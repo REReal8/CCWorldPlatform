@@ -1,0 +1,84 @@
+-- lua
+
+function Init()
+    -- niks te doen voor init
+end
+
+function Setup()
+    -- niks te doen voor setup
+end
+
+function GetEmptySlot()
+    -- alle slots nalopen
+    for slot = 1, 16 do
+
+        -- wat zit er in dit slot
+        local data = turtle.getItemDetail(slot)
+
+        -- deze slot wel het juiste item?
+        if not data then
+
+            -- deze selecteren
+            turtle.select(slot)
+
+            -- en we zijn klaar
+            return true
+        end
+    end
+
+    -- geen empty slot gevonden
+    return false
+end
+
+function SelectItem(itemName)
+    -- eerst huidige slot onderzoeken
+    local data = turtle.getItemDetail()
+
+    -- juiste?
+    if data and data.name == itemName then return true end
+
+    -- alle slots nalopen
+    for slot = 1, 16 do
+
+        -- wat zit er in dit slot
+        data = turtle.getItemDetail(slot)
+
+        -- deze slot wel het juiste item?
+        if data and data.name == itemName then
+
+            -- deze selecteren
+            turtle.select(slot)
+
+            -- en we zijn klaar
+            return true
+        end
+    end
+
+    -- niet gevonden, niet zo best
+    return false
+end
+
+function DropAll(itemName, direction)
+
+    -- alle slots nalopen
+    for slot = 1, 16 do
+
+        -- wat zit er in dit slot
+        local data = turtle.getItemDetail(slot)
+
+        -- deze slot wel het juiste item?
+        if data and data.name == itemName then
+
+            -- deze selecteren
+            turtle.select(slot)
+
+            -- juiste richting zoeken
+            if direction == "up" or direction == "Up" then turtle.dropUp()
+            elseif direction == "down" or direction == "Down" then turtle.dropDown()
+            else turtle.drop() end
+        end
+    end
+end
+
+
+

@@ -1,0 +1,139 @@
+local db	= {
+	logfile		= "/log/log.txt",
+	me			= os.getComputerID(),
+	protocol	= "coreutils",
+    serial		= 0,                                -- for unique id's
+}
+
+-- laatste serial uit de file lezen?
+function Init()
+	-- uniek random nummer
+	math.randomseed(os.time())
+end
+
+-- niet nodig voor utils
+function Setup()
+	-- start sending messages when we are ready to receive them too
+	coreevent.EventReadyFunction(EventReadySetup)
+
+	-- let others check our pulse
+	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol,	"pulse request")
+end
+
+function EventReadySetup()
+	-- startup, read from disk or get data from peers? Why not both!
+	coreevent.SendMessage({protocol=db.protocol, subject="what is the current time"})
+end
+
+-- generates a new id
+function NewId()
+	-- eentje ophogen
+	db.serial = db.serial + 1
+
+	-- id is een altijd een string
+	return db.me .. ":" .. db.serial
+end
+
+function IdCreator(id)
+	local t	= {}
+
+	-- split op :
+	for str in string.gmatch(id, "([^:]+)") do table.insert(t, str) end
+
+	-- waarde voor de : is de creator
+	return t[0]
+end
+
+function IdSerial(id)
+	local t	= {}
+
+	-- split op :
+	for str in string.gmatch(id, "([^:]+)") do table.insert(t, str) end
+
+	-- waarde voor de : is de creator
+	return t[1]
+end
+
+function ReadTableFromFile(filename)
+	-- does the db file exist?
+	if fs.exists(filename) then
+		-- var's
+		local fh = fs.open(filename, 'r')
+
+		-- read from the file
+		local text = fh.readAll()
+
+		-- text to table
+		local tbl = textutils.unserialize(text)
+
+		-- close the file
+		fh.close()
+
+		-- return the table
+		return tbl
+	end
+
+	-- still here? empty table
+	return {}
+end
+
+function WriteToFile(filename, message, writemode)
+	local mode	= "a"
+
+	-- check writemode
+	if writemode == "overwrite" then mode = "w" end
+
+	-- if we get a table, make it a string
+	if type(message) == "table" then message = textutils.serialize(message) end
+
+	-- bestand openen, schrijven en sluiten
+	if type(filename) ~= "string" then filename = db.logfile message = message .. debug.traceback() end
+	local fileHandle = fs.open(filename, mode)
+	fileHandle.writeLine(message)
+	fileHandle.close()
+
+end
+
+function WriteToLog(message)
+	-- write to the logfile
+	WriteToFile(db.logfile, message, "append")
+end
+
+function Warning(message)
+	-- write to the logfile
+	WriteToFile(db.logfile, message, "append")
+end
+
+function Error(message)
+	-- write to the logfile
+	WriteToFile(db.logfile, message, "append")
+end
+
+function UniversalTime()
+	return 24 * os.day() + os.time() -- https://computercraft.info/wiki/Os.time (waarde tussen 0 en 23.999)
+end
+
+function CoreUtilsProtocolName()
+	return db.protocol
+end
+
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
+
+function DoEventPulseRequest(subject, envelope)
+	local fuelLevel
+
+	-- computers don't have a fuel level
+	if turtle	then fuelLevel = turtle.getFuelLevel()
+				else fuelLevel = 0
+	end
+
+	-- send some information about us back
+    coreevent.ReplyToMessage(envelope, "pulse response", {fuelLevel=fuelLevel})
+end

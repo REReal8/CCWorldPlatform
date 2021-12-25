@@ -1,0 +1,200 @@
+-- the table that stores the data
+local db = {
+    job         = "forester",
+    schaarste   = true,
+    diepte      = 2,
+    breedte     = 2,
+}
+
+
+-- functions
+function Execute(jobData)
+    -- debug
+    coreutils.WriteToLog("forester Execute")
+    jobData = {enterpriseId = '1'}
+
+    -- task ophalen
+    local nextTask = enterprise_forest.GetNextTask(jobData.enterpriseId)
+
+    -- task uitvoeren
+    local f, err = loadstring(nextTask.functionName)
+    coretask.AddWork(f, nextTask.functionData)
+
+    -- loopje doen om inbox te lezen zolang de task nog bezig is
+    while not coretask.TaskListEmpty() do
+
+        -- hier ooit de inbox van deze enterprise verwerken
+
+        -- ff wachten
+        os.sleep(0.25)
+    end
+
+    -- klaar met de task
+    enterprise_forest.TaskComplete(nextTask)
+end
+
+function Rondje()
+    -- eerst in positie komen (in de stam van de eerste boom)
+    coremove.Up()
+    Vooruit(1)
+
+    -- naar de tweede boomn lopen, start positie van de lussen
+    if db.diepte > 1 then Vooruit(6) end
+
+    -- banen langs lopen
+    local aantalBanen = math.floor(db.breedte / 2)
+    for i=1, aantalBanen do
+
+        -- vooruit
+        Vooruit(6 * (db.diepte - 2))
+        coremove.Left()
+        Vooruit(6)
+        coremove.Left()
+
+        Vooruit(6 * (db.diepte - 2))
+        -- laatste bocht niet maken
+        if i ~= aantalBanen then
+            coremove.Right()
+            Vooruit(6)
+            coremove.Right()
+        end
+    end
+
+    -- terug naar huis, kan wat speciale dingen met zich mee brengen
+    if aantalBanen == 0 then coremove.Right(2)  end
+    if db.diepte    > 1 then Vooruit(6)         end
+
+
+    -- over de volledige breedte terug naar
+    coremove.Left()
+    Vooruit(6 * (db.breedte - 1))
+
+    -- terug in positie
+    coremove.Left()
+    coremove.Backward()
+    coremove.Down()
+
+    -- spullen opruimen
+    Opruimen()
+end
+
+function Vooruit(aantal)
+    aantal = aantal or 1
+
+    -- het gewenste aantal stappen zetten
+    for stap = 1, aantal do
+
+        -- staat er een boom recht voor ons?
+        if DetecteedBoom() then
+
+            -- ja, omhakken dus (doet meteen een stap naar voren)
+            KapBoom()
+        else
+
+            -- niks te zien, gewoon vooruit
+            coremove.Forward()
+        end
+    end
+end
+
+function DetecteedBoom()
+    local success, data = turtle.inspect()
+
+    -- staat er een berkenboom voor onze neus?
+    return success and type(data) == "table" and data.name == "minecraft:birch_log"
+end
+
+function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 blok hout levert ~ 70 movement op
+    local hoogte    = 1
+
+    -- eerste stukkie stam weghalen en op de plek van de stam gaan staan
+    turtle.dig()
+    coremove.Forward(1)
+    turtle.digDown()
+
+    -- omhoog gaan totdat we bladeren zien
+    while not turtle.inspect() do
+        -- omhoog
+        turtle.digUp()
+        coremove.Up()
+
+        -- bijhouden
+        hoogte = hoogte + 1
+    end
+
+    -- eentje boven de eerste bladen staan
+    turtle.digUp()
+    coremove.Up()
+
+    -- al het hout is weg (op het top blok na), nu de bladeren
+    if db.schaarste then OogstBladerenBuitenkant(true) end
+    OogstBladerenBuitenkant(false)
+
+    -- terug (top blok nog ff hakken)
+    turtle.digUp()
+    coremove.Down(hoogte)
+
+    -- staat er een berkenboom sapling voor onze neus?
+    local success, data = turtle.inspectDown()
+    if not success or type(data) ~= "table" or data.name ~= "minecraft:birch_sapling" then
+
+        -- als er een blok staat, weghalen
+        if success then turtle.digDown() end
+
+        -- hebben we nu een sappling?
+        if coreinventory.SelectItem("minecraft:birch_sapling")  then turtle.placeDown()
+                                                                else coreutils.Error("No birch sapling to plant") end
+    end
+end
+
+function OogstBladerenBuitenkant(buitenKant)
+    -- in positie komen, twee vooruit en draaien
+    if buitenKant then turtle.dig() coremove.Forward() end
+    turtle.dig()
+    coremove.Forward()
+    coremove.Right()
+
+    -- 4x een hoek nemen
+    for i=1,4 do
+        -- twee stappen naar de hoek
+        if buitenKant then OogstBladerenStap(not buitenKant) end
+        OogstBladerenStap(not buitenKant)
+
+        -- draaien
+        coremove.Right()
+
+        -- twee stappen naar het midden
+        if buitenKant then OogstBladerenStap(not buitenKant) end
+        OogstBladerenStap(not buitenKant)
+    end
+
+    -- terug lopen
+    coremove.Left()
+    if buitenKant then coremove.Backward() end
+    coremove.Backward()
+end
+
+function OogstBladerenStap(ookBoven)
+    turtle.digDown()
+    if ookBoven then turtle.digUp() end
+    turtle.dig()
+    coremove.Forward()
+end
+
+function Opruimen()
+    coremove.Backward()
+    coremove.Left()
+    coreinventory.DropAll("minecraft:birch_sapling")
+    coreinventory.GetEmptySlot()
+    turtle.suck(64)
+    coremove.Left()
+    coremove.Left()
+    coreinventory.DropAll("minecraft:stick")
+    coremove.Left()
+    coremove.Forward()
+    coremove.Right()
+    coremove.Forward()
+    coreinventory.DropAll("minecraft:birch_log")
+    coremove.Backward()
+    coremove.Left()
+end

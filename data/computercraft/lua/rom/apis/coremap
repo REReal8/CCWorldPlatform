@@ -1,0 +1,263 @@
+local filename  = "/db/mapAPI"
+local protocol  = "map"
+
+-- initializes the map api
+function Init()
+end
+
+-- setup runs whenever all other apis are initialized
+function Setup()
+end
+
+-- used for claiming entire areas of 6x6 squares
+function ClaimAreas(t)
+    local above             = t.above       or false
+    local below             = t.below       or false
+    local amount            = t.amount      or 1
+    local clientProtocol    = t.protocol
+    local searchSize        = 0
+    local claimed           = {}
+
+    -- don't work for useless parameters
+    if above == false and below == false then return claimed end
+
+    -- search for available areas
+    while amount > #claimed do
+
+        -- loop over x and y
+        for areaX=-searchSize, searchSize do for areaY=-searchSize, searchSize do
+
+            -- check if these coordinates will do
+            if IsAreaAvailable(areaX, areaY, above, below) then
+                local area  = {}
+
+                -- if the user wants the part above
+                if above then
+                    area["above"] = {
+                        blocksFree  = 0,
+                        usedBy      = clientProtocol
+                    }
+                end
+
+                -- if the user wants the part below (too)
+                if below then
+                    area["below"] = {
+                        blocksFree  = 0,
+                        usedBy      = clientProtocol
+                    }
+                end
+
+                -- save the data to the dht
+                dhtAPI.SaveData(area, protocol, areaX, areaY)
+
+                -- add this one to the claimed list
+                claimed[#claimed + 1] = {x = areaX, y = areaY, above = above, below = below}
+            end
+        end end
+
+        -- still here? increase the search size
+        searchSize = searchSize + 1
+    end
+
+    -- done, return which areas are claimed
+    return claimed
+end
+
+-- why would we ever abandon an area?!?
+function AbandonArea(x, y, above, below)
+    -- first, get a reference to the entire map from the dht
+    local map       = dhtAPI.GetData(protocol)
+
+    -- check if the area really is taken
+    if map[x] and map[x][y] then
+        -- what should we erase
+        if above then map[x][y]["above"] = nil end
+        if below then map[x][y]["below"] = nil end
+    end
+
+    -- check for fully abandoned area
+    if map[x][y]["above"] == nil and map[x][y]["below"] == nil then map[x][y] = nil end
+end
+
+-- used for claiming entire squares's of 6x6 blocks
+function ClaimSquares(t)
+    local above             = t.above
+    local below             = t.below
+    local amount            = t.amount
+    local clientProtocol    = t.protocol
+    local searchSize        = 0
+    local claimed           = {}
+
+    -- don't work for useless parameters
+    if above == false and below == false then return claimed end
+
+    -- search for available areas
+    while amount > #claimed do
+
+        -- loop over x and y
+        for areaX=-searchSize, searchSize do
+            for areaY=-searchSize, searchSize do
+
+                -- check if these coordinates will do
+                local available = CountAvailableSquares(areaX, areaY, above, below)
+
+                -- do we have available squares in this area?
+                if available > 0 then
+
+                    -- for readability, calc the number to claim
+                    local numberToClaim = math.min(amount - #claimed, available)
+
+                    -- claim them!
+                    ClaimSquaresToDB(claimed, numberToClaim, clientProtocol, areaX, areaY, above, below)
+                end
+
+                -- do we need to search for more?
+                if amount == #claimed then break end
+            end
+
+            -- do we need to search for more?
+            if amount == #claimed then break end
+        end
+
+        -- still here? increase the search size
+        searchSize = searchSize + 1
+    end
+
+    -- done, return which areas are claimed
+    return claimed
+end
+
+-- in case some protocol will no longer use a square (don't know why but who cares)
+function AbandonSquare(areaX, areaY, squareNumber, above, below)
+    system.NIY("mapAPI.AbandonSquare()")
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
+
+-- check if the area is empty (nil)
+local function IsAreaAvailable(x, y, above, below)
+    above = above or false
+    below = below or false
+
+    -- first, get a reference to the entire map from the dht
+    local map = dhtAPI.GetData(protocol)
+
+    -- check node exists
+    if map[x] and map[x][y] then
+        -- nice, go go go
+       return (above == false or map[x][y]["above"] == nil) and (below == false or map[x][y]["below"] == nil)
+    else
+        -- nothing there, above and below are free
+        return true
+    end
+end
+
+-- check if the area is empty (nil)
+local function CountAvailableSquares(x, y, above, below)
+    above = above or false
+    below = below or false
+
+    -- first, get a reference to the entire map from the dht
+    local map = dhtAPI.GetData(protocol)
+
+    -- check node exists
+    if map[x] and map[x][y] then
+
+        -- use local for speed
+        local areaAbove = map[x][y].above
+        local areaBelow = map[x][y].below
+        local available = 0
+
+        -- maybe entire area already claimed?
+        if areaAbove.blocksFree == 0 or areaBelow.blocksFree == 0 then return 0 end
+
+        -- we have still hope, count all the available squares
+        for i=1,36 do
+
+            -- check this square
+            if (above == false or areaAbove[i].protocol == nil) and (below == false or areaBelow[i].protocol == nil) then
+
+                -- this one is available, update the counter
+                available = available + 1
+            end
+        end
+
+        -- done!
+        return available
+    else
+        -- nothing there, above and below are free
+        return 6 * 6
+    end
+end
+
+-- actual claim squares
+local function ClaimSquaresToDB(claimed, numberToClaim, clientProtocol, areaX, areaY, above, below)
+    local areaAbove = dhtAPI.GetData(protocol, areaX, areaY, "above")
+    local areaBelow = dhtAPI.GetData(protocol, areaX, areaY, "below")
+
+    -- check if data was found
+    if above and areaAbove == nil then areaAbove = CreateNewSquareTable() end
+    if below and areaBelow == nil then areaBelow = CreateNewSquareTable() end
+
+    -- check all 36
+    for i=1,36 do
+
+        -- this one usefull
+        if (above == false or areaAbove.protocol == nil) and (below == false or areaBelow.protocol == nil) then
+
+            -- do this one!
+            local squareAbove = areaAbove[i]
+            local squareBelow = areaBelow[i]
+
+            -- need above?
+            if above then squareAbove.protocol = clientProtocol end
+            if below then squareBelow.protocol = clientProtocol end
+
+            -- add to the claimed list
+            claimed[#claimed + 1] = {
+                x       = areaX,
+                y       = areaY,
+                square  = i,
+                above   = above,
+                below   = below
+            }
+
+            -- update counter
+            numberToClaim = numberToClaim - 1
+        end
+
+        -- go on?
+        if numberToClaim == 0 then break end
+    end
+
+    -- save the data
+    if above then dhtAPI.SaveData(areaAbove, protocol, areaX, areaY, "above") end
+    if below then dhtAPI.SaveData(areaBelow, protocol, areaX, areaY, "below") end
+end
+
+local function CreateNewSquareTable()
+    local newTable = {}
+
+    -- make 36 entries
+    for i=1,36 do newTable[i] = {} end
+
+    -- done
+    return newTable
+end
+
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
+

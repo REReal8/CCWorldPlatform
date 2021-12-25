@@ -1,0 +1,59 @@
+function NewForest()
+    -- we zijn nieuw, we maken ons eigen ID aan
+    local enterpriseId = coreutils.NewId()
+
+    -- aanmaken in het dht
+    coredht.SaveData({
+        lastHarvest = 0,
+        inbox       = {},
+        taskList    = {},
+        diepte      = 4,
+        breedte     = 4,
+        startpunt   = {},
+    }, "enterprises", enterpriseId)
+
+    -- nu hebben we maar 1 taak, dus ff ID en taak zelf maken
+    NewHarvestingTask(enterpriseId)
+
+    -- mooi, nieuwe aangemaakt
+    Init(enterpriseId)
+end
+
+function Init(enterpriseId)
+    NewForesterJob(enterpriseId)
+end
+
+function GetNextTask(enterpriseId)
+    -- task markeren als in behandeling
+
+    -- return de task
+    return {functionName = 'role_forester.Rondje()', functionData = {}, taskId = "", enterpriseId = enterpriseId}
+end
+
+function TaskComplete(task)
+    -- task uit de lijst halen, toch afgerond
+    coredht.SaveData(nil, "enterprises", task.enterpriseId, "taskList", task.taskId)
+
+    -- moeten we nog iets doen nu de task is afgerond?
+    NewForesterJob(task.enterpriseId)
+end
+
+function NewForesterJob(enterpriseId)
+    corejob.NewJob('forester', {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
+end
+
+function NewHarvestingTask(enterpriseId)
+    local taskId        = coreutils.NewId()
+
+    -- toevoegen aan de lijst
+    coredht.SaveData({
+        functionName    = 'role_forester.Rondje()',
+        functionData    = {},
+        created         = coreutils.UniversalTime(),
+        notBefore       = coreutils.UniversalTime() + 12.00,
+        enterpriseId    = enterpriseId,
+        taskId          = taskId}, "enterprises", enterpriseId, "taskList", taskId)
+
+    -- klaar zo
+    return taskId
+end

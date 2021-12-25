@@ -1,0 +1,66 @@
+local db = {}
+
+function Init()
+end
+
+function Setup()
+end
+
+function NewJob(name, data, location, startTime, needTool, needTurtle)
+    -- parameters controleren
+    startTime = startTime or coreutils.UniversalTime()
+
+    -- opslaan
+    coredht.SaveData({
+        name            = name,
+        data            = data,
+        location        = location,
+        startTime       = startTime,
+        needTool        = needTool,
+        needTurtle      = needTurtle,
+        applications    = {},
+    }, "vacancies", coreutils.NewId())
+end
+
+function ApplyToJob(jobId)
+    -- onzelf toevoegen aan de lijst met inschrijvingen
+    coredht.SaveData({
+        time            = coreutils.UniversalTime(),
+        dice            = math.random(),
+    }, "vacancies", jobId, "applications", jobId)
+end
+
+function Run()
+    -- dit blijven we altijd doen
+    while core.IsSystemRunning() do
+
+        -- we zijn nu werkeloos
+        local nextJobId = role_unemployed.Execute()
+
+        -- hebben we iets? Zou raar zijn als het niet zo is
+        if nextJobId then
+
+            -- we weten nu welke rol we nu moeten doen
+            local nextJob   = coredht.GetData("vacancies", nextJobId)
+
+            -- zou raar zijn als we niks gevonden hebben, maar goed
+            if nextJob and nextJob.name then
+
+                -- deze job uit de lijst halen, mogen wij doen omdat wij nu deze job hebben
+                coredht.SaveData(nil, "vacancies", nextJobId)
+
+                -- juiste job starten
+                local f, err = loadstring("role_"..nextJob.name..".Execute()")
+
+                -- valid function?
+                if f then f() else coreutils.Error("corejob.Run(): loadstring gaf geen functie terug, wel een error: "..err) end
+            else
+                -- dit is niet best
+                coreutils.Error("corejob.Run(): Job "..nextJobId.." is niet gevonden in de vacancies lijst")
+            end
+        else
+            -- blijkbaar is er geen werk op dit moment
+            os.sleep(0.25)
+        end
+    end
+end
