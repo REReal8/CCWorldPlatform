@@ -18,6 +18,7 @@ function Setup()
     -- add handlers to protocol messages
 	coreevent.AddEventListener(DoEventGetAllData,    protocol, "get all data")
 	coreevent.AddEventListener(DoEventAllData,       protocol, "all data")
+	coreevent.AddEventListener(DoEventAllDataTimer,  protocol, "all data timer")
 	coreevent.AddEventListener(DoEventSaveData,      protocol, "save data")
 
 	-- start sending messages when we are ready to receive them too
@@ -25,8 +26,13 @@ function Setup()
 end
 
 function EventReadySetup()
+	coreutils.WriteToLog("dht event ready setup")
+
 	-- startup, read from disk or get data from peers? Why not both!
 	coreevent.SendMessage({protocol=protocol, subject="get all data"})
+
+    -- timer instellen voor het geval dat we geen reactie krijgen
+    coreevent.CreateTimeEvent(5, protocol, "all data timer")
 end
 
 function DHTReadyFunction(func)
@@ -91,13 +97,12 @@ function SaveDataToDB(data, ...)
     local listOfNodes = {}
 
     -- make a list of the nodes so we know which is the last one
-    for i,node in ipairs(arg) do
+    for i, node in ipairs(arg) do
         listOfNodes[#listOfNodes + 1] = node
     end
 
     -- check for all data
     if #listOfNodes == 0 then
-
         -- no keys, full database
         db = data
     else
@@ -144,6 +149,25 @@ function DoEventAllData(subject, envelope)
 	-- just save the data to the root
 	SaveDataToDB(envelope.message.data)
 
+    -- we zijn er klaar voor
+    DoDHTReady()
+end
+
+function DoEventAllDataTimer(subject, envelope)
+    -- alleen als de dht nog niet ready is
+    if not dhtReady then
+        -- niet zo best, we hebben geen data gekregen!
+        coreutils.WriteToLog("coredht: all data timer verlopen zonder iets ontvangen te hebben")
+
+        -- we zetten nu de dht op ready, terwijl we weten dat het niet zo is...
+        DoDHTReady()
+
+        -- save the db table to a file, dan maar iets leegs
+        coreutils.WriteToFile(filename, db, "overwrite")
+    end
+end
+
+function DoDHTReady()
     -- we zijn er klaar voor
     dhtReady = true
 

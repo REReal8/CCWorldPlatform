@@ -1,15 +1,15 @@
 -- allemaal event spullen
 local db = {
     channel		= {},		-- list of open channels, and which protocol wanted the channel
-    eventready	= {},		-- list of messages to send when ready
     timer		= {},		-- list of all known timers
     reply		= {},		-- the reply envelopes by message id (serial)
     logfile		= "/log/core.event.log",
 }
 
 -- object / function references
-local modem       = nil
-local listener    = {}
+local modem       	= nil
+local listener    	= {}
+local eventready	= {}	-- list of functions to run when ready
 
 -- event init
 function Init()
@@ -235,7 +235,7 @@ end
 
 function EventReadyFunction(func)
 	-- just add function to the list
-	db.eventready[#db.eventready] = func
+	eventready[#eventready + 1] = func
 end
 
 -- to add a custom functions to the event listener
@@ -274,8 +274,8 @@ function Run()
 	}
 
 	-- run functions when event is (about to be) ready
-	for i, func in ipairs(db.eventready) do func() end
-	db.eventready = {}
+	for i, func in ipairs(eventready) do func() end
+	eventready = {}
 
 	-- this function never stops as long as we have any function that could take action (or the display is active, so the human could start something)
 	-- dit gaat niet werken nu, moet nog aangepast worden !!!
@@ -296,7 +296,7 @@ function Run()
 			coreutils.WriteToFile(db.logfile, tostring(coreutils.UniversalTime()) .. " " .. "event = " .. event .. ", p1 = " .. (p1 or ""), "a")
 
 			-- should we log this event
---			if originalEvent ~= "modem_message" or event == "modem_message" then EventToLog(event, p1) end
+			if originalEvent ~= "modem_message" or event == "modem_message" then EventToLog(event, p1) end
 		end
 
 		-- dispatch event to the right listener
