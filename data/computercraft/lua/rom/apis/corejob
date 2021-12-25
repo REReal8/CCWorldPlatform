@@ -50,7 +50,7 @@ function Run()
                 coredht.SaveData(nil, "vacancies", nextJobId)
 
                 -- juiste job starten
-                local f, err = loadstring("role_"..nextJob.name..".Execute()")
+                local f, err = loadstring("role_"..nextJob.name..".Execute("..textutils.serialize(nextJob.data)..")")
 
                 -- valid function?
                 if f then f() else coreutils.Error("corejob.Run(): loadstring gaf geen functie terug, wel een error: "..err) end
