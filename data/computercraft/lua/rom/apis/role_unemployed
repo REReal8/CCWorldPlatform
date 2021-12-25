@@ -34,6 +34,11 @@ end
 function FindBestVacancy()
     -- zoeken naar een job om op in te schrijven
     local vacancies = coredht.GetData("vacancies")
+
+    -- kijken of we een lege lijst hebben gekregen?
+    if not vacancies then return nil end
+
+    -- op zoek naar de beste job
     for jobId, jobData in pairs(vacancies) do
 
         -- de eerste de beste
