@@ -12,15 +12,15 @@ function Execute(jobData)
     -- debug
     coreutils.WriteToLog("builder Execute")
 
-    --[[
     -- task ophalen
     local nextTask = enterprise_construction.GetNextTask(jobData.enterpriseId)
 
     -- task uitvoeren
     local f, err = loadstring(nextTask.functionName)
-    coretask.AddWork(f, nextTask.functionData)
+--    coretask.AddWork(f, nextTask.functionData)
+    coretask.AddWork(f)
 
-    -- loopje doen om inbox te lezen zolang de task nog bezig is
+    -- loop to make sure all turtle tasks are done (to ensure this job task is done)
     while not coretask.TaskListEmpty() do
 
         -- hier ooit de inbox van deze enterprise verwerken
@@ -29,14 +29,16 @@ function Execute(jobData)
         os.sleep(0.25)
     end
 
-    -- klaar met de task
+    -- task completed
     enterprise_construction.TaskComplete(nextTask)
-    ]]
 end
 
 
-function BuildForest() 
+function BuildForest(data) 
     coreutils.WriteToLog("Builder: build forest")
+    coreutils.WriteToLog(data)
+
+    
 end
 
 

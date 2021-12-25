@@ -31,7 +31,7 @@ function GetNextTask(enterpriseId)
     -- task markeren als in behandeling
 
     -- return de task
-    return {functionName = 'role_builder.BuildForest()', functionData = {}, taskId = "", enterpriseId = enterpriseId}
+    return {functionName = 'role_builder.BuildForest('..textutils.serialize({depth=2, width=2})..')', taskId = "", enterpriseId = enterpriseId}
 end
 
 function TaskComplete(task)
