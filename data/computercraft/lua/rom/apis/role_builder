@@ -1,9 +1,6 @@
 -- the table that stores the data
 local db = {
     job         = "builder",
-    schaarste   = true,
-    diepte      = 2,
-    breedte     = 2,
 }
 
 
@@ -34,11 +31,11 @@ function Execute(jobData)
 end
 
 
-function BuildForest(data) 
+function BuildForest(funcData) 
     coreutils.WriteToLog("Builder: build forest")
-    coreutils.WriteToLog(data)
+    coreutils.WriteToLog(funcData)
 
-    
+
 end
 
 
