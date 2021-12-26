@@ -48,7 +48,7 @@ function ClaimAreas(t)
                 end
 
                 -- save the data to the dht
-                dhtAPI.SaveData(area, protocol, areaX, areaY)
+                coredht.SaveData(area, protocol, areaX, areaY)
 
                 -- add this one to the claimed list
                 claimed[#claimed + 1] = {x = areaX, y = areaY, above = above, below = below}
@@ -66,7 +66,7 @@ end
 -- why would we ever abandon an area?!?
 function AbandonArea(x, y, above, below)
     -- first, get a reference to the entire map from the dht
-    local map       = dhtAPI.GetData(protocol)
+    local map       = coredht.GetData(protocol)
 
     -- check if the area really is taken
     if map[x] and map[x][y] then
@@ -129,7 +129,7 @@ end
 
 -- in case some protocol will no longer use a square (don't know why but who cares)
 function AbandonSquare(areaX, areaY, squareNumber, above, below)
-    system.NIY("mapAPI.AbandonSquare()")
+    core.NIY("mapAPI.AbandonSquare()")
 end
 
 --    _                 _    __                  _   _
@@ -142,12 +142,12 @@ end
 --
 
 -- check if the area is empty (nil)
-local function IsAreaAvailable(x, y, above, below)
+function IsAreaAvailable(x, y, above, below)
     above = above or false
     below = below or false
 
     -- first, get a reference to the entire map from the dht
-    local map = dhtAPI.GetData(protocol)
+    local map = coredht.GetData(protocol)
 
     -- check node exists
     if map[x] and map[x][y] then
@@ -160,12 +160,12 @@ local function IsAreaAvailable(x, y, above, below)
 end
 
 -- check if the area is empty (nil)
-local function CountAvailableSquares(x, y, above, below)
+function CountAvailableSquares(x, y, above, below)
     above = above or false
     below = below or false
 
     -- first, get a reference to the entire map from the dht
-    local map = dhtAPI.GetData(protocol)
+    local map = coredht.GetData(protocol)
 
     -- check node exists
     if map[x] and map[x][y] then
@@ -198,9 +198,9 @@ local function CountAvailableSquares(x, y, above, below)
 end
 
 -- actual claim squares
-local function ClaimSquaresToDB(claimed, numberToClaim, clientProtocol, areaX, areaY, above, below)
-    local areaAbove = dhtAPI.GetData(protocol, areaX, areaY, "above")
-    local areaBelow = dhtAPI.GetData(protocol, areaX, areaY, "below")
+function ClaimSquaresToDB(claimed, numberToClaim, clientProtocol, areaX, areaY, above, below)
+    local areaAbove = coredht.GetData(protocol, areaX, areaY, "above")
+    local areaBelow = coredht.GetData(protocol, areaX, areaY, "below")
 
     -- check if data was found
     if above and areaAbove == nil then areaAbove = CreateNewSquareTable() end
@@ -238,11 +238,11 @@ local function ClaimSquaresToDB(claimed, numberToClaim, clientProtocol, areaX, a
     end
 
     -- save the data
-    if above then dhtAPI.SaveData(areaAbove, protocol, areaX, areaY, "above") end
-    if below then dhtAPI.SaveData(areaBelow, protocol, areaX, areaY, "below") end
+    if above then core.SaveData(areaAbove, protocol, areaX, areaY, "above") end
+    if below then coredht.SaveData(areaBelow, protocol, areaX, areaY, "below") end
 end
 
-local function CreateNewSquareTable()
+function CreateNewSquareTable()
     local newTable = {}
 
     -- make 36 entries
