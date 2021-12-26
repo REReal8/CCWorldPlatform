@@ -10,8 +10,7 @@ local db = {
 -- functions
 function Execute(jobData)
     -- debug
-    coreutils.WriteToLog("forester Execute")
-    jobData = {enterpriseId = '1'}
+    coreutils.WriteToLog("Forester Execute for enterprise "..jobData.enterpriseId)
 
     -- task ophalen
     local nextTask = enterprise_forest.GetNextTask(jobData.enterpriseId)
