@@ -7,7 +7,7 @@ end
 
 function Setup()
     -- berichten opslaan die verstuurd zijn voordat de dht klaar is
-    coredht.DHTReadyFunction(MessageToDHT)
+    coredht.DHTReadyFunction(DHTReadySetup)
 end
 
 function DHTReadySetup()

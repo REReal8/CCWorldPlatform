@@ -7,6 +7,16 @@ end
 
 -- setup runs whenever all other apis are initialized
 function Setup()
+    -- berichten opslaan die verstuurd zijn voordat de dht klaar is
+    coredht.DHTReadyFunction(DHTReadySetup)
+end
+
+function DHTReadySetup()
+    -- kijken of onze key wel bestaat in de dht
+    local map = coredht.GetData("map")
+
+    -- en, bestaat deze?
+    if not map then coredht.SaveData({}, "map") end
 end
 
 -- used for claiming entire areas of 6x6 squares
