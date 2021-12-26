@@ -37,7 +37,7 @@ end
 
 function DHTReadyFunction(func)
 	-- just add function to the list
-	dhtReadyFunctions[#dhtReadyFunctions] = func
+	dhtReadyFunctions[#dhtReadyFunctions + 1] = func
 end
 
 function IsReady()
