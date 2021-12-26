@@ -44,7 +44,7 @@ function GetNextMessage(recipient)
     -- hoe laat is het eigenlijk
     local nu = coreutils.UniversalTime()
     local firstTime = nu + 1
-    local firstId   = nil
+    local messageId   = nil
 
     -- lekker zoeken
     local messages  = coredht.GetData("messages")
@@ -53,16 +53,16 @@ function GetNextMessage(recipient)
     for id, message in pairs(messages) do
 
         -- is dit een beter bericht?
-        if message.recipient == recipient and message.time < firstTime and message.notBefore <= nu then firstId = id end
+        if recipient == message.recipient and firstTime > message.time and nu >= message.notBefore then firstTime = message.time messageId = id end
     end
 
     -- hebben we iets?
-    if firstId then
+    if messageId then
         -- uit de lijst halen en terug geven
-        local message = messages[ firstId ].data
+        local message = messages[ messageId ].data
 
         -- uit de dht halen
-        coredht.SaveData(nil, "messages", firstId)
+        coredht.SaveData(nil, "messages", messageId)
 
         -- klaar
         return message
