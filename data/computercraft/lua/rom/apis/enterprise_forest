@@ -27,7 +27,7 @@ function GetNextTask(enterpriseId)
     -- task markeren als in behandeling
 
     -- return de task
-    return {functionName = 'role_forester.Rondje('..textutils.serialize({depth=2, width=2})..')', taskId = "", enterpriseId = enterpriseId}
+    return {functionName = 'role_forester.Rondje('..textutils.serialize({depth=3, width=2})..')', taskId = "", enterpriseId = enterpriseId}
 end
 
 function TaskComplete(task)

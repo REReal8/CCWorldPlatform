@@ -2,8 +2,6 @@
 local db = {
     job         = "forester",
     schaarste   = true,
-    diepte      = 2,
-    breedte     = 2,
 }
 
 
@@ -36,24 +34,28 @@ function Rondje(funcData)
     -- debug
     coreutils.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
 
+    -- init
+    local depth = funcData.depth
+    local width = funcData.width
+
     -- eerst in positie komen (in de stam van de eerste boom)
     coremove.Up()
     Vooruit(1)
 
     -- naar de tweede boomn lopen, start positie van de lussen
-    if db.diepte > 1 then Vooruit(6) end
+    if depth > 1 then Vooruit(6) end
 
     -- banen langs lopen
-    local aantalBanen = math.floor(db.breedte / 2)
+    local aantalBanen = math.floor(width / 2)
     for i=1, aantalBanen do
 
         -- vooruit
-        Vooruit(6 * (db.diepte - 2))
+        Vooruit(6 * (depth - 2))
         coremove.Left()
         Vooruit(6)
         coremove.Left()
 
-        Vooruit(6 * (db.diepte - 2))
+        Vooruit(6 * (depth - 2))
         -- laatste bocht niet maken
         if i ~= aantalBanen then
             coremove.Right()
@@ -64,12 +66,12 @@ function Rondje(funcData)
 
     -- terug naar huis, kan wat speciale dingen met zich mee brengen
     if aantalBanen == 0 then coremove.Right(2)  end
-    if db.diepte    > 1 then Vooruit(6)         end
+    if depth    > 1 then Vooruit(6)         end
 
 
     -- over de volledige breedte terug naar
     coremove.Left()
-    Vooruit(6 * (db.breedte - 1))
+    Vooruit(6 * (width - 1))
 
     -- terug in positie
     coremove.Left()
