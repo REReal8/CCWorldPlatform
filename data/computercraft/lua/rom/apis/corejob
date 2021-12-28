@@ -31,11 +31,37 @@ function ApplyToJob(jobId)
 end
 
 function Run()
+    -- is de dth al beschikbaar?
+    while not coredht.IsReady() do
+
+        -- gewoon ff wachten
+        os.sleep(0.25)
+    end
+
+    -- bestaat de entry al in de dht?
+    if not coredht.GetData("vacancies") then coredht.SaveData({}, "vacancies" ) end
+
     -- dit blijven we altijd doen
     while core.IsSystemRunning() do
 
         -- we zijn nu werkeloos
-        local nextJobId = role_unemployed.Execute()
+        local nextJobId = nil
+
+        -- volgende job zoeken
+        local jobApplication = FindBestVacancy()
+
+        -- hebben we een job?
+        if jobApplication then
+
+            -- inschrijven
+            corejob.ApplyToJob(jobApplication)
+
+            -- ff wachten, wellicht hebben meer zich ingeschreven
+            os.sleep(0.25)
+
+            -- controle wie de job krijgt
+            nextJobId = JobSelectionProcedure(jobApplication)
+        end
 
         -- hebben we iets? Zou raar zijn als het niet zo is
         if nextJobId then
@@ -63,4 +89,32 @@ function Run()
             os.sleep(0.25)
         end
     end
+end
+
+function FindBestVacancy()
+    -- zoeken naar een job om op in te schrijven
+    local vacancies = coredht.GetData("vacancies")
+
+    -- kijken of we een lege lijst hebben gekregen?
+    if not vacancies then return nil end
+
+    -- op zoek naar de beste job
+    for jobId, jobData in pairs(vacancies) do
+
+        -- de eerste de beste
+        return jobId
+    end
+
+    -- niks gevonden
+    return nil
+end
+
+function JobSelectionProcedure(jobId)
+    -- data van de job ophalen
+    local jobData = coredht.GetData("vacancies", jobId, "applications")
+
+    -- dit lijkt mij wel iets voor ons!
+    if jobData  then return jobId
+                else return nil end
+
 end
