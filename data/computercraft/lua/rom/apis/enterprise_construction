@@ -20,18 +20,21 @@ function NewEnterprise()
 end
 
 function Init(enterpriseId)
-    -- create 
+    -- create
     coreutils.WriteToLog("Enterprise Construction "..enterpriseId.." created");
 
     -- ToDo: get this from message box later
     NewBuilderJob(enterpriseId)
 end
 
-function GetNextTask(enterpriseId)
+function ProcessNextTask(data)
     -- task markeren als in behandeling
 
     -- return de task
-    return {functionName = 'role_builder.BuildForest('..textutils.serialize({depth=2, width=2})..')', taskId = "", enterpriseId = enterpriseId}
+    coretask.AddWork(role_builder.BuildForest, {depth=2, width=2})
+end
+
+function ProcessNextMessage(data)
 end
 
 function TaskComplete(task)
