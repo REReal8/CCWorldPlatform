@@ -23,11 +23,14 @@ function Init(enterpriseId)
     NewForesterJob(enterpriseId)
 end
 
-function GetNextTask(enterpriseId)
+function ProcessNextTask(data)
     -- task markeren als in behandeling
 
-    -- return de task
-    return {functionName = 'role_forester.Rondje('..textutils.serialize({depth=3, width=2})..')', taskId = "", enterpriseId = enterpriseId}
+    --de task in de queue zetten
+    coretask.AddWork(role_forester.Rondje, {depth=3, width=2})
+end
+
+function ProcessNextMessage(data)
 end
 
 function TaskComplete(task)

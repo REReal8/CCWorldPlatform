@@ -4,22 +4,34 @@ function Init()
 end
 
 function Setup()
+    -- pas als de dht klaar is...
+    coredht.DHTReadyFunction(DHTReadySetup)
 end
 
-function NewJob(name, data, location, startTime, needTool, needTurtle)
+function DHTReadySetup()
+    -- bestaat de entry al in de dht?
+    if not coredht.GetData("jobs") then coredht.SaveData({}, "jobs" ) end
+
+    -- dit heette ooit vacancies, die naam niet meer gebruiken
+    coredht.SaveData(nil, "vacancies" )
+end
+
+function NewJob(enterpriseName, data, location, startTime, needTool, needTurtle)
     -- parameters controleren
-    startTime = startTime or coreutils.UniversalTime()
+    startTime   = startTime or coreutils.UniversalTime()
+    local jobId = coreutils.NewId()
 
     -- opslaan
     coredht.SaveData({
-        name            = name,
+        jobId           = jobId,
+        enterpriseName  = enterpriseName,
         data            = data,
         location        = location,
         startTime       = startTime,
         needTool        = needTool,
         needTurtle      = needTurtle,
         applications    = {},
-    }, "vacancies", coreutils.NewId())
+    }, "jobs", jobId)
 end
 
 function ApplyToJob(jobId)
@@ -27,7 +39,7 @@ function ApplyToJob(jobId)
     coredht.SaveData({
         time            = coreutils.UniversalTime(),
         dice            = math.random(),
-    }, "vacancies", jobId, "applications", jobId)
+    }, "jobs", jobId, "applications", jobId)
 end
 
 function Run()
@@ -38,14 +50,11 @@ function Run()
         os.sleep(0.25)
     end
 
-    -- bestaat de entry al in de dht?
-    if not coredht.GetData("vacancies") then coredht.SaveData({}, "vacancies" ) end
-
     -- dit blijven we altijd doen
     while core.IsSystemRunning() do
 
         -- we zijn nu werkeloos
-        local nextJobId = nil
+        local nextJob = nil
 
         -- volgende job zoeken
         local jobApplication = FindBestVacancy()
@@ -60,30 +69,17 @@ function Run()
             os.sleep(0.25)
 
             -- controle wie de job krijgt
-            nextJobId = JobSelectionProcedure(jobApplication)
+            nextJob = JobSelectionProcedure(jobApplication)
         end
 
-        -- hebben we iets? Zou raar zijn als het niet zo is
-        if nextJobId then
+        -- hebben we iets?
+        if nextJob then
 
-            -- we weten nu welke rol we nu moeten doen
-            local nextJob   = coredht.GetData("vacancies", nextJobId)
+            -- deze job uit de lijst halen, mogen wij doen omdat wij nu deze job hebben
+            coredht.SaveData(nil, "jobs", nextJob.jobId)
 
-            -- zou raar zijn als we niks gevonden hebben, maar goed
-            if nextJob and nextJob.name then
-
-                -- deze job uit de lijst halen, mogen wij doen omdat wij nu deze job hebben
-                coredht.SaveData(nil, "vacancies", nextJobId)
-
-                -- juiste job starten
-                local f, err = loadstring("role_"..nextJob.name..".Execute("..textutils.serialize(nextJob.data)..")")
-
-                -- valid function?
-                if f then f() else coreutils.Error("corejob.Run(): loadstring gaf geen functie terug, wel een error: "..err) end
-            else
-                -- dit is niet best
-                coreutils.Error("corejob.Run(): Job "..nextJobId.." is niet gevonden in de vacancies lijst")
-            end
+            -- juiste job starten
+            DoJob(nextJob)
         else
             -- blijkbaar is er geen werk op dit moment
             os.sleep(0.25)
@@ -93,13 +89,13 @@ end
 
 function FindBestVacancy()
     -- zoeken naar een job om op in te schrijven
-    local vacancies = coredht.GetData("vacancies")
+    local jobs = coredht.GetData("jobs")
 
     -- kijken of we een lege lijst hebben gekregen?
-    if not vacancies then return nil end
+    if not jobs then return nil end
 
     -- op zoek naar de beste job
-    for jobId, jobData in pairs(vacancies) do
+    for jobId, jobData in pairs(jobs) do
 
         -- de eerste de beste
         return jobId
@@ -111,10 +107,36 @@ end
 
 function JobSelectionProcedure(jobId)
     -- data van de job ophalen
-    local jobData = coredht.GetData("vacancies", jobId, "applications")
+    local jobData = coredht.GetData("jobs", jobId, "applications")
 
     -- dit lijkt mij wel iets voor ons!
-    if jobData  then return jobId
+    if jobData  then return jobData
                 else return nil end
 
+end
+
+function DummyTask()
+    -- handig zodat er altijd iets is, kost ook weer een pull event
+    os.sleep(0.05)
+end
+
+function DoJob(jobData)
+    -- task functie klaar maken
+    local f, err = loadstring("enterprise_"..jobData.enterpriseName..".ProcessNextTask("..textutils.serialize(nextJob.data)..")")
+    if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+
+    -- loopje doen om inbox te lezen zolang de task nog bezig is
+    while not coretask.TaskListEmpty() do
+
+        -- hier ooit de inbox van deze enterprise verwerken
+        local f, err = loadstring("enterprise_"..jobData.enterpriseName..".ProcessNextMessage("..textutils.serialize(nextJob.data)..")")
+        if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+
+        -- ff wachten
+        os.sleep(0.5)
+    end
+
+    -- klaar met de task
+    local f, err = loadstring("enterprise_"..jobData.TaskComplete..".ProcessNextTask("..textutils.serialize(nextJob.data)..")")
+    if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 end

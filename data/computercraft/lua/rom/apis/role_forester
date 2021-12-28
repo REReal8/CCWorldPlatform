@@ -4,32 +4,7 @@ local db = {
     schaarste   = true,
 }
 
-
 -- functions
-function Execute(jobData)
-    -- debug
-    coreutils.WriteToLog("Forester.Execute("..textutils.serialize(jobData)..")")
-
-    -- task ophalen
-    local nextTask = enterprise_forest.GetNextTask(jobData.enterpriseId)
-
-    -- task uitvoeren
-    local f, err = loadstring(nextTask.functionName)
-    coretask.AddWork(f, nextTask.functionData)
-
-    -- loopje doen om inbox te lezen zolang de task nog bezig is
-    while not coretask.TaskListEmpty() do
-
-        -- hier ooit de inbox van deze enterprise verwerken
-
-        -- ff wachten
-        os.sleep(0.25)
-    end
-
-    -- klaar met de task
-    enterprise_forest.TaskComplete(nextTask)
-end
-
 function Rondje(funcData)
     -- debug
     coreutils.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
