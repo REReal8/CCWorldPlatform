@@ -56,7 +56,7 @@ function Init(data)
 
     -- data verrijken
     data.enterpriseId   = enterpriseId
-    data.enterpriseName = db.enterpriseName     -- handig voor debug
+    data.enterpriseName = db.enterpriseName
     data.topchests      = {}
     data.furnaces       = {}
     data.taskList       = {}
@@ -88,15 +88,15 @@ function ProcessNextMessage(data)
     if type(message) ~= "table" then return end
 
     -- what to do?
-    if message.subject == "item list"   then ProcessItemListMessage(message)    end
-    if message.subject == "claim chest" then ProcessClaimChestMessage(message)  end
-    if message.subject == "free chest"  then ProcessFreeChestMessage(message)   end
-    if message.subject == "make item"   then ProcessMakeItemMessage(message)    end
+    if message.subject == "item list"   then ProcessItemListMessage(message.data)   end
+    if message.subject == "claim chest" then ProcessClaimChestMessage(message.data) end
+    if message.subject == "free chest"  then ProcessFreeChestMessage(message.data)  end
+    if message.subject == "make item"   then ProcessMakeItemMessage(message.data)   end
 end
 
-function TaskComplete(task)
-    -- moeten we nog iets doen nu de task is afgerond?
-    corejob.NewJob(nil, {enterpriseId=task.enterpriseId}, task.location, coreutils.UniversalTime(), false, true)
+function TaskComplete(data)
+    -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
+    corejob.NewJob(nil, nil, data.location, coreutils.UniversalTime(), false, true)
 end
 
 function ProcessItemListMessage(message)
@@ -161,7 +161,8 @@ end
 
 function ProcessClaimChestMessage(message)
     -- get enterprise data
-    local data          = coredht.GetData("enterprises", message.recipient)
+    local enterpriseId  = corejob.GetCurrentEnterpriseId()
+    local data          = coredht.GetData("enterprises", enterpriseId)
     local topchests     = data.topchests
     local responseData  = {}
 
@@ -172,7 +173,7 @@ function ProcessClaimChestMessage(message)
         if chest.status == "free" then
 
             -- claim chest
-            coredht.SaveData("claimed", "enterprises", message.recipient, "topchests", chestId, "status")
+            coredht.SaveData("claimed", "enterprises", enterpriseId, "topchests", chestId, "status")
 
             -- opslaan
             responseData    = {
@@ -190,14 +191,17 @@ function ProcessClaimChestMessage(message)
 end
 
 function ProcessFreeChestMessage(message)
+    -- voor wie zijn we aan het werk?
+    local enterpriseId = corejob.GetCurrentEnterpriseId()
+
     -- check parameters
     if type(message) ~= "table" or type(message.data) ~= table then return nil end
 
     -- controleren of deze chest wel bestaat
-    if coredht.GetData("enterprises", message.recipient, "topchests", message.data.chestId) then
+    if coredht.GetData("enterprises", enterpriseId, "topchests", message.data.chestId) then
 
         -- store new status
-        coredht.SaveData("free", "enterprises", message.recipient, "topchests", message.data.chestId, "status")
+        coredht.SaveData("free", "enterprises", enterpriseId, "topchests", message.data.chestId, "status")
     end
 
     -- geen reactie terug
