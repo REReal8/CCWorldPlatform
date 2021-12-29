@@ -11,7 +11,7 @@ end
 
 function DHTReadySetup()
     -- controleren of dht root bestaat
-    if not coredht.GetData("allitems") then coredht.SaveData({}, "allitems") end
+    if not coredht.GetData("allItems") then coredht.SaveData({}, "allItems") end
 end
 
 function GetEmptySlot()
@@ -19,7 +19,7 @@ function GetEmptySlot()
     for slot = 1, 16 do
 
         -- wat zit er in dit slot
-        local data = turtle.getItemDetail(slot)
+        local data = GetItemDetail(slot)
 
         -- deze slot wel het juiste item?
         if not data then
@@ -36,9 +36,28 @@ function GetEmptySlot()
     return false
 end
 
+function GetItemDetail(slot)
+    -- wrap around turtle.getItemDetail to store all known information about items
+
+    -- informatie ophalen
+    local data = turtle.getItemDetail(slot)
+
+    -- controleren of dit item al bekend is
+    if data and not coredht.GetData("allItems", data.name) then
+        coredht.SaveData({
+            name        = data.name,
+            stackSize   = turtle.getItemCount(slot) + turtle.getItemSpace(slot),
+            recipies    = {},
+        }, "allItems", data.name)
+    end
+
+    -- klaar
+    return data
+end
+
 function SelectItem(itemName)
     -- eerst huidige slot onderzoeken
-    local data = turtle.getItemDetail()
+    local data = GetItemDetail()
 
     -- juiste?
     if data and data.name == itemName then return true end
@@ -47,7 +66,7 @@ function SelectItem(itemName)
     for slot = 1, 16 do
 
         -- wat zit er in dit slot
-        data = turtle.getItemDetail(slot)
+        data = GetItemDetail(slot)
 
         -- deze slot wel het juiste item?
         if data and data.name == itemName then
@@ -70,7 +89,7 @@ function DropAll(itemName, direction)
     for slot = 1, 16 do
 
         -- wat zit er in dit slot
-        local data = turtle.getItemDetail(slot)
+        local data = GetItemDetail(slot)
 
         -- deze slot wel het juiste item?
         if data and data.name == itemName then
