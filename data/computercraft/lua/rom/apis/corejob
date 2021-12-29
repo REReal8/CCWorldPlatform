@@ -1,4 +1,6 @@
-local db = {}
+local db = {
+    dhtRoot = "jobs"
+}
 
 function Init()
 end
@@ -10,7 +12,7 @@ end
 
 function DHTReadySetup()
     -- bestaat de entry al in de dht?
-    if not coredht.GetData("jobs") then coredht.SaveData({}, "jobs" ) end
+    if not coredht.GetData(db.dhtRoot) then coredht.SaveData({}, db.dhtRoot ) end
 
     -- dit heette ooit vacancies, die naam niet meer gebruiken
     coredht.SaveData(nil, "vacancies" )
@@ -31,7 +33,7 @@ function NewJob(enterpriseName, data, location, startTime, needTool, needTurtle)
         needTool        = needTool,
         needTurtle      = needTurtle,
         applications    = {},
-    }, "jobs", jobId)
+    }, db.dhtRoot, jobId)
 end
 
 function ApplyToJob(jobId)
@@ -39,7 +41,7 @@ function ApplyToJob(jobId)
     coredht.SaveData({
         time            = coreutils.UniversalTime(),
         dice            = math.random(),
-    }, "jobs", jobId, "applications", jobId)
+    }, db.dhtRoot, jobId, "applications", jobId)
 end
 
 function Run()
@@ -76,7 +78,7 @@ function Run()
         if nextJob then
 
             -- deze job uit de lijst halen, mogen wij doen omdat wij nu deze job hebben
-            coredht.SaveData(nil, "jobs", nextJob.jobId)
+            coredht.SaveData(nil, db.dhtRoot, nextJob.jobId)
 
             -- juiste job starten
             DoJob(nextJob)
@@ -89,7 +91,7 @@ end
 
 function FindBestVacancy()
     -- zoeken naar een job om op in te schrijven
-    local jobs = coredht.GetData("jobs")
+    local jobs = coredht.GetData(db.dhtRoot)
 
     -- kijken of we een lege lijst hebben gekregen?
     if not jobs then return nil end
@@ -107,10 +109,10 @@ end
 
 function JobSelectionProcedure(jobId)
     -- data van de job ophalen
-    local jobApplications = coredht.GetData("jobs", jobId, "applications")
+    local jobApplications = coredht.GetData(db.dhtRoot, jobId, "applications")
 
     -- dit lijkt mij wel iets voor ons!
-    if jobApplications  then return coredht.GetData("jobs", jobId)
+    if jobApplications  then return coredht.GetData(db.dhtRoot, jobId)
                         else return nil end
 
 end
