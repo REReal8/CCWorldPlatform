@@ -6,6 +6,12 @@ end
 
 function Setup()
     -- niks te doen voor setup
+    coredht.DHTReadyFunction(DHTReadySetup)
+end
+
+function DHTReadySetup()
+    -- controleren of dht root bestaat
+    if not coredht.GetData("allitems") then coredht.SaveData({}, "allitems") end
 end
 
 function GetEmptySlot()
