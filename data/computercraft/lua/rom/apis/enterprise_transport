@@ -8,9 +8,9 @@
 --   The functions are asynch. A callback function is called once the items are delivered.
 --
 
-function TrEnterprise:TransportItem(fromChest, toChest, itemType, itemAmount, callbackFunc)
+--function TrEnterprise:TransportItem(fromChest, toChest, itemType, itemAmount, callbackFunc)
     -- ToDo: implement
-end
+--end
 
 
 --
