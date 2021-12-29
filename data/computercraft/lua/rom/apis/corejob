@@ -142,6 +142,6 @@ function DoJob(jobData)
     end
 
     -- klaar met de task
-    local f, err = loadstring(jobData.enterpriseName..".ProcessNextTask("..textutils.serialize(jobData.data)..")")
+    local f, err = loadstring(jobData.enterpriseName..".TaskComplete("..textutils.serialize(jobData.data)..")")
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 end
