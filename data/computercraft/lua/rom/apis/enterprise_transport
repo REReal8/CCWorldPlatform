@@ -51,13 +51,13 @@ end
 -- corejob Functions
 --
 
-function ProcessNextTask(data)
+function ProcessNextTask(enterpriseId)
 end
 
-function ProcessNextMessage(data)
+function ProcessNextMessage(enterpriseId)
 end
 
-function TaskComplete(data)
+function TaskComplete(enterpriseId)
 end
 
 --

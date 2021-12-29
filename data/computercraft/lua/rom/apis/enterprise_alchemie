@@ -69,13 +69,13 @@ function Init(data)
     corejob.NewJob(enterpriseId, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), true, true)
 end
 
-function ProcessNextTask(data)
+function ProcessNextTask(enterpriseId)
     -- task markeren als in behandeling
 
     --de task in de queue zetten
 end
 
-function ProcessNextMessage(data)
+function ProcessNextMessage(enterpriseId)
     -- berichten die we accepteren
     --
     -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
@@ -84,7 +84,7 @@ function ProcessNextMessage(data)
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
-    local message = GetNextMessage(data.enterpriseId)
+    local message = GetNextMessage(enterpriseId)
     if type(message) ~= "table" then return end
 
     -- what to do?
@@ -94,7 +94,10 @@ function ProcessNextMessage(data)
     if message.subject == "make item"   then ProcessMakeItemMessage(message.data)   end
 end
 
-function TaskComplete(data)
+function TaskComplete(enterpriseId)
+    -- get enterprise data
+    local data = coredht.GetData("enterprises", data.enterpriseId)
+
     -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
     corejob.NewJob(nil, nil, data.location, coreutils.UniversalTime(), false, true)
 end

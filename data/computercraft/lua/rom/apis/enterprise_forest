@@ -23,22 +23,22 @@ function Init(enterpriseId)
     NewForesterJob(enterpriseId)
 end
 
-function ProcessNextTask(data)
+function ProcessNextTask(enterpriseId)
     -- task markeren als in behandeling
 
     --de task in de queue zetten
     coretask.AddWork(role_forester.Rondje, {depth=3, width=2})
 end
 
-function ProcessNextMessage(data)
+function ProcessNextMessage(enterpriseId)
 end
 
-function TaskComplete(task)
+function TaskComplete(enterpriseId)
     -- task uit de lijst halen, toch afgerond
-    coredht.SaveData(nil, "enterprises", task.enterpriseId, "taskList", task.taskId)
+--    coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", task.taskId)
 
     -- moeten we nog iets doen nu de task is afgerond?
-    NewForesterJob(task.enterpriseId)
+    NewForesterJob(enterpriseId)
 end
 
 function NewForesterJob(enterpriseId)

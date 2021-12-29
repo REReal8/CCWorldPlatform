@@ -19,7 +19,7 @@ function DHTReadySetup()
     coredht.SaveData(nil, "vacancies" )
 end
 
-function NewJob(enterpriseId, data, location, startTime, needTool, needTurtle)
+function NewJob(enterpriseId, location, startTime, needTool, needTurtle)
     -- parameters controleren
     enterpriseId    = enterpriseId  or GetCurrentEnterpriseId
     startTime       = startTime     or coreutils.UniversalTime()
@@ -30,7 +30,6 @@ function NewJob(enterpriseId, data, location, startTime, needTool, needTurtle)
         jobId           = jobId,
         enterpriseId    = enterpriseId,
         enterpriseName  = coredht.GetData("enterprises", enterpriseId, "enterpriseName"),
-        data            = data,
         location        = location,
         startTime       = startTime,
         needTool        = needTool,
@@ -79,18 +78,11 @@ function Run()
 
         -- hebben we iets?
         if nextJob then
-
-            -- set out new employer
-            db.currentEnterpriseId = nextJob.enterpriseId
-
             -- deze job uit de lijst halen, mogen wij doen omdat wij nu deze job hebben
             coredht.SaveData(nil, db.dhtRoot, nextJob.jobId)
 
             -- juiste job starten
             DoJob(nextJob)
-
-            -- done withthis employer
-            db.currentEnterpriseId = nil
         else
             -- blijkbaar is er geen werk op dit moment
             os.sleep(0.25)
@@ -136,14 +128,14 @@ function DoJob(job)
     coreutils.WriteToLog(job)
 
     -- task functie klaar maken
-    local f, err = loadstring(job.enterpriseName..".ProcessNextTask("..textutils.serialize(job.data)..")")
+    local f, err = loadstring(job.enterpriseName..".ProcessNextTask("..textutils.serialize(job.enterpriseId)..")")
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
     -- loopje doen om inbox te lezen zolang de task nog bezig is
     while not coretask.TaskListEmpty() do
 
         -- hier ooit de inbox van deze enterprise verwerken
-        local f, err = loadstring(job.enterpriseName..".ProcessNextMessage("..textutils.serialize(job.data)..")")
+        local f, err = loadstring(job.enterpriseName..".ProcessNextMessage("..textutils.serialize(job.enterpriseId)..")")
         if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
         -- ff wachten
@@ -151,11 +143,6 @@ function DoJob(job)
     end
 
     -- klaar met de task
-    local f, err = loadstring(job.enterpriseName..".TaskComplete("..textutils.serialize(job.data)..")")
+    local f, err = loadstring(job.enterpriseName..".TaskComplete("..textutils.serialize(job.enterpriseId)..")")
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
-end
-
-function GetCurrentEnterpriseId()
-    -- note, this function can return a nil value
-    return db.currentEnterpriseId
 end
