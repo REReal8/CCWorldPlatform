@@ -1,5 +1,8 @@
 local db = {
-    enterpriseName  = "enterprise_alchemie"
+    enterpriseName  = "enterprise_alchemie",
+    recipies        = {
+        "minecraft:stick" 
+    }
 }
 
 function Init(data)
@@ -29,9 +32,36 @@ function ProcessNextTask(data)
 end
 
 function ProcessNextMessage(data)
+    -- berichten die we accepteren
+    --
+    -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
+    -- {subject="claim chest" } --> return chest loaction and claims chest (or returns nil when no chest is available)
+    -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} destination="inventory"|{location tabel} } --> will make the items and returns message when complete
+
+    -- retreive next message
+    local message = GetNextMessage(data.enterpriseId)
+    if type(message) ~= "table" then return end
+
+    -- what to do?
+    if message.subject == "item list"   then ProcessItemListMessage(message)    end
+    if message.subject == "claim chest" then ProcessClaimChestMessage(message)  end
+    if message.subject == "make item"   then ProcessMakeItemMessage(message)    end
 end
 
 function TaskComplete(task)
     -- moeten we nog iets doen nu de task is afgerond?
     corejob.NewJob(db.enterpriseName, {enterpriseId=task.enterpriseId}, task.location, coreutils.UniversalTime(), false, true)
 end
+
+function ProcessItemListMessage(message)
+    --
+end
+
+function ProcessClaimChestMessage(message)
+    --
+end
+
+function ProcessMakeItemMessage(message)
+    --
+end
+

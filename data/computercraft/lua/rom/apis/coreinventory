@@ -47,7 +47,6 @@ function GetItemDetail(slot)
         coredht.SaveData({
             name        = data.name,
             stackSize   = turtle.getItemCount(slot) + turtle.getItemSpace(slot),
-            recipies    = {},
         }, "allItems", data.name)
     end
 
