@@ -1,0 +1,6 @@
+-- the table that stores the data
+local db = {
+    job         = "alchemist",
+}
+
+-- functions

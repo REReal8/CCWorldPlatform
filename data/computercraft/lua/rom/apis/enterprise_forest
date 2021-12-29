@@ -42,7 +42,7 @@ function TaskComplete(task)
 end
 
 function NewForesterJob(enterpriseId)
-    corejob.NewJob('forester', {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
+    corejob.NewJob('enterprise_forest', {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
 end
 
 function NewHarvestingTask(enterpriseId)
@@ -50,7 +50,7 @@ function NewHarvestingTask(enterpriseId)
 
     -- toevoegen aan de lijst
     coredht.SaveData({
-        functionName    = 'role_forester.Rondje()',
+        functionName    = 'role_forester.Rondje({depth=3, width=2})',
         functionData    = {},
         created         = coreutils.UniversalTime(),
         notBefore       = coreutils.UniversalTime() + 12.00,

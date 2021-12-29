@@ -122,14 +122,14 @@ end
 
 function DoJob(jobData)
     -- task functie klaar maken
-    local f, err = loadstring("enterprise_"..jobData.enterpriseName..".ProcessNextTask("..textutils.serialize(jobData.data)..")")
+    local f, err = loadstring(jobData.enterpriseName..".ProcessNextTask("..textutils.serialize(jobData.data)..")")
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
     -- loopje doen om inbox te lezen zolang de task nog bezig is
     while not coretask.TaskListEmpty() do
 
         -- hier ooit de inbox van deze enterprise verwerken
-        local f, err = loadstring("enterprise_"..jobData.enterpriseName..".ProcessNextMessage("..textutils.serialize(jobData.data)..")")
+        local f, err = loadstring(jobData.enterpriseName..".ProcessNextMessage("..textutils.serialize(jobData.data)..")")
         if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
         -- ff wachten
@@ -137,6 +137,6 @@ function DoJob(jobData)
     end
 
     -- klaar met de task
-    local f, err = loadstring("enterprise_"..jobData.TaskComplete..".ProcessNextTask("..textutils.serialize(jobData.data)..")")
+    local f, err = loadstring(jobData.TaskComplete..".ProcessNextTask("..textutils.serialize(jobData.data)..")")
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 end

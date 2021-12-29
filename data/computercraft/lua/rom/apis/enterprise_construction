@@ -47,7 +47,7 @@ end
 
 
 function NewBuilderJob(enterpriseId)
-    corejob.NewJob('builder', {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
+    corejob.NewJob('enterprise_construction', {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
 end
 
 --[[

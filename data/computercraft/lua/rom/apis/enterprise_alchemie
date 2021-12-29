@@ -1,0 +1,37 @@
+local db = {
+    enterpriseName  = "enterprise_alchemie"
+}
+
+function Init(data)
+    -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
+    -- data.type = "simpel" | "regular"
+
+    -- data verrijken
+    data.enterpriseId   = coreutils.NewId()
+    data.enterpriseName = db.enterpriseName     -- handig voor debug
+    data.topchests      = {}
+    data.furnaces       = {}
+    data.taskList       = {}
+    data.activeTasks    = {}
+
+    -- onze gegevens opslaan
+    coredht.SaveData(data, "enterprises", data.enterpriseId)
+
+    -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen. Alleen een tool nodig als het type regular is
+    local toolNeeded  = data.type == "regular"
+    corejob.NewJob(db.enterpriseName, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), toolNeeded, true)
+end
+
+function ProcessNextTask(data)
+    -- task markeren als in behandeling
+
+    --de task in de queue zetten
+end
+
+function ProcessNextMessage(data)
+end
+
+function TaskComplete(task)
+    -- moeten we nog iets doen nu de task is afgerond?
+    corejob.NewJob(db.enterpriseName, {enterpriseId=task.enterpriseId}, task.location, coreutils.UniversalTime(), false, true)
+end
