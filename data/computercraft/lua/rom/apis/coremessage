@@ -21,7 +21,7 @@ function DHTReadySetup()
     MessageToDHT()
 end
 
-function SendMessageToId(recipient, message, notBefore)
+function SendMessageToId(sender, recipient, data, notBefore)
     -- parameter controle
     notBefore = notBefore or 0
 
@@ -30,14 +30,23 @@ function SendMessageToId(recipient, message, notBefore)
 
     -- opslaan in de lokale lijst
     db.messageList[ messageId ] = {
+        sender      = sender,
         recipient   = recipient,
         time        = coreutils.UniversalTime(),
         notBefore   = notBefore,
-        data        = message,
+        data        = data,
     }
 
     -- opslaan in de dht
     MessageToDHT()
+end
+
+function ReplyToMessage(message, data, notBefore)
+    -- reference present?
+    if message.data.reference then data.reference = message.data.reference end
+
+    -- just send the message back
+    SendMessageToId(message.recipient, message.sender, data, notBefore)
 end
 
 function GetNextMessage(recipient)
