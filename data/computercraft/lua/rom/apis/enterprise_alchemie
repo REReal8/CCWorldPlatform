@@ -99,7 +99,63 @@ function TaskComplete(task)
 end
 
 function ProcessItemListMessage(message)
-    --
+    -- valid message?
+    if type(message.itemName) ~= "string" or type(message.itemCount) ~= "number" then coreutils.Warning("Received message without required fields") return nil end
+
+    -- do we know this item?
+    local recipe = db.recipes[ message.itemName ]
+    if not recipe then coreutils.Warning("No recipe found for "..message.itemName) return nil end
+
+    -- to store our reaction
+    local responseData  = { possibilities = {} }
+
+    -- via crafting te maken?
+    if recipe.crafting then
+        local crafting  = recipe.crafting
+        local data      = { itemList = {}, output = 0 }
+
+        -- how often do we need to perform this recipe?
+        local times = math.ceil( message.itemCount / crafting.yield )
+
+        -- calculate all the needed items
+        for i=1,16 do
+
+            -- this slot needed for this recipe?
+            if crafting[ i ] then
+
+                -- add to list
+                data.itemList[ crafting[ i ].itemName ] = (data.itemList[ crafting[ i ].itemName ] or 0) + times * crafting[ i ].itemCount
+
+            end
+        end
+
+        -- calculate the output
+        data.output = times * crafting.yield
+
+        -- add to responseData
+        responseData.possibilities[#responseData.possibilities + 1] = data
+    end
+
+    -- via smelting te maken?
+    if recipe.smelting then
+        local smelting  = recipe.smelting
+        local data      = { itemList = {}, output = 0 }
+
+        -- how often do we need to perform this recipe?
+        local times = math.ceil( message.itemCount / smelting.yield )
+
+        -- add to list
+        data.itemList[ smelting.itemName ] = times * smelting.itemCount
+
+        -- calculate the output
+        data.output = times * smelting.yield
+
+        -- add to responseData
+        responseData.possibilities[#responseData.possibilities + 1] = data
+    end
+
+    -- send message back
+    coremessage.ReplyToMessage(message, responseData)
 end
 
 function ProcessClaimChestMessage(message)
