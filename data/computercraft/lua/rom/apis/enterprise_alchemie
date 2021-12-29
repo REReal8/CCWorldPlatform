@@ -1,7 +1,51 @@
+-- [ 1] [ 2] [ 3] [ 4]
+-- [ 5] [ 6] [ 7] [ 8]
+-- [ 9] [10] [11] [12]
+-- [13] [14] [15] [16]
+
 local db = {
     enterpriseName  = "enterprise_alchemie",
-    recipies        = {
-        "minecraft:stick" 
+    recipes        = {
+        ["minecraft:stick"] = {
+            crafting  = {
+                 [1]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [4]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                yield   = 4
+            },
+        },
+        ["minecraft:charcoal"] = {
+            smelting  = {
+                itemName    = "minecraft:birch_log",
+                itemCount   = 1,
+                yield       = 1,
+            },
+        },
+        ["minecraft:torch"] = {
+            crafting  = {
+                [1]    = { itemName = "minecraft:charcoal", itemCount = 1 },
+                [4]    = { itemName = "minecraft:stick", itemCount = 1 },
+               yield   = 4
+           },
+        },
+        ["minecraft:birch_planks"] = {
+            crafting  = {
+                 [1]    = { itemName = "minecraft:birch_log", itemCount = 1 },
+                yield   = 4
+            },
+        },
+        ["minecraft:chest"] = {
+            crafting  = {
+                 [1]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [2]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [3]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [5]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [7]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [9]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                [10]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                [11]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                yield   = 1
+            },
+        },
     }
 }
 
@@ -20,9 +64,8 @@ function Init(data)
     -- onze gegevens opslaan
     coredht.SaveData(data, "enterprises", data.enterpriseId)
 
-    -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen. Alleen een tool nodig als het type regular is
-    local toolNeeded  = data.type == "regular"
-    corejob.NewJob(db.enterpriseName, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), toolNeeded, true)
+    -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
+    corejob.NewJob(db.enterpriseName, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), true, true)
 end
 
 function ProcessNextTask(data)
@@ -36,6 +79,7 @@ function ProcessNextMessage(data)
     --
     -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
     -- {subject="claim chest" } --> return chest loaction and claims chest (or returns nil when no chest is available)
+    -- {subject="free chest" }  --> marks the chest as free for new use
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} destination="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
@@ -45,6 +89,7 @@ function ProcessNextMessage(data)
     -- what to do?
     if message.subject == "item list"   then ProcessItemListMessage(message)    end
     if message.subject == "claim chest" then ProcessClaimChestMessage(message)  end
+    if message.subject == "free chest"  then ProcessFreeChestMessage(message)   end
     if message.subject == "make item"   then ProcessMakeItemMessage(message)    end
 end
 
@@ -58,6 +103,10 @@ function ProcessItemListMessage(message)
 end
 
 function ProcessClaimChestMessage(message)
+    --
+end
+
+function ProcessFreeChestMessage(message)
     --
 end
 
