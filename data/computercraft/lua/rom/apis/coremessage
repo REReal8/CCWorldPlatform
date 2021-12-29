@@ -21,7 +21,7 @@ function DHTReadySetup()
     MessageToDHT()
 end
 
-function SendMessageToId(sender, recipient, data, notBefore)
+function SendMessageToId(sender, recipient, subject, data, notBefore)
     -- parameter controle
     notBefore = notBefore or 0
 
@@ -32,6 +32,7 @@ function SendMessageToId(sender, recipient, data, notBefore)
     db.messageList[ messageId ] = {
         sender      = sender,
         recipient   = recipient,
+        subject     = subject,
         time        = coreutils.UniversalTime(),
         notBefore   = notBefore,
         data        = data,
@@ -41,12 +42,19 @@ function SendMessageToId(sender, recipient, data, notBefore)
     MessageToDHT()
 end
 
-function ReplyToMessage(message, data, notBefore)
+function ReplyToMessage(message, subject, data, notBefore)
     -- reference present?
-    if message.data.reference then data.reference = message.data.reference end
+    if message.data.reference then
+        if type(data) == "table"    then data.reference = message.data.reference
+                                    else data           = {reference = message.data.reference}
+        end
+    end
+
+    -- new subject?
+    if not subject then subject = message.subject end
 
     -- just send the message back
-    SendMessageToId(message.recipient, message.sender, data, notBefore)
+    SendMessageToId(message.recipient, message.sender, subject, data, notBefore)
 end
 
 function GetNextMessage(recipient)

@@ -159,7 +159,33 @@ function ProcessItemListMessage(message)
 end
 
 function ProcessClaimChestMessage(message)
-    --
+    -- get enterprise data
+    local data          = coredht.GetData("enterprises", message.recipient)
+    local topchests     = data.topchests
+    local responseData  = {}
+
+    -- look for a free chest
+    for chestId, chest in pairs(topchests) do
+
+        -- is this one free?
+        if chest.status == "free for use" then
+
+            -- claim chest
+            chest.status = "claimed"
+
+            -- opslaan
+            responseData    = {
+                chestId         = chestId,
+                chestLocation   = chest.location
+            }
+
+            -- rest van de loop niet meer nodig
+            break
+        end
+    end
+
+    -- send message back
+    coremessage.ReplyToMessage(message, responseData)
 end
 
 function ProcessFreeChestMessage(message)
