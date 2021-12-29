@@ -80,7 +80,7 @@ function ProcessNextMessage(data)
     -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
     -- {subject="claim chest" } --> return chest loaction and claims chest (or returns nil when no chest is available)
     -- {subject="free chest" }  --> marks the chest as free for new use
-    -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} destination="inventory"|{location tabel} } --> will make the items and returns message when complete
+    -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
     local message = GetNextMessage(data.enterpriseId)
@@ -189,6 +189,9 @@ function ProcessClaimChestMessage(message)
 end
 
 function ProcessFreeChestMessage(message)
+    -- check parameters
+    if type(message) ~= "table" or type(message.data) ~= table then return nil end
+
     -- controleren of deze chest wel bestaat
     if coredht.GetData("enterprises", message.recipient, "topchests", message.data.chestId) then
 
@@ -200,7 +203,13 @@ function ProcessFreeChestMessage(message)
 end
 
 function ProcessMakeItemMessage(message)
-    --
-    
+    -- check parameters
+--    message.data.itemName     = "minecraft:chest"
+--    message.data.itemCount    = 8
+--    message.data.resource     = "inventory"|{location tabel}
+
+    -- see if it's crafting (no waiting time) or smelting (waiting time)
+
+
 end
 
