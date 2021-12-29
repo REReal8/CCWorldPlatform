@@ -52,9 +52,10 @@ local db = {
 function Init(data)
     -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
     -- data.type = "simpel" | "regular"
+    local enterpriseId   = coreutils.NewId()
 
     -- data verrijken
-    data.enterpriseId   = coreutils.NewId()
+    data.enterpriseId   = enterpriseId
     data.enterpriseName = db.enterpriseName     -- handig voor debug
     data.topchests      = {}
     data.furnaces       = {}
@@ -65,7 +66,7 @@ function Init(data)
     coredht.SaveData(data, "enterprises", data.enterpriseId)
 
     -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
-    corejob.NewJob(db.enterpriseName, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), true, true)
+    corejob.NewJob(enterpriseId, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), true, true)
 end
 
 function ProcessNextTask(data)
@@ -95,7 +96,7 @@ end
 
 function TaskComplete(task)
     -- moeten we nog iets doen nu de task is afgerond?
-    corejob.NewJob(db.enterpriseName, {enterpriseId=task.enterpriseId}, task.location, coreutils.UniversalTime(), false, true)
+    corejob.NewJob(nil, {enterpriseId=task.enterpriseId}, task.location, coreutils.UniversalTime(), false, true)
 end
 
 function ProcessItemListMessage(message)
