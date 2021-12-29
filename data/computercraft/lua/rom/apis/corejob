@@ -107,11 +107,11 @@ end
 
 function JobSelectionProcedure(jobId)
     -- data van de job ophalen
-    local jobData = coredht.GetData("jobs", jobId, "applications")
+    local jobApplications = coredht.GetData("jobs", jobId, "applications")
 
     -- dit lijkt mij wel iets voor ons!
-    if jobData  then return jobData
-                else return nil end
+    if jobApplications  then return coredht.GetData("jobs", jobId)
+                        else return nil end
 
 end
 
@@ -121,6 +121,9 @@ function DummyTask()
 end
 
 function DoJob(jobData)
+    -- debugging
+    coreutils.WriteToLog(jobData)
+
     -- task functie klaar maken
     local f, err = loadstring(jobData.enterpriseName..".ProcessNextTask("..textutils.serialize(jobData.data)..")")
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end

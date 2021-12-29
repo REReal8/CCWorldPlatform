@@ -168,10 +168,10 @@ function ProcessClaimChestMessage(message)
     for chestId, chest in pairs(topchests) do
 
         -- is this one free?
-        if chest.status == "free for use" then
+        if chest.status == "free" then
 
             -- claim chest
-            chest.status = "claimed"
+            coredht.SaveData("claimed", "enterprises", message.recipient, "topchests", chestId, "status")
 
             -- opslaan
             responseData    = {
@@ -189,10 +189,18 @@ function ProcessClaimChestMessage(message)
 end
 
 function ProcessFreeChestMessage(message)
-    --
+    -- controleren of deze chest wel bestaat
+    if coredht.GetData("enterprises", message.recipient, "topchests", message.data.chestId) then
+
+        -- store new status
+        coredht.SaveData("free", "enterprises", message.recipient, "topchests", message.data.chestId, "status")
+    end
+
+    -- geen reactie terug
 end
 
 function ProcessMakeItemMessage(message)
     --
+    
 end
 
