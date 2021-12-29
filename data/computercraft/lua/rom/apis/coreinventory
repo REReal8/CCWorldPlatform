@@ -98,9 +98,10 @@ function DropAll(itemName, direction)
             turtle.select(slot)
 
             -- juiste richting zoeken
-            if direction == "up" or direction == "Up" then turtle.dropUp()
-            elseif direction == "down" or direction == "Down" then turtle.dropDown()
-            else turtle.drop() end
+            if      direction == "up"   or direction == "Up"    then turtle.dropUp()
+            elseif  direction == "down" or direction == "Down"  then turtle.dropDown()
+                                                                else turtle.drop()
+            end
         end
     end
 end
