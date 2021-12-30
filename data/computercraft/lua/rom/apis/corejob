@@ -11,14 +11,6 @@ function Setup()
     coredht.DHTReadyFunction(DHTReadySetup)
 end
 
-function DHTReadySetup()
-    -- bestaat de entry al in de dht?
-    if not coredht.GetData(db.dhtRoot) then coredht.SaveData({}, db.dhtRoot ) end
-
-    -- dit heette ooit vacancies, die naam niet meer gebruiken
-    coredht.SaveData(nil, "vacancies" )
-end
-
 function NewJob(jobData)
     -- parameters snel controleren (meteen definitie van de data)
     local enterpriseId  = jobData.enterpriseId  or GetCurrentEnterpriseId()
@@ -100,18 +92,26 @@ end
 --
 --
 
+function DHTReadySetup()
+    -- bestaat de entry al in de dht?
+    if not coredht.GetData(db.dhtRoot) then coredht.SaveData({}, db.dhtRoot ) end
+
+    -- dit heette ooit vacancies, die naam niet meer gebruiken
+    coredht.SaveData(nil, "vacancies" )
+end
+
 function FindBestVacancy()
     -- zoeken naar een job om op in te schrijven
     local jobs = coredht.GetData(db.dhtRoot)
 
     -- kijken of we een lege lijst hebben gekregen?
-    if not jobs then return nil end
+    if not jobs or type(jobs) ~= "table" then return nil end
 
     -- op zoek naar de beste job
     for jobId, jobData in pairs(jobs) do
 
-        -- de eerste de beste
-        return jobId
+        -- ff status controleren, verdere controles later
+        if jobData.status == "open" then return jobId end
     end
 
     -- niks gevonden
@@ -136,11 +136,13 @@ end
 
 function JobSelectionProcedure(jobId)
     -- data van de job ophalen
-    local jobApplications = coredht.GetData(db.dhtRoot, jobId, "applications")
+    local job = coredht.GetData(db.dhtRoot, jobId)
+
+    -- see if this job is still open, better selection later
+    if job.status == "open" then return job end
 
     -- dit lijkt mij wel iets voor ons!
-    if jobApplications  then return coredht.GetData(db.dhtRoot, jobId)
-                        else return nil end
+    return nil
 end
 
 function TakeJob(jobId)
