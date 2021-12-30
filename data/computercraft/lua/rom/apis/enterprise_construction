@@ -45,9 +45,13 @@ function TaskComplete(task)
 --    NewForesterJob(task.enterpriseId)
 end
 
-
 function NewBuilderJob(enterpriseId)
-    corejob.NewJob(enterpriseId, {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
+    corejob.NewJob({
+        enterpriseId    = enterpriseId,
+        startTime       = coreutils.UniversalTime(),
+        needTool        = true,
+        needTurtle      = true
+    })
 end
 
 --[[

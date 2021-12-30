@@ -66,16 +66,22 @@ function Init(data)
     coredht.SaveData(data, "enterprises", data.enterpriseId)
 
     -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
-    corejob.NewJob(enterpriseId, {enterpriseId=data.enterpriseId}, data.location, coreutils.UniversalTime(), true, true)
+    corejob.NewJob({
+        enterpriseId    = enterpriseId,
+        location        = data.location,                -- locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
+        startTime       = coreutils.UniversalTime(),
+        needTool        = true,
+        needTurtle      = true
+    })
 end
 
-function ProcessNextTask(enterpriseId)
+function ProcessNextTask(jobId)
     -- task markeren als in behandeling
 
     --de task in de queue zetten
 end
 
-function ProcessNextMessage(enterpriseId)
+function ProcessNextMessage(jobId)
     -- berichten die we accepteren
     --
     -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
@@ -84,7 +90,7 @@ function ProcessNextMessage(enterpriseId)
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
-    local message = coremessage.GetNextMessage(enterpriseId)
+    local message = coremessage.GetNextMessage(corejob.GetCurrentEnterpriseId())
     if type(message) ~= "table" then return end
 
     -- what to do?
@@ -94,12 +100,19 @@ function ProcessNextMessage(enterpriseId)
     if message.subject == "make item"   then ProcessMakeItemMessage(message.data)   end
 end
 
-function TaskComplete(enterpriseId)
+function TaskComplete(jobId)
     -- get enterprise data
-    local data = coredht.GetData("enterprises", corejob.GetCurrentEnterpriseId())
+    local enterpriseId  = corejob.GetCurrentEnterpriseId()
+    local data          = coredht.GetData("enterprises", enterpriseId)
 
     -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
-    corejob.NewJob(nil, nil, data.location, coreutils.UniversalTime(), false, true)
+    corejob.NewJob({
+        enterpriseId    = enterpriseId,
+        location        = data.location,                -- locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
+        startTime       = coreutils.UniversalTime(),
+        needTool        = false,                        -- geen bijzondere turtle nodig
+        needTurtle      = true
+    })
 end
 
 function ProcessItemListMessage(message)

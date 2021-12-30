@@ -51,13 +51,13 @@ end
 -- corejob Functions
 --
 
-function ProcessNextTask(enterpriseId)
+function ProcessNextTask(jobId)
 end
 
-function ProcessNextMessage(enterpriseId)
+function ProcessNextMessage(jobId)
 end
 
-function TaskComplete(enterpriseId)
+function TaskComplete(jobId)
 end
 
 --
@@ -65,5 +65,10 @@ end
 --
 
 --function NewBuilderJob(enterpriseId)
---    corejob.NewJob(enterpriseId, {}, {}, coreutils.UniversalTime(), true, true)
+--    corejob.NewJob({
+--        enterpriseId    = enterpriseId,
+--        location        = coredht.GetData("enterprises", enterpriseId, "location"), -- locatie van het bos, waar het werk plaats zal vinden
+--        needTool        = true,                                                     -- waarschijnlijk het bos weer omhakken, dus tool nodig
+--        needTurtle      = true                                                      -- waarschijnlijk het bos weer omhakken, dus turtle nodig
+--    })
 --end

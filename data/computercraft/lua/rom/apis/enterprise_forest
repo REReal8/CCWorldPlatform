@@ -44,7 +44,12 @@ function TaskComplete(enterpriseId)
 end
 
 function NewForesterJob(enterpriseId)
-    corejob.NewJob(enterpriseId, {enterpriseId=enterpriseId}, {}, coreutils.UniversalTime(), true, true)
+    corejob.NewJob({
+        enterpriseId    = enterpriseId,
+        location        = coredht.GetData("enterprises", enterpriseId, "location"), -- locatie van het bos, waar het werk plaats zal vinden
+        needTool        = true,                                                     -- waarschijnlijk het bos weer omhakken, dus tool nodig
+        needTurtle      = true                                                      -- waarschijnlijk het bos weer omhakken, dus turtle nodig
+})
 end
 
 function NewHarvestingTask(enterpriseId)
