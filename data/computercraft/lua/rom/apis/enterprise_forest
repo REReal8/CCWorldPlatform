@@ -22,7 +22,7 @@ function NewForest()
 end
 
 function Init(enterpriseId)
-    NewForesterJob(enterpriseId)
+    NewForesterJob(enterpriseId, 0)
 end
 
 function ProcessNextTask(enterpriseId)
@@ -40,13 +40,19 @@ function TaskComplete(enterpriseId)
 --    coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", task.taskId)
 
     -- moeten we nog iets doen nu de task is afgerond?
-    NewForesterJob(enterpriseId)
+    NewForesterJob(enterpriseId, 12)
 end
 
-function NewForesterJob(enterpriseId)
+function NewForesterJob(enterpriseId, extraTime)
+    -- paramters
+    if not enterpriseId then return end
+    extraTime = extraTime or 0
+
+    -- create
     corejob.NewJob({
         enterpriseId    = enterpriseId,
         location        = coredht.GetData("enterprises", enterpriseId, "location"), -- locatie van het bos, waar het werk plaats zal vinden
+        startTime       = coreutils.UniversalTime() + extraTime,
         needTool        = true,                                                     -- waarschijnlijk het bos weer omhakken, dus tool nodig
         needTurtle      = true                                                      -- waarschijnlijk het bos weer omhakken, dus turtle nodig
 })

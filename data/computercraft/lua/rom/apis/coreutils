@@ -1,12 +1,15 @@
 local db	= {
+	dbFilename  = "/db/coreutils.lua",
 	logfile		= "/log/log.txt",
-	me			= os.getComputerID(),
 	protocol	= "coreutils",
     serial		= 0,                                -- for unique id's
 }
 
 -- laatste serial uit de file lezen?
 function Init()
+	-- read from file
+	db = ReadTableFromFile(db.dbFilename)
+
 	-- uniek random nummer
 	math.randomseed(os.time())
 end
@@ -30,8 +33,11 @@ function NewId()
 	-- eentje ophogen
 	db.serial = db.serial + 1
 
+	-- write to disk
+	WriteToFile(db.dbFilename, db, "overwrite")
+
 	-- id is een altijd een string
-	return db.me .. ":" .. db.serial
+	return os.getComputerID() .. ":" .. db.serial
 end
 
 function IdCreator(id)
