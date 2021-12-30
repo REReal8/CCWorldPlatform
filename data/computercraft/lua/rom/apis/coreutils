@@ -10,7 +10,7 @@ function Init()
 	-- read from file
 	local dbFile = ReadTableFromFile(db.dbFilename)
 
-	-- empty table means no file found, so only if something present in the loaded table
+	-- check for empty table --> https://stackoverflow.com/questions/1252539/most-efficient-way-to-determine-if-a-lua-table-is-empty-contains-no-entries
 	if next(dbFile) ~= nil then db = ReadTableFromFile(db.dbFilename) end
 
 	-- uniek random nummer
