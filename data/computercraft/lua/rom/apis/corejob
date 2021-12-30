@@ -21,7 +21,7 @@ end
 
 function NewJob(enterpriseId, location, startTime, needTool, needTurtle)
     -- parameters controleren
-    enterpriseId    = enterpriseId  or GetCurrentEnterpriseId
+    enterpriseId    = enterpriseId  or corejob.GetCurrentEnterpriseId()
     startTime       = startTime     or coreutils.UniversalTime()
     local jobId     = coreutils.NewId()
 

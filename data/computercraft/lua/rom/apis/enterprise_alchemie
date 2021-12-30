@@ -96,7 +96,7 @@ end
 
 function TaskComplete(enterpriseId)
     -- get enterprise data
-    local data = coredht.GetData("enterprises", data.enterpriseId)
+    local data = coredht.GetData("enterprises", corejob.GetCurrentEnterpriseId())
 
     -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
     corejob.NewJob(nil, nil, data.location, coreutils.UniversalTime(), false, true)
