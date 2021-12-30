@@ -1,6 +1,6 @@
 local db = {
-    dhtRoot             = "jobs",
-    currentEnterpriseId = nil,
+    dhtRoot     = "jobs",
+    currentJob  = nil,
 }
 
 function Init()
@@ -39,16 +39,56 @@ function NewJob(jobData)
         startTime       = startTime,
         needTool        = needTool,
         needTurtle      = needTurtle,
+        status          = "open",
         applications    = {},
     }, db.dhtRoot, jobId)
 end
 
 function ApplyToJob(jobId)
-    -- onzelf toevoegen aan de lijst met inschrijvingen
-    coredht.SaveData({
-        time            = coreutils.UniversalTime(),
-        dice            = math.random(),
-    }, db.dhtRoot, jobId, "applications", jobId)
+    -- alleen solliciteren indien de job open is
+    if coredht.GetData(db.dhtRoot, jobId, "status") == "open" then
+
+        -- wie zijn we?
+        local me = os.getComputerID()
+
+        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
+        coredht.SaveData({
+            time            = coreutils.UniversalTime(),
+            dice            = math.random(),
+            applicant       = me,
+        }, db.dhtRoot, jobId, "applications", me)
+    end
+end
+
+function StaffedJob(jobId)
+    -- this computer is apparently executing this job
+    db.currentJob   = jobId
+
+    -- mark as staffed
+    coredht.SaveData("staffed", db.dhtRoot, jobId, "status")
+end
+
+function GetEnterpriseOfJob(jobId)
+    -- easy
+    return coredht.GetData(db.dhtRoot, jobId, "enterpriseId")
+end
+
+function CloseJob(jobId)
+    -- no long a salary slave of this enterprise F*CK THEM
+    db.currentJob   = nil
+
+    -- easy
+    coredht.SaveData(nil, db.dhtRoot, jobId)
+end
+
+function GetCurrentJob()
+    -- stored in the local db
+    return db.currentJob
+end
+
+function GetCurrentEnterpriseId()
+    -- sneaky
+    return GetEnterpriseOfJob(db.currentJob)
 end
 
 function Run()
@@ -83,11 +123,14 @@ function Run()
 
         -- hebben we iets?
         if nextJob then
-            -- deze job uit de lijst halen, mogen wij doen omdat wij nu deze job hebben
-            coredht.SaveData(nil, db.dhtRoot, nextJob.jobId)
+            -- deze job markeren als gevuld
+            StaffedJob(nextJob.jobId)
 
             -- juiste job starten
             DoJob(nextJob)
+
+            -- job done, sluiten dus
+            CloseJob(nextJob.jobId)
         else
             -- blijkbaar is er geen werk op dit moment
             os.sleep(0.25)
