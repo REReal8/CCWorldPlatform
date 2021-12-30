@@ -13,10 +13,10 @@ end
 
 function NewJob(jobData)
     -- parameters snel controleren (meteen definitie van de data)
-    local enterpriseId  = jobData.enterpriseId  or GetCurrentEnterpriseId()
-    local location      = jobData.location      or nil                              --> nil locatie geeft aan dat locatie geen rol speelt bij de selectie
-    local startTime     = jobData.startTime     or coreutils.UniversalTime()
-    local needTool      = jobData.needTool      or false
+    local enterpriseId  = jobData.enterpriseId  or GetCurrentEnterpriseId()         --> een turtle of computer is altijd in dienst van een enterprise!
+    local location      = jobData.location      or nil                              --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
+    local startTime     = jobData.startTime     or coreutils.UniversalTime()        --> tijd wanneer de job uitgevoerd moet worden, zal niet starten voor deze tijd
+    local needTool      = jobData.needTool      or false                            --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
     local needTurtle    = jobData.needTurtle    or true
 
     -- jobId aanmaken
