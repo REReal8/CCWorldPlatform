@@ -108,6 +108,10 @@ function WriteToLog(message)
 	WriteToFile(db.logfile, message, "append")
 end
 
+function WriteToMonitor(message)
+	-- write to an attached monitor if available (usefull for a stataus monitor screen)
+end
+
 function Warning(message)
 	-- write to the logfile
 	WriteToFile(db.logfile, message, "append")
