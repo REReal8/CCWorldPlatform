@@ -8,7 +8,10 @@ local db	= {
 -- laatste serial uit de file lezen?
 function Init()
 	-- read from file
-	db = ReadTableFromFile(db.dbFilename)
+	local dbFile = ReadTableFromFile(db.dbFilename)
+
+	-- empty table means no file found, so only if something present in the loaded table
+	if next(dbFile) ~= nil then db = ReadTableFromFile(db.dbFilename) end
 
 	-- uniek random nummer
 	math.randomseed(os.time())
@@ -20,7 +23,7 @@ function Setup()
 	coreevent.EventReadyFunction(EventReadySetup)
 
 	-- let others check our pulse
-	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol,	"pulse request")
+	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol, "pulse request")
 end
 
 function EventReadySetup()
