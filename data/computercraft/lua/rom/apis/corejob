@@ -62,7 +62,7 @@ end
 
 function GetCurrentEnterpriseId()
     -- sneaky
-    return GetEnterpriseOfJob(db.currentJob)
+    return coredht.GetData(db.dhtRoot, db.currentJob, "enterpriseId")
 end
 
 function Run()
@@ -193,9 +193,3 @@ function QuitJob(jobId)
     -- easy
     coredht.SaveData(nil, db.dhtRoot, jobId)
 end
-
-function GetEnterpriseOfJob(jobId)
-    -- easy
-    return coredht.GetData(db.dhtRoot, jobId, "enterpriseId")
-end
-
