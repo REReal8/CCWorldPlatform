@@ -44,22 +44,6 @@ function NewJob(jobData)
     }, db.dhtRoot, jobId)
 end
 
-function ApplyToJob(jobId)
-    -- alleen solliciteren indien de job open is
-    if coredht.GetData(db.dhtRoot, jobId, "status") == "open" then
-
-        -- wie zijn we?
-        local me = os.getComputerID()
-
-        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
-        coredht.SaveData({
-            time            = coreutils.UniversalTime(),
-            dice            = math.random(),
-            applicant       = me,
-        }, db.dhtRoot, jobId, "applications", me)
-    end
-end
-
 function GetCurrentEnterpriseId()
     -- sneaky
     return coredht.GetData(db.dhtRoot, db.currentJob, "enterpriseId")
@@ -82,7 +66,7 @@ function Run()
         -- volgende job zoeken
         local jobApplication = FindBestVacancy()
 
-        -- hebben we een job?
+        -- hebben we een job waar we geschik voor zijn?
         if jobApplication then
 
             -- inschrijven
@@ -96,15 +80,25 @@ function Run()
         end
 
         -- hebben we iets?
-        if nextJob then
-            -- juiste job starten
-            DoJob(nextJob)
-        else
-            -- blijkbaar is er geen werk op dit moment
-            os.sleep(0.25)
+        if nextJob  then DoJob(nextJob)     -- we gaan beginnen aan deze job
+                    else os.sleep(0.25)     -- blijkbaar is er geen werk op dit moment
         end
     end
 end
+
+function DummyTask()
+    -- handig zodat er altijd iets is, kost ook weer een pull event
+    os.sleep(0.05)
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
 
 function FindBestVacancy()
     -- zoeken naar een job om op in te schrijven
@@ -124,6 +118,22 @@ function FindBestVacancy()
     return nil
 end
 
+function ApplyToJob(jobId)
+    -- alleen solliciteren indien de job open is
+    if coredht.GetData(db.dhtRoot, jobId, "status") == "open" then
+
+        -- wie zijn we?
+        local me = os.getComputerID()
+
+        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
+        coredht.SaveData({
+            time            = coreutils.UniversalTime(),
+            dice            = math.random(),
+            applicant       = me,
+        }, db.dhtRoot, jobId, "applications", me)
+    end
+end
+
 function JobSelectionProcedure(jobId)
     -- data van de job ophalen
     local jobApplications = coredht.GetData(db.dhtRoot, jobId, "applications")
@@ -131,22 +141,15 @@ function JobSelectionProcedure(jobId)
     -- dit lijkt mij wel iets voor ons!
     if jobApplications  then return coredht.GetData(db.dhtRoot, jobId)
                         else return nil end
-
 end
 
-function DummyTask()
-    -- handig zodat er altijd iets is, kost ook weer een pull event
-    os.sleep(0.05)
-end
+function TakeJob(jobId)
+    -- this computer is apparently executing this job
+    db.currentJob   = jobId
 
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---
---
+    -- mark as staffed
+    coredht.SaveData("staffed", db.dhtRoot, jobId, "status")
+end
 
 function DoJob(job)
     -- debugging
@@ -176,14 +179,6 @@ function DoJob(job)
 
     -- we have done all for this job that we needed to do
     QuitJob(job.jobId)
-end
-
-function TakeJob(jobId)
-    -- this computer is apparently executing this job
-    db.currentJob   = jobId
-
-    -- mark as staffed
-    coredht.SaveData("staffed", db.dhtRoot, jobId, "status")
 end
 
 function QuitJob(jobId)
