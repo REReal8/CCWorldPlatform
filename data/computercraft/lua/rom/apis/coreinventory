@@ -82,7 +82,50 @@ function SelectItem(itemName)
     return false
 end
 
+function GetAllItems(direction)
+    local f    = turtle.suck()
+
+    -- andere richting?
+    if direction == "up"   or direction == "Up"     then f = turtle.suckUp()    end
+    if direction == "down" or direction == "Down"   then f = turtle.suckDown()  end
+
+    -- net zo langs spullen opzuigen totdat er niks meer verplaatst (om welke rede dan ook)
+    while f() do end
+end
+
+function DropAllItems(direction)
+    -- check the direction, lowercase only
+    direction = string.lower(direction)
+
+    -- we will organize what we droppen, who knows who cares
+    local cargoList = {}
+
+    -- alle slots nalopen
+    for slot = 1, 16 do
+
+        -- select it
+        turtle.select(slot)
+
+        -- for the cargoList
+        local itemData = GetItemDetail(slot)
+
+        -- add to the cargoList
+        if itemData then cargoList[ itemData.name ] = (cargoList[ itemData.name ] or 0) + itemData.count end
+
+        -- actually drop this shit in the right direction
+        if      direction == "up"   then turtle.dropUp()
+        elseif  direction == "down" then turtle.dropDown()
+                                    else turtle.drop()
+        end
+    end
+
+    -- nicely done!
+    return cargoList
+end
+
 function DropAll(itemName, direction)
+    -- check the direction, lowercase only
+    direction = string.lower(direction)
 
     -- alle slots nalopen
     for slot = 1, 16 do

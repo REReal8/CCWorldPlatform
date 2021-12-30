@@ -224,11 +224,14 @@ function ProcessFreeChestMessage(message)
 end
 
 function ProcessMakeItemMessage(message)
+    -- voor wie zijn we aan het werk?
+    local enterpriseId = corejob.GetCurrentEnterpriseId()
+
     -- check parameters
---    message.data.itemName     = "minecraft:chest"
---    message.data.itemCount    = 8
---    message.data.resource     = "inventory"|{location tabel}
-    local messageData   = message.data
+    local messageData       = message.data
+    if not messageData.itemName then return nil end                         -- "minecraft:chest"
+    messageData.itemCount   = messageData.itemCount or 1                    -- 8
+    messageData.resource    = messageData.resource  or "inventory"          -- "inventory"|{location tabel}
 
     -- see if it's crafting (no waiting time) or smelting (waiting time)
     local crafting      = db.recipes[ messageData.itemName ].crafting
@@ -241,14 +244,32 @@ function ProcessMakeItemMessage(message)
         local times = math.ceil( messageData.itemCount / crafting.yield )
 
         -- command our employee, get the stuff first
-        if messageData.resource ~= "inventory" then
+
+        -- only if we get an location, not needed when working from inventory
+        local resourceLocation  = coremove.GetRelativeLocationUp(messageData.resource)
+        if type(messageData.resource) == "table" then
 
             -- move to resource location
-            local moveLocation  = coremove.GetLocationUp
-            coretask.AddWork(coremove.GoTo, messageData.resource)
+            coretask.AddWork(coremove.GoTo, resourceLocation)
 
             -- suck everything from the box
+            coretask.AddWork(coreinventory.GetAllItems, "Down")
+        end
 
+        -- move to the crafting location
+        coretask.AddWork(coremove.GoTo, coredht.GetData("enterprises", enterpriseId, "location"))
+
+        -- craft the stuff!
+        coretask.AddWork(role_alchemist.craft, {})
+
+        -- only if we get an location
+        if type(messageData.resource) == "table" then
+
+            -- move back to resource location
+            coretask.AddWork(coremove.GoTo, resourceLocation)
+
+            -- dump the stuff
+            coretask.AddWork(coreinventory.GetAllItems, "Down")
         end
     end
 
