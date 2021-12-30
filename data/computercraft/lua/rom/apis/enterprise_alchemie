@@ -84,7 +84,7 @@ function ProcessNextMessage(enterpriseId)
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
-    local message = GetNextMessage(enterpriseId)
+    local message = coremessage.GetNextMessage(enterpriseId)
     if type(message) ~= "table" then return end
 
     -- what to do?
