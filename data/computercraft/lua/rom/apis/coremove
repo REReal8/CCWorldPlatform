@@ -52,21 +52,21 @@ end
 
 function Left(c)
 	-- init parameter
-  c = c or 1
-  c = math.floor(c + 0.5) or 1
+    c = c or 1
+    c = math.floor(c + 0.5) or 1
 
-  -- loop
-  for n=1,c do
-  	-- remember direction
-	  local ox = db.dx
-	  local oy = db.dy
+    -- loop
+    for n=1,c do
+    	-- remember direction
+	    local ox = db.dx
+	    local oy = db.dy
 
 		-- do the turn!
-	  turtle.turnLeft()
+	    turtle.turnLeft()
 
 		-- new direction
-	  db.dx = -1 * oy
-	  db.dy = ox
+	    db.dx = -1 * oy
+	    db.dy = ox
 	end
 end
 function Right(c)
@@ -279,6 +279,106 @@ function SetLocation(location)
 		dy	= location.dy
 	}
 end
+function GetRelativeLocationFront(location, steps)
+	-- default
+	steps	= steps or 1
+
+	-- done before we started :-)
+	return {
+		x   = location.x + steps * location.dx,
+		y   = location.y + steps * location.dy,
+		z   = location.z,
+		dx  = location.dx,
+		dy  = location.dy,
+	}
+end
+
+function GetRelativeLocationUp(location, steps)
+	-- default
+	steps	= steps or 1
+
+	-- done before we started :-)
+	return {
+		x   = location.x,
+		y   = location.y,
+		z   = location.z + steps,
+		dx  = location.dx,
+		dy  = location.dy,
+	}
+end
+
+function GetRelativeLocationDown(location, steps)
+	-- default
+	steps	= steps or 1
+
+	-- done before we started :-)
+	return {
+		x	= location.x,
+		y	= location.y,
+		z   = location.z - steps,
+		dx  = location.dx,
+		dy  = location.dy,
+	}
+end
+
+function GetRelativeLocationLeft(location, steps)
+	-- default
+	steps	= steps or 1
+	steps	= math.fmod(steps, 4)
+
+	-- make a deep copy of the location table
+	local newLocation	= {
+		x	= location.x,
+		y	= location.y,
+		z   = location.z,
+		dx  = location.dx,
+		dy  = location.dy,
+	}
+
+	-- do as requested
+	for turn=1, steps do
+		-- don't forget those
+		local oldX		= newLocation.dx
+		local oldY		= newLocation.dy
+
+		-- new direction
+		newLocation.dx	= -1 * oldY
+		newLocation.dy	= oldX
+	end
+
+	-- this is where we ended
+	return newLocation
+end
+
+function GetRelativeLocationRight(location, steps)
+	-- default
+	steps	= steps or 1
+	steps	= math.fmod(steps, 4)
+
+	-- make a deep copy of the location table
+	local newLocation	= {
+		x	= location.x,
+		y	= location.y,
+		z   = location.z,
+		dx  = location.dx,
+		dy  = location.dy,
+	}
+
+	-- do as requested
+	for turn=1, steps do
+		-- don't forget those
+		local oldX		= newLocation.dx
+		local oldY		= newLocation.dy
+
+		-- new direction
+		newLocation.dx	= oldY
+		newLocation.dy	= -1 * oldX
+	end
+
+	-- this is where we ended
+	return newLocation
+end
+
 
 function GetDepth()
 	return db.z

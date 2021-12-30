@@ -228,9 +228,33 @@ function ProcessMakeItemMessage(message)
 --    message.data.itemName     = "minecraft:chest"
 --    message.data.itemCount    = 8
 --    message.data.resource     = "inventory"|{location tabel}
+    local messageData   = message.data
 
     -- see if it's crafting (no waiting time) or smelting (waiting time)
+    local crafting      = db.recipes[ messageData.itemName ].crafting
+    local smelting      = db.recipes[ messageData.itemName ].smelting
 
+    -- for now just one way supported
+    if crafting and not smelting then
 
+        -- calculate how many times we need to "do" the recipe
+        local times = math.ceil( messageData.itemCount / crafting.yield )
+
+        -- command our employee, get the stuff first
+        if messageData.resource ~= "inventory" then
+
+            -- move to resource location
+            local moveLocation  = coremove.GetLocationUp
+            coretask.AddWork(coremove.GoTo, messageData.resource)
+
+            -- suck everything from the box
+
+        end
+    end
+
+    -- other way around
+    if not crafting and smelting then
+
+    end
 end
 
