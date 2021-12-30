@@ -11,7 +11,7 @@ function Init()
 	local dbFile = ReadTableFromFile(db.dbFilename)
 
 	-- check for empty table --> https://stackoverflow.com/questions/1252539/most-efficient-way-to-determine-if-a-lua-table-is-empty-contains-no-entries
-	if next(dbFile) ~= nil then db = ReadTableFromFile(db.dbFilename) end
+	if next(dbFile) ~= nil then db = dbFile end
 
 	-- uniek random nummer
 	math.randomseed(os.time())
