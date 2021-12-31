@@ -9,5 +9,14 @@ function NewAlchemist()
 end
 
 function SendMessage()
-    --coremessage.SendMessageToId(coreutils, recipient, subject, data, notBefore)
+    coremessage.SendMessageToId(
+        "0:0",
+        "3:1121",
+        "make item", {
+            itemName            = "minecraft:sticks",
+            itemCount           = 8,
+            ingredientsLocation = "inventory",
+        },
+        coreutils.UniversalTime()
+    )
 end

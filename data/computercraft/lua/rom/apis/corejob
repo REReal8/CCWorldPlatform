@@ -20,19 +20,20 @@ function NewJob(jobData)
     local needTurtle    = jobData.needTurtle    or true
 
     -- jobId aanmaken
-    local jobId         = coreutils.NewId()
+    local jobId             = coreutils.NewId()
+    local enterpriseName    = coredht.GetData("enterprises", enterpriseId, "enterpriseName")
 
     -- opslaan job (job meta data and job internal data)
     coredht.SaveData({
         jobId           = jobId,
         enterpriseId    = enterpriseId,
-        enterpriseName  = coredht.GetData("enterprises", enterpriseId, "enterpriseName"),
-        location        = location,
+        enterpriseName  = enterpriseName,
         startTime       = startTime,
+        location        = location,
         needTool        = needTool,
         needTurtle      = needTurtle,
         status          = "open",
-        applications    = {},
+        applications    = {}
     }, db.dhtRoot, jobId)
 end
 
@@ -100,9 +101,6 @@ end
 function DHTReadySetup()
     -- bestaat de entry al in de dht?
     if not coredht.GetData(db.dhtRoot) then coredht.SaveData({}, db.dhtRoot ) end
-
-    -- dit heette ooit vacancies, die naam niet meer gebruiken
-    coredht.SaveData(nil, "vacancies" )
 end
 
 function FindBestVacancy()
@@ -160,9 +158,6 @@ function TakeJob(jobId)
 end
 
 function DoJob(job)
-    -- debugging
-    coreutils.WriteToLog(job)
-
     -- we have taken this job!
     TakeJob(job.jobId)
 

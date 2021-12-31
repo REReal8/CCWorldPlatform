@@ -10,7 +10,8 @@ function Init()
 	db = coreutils.ReadTableFromFile(filename)
 
 	-- in case we start for the first time, set a _version
-    if db._version == nil then db._version = 0 end
+    if type(db) ~= "table"  then db = {}            end
+    if db._version == nil   then db._version = 0    end
 end
 
 -- set up stuff when other apis are loaden
@@ -26,8 +27,6 @@ function Setup()
 end
 
 function EventReadySetup()
-	coreutils.WriteToLog("dht event ready setup")
-
 	-- startup, read from disk or get data from peers? Why not both!
 	coreevent.SendMessage({protocol=protocol, subject="get all data"})
 

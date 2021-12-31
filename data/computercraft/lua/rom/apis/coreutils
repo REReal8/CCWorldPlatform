@@ -1,7 +1,7 @@
 local db	= {
 	dbFilename  = "/db/coreutils.lua",
 	logfile		= "/log/log.txt",
-	protocol	= "coreutils",
+	protocol	= "core:utils",
     serial		= 0,                                -- for unique id's
 }
 
@@ -28,7 +28,7 @@ end
 
 function EventReadySetup()
 	-- startup, read from disk or get data from peers? Why not both!
-	coreevent.SendMessage({protocol=db.protocol, subject="what is the current time"})
+--	coreevent.SendMessage({protocol=db.protocol, subject="what is the current time"})
 end
 
 -- generates a new id
@@ -93,7 +93,7 @@ function WriteToFile(filename, message, writemode)
 	if writemode == "overwrite" then mode = "w" end
 
 	-- if we get a table, make it a string
-	if type(message) == "table" then message = textutils.serialize(message) end
+	if type(message) == "table" then message = textutils.serialize(message)	end
 
 	-- bestand openen, schrijven en sluiten
 	if type(filename) ~= "string" then filename = db.logfile message = message .. debug.traceback() end

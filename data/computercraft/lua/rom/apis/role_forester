@@ -7,6 +7,7 @@ local db = {
 -- functions
 function Rondje(funcData)
     -- debug
+    coreutils.WriteToLog("Forester.Rondje()")
     coreutils.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
 
     -- init

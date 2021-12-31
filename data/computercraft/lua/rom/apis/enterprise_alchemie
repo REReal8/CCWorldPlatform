@@ -64,22 +64,24 @@ function NewAlchemieSite(data)
     data.craftingTable  = "inventory" -- or {location table} if the site has one
 
     -- onze gegevens opslaan
-    coredht.SaveData(data, "enterprises", data.enterpriseId)
+    coredht.SaveData(data, "enterprises", enterpriseId)
 
     -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
     corejob.NewJob({
         enterpriseId    = enterpriseId,
-        location        = data.location,                -- locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
+        location        = coremove.GetRelativeLocationFront(data.location, 0), -- koipie van locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
         startTime       = coreutils.UniversalTime(),
         needTool        = true,
         needTurtle      = true
     })
 end
 
-function ProcessNextTask(jobId)
-    local enterpriseId      = corejob.GetJobEnterpriseId(jobId)
+function ProcessNextTask(enterpriseId)
     local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
     local taskId, taskTable = next(taskList)
+
+    -- did we get a task?
+    if not taskId or type(taskTable) ~= "table" then return end
 
     -- remove from the task list
     coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
@@ -91,7 +93,7 @@ function ProcessNextTask(jobId)
     end
 end
 
-function ProcessNextMessage(jobId)
+function ProcessNextMessage(enterpriseId)
     -- berichten die we accepteren
     --
     -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
@@ -100,7 +102,6 @@ function ProcessNextMessage(jobId)
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
-    local enterpriseId  = corejob.GetJobEnterpriseId(jobId)
     local message       = coremessage.GetNextMessage(enterpriseId)
     if type(message) ~= "table" then return false end
 
@@ -114,15 +115,14 @@ function ProcessNextMessage(jobId)
     return true
 end
 
-function TaskComplete(jobId)
+function TaskComplete(enterpriseId)
     -- get enterprise data
-    local enterpriseId  = corejob.GetJobEnterpriseId(jobId)
-    local data          = coredht.GetData("enterprises", enterpriseId)
+--    local data          = coredht.GetData("enterprises", enterpriseId)
 
     -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
     corejob.NewJob({
         enterpriseId    = enterpriseId,
-        location        = data.location,                -- locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
+--        location        = data.location,                -- locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
         startTime       = coreutils.UniversalTime(),
         needTool        = false,                        -- geen bijzondere turtle nodig
         needTurtle      = true

@@ -339,7 +339,6 @@ function ProcessModemMessageEvent(side, frequency, replyFrequency, message, dist
 		local msg	= message
 
 		-- not our message, continue without ajusting anything
-		if type(msg) == "table" then msg = textutils.serialize() end
 		coredisplay.UpdateToDisplay("Unknown modem_message", 5)
 		coreutils.WriteToLog("Unknown modem_message:")
 		coreutils.WriteToLog("    side           = "..side)
