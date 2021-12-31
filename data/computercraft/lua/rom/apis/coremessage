@@ -30,6 +30,7 @@ function SendMessageToId(sender, recipient, subject, data, notBefore)
 
     -- opslaan in de lokale lijst
     db.messageList[ messageId ] = {
+        messageId   = messageId,
         sender      = sender,
         recipient   = recipient,
         subject     = subject,
@@ -88,6 +89,10 @@ function GetNextMessage(recipient)
         return nil
     end
 end
+
+function GetMessageId(message)          return message.messageId    end
+function GetMessageSender(message)      return message.sender       end
+function GetMessageRecipient(message)   return message.recipient    end
 
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)

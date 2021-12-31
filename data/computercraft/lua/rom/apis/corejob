@@ -41,6 +41,11 @@ function GetCurrentEnterpriseId()
     return coredht.GetData(db.dhtRoot, db.currentJob, "enterpriseId")
 end
 
+function GetJobEnterpriseId(jobId)
+    -- sneaky
+    return coredht.GetData(db.dhtRoot, jobId, "enterpriseId")
+end
+
 function Run()
     -- is de dth al beschikbaar?
     while not coredht.IsReady() do
@@ -166,11 +171,14 @@ function DoJob(job)
     if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
     -- loopje doen om inbox te lezen zolang de task nog bezig is
-    while not coretask.TaskListEmpty() do
+    local messagePresent    = true
+    while not messagePresent and not coretask.TaskListEmpty() do
+        -- assume no message here
+        messagePresent    = false
 
         -- hier ooit de inbox van deze enterprise verwerken
         local f, err = loadstring(job.enterpriseName..".ProcessNextMessage("..textutils.serialize(job.enterpriseId)..")")
-        if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+        if f then messagePresent = f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
         -- ff wachten
         os.sleep(0.05)

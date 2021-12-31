@@ -61,6 +61,7 @@ function Init(data)
     data.furnaces       = {}
     data.taskList       = {}
     data.activeTasks    = {}
+    data.craftingTable  = "inventory" -- or {location table} if the site has one
 
     -- onze gegevens opslaan
     coredht.SaveData(data, "enterprises", data.enterpriseId)
@@ -76,9 +77,18 @@ function Init(data)
 end
 
 function ProcessNextTask(jobId)
-    -- task markeren als in behandeling
+    local enterpriseId      = corejob.GetJobEnterpriseId(jobId)
+    local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
+    local taskId, taskTable = next(taskList)
 
-    --de task in de queue zetten
+    -- remove from the task list
+    coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
+
+    -- execute this command using the task queue
+        if taskTable.alchemieType == "craft"    then coretask.AddWork(role_alchemist.Craft,  taskTable)
+    elseif taskTable.alchemieType == "smelt"    then coretask.AddWork(role_alchemist.Smelt,  taskTable)
+    elseif taskTable.alchemieType == "pickup"   then coretask.AddWork(role_alchemist.Pickup, taskTable)
+    end
 end
 
 function ProcessNextMessage(jobId)
@@ -90,19 +100,23 @@ function ProcessNextMessage(jobId)
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
-    local message = coremessage.GetNextMessage(corejob.GetCurrentEnterpriseId())
-    if type(message) ~= "table" then return end
+    local enterpriseId  = corejob.GetJobEnterpriseId(jobId)
+    local message       = coremessage.GetNextMessage(enterpriseId)
+    if type(message) ~= "table" then return false end
 
     -- what to do?
     if message.subject == "item list"   then ProcessItemListMessage(message.data)   end
     if message.subject == "claim chest" then ProcessClaimChestMessage(message.data) end
     if message.subject == "free chest"  then ProcessFreeChestMessage(message.data)  end
     if message.subject == "make item"   then ProcessMakeItemMessage(message.data)   end
+
+    -- we did something, impressive
+    return true
 end
 
 function TaskComplete(jobId)
     -- get enterprise data
-    local enterpriseId  = corejob.GetCurrentEnterpriseId()
+    local enterpriseId  = corejob.GetJobEnterpriseId(jobId)
     local data          = coredht.GetData("enterprises", enterpriseId)
 
     -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
@@ -177,7 +191,7 @@ end
 
 function ProcessClaimChestMessage(message)
     -- get enterprise data
-    local enterpriseId  = corejob.GetCurrentEnterpriseId()
+    local enterpriseId  = coremessage.GetMessageRecipient(message)
     local data          = coredht.GetData("enterprises", enterpriseId)
     local topchests     = data.topchests
     local responseData  = {}
@@ -208,7 +222,7 @@ end
 
 function ProcessFreeChestMessage(message)
     -- voor wie zijn we aan het werk?
-    local enterpriseId = corejob.GetCurrentEnterpriseId()
+    local enterpriseId = coremessage.GetMessageRecipient(message)
 
     -- check parameters
     if type(message) ~= "table" or type(message.data) ~= table then return nil end
@@ -224,58 +238,47 @@ function ProcessFreeChestMessage(message)
 end
 
 function ProcessMakeItemMessage(message)
+    -- message.data.itemName            -- mandatory
+    -- message.data.itemCount           -- default: 1
+    -- message.data.ingredientsLocation -- "inventory"|{location table}
+
     -- voor wie zijn we aan het werk?
-    local enterpriseId = corejob.GetCurrentEnterpriseId()
+    local enterpriseId = coremessage.GetMessageRecipient(message)
 
     -- check parameters
-    local messageData       = message.data
-    if not messageData.itemName then return nil end                         -- "minecraft:chest"
-    messageData.itemCount   = messageData.itemCount or 1                    -- 8
-    messageData.resource    = messageData.resource  or "inventory"          -- "inventory"|{location tabel}
+    local messageData               = message.data
+    if not messageData.itemName then return nil end                                 -- "minecraft:chest"
+    messageData.itemCount           = messageData.itemCount or 1                    -- 8
+    messageData.ingredientsLocation = messageData.ingredientsLocation  or "inventory"  -- "inventory"|{location tabel}
 
     -- see if it's crafting (no waiting time) or smelting (waiting time)
-    local crafting      = db.recipes[ messageData.itemName ].crafting
-    local smelting      = db.recipes[ messageData.itemName ].smelting
+    local craftingRecipe      = db.recipes[ messageData.itemName ].crafting
+    local smeltingRecipe      = db.recipes[ messageData.itemName ].smelting
+
+    -- get us a nice fresh id
+    local taskId        = coreutils.NewId()
 
     -- for now just one way supported
-    if crafting and not smelting then
-
-        -- calculate how many times we need to "do" the recipe
-        local times = math.ceil( messageData.itemCount / crafting.yield )
-
-        -- command our employee, get the stuff first
-
-        -- only if we get an location, not needed when working from inventory
-        local resourceLocation  = coremove.GetRelativeLocationUp(messageData.resource)
-        if type(messageData.resource) == "table" then
-
-            -- move to resource location
-            coretask.AddWork(coremove.GoTo, resourceLocation)
-
-            -- suck everything from the box
-            coretask.AddWork(coreinventory.GetAllItems, "Down")
-        end
-
-        -- move to the crafting location
-        coretask.AddWork(coremove.GoTo, coredht.GetData("enterprises", enterpriseId, "location"))
-
-        -- craft the stuff!
-        coretask.AddWork(role_alchemist.craft, {})
-
-        -- only if we get an location
-        if type(messageData.resource) == "table" then
-
-            -- move back to resource location
-            coretask.AddWork(coremove.GoTo, resourceLocation)
-
-            -- dump the stuff
-            coretask.AddWork(coreinventory.GetAllItems, "Down")
-        end
-    end
+    if craftingRecipe then
+        coredht.SaveData({
+            taskId              = taskId,
+            messageId           = coremessage.GetMessageId(message),
+            created             = coreutils.UniversalTime(),
+            alchemieType        = "craft",
+            recipe              = craftingRecipe,
+            itemName            = messageData.itemName,
+            itemCount           = messageData.itemCount,
+            alchemyLocation     = coredht.GetData("enterprises", enterpriseId, "location"), -- location of the alchemy site
+            ingredientsLocation = messageData.ingredientsLocation,                          -- location where the ingredients can be found
+        }, "enterprises", enterpriseId, "taskList", taskId)
 
     -- other way around
-    if not crafting and smelting then
+    elseif smeltingRecipe then
 
+
+
+    else
+        -- no recipe known for this item!
     end
 end
 

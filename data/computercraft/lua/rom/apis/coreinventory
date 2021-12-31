@@ -14,21 +14,27 @@ function DHTReadySetup()
     if not coredht.GetData("allItems") then coredht.SaveData({}, "allItems") end
 end
 
-function GetEmptySlot()
+function GetEmptySlot(list)
+    -- list is an optional table containing which slots are allowed
+
     -- alle slots nalopen
     for slot = 1, 16 do
 
-        -- wat zit er in dit slot
-        local data = GetItemDetail(slot)
+        -- alleen een optie als we geen lijst gekregen hebben of de lijst aangeeft dat deze gebruikt mag worden
+        if not list or list[slot] then
 
-        -- deze slot wel het juiste item?
-        if not data then
+            -- wat zit er in dit slot
+            local data = GetItemDetail(slot)
 
-            -- deze selecteren
-            turtle.select(slot)
+            -- deze slot wel het juiste item?
+            if not data then
 
-            -- en we zijn klaar
-            return true
+                -- deze selecteren
+                turtle.select(slot)
+
+                -- en we zijn klaar
+                return slot
+            end
         end
     end
 
