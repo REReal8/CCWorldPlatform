@@ -49,7 +49,7 @@ local db = {
     }
 }
 
-function Init(data)
+function NewAlchemieSite(data)
     -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
     -- data.type = "simpel" | "regular"
     local enterpriseId   = coreutils.NewId()

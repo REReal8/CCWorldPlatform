@@ -1,0 +1,13 @@
+local db = {}
+
+-- bestand voor eenvoudiger testen, diverse commando's kunnen hier makkelijk bij elkaar gezet worden
+function NewAlchemist()
+    enterprise_alchemie.NewAlchemieSite({
+        location    = {y = 0, x = 0, z = 0, dx = 0, dy = 1, },
+        type        = "simpel",
+    })
+end
+
+function SendMessage()
+    --coremessage.SendMessageToId(coreutils, recipient, subject, data, notBefore)
+end
