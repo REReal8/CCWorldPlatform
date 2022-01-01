@@ -77,7 +77,6 @@ function NewAlchemieSite(data)
 end
 
 function ProcessNextTask(enterpriseId)
-    --coreutils.WriteToLog("ProcessNextTask")
     local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
     local taskId, taskTable = next(taskList)
 
@@ -106,9 +105,6 @@ function ProcessNextMessage(enterpriseId)
     local message       = coremessage.GetNextMessage(enterpriseId)
     if type(message) ~= "table" then return false end
 
-    coreutils.WriteToLog("message = ")
-    coreutils.WriteToLog(message)
-
     -- what to do?
     if message.subject == "item list"   then ProcessItemListMessage(message)    end
     if message.subject == "claim chest" then ProcessClaimChestMessage(message)  end
@@ -120,7 +116,6 @@ function ProcessNextMessage(enterpriseId)
 end
 
 function TaskComplete(enterpriseId)
-    --coreutils.WriteToLog("TaskComplete")
     -- get enterprise data
 --    local data          = coredht.GetData("enterprises", enterpriseId)
 

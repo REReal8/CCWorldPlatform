@@ -5,9 +5,6 @@ local db = {
 
 -- main functions
 function Craft(craftData)
-    coreutils.WriteToLog("role_alchemist: Craft")
-    coreutils.WriteToLog(craftData)
-
     -- calculate how many times we need to "do" the recipe
     local crafting  = craftData.recipe
     local times     = math.ceil(craftData.itemCount / crafting.yield)
@@ -45,9 +42,6 @@ function Craft(craftData)
         -- dump the stuff
         coreinventory.DropAllItems("Down")
     end
-
-    -- really done?
-    coreutils.WriteToLog("Done with role_alchemist.Craft()")
 end
 
 function Smelt(requestDetails)
