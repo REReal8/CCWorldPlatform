@@ -9,8 +9,12 @@ end
 function Setup()
 end
 
-function TaskListEmpty()
-	return work.first > work.last
+function TaskComplete(taskId)
+	if type(taskId) == "number" then
+		return taskId < work.first
+	else
+		return true
+	end
 end
 
 -- add something to do, and have the system triggered to get to work if idle
@@ -19,6 +23,7 @@ function AddWork(func, data)
     	work.last		= work.last + 1
     	work[work.last]	= {func = func, data = data}
     	os.queueEvent("dummy")
+		return work.last
     else
         coreutils.WriteToLog("taskAPI.AddWork: func nil")
     end
@@ -30,6 +35,7 @@ function AddNextWork(func, data)
 		work.first			= work.first - 1
 		work[work.first]	= {func = func, data = data}
 		os.queueEvent("dummy")
+		return work.first
     else
         coreutils.WriteToLog("taskAPI.AddNextWork: func nil")
     end
@@ -64,10 +70,13 @@ function Run()
 		if work.first <= work.last then
 
 			-- get the work item
-			local work = GetNextWork()
+			local nextWork = GetNextWork()
 
 			-- do the work
-			work.func(work.data)
+			nextWork.func(nextWork.data)
+
+			-- mark work as complete
+			NextWorkComplete()
 
 			-- do the post work -- weird thing, do all post work, regardless of protocol... !!!
 			for protocol, func in pairs(postWorkHandler) do coreutils.WriteToLog("Work, postWorkHandler, protocol = ", protocol) func() end
@@ -121,11 +130,12 @@ function GetNextWork()
 	-- get referece to the task
     local task			= work[work.first]
 
-    -- remove item from the list
-    work[work.first]	= nil
-    work.first			= work.first + 1
-
     -- return the table with function and data
     return task
 end
 
+function NextWorkComplete()
+    -- remove item from the list
+    work[work.first]	= nil
+    work.first			= work.first + 1
+end

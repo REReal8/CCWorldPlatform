@@ -134,7 +134,7 @@ function SendMessage(t)
 		if not currentChannel then currentChannel = to[i] end
 
         -- usefull logging
-		coreutils.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
+		-- coreutils.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
 
         -- actuall sending the message
 		modem.transmit(currentChannel, from, textutils.serialize({

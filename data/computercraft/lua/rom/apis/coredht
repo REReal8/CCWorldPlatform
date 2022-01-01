@@ -2,6 +2,7 @@ local db                = { _version = 0 }
 local dhtReady          = false
 local dhtReadyFunctions = {}
 local filename          = "/db/dht.lua"
+local logfile           = "/log/dht.txt"
 local protocol          = "core:dht"
 
 -- initializes the dht
@@ -12,6 +13,9 @@ function Init()
 	-- in case we start for the first time, set a _version
     if type(db) ~= "table"  then db = {}            end
     if db._version == nil   then db._version = 0    end
+
+    coreutils.WriteToFile(logfile, "db = ", "overwerite")
+    coreutils.WriteToFile(logfile, db)
 end
 
 -- set up stuff when other apis are loaden
@@ -40,17 +44,16 @@ function DHTReadyFunction(func)
 end
 
 function IsReady()
-    return true
---    return dhtReady
+    -- is the dht ready?
+    return dhtReady
 end
 
 -- get data from the dht
 function GetData(...)
     local ldb = db
-    local i, node
 
     -- follow the nodes
-    for i,node in ipairs(arg) do
+    for i, node in ipairs(arg) do
         if type(ldb) == "table" and ldb[node] ~= nil    then ldb = ldb[node]
                                                         else return nil
         end
@@ -62,6 +65,17 @@ end
 
 -- save data to the table db
 function SaveData(data, ...)
+    if not dhtReady then coreutils.WriteToLog("coredht.SaveData called before dht is ready. Traceback info: "..debug.traceback()) end
+
+    if false then
+        coreutils.WriteToFile(logfile, "", "a")
+        coreutils.WriteToFile(logfile, "*** Saving data ***", "a")
+        coreutils.WriteToFile(logfile, "data =", "a")
+        coreutils.WriteToFile(logfile, data, "a")
+        coreutils.WriteToFile(logfile, "arg =", "a")
+        coreutils.WriteToFile(logfile, arg, "a")
+    end
+
     -- update the version
     db._version = db._version + 1
 

@@ -5,13 +5,18 @@ local db = {
 
 -- main functions
 function Craft(craftData)
+    coreutils.WriteToLog("role_alchemist: Craft")
+    coreutils.WriteToLog(craftData)
+
     -- calculate how many times we need to "do" the recipe
-    local crafting  = db.recipes[ craftData.itemName ].crafting
+    local crafting  = craftData.recipe
     local times     = math.ceil(craftData.itemCount / crafting.yield)
 
     -- only if we get an location, not needed when working from inventory
-    local ingredientsLocation  = coremove.GetRelativeLocationUp(craftData.ingredientsLocation)
-    if type(craftData.resource) == "table" then
+    local ingredientsLocation  = craftData.ingredientsLocation
+    if type(ingredientsLocation) == "table" then
+        -- get above the ingredients location
+        ingredientsLocation = coremove.GetRelativeLocationUp(ingredientsLocation)
 
         -- move to resource location
         coremove.GoTo(ingredientsLocation)
@@ -32,7 +37,7 @@ function Craft(craftData)
     coreinventory.GetAllItems("down")
 
     -- only if we get an location
-    if type(craftData.resource) == "table" then
+    if type(ingredientsLocation) == "table" then
 
         -- move back to resource location
         coremove.GoTo(ingredientsLocation)
@@ -62,7 +67,7 @@ function EquipCraftingTable()
     coreinventory.GetEmptySlot()
 
     -- remove item on the left side
-    turtle.equipLeft()
+    turtle.equipRight()
 
     -- remember what we removed?
     local itemDetail = coreinventory.GetItemDetail()
@@ -71,7 +76,7 @@ function EquipCraftingTable()
     coreinventory.SelectItem("minecraft:crafting_table")
 
     -- equip it
-    turtle.equipLeft()
+    turtle.equipRight()
 
     -- this is the tool we removed
     return itemDetail
@@ -79,12 +84,11 @@ end
 
 function PrepareCraftingArea(recipe, times)
     -- presume we can use the storage below us
-    local craftArea = {true,  true,  true,  false, true,  true,  true,  false, true,  true,  true,  false, false, false, false, false }
-    local sideArea  = {false, false, false, true,  false, false, false, true,  false, false, false, true,  true,  true,  true,  true  }
+    local craftArea = {false, false, false, false, false, true,  true,  true,  false, true,  true,  true,  false, true,  true,  true,  }
+    local sideArea  = {true,  true,  true,  true,  true,  false, false, false, true,  false, false, false, true,  false, false, false, }
 
     -- loop the crafting area
     for slot=1,16 do
-
         -- only for the crafting area
         if craftArea[slot] then
 
@@ -100,34 +104,52 @@ function PrepareCraftingArea(recipe, times)
                 turtle.transferTo(emptySlot)
             end
 
-            -- find stuff that is needed here
-            local itemName      =         recipe.itemName
-            local itemCount     = times * recipe.itemCount
-            local itemPresent   = turtle.getItemCount(slot)         -- slot is empty at this point
+            -- do we need stuff in this slot?
+            if type(recipe[slot]) == "table" then
+                -- debug
+                coreutils.WriteToLog("processing slot "..slot)
 
-            -- go, find the stuff
-            local itemSlot  = slot + 1
-            while itemCount > itemPresent and slot <= 16 do
+                -- find stuff that is needed here
+                local itemName      =         recipe[slot].itemName
+                local itemCount     = times * recipe[slot].itemCount
+                local itemPresent   = turtle.getItemCount(slot)         -- slot is empty at this point
 
-                -- see what is in this slot
-                itemDetail = coreinventory.GetItemDetail(itemSlot)
+                -- looking for:
+                coreutils.WriteToLog("itemName = "..itemName..", itemCount = "..itemCount)
 
-                -- usefull?
-                if itemDetail and itemDetail.itemName == itemName then
+                -- go, find the stuff
+                local itemSlot  = 1
+                while itemCount > itemPresent and itemSlot <= 16 do
 
-                    -- great, transfer!
-                    turtle.select(itemSlot)
-                    turtle.transferTo(slot, itemCount - itemPresent)
+                    -- skip crafting spots allready prepared
+                    if itemSlot > slot or sideArea[itemSlot] then
 
-                    -- how many in the slot right now?
-                    itemPresent = turtle.getItemCount(slot)
+                        -- see what is in this slot
+                        itemDetail = coreinventory.GetItemDetail(itemSlot)
+
+                        if itemDetail then coreutils.WriteToLog("We found in slot "..itemSlot.." this: "..textutils.serialize(itemDetail)) end
+
+                        -- usefull?
+                        if type(itemDetail) == "table" and itemDetail.itemName == itemName then
+
+                            -- great, transfer!
+                            turtle.select(itemSlot)
+                            turtle.transferTo(slot, itemCount - itemPresent)
+
+                            -- how many in the slot right now?
+                            itemPresent = turtle.getItemCount(slot)
+                        end
+                    end
+
+                    -- don't forget to increase the slot
+                    itemSlot = itemSlot + 1
                 end
-
-                -- don't forget to increase the slot
-                itemSlot = itemSlot + 1
             end
         end
     end
+
+    -- halen we dit?
+    coreutils.WriteToLog("crafting area prepared, up to the next task")
 
     -- drop everything we don't need
     for slot=1,16 do

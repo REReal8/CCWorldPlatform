@@ -60,9 +60,11 @@ end
 
 function GetNextMessage(recipient)
     -- hoe laat is het eigenlijk
-    local nu = coreutils.UniversalTime()
+    local nu        = coreutils.UniversalTime()
+
+    -- om het oudste bericht te vinden
     local firstTime = nu + 1
-    local messageId   = nil
+    local messageId = nil
 
     -- lekker zoeken
     local messages  = coredht.GetData("messages")
@@ -77,7 +79,7 @@ function GetNextMessage(recipient)
     -- hebben we iets?
     if messageId then
         -- uit de lijst halen en terug geven
-        local message = messages[ messageId ].data
+        local message = messages[ messageId ]
 
         -- uit de dht halen
         coredht.SaveData(nil, "messages", messageId)

@@ -89,11 +89,11 @@ function SelectItem(itemName)
 end
 
 function GetAllItems(direction)
-    local f    = turtle.suck()
+    local f    = turtle.suck
 
     -- andere richting?
-    if direction == "up"   or direction == "Up"     then f = turtle.suckUp()    end
-    if direction == "down" or direction == "Down"   then f = turtle.suckDown()  end
+    if direction == "up"   or direction == "Up"     then f = turtle.suckUp    end
+    if direction == "down" or direction == "Down"   then f = turtle.suckDown  end
 
     -- net zo langs spullen opzuigen totdat er niks meer verplaatst (om welke rede dan ook)
     while f() do end

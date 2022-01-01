@@ -48,8 +48,6 @@ function GetJobEnterpriseId(jobId)
 end
 
 function Run()
-    coreutils.WriteToLog("Running Run")
-
     -- is de dth al beschikbaar?
     while not coredht.IsReady() do
 
@@ -59,8 +57,6 @@ function Run()
 
     -- dit blijven we altijd doen
     while core.IsSystemRunning() do
-
-        coreutils.WriteToLog("Next main loop")
 
         -- we zijn nu werkeloos
         local nextJob = nil
@@ -72,7 +68,7 @@ function Run()
         if jobApplication then
 
             -- inschrijven
-            corejob.ApplyToJob(jobApplication)
+            ApplyToJob(jobApplication)
 
             -- ff wachten, wellicht hebben meer zich ingeschreven
             os.sleep(1.25)
@@ -108,7 +104,7 @@ function DHTReadySetup()
 end
 
 function FindBestVacancy()
-    coreutils.WriteToLog("Running FindBestVacancy")
+--    coreutils.WriteToLog("Running FindBestVacancy")
 
     -- zoeken naar een job om op in te schrijven
     local jobs  = coredht.GetData(db.dhtRoot)
@@ -129,7 +125,7 @@ function FindBestVacancy()
 end
 
 function ApplyToJob(jobId)
-    coreutils.WriteToLog("Running ApplyToJob")
+--    coreutils.WriteToLog("Running ApplyToJob")
 
     -- alleen solliciteren indien de job open is
     if coredht.GetData(db.dhtRoot, jobId, "status") == "open" then
@@ -147,7 +143,7 @@ function ApplyToJob(jobId)
 end
 
 function JobSelectionProcedure(jobId)
-    coreutils.WriteToLog("Running JobSelectionProcedure")
+--    coreutils.WriteToLog("Running JobSelectionProcedure")
 
     -- data van de job ophalen
     local job = coredht.GetData(db.dhtRoot, jobId)
@@ -160,7 +156,7 @@ function JobSelectionProcedure(jobId)
 end
 
 function TakeJob(jobId)
-    coreutils.WriteToLog("Running TakeJob")
+--    coreutils.WriteToLog("Running TakeJob("..jobId..")")
 
     -- this computer is apparently executing this job
     db.currentJob   = jobId
@@ -170,22 +166,20 @@ function TakeJob(jobId)
 end
 
 function DoJob(job)
-    coreutils.WriteToLog("Running DoJob")
+    local taskId    = nil
 
     -- we have taken this job!
     TakeJob(job.jobId)
 
     -- task functie klaar maken
-    local f, err = loadstring(job.enterpriseName..".ProcessNextTask("..textutils.serialize(job.enterpriseId)..")")
-    if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+    local f, err = loadstring("return "..job.enterpriseName..".ProcessNextTask("..textutils.serialize(job.enterpriseId)..")")
+    if f then taskId = f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
     -- loopje doen om inbox te lezen zolang de task nog bezig is
     local messagePresent    = true
-    while messagePresent or not coretask.TaskListEmpty() do
+    while messagePresent or not coretask.TaskComplete(taskId) do
         -- assume no message here
         messagePresent    = false
-
-        coreutils.WriteToLog("Message loop")
 
         -- hier ooit de inbox van deze enterprise verwerken
         local f, err = loadstring(job.enterpriseName..".ProcessNextMessage("..textutils.serialize(job.enterpriseId)..")")
