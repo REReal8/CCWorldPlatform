@@ -52,6 +52,10 @@ function LetItGrow()
     -- refuel
     coreinventory.Refuel({itemName = "minecraft:birch_planks", itemCount = 4 * logs})
     coreinventory.Refuel({itemName = "minecraft:stick", itemCount = sticks})
+
+    -- we are ready to do more stuff!
+    print("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
+    print("We have "..turtle.getFuelLevel().." fuel")
 end
 
 --    _                 _    __                  _   _
