@@ -43,8 +43,11 @@ function Craft(craftData)
         coremove.GoTo(ingredientsLocation)
 
         -- dump the stuff
-        coreinventory.GetAllItems("Down")
+        coreinventory.DropAllItems("Down")
     end
+
+    -- really done?
+    coreutils.WriteToLog("Done with role_alchemist.Craft()")
 end
 
 function Smelt(requestDetails)
@@ -106,16 +109,10 @@ function PrepareCraftingArea(recipe, times)
 
             -- do we need stuff in this slot?
             if type(recipe[slot]) == "table" then
-                -- debug
-                coreutils.WriteToLog("processing slot "..slot)
-
                 -- find stuff that is needed here
                 local itemName      =         recipe[slot].itemName
                 local itemCount     = times * recipe[slot].itemCount
                 local itemPresent   = turtle.getItemCount(slot)         -- slot is empty at this point
-
-                -- looking for:
-                coreutils.WriteToLog("itemName = "..itemName..", itemCount = "..itemCount)
 
                 -- go, find the stuff
                 local itemSlot  = 1
@@ -127,10 +124,8 @@ function PrepareCraftingArea(recipe, times)
                         -- see what is in this slot
                         itemDetail = coreinventory.GetItemDetail(itemSlot)
 
-                        if itemDetail then coreutils.WriteToLog("We found in slot "..itemSlot.." this: "..textutils.serialize(itemDetail)) end
-
                         -- usefull?
-                        if type(itemDetail) == "table" and itemDetail.itemName == itemName then
+                        if type(itemDetail) == "table" and itemDetail.name == itemName then
 
                             -- great, transfer!
                             turtle.select(itemSlot)
@@ -148,9 +143,6 @@ function PrepareCraftingArea(recipe, times)
         end
     end
 
-    -- halen we dit?
-    coreutils.WriteToLog("crafting area prepared, up to the next task")
-
     -- drop everything we don't need
     for slot=1,16 do
 
@@ -163,3 +155,5 @@ function PrepareCraftingArea(recipe, times)
         end
     end
 end
+
+

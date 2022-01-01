@@ -84,7 +84,7 @@ function ProcessNextTask(enterpriseId)
     -- did we get a task?
     if not taskId or type(taskTable) ~= "table" then return end
 
-    -- remove from the task list
+    -- remove from the task list once completed
     coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
 
     -- execute this command using the task queue

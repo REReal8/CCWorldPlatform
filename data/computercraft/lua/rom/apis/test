@@ -11,7 +11,7 @@ end
 function SendMessage()
     coremessage.SendMessageToId(
         "0:0",
-        "3:20",
+        "3:0",
         "make item", {
             itemName            = "minecraft:stick",
             itemCount           = 8,
