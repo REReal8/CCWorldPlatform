@@ -275,7 +275,7 @@ function ProcessMakeItemMessage(message)
             messageId           = coremessage.GetMessageId(message),
             created             = coreutils.UniversalTime(),
             alchemieType        = "craft",
-            recipe              = craftingRecipe, --textutils.unserialize(textutils.serialize(craftingRecipe)),
+            recipe              = textutils.unserialize(textutils.serialize(craftingRecipe)),
             itemName            = messageData.itemName,
             itemCount           = messageData.itemCount,
             ingredientsLocation = messageData.ingredientsLocation,
