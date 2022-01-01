@@ -85,6 +85,7 @@ function DetecteedBoom()
 end
 
 function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 blok hout levert ~ 70 movement op
+    local schaarste = true
     local hoogte    = 1
 
     -- eerste stukkie stam weghalen en op de plek van de stam gaan staan
@@ -107,7 +108,7 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
     coremove.Up()
 
     -- al het hout is weg (op het top blok na), nu de bladeren
-    if db.schaarste then OogstBladerenBuitenkant(true) end
+    if schaarste then OogstBladerenBuitenkant(true) end
     OogstBladerenBuitenkant(false)
 
     -- terug (top blok nog ff hakken)

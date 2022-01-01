@@ -1,0 +1,82 @@
+-- the table that stores the data
+local db = {
+    job         = "alchemist",
+}
+
+-- main functions
+function LetItGrow()
+    -- plant the sappling
+    coreinventory.SelectItem("minecraft:birch_sapling")
+    turtle.place()
+
+    -- quip the axe / hatchet
+    coreinventory.Equip("minecraft:diamond_axe")
+
+    -- remove the ground under us, usefull for crafting later
+    turtle.digDown()
+
+    -- pick up any items under us (should be nothing though)
+    turtle.suckDown()
+
+    -- for a tree
+    local has_block, data = turtle.inspect()
+    while not has_block or type(data) ~= "table" or data.name ~= "minecraft:birch_log" do
+        -- ff wachten
+        os.sleep(0.25)
+
+        -- opnieuw kijken
+        has_block, data = turtle.inspect()
+    end
+
+    -- blok voor ons omhakken
+    turtle.dig()
+
+    -- eerste log omzetten naar planken
+    LogToPlanks(1)
+
+    -- nu kunnen we bijtanken
+    coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4})
+
+    -- rest van de boom omhakken
+    coreinventory.Equip("minecraft:diamond_axe")
+    coremove.Up(1)
+    role_forester.KapBoom()
+
+    -- rest van de planken als brandstof gebruiken, kisten maken we laten (waarschijnlijk beter om eerst fakkeltje te maken trouwens, wellicht later)
+    local logs      = coreinventory.CountItem("minecraft:birch_log")
+    local sticks    = coreinventory.CountItem("minecraft:stick")
+
+    -- logs to planks
+    LogToPlanks(logs)
+
+    -- refuel
+    coreinventory.Refuel({itemName = "minecraft:birch_planks", itemCount = 4 * logs})
+    coreinventory.Refuel({itemName = "minecraft:stick", itemCount = sticks})
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
+
+function LogToPlanks(logs)
+    role_alchemist.Craft({
+        taskId = "0",
+        alchemieType = "craft",
+        recipe = {
+            [6] = {
+                itemName = "minecraft:birch_log",
+                itemCount = 1
+            },
+            yield = 4
+        },
+        itemName = "minecraft:planks",
+        itemCount = 4 * logs,
+        ingredientsLocation = "inventory",
+        workingLocation = {x=0, y=0, z=0, dx=0, dy=1},
+    })
+end

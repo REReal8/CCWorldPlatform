@@ -1,0 +1,52 @@
+local db = {
+    enterpriseName  = "enterprise_childhood",
+    taskList        = {
+        { command = "role_child.LetItGrow()" },
+
+    },
+}
+
+function NewChildhood(data)
+    local enterpriseId   = coreutils.NewId()
+
+    -- data verrijken
+    data.enterpriseId   = enterpriseId
+    data.enterpriseName = db.enterpriseName
+    data.taskList       = {}
+
+    -- onze gegevens opslaan
+    coredht.SaveData(data, "enterprises", enterpriseId)
+
+    -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
+    corejob.NewJob({enterpriseId = enterpriseId})
+end
+
+function ProcessNextTask(enterpriseId)
+    local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
+    local taskId, taskTable = next(taskList)
+
+    -- did we get a task?
+    if not taskId or type(taskTable) ~= "table" then return end
+
+    -- remove from the task list once completed
+    coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
+
+    -- execute this command using the task queue
+    coretask.AddWork(role_child.Task,  taskTable)
+end
+
+function ProcessNextMessage(enterpriseId)
+    -- berichten die we accepteren
+    --
+
+    -- you cannot communicate with your childhood
+    return false
+end
+
+function TaskComplete(enterpriseId)
+    -- get enterprise data
+--    local data          = coredht.GetData("enterprises", enterpriseId)
+
+    -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
+    corejob.NewJob({enterpriseId = enterpriseId})
+end

@@ -26,7 +26,7 @@ function Craft(craftData)
     coremove.GoTo(craftData.workingLocation)
 
     -- do the magic!
-    EquipCraftingTable()
+    coreinventory.Equip("minecraft:crafting_table")
     PrepareCraftingArea(craftData.recipe, times)
     turtle.craft()
 
@@ -58,26 +58,6 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --
 --
-
-function EquipCraftingTable()
-    -- find empty spot
-    coreinventory.GetEmptySlot()
-
-    -- remove item on the left side
-    turtle.equipRight()
-
-    -- remember what we removed?
-    local itemDetail = coreinventory.GetItemDetail()
-
-    -- find the crafting table
-    coreinventory.SelectItem("minecraft:crafting_table")
-
-    -- equip it
-    turtle.equipRight()
-
-    -- this is the tool we removed
-    return itemDetail
-end
 
 function PrepareCraftingArea(recipe, times)
     -- presume we can use the storage below us
