@@ -1,7 +1,7 @@
 local db	= {
 	dbFilename  = "/db/coreutils.lua",
 	logfile		= "/log/log.txt",
-	protocol	= "core:utils",
+	protocol	= "coreutils",
     serial		= 0,                                -- for unique id's
 }
 
@@ -15,6 +15,9 @@ function Init()
 
 	-- uniek random nummer
 	math.randomseed(os.time())
+
+	-- place markers in the logfile
+	WriteToLog("--- starting up ---")
 end
 
 -- niet nodig voor utils
@@ -95,12 +98,13 @@ function WriteToFile(filename, message, writemode)
 	-- if we get a table, make it a string
 	if type(message) == "table" then message = textutils.serialize(message)	end
 
+	-- bestandsnaam controleren, moet gewoon een string zijn natuurlijk
+	if type(filename) ~= "string" then filename = db.logfile message = message..debug.traceback() end
+
 	-- bestand openen, schrijven en sluiten
-	if type(filename) ~= "string" then filename = db.logfile message = message .. debug.traceback() end
 	local fileHandle = fs.open(filename, mode)
 	fileHandle.writeLine(message)
 	fileHandle.close()
-
 end
 
 function WriteToLog(message)
@@ -119,6 +123,7 @@ end
 
 function Error(message)
 	-- write to the logfile
+	WriteToFile(db.logfile, "ERROR:", "append")
 	WriteToFile(db.logfile, message, "append")
 end
 

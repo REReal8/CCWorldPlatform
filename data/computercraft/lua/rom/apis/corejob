@@ -48,6 +48,8 @@ function GetJobEnterpriseId(jobId)
 end
 
 function Run()
+    coreutils.WriteToLog("Running Run")
+
     -- is de dth al beschikbaar?
     while not coredht.IsReady() do
 
@@ -57,6 +59,8 @@ function Run()
 
     -- dit blijven we altijd doen
     while core.IsSystemRunning() do
+
+        coreutils.WriteToLog("Next main loop")
 
         -- we zijn nu werkeloos
         local nextJob = nil
@@ -71,7 +75,7 @@ function Run()
             corejob.ApplyToJob(jobApplication)
 
             -- ff wachten, wellicht hebben meer zich ingeschreven
-            os.sleep(0.25)
+            os.sleep(1.25)
 
             -- controle wie de job krijgt
             nextJob = JobSelectionProcedure(jobApplication)
@@ -104,6 +108,8 @@ function DHTReadySetup()
 end
 
 function FindBestVacancy()
+    coreutils.WriteToLog("Running FindBestVacancy")
+
     -- zoeken naar een job om op in te schrijven
     local jobs  = coredht.GetData(db.dhtRoot)
     local now   = coreutils.UniversalTime()
@@ -123,6 +129,8 @@ function FindBestVacancy()
 end
 
 function ApplyToJob(jobId)
+    coreutils.WriteToLog("Running ApplyToJob")
+
     -- alleen solliciteren indien de job open is
     if coredht.GetData(db.dhtRoot, jobId, "status") == "open" then
 
@@ -139,6 +147,8 @@ function ApplyToJob(jobId)
 end
 
 function JobSelectionProcedure(jobId)
+    coreutils.WriteToLog("Running JobSelectionProcedure")
+
     -- data van de job ophalen
     local job = coredht.GetData(db.dhtRoot, jobId)
 
@@ -150,6 +160,8 @@ function JobSelectionProcedure(jobId)
 end
 
 function TakeJob(jobId)
+    coreutils.WriteToLog("Running TakeJob")
+
     -- this computer is apparently executing this job
     db.currentJob   = jobId
 
@@ -158,6 +170,8 @@ function TakeJob(jobId)
 end
 
 function DoJob(job)
+    coreutils.WriteToLog("Running DoJob")
+
     -- we have taken this job!
     TakeJob(job.jobId)
 
@@ -167,9 +181,11 @@ function DoJob(job)
 
     -- loopje doen om inbox te lezen zolang de task nog bezig is
     local messagePresent    = true
-    while not messagePresent and not coretask.TaskListEmpty() do
+    while messagePresent or not coretask.TaskListEmpty() do
         -- assume no message here
         messagePresent    = false
+
+        coreutils.WriteToLog("Message loop")
 
         -- hier ooit de inbox van deze enterprise verwerken
         local f, err = loadstring(job.enterpriseName..".ProcessNextMessage("..textutils.serialize(job.enterpriseId)..")")

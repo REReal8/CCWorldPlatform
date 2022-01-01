@@ -77,6 +77,7 @@ function NewAlchemieSite(data)
 end
 
 function ProcessNextTask(enterpriseId)
+    coreutils.WriteToLog("ProcessNextTask")
     local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
     local taskId, taskTable = next(taskList)
 
@@ -94,6 +95,7 @@ function ProcessNextTask(enterpriseId)
 end
 
 function ProcessNextMessage(enterpriseId)
+    coreutils.WriteToLog("ProcessNextMessage")
     -- berichten die we accepteren
     --
     -- {subject="item list", itemName="minecraft:charcoal", itemCount=64} --> returns one or more item lists needed to craft this
@@ -104,6 +106,8 @@ function ProcessNextMessage(enterpriseId)
     -- retreive next message
     local message       = coremessage.GetNextMessage(enterpriseId)
     if type(message) ~= "table" then return false end
+
+    coreutils.WriteToLog("message.subject = "..message.subject)
 
     -- what to do?
     if message.subject == "item list"   then ProcessItemListMessage(message.data)   end
@@ -116,6 +120,7 @@ function ProcessNextMessage(enterpriseId)
 end
 
 function TaskComplete(enterpriseId)
+    coreutils.WriteToLog("TaskComplete")
     -- get enterprise data
 --    local data          = coredht.GetData("enterprises", enterpriseId)
 
