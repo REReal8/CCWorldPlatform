@@ -122,6 +122,7 @@ function BirchGrowToFile()
 
     -- loop entries
     for k, v in pairs(data) do
-        coreutils.WriteToFile(filename, v.saplings..";"..v.logs..";"..v.sticks..";"..v.fuelUsage..";"..v.growTime..";"..v.harvestTime, "append")
+        coreutils.WriteToFile(filename, v.saplings..";"..v.logs..";"..v.sticks..";"..v.fuelUsage..";"..string.format("%.3f", v.growTime)..";"..string.format("%.3f", v.harvestTime), "append")
     end
 end
+
