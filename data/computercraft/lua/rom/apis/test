@@ -22,6 +22,8 @@ function SendMessage()
 end
 
 function BirchGrow()
+    -- zorg dat er een kist onder de turtle staat met een paar saplings. De turtle moet een modem (links) en een diamond axe (rechts of inventory) hebben
+
     local saplings
     local logs
     local sticks
@@ -34,9 +36,10 @@ function BirchGrow()
     coreinventory.Equip("minecraft:diamond_axe")
 
     -- remove the ground under us, usefull for crafting later
-    turtle.digDown()
+    --turtle.digDown()
 
     -- plant the sappling
+    turtle.suckDown(1)
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
     growTime = coreutils.UniversalTime()
@@ -76,17 +79,12 @@ function BirchGrow()
         coremove.Down()
 
         -- inventory tellen
-        saplings    = coreinventory.CountItem("minecraft:birch_sapling")
+        saplings    = coreinventory.CountItem("minecraft:birch_sapling") - 1
         logs        = coreinventory.CountItem("minecraft:birch_log")
         sticks      = coreinventory.CountItem("minecraft:stick")
 
-        -- unique situation
-        if saplings == 0 then
-            local has_block, data = turtle.inspect()
-            if not has_block or type(data) ~= "table" or (data.name ~= "minecraft:birch_log" and data.name ~= "minecraft:birch_sapling") then
-                saplings = -1
-            end
-        end
+        -- sapling in the chest
+        coreinventory.DropAll("minecraft:birch_sapling", "down")
 
         -- use as fuel what we can
         for slot=1,16 do turtle.select(slot) turtle.refuel() end
@@ -106,6 +104,9 @@ function BirchGrow()
 
         -- info
         print("Fuel level: "..turtle.getFuelLevel().."units")
+
+        -- get one new sapling
+        turtle.suckDown(1)
     end
 end
 

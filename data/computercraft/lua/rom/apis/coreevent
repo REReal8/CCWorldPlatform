@@ -36,32 +36,22 @@ function ActivateModem()
     modem = peripheral.find("modem")
 
     -- did we find a modem?
-    if not modem then
+    if not modem and turtle then
         -- in case of a turtle and the server was restarted it seems to lose it's modem while it is still there
         -- below is an attempt to recover it
-        if turtle then
-          	-- try find it
-        	print( "Modem not found... trying to recover it after server reboot...")
+		-- try find it
+		print( "Modem not found... trying to recover it after server reboot...")
 
-            -- find an empty slot
-            local slot = coreinventory.GetEmptySlot()
+		-- remove item on the left and right
+		if coreinventory.GetEmptySlot() then turtle.equipLeft() end
+		if coreinventory.GetEmptySlot() then turtle.equipRight() end
 
-            -- tja, het helpt wel eens...
-            if slot then
-            	-- select the slot
-            	turtle.select(slot)
+		-- selecteer de modem als die in ons bezit is, en dan links vastmaken
+		if coreinventory.SelectItem("computercraft:wireless_modem_normal") then turtle.equipLeft() end
 
-            	-- retrieve it (although it seems not there) and place it back again (left and right)
-            	turtle.equipLeft()
-            	turtle.equipLeft()
-            	turtle.equipRight()
-            	turtle.equipRight()
-
-            	-- try find the modem again
-            	modem = peripheral.find("modem")
-            end
-        end
-    end
+		-- try find the modem again
+		modem = peripheral.find("modem")
+   end
 
  	-- did we find it now?
     if not modem then error("No modem found!") end
