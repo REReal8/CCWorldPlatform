@@ -18,7 +18,7 @@ function LetItGrow()
     -- pick up any items under us (should be nothing though)
     turtle.suckDown()
 
-    -- for a tree
+    -- wait for a tree
     local has_block, data = turtle.inspect()
     while not has_block or type(data) ~= "table" or data.name ~= "minecraft:birch_log" do
         -- ff wachten
@@ -50,8 +50,8 @@ function LetItGrow()
     LogToPlanks(logs)
 
     -- refuel
-    coreinventory.Refuel({itemName = "minecraft:birch_planks", itemCount = 4 * logs})
-    coreinventory.Refuel({itemName = "minecraft:stick", itemCount = sticks})
+    coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = 4 * logs})
+    coreinventory.Refuel({itemName = "minecraft:stick",         itemCount = sticks})
 
     -- we are ready to do more stuff!
     print("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")

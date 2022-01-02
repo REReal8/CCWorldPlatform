@@ -119,6 +119,7 @@ end
 
 function DropAllItems(direction)
     -- check the direction, lowercase only
+    direction = direction or "down"
     direction = string.lower(direction)
 
     -- we will organize what we droppen, who knows who cares

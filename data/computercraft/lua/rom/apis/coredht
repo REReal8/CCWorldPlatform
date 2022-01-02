@@ -157,12 +157,12 @@ end
 
 function DoEventGetAllData(subject, envelope)
     -- send all data back
-    coreevent.ReplyToMessage(envelope, "all data", db)
+    coreevent.ReplyToMessage(envelope, "all data", {data = db})
 end
 
 function DoEventAllData(subject, envelope)
     -- alleen als de dht nog niet ready is (en ook als we geen table ontvangen hebben)
-    if dhtReady or type(envelope.message.data) ~= "table" then return end
+    if dhtReady or type(envelope.message) ~= "table" then return end
 
 	-- just save the data to the root
 	SaveDataToDB(envelope.message.data)

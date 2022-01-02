@@ -20,3 +20,108 @@ function SendMessage()
         coreutils.UniversalTime()
     )
 end
+
+function BirchGrow()
+    local saplings
+    local logs
+    local sticks
+
+    local growTime
+    local fuelUsage
+    local harvestTime
+
+    -- quip the axe / hatchet
+    coreinventory.Equip("minecraft:diamond_axe")
+
+    -- remove the ground under us, usefull for crafting later
+    turtle.digDown()
+
+    -- plant the sappling
+    coreinventory.SelectItem("minecraft:birch_sapling")
+    turtle.place()
+    growTime = coreutils.UniversalTime()
+
+    -- endless
+    while true do
+        -- sepling just planted, record the time
+        growTime = coreutils.UniversalTime()
+
+        -- wait for a tree
+        local has_block, data = turtle.inspect()
+        while not has_block or type(data) ~= "table" or data.name ~= "minecraft:birch_log" do
+            -- ff wachten
+            os.sleep(0.25)
+
+            -- opnieuw kijken
+            has_block, data = turtle.inspect()
+        end
+
+        -- grown!
+        growTime = coreutils.UniversalTime() - growTime
+
+        -- move into position (don't count this step as harvesting)
+        coremove.Up()
+        fuelUsage   = turtle.getFuelLevel()
+        harvestTime = coreutils.UniversalTime()
+
+        -- boom omhakken
+        role_forester.KapBoom()
+
+        -- klaar met omhakken, wat hebben we geleerd?
+        fuelUsage   = fuelUsage                 - turtle.getFuelLevel()
+        harvestTime = coreutils.UniversalTime() - harvestTime
+
+        -- terug naar onze plek
+        coremove.Backward()
+        coremove.Down()
+
+        -- inventory tellen
+        saplings    = coreinventory.CountItem("minecraft:birch_sapling")
+        logs        = coreinventory.CountItem("minecraft:birch_log")
+        sticks      = coreinventory.CountItem("minecraft:stick")
+
+        -- unique situation
+        if saplings == 0 then
+            local has_block, data = turtle.inspect()
+            if not has_block or type(data) ~= "table" or (data.name ~= "minecraft:birch_log" and data.name ~= "minecraft:birch_sapling") then
+                saplings = -1
+            end
+        end
+
+        -- use as fuel what we can
+        for slot=1,16 do turtle.select(slot) turtle.refuel() end
+
+        -- clean inventory
+        coreinventory.DropAllItems("down")
+
+        -- save the data
+        coredht.SaveData({
+            saplings    = saplings,
+            logs        = logs,
+            sticks      = sticks,
+            fuelUsage   = fuelUsage,
+            growTime    = growTime,
+            harvestTime = harvestTime,
+        }, "test", "BirchGrow", coreutils.NewId())
+
+        -- info
+        print("Fuel level: "..turtle.getFuelLevel().."units")
+    end
+end
+
+function BirchGrowToFile()
+    -- get the data
+    local filename  = '/log/birchgrow.csv'
+    local data = coredht.GetData("test", "BirchGrow")
+
+    coreutils.WriteToLog("data:")
+    coreutils.WriteToLog(data)
+
+    -- new file
+    coreutils.WriteToFile(filename, "saplings;logs;sticks;fuelUsage;growTime;harvestTime", "overwrite")
+
+    -- loop entries
+    for k, v in pairs(data) do
+        coreutils.WriteToFile(filename, v.saplings..";"..v.logs..";"..v.sticks..";"..v.fuelUsage..";"..v.growTime..";"..v.harvestTime, "append")
+    end
+end

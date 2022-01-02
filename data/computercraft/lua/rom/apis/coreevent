@@ -328,7 +328,7 @@ function ProcessModemMessageEvent(side, frequency, replyFrequency, message, dist
 
 		-- write message to file, for debugging and documentation
 		coreutils.WriteToFile("/log/system.txt", "    message in: from = "..envelope.from..", protocol = "..envelope.protocol..", subject = "..envelope.subject, "a")
-		coreutils.WriteToFile("/event/"..envelope.protocol.."/"..envelope.subject, envelope)
+		coreutils.WriteToFile("/event/"..envelope.protocol.."/"..envelope.subject, envelope, "overwrite")
 
 		-- log to monitor screen
 		coreutils.WriteToMonitor("to: "..me..", from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)

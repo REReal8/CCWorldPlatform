@@ -103,8 +103,12 @@ function WriteToFile(filename, message, writemode)
 
 	-- bestand openen, schrijven en sluiten
 	local fileHandle = fs.open(filename, mode)
-	fileHandle.writeLine(message)
-	fileHandle.close()
+	if fileHandle then
+		fileHandle.writeLine(message)
+		fileHandle.close()
+	else
+		print("Cannot open file "..filename)
+	end
 end
 
 function WriteToLog(message)
