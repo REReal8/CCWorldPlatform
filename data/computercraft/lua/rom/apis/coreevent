@@ -35,23 +35,22 @@ function ActivateModem()
     -- activate the modem
     modem = peripheral.find("modem")
 
-    -- did we find a modem?
-    if not modem and turtle then
-        -- in case of a turtle and the server was restarted it seems to lose it's modem while it is still there
-        -- below is an attempt to recover it
-		-- try find it
-		print( "Modem not found... trying to recover it after server reboot...")
+	-- find a modem
+	if not modem and coreinventory.GetEmptySlot() then
 
-		-- remove item on the left and right
-		if coreinventory.GetEmptySlot() then turtle.equipLeft() end
-		if coreinventory.GetEmptySlot() then turtle.equipRight() end
+		-- make left side free
+		turtle.equipLeft()
 
-		-- selecteer de modem als die in ons bezit is, en dan links vastmaken
-		if coreinventory.SelectItem("computercraft:wireless_modem_normal") then turtle.equipLeft() end
+		-- any modem present?
+		if coreinventory.SelectItem("computercraft:wireless_modem_normal") then
 
-		-- try find the modem again
-		modem = peripheral.find("modem")
-   end
+			-- great, equip it
+			turtle.equipLeft()
+
+			-- go for the modem again
+			modem = peripheral.find("modem")
+		end
+	end
 
  	-- did we find it now?
     if not modem then error("No modem found!") end
@@ -127,13 +126,17 @@ function SendMessage(t)
 		-- coreutils.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
 
         -- actuall sending the message
-		modem.transmit(currentChannel, from, textutils.serialize({
+		if modem then modem.transmit(currentChannel, from, textutils.serialize({
 			from        = from,
 			to			= to[i],
 			protocol	= protocol,
 			subject		= subject,
 			message		= message
 		}))
+		else
+			-- weird situation
+			coreutils.WriteToLog("Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")")
+		end
 	end
 
 	-- return the (generated) message id

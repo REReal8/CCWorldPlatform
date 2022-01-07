@@ -113,6 +113,11 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
 
     -- terug (top blok nog ff hakken)
     turtle.digUp()
+
+    -- do we need the crown too?
+    if coreinventory.CountItem("minecraft:birch_sapling") < 2 then ChopCrown() end
+
+    -- back to where we started
     coremove.Down(hoogte)
 
     -- staat er een berkenboom sapling voor onze neus?
@@ -160,6 +165,17 @@ function OogstBladerenStap(ookBoven)
     if ookBoven then turtle.digUp() end
     turtle.dig()
     coremove.Forward()
+end
+
+function ChopCrown()
+    -- get to the crown
+    for i=1,2 do coremove.Up() turtle.digUp() end
+
+    -- dig around
+    for i=1,4 do turtle.dig() coremove.Right() end
+
+    -- back into position
+    for i=1,2 do coremove.Down() end
 end
 
 function Opruimen()

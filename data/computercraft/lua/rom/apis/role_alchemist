@@ -64,6 +64,16 @@ function PrepareCraftingArea(recipe, times)
     local craftArea = {false, false, false, false, false, true,  true,  true,  false, true,  true,  true,  false, true,  true,  true,  }
     local sideArea  = {true,  true,  true,  true,  true,  false, false, false, true,  false, false, false, true,  false, false, false, }
 
+    -- drop stuff we don't need
+    for slot=1,16 do
+
+        -- what is in this slot?
+        local itemDetail = coreinventory.GetItemDetail(slot)
+
+        -- something in this slot and we don't need it?
+        if itemDetail and not ItemInRecipe(itemDetail.name, recipe) then turtle.select(slot) turtle.dropDown() end
+    end
+
     -- loop the crafting area
     for slot=1,16 do
         -- only for the crafting area
@@ -130,4 +140,10 @@ function PrepareCraftingArea(recipe, times)
     end
 end
 
+function ItemInRecipe(itemName, recipe)
+    -- loop all slots
+    for slot=1,16 do if recipe[ slot ] and recipe[ slot ].itemName == itemName then return true end end
 
+    -- not present
+    return false
+end

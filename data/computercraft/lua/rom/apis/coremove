@@ -440,13 +440,20 @@ function Below( t )
 	}
 end
 
-function MoveTo( t, force )
+function MoveTo(t, force)
 	if t == nil then
 		print("Cannot move to nil location")
 		coreutils.WriteToLog("function coremove.MoveTo: Cannot move to nil location")
 		coreutils.WriteToLog(debug.traceback())
 		return false
 	end
+
+	-- might be partly given coordinates, enricht with the current coordinates
+	t.x  = t.x  or db.x
+	t.y  = t.y  or db.y
+	t.z  = t.z  or db.z
+	t.dx = t.dx or db.dx
+	t.dy = t.dy or db.dy
 
 	-- might be a difficult route, try more times
 	for i=1,3 do

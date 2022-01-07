@@ -8,8 +8,8 @@ local db = {
     recipes        = {
         ["minecraft:stick"] = {
             crafting  = {
-                  [6]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                 [10]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                  [6]    = { itemName = "minecraft:birch_planks",   itemCount = 1 },
+                 [10]    = { itemName = "minecraft:birch_planks",   itemCount = 1 },
                 yield   = 4
             },
         },
@@ -22,27 +22,27 @@ local db = {
         },
         ["minecraft:torch"] = {
             crafting  = {
-                 [6]    = { itemName = "minecraft:charcoal", itemCount = 1 },
-                [10]    = { itemName = "minecraft:stick", itemCount = 1 },
+                 [6]    = { itemName = "minecraft:charcoal",        itemCount = 1 },
+                [10]    = { itemName = "minecraft:stick",           itemCount = 1 },
                yield   = 4
            },
         },
         ["minecraft:birch_planks"] = {
             crafting  = {
-                 [6]    = { itemName = "minecraft:birch_log", itemCount = 1 },
+                 [6]    = { itemName = "minecraft:birch_log",       itemCount = 1 },
                 yield   = 4
             },
         },
         ["minecraft:chest"] = {
             crafting  = {
-                 [6]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                 [7]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                 [8]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                [10]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                [12]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                [14]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                [15]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
-                [16]    = { itemName = "minecraft:birch_planks", itemCount = 1 },
+                 [6]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                 [7]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                 [8]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                [10]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                [12]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                [14]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                [15]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
+                [16]    = { itemName = "minecraft:birch_planks",    itemCount = 1 },
                 yield   = 1
             },
         },

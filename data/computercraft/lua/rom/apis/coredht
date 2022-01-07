@@ -81,7 +81,7 @@ function SaveData(data, ...)
     -- update the version
     db._version = db._version + 1
 
-    -- send other what we are about to write
+    -- send other what we are about to write (if event is ready ofcourse)
     coreevent.SendMessage({
 	    protocol    = protocol,
 	    subject     = "save data",

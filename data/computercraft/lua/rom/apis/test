@@ -1,6 +1,30 @@
 local db = {}
 
 -- bestand voor eenvoudiger testen, diverse commando's kunnen hier makkelijk bij elkaar gezet worden
+function Test()
+    local recipe = {
+        [6] = {itemName = "minecraft:cobblestone", itemCount = 1},
+        [7] = {itemName = "minecraft:cobblestone", itemCount = 1},
+        [8] = {itemName = "minecraft:cobblestone", itemCount = 1},
+       [10] = {itemName = "minecraft:cobblestone", itemCount = 1},
+       [12] = {itemName = "minecraft:cobblestone", itemCount = 1},
+       [14] = {itemName = "minecraft:cobblestone", itemCount = 1},
+       [15] = {itemName = "minecraft:cobblestone", itemCount = 1},
+       [16] = {itemName = "minecraft:cobblestone", itemCount = 1},
+       yield = 1
+   }
+
+   -- drop stuff we don't need
+   for slot=1,16 do
+
+        -- what is in this slot?
+        local itemDetail = coreinventory.GetItemDetail(slot)
+
+        -- something in this slot and do we need it?
+        if itemDetail and not role_alchemist.ItemInRecipe(itemDetail.name, recipe) then turtle.select(slot) turtle.dropDown() end
+    end
+end
+
 function NewAlchemist()
     enterprise_alchemie.NewAlchemieSite({
         location    = {y = 0, x = 0, z = 0, dx = 0, dy = 1, },
@@ -42,7 +66,6 @@ function BirchGrow()
     turtle.suckDown(1)
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
-    growTime = coreutils.UniversalTime()
 
     -- endless
     while true do
@@ -50,7 +73,7 @@ function BirchGrow()
         growTime = coreutils.UniversalTime()
 
         -- wait for a tree
-        local has_block, data = turtle.inspect()
+        local has_block, data
         while not has_block or type(data) ~= "table" or data.name ~= "minecraft:birch_log" do
             -- ff wachten
             os.sleep(0.25)

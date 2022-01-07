@@ -174,14 +174,17 @@ function DropAll(itemName, direction)
 end
 
 function Equip(itemName)
-    -- find empty spot
-    coreinventory.GetEmptySlot()
+    local slot = nil
 
-    -- remember this slot
-    local slot  = turtle.getSelectedSlot()
+    -- find empty spot (remove current equiped to the right when we have an empty spot)
+    if coreinventory.GetEmptySlot() then
 
-    -- remove item on the right side (modem on the left) if there is anything equiped ofcourse
-    turtle.equipRight()
+        -- remember this slot
+        slot = turtle.getSelectedSlot()
+
+        -- remove item on the right side (modem on the left) if there is anything equiped ofcourse
+        turtle.equipRight()
+    end
 
     -- find the crafting table
     coreinventory.SelectItem(itemName)
@@ -190,21 +193,33 @@ function Equip(itemName)
     local itemDetail = coreinventory.GetItemDetail()
 
     -- equip when found
-    if itemDetail then return turtle.equipRight()
+    if itemDetail then
+        -- great!
+        return turtle.equipRight()
     else
         -- not found, restore
-        turtle.select(slot)
-        turtle.equipRight()
+        if slot then
+            turtle.select(slot)
+            turtle.equipRight()
+        end
 
         -- done
         return nil
     end
 end
 
-function Refuel(fuel)
+function Refuel(fuel) -- needs expansion when fuel is devided over multiple slots
+    -- check parameter
+    if type(fuel) ~= "table" or type(fuel.itemCount) ~= "number" or fuel.itemCount < 1 then return false end
+
     -- find the fuel in the inventory
     SelectItem(fuel.itemName)
 
     -- do the refuelling
-    turtle.refuel(fuel.itemCound)
+    turtle.refuel(fuel.itemCount)
+
+    -- done
+    return true
 end
+
+
