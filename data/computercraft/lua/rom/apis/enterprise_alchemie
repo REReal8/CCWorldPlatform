@@ -51,7 +51,7 @@ local db = {
 
 function NewAlchemieSite(data)
     -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
-    -- data.type = "simpel" | "regular"
+    -- data.type = "simple" | "regular"
     local enterpriseId   = coreutils.NewId()
 
     -- data verrijken
@@ -69,7 +69,7 @@ function NewAlchemieSite(data)
     -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
     corejob.NewJob({
         enterpriseId    = enterpriseId,
-        location        = coremove.GetRelativeLocationFront(data.location, 0), -- kopie van locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
+        location        = coremove.CopyLocation(data.location, 0), -- kopie van locatie van het alchemisten centrum, waar het werk (waarschijnlijk) plaats zal vinden
         startTime       = coreutils.UniversalTime(),
         needTool        = true,
         needTurtle      = true
@@ -189,7 +189,7 @@ function ProcessItemListMessage(message)
     end
 
     -- send message back
-    coremessage.ReplyToMessage(message, responseData)
+    coremessage.ReplyToMessage(message, "item list response", responseData)
 end
 
 function ProcessClaimChestMessage(message)
@@ -220,7 +220,7 @@ function ProcessClaimChestMessage(message)
     end
 
     -- send message back
-    coremessage.ReplyToMessage(message, responseData)
+    coremessage.ReplyToMessage(message, "claim chest response", responseData)
 end
 
 function ProcessFreeChestMessage(message)
