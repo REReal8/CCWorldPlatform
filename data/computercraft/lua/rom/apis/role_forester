@@ -108,8 +108,9 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
     coremove.Up()
 
     -- al het hout is weg (op het top blok na), nu de bladeren
-    if schaarste then OogstBladerenBuitenkant(true) end
-    OogstBladerenBuitenkant(false)
+    OogstBladerenVolledig()
+    -- if schaarste then OogstBladerenBuitenkant(true) end
+    -- OogstBladerenBuitenkant(false)
 
     -- terug (top blok nog ff hakken)
     turtle.digUp()
@@ -131,6 +132,58 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
         if coreinventory.SelectItem("minecraft:birch_sapling")  then turtle.placeDown()
                                                                 else coreutils.Error("No birch sapling to plant") end
     end
+end
+
+function OogstBladerenVolledig()
+-- 561→2
+-- ↑↓↑9↓
+-- ↑↓0↑↓
+-- ↑7→8↓
+-- 4←←←3
+
+    OogstBladerenForward(true)
+    OogstBladerenForward(false)
+    coremove.Right()            -- 1
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    coremove.Right()            -- 2
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    coremove.Right()            -- 3
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    coremove.Right()            -- 4
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    OogstBladerenForward(false)
+    coremove.Right()            -- 5
+    OogstBladerenForward(false)
+    coremove.Right()            -- 6
+    OogstBladerenForward(true)
+    OogstBladerenForward(true)
+    OogstBladerenForward(true)
+    coremove.Left()             -- 7
+    OogstBladerenForward(true)
+    OogstBladerenForward(true)
+    coremove.Left()             -- 8
+    OogstBladerenForward(true)
+    OogstBladerenForward(true)
+    coremove.Left()             -- 9
+    coremove.Forward()
+    coremove.Right()
+    coremove.Backward()         -- returg op 0
+end
+
+function OogstBladerenForward(ookBoven)
+    turtle.dig()
+    coremove.Forward()
+    if ookBoven then turtle.digUp() end
+    turtle.digDown()
 end
 
 function OogstBladerenBuitenkant(buitenKant)
