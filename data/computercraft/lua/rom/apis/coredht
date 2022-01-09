@@ -1,6 +1,7 @@
 local db             = { _version = 0 }
 local dhtReady          = false
 local dhtReadyFunctions = {}
+local writeToFileQueued = false
 local filename          = "/db/dht.lua"
 local logfile           = "/log/dht.txt"
 local protocol          = "core:dht"
@@ -140,10 +141,24 @@ function SaveDataToDB(data, ...)
     end
 
     -- save the db table to a file
-    coreutils.WriteToFile(filename, db, "overwrite")
+    if not writeToFileQueued then
+        -- now it is in the queue
+        writeToFileQueued = true
+
+        -- add to the work queue
+        coretask.AddWork(SaveDBToFile)
+    end
 
     -- return the data itself
     return data
+end
+
+function SaveDBToFile()
+    -- no longer in the queue since we are doing it now
+    writeToFileQueued = false
+
+    -- save the db table to a file (this may take some time with larger dht's)
+    coreutils.WriteToFile(filename, db, "overwrite")
 end
 
 --                         _
