@@ -45,14 +45,14 @@ end
 
 function ReplyToMessage(message, subject, data, notBefore)
     -- reference present?
-    if message.data.reference then
+    if type(message.data) == "table" and message.data.reference then
         if type(data) == "table"    then data.reference = message.data.reference
                                     else data           = {reference = message.data.reference}
         end
     end
 
     -- new subject?
-    if not subject then subject = message.subject end
+    if not subject then subject = message.subject .. " response" end
 
     -- just send the message back
     SendMessageToId(message.recipient, message.sender, subject, data, notBefore)
