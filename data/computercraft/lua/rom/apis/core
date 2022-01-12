@@ -27,10 +27,11 @@ function Init()
 	coreinventory.Init()
 	corejob.Init()
 	coremap.Init()
-	coremessage.Init()
 	coremove.Init()
 	coretask.Init()
 	coreutils.Init()
+
+	enterprise.Init()
 
 	-- set the new status
 	db.systemStatus = "initialized"
@@ -48,10 +49,11 @@ function Setup()
 	coreinventory.Setup()
 	corejob.Setup()
 	coremap.Setup()
-	coremessage.Setup()
 	coremove.Setup()
 	coretask.Setup()
 	coreutils.Setup()
+
+	enterprise.Setup()
 
 	-- set new status
 	db.systemStatus = "ready"

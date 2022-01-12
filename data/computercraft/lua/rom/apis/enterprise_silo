@@ -27,17 +27,13 @@ function NewSilo(data)
 end
 
 function ProcessNextTask(enterpriseId)
-    local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
-    local taskId, taskTable = next(taskList)
+    local taskData = enterprise.GetNextTask(enterpriseId)
 
     -- did we get a task?
-    if not taskId or type(taskTable) ~= "table" then return end
-
-    -- remove from the task list once completed
-    coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
+    if type(taskData) ~= "table" then return end
 
     -- execute this command using the task queue
-    if taskTable.alchemieType == "collect"  then return coretask.AddWork(role_silo_worker.Collect, taskTable) end
+    if taskData.subject == "organize top chests" then return coretask.AddWork(role_silo_worker.Collect, taskData) end
 end
 
 function ProcessNextMessage(enterpriseId)

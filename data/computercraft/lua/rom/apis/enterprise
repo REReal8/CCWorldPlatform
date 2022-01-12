@@ -96,6 +96,15 @@ function GetMessageId(message)          return message.messageId    end
 function GetMessageSender(message)      return message.sender       end
 function GetMessageRecipient(message)   return message.recipient    end
 
+--    _            _
+--   | |          | |
+--   | |_ __ _ ___| | __
+--   | __/ _` / __| |/ /
+--   | || (_| \__ \   <
+--    \__\__,_|___/_|\_\
+--
+--
+
 function AddTask(enterpriseId, taskData)
     -- check parameters
     if not enterpriseId or not taskData then return end
@@ -112,7 +121,7 @@ function AddTask(enterpriseId, taskData)
     coredht.SaveData(task, "tasks", taskId)
 end
 
-function GetNextTask(enterpriseId)
+function GetNextTask(enterpriseId, justPeek) -- justPeek = true won't remove the task from the task list
     -- check parameters
     if not enterpriseId then return end
 
@@ -136,7 +145,7 @@ function GetNextTask(enterpriseId)
     end
 
     -- found any? --> remove from the dht
-    if taskId then coredht.SaveData(nil, "tasks", taskId) end
+    if taskId and not justPeek then coredht.SaveData(nil, "tasks", taskId) end
 
     -- done
     return task
