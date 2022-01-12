@@ -11,11 +11,11 @@ function Setup()
 end
 
 function DHTReadySetup()
-    -- kijken of onze key wel bestaat in de dht
-    local messages = coredht.GetData("messages")
+    -- en, bestaan de messages?
+    if not coredht.GetData("messages") then coredht.SaveData({}, "messages") end
 
-    -- en, bestaat deze?
-    if not messages then coredht.SaveData({}, "messages") end
+    -- tasks ook?
+    if not coredht.GetData("tasks") then coredht.SaveData({}, "tasks") end
 
     -- opslaan in de dht
     MessageToDHT()
@@ -95,6 +95,52 @@ end
 function GetMessageId(message)          return message.messageId    end
 function GetMessageSender(message)      return message.sender       end
 function GetMessageRecipient(message)   return message.recipient    end
+
+function AddTask(enterpriseId, taskData)
+    -- check parameters
+    if not enterpriseId or not taskData then return end
+
+    -- create a new task
+    local taskId    = coreutils.NewId()
+    local task      = {
+        enterpriseId    = enterpriseId,
+        time            = coreutils.UniversalTime(),
+        taskData        = taskData
+    }
+
+    -- save to the dht
+    coredht.SaveData(task, "tasks", taskId)
+end
+
+function GetNextTask(enterpriseId)
+    -- check parameters
+    if not enterpriseId then return end
+
+    -- local vars
+    local tasks     = coredht.GetData("tasks")
+    local taskTime  = math.huge
+    local taskId    = nil
+    local task      = nil
+
+    -- find the oldest task
+    for id, taskData in pairs(tasks) do
+
+        -- newer one?
+        if enterpriseId == taskData.enterpriseId and taskTime > taskData.time then
+
+            -- use this one
+            taskTime    = taskData.time
+            taskId      = id
+            task        = taskData
+        end
+    end
+
+    -- found any? --> remove from the dht
+    if taskId then coredht.SaveData(nil, "tasks", taskId) end
+
+    -- done
+    return task
+end
 
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
