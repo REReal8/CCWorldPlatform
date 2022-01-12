@@ -102,7 +102,7 @@ function ProcessNextMessage(enterpriseId)
     -- {subject="make item", itemName="minecraft:charcoal", itemCount=64, resource="inventory"|{location tabel} } --> will make the items and returns message when complete
 
     -- retreive next message
-    local message       = coremessage.GetNextMessage(enterpriseId)
+    local message       = enterprise.GetNextMessage(enterpriseId)
     if type(message) ~= "table" then return false end
 
     -- what to do?
@@ -189,12 +189,12 @@ function ProcessItemListMessage(message)
     end
 
     -- send message back
-    coremessage.ReplyToMessage(message, "item list response", responseData)
+    enterprise.ReplyToMessage(message, "item list response", responseData)
 end
 
 function ProcessClaimChestMessage(message)
     -- get enterprise data
-    local enterpriseId  = coremessage.GetMessageRecipient(message)
+    local enterpriseId  = enterprise.GetMessageRecipient(message)
     local data          = coredht.GetData("enterprises", enterpriseId)
     local topchests     = data.topchests
     local responseData  = {}
@@ -220,12 +220,12 @@ function ProcessClaimChestMessage(message)
     end
 
     -- send message back
-    coremessage.ReplyToMessage(message, "claim chest response", responseData)
+    enterprise.ReplyToMessage(message, "claim chest response", responseData)
 end
 
 function ProcessFreeChestMessage(message)
     -- voor wie zijn we aan het werk?
-    local enterpriseId = coremessage.GetMessageRecipient(message)
+    local enterpriseId = enterprise.GetMessageRecipient(message)
 
     -- check parameters
     if type(message) ~= "table" or type(message.data) ~= table then return nil end
@@ -246,7 +246,7 @@ function ProcessMakeItemMessage(message)
     -- message.data.ingredientsLocation -- "inventory"|{location table}
 
     -- voor wie zijn we aan het werk?
-    local enterpriseId = coremessage.GetMessageRecipient(message)
+    local enterpriseId = enterprise.GetMessageRecipient(message)
 
     -- check parameters
     local messageData               = message.data
@@ -272,7 +272,7 @@ function ProcessMakeItemMessage(message)
     if craftingRecipe ~= nil then
         coredht.SaveData({
             taskId              = taskId,
-            messageId           = coremessage.GetMessageId(message),
+            messageId           = enterprise.GetMessageId(message),
             created             = coreutils.UniversalTime(),
             alchemieType        = "craft",
             recipe              = textutils.unserialize(textutils.serialize(craftingRecipe)),
