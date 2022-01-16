@@ -60,6 +60,10 @@ function GetItemDetail(slot)
     return data
 end
 
+function GetStackSize(itemName)
+    return coredht.GetData("allItems", itemName, "stackSize") or 64
+end
+
 function SelectItem(itemName)
     -- eerst huidige slot onderzoeken
     local data = GetItemDetail()
