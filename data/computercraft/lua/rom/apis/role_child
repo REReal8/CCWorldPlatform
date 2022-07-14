@@ -147,14 +147,15 @@ function LetItGrow()
     LogToTorches(torchesNeeded)
 
     -- redo first tree according to pattern
+    print(">Finishing Forest<")
     BuildNewTreePattern( 0, 0, 0)
 
     -- finish the crafting station
-    print(">running FinishCraftingStation<")
+    print(">Finishing Crafting Station<")
     FinishCraftingStation()
 
     -- make a first (small) silo
-    print(">running BuildSmallSilo<")
+    print(">Building SmallSilo<")
     BuildSmallSilo()
 
     -- back to start position
@@ -182,6 +183,8 @@ function Reset()
 end
 
 function HarvestForest()
+    print(" Harvesting Forest")
+
     -- go to first tree position
     coremove.GoTo(db.startLocation)
 
@@ -220,10 +223,10 @@ function Refuel()
     local minFuel       = 500
     local refuelLevel   = 1000
 
-    print("Refuel: current level: " .. turtle.getFuelLevel())
 
     -- do we need to refuel?
     if fuelLevel < minFuel then
+        print(" Attempt refueling from " .. fuelLevel .. " to " .. refuelLevel .. ".")
         -- determine present en wanted, process the lowest value of both values
         local logs        = coreinventory.CountItem("minecraft:birch_log")
         local logsNeeded  = math.ceil((refuelLevel - fuelLevel ) / 60)    -- 1 log --> 4 planks, 4 planks have a burn value of 60 (15 each)
@@ -236,12 +239,14 @@ function Refuel()
         local planksPresent   = coreinventory.CountItem("minecraft:birch_planks")
         coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planksPresent})
 
-        print("Refuel: new level: " .. turtle.getFuelLevel())
+        print(" refueled to " .. turtle.getFuelLevel())
+    else
+        print(" Already above (=" .. fuelLevel .. ") minumum(=" .. minLevel .. ") fuellevel.")
     end
 end
 
 function TryExtendForest(nTrees)
-    print("Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
+    print(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
 
     -- craft torches
     LogToTorches(4)
