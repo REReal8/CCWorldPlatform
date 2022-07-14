@@ -10,65 +10,15 @@ function BuildForest(funcData)
 end
 
 
-function R()
-    TF({x=0, y=4, z=-2, dx=0, dy=1})
-    print("klaar met 1")
-    TF({x=6, y=10, z=-2, dx=0, dy=1})
-    print("klaar met 2")
-    TF({x=6, y=4, z=-2, dx=0, dy=1})
-    print("klaar met 3")
-    TF({x=0, y=10, z=-2, dx=0, dy=1})
-    print("klaar met 4")
-end
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
 
-function RD(z)
-    for lx=0, 5 do
-        for ly=0, 5 do
-            TD({x=lx, y=ly, z=z, dx=0, dy=1})
-        end
-    end
-end
-
-function TD(startpoint)
---    print("startpoint=" .. textutils.serialize(startpoint))
-    local data = {
-        startpoint  = startpoint,
-        angle    = 0, -- 0 90 180 270
-        pattern = {
-            deltaX      = 1, --    > 0
-            deltaY      = 1, --    > 0
-            objectList  = {
-                { x = 0, y = 0, block = "minecraft:dirt"},
-            },
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true, -- false
-    }
-
-    BuildRectangle(data)
-end
-
-
-function TF(startpoint)
-    local data = {
-        startpoint  = startpoint,
-        angle    = 0, -- 0 90 180 270
-        pattern = {
-            deltaX      = 6, --    > 0
-            deltaY      = 6, --    > 0
-            objectList  = {
-                { x = 0, y = 0, block = "minecraft:torch"},
-                { x = 0, y = 3, block = "minecraft:birch_sapling"},
-                { x = 3, y = 3, block = "minecraft:torch"},
-                { x = 3, y = 0, block = "minecraft:birch_sapling"},
-            },
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true, -- false
-    }
-
-    BuildRectangle(data)
-end
 
 function BuildRectangle(data)
     -- orientatie
