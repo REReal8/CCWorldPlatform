@@ -42,7 +42,12 @@ function BuildRectangle(data)
     -- walk along x
     for x=0, data.pattern.deltaX - 1 do
         -- walk along y
-        for y=0, data.pattern.deltaY - 1 do
+        for iY=0, data.pattern.deltaY - 1 do
+            -- determine y value such that path is back and forth in y
+            local y = iY
+            if x % 2 == 1 then
+                y = data.pattern.deltaY - 1 - iY
+            end
 
             -- ga naar de locatie
             coremove.MoveTo(coremove.GetRelativeLocation(data.startpoint, x, y, deltaZ), true)
