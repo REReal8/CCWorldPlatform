@@ -1,0 +1,92 @@
+-- the table that stores the data
+local db = {
+    job         = "excavator",
+}
+
+
+--                    _          __                  _   _                 
+--                   (_)        / _|                | | (_)                
+--    _ __ ___   __ _ _ _ __   | |_ _   _ _ __   ___| |_ _  ___  _ __  ___ 
+--   | '_ ` _ \ / _` | | '_ \  |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | | | | | (_| | | | | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_| |_| |_|\__,_|_|_| |_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
+
+function Excavate(excavateData)
+    -- Usage:
+    --
+    --
+    
+    -- debugging
+    coreutils.WriteToLog("role_excavator:Excavate("..textutils.serialize(excavateData)..")")
+
+    -- move to the excavation location
+--    local startLocation = coremove.GetRelativeLocationFront(excavateData.startLocation, 0)
+    local startLocation = excavateData.startLocation
+    coreutils.WriteToLog("  got to startLocation=("..textutils.serialize(startLocation)..")")
+    coremove.GoTo(excavateData.startLocation)
+
+    -- ToDo: implement multiple levels
+    local dimensions = excavateData.dimensions
+    local nrLevels = math.floor(dimensions.dz / 3) + 1
+
+    local alsoDown = false
+    local alsoUp = false
+
+    -- position on begin 1st row
+    -- ToDo: ensure facing in x direction
+    ExcavateForward(alsoDown, alsoUp)
+
+    -- excavate the level (max 3 hight)
+    for iY=1, dimensions.dy do
+        for iX=1, dimensions.dx-1 do
+            coreutils.WriteToLog("  (ix,iy)=("..iX..","..iY.."): loc="..textutils.serialize(coremove.GetLocation()))
+            ExcavateForward(alsoDown, alsoUp)
+        end
+        
+        -- position to begin of next row
+        if iY % 2 == 0 then
+            coremove.Right()
+            ExcavateForward(alsoDown, alsoUp)
+            coremove.Right()
+        else
+            coremove.Left()
+            ExcavateForward(alsoDown, alsoUp)
+            coremove.Left()
+        end
+    end
+ 
+    -- dump gathered materials on output location (if provided)
+    local outputLocation = excavateData.outputLocation
+    if type(outputLocation) == "table" then
+        -- move to output location
+        coremove.GoTo(outputLocation)
+
+        -- dump the stuff
+        coreinventory.DropAllItems("Down")
+    end
+
+    -- optionally move back to start location
+    if backToStartLocation then
+        -- move to start location
+        coreutils.WriteToLog("  got back to startLocation=("..textutils.serialize(startLocation)..")")
+        coremove.GoTo(startLocation)
+    end
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
+
+function ExcavateForward(alsodown, alsoUp)
+    turtle.dig()
+    coremove.Forward()
+    if alsoDown then turtle.digDown() end
+    if alsoUp then turtle.digUp() end
+end

@@ -150,3 +150,13 @@ function BirchGrowToFile()
     end
 end
 
+
+function Excavate()
+    role_excavator.Excavate({
+        startLocation       = {y = 0, x = 0, z = 0, dx = 0, dy = 1 },
+        dimensions          = {dx = 6, dy = 3, dz = 1 },
+        outputLocation      = "inventory",
+        backToStartLocation = true
+    })
+end
+
