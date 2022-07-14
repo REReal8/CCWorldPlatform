@@ -241,7 +241,7 @@ function Refuel()
 
         print(" refueled to " .. turtle.getFuelLevel())
     else
-        print(" Already above (=" .. fuelLevel .. ") minumum(=" .. minLevel .. ") fuellevel.")
+        print(" Already above (=" .. fuelLevel .. ") minumum(=" .. minFuel .. ") fuellevel.")
     end
 end
 
