@@ -1,7 +1,17 @@
--- lua
+local db	= {
+	dbFilename  = "/db/coreinventory.lua",
+	protocol	= "coreinventory",
+    left        = "",
+    right       = "",
+}
 
+-- init, read last db from file
 function Init()
-    -- niks te doen voor init
+	-- read from file
+	local dbFile = coreutils.ReadTableFromFile(db.dbFilename)
+
+	-- check for empty table --> https://stackoverflow.com/questions/1252539/most-efficient-way-to-determine-if-a-lua-table-is-empty-contains-no-entries
+	if next(dbFile) ~= nil then db = dbFile end
 end
 
 function Setup()
@@ -61,6 +71,7 @@ function GetItemDetail(slot)
 end
 
 function GetStackSize(itemName)
+    -- return what the dht has, otherwise 64 as default value
     return coredht.GetData("allItems", itemName, "stackSize") or 64
 end
 
@@ -154,6 +165,7 @@ end
 
 function DropAll(itemName, direction)
     -- check the direction, lowercase only
+    direction = direction or "front"
     direction = string.lower(direction)
 
     -- alle slots nalopen
@@ -180,6 +192,9 @@ end
 function Equip(itemName)
     local slot = nil
 
+    -- already equiped?
+    if db.right == itemName then return true end
+
     -- find empty spot (remove current equiped to the right when we have an empty spot)
     if coreinventory.GetEmptySlot() then
 
@@ -194,10 +209,13 @@ function Equip(itemName)
     coreinventory.SelectItem(itemName)
 
     -- did we found one?
-    local itemDetail = coreinventory.GetItemDetail()
+    if coreinventory.GetItemDetail() then
+        -- remember this
+        db.right    = itemName
 
-    -- equip when found
-    if itemDetail then
+       	-- write to disk
+        coreutils.WriteToFile(db.dbFilename, db, "overwrite")
+
         -- great!
         return turtle.equipRight()
     else

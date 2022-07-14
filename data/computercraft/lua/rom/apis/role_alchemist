@@ -45,9 +45,38 @@ function Craft(craftData)
 end
 
 function Smelt(requestDetails)
+    -- prepare
+    local times     = math.ceil(requestDetails.itemCount / requestDetails.recipe.yield)
+
+    -- go to the furnace
+    coremove.GoTo(requestDetails.entryLocation)
+    coremove.GoTo(coremove.GetRelativeLocation(requestDetails.workingLocation, 0, 0, 1))
+
+    -- move on top of the furnace
+    coremove.Forward()
+
+    -- fill furnace with it's ingredient
+    coreinventory.SelectItem(requestDetails.recipe.ingredient)
+    turtle.dropDown(times)
+
+    -- move to the front of the furnace
+    coremove.GoTo(requestDetails.workingLocation)
+
+    -- fill the furnace with fuel
+    coreinventory.SelectItem(requestDetails.fuel)
+    turtle.drop(1)
 end
 
 function Pickup(requestDetails)
+    -- go to the furnace
+    coremove.GoTo(requestDetails.entryLocation)
+    coremove.GoTo(coremove.GetRelativeLocation(requestDetails.workingLocation, 0, 0, -1))
+
+    -- move below the furnace
+    coremove.Forward()
+
+    -- suck the furnace empty
+    turtle.suckUp()
 end
 
 --    _                 _    __                  _   _

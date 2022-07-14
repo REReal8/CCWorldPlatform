@@ -10,9 +10,23 @@ function Rondje(funcData)
     coreutils.WriteToLog("Forester.Rondje()")
     coreutils.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
 
+    local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
+
+    -- stop if we don't meet the needs
+    if not axePresent then
+        -- no good
+        print("Missing item(s) for Rondje:")
+        if not axePresent       then print ("* Need a diamond axe") end
+
+        -- done here
+        return false
+    end
+
     -- init
     local depth = funcData.depth
     local width = funcData.width
+    local dontCleanup = funcData.dontCleanup
+--    print ("Rondje with: depth=" .. depth .. ", width=" .. width .. ", dontCleanup=" .. tostring(dontCleanup))
 
     -- eerst in positie komen (in de stam van de eerste boom)
     coremove.Up()
@@ -55,7 +69,9 @@ function Rondje(funcData)
     coremove.Down()
 
     -- spullen opruimen
-    Opruimen()
+    if not dontCleanup then
+        Opruimen()
+    end
 end
 
 function Vooruit(aantal)

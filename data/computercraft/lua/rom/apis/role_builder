@@ -10,6 +10,131 @@ function BuildForest(funcData)
 end
 
 
+function R()
+    TF({x=0, y=4, z=-2, dx=0, dy=1})
+    print("klaar met 1")
+    TF({x=6, y=10, z=-2, dx=0, dy=1})
+    print("klaar met 2")
+    TF({x=6, y=4, z=-2, dx=0, dy=1})
+    print("klaar met 3")
+    TF({x=0, y=10, z=-2, dx=0, dy=1})
+    print("klaar met 4")
+end
+
+function RD(z)
+    for lx=0, 5 do
+        for ly=0, 5 do
+            TD({x=lx, y=ly, z=z, dx=0, dy=1})
+        end
+    end
+end
+
+function TD(startpoint)
+--    print("startpoint=" .. textutils.serialize(startpoint))
+    local data = {
+        startpoint  = startpoint,
+        angle    = 0, -- 0 90 180 270
+        pattern = {
+            deltaX      = 1, --    > 0
+            deltaY      = 1, --    > 0
+            objectList  = {
+                { x = 0, y = 0, block = "minecraft:dirt"},
+            },
+            clearRemainingSpace = true, -- false
+        },
+        buildFromAbove  = true, -- false
+    }
+
+    BuildRectangle(data)
+end
+
+
+function TF(startpoint)
+    local data = {
+        startpoint  = startpoint,
+        angle    = 0, -- 0 90 180 270
+        pattern = {
+            deltaX      = 6, --    > 0
+            deltaY      = 6, --    > 0
+            objectList  = {
+                { x = 0, y = 0, block = "minecraft:torch"},
+                { x = 0, y = 3, block = "minecraft:birch_sapling"},
+                { x = 3, y = 3, block = "minecraft:torch"},
+                { x = 3, y = 0, block = "minecraft:birch_sapling"},
+            },
+            clearRemainingSpace = true, -- false
+        },
+        buildFromAbove  = true, -- false
+    }
+
+    BuildRectangle(data)
+end
+
+function BuildRectangle(data)
+    -- orientatie
+    local deltaZ    = 1
+    if data.buildFromAbove  then deltaZ    =  1
+                            else deltaZ    = -1
+    end
+
+    -- check if inventory has what we need
+
+    -- pickaxe mandatory!
+    local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
+    if not axePresent then
+        coreutils.WriteToLog("role_bilder.BuildRectangle(): No pickaxe present, we are on strike!")
+        return
+    end
+
+    -- go to starting location
+    coremove.GoTo(coremove.GetRelativeLocation(data.startpoint, 0, 0, deltaZ), true)
+
+    -- walk along x
+    for x=0, data.pattern.deltaX - 1 do
+        -- walk along y
+        for y=0, data.pattern.deltaY - 1 do
+
+            -- ga naar de locatie
+            coremove.MoveTo(coremove.GetRelativeLocation(data.startpoint, x, y, deltaZ), true)
+
+            -- moeten we hier wat plaatsen?
+            local placingBlock  = false
+            for i, object in ipairs(data.pattern.objectList) do
+
+                -- juiste coordinaat?
+                if object.x == x and object.y == y then
+
+                    -- onthouden voor zo
+                    placingBlock = true
+
+                    -- block nu plaatsen
+                    if coreinventory.SelectItem(object.block) then
+                        if data.buildFromAbove  then turtle.digDown()   turtle.placeDown()
+                                                else turtle.digUp()     turtle.placeUp()
+                        end
+                    else
+                        -- mandatory item not in inventory, error message and ignore
+                        coreutils.WriteToLog("Oops, BuildRectangle() item not in inventory: " .. object.block)
+                    end
+
+                    -- klaar met deze loop
+                    break
+                end
+            end
+
+            -- nee? Dan iets weghalen?
+            if not placingBlock and data.pattern.clearRemainingSpace then
+
+                -- vak schoon maken
+                if data.buildFromAbove  then turtle.digDown()
+                                        else turtle.digUp()
+                end
+            end
+        end
+    end
+end
+
+
 --[[
 function Rondje()
     -- eerst in positie komen (in de stam van de eerste boom)

@@ -33,7 +33,7 @@ function ProcessNextTask(enterpriseId)
     if type(taskData) ~= "table" then return end
 
     -- execute this command using the task queue
-    if taskData.subject == "organize top chests" then return coretask.AddWork(role_silo_worker.Collect, taskData) end
+    if taskData.subject == "organize top chests" then return coretask.AddWork(role_silo_worker.OrganizeTopChests, taskData) end
 end
 
 function ProcessNextMessage(enterpriseId)
@@ -52,8 +52,8 @@ function ProcessNextMessage(enterpriseId)
     -- what to do?
     if message.subject == "claim chest"     then ProcessClaimChestMessage(message)      end
     if message.subject == "free chest"      then ProcessFreeChestMessage(message)       end
-    if message.subject == "items available" then ProcessItemsAvailableMessage(message)  end
-    if message.subject == "items deliverd"  then ProcessItemsDeliveredMessage(message)  end
+    if message.subject == "items available" then ProcessItemsAvailableMessage(message)  end     -- returns a list of all items available in this storage
+    if message.subject == "items deliverd"  then ProcessItemsDeliveredMessage(message)  end     -- notification that items have been delivered
     if message.subject == "items requested" then ProcessItemsRequestedMessage(message)  end
 
     -- we did something, impressive
@@ -163,7 +163,6 @@ function ProcessItemsDeliveredMessage(message)
     -- voor wie zijn we aan het werk?
     local enterpriseId  = enterprise.GetMessageRecipient(message)
     local data          = coredht.GetData("enterprises", enterpriseId)
-
 
     -- good to know, we assume the itemList is correct
     local chestItemList       = data.topchests[ message.source["chestId"] ].itemList
