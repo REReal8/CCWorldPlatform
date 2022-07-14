@@ -107,6 +107,13 @@ function BuildRectangle(data)
                     -- onthouden voor zo
                     placingBlock = true
 
+                    -- moeten we in een specifieke richting draaien?
+                    if object.dx ~= nil and object.dy ~= nil then
+
+                        -- turn in the right direction
+                        coremove.TurnTo({dx = object.dx, dy = object.dy})
+                    end
+
                     -- block nu plaatsen
                     if coreinventory.SelectItem(object.block) then
                         if data.buildFromAbove  then turtle.digDown()   turtle.placeDown()

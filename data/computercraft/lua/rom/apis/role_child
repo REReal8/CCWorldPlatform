@@ -6,6 +6,7 @@ local db = {
     nTrees = 1,
     craftingLocation    = {x= 3, y= 2, z= 1, dx=0, dy=1},
     crafterLocation     = {x=12, y= 0, z= 1, dx=0, dy=1},
+    siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
 }
 
 -- main functions
@@ -608,8 +609,8 @@ function FinishCraftingStation()
     end
 
     -- temp / debug
-    local crafterStart = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1)
-    db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
+--    local crafterStart = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1)
+--    db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
 
     -- build top layer
     role_builder.BuildRectangle({
@@ -646,6 +647,66 @@ function FinishCraftingStation()
 end
 
 function BuildSmallSilo()
+    -- check inventory
+    local chests    = coreinventory.CountItem("minecraft:chest")
+    local torches   = coreinventory.CountItem("minecraft:torch")
 
+    -- enough?
+    if chests < 18 or torches < 2 then
+        print("Not building the small silo, not enough (chests: "..chests..", torches: "..torches..")")
+        return false
+    end
 
+    -- build top layer
+    role_builder.BuildRectangle({
+        startpoint  = db.siloLocation,
+        angle    = 0, -- 0 90 180 270
+        pattern = {
+            deltaX      = 6,
+            deltaY      = 6,
+            objectList  = {
+                { x = 0, y = 3,                 block = "minecraft:torch"},
+                { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+                { x = 3, y = 0,                 block = "minecraft:torch"},
+                { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+            },
+            clearRemainingSpace = true, -- false
+        },
+        buildFromAbove  = true,
+    })
+
+    -- create access shaft
+    coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 0))
+    coremove.Down(3, true)
+
+    -- create layers of chests
+    for i=0,1 do
+        -- crafter temporary storage chest
+        role_builder.BuildRectangle({
+            startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i),
+            angle    = 0,
+            pattern = {
+                deltaX      = 3,
+                deltaY      = 3,
+                objectList  = {
+                    { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
+                    { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+
+                    { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+                    { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+
+                    { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+                    { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+
+                    { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
+                    { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
+                },
+                clearRemainingSpace = true,
+            },
+            buildFromAbove  = false,
+        })
+    end
+
+    -- help our builder escape
+    coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 1))
 end
