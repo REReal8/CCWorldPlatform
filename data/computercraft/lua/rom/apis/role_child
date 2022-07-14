@@ -133,7 +133,7 @@ function LetItGrow()
     local chestsNeeded = 24
     local torchesNeeded = 6
     local logsNeeded = chestsNeeded * 2 + math.ceil(torchesNeeded / 2)
-    print (">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
+    print(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
         HarvestForest()
@@ -145,7 +145,16 @@ function LetItGrow()
     -- create torches
     LogToTorches(torchesNeeded)
 
-    -- do the rest
+    -- redo first tree according to pattern
+    BuildNewTreePattern( 0, 0, 0)
+
+    -- finish the crafting station
+    print(">running FinishCraftingStation<")
+    FinishCraftingStation()
+
+    -- make a first (small) silo
+    print(">running BuildSmallSilo<")
+    BuildSmallSilo()
 
     -- back to start position
     GoHome()
@@ -246,28 +255,31 @@ function TryExtendForest(nTrees)
             return false
         end
 
-        -- build forest layer
-        local forestLayer = {
-            startpoint  = coremove.GetRelativeLocation(db.forestLocation, 0, db.nTrees*6, 0),
-            angle    = 0,
-            pattern = {
-                deltaX      = 6,
-                deltaY      = 6,
-                objectList  = {
-                    { x = 3, y = 3, block = "minecraft:birch_sapling"},
-                    { x = 3, y = 0, block = "minecraft:torch"},
-                    { x = 0, y = 3, block = "minecraft:torch"},
-                },
-                clearRemainingSpace = true,
-            },
-            buildFromAbove  = true,
-        }
-        role_builder.BuildRectangle(forestLayer)
-
+        -- new tree
+        BuildNewTreePattern(0, 6 * db.nTrees, 0)
         db.nTrees = db.nTrees + 1
     end
 
     return true
+end
+
+function BuildNewTreePattern(x, y, z)
+    -- build forest layer
+    role_builder.BuildRectangle({
+        startpoint  = coremove.GetRelativeLocation(db.forestLocation, x, y, z),
+        angle    = 0,
+        pattern = {
+            deltaX      = 6,
+            deltaY      = 6,
+            objectList  = {
+                { x = 3, y = 3, block = "minecraft:birch_sapling"},
+                { x = 3, y = 0, block = "minecraft:torch"},
+                { x = 0, y = 3, block = "minecraft:torch"},
+            },
+            clearRemainingSpace = true,
+        },
+        buildFromAbove  = true,
+    })
 end
 
 function FillHole()
@@ -582,4 +594,58 @@ function BuildInitialCraftingStation()
 
     -- up to serface
     coremove.GoTo(crafterStart)
+end
+
+function FinishCraftingStation()
+    -- check inventory
+    local chests    = coreinventory.CountItem("minecraft:chest")
+    local torches   = coreinventory.CountItem("minecraft:torch")
+
+    -- enough?
+    if chests < 3 or torches < 2 then
+        print("Not finishing the crafting station, not enough (chests: "..chests..", torches: "..torches..")")
+        return false
+    end
+
+    -- temp / debug
+    local crafterStart = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1)
+    db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
+
+    -- build top layer
+    role_builder.BuildRectangle({
+        startpoint  = db.crafterLocation,
+        angle    = 0, -- 0 90 180 270
+        pattern = {
+            deltaX      = 6,
+            deltaY      = 6,
+            objectList  = {
+                { x = 0, y = 3, block = "minecraft:torch"},
+                { x = 2, y = 5, block = "minecraft:chest"},
+                { x = 3, y = 0, block = "minecraft:torch"},
+                { x = 4, y = 5, block = "minecraft:chest"},
+            },
+            clearRemainingSpace = true, -- false
+        },
+        buildFromAbove  = true,
+    })
+
+    -- crafter temporary storage chest
+    role_builder.BuildRectangle({
+        startpoint  = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1),
+        angle    = 0,
+        pattern = {
+            deltaX      = 1,
+            deltaY      = 1,
+            objectList  = {
+                { x = 0, y = 0, block = "minecraft:chest"},
+            },
+            clearRemainingSpace = false,
+        },
+        buildFromAbove  = true,
+    })
+end
+
+function BuildSmallSilo()
+
+
 end
