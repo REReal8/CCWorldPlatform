@@ -114,7 +114,7 @@ function LetItGrow()
 
     -- build initial crafting location
     print (">Creating initial crafting station<")
-    BuildInitialCraftingStation()
+    BuildCraftingStationL0()
 
     -- craft torches
     LogToTorches(4)
@@ -148,15 +148,15 @@ function LetItGrow()
 
     -- redo first tree according to pattern
     print(">Finishing Forest<")
-    BuildNewTreePattern( 0, 0, 0)
+    BuildForestTreePattern( 0, 0, 0)
 
     -- finish the crafting station
     print(">Finishing Crafting Station<")
-    FinishCraftingStation()
+    BuildCraftingStationL1()
 
     -- make a first (small) silo
-    print(">Building SmallSilo<")
-    BuildSmallSilo()
+    print(">Building small silo<")
+    BuildSiloL0()
 
     -- back to start position
     GoHome()
@@ -243,88 +243,6 @@ function Refuel()
     else
         print(" Already above (=" .. fuelLevel .. ") minumum(=" .. minFuel .. ") fuellevel.")
     end
-end
-
-function TryExtendForest(nTrees)
-    print(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
-
-    -- craft torches
-    LogToTorches(4)
-
-    while db.nTrees < nTrees do
-        -- check input (sapling + 2x torch)
-        local birchSaplings  = coreinventory.CountItem("minecraft:birch_sapling")
-        local torches  = coreinventory.CountItem("minecraft:torch")
-
-        -- stop if we don't meet the needs
-        if birchSaplings < 1 or torches < 2 then
-            return false
-        end
-
-        -- new tree
-        BuildNewTreePattern(0, 6 * db.nTrees, 0)
-        db.nTrees = db.nTrees + 1
-    end
-
-    return true
-end
-
-function BuildNewTreePattern(x, y, z)
-    -- build forest layer
-    role_builder.BuildRectangle({
-        startpoint  = coremove.GetRelativeLocation(db.forestLocation, x, y, z),
-        angle    = 0,
-        pattern = {
-            deltaX      = 6,
-            deltaY      = 6,
-            objectList  = {
-                { x = 3, y = 3, block = "minecraft:birch_sapling"},
-                { x = 3, y = 0, block = "minecraft:torch"},
-                { x = 0, y = 3, block = "minecraft:torch"},
-            },
-            clearRemainingSpace = true,
-        },
-        buildFromAbove  = true,
-    })
-end
-
-function FillHole()
-    local blockType1 = "minecraft:cobblestone"
-    local blockType2= "minecraft:dirt"
-
-    -- loop over layers
-    for z=-5, -1 do
-        local blockType = blockType1
-        if z ==-1 then
-            blockType = blockType2
-        end
-
-        local layer = {
-            startpoint  = coremove.GetRelativeLocation(db.startLocation, -1, -1, z),
-            angle    = 0, -- 0 90 180 270
-            pattern = {
-                deltaX      = 3,
-                deltaY      = 3,
-                objectList  = {
-                    { x = 0, y = 0, block = blockType},
-                    { x = 0, y = 1, block = blockType},
-                    { x = 0, y = 2, block = blockType},
-                    { x = 1, y = 0, block = blockType},
-                    { x = 1, y = 1, block = blockType},
-                    { x = 1, y = 2, block = blockType},
-                    { x = 2, y = 0, block = blockType},
-                    { x = 2, y = 1, block = blockType},
-                    { x = 2, y = 2, block = blockType},
-                },
-                clearRemainingSpace = false, -- false
-            },
-            buildFromAbove  = true,
-        }
-
-        role_builder.BuildRectangle(layer)
-    end
-
-    GoHome()
 end
 
 --    _                 _    __                  _   _
@@ -546,8 +464,89 @@ function CharcoalAndStickToTorch(torches)
     })
 end
 
-function BuildInitialCraftingStation()
+function TryExtendForest(nTrees)
+    print(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
 
+    -- craft torches
+    LogToTorches(4)
+
+    while db.nTrees < nTrees do
+        -- check input (sapling + 2x torch)
+        local birchSaplings  = coreinventory.CountItem("minecraft:birch_sapling")
+        local torches  = coreinventory.CountItem("minecraft:torch")
+
+        -- stop if we don't meet the needs
+        if birchSaplings < 1 or torches < 2 then
+            return false
+        end
+
+        -- new tree
+        BuildForestTreePattern(0, 6 * db.nTrees, 0)
+        db.nTrees = db.nTrees + 1
+    end
+
+    return true
+end
+
+function BuildForestTreePattern(x, y, z)
+    -- build forest layer
+    role_builder.BuildRectangle({
+        startpoint  = coremove.GetRelativeLocation(db.forestLocation, x, y, z),
+        angle    = 0,
+        pattern = {
+            deltaX      = 6,
+            deltaY      = 6,
+            objectList  = {
+                { x = 3, y = 3, block = "minecraft:birch_sapling"},
+                { x = 3, y = 0, block = "minecraft:torch"},
+                { x = 0, y = 3, block = "minecraft:torch"},
+            },
+            clearRemainingSpace = true,
+        },
+        buildFromAbove  = true,
+    })
+end
+
+function FillHole()
+    local blockType1 = "minecraft:cobblestone"
+    local blockType2= "minecraft:dirt"
+
+    -- loop over layers
+    for z=-5, -1 do
+        local blockType = blockType1
+        if z ==-1 then
+            blockType = blockType2
+        end
+
+        local layer = {
+            startpoint  = coremove.GetRelativeLocation(db.startLocation, -1, -1, z),
+            angle    = 0, -- 0 90 180 270
+            pattern = {
+                deltaX      = 3,
+                deltaY      = 3,
+                objectList  = {
+                    { x = 0, y = 0, block = blockType},
+                    { x = 0, y = 1, block = blockType},
+                    { x = 0, y = 2, block = blockType},
+                    { x = 1, y = 0, block = blockType},
+                    { x = 1, y = 1, block = blockType},
+                    { x = 1, y = 2, block = blockType},
+                    { x = 2, y = 0, block = blockType},
+                    { x = 2, y = 1, block = blockType},
+                    { x = 2, y = 2, block = blockType},
+                },
+                clearRemainingSpace = false, -- false
+            },
+            buildFromAbove  = true,
+        }
+
+        role_builder.BuildRectangle(layer)
+    end
+
+    GoHome()
+end
+
+function BuildCraftingStationL0()
     -- start location for this small crafter station
     local crafterStart = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1)
 
@@ -602,7 +601,7 @@ function BuildInitialCraftingStation()
     coremove.GoTo(crafterStart)
 end
 
-function FinishCraftingStation()
+function BuildCraftingStationL1()
     -- check inventory
     local chests    = coreinventory.CountItem("minecraft:chest")
     local torches   = coreinventory.CountItem("minecraft:torch")
@@ -612,10 +611,6 @@ function FinishCraftingStation()
         print("Not finishing the crafting station, not enough (chests: "..chests..", torches: "..torches..")")
         return false
     end
-
-    -- temp / debug
---    local crafterStart = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1)
---    db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
 
     -- build top layer
     role_builder.BuildRectangle({
@@ -651,7 +646,7 @@ function FinishCraftingStation()
     })
 end
 
-function BuildSmallSilo()
+function BuildSiloL0()
     -- check inventory
     local chests    = coreinventory.CountItem("minecraft:chest")
     local torches   = coreinventory.CountItem("minecraft:torch")
