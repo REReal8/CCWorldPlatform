@@ -69,14 +69,27 @@ function BuildRectangle(data)
                         coremove.TurnTo({dx = object.dx, dy = object.dy})
                     end
 
-                    -- block nu plaatsen
-                    if coreinventory.SelectItem(object.block) then
-                        if data.buildFromAbove  then turtle.digDown()   turtle.placeDown()
-                                                else turtle.digUp()     turtle.placeUp()
+                    -- check if block already present
+                    local has_block, block_data
+                    if not data.replacePresentObjects then
+                        if data.buildFromAbove then
+                            has_block, block_data = turtle.inspectDown()
+                        else
+                            has_block, block_data = turtle.inspectUp()
                         end
-                    else
-                        -- mandatory item not in inventory, error message and ignore
-                        coreutils.WriteToLog("Oops, BuildRectangle() item not in inventory: " .. object.block)
+                    end 
+
+                    -- check placing object
+                    if data.replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= object.block then
+                        -- block nu plaatsen
+                        if coreinventory.SelectItem(object.block) then
+                            if data.buildFromAbove  then turtle.digDown()   turtle.placeDown()
+                                                    else turtle.digUp()     turtle.placeUp()
+                            end
+                        else
+                            -- mandatory item not in inventory, error message and ignore
+                            coreutils.WriteToLog("Oops, BuildRectangle() item not in inventory: " .. object.block)
+                        end
                     end
 
                     -- klaar met deze loop

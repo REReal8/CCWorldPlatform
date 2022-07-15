@@ -504,6 +504,7 @@ function BuildForestTreePattern(x, y, z)
             clearRemainingSpace = true,
         },
         buildFromAbove  = true,
+        replacePresentObjects = false,
     })
 end
 
