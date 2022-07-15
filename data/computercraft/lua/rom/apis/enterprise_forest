@@ -73,3 +73,24 @@ function NewHarvestingTask(enterpriseId)
     -- klaar zo
     return taskId
 end
+
+
+--   _           _ _     _               _   _                      
+--   | |         (_) |   | |             | | | |                     
+--   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___ 
+--   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|
+--   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \
+--   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/
+--                           | |                                     
+--                           |_|                                     
+
+treePattern = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 3, y = 3, block = "minecraft:birch_sapling"},
+        { x = 3, y = 0, block = "minecraft:torch"},
+        { x = 0, y = 3, block = "minecraft:torch"},
+    },
+    clearRemainingSpace = true,
+}
