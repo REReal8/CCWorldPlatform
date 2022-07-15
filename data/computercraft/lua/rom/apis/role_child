@@ -464,6 +464,17 @@ function CharcoalAndStickToTorch(torches)
     })
 end
 
+
+--    _           _ _     _    __                  _   _                 
+--   | |         (_) |   | |  / _|                | | (_)                
+--   | |__  _   _ _| | __| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___ 
+--   | '_ \| | | | | |/ _` | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | | | (_| | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_.__/ \__,_|_|_|\__,_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--                                                                       
+--                                                                       
+
+
 function TryExtendForest(nTrees)
     print(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
 
@@ -491,45 +502,7 @@ end
 function BuildForestTreePattern(x, y, z)
     local point = coremove.GetRelativeLocation(db.forestLocation, x, y, z)
 
-    role_builder.BuildRectangle({startpoint = point, buildFromAbove = true, replacePresentObjects = false, pattern = enterprise_forest.treePattern})
-end
-
-function FillHole()
-    local blockType1 = "minecraft:cobblestone"
-    local blockType2= "minecraft:dirt"
-
-    -- loop over layers
-    for z=-5, -1 do
-        local blockType = blockType1
-        if z ==-1 then
-            blockType = blockType2
-        end
-
-        local layer = {
-            startpoint  = coremove.GetRelativeLocation(db.startLocation, -1, -1, z),
-            pattern = {
-                deltaX      = 3,
-                deltaY      = 3,
-                objectList  = {
-                    { x = 0, y = 0, block = blockType},
-                    { x = 0, y = 1, block = blockType},
-                    { x = 0, y = 2, block = blockType},
-                    { x = 1, y = 0, block = blockType},
-                    { x = 1, y = 1, block = blockType},
-                    { x = 1, y = 2, block = blockType},
-                    { x = 2, y = 0, block = blockType},
-                    { x = 2, y = 1, block = blockType},
-                    { x = 2, y = 2, block = blockType},
-                },
-                clearRemainingSpace = false, -- false
-            },
-            buildFromAbove  = true,
-        }
-
-        role_builder.BuildRectangle(layer)
-    end
-
-    GoHome()
+    role_builder.BuildRectangle({startpoint = point, buildFromAbove = true, replacePresentObjects = false, pattern = enterprise_forest.tree_pattern})
 end
 
 function BuildCraftingStationL0()
@@ -540,47 +513,18 @@ function BuildCraftingStationL0()
     coremove.GoTo(crafterStart)
 
     -- place for future chest
-    role_builder.BuildRectangle({
-        startpoint  = coremove.GetRelativeLocation(crafterStart, 0, 0, -6),
-        pattern = {
-            deltaX      = 1,
-            deltaY      = 1,
-            objectList  = {},
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true,
-    })
+    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -6), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL0_pattern})
 
     -- we have a new crafting location!
     db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
 
-    -- under the furnace level
-    role_builder.BuildRectangle({
-        startpoint  = coremove.GetRelativeLocation(crafterStart, 0, 0, -5),
-        pattern = {
-            deltaX      = 1,
-            deltaY      = 2,
-            objectList  = {},
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true,
-    })
+    -- under the furnace layer
+    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -5), buildFromAbove  = true, pattern = enterprise_alchemie.underTheFurnanceLayerL0_pattern})
 
-    -- furnace level
-    role_builder.BuildRectangle({
-        startpoint  = coremove.GetRelativeLocation(crafterStart, 0, 0, -4),
-        pattern = {
-            deltaX      = 1,
-            deltaY      = 2,
-            objectList  = {
-                { x = 0, y = 1, block = "minecraft:furnace"},
-            },
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true,
-    })
+    -- furnace layer
+    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -4), buildFromAbove  = true, pattern = enterprise_alchemie.furnanceLayerL0_pattern})
 
-    -- up to serface
+    -- up to surface
     coremove.GoTo(crafterStart)
 end
 
@@ -596,35 +540,10 @@ function BuildCraftingStationL1()
     end
 
     -- build top layer
-    role_builder.BuildRectangle({
-        startpoint  = db.crafterLocation,
-        pattern = {
-            deltaX      = 6,
-            deltaY      = 6,
-            objectList  = {
-                { x = 0, y = 3, block = "minecraft:torch"},
-                { x = 2, y = 5, block = "minecraft:chest"},
-                { x = 3, y = 0, block = "minecraft:torch"},
-                { x = 4, y = 5, block = "minecraft:chest"},
-            },
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true,
-    })
+    role_builder.BuildRectangle({startpoint = db.crafterLocation, buildFromAbove  = true, pattern = enterprise_alchemie.topLayerL1_pattern})
 
     -- crafter temporary storage chest
-    role_builder.BuildRectangle({
-        startpoint  = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1),
-        pattern = {
-            deltaX      = 1,
-            deltaY      = 1,
-            objectList  = {
-                { x = 0, y = 0, block = "minecraft:chest"},
-            },
-            clearRemainingSpace = false,
-        },
-        buildFromAbove  = true,
-    })
+    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL1_pattern})
 end
 
 function BuildSiloL0()
@@ -639,21 +558,7 @@ function BuildSiloL0()
     end
 
     -- build top layer
-    role_builder.BuildRectangle({
-        startpoint  = db.siloLocation,
-        pattern = {
-            deltaX      = 6,
-            deltaY      = 6,
-            objectList  = {
-                { x = 0, y = 3,                 block = "minecraft:torch"},
-                { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
-                { x = 3, y = 0,                 block = "minecraft:torch"},
-                { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
-            },
-            clearRemainingSpace = true, -- false
-        },
-        buildFromAbove  = true,
-    })
+    role_builder.BuildRectangle({startpoint = db.siloLocation, buildFromAbove  = true, pattern = enterprise_silo.topLayerL0_pattern})
 
     -- create access shaft
     coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 0))
@@ -662,28 +567,7 @@ function BuildSiloL0()
     -- create layers of chests
     for i=0,1 do
         -- crafter temporary storage chest
-        role_builder.BuildRectangle({
-            startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i),
-            pattern = {
-                deltaX      = 3,
-                deltaY      = 3,
-                objectList  = {
-                    { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
-                    { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
-
-                    { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
-                    { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
-
-                    { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
-                    { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
-
-                    { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
-                    { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
-                },
-                clearRemainingSpace = true,
-            },
-            buildFromAbove  = false,
-        })
+        role_builder.BuildRectangle({startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i), buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern})
     end
 
     -- help our builder escape

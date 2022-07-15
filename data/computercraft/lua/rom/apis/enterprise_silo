@@ -184,3 +184,43 @@ function ProcessItemsRequestedMessage(message)
 
 end
 
+
+--   _           _ _     _               _   _                      
+--   | |         (_) |   | |             | | | |                     
+--   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___ 
+--   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|
+--   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \
+--   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/
+--                           | |                                     
+--                           |_|                                     
+
+topLayerL0_pattern = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3,                 block = "minecraft:torch"},
+        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 3, y = 0,                 block = "minecraft:torch"},
+        { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true, -- false
+}
+
+chestLayer_pattern = {
+    deltaX      = 3,
+    deltaY      = 3,
+    objectList  = {
+        { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
+        { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+
+        { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+
+        { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+        { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+
+        { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
+        { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}

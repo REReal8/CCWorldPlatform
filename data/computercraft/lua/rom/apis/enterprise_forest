@@ -84,7 +84,7 @@ end
 --                           | |                                     
 --                           |_|                                     
 
-treePattern = {
+tree_pattern = {
     deltaX      = 6,
     deltaY      = 6,
     objectList  = {
