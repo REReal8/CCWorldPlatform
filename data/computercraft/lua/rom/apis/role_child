@@ -507,7 +507,6 @@ function FillHole()
 
         local layer = {
             startpoint  = coremove.GetRelativeLocation(db.startLocation, -1, -1, z),
-            angle    = 0, -- 0 90 180 270
             pattern = {
                 deltaX      = 3,
                 deltaY      = 3,
@@ -543,7 +542,6 @@ function BuildCraftingStationL0()
     -- place for future chest
     role_builder.BuildRectangle({
         startpoint  = coremove.GetRelativeLocation(crafterStart, 0, 0, -6),
-        angle    = 0, -- 0 90 180 270
         pattern = {
             deltaX      = 1,
             deltaY      = 1,
@@ -559,7 +557,6 @@ function BuildCraftingStationL0()
     -- under the furnace level
     role_builder.BuildRectangle({
         startpoint  = coremove.GetRelativeLocation(crafterStart, 0, 0, -5),
-        angle    = 0, -- 0 90 180 270
         pattern = {
             deltaX      = 1,
             deltaY      = 2,
@@ -572,7 +569,6 @@ function BuildCraftingStationL0()
     -- furnace level
     role_builder.BuildRectangle({
         startpoint  = coremove.GetRelativeLocation(crafterStart, 0, 0, -4),
-        angle    = 0, -- 0 90 180 270
         pattern = {
             deltaX      = 1,
             deltaY      = 2,
@@ -602,7 +598,6 @@ function BuildCraftingStationL1()
     -- build top layer
     role_builder.BuildRectangle({
         startpoint  = db.crafterLocation,
-        angle    = 0, -- 0 90 180 270
         pattern = {
             deltaX      = 6,
             deltaY      = 6,
@@ -620,7 +615,6 @@ function BuildCraftingStationL1()
     -- crafter temporary storage chest
     role_builder.BuildRectangle({
         startpoint  = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1),
-        angle    = 0,
         pattern = {
             deltaX      = 1,
             deltaY      = 1,
@@ -647,7 +641,6 @@ function BuildSiloL0()
     -- build top layer
     role_builder.BuildRectangle({
         startpoint  = db.siloLocation,
-        angle    = 0, -- 0 90 180 270
         pattern = {
             deltaX      = 6,
             deltaY      = 6,
@@ -671,7 +664,6 @@ function BuildSiloL0()
         -- crafter temporary storage chest
         role_builder.BuildRectangle({
             startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i),
-            angle    = 0,
             pattern = {
                 deltaX      = 3,
                 deltaY      = 3,
