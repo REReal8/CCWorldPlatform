@@ -19,7 +19,29 @@ end
 --
 --
 
+--[[
+    Function to build a rectangular pattern (blueprint) in the x,y plane.
 
+    data = {
+        startpoint              --> lower left coordinate to start building the pattern
+        buildFromAbove          --> whether build should be done from above (true) or below (false)
+        replacePresentObjects   --> whether objects should be replaced if it is already present in the minecraft world (default = true)
+        pattern                 --> pattern to build
+    }
+
+    with pattern = {
+        deltaX                  --> x size of pattern
+        deltaY                  --> y size of pattern
+        objectList              --> array of objects to build
+        clearRemainingSpace     --> whether spce not in the objectlist should be cleared
+    }
+
+    with for each object = { 
+        x                       --> x coordinate within the pattern
+        y                       --> y coordinate within the pattern
+        block                   --> minecraft blocktype to build (e.g. "minecraft:torch")
+    }
+--]]
 function BuildRectangle(data)
     -- orientatie
     local deltaZ    = 1
