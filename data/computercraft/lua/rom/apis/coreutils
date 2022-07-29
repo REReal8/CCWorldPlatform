@@ -3,7 +3,11 @@ local db	= {
 	logfile		= "/log/log.txt",
 	protocol	= "coreutils",
     serial		= 0,                                -- for unique id's
+	loggerChannel	= 65534,
 }
+
+local monitorLeft	= nil
+local monitorRight	= nil
 
 -- laatste serial uit de file lezen?
 function Init()
@@ -27,6 +31,31 @@ function Setup()
 
 	-- let others check our pulse
 	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol, "pulse request")
+
+	-- check if we have monitors on our side (and we are not a turtle, so a handheld or computer)
+	if peripheral.getType("left") == "monitor" and peripheral.getType("right") == "monitor" and not turtle then
+
+		-- get monitor handles
+		monitorLeft		= peripheral.wrap("left")
+		monitorRight	= peripheral.wrap("right")
+
+		-- start at the bottom
+		monitorLeft.clear()
+		local w, h = monitorLeft.getSize()
+		monitorLeft.setCursorPos(1,h)
+
+		-- we will be the logger of this system
+		coreassignment.RejectAllAssignments()
+
+		-- listen to the logger port
+		coreevent.OpenChannel(db.loggerChannel, db.protocol)
+
+		-- listen to our events
+		coreevent.AddEventListener(DoEventWriteToLog, db.protocol, "write to log")
+
+		-- show who's boss!
+		WriteToMonitor("--- starting up monitor ---", monitorLeft)
+	end
 end
 
 function EventReadySetup()
@@ -36,6 +65,7 @@ end
 
 -- generates a new id
 function NewId()
+
 	-- eentje ophogen
 	db.serial = db.serial + 1
 
@@ -114,10 +144,39 @@ end
 function WriteToLog(message)
 	-- write to the logfile
 	WriteToFile(db.logfile, message, "append")
+
+	-- send message
+	if monitorLeft then
+		-- we are the logging station, don't send message
+		WriteToMonitor(message, monitorLeft)
+	else
+
+		-- send message two whoever is loggin our stuff
+		coreevent.SendMessage({
+			channel		= db.loggerChannel,
+			protocol	= db.protocol,
+			subject		= "write to log",
+			message		= {text = message} })
+	end
 end
 
-function WriteToMonitor(message)
+function WriteToMonitor(message, monitor)
+	-- default monitor
+	monitor = monitor or monitorLeft
+
 	-- write to an attached monitor if available (usefull for a stataus monitor screen)
+	if monitor then
+		local w, h = monitor.getSize()
+
+		-- scroll the existing stuff up
+		monitor.scroll(1)
+
+		-- write the message
+		monitor.write(message)
+
+		-- set the cursus back at the start of the line
+		monitor.setCursorPos(1,h)
+	end
 end
 
 function Warning(message)
@@ -158,4 +217,9 @@ function DoEventPulseRequest(subject, envelope)
 
 	-- send some information about us back
     coreevent.ReplyToMessage(envelope, "pulse response", {fuelLevel=fuelLevel})
+end
+
+function DoEventWriteToLog(subject, envelope)
+	-- write the message on the monitor
+	WriteToMonitor(envelope.message.text, monitorLeft)
 end

@@ -1,7 +1,7 @@
 local db = {
-    dhtRoot           = "coreassignment",
-    listRoot          = "assignmentList",
-    currentassignment = nil,
+    dhtRoot                 = "coreassignment",
+    listRoot                = "assignmentList",
+    rejectAllAssignments    = false,
 }
 
 --                _     _ _         __                  _   _
@@ -57,7 +57,7 @@ function Run()
     end
 
     -- infinite loop
-    while core.IsSystemRunning() do
+    while core.IsSystemRunning() and not db.rejectAllAssignments do
 
         -- we zijn nu werkeloos
         local nextAssignment = nil
@@ -83,6 +83,11 @@ function Run()
         else os.sleep(0.25)     -- bapparently no assignment now
         end
     end
+end
+
+function RejectAllAssignments()
+    -- just remember for now, nothing else
+    db.rejectAllAssignments = true
 end
 
 --    _                 _    __                  _   _
