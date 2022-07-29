@@ -15,13 +15,13 @@
 --   |___/\___|_|    \_/ |_|\___\___||___/
 
 function TestPureLogicService(serviceArgument)
-    print("enterprise_test.TestPureLogicService("..serviceArgument..")")
+    coreutils.WriteToLog("enterprise_test.TestPureLogicService("..serviceArgument..")")
 
     return serviceArgument
 end
 
 function TestServiceWithAssignment(serviceArgument)
-    print("enterprise_test.TestServiceWithAssignment("..serviceArgument..")")
+    coreutils.WriteToLog("enterprise_test.TestServiceWithAssignment("..serviceArgument..")")
 
     -- create assignment arguments
     local metaData = {
@@ -43,6 +43,28 @@ function TestServiceWithAssignment(serviceArgument)
     return true
 end
 
+function TestServiceWithAssignmentAndCallback(serviceArgument, callbackFunction)
+    coreutils.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..serviceArgument..", "..callbackFunction..")")
+
+    -- create assignment arguments
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        needTool = false,
+        needTurtle = false,
+        fuelNeeded = 0
+    }
+    local taskFunction = "enterprise_test.ATaskFunc1"
+    local taskArgumentTable = {
+        arg1 = serviceArgument
+    }
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction)
+
+    return true
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -51,13 +73,13 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function ATaskFunc1(taskArgumentTable)
-    print("enterprise_test.ATaskFunc1("..textutils.serialise(taskArgumentTable)..").")
+    coreutils.WriteToLog("enterprise_test.ATaskFunc1("..textutils.serialise(taskArgumentTable)..").")
 
     return taskArgumentTable.arg1
 end
 
 function ACallBackFunc1(taskArgumentTable, testResult)
-    print("enterprise_test.ACallBackFunc1("..textutils.serialise(taskArgumentTable)..", "..textutils.serialise(testResult)..").")
+    coreutils.WriteToLog("enterprise_test.ACallBackFunc1("..textutils.serialise(taskArgumentTable)..", "..textutils.serialise(testResult)..") called.")
 
     return taskArgumentTable.arg1
 end

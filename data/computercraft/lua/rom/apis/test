@@ -2,18 +2,62 @@ local db = {}
 
 -- short hand for current test to run
 function T()
-    T_TestEnt()
+    T_enterprise_construction()
+--    T_role_builder()
+--    T_enterprise_test()
 end
 
-function T_TestEnt()
-    print(".")
+local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
 
-    -- call some test services
+local testBuildPattern = {
+    deltaX      = 4,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3,                 block = "minecraft:torch"},
+        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 3, y = 0,                 block = "minecraft:torch"},
+    },
+    clearRemainingSpace = true,
+}
+
+function T_enterprise_construction()
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
+    local callbackFunction = "test.ACallBack1"
+
+    -- test service 1   
+    coreutils.WriteToLog("# Test 1")
+
+    coreutils.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
+    enterprise_construction.BuildRectangularPattern(buildData, callbackFunction)
+end
+
+function T_role_builder()
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
+
+    role_builder.BuildRectangle(buildData)
+end
+
+function T_enterprise_test()
+    -- init
     local testArg = 20
-    local testResult = enterprise_test.TestPureLogicService(testArg)
-    print("  TestPureLogicService("..testArg..") => " .. testResult .. ".")
 
+    -- test service 1   
+    coreutils.WriteToLog("# Test 1")
+    local testResult = enterprise_test.TestPureLogicService(testArg)
+    coreutils.WriteToLog("  TestPureLogicService("..testArg..") => " .. testResult .. ".")
+
+    -- test service 2   
+    coreutils.WriteToLog("# Test 2")
     enterprise_test.TestServiceWithAssignment(testArg)
+
+    -- test service 3
+    coreutils.WriteToLog("# Test 3")
+    local callbackFunction = "test.ACallBack1"
+    enterprise_test.TestServiceWithAssignmentAndCallback(testArg, callbackFunction)
+end
+
+function ACallBack1(taskArgumentTable, taskResult)
+    coreutils.WriteToLog("ACallBack("..textutils.serialise(taskArgumentTable)..", "..textutils.serialise(taskResult)..") called")
 end
 
 function BirchGrow()
