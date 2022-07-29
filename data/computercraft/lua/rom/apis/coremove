@@ -39,15 +39,17 @@ function Reset()
 end
 
 function Status()
-    print( "Location:" )
-    print( "x: " .. db.x )
-    print( "y: " .. db.y )
-    print( "z: " .. db.z )
-    print( "Direction:" )
-    print( "x: " .. db.dx )
-    print( "y: " .. db.dy )
-    print( "Fuel:" )
-    print( turtle.getFuelLevel() )
+	if turtle then
+		print( "Location:" )
+		print( "x: " .. db.x )
+		print( "y: " .. db.y )
+		print( "z: " .. db.z )
+		print( "Direction:" )
+		print( "x: " .. db.dx )
+		print( "y: " .. db.dy )
+		print( "Fuel:" )
+		print( turtle.getFuelLevel() )
+	end
 end
 
 function Left(c)
