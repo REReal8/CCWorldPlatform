@@ -43,21 +43,24 @@ end
     }
 --]]
 function BuildRectangle(data)
+    -- check input
+    if type(data) ~= "table" then coreutils.Error("role_builder.BuildRectangle: data not a table") return false end
+
+    -- check if inventory has what we need
+
+    -- check mandatory pickage!
+    local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
+    if not axePresent then
+        coreutils.WriteToLog("role_bilder.BuildRectangle(): No pickaxe present, we are on strike!")
+        return false
+    end
+
     -- orientatie
     local deltaZ    = 1
     if data.buildFromAbove  then deltaZ    =  1
                             else deltaZ    = -1
     end
-
-    -- check if inventory has what we need
-
-    -- pickaxe mandatory!
-    local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
-    if not axePresent then
-        coreutils.WriteToLog("role_bilder.BuildRectangle(): No pickaxe present, we are on strike!")
-        return
-    end
-
+        
     -- go to starting location
     coremove.GoTo(coremove.GetRelativeLocation(data.startpoint, 0, 0, deltaZ), true)
 
@@ -129,5 +132,7 @@ function BuildRectangle(data)
             end
         end
     end
+
+    return true
 end
 
