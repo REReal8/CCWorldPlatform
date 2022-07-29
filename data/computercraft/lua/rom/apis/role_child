@@ -152,7 +152,7 @@ function LetItGrow()
 
     -- finish the crafting station
     print(">Finishing Crafting Station<")
-    BuildCraftingStationL1()
+    UpdateToCraftingStationL1()
 
     -- make a first (small) silo
     print(">Building small silo<")
@@ -528,7 +528,7 @@ function BuildCraftingStationL0()
     coremove.GoTo(crafterStart)
 end
 
-function BuildCraftingStationL1()
+function UpdateToCraftingStationL1()
     -- check inventory
     local chests    = coreinventory.CountItem("minecraft:chest")
     local torches   = coreinventory.CountItem("minecraft:torch")
