@@ -28,9 +28,19 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     metaData.needTool      = metaData.needTool      or false                            --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
     metaData.needTurtle    = metaData.needTurtle    or true
     metaData.fuelNeeded    = metaData.fuelNeeded    or 500                              --> minimum amount of fuel needed to grant assignment
-    if type(taskArgumentTable) ~= "table" then coreutils.Error("coreassignment_AddAssignment: taskArgumentTable not a table") return end
-    if type(taskFunction) ~= "string" then coreutils.Error("coreassignment_AddAssignment: taskFunction not a string") return end
-    if type(callbackFunction) ~= "string" then coreutils.Error("coreassignment_AddAssignment: callbackFunction not a string") return end
+    if type(taskArgumentTable) ~= "table" then coreutils.Error("coreassignment.AddAssignment: taskArgumentTable not a table") return end
+    if type(taskFunction) ~= "string" then 
+        coreutils.Error("coreassignment.AddAssignment: taskFunction not a string") return
+    else
+        -- ToDo: investigate if there is a way to check if the actual function exists and has the proper argument without actually calling it
+    end
+    if type(callbackFunction) ~= "string" then                                          --> callbackFunction should take two arguments
+        coreutils.Error("coreassignment.AddAssignment: callbackFunction not a string") return
+    else                                                                                --> callbackFunction should take two arguments: 
+                                                                                        -->   taskArgumentTable     (the argument to the function taskFunction)
+                                                                                        -->   taskResult            (the result of the function taskFunction)
+        -- ToDo: investigate if there is a way to check if the actual function exists and has the proper arguments without actually calling it
+    end
 
     -- create assignmentId
     local assignmentId  = coreutils.NewId()
@@ -90,6 +100,17 @@ function RejectAllAssignments()
     db.rejectAllAssignments = true
 end
 
+function ClearAssignmentList()
+    local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
+    if not assignmentList or type(assignmentList) ~= "table" then coreutils.Warning("coreassignment.ClearAssignmentList: not a (valid) assignmentList") return nil end
+
+    -- remove all assignments
+    for assignmentId, assignmentData in pairs(assignmentList) do
+        -- check status and startTime
+        EndAssignment(assignmentId)
+    end
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -109,10 +130,10 @@ function FindBestAssignment()
 
     -- zoeken naar een assignment om op in te schrijven
     local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
-    local now         = coreutils.UniversalTime()
+    local now            = coreutils.UniversalTime()
 
     -- check assignmentList
-    if not assignmentList or type(assignmentList) ~= "table" then coreutils.Error("coreassignment_FindBestAssignment: invalid assignmentList") return nil end
+    if not assignmentList or type(assignmentList) ~= "table" then coreutils.Error("coreassignment.FindBestAssignment: invalid assignmentList") return nil end
 
     -- look for best assignment
     for assignmentId, assignmentData in pairs(assignmentList) do
@@ -192,8 +213,14 @@ function DoAssignment(assignment)
 end
 
 function TakeAssignment(assignmentId)
-    -- mark as staffed
-    coredht.SaveData("staffed", db.dhtRoot, db.listRoot, assignmentId, "status")
+    -- data van de assignment ophalen
+    local assignment = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId)
+
+    -- see if this assignment is still open
+    if assignment.status == "open" then
+        -- mark as staffed
+        coredht.SaveData("staffed", db.dhtRoot, db.listRoot, assignmentId, "status")
+    end
 end
 
 function EndAssignment(assignmentId)
