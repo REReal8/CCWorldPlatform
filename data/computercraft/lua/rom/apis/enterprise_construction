@@ -42,17 +42,10 @@
 function BuildRectangularPattern(buildData, callbackFunction)
     -- check input
     if type(buildData) ~= "table" then coreutils.Error("enterprise_construction.BuildRectangularPattern: buildData not a table") return end
---    coreutils.WriteToLog("BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
     if type(callbackFunction) ~= "string" then coreutils.Error("enterprise_construction.BuildRectangularPattern: callbackFunction not a string") return end
 
     -- construct assignment metadata
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(buildData.startpoint), -- copy needed because otherwise reference is used twice -- ToDo: obtain from role task
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 500 -- ToDo: obtain from role task
-    }
+    local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callbackFunction)

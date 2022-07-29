@@ -7,10 +7,20 @@
 --
 --
 
+function BuildRectangularPattern_MetaData(buildData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(buildData.startpoint), -- copy needed because otherwise reference is used twice
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 500 -- ToDo: calculate from actual movements defined
+    }
+end
+
 --[[
     Function to build a rectangular pattern (blueprint) in the x,y plane.
 
-    data = {
+    buildData = {
         startpoint              --> lower left coordinate to start building the pattern
         buildFromAbove          --> whether build should be done from above (true) or below (false)
         replacePresentObjects   --> whether objects should be replaced if it is already present in the minecraft world (default = true)
@@ -30,9 +40,9 @@
         block                   --> minecraft blocktype to build (e.g. "minecraft:torch")
     }
 --]]
-function BuildRectangularPattern_Task(data)
+function BuildRectangularPattern_Task(buildData)
     -- check input
-    if type(data) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_Task: data not a table") return false end
+    if type(buildData) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_Task: buildData not a table") return false end
 
     -- check if inventory has what we need
 
@@ -45,29 +55,29 @@ function BuildRectangularPattern_Task(data)
 
     -- orientatie
     local deltaZ    = 1
-    if data.buildFromAbove  then deltaZ    =  1
+    if buildData.buildFromAbove  then deltaZ    =  1
                             else deltaZ    = -1
     end
         
     -- go to starting location
-    coremove.GoTo(coremove.GetRelativeLocation(data.startpoint, 0, 0, deltaZ), true)
+    coremove.GoTo(coremove.GetRelativeLocation(buildData.startpoint, 0, 0, deltaZ), true)
 
     -- walk along x
-    for x=0, data.pattern.deltaX - 1 do
+    for x=0, buildData.pattern.deltaX - 1 do
         -- walk along y
-        for iY=0, data.pattern.deltaY - 1 do
+        for iY=0, buildData.pattern.deltaY - 1 do
             -- determine y value such that path is back and forth in y
             local y = iY
             if x % 2 == 1 then
-                y = data.pattern.deltaY - 1 - iY
+                y = buildData.pattern.deltaY - 1 - iY
             end
 
             -- ga naar de locatie
-            coremove.MoveTo(coremove.GetRelativeLocation(data.startpoint, x, y, deltaZ), true)
+            coremove.MoveTo(coremove.GetRelativeLocation(buildData.startpoint, x, y, deltaZ), true)
 
             -- moeten we hier wat plaatsen?
             local placingBlock  = false
-            for i, object in ipairs(data.pattern.objectList) do
+            for i, object in ipairs(buildData.pattern.objectList) do
 
                 -- juiste coordinaat?
                 if object.x == x and object.y == y then
@@ -84,8 +94,8 @@ function BuildRectangularPattern_Task(data)
 
                     -- check if block already present
                     local has_block, block_data
-                    if not data.replacePresentObjects then
-                        if data.buildFromAbove then
+                    if not buildData.replacePresentObjects then
+                        if buildData.buildFromAbove then
                             has_block, block_data = turtle.inspectDown()
                         else
                             has_block, block_data = turtle.inspectUp()
@@ -93,10 +103,10 @@ function BuildRectangularPattern_Task(data)
                     end 
 
                     -- check placing object
-                    if data.replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= object.block then
+                    if buildData.replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= object.block then
                         -- block nu plaatsen
                         if coreinventory.SelectItem(object.block) then
-                            if data.buildFromAbove  then turtle.digDown()   turtle.placeDown()
+                            if buildData.buildFromAbove  then turtle.digDown()   turtle.placeDown()
                                                     else turtle.digUp()     turtle.placeUp()
                             end
                         else
@@ -111,10 +121,10 @@ function BuildRectangularPattern_Task(data)
             end
 
             -- nee? Dan iets weghalen?
-            if not placingBlock and data.pattern.clearRemainingSpace then
+            if not placingBlock and buildData.pattern.clearRemainingSpace then
 
                 -- vak schoon maken
-                if data.buildFromAbove  then turtle.digDown()
+                if buildData.buildFromAbove  then turtle.digDown()
                                         else turtle.digUp()
                 end
             end
