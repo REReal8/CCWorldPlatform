@@ -16,51 +16,6 @@ function T_TestEnt()
     enterprise_test.TestServiceWithAssignment(testArg)
 end
 
--- bestand voor eenvoudiger testen, diverse commando's kunnen hier makkelijk bij elkaar gezet worden
-function Test()
-    local recipe = {
-        [6] = {itemName = "minecraft:cobblestone", itemCount = 1},
-        [7] = {itemName = "minecraft:cobblestone", itemCount = 1},
-        [8] = {itemName = "minecraft:cobblestone", itemCount = 1},
-       [10] = {itemName = "minecraft:cobblestone", itemCount = 1},
-       [12] = {itemName = "minecraft:cobblestone", itemCount = 1},
-       [14] = {itemName = "minecraft:cobblestone", itemCount = 1},
-       [15] = {itemName = "minecraft:cobblestone", itemCount = 1},
-       [16] = {itemName = "minecraft:cobblestone", itemCount = 1},
-       yield = 1
-   }
-
-   -- drop stuff we don't need
-   for slot=1,16 do
-
-        -- what is in this slot?
-        local itemDetail = coreinventory.GetItemDetail(slot)
-
-        -- something in this slot and do we need it?
-        if itemDetail and not role_alchemist.ItemInRecipe(itemDetail.name, recipe) then turtle.select(slot) turtle.dropDown() end
-    end
-end
-
-function NewAlchemist()
-    enterprise_alchemie.NewAlchemieSite({
-        location    = {y = 0, x = 0, z = 0, dx = 0, dy = 1, },
-        type        = "simpel",
-    })
-end
-
-function SendMessage()
-    coremessage.SendMessageToId(
-        "0:0",
-        "3:0",
-        "make item", {
-            itemName            = "minecraft:stick",
-            itemCount           = 8,
-            ingredientsLocation = "inventory",
-        },
-        coreutils.UniversalTime()
-    )
-end
-
 function BirchGrow()
     -- zorg dat er een kist onder de turtle staat met een paar saplings. De turtle moet een modem (links) en een diamond axe (rechts of inventory) hebben
 
