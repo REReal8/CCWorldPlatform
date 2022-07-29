@@ -31,7 +31,7 @@ function TestServiceWithAssignment(serviceArgument)
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskFunction = "enterprise_test.ATaskFunc2"
+    local taskFunction = "enterprise_test.ATaskFunc1"
     local taskArgumentTable = {
         arg1 = serviceArgument
     }
