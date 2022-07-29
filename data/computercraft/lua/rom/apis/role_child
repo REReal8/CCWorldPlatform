@@ -502,7 +502,7 @@ end
 function BuildForestTreePattern(x, y, z)
     local point = coremove.GetRelativeLocation(db.forestLocation, x, y, z)
 
-    role_builder.BuildRectangle({startpoint = point, buildFromAbove = true, replacePresentObjects = false, pattern = enterprise_forest.tree_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = point, buildFromAbove = true, replacePresentObjects = false, pattern = enterprise_forest.tree_pattern})
 end
 
 function BuildCraftingStationL0()
@@ -513,16 +513,16 @@ function BuildCraftingStationL0()
     coremove.GoTo(crafterStart)
 
     -- place for future chest
-    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -6), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -6), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL0_pattern})
 
     -- we have a new crafting location!
     db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
 
     -- under the furnace layer
-    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -5), buildFromAbove  = true, pattern = enterprise_alchemie.underTheFurnanceLayerL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -5), buildFromAbove  = true, pattern = enterprise_alchemie.underTheFurnanceLayerL0_pattern})
 
     -- furnace layer
-    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -4), buildFromAbove  = true, pattern = enterprise_alchemie.furnanceLayerL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -4), buildFromAbove  = true, pattern = enterprise_alchemie.furnanceLayerL0_pattern})
 
     -- up to surface
     coremove.GoTo(crafterStart)
@@ -540,10 +540,10 @@ function BuildCraftingStationL1()
     end
 
     -- build top layer
-    role_builder.BuildRectangle({startpoint = db.crafterLocation, buildFromAbove  = true, pattern = enterprise_alchemie.topLayerL1_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = db.crafterLocation, buildFromAbove  = true, pattern = enterprise_alchemie.topLayerL1_pattern})
 
     -- crafter temporary storage chest
-    role_builder.BuildRectangle({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL1_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL1_pattern})
 end
 
 function BuildSiloL0()
@@ -558,7 +558,7 @@ function BuildSiloL0()
     end
 
     -- build top layer
-    role_builder.BuildRectangle({startpoint = db.siloLocation, buildFromAbove  = true, pattern = enterprise_silo.topLayerL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = db.siloLocation, buildFromAbove  = true, pattern = enterprise_silo.topLayerL0_pattern})
 
     -- create access shaft
     coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 0))
@@ -567,7 +567,7 @@ function BuildSiloL0()
     -- create layers of chests
     for i=0,1 do
         -- crafter temporary storage chest
-        role_builder.BuildRectangle({startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i), buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern})
+        role_builder.BuildRectangularPattern_Task({startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i), buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern})
     end
 
     -- help our builder escape

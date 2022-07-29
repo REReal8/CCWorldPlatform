@@ -36,6 +36,8 @@
         y                       --> y coordinate within the pattern
         block                   --> minecraft blocktype to build (e.g. "minecraft:torch")
     }
+
+
 --]]
 function BuildRectangularPattern(buildData, callbackFunction)
     -- check input
@@ -46,14 +48,14 @@ function BuildRectangularPattern(buildData, callbackFunction)
     -- construct assignment metadata
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(buildData.startpoint), -- ToDo: why is a copy needed??? -- ToDo: obtain from role task
+        location = coremove.CopyLocation(buildData.startpoint), -- copy needed because otherwise reference is used twice -- ToDo: obtain from role task
         needTool = true,
         needTurtle = true,
         fuelNeeded = 500 -- ToDo: obtain from role task
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_builder.BuildRectangle", buildData, callbackFunction)
+    coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callbackFunction)
 
     return true
 end
