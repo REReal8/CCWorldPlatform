@@ -1,5 +1,21 @@
 local db = {}
 
+-- short hand for current test to run
+function T()
+    T_TestEnt()
+end
+
+function T_TestEnt()
+    print(".")
+
+    -- call some test services
+    local testArg = 20
+    local testResult = enterprise_test.TestPureLogicService(testArg)
+    print("  TestPureLogicService("..testArg..") => " .. testResult .. ".")
+
+    enterprise_test.TestServiceWithAssignment(testArg)
+end
+
 -- bestand voor eenvoudiger testen, diverse commando's kunnen hier makkelijk bij elkaar gezet worden
 function Test()
     local recipe = {

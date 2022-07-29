@@ -133,7 +133,7 @@ function ExecuteCode(t, code)
 		NextScreen({
 			clear       = true,
 			func	    = ExecuteCode,
-			intro       = "Pleaes type your line of code below\n",
+			intro       = "Please type your line of code below\n",
 			param	    = {step = 2},
 			question    = nil
 		})

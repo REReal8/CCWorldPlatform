@@ -26,6 +26,7 @@ function Init()
 	coreevent.Init()
 	coreinventory.Init()
 	corejob.Init()
+	coreassignment.Init()
 	coremap.Init()
 	coremove.Init()
 	coretask.Init()
@@ -48,6 +49,7 @@ function Setup()
 	coreevent.Setup()
 	coreinventory.Setup()
 	corejob.Setup()
+	coreassignment.Setup()
 	coremap.Setup()
 	coremove.Setup()
 	coretask.Setup()
@@ -72,7 +74,7 @@ function Run()
         db.systemStatus = "running"
 
     	-- run the event listener and event processer parallel
-    	parallel.waitForAll(coreevent.Run, coretask.Run, corejob.Run, coredisplay.Run)
+    	parallel.waitForAll(coreevent.Run, coretask.Run, corejob.Run, coreassignment.Run, coredisplay.Run)
 
         -- no longer running, we're done
         db.systemStatus = "ready"

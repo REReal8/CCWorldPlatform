@@ -1,0 +1,64 @@
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+--                        _
+--                       (_)
+--    ___  ___ _ ____   ___  ___ ___  ___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \/ __|
+--   \__ \  __/ |   \ V /| | (_|  __/\__ \
+--   |___/\___|_|    \_/ |_|\___\___||___/
+
+function TestPureLogicService(serviceArgument)
+    print("enterprise_test.TestPureLogicService("..serviceArgument..")")
+
+    return serviceArgument
+end
+
+function TestServiceWithAssignment(serviceArgument)
+    print("enterprise_test.TestServiceWithAssignment("..serviceArgument..")")
+
+    -- create assignment arguments
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        needTool = false,
+        needTurtle = false,
+        fuelNeeded = 0
+    }
+    local taskFunction = "enterprise_test.ATaskFunc2"
+    local taskArgumentTable = {
+        arg1 = serviceArgument
+    }
+    local callbackFunction = "enterprise_test.ACallBackFunc1"
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction)
+
+    return true
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function ATaskFunc1(taskArgumentTable)
+    print("enterprise_test.ATaskFunc1("..textutils.serialise(taskArgumentTable)..").")
+
+    return taskArgumentTable.arg1
+end
+
+function ACallBackFunc1(taskArgumentTable, testResult)
+    print("enterprise_test.ACallBackFunc1("..textutils.serialise(taskArgumentTable)..", "..textutils.serialise(testResult)..").")
+
+    return taskArgumentTable.arg1
+end
+

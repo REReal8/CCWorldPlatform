@@ -1,0 +1,197 @@
+local db = {
+    dhtRoot           = "coreassignment",
+    listRoot          = "assignmentList",
+    currentassignment = nil,
+}
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function Init()
+end
+
+function Setup()
+    -- pas als de dht klaar is...
+    coredht.DHTReadyFunction(DHTReadySetup)
+end
+
+function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction)
+    -- check input
+    metaData.startTime     = metaData.startTime     or coreutils.UniversalTime()        --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
+    metaData.location      = metaData.location      or nil                              --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
+    metaData.needTool      = metaData.needTool      or false                            --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
+    metaData.needTurtle    = metaData.needTurtle    or true
+    metaData.fuelNeeded    = metaData.fuelNeeded    or 500                              --> minimum amount of fuel needed to grant assignment
+    if type(taskArgumentTable) ~= "table" then coreutils.WriteToLog("coreassignment_AddAssignment: taskArgumentTable not a table") return end
+    if type(taskFunction) ~= "string" then coreutils.WriteToLog("coreassignment_AddAssignment: taskFunction not a string") return end
+    if type(callbackFunction) ~= "string" then coreutils.WriteToLog("coreassignment_AddAssignment: callbackFunction not a string") return end
+
+    -- create assignmentId
+    local assignmentId  = coreutils.NewId()
+
+    -- store assignment
+    coredht.SaveData({
+        assignmentId    = assignmentId,
+        status          = "open",
+        applications    = {},
+
+        metaData        = metaData,
+        taskFunction    = taskFunction,
+        taskArgumentTable = taskArgumentTable,
+        callbackFunction = callbackFunction,
+    }, db.dhtRoot, db.listRoot, assignmentId)
+end
+
+function Run()
+    -- is the dth available?
+    while not coredht.IsReady() do
+
+        -- just wait
+        os.sleep(0.25)
+    end
+
+    -- infinite loop
+    while core.IsSystemRunning() do
+
+        -- we zijn nu werkeloos
+        local nextAssignment = nil
+
+        -- look for best next assignment
+        local assignmentApplication = FindBestAssignment()
+
+        -- did we find one?
+        if assignmentApplication then
+            -- apply
+            ApplyToAssignment(assignmentApplication)
+
+            -- wait, maybe more turtles have applied
+            os.sleep(1.25)
+
+            -- check who gets the assignment
+            nextAssignment = AssignmentSelectionProcedure(assignmentApplication)
+        end
+
+        -- did we get the assignment?
+        if nextAssignment then
+            DoAssignment(nextAssignment)
+        else os.sleep(0.25)     -- bapparently no assignment now
+        end
+    end
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+
+function DHTReadySetup()
+    -- bestaat de entry al in de dht?
+    if not coredht.GetData(db.dhtRoot)              then coredht.SaveData({}, db.dhtRoot ) end
+    if not coredht.GetData(db.dhtRoot, db.listRoot) then coredht.SaveData({}, db.dhtRoot, db.listRoot ) end
+end
+
+function FindBestAssignment()
+--    coreutils.WriteToLog("Running FindBestVacancy")
+
+    -- zoeken naar een assignment om op in te schrijven
+    local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
+    local now         = coreutils.UniversalTime()
+
+    -- check assignmentList
+    if not assignmentList or type(assignmentList) ~= "table" then coreutils.WriteToLog("coreassignment_FindBestAssignment: invalid assignmentList") return nil end
+
+    -- look for best assignment
+    for assignmentId, assignmentData in pairs(assignmentList) do
+        -- check status and startTime
+        -- ToDo: add other metadata checks
+        if assignmentData.status == "open" and assignmentData.metaData.startTime <= now then return assignmentId end
+    end
+
+    -- nothing found
+    return nil
+end
+
+function ApplyToAssignment(assignmentId)
+--    coreutils.WriteToLog("Running ApplyToassignment")
+
+    -- alleen solliciteren indien de assignment open is
+    if coredht.GetData(db.dhtRoot, db.listRoot, assignmentId, "status") == "open" then
+        -- wie zijn we?
+        local me = os.getComputerID()
+
+        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
+        coredht.SaveData({
+            time            = coreutils.UniversalTime(),
+            dice            = math.random(),
+            applicant       = me,
+        }, db.dhtRoot, db.listRoot, assignmentId, "applications", me)
+    end
+end
+
+function AssignmentSelectionProcedure(assignmentId)
+--    coreutils.WriteToLog("Running assignmentSelectionProcedure")
+
+    -- data van de assignment ophalen
+    local assignment = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId)
+
+    -- see if this assignment is still open
+    if assignment.status == "open" then
+        --
+        local applications = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId, "applications")
+
+        -- see who got the highest dice
+        local highestDiceTurtle = nil
+        local highestDiceValue = 0
+        for turtleId, applicationData in pairs(applications) do
+            if applicationData.dice >= highestDiceValue then
+                highestDiceValue = applicationData.dice
+                highestDiceTurtle = applicationData.applicant
+            end
+        end
+
+        -- check if I got the highest dice
+        if highestDiceTurtle == os.getComputerID() then
+            return assignment
+        end
+    end
+
+    -- apparently it's not for me
+    return nil
+end
+
+function DoAssignment(assignment)
+    local taskResult = nil
+
+    -- we have taken this assignment!
+    TakeAssignment(assignment.assignmentId)
+
+    -- call task function
+    local f, err = loadstring("return "..assignment.taskFunction.."("..textutils.serialize(assignment.taskArgumentTable)..")")
+    if f then taskResult = f() else coreutils.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
+
+    -- call callBack function
+    f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.taskArgumentTable)..","..textutils.serialize(taskResult).. ")")
+    if f then f() else coreutils.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
+
+    -- we have done all for this assignment that we needed to do
+    EndAssignment(assignment.assignmentId)
+end
+
+function TakeAssignment(assignmentId)
+    -- mark as staffed
+    coredht.SaveData("staffed", db.dhtRoot, db.listRoot, assignmentId, "status")
+end
+
+function EndAssignment(assignmentId)
+    -- easy
+    coredht.SaveData(nil, db.dhtRoot, db.listRoot, assignmentId)
+end
