@@ -28,9 +28,9 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     metaData.needTool      = metaData.needTool      or false                            --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
     metaData.needTurtle    = metaData.needTurtle    or true
     metaData.fuelNeeded    = metaData.fuelNeeded    or 500                              --> minimum amount of fuel needed to grant assignment
-    if type(taskArgumentTable) ~= "table" then coreutils.WriteToLog("coreassignment_AddAssignment: taskArgumentTable not a table") return end
-    if type(taskFunction) ~= "string" then coreutils.WriteToLog("coreassignment_AddAssignment: taskFunction not a string") return end
-    if type(callbackFunction) ~= "string" then coreutils.WriteToLog("coreassignment_AddAssignment: callbackFunction not a string") return end
+    if type(taskArgumentTable) ~= "table" then coreutils.Error("coreassignment_AddAssignment: taskArgumentTable not a table") return end
+    if type(taskFunction) ~= "string" then coreutils.Error("coreassignment_AddAssignment: taskFunction not a string") return end
+    if type(callbackFunction) ~= "string" then coreutils.Error("coreassignment_AddAssignment: callbackFunction not a string") return end
 
     -- create assignmentId
     local assignmentId  = coreutils.NewId()
@@ -112,7 +112,7 @@ function FindBestAssignment()
     local now         = coreutils.UniversalTime()
 
     -- check assignmentList
-    if not assignmentList or type(assignmentList) ~= "table" then coreutils.WriteToLog("coreassignment_FindBestAssignment: invalid assignmentList") return nil end
+    if not assignmentList or type(assignmentList) ~= "table" then coreutils.Error("coreassignment_FindBestAssignment: invalid assignmentList") return nil end
 
     -- look for best assignment
     for assignmentId, assignmentData in pairs(assignmentList) do
