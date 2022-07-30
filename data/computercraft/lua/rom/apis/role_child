@@ -558,7 +558,7 @@ function BuildSiloL0()
     end
 
     -- build top layer
-    role_builder.BuildRectangularPattern_Task({startpoint = db.siloLocation, buildFromAbove  = true, pattern = enterprise_silo.topLayerL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = db.siloLocation, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern})
 
     -- create access shaft
     coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 0))
@@ -567,7 +567,7 @@ function BuildSiloL0()
     -- create layers of chests
     for i=0,1 do
         -- crafter temporary storage chest
-        role_builder.BuildRectangularPattern_Task({startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i), buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern})
+        role_builder.BuildRectangularPattern_Task({startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i), buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern})
     end
 
     -- help our builder escape
