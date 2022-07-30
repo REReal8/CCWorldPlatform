@@ -21,7 +21,7 @@ function Setup()
     coredht.DHTReadyFunction(DHTReadySetup)
 end
 
-function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction)
+function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction, callbackArgumentTable)
     -- check input
     metaData.startTime     = metaData.startTime     or coreutils.UniversalTime()        --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
     metaData.location      = metaData.location      or nil                              --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
@@ -34,10 +34,11 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     else
         -- ToDo: investigate if there is a way to check if the actual function exists and has the proper argument without actually calling it
     end
-    if type(callbackFunction) ~= "string" then                                          --> callbackFunction should take two arguments
+    if type(callbackFunction) ~= "string" then
         coreutils.Error("coreassignment.AddAssignment: callbackFunction not a string") return
     else                                                                                --> callbackFunction should take two arguments: 
-                                                                                        -->   taskArgumentTable     (the argument to the function taskFunction)
+                                                                                        -->   callbackArgumentTable (the extra information to the callback function)
+         if type(callbackArgumentTable) ~= "table" then coreutils.Error("coreassignment.AddAssignment: callbackArgumentTable not a table") return end
                                                                                         -->   taskResult            (the result of the function taskFunction)
         -- ToDo: investigate if there is a way to check if the actual function exists and has the proper arguments without actually calling it
     end
@@ -55,6 +56,7 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
         taskFunction    = taskFunction,
         taskArgumentTable = taskArgumentTable,
         callbackFunction = callbackFunction,
+        callbackArgumentTable = callbackArgumentTable,
     }, db.dhtRoot, db.listRoot, assignmentId)
 end
 
@@ -205,7 +207,7 @@ function DoAssignment(assignment)
     if f then taskResult = f() else coreutils.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
 
     -- call callBack function
-    f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.taskArgumentTable)..","..textutils.serialize(taskResult).. ")")
+    f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.callbackArgumentTable)..","..textutils.serialize(taskResult).. ")")
     if f then f() else coreutils.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
 
     -- we have done all for this assignment that we needed to do

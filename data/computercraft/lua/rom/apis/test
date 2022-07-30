@@ -2,9 +2,30 @@ local db = {}
 
 -- short hand for current test to run
 function T()
-    T_enterprise_construction()
+--    T_enterprise_construction1()
+    T_enterprise_construction2()
 --    T_role_builder()
 --    T_enterprise_test()
+end
+
+function GoHome()
+    coremove.GoTo({
+        x	= 0,
+        y	= 0,
+        z	= 1,
+        dx	= 0,
+        dy	= 1,
+    })
+end
+
+function Reset()
+    coremove.SetLocation({
+        x	= 0,
+        y	= 0,
+        z	= 1,
+        dx	= 0,
+        dy	= 1,
+    })
 end
 
 local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
@@ -20,15 +41,32 @@ local testBuildPattern = {
     clearRemainingSpace = true,
 }
 
-function T_enterprise_construction()
+local testBlueprint = {
+    layerList = {
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_silo.topLayerL0_pattern},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = true, pattern = enterprise_silo.shaftLayer_pattern},
+--        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern},
+--        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern}
+    }
+}
+
+function T_enterprise_construction1()
+    -- test service 1   
+    coreutils.WriteToLog("# Test 1")
     local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
     local callbackFunction = "test.ACallBack1"
 
-    -- test service 1   
-    coreutils.WriteToLog("# Test 1")
-
     coreutils.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
     enterprise_construction.BuildRectangularPattern(buildData, callbackFunction)
+end
+
+function T_enterprise_construction2()
+    -- test service 2
+    coreutils.WriteToLog("# Test 2")
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
+    local callbackFunction = "test.ACallBack1"
+    coreutils.WriteToLog("T_enterprise_construction calling BuildBluePrint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
+    enterprise_construction.BuildBluePrint(blueprintBuildData, callbackFunction)
 end
 
 function T_role_builder()
@@ -54,10 +92,21 @@ function T_enterprise_test()
     coreutils.WriteToLog("# Test 3")
     local callbackFunction = "test.ACallBack1"
     enterprise_test.TestServiceWithAssignmentAndCallback(testArg, callbackFunction)
+
+    -- test service 4
+    coreutils.WriteToLog("# Test 4")
+    local callbackArgumentTable = {"calbackArg1"}
+    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackArgumentTable)
 end
 
-function ACallBack1(taskArgumentTable, taskResult)
-    coreutils.WriteToLog("ACallBack("..textutils.serialise(taskArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+function ACallBack1(callbackArgumentTable, taskResult)
+    coreutils.WriteToLog("test.ACallBack1("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+end
+
+function GoHomeCallBack(callbackArgumentTable, taskResult)
+    coreutils.WriteToLog("test.GoHomeCallBack("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+
+    GoHome()
 end
 
 function BirchGrow()

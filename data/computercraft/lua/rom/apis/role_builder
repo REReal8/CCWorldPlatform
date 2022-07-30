@@ -58,7 +58,7 @@ function BuildRectangularPattern_Task(buildData)
     if buildData.buildFromAbove  then deltaZ    =  1
                             else deltaZ    = -1
     end
-        
+
     -- go to starting location
     coremove.GoTo(coremove.GetRelativeLocation(buildData.startpoint, 0, 0, deltaZ), true)
 
