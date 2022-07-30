@@ -2,7 +2,7 @@ local db = {}
 
 -- short hand for current test to run
 function T()
---    role_child.BuildSiloL0()
+--    role_settler.BuildSiloL0()
 --    T_enterprise_construction1()
     T_enterprise_construction2()
 --    T_role_builder()

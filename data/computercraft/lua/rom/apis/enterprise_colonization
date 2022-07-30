@@ -1,7 +1,7 @@
 local db = {
-    enterpriseName  = "enterprise_childhood",
+    enterpriseName  = "enterprise_colonization",
     taskList        = {
-        { command = "role_child.LetItGrow()" },
+        { command = "role_settler.LetItGrow()" },
 
     },
 }
@@ -32,7 +32,7 @@ function ProcessNextTask(enterpriseId)
     coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
 
     -- execute this command using the task queue
-    coretask.AddWork(role_child.Task,  taskTable)
+    coretask.AddWork(role_settler.Task,  taskTable)
 end
 
 function ProcessNextMessage(enterpriseId)
