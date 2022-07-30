@@ -65,8 +65,9 @@ function T_enterprise_construction2()
     coreutils.WriteToLog("# Test 2")
     local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
     local callbackFunction = "test.ACallBack1"
+    local callbackArgumentTable = {}
     coreutils.WriteToLog("T_enterprise_construction calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
-    enterprise_construction.BuildBlueprint(blueprintBuildData, callbackFunction)
+    enterprise_construction.BuildBlueprint(blueprintBuildData, callbackFunction, callbackArgumentTable)
 end
 
 function T_role_builder()

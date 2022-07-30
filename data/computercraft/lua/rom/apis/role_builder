@@ -40,8 +40,64 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---
---
+
+function BuildBlueprint_MetaData(buildData)
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(buildData.blueprintStartpoint), -- copy needed because otherwise reference is used twice
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 0,
+    }
+
+    -- loop on layers
+    for i, buildLayer in ipairs(buildData.blueprint.layerList) do
+        -- determine buildData for this layer
+        local layerBuildData = {
+            startpoint              = coremove.GetRelativeLocation(buildLayer.startpoint,
+                                                                buildData.blueprintStartpoint.x,
+                                                                buildData.blueprintStartpoint.y,
+                                                                buildData.blueprintStartpoint.z),
+            buildFromAbove          = buildLayer.buildFromAbove,
+            replacePresentObjects   = buildLayer.replacePresentObjects,
+            pattern                 = buildLayer.pattern,
+        }
+
+        -- get metadata for layer
+        local layereMetaData = BuildRectangularPattern_MetaData(layerBuildData)
+
+        -- update blueprint metadata
+        metaData.fuelNeeded = metaData.fuelNeeded + layereMetaData.fuelNeeded
+    end
+
+    return metaData
+end
+
+
+function BuildBlueprint_Task(buildData)
+    -- loop on layers
+    for i, buildLayer in ipairs(buildData.blueprint.layerList) do
+        -- determine buildData for this layer
+        local layerBuildData = {
+            startpoint              = coremove.GetRelativeLocation(buildLayer.startpoint,
+                                                                   buildData.blueprintStartpoint.x,
+                                                                   buildData.blueprintStartpoint.y,
+                                                                   buildData.blueprintStartpoint.z),
+            buildFromAbove          = buildLayer.buildFromAbove,
+            replacePresentObjects   = buildLayer.replacePresentObjects,
+            pattern                 = buildLayer.pattern,
+        }
+
+        -- build layer using internal task
+        if BuildRectangularPattern_Task(layerBuildData) ~= true then
+            coreutils.Error("role_builder.BuildBlueprint_Task(): Failed building layer " ..i..". Remaining layers skipped.")
+            return false
+        end
+    end
+
+    return true
+end
+
 
 function BuildRectangularPattern_MetaData(buildData)
     return {
@@ -49,7 +105,7 @@ function BuildRectangularPattern_MetaData(buildData)
         location = coremove.CopyLocation(buildData.startpoint), -- copy needed because otherwise reference is used twice
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 500 -- ToDo: calculate from actual movements defined
+        fuelNeeded = 500 -- ToDo: calculate from actual movements needed
     }
 end
 
@@ -85,7 +141,7 @@ function BuildRectangularPattern_Task(buildData)
     -- check mandatory pickage!
     local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
     if not axePresent then
-        coreutils.WriteToLog("role_bilder.BuildRectangularPattern_Task(): No pickaxe present, we are on strike!")
+        coreutils.Error("role_builder.BuildRectangularPattern_Task(): No pickaxe present, we are on strike!")
         return false
     end
 

@@ -17,7 +17,7 @@
 
 -- Service to build a blueprint.
 -- ToDo: consider a distributed implementation (i.e. that uses multiple assignments for various parts of the blueprint)
-function BuildBlueprint(buildData, callbackFunction)
+function BuildBlueprint(buildData, callbackFunction, callbackArgumentTable)
     -- check input
     --
     -- buildData = {
@@ -36,26 +36,11 @@ function BuildBlueprint(buildData, callbackFunction)
     -- callbackFunction
     if type(callbackFunction) ~= "string" then coreutils.Error("enterprise_construction.BuildBlueprint: callbackFunction not a string") return false end
 
-    -- loop on layers
-    for i, buildLayer in ipairs(buildData.blueprint.layerList) do
-        -- determine buildData for this layer
-        local layerBuildData = {
-            startpoint              = coremove.GetRelativeLocation(buildLayer.startpoint,
-                                                                   buildData.blueprintStartpoint.x,
-                                                                   buildData.blueprintStartpoint.y,
-                                                                   buildData.blueprintStartpoint.z),
-            buildFromAbove          = buildLayer.buildFromAbove,
-            replacePresentObjects   = buildLayer.replacePresentObjects,
-            pattern                 = buildLayer.pattern,
-        }
+    -- construct assignment metadata
+    local metaData = role_builder.BuildBlueprint_MetaData(buildData)
 
-        -- schedule build layer
-        -- ToDo: do this in sequence by nested callbacks
-        BuildRectangularPattern(layerBuildData, callbackFunction, {i})   -- callback function is now called multiple times
-
-        -- ff wachten
-        os.sleep(0.25)
-    end
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_builder.BuildBlueprint_Task", buildData, callbackFunction, callbackArgumentTable)
 
     return true
 end
