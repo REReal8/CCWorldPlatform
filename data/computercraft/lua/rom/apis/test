@@ -13,7 +13,7 @@ end
 function T_enterpise_colonization()
     -- test CreateNewWorld
     coreutils.WriteToLog("# Test CreateNewWorld")
-    local callbackFunction = "test.GoHomeCallBack"
+    local callbackFunction = "test.ACallBack1"
 
     coreutils.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..")")
     enterprise_colonization.CreateNewWorld(callbackFunction)

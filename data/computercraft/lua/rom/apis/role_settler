@@ -1,6 +1,5 @@
 -- the table that stores the data
 local db = {
-    startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
     forestLocation      = {x= 0, y= 0, z= 1, dx=0, dy=1},
     nTrees = 1,
     craftingLocation    = {x= 3, y= 2, z= 1, dx=0, dy=1},
@@ -38,7 +37,8 @@ function Settle_Task(settleData)
     end
 
     -- coordinaten stelsel goed zetten
-    coremove.SetLocation(db.startLocation)
+    local startLocation = settleData.startLocation
+    coremove.SetLocation(startLocation)
 
     -- plant the sappling
     print (" ")
@@ -108,7 +108,7 @@ function Settle_Task(settleData)
     end
 
     -- restore our crafting spot
-    coremove.MoveTo({z = db.startLocation.z - 1})
+    coremove.MoveTo({z = startLocation.z - 1})
     if coreinventory.SelectItem("minecraft:dirt") or coreinventory.SelectItem("minecraft:cobblestone") then turtle.placeDown() end
 
     -- craft furnace
@@ -133,7 +133,7 @@ function Settle_Task(settleData)
     print (">Extending forest to " .. treesNeeded .. " trees<")
     while db.nTrees < treesNeeded do
         -- Harvest Forest
-        HarvestForest()
+        HarvestForest(startLocation)
 
         -- try extend forest
         TryExtendForest(treesNeeded)
@@ -146,7 +146,7 @@ function Settle_Task(settleData)
     print(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
-        HarvestForest()
+        HarvestForest(startLocation)
     end
 
     -- create chests
@@ -200,11 +200,11 @@ function Reset()
     })
 end
 
-function HarvestForest()
+function HarvestForest(startLocation)
     print(" Harvesting Forest")
 
     -- go to first tree position
-    coremove.GoTo(db.startLocation)
+    coremove.GoTo(startLocation)
 
     -- wait for tree
     WaitForTree()
@@ -218,10 +218,6 @@ function HarvestForest()
 
     -- refuel
     Refuel()
-end
-
-function GoStart()
-    coremove.GoTo(db.startLocation)
 end
 
 function WaitForTree()

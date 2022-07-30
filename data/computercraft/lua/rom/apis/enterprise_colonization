@@ -38,7 +38,7 @@ function CreateNewWorld(callback)
         needTurtle = true,
         fuelNeeded = 0                          --> per definition the settler starts without fuel
     }
-    local settleData = {startpoint = startLocation}
+    local settleData = {startLocation = startLocation}
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, {})
