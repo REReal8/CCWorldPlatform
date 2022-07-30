@@ -2,11 +2,21 @@ local db = {}
 
 -- short hand for current test to run
 function T()
+    T_enterpise_colonization()
 --    role_settler.BuildSiloL0()
 --    T_enterprise_construction1()
-    T_enterprise_construction2()
+--    T_enterprise_construction2()
 --    T_role_builder()
 --    T_enterprise_test()
+end
+
+function T_enterpise_colonization()
+    -- test CreateNewWorld
+    coreutils.WriteToLog("# Test CreateNewWorld")
+    local callbackFunction = "test.GoHomeCallBack"
+
+    coreutils.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..")")
+    enterprise_colonization.CreateNewWorld(callbackFunction)
 end
 
 function GoHome()

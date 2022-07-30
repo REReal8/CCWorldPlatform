@@ -1,6 +1,5 @@
 -- the table that stores the data
 local db = {
-    job         = "alchemist",
     startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
     forestLocation      = {x= 0, y= 0, z= 1, dx=0, dy=1},
     nTrees = 1,
@@ -9,8 +8,18 @@ local db = {
     siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
 }
 
--- main functions
-function LetItGrow()
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+
+function Settle_Task(settleData)
     -- ready to start?
     local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
     local craftingTable = coreinventory.CountItem("minecraft:crafting_table")
@@ -162,6 +171,15 @@ function LetItGrow()
     GoHome()
 end
 
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+
 function GoHome()
     coremove.GoTo({
         x	= 0,
@@ -244,15 +262,6 @@ function Refuel()
         print(" Already above (=" .. fuelLevel .. ") minumum(=" .. minFuel .. ") fuellevel.")
     end
 end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---
---
 
 function LogToPlanks(planks)
     -- check input

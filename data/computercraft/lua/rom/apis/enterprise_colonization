@@ -1,52 +1,54 @@
-local db = {
-    enterpriseName  = "enterprise_colonization",
-    taskList        = {
-        { command = "role_settler.LetItGrow()" },
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
 
-    },
-}
 
-function NewChildhood(data)
-    local enterpriseId   = coreutils.NewId()
+function CreateNewWorld(callback)
+    --[[
+    This public function creates a new CCWorldPlatform world.
+        It bootstraps the world logic by building an initiating several enterprise (sites). 
 
-    -- data verrijken
-    data.enterpriseId   = enterpriseId
-    data.enterpriseName = db.enterpriseName
-    data.taskList       = {}
+        The turtle should already have (either equiped or in it's inventory)
+            one modem
+            one axe
+            one crafting station
+            one birchSapling
+        It is not necessary for the turtle to have any energy.
 
-    -- onze gegevens opslaan
-    coredht.SaveData(data, "enterprises", enterpriseId)
+    Return value:
+        if initiating the bootstrapping sequence was succesfull
 
-    -- vacature uitzetten voor een turtle die dit voor ons gaat bouwen
-    corejob.NewJob({enterpriseId = enterpriseId})
+    Parameters:
+        callback - (string) function name to call once the world is created
+    ]]--
+    -- check input
+    if type(callback) ~= "string" then coreutils.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
+
+    -- construct arguments
+    local startLocation = {x= 3, y= 2, z= 1, dx=0, dy=1}
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 0                          --> per definition the settler starts without fuel
+    }
+    local settleData = {startpoint = startLocation}
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, {})
 end
 
-function ProcessNextTask(enterpriseId)
-    local taskList          = coredht.GetData("enterprises", enterpriseId, "taskList")
-    local taskId, taskTable = next(taskList)
 
-    -- did we get a task?
-    if not taskId or type(taskTable) ~= "table" then return end
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-    -- remove from the task list once completed
-    coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
-
-    -- execute this command using the task queue
-    coretask.AddWork(role_settler.Task,  taskTable)
-end
-
-function ProcessNextMessage(enterpriseId)
-    -- berichten die we accepteren
-    --
-
-    -- you cannot communicate with your childhood
-    return false
-end
-
-function TaskComplete(enterpriseId)
-    -- get enterprise data
---    local data          = coredht.GetData("enterprises", enterpriseId)
-
-    -- moeten we nog iets doen nu de task is afgerond? nieuwe job aanmaken
-    corejob.NewJob({enterpriseId = enterpriseId})
-end
