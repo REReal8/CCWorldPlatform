@@ -190,16 +190,6 @@ function GoHome()
     })
 end
 
-function Reset()
-    coremove.SetLocation({
-        x	= 0,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
-    })
-end
-
 function HarvestForest(startLocation)
     print(" Harvesting Forest")
 
