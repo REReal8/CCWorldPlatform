@@ -76,8 +76,6 @@ end
 --    / _ \| |/ _` |
 --   | (_) | | (_| |
 --    \___/|_|\__,_|
---
---
 
 function NewSilo(data)
     -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
