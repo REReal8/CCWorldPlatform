@@ -198,7 +198,7 @@ end
 siloL0_blueprint = {
     layerList = {
         { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_silo.topLayerL0_pattern},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = true, pattern = enterprise_silo.shaftLayer_pattern},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_silo.shaftLayer_pattern},
         { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern},
         { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = enterprise_silo.chestLayer_pattern}
     }

@@ -51,6 +51,9 @@ function BuildBluePrint(buildData, callbackFunction)
         -- schedule build layer
         -- ToDo: do this in sequence by nested callbacks
         BuildRectangularPattern(layerBuildData, callbackFunction, {i})   -- callback function is now called multiple times
+
+        -- ff wachten
+        os.sleep(0.25)
     end
 
     return true
