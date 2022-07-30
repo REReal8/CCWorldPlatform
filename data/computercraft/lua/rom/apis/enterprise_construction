@@ -16,7 +16,8 @@
 
 
 -- Service to build a blueprint.
-function BuildBluePrint(buildData, callbackFunction)
+-- ToDo: consider a distributed implementation (i.e. that uses multiple assignments for various parts of the blueprint)
+function BuildBlueprint(buildData, callbackFunction)
     -- check input
     --
     -- buildData = {
@@ -24,16 +25,16 @@ function BuildBluePrint(buildData, callbackFunction)
     --    blueprint               --> blueprint to build   
     -- }
     if type(buildData) ~= "table" then
-        coreutils.Error("enterprise_construction.BuildBluePrint: bluePrintData not a table")
+        coreutils.Error("enterprise_construction.BuildBlueprint: bluePrintData not a table")
         return false
     else
-        if type(buildData.blueprintStartpoint) ~= "table" then coreutils.Error("enterprise_construction.BuildBluePrint: blueprintStartpoint not a table") return false end
-        if type(buildData.blueprint) ~= "table" then coreutils.Error("enterprise_construction.BuildBluePrint: blueprint not a table") return false end
-        if type(buildData.blueprint.layerList) ~= "table" then coreutils.Error("enterprise_construction.BuildBluePrint: blueprint.layerList not a table") return false end
+        if type(buildData.blueprintStartpoint) ~= "table" then coreutils.Error("enterprise_construction.BuildBlueprint: blueprintStartpoint not a table") return false end
+        if type(buildData.blueprint) ~= "table" then coreutils.Error("enterprise_construction.BuildBlueprint: blueprint not a table") return false end
+        if type(buildData.blueprint.layerList) ~= "table" then coreutils.Error("enterprise_construction.BuildBlueprint: blueprint.layerList not a table") return false end
     end
     --
     -- callbackFunction
-    if type(callbackFunction) ~= "string" then coreutils.Error("enterprise_construction.BuildBluePrint: callbackFunction not a string") return false end
+    if type(callbackFunction) ~= "string" then coreutils.Error("enterprise_construction.BuildBlueprint: callbackFunction not a string") return false end
 
     -- loop on layers
     for i, buildLayer in ipairs(buildData.blueprint.layerList) do
