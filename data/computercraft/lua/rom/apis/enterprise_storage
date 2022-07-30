@@ -2,6 +2,83 @@ local db = {
     enterpriseName  = "enterprise_storage",
 }
 
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function StoreItems(itemList)
+--[[
+    This public function is for storing items.
+
+    Return value:
+        location where to drop the items
+
+    Parameters:
+        itemList - (table) list of items (name and count) to be stored
+]]--
+end
+
+function ItemsDelivered(itemList, location)
+--[[
+    This public function notifies the storage enterprise that items have been delivered
+
+    Return value:
+        nil
+
+    Parameters:
+        itemList - (table) list of items (name and count) to be stored
+        location - (table) location of the items
+]]--
+end
+
+function RetrieveItems(itemList, callback)
+--[[
+    This public function is retrieving items from the storage.
+
+    Return value:
+        location where to drop the items
+
+    Parameters:
+        itemList - (table) list of items (name and count) to be stored
+        callback - (string) function name to call once the items are ready for pickup
+]]--
+end
+
+
+
+--                        _
+--                       (_)
+--    ___  ___ _ ____   ___  ___ ___  ___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \/ __|
+--   \__ \  __/ |   \ V /| | (_|  __/\__ \
+--   |___/\___|_|    \_/ |_|\___\___||___/
+
+
+
+
+
+
+
+
+
+
+
+
+
+--          _     _
+--         | |   | |
+--     ___ | | __| |
+--    / _ \| |/ _` |
+--   | (_) | | (_| |
+--    \___/|_|\__,_|
+--
+--
+
 function NewSilo(data)
     -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
     -- data.type = "simple" | "column"
