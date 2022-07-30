@@ -70,11 +70,17 @@ function BuildBlueprint_MetaData(buildData)
         metaData.fuelNeeded = metaData.fuelNeeded + layereMetaData.fuelNeeded
     end
 
+    -- update metadata with escapeSequence (if present)
+    -- ToDo: implement
+
     return metaData
 end
 
 
 function BuildBlueprint_Task(buildData)
+    -- check input
+    if type(buildData.blueprint.escapeSequence) ~= "table" then coreutils.Error("role_builder.BuildBlueprint_Task: escape sequence not a table") return false end
+
     -- loop on layers
     for i, buildLayer in ipairs(buildData.blueprint.layerList) do
         -- determine buildData for this layer
@@ -93,6 +99,14 @@ function BuildBlueprint_Task(buildData)
             coreutils.Error("role_builder.BuildBlueprint_Task(): Failed building layer " ..i..". Remaining layers skipped.")
             return false
         end
+    end
+
+    -- perform escape sequence
+    for i, escapeLocation in ipairs(buildData.blueprint.escapeSequence) do
+        coremove.GoTo(coremove.GetRelativeLocation(buildData.blueprintStartpoint,
+                                                   escapeLocation.x,
+                                                   escapeLocation.y,
+                                                   escapeLocation.z))
     end
 
     return true

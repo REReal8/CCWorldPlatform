@@ -278,6 +278,9 @@ siloL0_blueprint = {
         { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
         { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern},
         { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern}
+    },
+    escapeSequence = {
+        { x= 3, y= 3, z=  1},
     }
 }
 --]]
