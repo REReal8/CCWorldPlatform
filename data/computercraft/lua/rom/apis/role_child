@@ -547,6 +547,8 @@ function UpdateToCraftingStationL1()
 end
 
 function BuildSiloL0()
+    -- ToDo: later make this internal code of enterprise_storage or role_silo_worker
+
     -- check inventory
     local chests    = coreinventory.CountItem("minecraft:chest")
     local torches   = coreinventory.CountItem("minecraft:torch")
@@ -557,19 +559,6 @@ function BuildSiloL0()
         return false
     end
 
-    -- build top layer
-    role_builder.BuildRectangularPattern_Task({startpoint = db.siloLocation, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern})
-
-    -- create access shaft
-    coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 0))
-    coremove.Down(3, true)
-
-    -- create layers of chests
-    for i=0,1 do
-        -- crafter temporary storage chest
-        role_builder.BuildRectangularPattern_Task({startpoint  = coremove.GetRelativeLocation(db.siloLocation, 2, 2, -2 - i), buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern})
-    end
-
-    -- help our builder escape
-    coremove.GoTo(coremove.GetRelativeLocation(db.siloLocation, 3, 3, 1))
+    -- build blue print
+    role_builder.BuildBlueprint_Task({blueprintStartpoint = db.siloLocation, blueprint = enterprise_storage.GetSiloL0_blueprint()})
 end

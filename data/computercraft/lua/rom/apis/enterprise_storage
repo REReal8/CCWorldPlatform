@@ -271,20 +271,6 @@ end
 --                           | |                                                                  | |
 --                           |_|                                                                  |_|
 
---[[]
-siloL0_blueprint = {
-    layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
-        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern},
-        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern}
-    },
-    escapeSequence = {
-        { x= 3, y= 3, z=  1},
-    }
-}
---]]
-
 topLayerL0_pattern = {
     deltaX      = 6,
     deltaY      = 6,
@@ -323,3 +309,19 @@ chestLayer_pattern = {
     },
     clearRemainingSpace = true,
 }
+
+-- ToDo: later wrap this within enterprise_storage (or role_silo_worker) such that this data can become private
+function GetSiloL0_blueprint()
+    return {
+        layerList = {
+            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern},
+            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
+            { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern},
+            { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(enterprise_storage.chestLayer_pattern)}
+        },
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
+    }
+end
+
