@@ -35,7 +35,9 @@ local db = {
 --   | |
 --   |_|
 
-function StoreItems(itemList)
+-- print(textutils.serialize(enterprise_storage.StoreItems({{itemName="minecraft:charcoal", itemCount=12, stackSize="64"}}, {x=0, y=0, z= 1, dx=0, dy=1})))
+
+function StoreItems(itemList, location)
 --[[
     This public function is for storing items. It does not care if there is space, all items are accepted
 
@@ -44,7 +46,19 @@ function StoreItems(itemList)
 
     Parameters:
         itemList - (table) list of items (name and count) to be stored
+        location - (table) location where the items are now, to search of a nearby site
 --]]
+
+    -- check our input
+    if type(itemList) ~= "table" then coreutils.Error('enterprise_storage.StoreItems: Invalid input') return nil end
+
+    -- this site is best
+    local site  = FindClosestSite(location)
+    if site == nil then coreutils.Error('enterprise_storage.StoreItems: No valid site') return nil end
+
+    -- let the site handle this request
+    if site.type == "silo" then return enterprise_storage_silo.StoreItems(site, itemList)
+    end
 end
 
 function ItemsDelivered(itemList, location)
@@ -112,12 +126,41 @@ function NewSite(siteData)
         siteData - (table) data about this site, like type and layout
 --]]
 
+    -- just check if our enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then
+
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+        coredht.SaveData({}, db.dhtRoot, db.dhtSites)
+    end
+
     -- check our input
-    if  type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then coreutils.Error('enterprise_storage.NewSite: Invalid input') return nil end
+    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then coreutils.Error('enterprise_storage.NewSite: Invalid input') return nil end
 
     -- what kind of storage is this?
     if siteData.type == 'silo' then return enterprise_storage_silo.NewSite(siteData)
     end
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function FindClosestSite(location)
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- check if we have any site
+    if type(sites) ~= "table" or #sites == 0 then coreutils.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
+
+    -- beautyfull!
+    coreutils.WriteToLog(sites)
+
+    -- we should look for the best site, for now just take the first
+    return sites[1]
 end
 
 --    _           _ _     _               _   _                                 _     _                       _       _
