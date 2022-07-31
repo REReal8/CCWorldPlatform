@@ -1,0 +1,67 @@
+local db = {
+    dhtRoot     = "enterprise_storage",
+    dhtSites    = "sites",
+}
+
+function NewSite(siteData)
+    -- variables
+    local site  = {
+        type            = "silo",
+        location        = siteData.location,
+        entryLocation   = {},
+        topChests       = {},
+        storageChests   = {},
+    }
+
+    -- check input, use default
+    if siteData.siloType == nil then siteData.siloType = "basic" end
+
+    -- what kind of new silo is this?
+    if siteData.siloType == "basic" then
+
+        -- variables
+        local shaft = nil    -- becomes a location opbject
+
+        -- defaults to input
+        siteData.topChests  = siteData.topChests    or 2
+        siteData.layers     = siteData.layers       or 2
+
+        -- mark our locations
+        site.entryLocation  = coremove.GetRelativeLocation(siteData.location, 3, 3, 0)
+
+        -- add our top chests, depending how many we have
+        if siteData.topChests >= 1 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 2, 5, 0)}) end
+        if siteData.topChests >= 2 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 4, 5, 0)}) end
+        if siteData.topChests >= 3 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 5, 4, 0)}) end
+        if siteData.topChests >= 4 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 5, 2, 0)}) end
+        if siteData.topChests >= 5 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 4, 1, 0)}) end
+        if siteData.topChests >= 6 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 2, 1, 0)}) end
+        if siteData.topChests >= 7 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 1, 2, 0)}) end
+        if siteData.topChests >= 8 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 1, 4, 0)}) end
+
+        -- loop the layers
+        for i=0, siteData.layers, 1 do
+
+            -- do the floor
+            shaft     = coremove.GetRelativeLocation(site.entryLocation, 0, 0, -2 - i)
+            table.insert(site.storageChests, { status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0,  1), actual=0, virtual=0, stackSize=0})
+            table.insert(site.storageChests, { status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  1,  0), actual=0, virtual=0, stackSize=0})
+            table.insert(site.storageChests, { status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0, -1), actual=0, virtual=0, stackSize=0})
+            table.insert(site.storageChests, { status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft, -1,  0), actual=0, virtual=0, stackSize=0})
+        end
+
+        -- reserve the first chest for charcoal
+        site.storageChests[1].status    = "used"
+        site.storageChests[1].itemName  = "minecraft:charcoal"
+        site.storageChests[1].stackSize = 64
+    end
+
+    -- add this new site to our data
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- add this site to the dht
+    table.insert(sites, site)
+
+    -- save the dht
+    coredht.SaveData(sites, db.dhtRoot, db.dhtSites)
+end
