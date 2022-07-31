@@ -197,7 +197,7 @@ function ToBottom()
   while turtle.down() do db.z = db.z - 1 end
   return true
 end
-
+--[[
 function NeedTorch()
   local x = db.x
   local y = db.y
@@ -232,7 +232,7 @@ function NeedSappling()
     return false
   end
 end
-
+--]]
 function GetLocation()
 	return {
 		x = db.x,
@@ -290,7 +290,17 @@ function CopyLocation(location)
 		dy  = location.dy
 	}
 end
-
+function IsSameLocation(a, b)	return a.x  == b.x  and a.y  == b.y  and a.z == b.z	end
+function IsSameDirection(a, b)	return a.dx == b.dx and a.dy == b.dy			    end
+function GetDivergentDirection(location, dx, dy)
+	return {
+		x	= location.x,
+		y 	= location.y,
+		z 	= location.z,
+		dx  = dx,
+		dy  = dy
+	}
+end
 function GetRelativeLocation(location, addX, addY, addZ)
 	return {
 		x	= location.x + addX,
@@ -300,7 +310,6 @@ function GetRelativeLocation(location, addX, addY, addZ)
 		dy  = location.dy
 	}
 end
-
 function GetRelativeLocationFront(location, steps)
 	-- check input
 	if type(location) ~= "table" or location.x == nil or location.y == nil or location.z == nil or location.dx == nil or location.dy == nil then return location end
