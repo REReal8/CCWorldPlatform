@@ -19,7 +19,7 @@ function Init()
 end
 
 function Setup()
-	Status()
+	-- Status()
 end
 
 function DoIdle()
