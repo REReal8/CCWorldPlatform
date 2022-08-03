@@ -29,14 +29,14 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     metaData.needTurtle    = metaData.needTurtle    or true
     metaData.fuelNeeded    = metaData.fuelNeeded    or 500                              --> minimum amount of fuel needed to grant assignment
     if type(taskArgumentTable) ~= "table" then coreutils.Error("coreassignment.AddAssignment: taskArgumentTable not a table") return end
-    if type(taskFunction) ~= "string" then 
+    if type(taskFunction) ~= "string" then
         coreutils.Error("coreassignment.AddAssignment: taskFunction not a string") return
     else
         -- ToDo: investigate if there is a way to check if the actual function exists and has the proper argument without actually calling it
     end
     if type(callbackFunction) ~= "string" then
         coreutils.Error("coreassignment.AddAssignment: callbackFunction not a string") return
-    else                                                                                --> callbackFunction should take two arguments: 
+    else                                                                                --> callbackFunction should take two arguments:
                                                                                         -->   callbackArgumentTable (the extra information to the callback function)
          if type(callbackArgumentTable) ~= "table" then coreutils.Error("coreassignment.AddAssignment: callbackArgumentTable not a table") return end
                                                                                         -->   taskResult            (the result of the function taskFunction)
@@ -48,16 +48,21 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
 
     -- store assignment
     coredht.SaveData({
-        assignmentId    = assignmentId,
-        status          = "open",
-        applications    = {},
+        assignmentId            = assignmentId,
+        status                  = "open",
+        applications            = {},
 
-        metaData        = metaData,
-        taskFunction    = taskFunction,
-        taskArgumentTable = taskArgumentTable,
-        callbackFunction = callbackFunction,
-        callbackArgumentTable = callbackArgumentTable,
+        metaData                = metaData,
+        taskFunction            = taskFunction,
+        taskArgumentTable       = taskArgumentTable,
+        callbackFunction        = callbackFunction,
+        callbackArgumentTable   = callbackArgumentTable,
     }, db.dhtRoot, db.listRoot, assignmentId)
+end
+
+-- coreassignment.DummyAssignment
+function DummyAssignment(emptyTable)
+    -- do nothing
 end
 
 function Run()
