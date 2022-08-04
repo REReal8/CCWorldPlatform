@@ -102,22 +102,32 @@ function ItemPresent(itemName)
     Parameters:
         itemName - (string) name of the item to be counted
 --]]
-    -- variables
-    local itemCount = 0
 
-    -- sites ophalen
+    -- variables
     local sites     = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local itemCount = 0
+    local result    = {
+        total           = 0,
+        sites           = {}
+    }
 
     -- loop the sites
     for i, site in ipairs(sites) do
 
         -- let the type determine how this is managed
-        if site.type == "silo" then itemCount = itemCount + enterprise_storage_silo.ItemPresent(site, itemName)
+        if site.type == "silo" then itemCount = enterprise_storage_silo.ItemPresent(site, itemName)
         end
+
+        -- add to our data structure
+        result.total    = result.total + itemCount
+        table.insert(result.sites, {
+            siteIndex   = site.siteIndex,
+            itemCount   = itemCount
+        })
     end
 
     -- this is what we have
-    return itemCount
+    return result
 end
 
 -- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
