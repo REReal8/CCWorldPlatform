@@ -1,4 +1,4 @@
-local db             = { _version = 0 }
+local db                = { _version = 0 }
 local dhtReady          = false
 local dhtReadyFunctions = {}
 local writeToFileQueued = false

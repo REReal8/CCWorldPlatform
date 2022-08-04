@@ -5,17 +5,21 @@ local db = {
     z  = 0,
     dx = 0,
     dy = 1,
-
-	filename	= "/db/move.lua",
 }
+
+-- for writing db to file
+local filename			= "/db/move.lua"
+local writeToFileQueued	= false
 
 -- moving forward, up, down and turning all need 8 ticks (0.40 sec) to complete
 -- turtle.select takes 1 tick (0.05 second)
 
 function Init()
-	db = coreutils.ReadTableFromFile( db.filename )
+	-- read last known location from file
+	db = coreutils.ReadTableFromFile(filename)
+
+	-- reset if the location from file was not valid
 	if not db or db.x == nil then Reset() end
-	DoIdle()
 end
 
 function Setup()
@@ -23,7 +27,7 @@ function Setup()
 end
 
 function DoIdle()
-	coreutils.WriteToFile( db.filename, db, "overwrite" )
+	-- used to write to disk, will do no longer
 end
 
 function Reset()
@@ -33,8 +37,6 @@ function Reset()
         z	= 0,
         dx	= 0,
         dy	= 1,
-
-		filename	= "/db/move.lua",
     }
 end
 
@@ -69,133 +71,213 @@ function Left(c)
 		-- new direction
 	    db.dx = -1 * oy
 	    db.dy = ox
+
+		-- save new direction right away
+		SaveDB()
 	end
 end
+
 function Right(c)
 	-- init parameter
-  c = c or 1
-  c = math.floor(c + 0.5)
+	c = c or 1
+	c = math.floor(c + 0.5)
 
-  -- loop
-  for n=1,c do
+	-- loop
+	for n=1,c do
+
 		-- remember direction
-	  local ox = db.dx
-	  local oy = db.dy
+		local ox = db.dx
+		local oy = db.dy
 
 		-- do the turn!
-	  turtle.turnRight()
+		turtle.turnRight()
 
 		-- new direction
-	  db.dx = oy
-	  db.dy = -1 * ox
+		db.dx = oy
+		db.dy = -1 * ox
+
+		-- save new direction right away
+		SaveDB()
 	end
 end
+
 function Forward(c, force)
 	-- init parameter
-  c = c or 1
-  c = math.floor(c + 0.5)
+	c = c or 1
+	c = math.floor(c + 0.5)
 
-  -- loop the movement
-  for i=1,c do
+	-- loop the movement
+	for i=1,c do
 
-  	-- keep trying
-    local tries = 0
-    local success = turtle.forward()
-    while not success and force do
-      turtle.dig()
-      turtle.attack()
-      sleep(0.1)
-      tries = tries + 1
-      if tries > 50 then
-        print("Error: can't move forward.")
-        return false
-      end
-      success = turtle.forward()
-    end
-    if success then
-	    db.x = db.x + db.dx
-	    db.y = db.y + db.dy
-	  end
-  end
-  return true
+		-- keep trying
+		local tries		= 0
+		local success	= turtle.forward()
+
+		-- if it did not work, attack the space in front of us
+		while not success and force do
+
+			-- do our magic
+			turtle.dig()
+			turtle.attack()
+			sleep(0.1)
+
+			-- update how often we tried so far
+			tries = tries + 1
+			if tries > 50 then print("Error: can't move forward.") return false end
+
+			-- retry
+			success = turtle.forward()
+		end
+
+		-- did we move?
+		if success then
+
+			-- update db
+			db.x = db.x + db.dx
+			db.y = db.y + db.dy
+
+			-- save db
+			SaveDB()
+		end
+	end
+
+	-- done succesfully
+	return true
 end
+
 function Backward(c, force)
 	-- init parameter
-  c = c or 1
-  c = math.floor(c + 0.5)
+	c = c or 1
+	c = math.floor(c + 0.5)
 
-  -- loop
-  for i=1,c do
+	-- loop
+	for i=1,c do
 
-  	-- can we move backward?
-    if turtle.back() ~= true then
-    	if force then
-	      Left(2)
-	      local success = Forward(1, force)
-	      Right(2)
-	      if not success then return false end
+		-- can we move backward?
+		if turtle.back() ~= true then
+
+			-- can we use force?
+			if force then
+
+				-- turn around to attack the block
+				Left(2)
+				local success = Forward(1, force)
+				Right(2)
+
+				-- did it work?
+				if not success then return false end
 			else
+				-- we are not using force, but we cannot move backwards
 				return false
 			end
-    else
-	    db.x = db.x - db.dx
-  	  db.y = db.y - db.dy
-    end
-  end
+		else
+			-- update db
+			db.x = db.x - db.dx
+			db.y = db.y - db.dy
 
-  return true
+			-- save db
+			SaveDB()
+		end
+	end
+
+	return true
 end
+
 function Up(c, force)
 	-- init parameter
-  c = c or 1
-  c = math.floor(c + 0.5)
+	c = c or 1
+	c = math.floor(c + 0.5)
 
-  -- loop
-  for i=1,c do
-    local tries = 0
-    local success = turtle.up()
-    while not success and force do
-      turtle.digUp()
-      turtle.attackUp()
-      sleep(0.1)
-      tries = tries + 1
-      if tries>50 then
-        print("Error: can't move up.")
-        return false
-      end
-      success = turtle.up()
-    end
-		if success then db.z = db.z + 1 end
-  end
-  return true
+	-- loop
+	for i=1,c do
+		local tries = 0
+		local success = turtle.up()
+
+		-- did we move up?
+		while not success and force do
+
+			-- use force
+			turtle.digUp()
+			turtle.attackUp()
+			sleep(0.1)
+
+			-- update how ofter we tried
+			tries = tries + 1
+			if tries>50 then print("Error: can't move up.") return false end
+
+			-- give it another try
+			success = turtle.up()
+    	end
+
+		-- successfull?
+		if success then
+
+			-- update location
+			db.z = db.z + 1
+
+			-- dave location
+			SaveDB()
+		end
+	end
+
+	-- we did it!
+	return true
 end
+
 function Down(c, force)
 	-- init parameter
-  c = c or 1
-  c = math.floor(c + 0.5)
+	c = c or 1
+	c = math.floor(c + 0.5)
 
-  -- loop
-  for i=1,c do
-    local tries = 0
-    local success = turtle.down()
-    while not success and force do
-      turtle.digDown()
-      turtle.attackDown()
-      sleep(0.2)
-      tries = tries + 1
-      if tries>50 then
-        print("Error: can't move down.")
-        return false
-      end
-      success = turtle.down()
-    end
-    if success then db.z = db.z - 1 end
-  end
-  return true
+	-- loop
+	for i=1,c do
+		local tries = 0
+		local success = turtle.down()
+
+		-- did we go down?
+		while not success and force do
+
+			-- let's use force
+			turtle.digDown()
+			turtle.attackDown()
+			sleep(0.2)
+
+			-- update how often we tried
+			tries = tries + 1
+			if tries>50 then print("Error: can't move down.") return false end
+
+			-- try again
+			success = turtle.down()
+		end
+
+		-- did we managed to go down?
+		if success then
+
+			-- update location
+			db.z = db.z - 1
+
+			-- save location
+			SaveDB()
+		end
+	end
+
+	-- we went down
+	return true
 end
+
 function ToBottom()
-  while turtle.down() do db.z = db.z - 1 end
-  return true
+	-- simple loop going down, without force
+  	while turtle.down() do
+
+		-- keep track of our location
+		db.z = db.z - 1
+
+		-- save our location
+		SaveDB()
+	end
+
+	-- will always work, might have done zero steps down though
+  	return true
 end
 --[[
 function NeedTorch()
@@ -242,6 +324,7 @@ function GetLocation()
 		dy = db.dy,
 	}
 end
+
 function GetLocationFront( c )
 	c = c or 1
 	return {
@@ -252,6 +335,7 @@ function GetLocationFront( c )
 		dy = db.dy,
 	}
 end
+
 function GetLocationUp( c )
 	c = c or 1
 	return {
@@ -262,6 +346,7 @@ function GetLocationUp( c )
 		dy = db.dy,
 	}
 end
+
 function GetLocationDown( c )
 	c = c or 1
 	return {
@@ -272,7 +357,9 @@ function GetLocationDown( c )
 		dy = db.dy,
 	}
 end
+
 function SetLocation(location)
+	-- set to memory
 	db = {
 		x	= location.x,
 		y	= location.y,
@@ -280,7 +367,11 @@ function SetLocation(location)
 		dx	= location.dx,
 		dy	= location.dy
 	}
+
+	-- save to file
+	SaveDB()
 end
+
 function CopyLocation(location)
 	return {
 		x	= location.x,
@@ -290,8 +381,10 @@ function CopyLocation(location)
 		dy  = location.dy
 	}
 end
+
 function IsSameLocation(a, b)	return a.x  == b.x  and a.y  == b.y  and a.z == b.z	end
 function IsSameDirection(a, b)	return a.dx == b.dx and a.dy == b.dy			    end
+
 function GetDivergentDirection(location, dx, dy)
 	return {
 		x	= location.x,
@@ -301,6 +394,7 @@ function GetDivergentDirection(location, dx, dy)
 		dy  = dy
 	}
 end
+
 function GetRelativeLocation(location, addX, addY, addZ)
 	return {
 		x	= location.x + addX,
@@ -310,6 +404,7 @@ function GetRelativeLocation(location, addX, addY, addZ)
 		dy  = location.dy
 	}
 end
+
 function GetRelativeLocationFront(location, steps)
 	-- check input
 	if type(location) ~= "table" or location.x == nil or location.y == nil or location.z == nil or location.dx == nil or location.dy == nil then return location end
@@ -413,7 +508,6 @@ function GetRelativeLocationRight(location, steps)
 	return newLocation
 end
 
-
 function GetDepth()
 	return db.z
 end
@@ -427,6 +521,7 @@ function Above( t )
 		dy = t.dy,
 	}
 end
+
 function Nextto( target, pref )
 	local temp = target
 	pref = pref or "x"
@@ -452,6 +547,7 @@ function Nextto( target, pref )
 
 	return temp -- BUG? is temp meant here???
 end
+
 function Below( t )
 	return {
 		x = t.x,
@@ -497,8 +593,8 @@ function MoveTo(t, force)
 		-- now go down
 		if t.z < db.z then Down(db.z - t.z, force) end
 	end
-	coreutils.WriteToFile( db.filename, db, "overwrite" )
 end
+
 function TurnTo( t )
 	if t == nil then
 		print("Cannot turn to nil location")
@@ -522,9 +618,30 @@ function TurnTo( t )
 			Right(1)
 		end
 	end
-	coreutils.WriteToFile( db.filename, db, "overwrite" )
 end
+
 function GoTo( t, force )
 	MoveTo( t, force )
 	TurnTo( t )
+end
+
+-- local functions
+function SaveDB()
+    -- save the db table to a file
+    if not writeToFileQueued then
+
+        -- now it is in the queue
+        writeToFileQueued = true
+
+        -- add to the work queue
+        coretask.AddWork(SaveDBToFile)
+    end
+end
+
+function SaveDBToFile()
+    -- no longer in the queue since we are doing it now
+    writeToFileQueued = false
+
+    -- save the db table to a file (this may take some time with larger dht's)
+    coreutils.WriteToFile(filename, db, "overwrite")
 end
