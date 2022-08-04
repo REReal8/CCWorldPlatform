@@ -43,6 +43,25 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
     )
 end
 
+function ItemPresent(site, itemName)
+    -- variables
+    local itemCount = 0
+
+    -- loop all storage chests
+    for i, storageChests in ipairs(site.storageChests) do
+
+        -- right item?
+        if storageChests.itemName == itemName then
+
+            -- update the counter with the actual value || virual might be smarter though
+            itemCount = itemCount + storageChests.actual
+        end
+    end
+
+    -- done
+    return itemCount
+end
+
 function NewSite(siteData)
     -- variables
     local site  = {

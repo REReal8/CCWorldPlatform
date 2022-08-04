@@ -3,29 +3,6 @@ local db = {
     dhtSites    = "sites",
 }
 
---[[
-    dht = {
-        enterprise_storage = {
-            sites = {
-                {
-                    type = "silo",
-                    entryLocation = {location-table},
-                    topLocation = {location-table},
-                    topChests = {
-                        { status = "free|used", location = {location-table} },
-                        { status = "free|used", location = {location-table} },
-                    },
-                    storageChests = {
-                        { status = "free|used", itemName = nil|"minecraft:charcoal",  actual = 14, virtual = 18, stackSize = 64 },
-                        { status = "free|used", itemName = nil|"minecraft:birch_log", actual = 14, virtual = 18, stackSize = 64 },
-                    },
-                },
-            },
-            statistics = {},
-        }
-    }
---]]
-
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -114,6 +91,7 @@ function ItemsCollected(itemList, location)
 --]]
 end
 
+-- print(enterprise_storage.ItemPresent("minecraft:stick"))
 function ItemPresent(itemName)
 --[[
     This public function counts how many of an item is present in the system. Unknown items return 0 (not nil)
@@ -124,6 +102,22 @@ function ItemPresent(itemName)
     Parameters:
         itemName - (string) name of the item to be counted
 --]]
+    -- variables
+    local itemCount = 0
+
+    -- sites ophalen
+    local sites     = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- loop the sites
+    for i, site in ipairs(sites) do
+
+        -- let the type determine how this is managed
+        if site.type == "silo" then itemCount = itemCount + enterprise_storage_silo.ItemPresent(site, itemName)
+        end
+    end
+
+    -- this is what we have
+    return itemCount
 end
 
 -- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
