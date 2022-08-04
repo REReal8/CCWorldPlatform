@@ -28,9 +28,9 @@ function Settle_Task(settleData)
     if not axePresent or craftingTable == 0 or birchSapling == 0 then
         -- no good
         print("Missing item(s) for a new start:")
-        if not axePresent       then print ("* Need a diamond axe") end
-        if craftingTable == 0   then print ("* Need a crafting tabel") end
-        if birchSapling  == 0   then print ("* Need a birch sapling") end
+        if not axePresent       then print ("* Need a diamond axe")     end
+        if craftingTable == 0   then print ("* Need a crafting tabel")  end
+        if birchSapling  == 0   then print ("* Need a birch sapling")   end
 
         -- done here
         return false
