@@ -132,6 +132,34 @@ function GetAllItems(direction)
     while f() do end
 end
 
+function GetInventoryDetail()
+    -- to hold the data
+    local inventory = {
+        items   = {},
+        slots   = {},
+    }
+
+    -- loop all slots
+    for slot=1,16 do
+
+        -- get detailed information about this slot
+        local itemDetail = GetItemDetail(slot)
+
+        -- right item?
+        if type(itemDetail) == "table" then
+
+            -- add to items
+            inventory.items[ itemDetail.name ]  = (inventory.items[ itemDetail.name ] or 0) + itemDetail.count
+
+            -- add to slots, name and count
+            inventory.slots[ slot ]             = itemDetail
+        end
+    end
+
+    -- we're done
+    return inventory
+end
+
 function DropAllItems(direction)
     -- check the direction, lowercase only
     direction = direction or "down"
@@ -196,7 +224,7 @@ function Equip(itemName)
     if db.right == itemName then return true end
 
     -- find empty spot (remove current equiped to the right when we have an empty spot)
-    if coreinventory.GetEmptySlot() then
+    if GetEmptySlot() then
 
         -- remember this slot
         slot = turtle.getSelectedSlot()
@@ -206,10 +234,10 @@ function Equip(itemName)
     end
 
     -- find the crafting table
-    coreinventory.SelectItem(itemName)
+    SelectItem(itemName)
 
     -- did we found one?
-    if coreinventory.GetItemDetail() then
+    if GetItemDetail() then
         -- remember this
         db.right    = itemName
 
@@ -230,15 +258,32 @@ function Equip(itemName)
     end
 end
 
-function Refuel(fuel) -- needs expansion when fuel is devided over multiple slots
-    -- check parameter
-    if type(fuel) ~= "table" or type(fuel.itemCount) ~= "number" or fuel.itemCount < 1 then return false end
+function Refuel(fuel)
+
+    -- check input arguments
+    if type(fuel) ~= "table" or type(fuel.itemName) ~= "string" or type(fuel.itemCount) ~= "number" or fuel.itemCount < 1 then return false end
+
+    -- handig voor de loop
+    local itemsLeft  = fuel.itemCount
 
     -- find the fuel in the inventory
-    SelectItem(fuel.itemName)
+    while SelectItem(fuel.itemName) and itemsLeft > 0 do
 
-    -- do the refuelling
-    turtle.refuel(fuel.itemCount)
+        -- how many present
+        local itemsPresent  = turtle.getItemCount()
+
+        -- how many to burn
+        local itemsToBurn   = nil
+        if itemsLeft < itemsPresent then itemsToBurn = itemsLeft
+                                    else itemsToBurn = itemsPresent
+        end
+
+        -- do the refuelling
+        turtle.refuel(itemsToBurn)
+
+        -- adjust itemsLeft
+        itemsLeft = itemsLeft - itemsToBurn
+    end
 
     -- done
     return true
