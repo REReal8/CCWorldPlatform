@@ -152,7 +152,10 @@ function GetInventoryDetail()
             inventory.items[ itemDetail.name ]  = (inventory.items[ itemDetail.name ] or 0) + itemDetail.count
 
             -- add to slots, name and count
-            inventory.slots[ slot ]             = itemDetail
+            inventory.slots[ slot ]             = {
+                itemName    = itemDetail.name,
+                itemCount   = itemDetail.count,
+            }
         end
     end
 
