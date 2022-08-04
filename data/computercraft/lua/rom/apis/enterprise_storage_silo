@@ -19,6 +19,30 @@ function StoreItems(site, itemList)
     end
 end
 
+function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
+    -- variables
+    local assignmentMeta        = {
+        startTime       = 0,
+        location        = coremove.CopyLocation(location),
+        needTool        = false,
+        needTurtle      = true,
+        fuelNeeded      = 100
+    }
+    local assignmentArguments   = {
+        sitesIndex      = sitesIndex,
+        topChestIndex   = topChestIndex
+    }
+
+    -- now we need to get some work done, time for a new assignment
+    coreassignment.AddAssignment(
+        assignmentMeta,                                         -- meta data about the assignment
+        "enterprise_storage_silo.ItemsDeliveredAssignement",    -- taskFunction
+        assignmentArguments,                                    -- taskArgumentTable
+        "coreassignment.DummyAssignment",                       -- callbackFunction
+        {}                                                      -- callbackArgumentTable
+    )
+end
+
 function NewSite(siteData)
     -- variables
     local site  = {
@@ -85,4 +109,131 @@ function NewSite(siteData)
 
     -- save the dht
     coredht.SaveData(sites, db.dhtRoot, db.dhtSites)
+end
+
+function FindSiteByTopChest(site, location)
+--[[
+    This function checks of this site has a topchest which matches the given location. Returns nil if not found
+--]]
+
+    -- loop our top chests
+    for i, topChest in ipairs(site.topChests) do
+
+        -- this the one?
+        if coremove.IsSameLocation(location, topChest.location) then return topChest end
+    end
+
+    -- still here? Then we have found no match
+    return nil
+end
+
+--[[
+                _                                  _
+               (_)                                | |
+   __ _ ___ ___ _  __ _ _ __  _ __ ___   ___ _ __ | |_ ___
+  / _` / __/ __| |/ _` | '_ \| '_ ` _ \ / _ \ '_ \| __/ __|
+ | (_| \__ \__ \ | (_| | | | | | | | | |  __/ | | | |_\__ \
+  \__,_|___/___/_|\__, |_| |_|_| |_| |_|\___|_| |_|\__|___/
+                   __/ |
+                  |___/
+--]]
+
+function ItemsDeliveredAssignement(data)
+
+    -- variables from the assignment data
+    local site      = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
+    local topChest  = site.topChests[ data.topChestIndex ]
+
+    -- go to the pickup point
+    coremove.MoveTo(coremove.GetRelativeLocationUp(topChest.location, 1))
+
+    -- get all items from the chest
+    turtle.select(1)
+    coreinventory.GetAllItems("down")
+
+    -- asume it's empty and mark it as free
+    coredht.SaveData("free", db.dhtRoot, db.dhtSites, data.sitesIndex, "topChests", data.topChestIndex, "status")
+
+    -- make list of items in inventory
+    local inventory = coreinventory.GetInventoryDetail()
+    coreutils.WriteToLog("inventory")
+    coreutils.WriteToLog( inventory )
+
+    -- loop all storage chests and see which we need
+    for i, storageChest in ipairs(site.storageChests) do
+
+        -- unused chest?
+        if storageChest.status == "free" then
+
+            -- anything left to store?
+            local itemName, itemCount = next(inventory.items, nil)
+
+            -- we will use this chest for this item, if any item still present in our inventory
+            if itemName ~= nil then
+
+                -- make a reservation for this item
+                storageChest.status     = "used"
+                storageChest.itemName   = itemName
+                storageChest.stackSize  = coreinventory.GetStackSize( itemName )
+                storageChest.actual     = 0
+                storageChest.virtual    = 0
+
+                -- save info
+            else
+                -- seems there is nothing left to store
+                break
+            end
+        end
+
+        coreutils.WriteToLog("---")
+        coreutils.WriteToLog("i: "..(i or 0))
+        coreutils.WriteToLog("itemName: "..(storageChest.itemName or "nil"))
+
+        -- see if this chest matches any of our
+        if inventory.items[ storageChest.itemName ] ~= nil then
+
+            -- nice, we have a match, let's store! for now ignore that the chest might be full
+            -- move to the chest
+            coremove.GoTo(storageChest.location)
+
+            -- dump the stuff
+            for slot=1,16 do
+
+                -- anything present in this slot, with the right name?
+                if type(inventory.slots[ slot ]) == "table" and inventory.slots[ slot ].itemName == storageChest.itemName then
+
+                    -- select this slot, since it will be used!
+                    turtle.select(slot)
+
+                    -- for some math
+                    local beforeCount   = turtle.getItemCount()
+
+                    -- transfer!
+                    turtle.drop()
+
+                    -- more math
+                    local afterCount    = turtle.getItemCount()
+
+                    -- update storage information
+                    storageChest.actual     = storageChest.actual   + (beforeCount - afterCount)
+                    storageChest.virtual    = storageChest.virtual  + (beforeCount - afterCount)
+                    coredht.SaveData(storageChest, db.dhtRoot, db.dhtSites, site.sitesIndex, "storageChests", storageChest.chestIndex)
+
+                    -- this slot is empty now
+                    if afterCount == 0 then inventory.slots[ slot ] = nil end
+
+                    -- adjust total present in inventory
+                    inventory.items[ storageChest.itemName ] = inventory.items[ storageChest.itemName ] - (beforeCount - afterCount)
+                end
+            end
+
+            -- all gone?
+            if inventory.items[ storageChest.itemName ] <= 0 then inventory.items[ storageChest.itemName ] = nil end
+
+
+        end
+    end
+
+    -- store all the items & update site information
+    -- ? done ?
 end

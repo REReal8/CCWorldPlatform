@@ -36,7 +36,6 @@ local db = {
 --   |_|
 
 -- print(textutils.serialize(enterprise_storage.StoreItems({{itemName="minecraft:charcoal", itemCount=12, stackSize="64"}}, {x=0, y=0, z= 1, dx=0, dy=1})))
-
 function StoreItems(itemList, location)
 --[[
     This public function is for storing items. It does not care if there is space, all items are accepted
@@ -61,6 +60,7 @@ function StoreItems(itemList, location)
     end
 end
 
+-- enterprise_storage.ItemsDelivered({}, {y = 17,x = 14,z = 1,dx = 0,dy = 1,})
 function ItemsDelivered(itemList, location)
 --[[
     This public function notifies the storage enterprise that items have been delivered
@@ -69,9 +69,22 @@ function ItemsDelivered(itemList, location)
         nil
 
     Parameters:
-        itemList - (table) list of items (name and count) to be stored
+        itemList - (table) list of items (name and count) to be stored (ignored btw, maybe used later)
         location - (table) location of the items
 --]]
+
+    -- check our input
+    if type(itemList) ~= "table" or type(location) ~= "table" then coreutils.Error('enterprise_storage.ItemsDelivered: Invalid input') return nil end
+
+    -- find the site this top chest location belongs to
+    local site, topChest = FindSiteByTopChest(location)
+
+    -- got anything?
+    if site == nil or topChest == nil then coreutils.Error('enterprise_storage.ItemsDelivered: No site found') return nil end
+
+    -- what kind of site is this anyways?
+    if site.type == "silo" then return enterprise_storage_silo.ItemsDelivered(site.sitesIndex, topChest.chestIndex, itemList, location)
+    end
 end
 
 function RetrieveItems(itemList, callback)
@@ -114,10 +127,9 @@ function ItemPresent(itemName)
 end
 
 -- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
-
 function NewSite(siteData)
 --[[
-    This public function to notify the storage that a new site is ready for use
+    This public function to notify the (enterprise) storage that a new site is ready for use
 
     Return value:
         nil
@@ -156,11 +168,30 @@ function FindClosestSite(location)
     -- check if we have any site
     if type(sites) ~= "table" or #sites == 0 then coreutils.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
 
-    -- beautyfull!
-    coreutils.WriteToLog(sites)
-
     -- we should look for the best site, for now just take the first
     return sites[1]
+end
+
+function FindSiteByTopChest(location)
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- loop the sites
+    for i, site in ipairs(sites) do
+
+        -- this one?
+        local topChest    = nil
+
+        -- let the type determine how this is managed
+        if site.type == "silo" then topChest = enterprise_storage_silo.FindSiteByTopChest(site, location)
+        end
+
+        -- do we have anything?
+        if site ~= nil then return site, topChest end
+    end
+
+    -- found nothing
+    return nil, nil
 end
 
 --    _           _ _     _               _   _                                 _     _                       _       _
