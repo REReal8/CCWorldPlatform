@@ -64,17 +64,17 @@ function ItemsDelivered(itemList, location)
     end
 end
 
--- print(enterprise_storage.ItemPresent("minecraft:stick"))
+-- print(textutils.serialize(enterprise_storage.ItemPresent("minecraft:stick")))
 function ItemPresent(itemName)
-    --[[
-        This public function counts how many of an item is present in the system. Unknown items return 0 (not nil)
+--[[
+    This public function counts how many of an item is present in the system. Unknown items return 0 (not nil)
 
-        Return value:
-            integer how many of that item is present in the storage system
+    Return value:
+        integer how many of that item is present in the storage system
 
-        Parameters:
-            itemName - (string) name of the item to be counted
-    --]]
+    Parameters:
+        itemName - (string) name of the item to be counted
+--]]
 
         -- variables
         local sites     = coredht.GetData(db.dhtRoot, db.dhtSites)
@@ -94,7 +94,7 @@ function ItemPresent(itemName)
             -- add to our data structure
             result.total    = result.total + itemCount
             table.insert(result.sites, {
-                siteIndex   = site.siteIndex,
+                siteIndex   = site.sitesIndex,
                 itemCount   = itemCount
             })
         end
@@ -103,7 +103,7 @@ function ItemPresent(itemName)
         return result
     end
 
-    function RetrieveItems(itemList, callback)
+function RetrieveItems(siteIndex, itemList, callback)
 --[[
     This public function is retrieving items from the storage. When the requested items are not
         all present, the function will return nil and no action will follow
@@ -112,9 +112,13 @@ function ItemPresent(itemName)
         location where to drop the items
 
     Parameters:
-        itemList - (table) list of items (name and count) to be stored
-        callback - (string) function name to call once the items are ready for pickup
+        siteIndex - (integer) index of the delivering site
+        itemList  - (table) list of items (name and count) to be stored
+        callback  - (string) function name to call once the items are ready for pickup
 --]]
+
+
+
 end
 
 function ItemsCollected(itemList, location)
