@@ -76,32 +76,35 @@ function ItemPresent(itemName)
         itemName - (string) name of the item to be counted
 --]]
 
-        -- variables
-        local sites     = coredht.GetData(db.dhtRoot, db.dhtSites)
-        local itemCount = 0
-        local result    = {
-            total           = 0,
-            sites           = {}
-        }
+    -- variables
+    local sites     = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local itemCount = 0
+    local result    = {
+        total           = 0,
+        sites           = {}
+    }
 
-        -- loop the sites
-        for i, site in ipairs(sites) do
+    -- parameter must be a string
+    if type(itemName) ~= "string" then coreutils.Error("enterprise_storage.ItemPresent: itemName nog a string") return nil end
 
-            -- let the type determine how this is managed
-            if site.type == "silo" then itemCount = enterprise_storage_silo.ItemPresent(site, itemName)
-            end
+    -- loop the sites
+    for i, site in ipairs(sites) do
 
-            -- add to our data structure
-            result.total    = result.total + itemCount
-            table.insert(result.sites, {
-                siteIndex   = site.sitesIndex,
-                itemCount   = itemCount
-            })
+        -- let the type determine how this is managed
+        if site.type == "silo" then itemCount = enterprise_storage_silo.ItemPresent(site, itemName)
         end
 
-        -- this is what we have
-        return result
+        -- add to our data structure
+        result.total    = result.total + itemCount
+        table.insert(result.sites, {
+            siteIndex   = site.sitesIndex,
+            itemCount   = itemCount
+        })
     end
+
+    -- this is what we have
+    return result
+end
 
 function RetrieveItems(siteIndex, itemList, callback)
 --[[
