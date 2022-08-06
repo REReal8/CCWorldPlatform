@@ -106,13 +106,14 @@ function ItemPresent(itemName)
     return result
 end
 
-function RetrieveItems(siteIndex, itemList, callback)
+-- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 12}, "coreassignment.DummyAssignment", {})))
+function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
 --[[
     This public function is retrieving items from the storage. When the requested items are not
         all present, the function will return nil and no action will follow
 
     Return value:
-        location where to drop the items
+        location where there items will be dropped for pick up
 
     Parameters:
         siteIndex - (integer) index of the delivering site
@@ -120,11 +121,20 @@ function RetrieveItems(siteIndex, itemList, callback)
         callback  - (string) function name to call once the items are ready for pickup
 --]]
 
+    -- variables
+    local site      = coredht.GetData(db.dhtRoot, db.dhtSites, sitesIndex)
 
+    -- check paramters (should check if sitesIndex is really a valid sitesIndex)
+    if type(sitesIndex) ~= "number" or type(site) ~= "table" or type(itemList) ~= "table" or type(callback) ~= "string" then coreutils.Error("enterprise_storage.RetrieveItems: invalid paramters") return nil end
+
+    -- tell this site do retrieve the items
+    if site.type == "silo" then return enterprise_storage_silo.RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
+    end
 
 end
 
-function ItemsCollected(itemList, location)
+-- enterprise_storage.ItemsCollected({y = 17, x = 14, z = 1, dy = 1, dx = 0})
+function ItemsCollected(location)
 --[[
     This public function notifies the storage enterprise that the items have been collected
 
@@ -135,6 +145,16 @@ function ItemsCollected(itemList, location)
         itemList - (table) list of items (name and count) collected (must be all of it)
         location - (table) location of the items
 --]]
+
+    -- lets find the site to start with
+    local site, topChest = FindSiteByTopChest(location)
+
+    -- check what we got
+    if site == nil or topChest == nil then coreutils.Error("enterprise_storage.ItemsCollected: no site and/or topchest found") return nil end
+
+    -- let the site fix this
+    if site.type == "silo" then enterprise_storage_silo.ItemsCollected(site, topChest)
+    end
 end
 
 -- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})

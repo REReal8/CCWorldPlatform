@@ -62,12 +62,71 @@ function ItemPresent(site, itemName)
     return itemCount
 end
 
+function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
+
+    -- variables
+    local site      = coredht.GetData(db.dhtRoot, db.dhtSites, sitesIndex)
+    local location  = nil
+
+    -- part 1: make a reservation for a pick up box
+    -- just loop all top chests, ignore the itemList (for now)
+    for i, topChest in ipairs(site.topChests) do
+
+        -- this one free?
+        if topChest.status == "free" then
+
+            -- save this to the dht
+            coredht.SaveData("used", db.dhtRoot, db.dhtSites, site.sitesIndex, "topChests", i, "status")
+
+            -- return the location of this top chest
+            location = topChest.location
+
+            -- done with the loop
+            break
+        end
+    end
+
+    -- found any?
+    if location == nil then coreutils.Error("enterprise_storage_silo.RetrieveItems: no free top chest") return nil end
+
+    -- part 2: make an assignment for the actual pickup
+    local assignmentMeta        = {
+        startTime       = 0,
+        location        = coremove.CopyLocation(site.entryLocation),
+        needTool        = false,
+        needTurtle      = true,
+        fuelNeeded      = 100
+    }
+    local assignmentArguments   = {
+        sitesIndex      = sitesIndex,
+        itemList        = itemList,
+        dropLocation    = coremove.CopyLocation(location),
+    }
+
+    -- now we need to get some work done, time for a new assignment
+    coreassignment.AddAssignment(
+        assignmentMeta,                                         -- meta data about the assignment
+        "enterprise_storage_silo.RetrieveItemsAssignement",     -- taskFunction
+        assignmentArguments,                                    -- taskArgumentTable
+        callback,                                               -- callbackFunction
+        callbackArgs                                            -- callbackArgumentTable
+    )
+
+    -- return the location of the pickup box
+    return location
+end
+
+function ItemsCollected(site, topChest)
+    -- mark the topchest free, that's all
+    coredht.SaveData("free", db.dhtRoot, db.dhtSites, site.sitesIndex, "topChests", topChest.chestIndex, "status")
+end
+
 function NewSite(siteData)
     -- variables
     local site  = {
         type            = "silo",
         location        = siteData.location,
-        entryLocation   = {},
+        entryLocation   = coremove.GetRelativeLocation(siteData.location, 3, 3, 0),
         topChests       = {},
         storageChests   = {},
 
@@ -75,20 +134,14 @@ function NewSite(siteData)
     }
 
     -- check input, use default
-    if siteData.siloType == nil then siteData.siloType = "basic" end
+    siteData.siloType = siteData.siloType or "basic"
 
     -- what kind of new silo is this?
     if siteData.siloType == "basic" then
 
-        -- variables
-        local shaft = nil    -- becomes a location opbject
-
         -- defaults to input
         siteData.topChests  = siteData.topChests    or 2
         siteData.layers     = siteData.layers       or 2
-
-        -- mark our locations
-        site.entryLocation  = coremove.GetRelativeLocation(siteData.location, 3, 3, 0)
 
         -- add our top chests, depending how many we have
         if siteData.topChests >= 1 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 2, 5, 0), chestIndex=1}) end
@@ -104,7 +157,7 @@ function NewSite(siteData)
         for i=0, siteData.layers, 1 do
 
             -- do the floor
-            shaft = coremove.GetRelativeLocation(site.entryLocation, 0, 0, -2 - i)
+            local shaft = coremove.GetRelativeLocation(site.entryLocation, 0, 0, -2 - i)
             table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0,  1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
             table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  1,  0), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
             table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0, -1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
@@ -175,8 +228,6 @@ function ItemsDeliveredAssignement(data)
 
     -- make list of items in inventory
     local inventory = coreinventory.GetInventoryDetail()
-    coreutils.WriteToLog("inventory")
-    coreutils.WriteToLog( inventory )
 
     -- loop all storage chests and see which we need
     for i, storageChest in ipairs(site.storageChests) do
@@ -203,10 +254,6 @@ function ItemsDeliveredAssignement(data)
                 break
             end
         end
-
-        coreutils.WriteToLog("---")
-        coreutils.WriteToLog("i: "..(i or 0))
-        coreutils.WriteToLog("itemName: "..(storageChest.itemName or "nil"))
 
         -- see if this chest matches any of our
         if inventory.items[ storageChest.itemName ] ~= nil then
@@ -249,10 +296,65 @@ function ItemsDeliveredAssignement(data)
             -- all gone?
             if inventory.items[ storageChest.itemName ] <= 0 then inventory.items[ storageChest.itemName ] = nil end
 
-
         end
     end
 
     -- store all the items & update site information
     -- ? done ?
+end
+
+function RetrieveItemsAssignement(data)
+    -- variables
+    local site          = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
+    local itemList      = data.itemList
+    local dropLocation  = data.dropLocation
+
+    coreutils.WriteToLog("data")
+    coreutils.WriteToLog(data)
+
+    -- get to work
+    turtle.select(1)
+    coremove.MoveTo(site.entryLocation)
+
+    -- loop the storage chests to see if there is anything we need
+    for chestIndex, storageChest in ipairs(site.storageChests) do
+
+        -- unused chest?
+        local itemName  = storageChest.itemName
+
+        if storageChest.status == "used" and storageChest.actual > 0 and itemList[ itemName ] ~= nil and itemList[ itemName ] > 0 then
+
+            -- nice, we have a match, let's get what we need!
+            -- move to the chest
+            coremove.GoTo(storageChest.location)
+
+            -- how much can we grab?
+            local toSuck    = math.min(storageChest.actual, itemList[ itemName ], storageChest.stackSize)
+
+            -- keep working while usefull
+            while toSuck > 0 do
+
+                -- suck this amount
+                turtle.suck( toSuck )
+
+                -- update values
+                storageChest.actual     = storageChest.actual               - toSuck
+                storageChest.virtual    = storageChest.virtual              - toSuck
+                itemList[ itemName ]    = itemList[ itemName ]              - toSuck
+
+                -- storage cheset updated, write to dht
+                coredht.SaveData(storageChest, db.dhtRoot, db.dhtSites, site.sitesIndex, "storageChests", chestIndex)
+
+                -- recalculate
+                toSuck    = math.min(storageChest.actual, itemList[ storageChest.itemName ], storageChest.stackSize)
+            end
+        end
+    end
+
+    -- time to drop our stuff
+    coremove.MoveTo(coremove.GetRelativeLocationUp(dropLocation, 1))
+    local cargoList = coreinventory.DropAllItems("down")
+
+    -- done
+    return cargoList
 end
