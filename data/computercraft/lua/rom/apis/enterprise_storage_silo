@@ -199,6 +199,32 @@ function FindSiteByTopChest(site, location)
     return nil
 end
 
+function CheckIntegrity(site)
+
+    -- meta about the assignment, for the selection procedure
+    local assignmentMeta        = {
+        startTime       = 0,
+        location        = coremove.CopyLocation(site.entryLocation),
+        needTool        = false,
+        needTurtle      = true,
+        fuelNeeded      = 100
+    }
+
+    -- arguments for the assignment itself
+    local assignmentArguments   = {
+        sitesIndex      = site.sitesIndex,
+    }
+
+    -- now we need to get some work done, time for a new assignment
+    coreassignment.AddAssignment(
+        assignmentMeta,                                         -- meta data about the assignment
+        "enterprise_storage_silo.CheckIntegrityAssignement",    -- taskFunction
+        assignmentArguments,                                    -- taskArgumentTable
+        "coreassignment.DummyCallback",                         -- callbackFunction
+        {}                                                      -- callbackArgumentTable
+    )
+end
+
 --[[
                 _                                  _
                (_)                                | |
@@ -357,4 +383,67 @@ function RetrieveItemsAssignement(data)
 
     -- done
     return cargoList
+end
+
+function CheckIntegrityAssignement(data)
+    -- variables
+    local site          = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
+
+    -- get into position!
+    coremove.MoveTo(site.entryLocation)
+
+    -- loop the storage chests to see if there is anything we need
+    for chestIndex, storageChest in ipairs(site.storageChests) do
+
+        -- variables
+        local changed = false
+
+        -- move to the chest
+        coremove.GoTo(storageChest.location)
+
+        -- get all items from the chest
+        turtle.select(1)
+        coreinventory.GetAllItems("front")
+
+        -- what do we have?
+        local inventory = coreinventory.GetInventoryDetail()
+
+        -- asume items in inventory slot 1 is what this chest is for
+        local itemName  = nil
+        if type(inventory) == "table" and type(inventory.slots) == "table" and type(inventory.slots[1]) == "table" then itemName = inventory.slots[1].itemName end
+
+        -- set the name and status if we have items
+        if type(itemName) == "string" and (storageChest.status ~= "used" or storageChest.itemName ~= itemName) then
+
+            -- this one is used
+            storageChest.status     = "used"
+            storageChest.itemName   = itemName
+
+            -- so we changed
+            changed = true
+        end
+
+        -- how many?
+        local itemCount = 0
+        if type(inventory) == "table" and type(inventory.items) == "table" and type(inventory.items[ itemName ]) == "number" then itemCount = inventory.items[ itemName ] end
+
+        -- set the actual value, ignore virtual for now
+        if storageChest.actual ~= itemCount then
+
+            -- set the correct value
+            storageChest.actual = itemCount
+
+            -- we changed this!
+            changed = true
+        end
+
+        -- do we need to store this? then we must safe!
+        if changed then coredht.SaveData(storageChest, db.dhtRoot, db.dhtSites, site.sitesIndex, "storageChests", storageChest.chestIndex) end
+
+        -- put the stuff back if we have any
+        coreinventory.DropAllItems("front")
+    end
+
+    -- done, move out of the silo
+    coremove.MoveTo(site.entryLocation)
 end
