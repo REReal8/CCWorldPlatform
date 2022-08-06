@@ -154,10 +154,10 @@ function NewSite(siteData)
         if siteData.topChests >= 8 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 1, 4, 0), chestIndex=8}) end
 
         -- loop the layers
-        for i=0, siteData.layers, 1 do
+        for i=1, siteData.layers, 1 do
 
             -- do the floor
-            local shaft = coremove.GetRelativeLocation(site.entryLocation, 0, 0, -2 - i)
+            local shaft = coremove.GetRelativeLocation(site.entryLocation, 0, 0, -1 - i)
             table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0,  1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
             table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  1,  0), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
             table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0, -1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
