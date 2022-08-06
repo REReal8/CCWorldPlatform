@@ -1,8 +1,8 @@
 local db	= {
-	dbFilename  = "/db/coreutils.lua",
-	logfile		= "/log/log.txt",
-	protocol	= "coreutils",
-    serial		= 0,                                -- for unique id's
+	dbFilename  	= "/db/coreutils.lua",
+	logfile			= "/log/log.txt",
+	protocol		= "coreutils",
+    serial			= 0,                                -- for unique id's
 	loggerChannel	= 65534,
 }
 
@@ -21,7 +21,7 @@ function Init()
 	math.randomseed(os.time())
 
 	-- place markers in the logfile
-	WriteToLog("--- starting up ---")
+	WriteToLog("--- starting up ---", "overwrite")
 end
 
 -- niet nodig voor utils
@@ -141,9 +141,12 @@ function WriteToFile(filename, message, writemode)
 	end
 end
 
-function WriteToLog(message)
+function WriteToLog(message, writeMode)
+	-- set the default
+	writeMode = writeMode or "append"
+
 	-- write to the logfile
-	WriteToFile(db.logfile, message, "append")
+	WriteToFile(db.logfile, message, writeMode)
 
 	-- send message
 	if monitorLeft then
