@@ -38,7 +38,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
         assignmentMeta,                                         -- meta data about the assignment
         "enterprise_storage_silo.ItemsDeliveredAssignement",    -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
-        "coreassignment.DummyAssignment",                       -- callbackFunction
+        "coreassignment.DummyCallback",                       -- callbackFunction
         {}                                                      -- callbackArgumentTable
     )
 end
