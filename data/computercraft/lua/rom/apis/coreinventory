@@ -168,7 +168,7 @@ function DropAllItems(direction)
     direction = direction or "down"
     direction = string.lower(direction)
 
-    -- we will organize what we droppen, who knows who cares
+    -- we will organize what we dropped, who knows who cares
     local cargoList = {}
 
     -- alle slots nalopen
