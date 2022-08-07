@@ -75,7 +75,7 @@ function OpenChannel(channel, protocol)
 	db.channel[channel][protocol] = true
 
 	-- open the channel (unless already open)
-	if modem.isOpen(channel) == false then modem.open(channel) end
+	if modem and modem.isOpen(channel) == false then modem.open(channel) end
 end
 
 -- closes the channel for the specific protocol. Channel is really closed then no other protocol uses the channel
@@ -99,7 +99,7 @@ end
 function SendMessage(t)
 	-- format input
 	local from		= os.getComputerID()
-	local to		= t.to      	or 65535    -- public channel if no other is specified
+	local to		= t.to      	or { 65535 }    -- public channel if no other is specified
 	local channel	= t.channel
 	local protocol	= t.protocol	or ""
 	local subject	= t.subject		or ""
@@ -188,7 +188,7 @@ function SendMessageSaveReply(t)
 	if ticks and replysubject then CreateTimeEvent(ticks, t.protocol, replysubject, messageId) end
 
 	-- create a table for the replies
-	db.reply[messageId] = {}
+	if messageId then db.reply[messageId] = {} end
 
 	-- return the message id
 	return messageId
