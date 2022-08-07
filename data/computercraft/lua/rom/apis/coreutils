@@ -147,7 +147,7 @@ function WriteToLog(message, writeMode)
 
 	-- write to the logfile
 	WriteToFile(db.logfile, message, writeMode)
-
+--[[
 	-- send message
 	if monitorLeft then
 		-- we are the logging station, don't send message
@@ -161,6 +161,7 @@ function WriteToLog(message, writeMode)
 			subject		= "write to log",
 			message		= {text = message} })
 	end
+--]]
 end
 
 function WriteToMonitor(message, monitor)
