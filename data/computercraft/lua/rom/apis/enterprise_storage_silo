@@ -38,7 +38,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
         assignmentMeta,                                         -- meta data about the assignment
         "enterprise_storage_silo.ItemsDeliveredAssignement",    -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
-        "coreassignment.DummyCallback",                       -- callbackFunction
+        "coreassignment.DummyCallback",                         -- callbackFunction
         {}                                                      -- callbackArgumentTable
     )
 end
@@ -385,6 +385,7 @@ function RetrieveItemsAssignement(data)
     return cargoList
 end
 
+-- needs some improvements to support more then 16 stacks in a box
 function CheckIntegrityAssignement(data)
     -- variables
     local site          = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
