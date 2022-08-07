@@ -3,6 +3,7 @@ local db = {
     channel		= {},		-- list of open channels, and which protocol wanted the channel
     timer		= {},		-- list of all known timers
     reply		= {},		-- the reply envelopes by message id (serial)
+	toSend		= {},		-- list of messages that still need to be send
     logfile		= "/log/core.event.log",
 }
 
@@ -52,8 +53,11 @@ function ActivateModem()
 		end
 	end
 
- 	-- did we find it now?
-    if not modem then error("No modem found!") end
+ 	-- did we find it now? if so, send all waiting messages. else stop the show
+    if modem 	then for i, messageData in ipairs(db.toSend) do modem.transmit(messageData.channel, messageData.replyChannel, messageData.message) end db.toSend = nil
+				else error("No modem found!")
+	end
+
 end
 
 -- opens a channel for a specific protocol
@@ -126,16 +130,33 @@ function SendMessage(t)
 		-- coreutils.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
 
         -- actuall sending the message
-		if modem then modem.transmit(currentChannel, from, textutils.serialize({
-			from        = from,
-			to			= to[i],
-			protocol	= protocol,
-			subject		= subject,
-			message		= message
-		}))
+		if modem then
+
+			-- this sends the message
+			modem.transmit(currentChannel, from, textutils.serialize({
+				from        = from,
+				to			= to[i],
+				protocol	= protocol,
+				subject		= subject,
+				message		= message
+			}))
 		else
-			-- weird situation
-			coreutils.WriteToLog("Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")")
+
+			-- no modem, just wait for a better moment
+			table.insert(db.toSend, {
+				channel 		= currentChannel,
+				replyChannel	= from,
+				message			= textutils.serialize({
+					from        = from,
+					to			= to[i],
+					protocol	= protocol,
+					subject		= subject,
+					message		= message
+				})
+			})
+
+			-- coreutils.WriteToLog("Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")")
+			-- don't write to log, since that will send a message and get's us in a loop
 		end
 	end
 
