@@ -14,7 +14,7 @@ local db = {
                   |___/
 --]]
 
-function ItemsDeliveredTask(data)
+function ItemsDelivered_Task(data)
 
     -- variables from the assignment data
     local site      = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
@@ -107,7 +107,7 @@ function ItemsDeliveredTask(data)
     -- ? done ?
 end
 
-function RetrieveItemsTask(data)
+function RetrieveItems_Task(data)
     -- variables
     local site          = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
     local itemList      = data.itemList
@@ -164,7 +164,7 @@ function RetrieveItemsTask(data)
 end
 
 -- needs some improvements to support more then 16 stacks in a box
-function CheckIntegrityTask(data)
+function CheckIntegrity_Task(data)
     -- variables
     local site          = coredht.GetData(db.dhtRoot, db.dhtSites, data.sitesIndex)
 

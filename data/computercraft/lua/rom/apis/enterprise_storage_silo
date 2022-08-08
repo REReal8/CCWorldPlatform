@@ -36,7 +36,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
     -- now we need to get some work done, time for a new assignment
     coreassignment.AddAssignment(
         assignmentMeta,                                         -- meta data about the assignment
-        "role_storage_silo_worker.ItemsDeliveredTask",          -- taskFunction
+        "role_storage_silo_worker.ItemsDelivered_Task",          -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
         "coreassignment.Dummy_Callback",                         -- callbackFunction
         {}                                                      -- callbackArgumentTable
@@ -106,7 +106,7 @@ function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
     -- now we need to get some work done, time for a new assignment
     coreassignment.AddAssignment(
         assignmentMeta,                                         -- meta data about the assignment
-        "role_storage_silo_worker.RetrieveItemsTask",           -- taskFunction
+        "role_storage_silo_worker.RetrieveItems_Task",           -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
         callback,                                               -- callbackFunction
         callbackArgs                                            -- callbackArgumentTable
@@ -218,7 +218,7 @@ function CheckIntegrity(site)
     -- now we need to get some work done, time for a new assignment
     coreassignment.AddAssignment(
         assignmentMeta,                                         -- meta data about the assignment
-        "role_storage_silo_worker.CheckIntegrityTask",          -- taskFunction
+        "role_storage_silo_worker.CheckIntegrity_Task",          -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
         "coreassignment.Dummy_Callback",                        -- callbackFunction
         {}                                                      -- callbackArgumentTable
