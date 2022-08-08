@@ -42,6 +42,7 @@ function BuildBlueprint_MetaData(buildData)
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0,
+        itemsNeeded = {},
     }
 
     -- loop on layers
@@ -58,10 +59,28 @@ function BuildBlueprint_MetaData(buildData)
         }
 
         -- get metadata for layer
-        local layereMetaData = BuildRectangularPattern_MetaData(layerBuildData)
+        local layerMetaData = BuildRectangularPattern_MetaData(layerBuildData)
 
         -- update blueprint metadata
-        metaData.fuelNeeded = metaData.fuelNeeded + layereMetaData.fuelNeeded
+        metaData.fuelNeeded = metaData.fuelNeeded + layerMetaData.fuelNeeded
+        for i, layerItemNeeded in ipairs(layerMetaData.itemsNeeded) do
+            -- find item in itemlist (and increment counter if found)
+            local itemAlreadyInList = false
+            for j, itemNeeded in ipairs(metaData.itemsNeeded) do
+                -- right item?
+                if itemNeeded.itemName == layerItemNeeded.itemName then
+                    itemNeeded.itemCount = itemNeeded.itemCount + layerItemNeeded.itemCount
+
+                    itemAlreadyInList = true
+                    break
+                end
+            end
+
+            -- add new item to itemsNeeded
+            if not itemAlreadyInList then
+                table.insert(metaData.itemsNeeded, {itemName = layerItemNeeded.itemName, itemCount = layerItemNeeded.itemCount})
+            end
+        end
     end
 
     -- update metadata with escapeSequence (if present)
@@ -69,7 +88,6 @@ function BuildBlueprint_MetaData(buildData)
 
     return metaData
 end
-
 
 function BuildBlueprint_Task(buildData)
     -- check input
@@ -106,14 +124,44 @@ function BuildBlueprint_Task(buildData)
     return true
 end
 
-
 function BuildRectangularPattern_MetaData(buildData)
+    -- check input
+    if type(buildData) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_MetaData: buildData not a table") return {} end
+    if type(buildData.pattern) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_MetaData: pattern not a table") return {} end
+    if type(buildData.pattern.objectList) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_MetaData: objectList not a table") return {} end
+
+    -- determine needed items
+    local itemList = {}
+    for i, object in ipairs(buildData.pattern.objectList) do
+        local itemName = object.block
+
+        -- find item in itemlist (and increment counter if found)
+        local itemAlreadyInList = false
+        for j, item in ipairs(itemList) do
+            -- right item?
+            if item.itemName == itemName then
+                item.itemCount = item.itemCount + 1
+
+                itemAlreadyInList = true
+                break
+            end
+        end
+
+        -- add new item to itemlist
+        if not itemAlreadyInList then
+            table.insert(itemList, {itemName = itemName, itemCount = 1})
+        end
+    end
+    coreutils.WriteToLog("")
+
+    -- return metadata
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(buildData.startpoint), -- copy needed because otherwise reference is used twice
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 500 -- ToDo: calculate from actual movements needed
+        fuelNeeded = 500, -- ToDo: calculate from actual movements needed
+        itemsNeeded = itemList
     }
 end
 

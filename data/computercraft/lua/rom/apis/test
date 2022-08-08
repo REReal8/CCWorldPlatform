@@ -2,7 +2,8 @@ local db = {}
 
 -- short hand for current test to run
 function T()
-    T_enterpise_colonization()
+    T_role_builder_MetaDatas()
+--    T_enterpise_colonization()
 --    role_settler.BuildSiloL0()
 --    T_enterprise_construction1()
 --    T_enterprise_construction2()
@@ -45,7 +46,7 @@ end
 
 local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
 
-local testBuildPattern = {
+local testBuildPattern1 = {
     deltaX      = 4,
     deltaY      = 6,
     objectList  = {
@@ -56,7 +57,26 @@ local testBuildPattern = {
     clearRemainingSpace = true,
 }
 
-local testBlueprint = {
+local testBuildPattern2 = {
+    deltaX      = 3,
+    deltaY      = 3,
+    objectList  = {
+        { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
+        { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+
+        { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+
+        { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+        { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+
+        { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
+        { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}
+
+local testBlueprint1 = {
     layerList = {
         { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern},
         { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
@@ -68,10 +88,20 @@ local testBlueprint = {
     }
 }
 
+local testBlueprint2 = {
+    layerList = {
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = testBuildPattern1},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = testBuildPattern2},
+    },
+    escapeSequence = {
+        { x= 3, y= 3, z=  1},
+    }
+}
+
 function T_enterprise_construction1()
     -- test service 1
     coreutils.WriteToLog("# Test 1")
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
     local callbackFunction = "test.Func1_Callback"
 
     coreutils.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
@@ -81,15 +111,23 @@ end
 function T_enterprise_construction2()
     -- test service 2
     coreutils.WriteToLog("# Test 2")
-    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint1}
     local callbackFunction = "test.Func1_Callback"
     local callbackArgumentTable = {}
     coreutils.WriteToLog("T_enterprise_construction calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
     enterprise_construction.BuildBlueprint(blueprintBuildData, callbackFunction, callbackArgumentTable)
 end
 
+function T_role_builder_MetaDatas()
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint2}
+
+    coreutils.WriteToLog("BuildRectangularPattern_MetaData => "..textutils.serialize(role_builder.BuildRectangularPattern_MetaData(buildData)))
+    coreutils.WriteToLog("BuildBlueprint_MetaData => "..textutils.serialize(role_builder.BuildBlueprint_MetaData(blueprintBuildData)))
+end
+
 function T_role_builder()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
 
     role_builder.BuildRectangularPattern_Task(buildData)
 end
