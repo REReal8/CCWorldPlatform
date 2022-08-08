@@ -60,8 +60,8 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     }, db.dhtRoot, db.listRoot, assignmentId)
 end
 
--- coreassignment.DummyCallback
-function DummyCallback(emptyTable)
+-- coreassignment.Dummy_Callback
+function Dummy_Callback(emptyTable)
     -- do nothing
 end
 

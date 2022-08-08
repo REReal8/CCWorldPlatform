@@ -38,7 +38,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
         assignmentMeta,                                         -- meta data about the assignment
         "role_storage_silo_worker.ItemsDeliveredTask",          -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
-        "coreassignment.DummyCallback",                         -- callbackFunction
+        "coreassignment.Dummy_Callback",                         -- callbackFunction
         {}                                                      -- callbackArgumentTable
     )
 end
@@ -220,7 +220,7 @@ function CheckIntegrity(site)
         assignmentMeta,                                         -- meta data about the assignment
         "role_storage_silo_worker.CheckIntegrityTask",          -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
-        "coreassignment.DummyCallback",                         -- callbackFunction
+        "coreassignment.Dummy_Callback",                        -- callbackFunction
         {}                                                      -- callbackArgumentTable
     )
 end
