@@ -28,6 +28,7 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     metaData.needTool      = metaData.needTool      or false                            --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
     metaData.needTurtle    = metaData.needTurtle    or true
     metaData.fuelNeeded    = metaData.fuelNeeded    or 500                              --> minimum amount of fuel needed to grant assignment
+    metaData.itemsNeeded   = metaData.itemsNeeded   or {}                               --> items needed in inventory to grant assignment
     if type(taskArgumentTable) ~= "table" then coreutils.Error("coreassignment.AddAssignment: taskArgumentTable not a table") return end
     if type(taskFunction) ~= "string" then
         coreutils.Error("coreassignment.AddAssignment: taskFunction not a string") return
@@ -137,20 +138,77 @@ function FindBestAssignment()
 
     -- zoeken naar een assignment om op in te schrijven
     local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
-    local now            = coreutils.UniversalTime()
 
     -- check assignmentList
     if not assignmentList or type(assignmentList) ~= "table" then coreutils.Error("coreassignment.FindBestAssignment: invalid assignmentList") return nil end
 
     -- look for best assignment
     for assignmentId, assignmentData in pairs(assignmentList) do
-        -- check status and startTime
-        -- ToDo: add other metadata checks
-        if assignmentData.status == "open" and assignmentData.metaData.startTime <= now then return assignmentId end
+        -- check assignment open
+        if assignmentData.status == "open" then
+            -- check metaconditions
+            if MetaDataConditionsMet(assignmentData.metaData) then
+                return assignmentId
+            else
+                -- ToDo: remember reason to skip for debugging puroses
+            end
+        end
     end
 
     -- nothing found
     return nil
+end
+
+function MetaDataConditionsMet(metaData)
+    -- check startTime
+    local now            = coreutils.UniversalTime()
+    if metaData.startTime > now then
+--        coreutils.WriteToLog("coreassignment.MetaDataConditionsMet: Assignment in the future (="..metaData.startTime..") (now ="..now..") => skipped")
+        return false
+    end
+
+    -- check optional turtle conditions
+    if metaData.needTurtle then
+        -- check mandatory turtle 
+        if not turtle then
+            coreutils.WriteToLog("coreassignment.MetaDataConditionsMet: Mandatory turtle not present => skipped")
+            return false
+        end
+
+        -- check enough fuel for assignment (including traveling there from current location)
+        local fuelNeeded = metaData.fuelNeeded -- ToDo include fuel needed to travel to the metaData.location
+        if fuelNeeded > 0 then
+            local fuelLevel = turtle.getFuelLevel()
+            if fuelLevel < fuelNeeded then
+                coreutils.WriteToLog("coreassignment.MetaDataConditionsMet: Not enough(="..fuelNeeded..") fuel present(="..fuelLevel..") => skipped")
+                return false
+            end
+        end
+
+        -- check need pickaxe
+        if metaData.needTool then
+            -- check mandatory pickaxe
+            local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
+            if not axePresent then
+                coreutils.WriteToLog("coreassignment.MetaDataConditionsMet: Mandatory pickaxe not present => skipped")
+                return false
+            end
+        end
+
+        -- check items in inventory
+        for i, item in ipairs(metaData.itemsNeeded) do
+            -- get items in inventory
+            local items = coreinventory.CountItem(item.itemName)
+
+            -- enough?
+            if items < item.itemCount then
+                coreutils.WriteToLog("coreassignment.MetaDataConditionsMet: Not enough(="..item.itemCount..") "..item.itemName.." (="..items..") in inventory for assignment => skipped")
+                return false
+            end
+        end
+    end
+
+    return true
 end
 
 function ApplyToAssignment(assignmentId)
