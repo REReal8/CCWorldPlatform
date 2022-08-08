@@ -72,7 +72,7 @@ function T_enterprise_construction1()
     -- test service 1
     coreutils.WriteToLog("# Test 1")
     local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
-    local callbackFunction = "test.ACallBack1"
+    local callbackFunction = "test.Func1_Callback"
 
     coreutils.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
     enterprise_construction.BuildRectangularPattern(buildData, callbackFunction)
@@ -82,7 +82,7 @@ function T_enterprise_construction2()
     -- test service 2
     coreutils.WriteToLog("# Test 2")
     local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
-    local callbackFunction = "test.ACallBack1"
+    local callbackFunction = "test.Func1_Callback"
     local callbackArgumentTable = {}
     coreutils.WriteToLog("T_enterprise_construction calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
     enterprise_construction.BuildBlueprint(blueprintBuildData, callbackFunction, callbackArgumentTable)
@@ -109,7 +109,7 @@ function T_enterprise_test()
 
     -- test service 3
     coreutils.WriteToLog("# Test 3")
-    local callbackFunction = "test.ACallBack1"
+    local callbackFunction = "test.Func1_Callback"
     enterprise_test.TestServiceWithAssignmentAndCallback(testArg, callbackFunction)
 
     -- test service 4
@@ -118,8 +118,8 @@ function T_enterprise_test()
     enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackArgumentTable)
 end
 
-function ACallBack1(callbackArgumentTable, taskResult)
-    coreutils.WriteToLog("test.ACallBack1("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+function Func1_Callback(callbackArgumentTable, taskResult)
+    coreutils.WriteToLog("test.Func1_Callback("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
 end
 
 function GoHomeCallBack(callbackArgumentTable, taskResult)
