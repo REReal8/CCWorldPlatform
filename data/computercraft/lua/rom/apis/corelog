@@ -1,5 +1,4 @@
 local db	= {
---	dbFilename  	= "/db/corelog.lua",
 	logfile			= "/log/log.txt",
 	protocol		= "corelog",
 	loggerChannel	= 65534,
