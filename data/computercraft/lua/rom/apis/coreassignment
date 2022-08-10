@@ -150,7 +150,7 @@ function FindBestAssignment()
             if MetaDataConditionsMet(assignmentData.metaData) then
                 return assignmentId
             else
-                -- ToDo: remember reason to skip for debugging puroses
+                -- ToDo: remember reason to skip for debugging purposes
             end
         end
     end
