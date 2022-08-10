@@ -59,7 +59,7 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
     }
 
     -- log assignment
-    corelog.WriteToAssignmentLog("Adding new Assignment "..textutils.serialize(assignment))
+    corelog.WriteToAssignmentLog("Add new: "..textutils.serialize(assignment), assignmentId)
 
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.listRoot, assignmentId)
@@ -157,7 +157,7 @@ function FindBestAssignment()
             else
                 if skipReason then
                     -- Report reason for skipping for debugging purposes
-                    corelog.WriteToAssignmentLog("Skipping Assignment "..assignmentId.." because "..skipReason)
+                    corelog.WriteToAssignmentLog("Skipped because "..skipReason, assignmentId)
                 end
             end
         end
@@ -171,14 +171,14 @@ function MetaDataConditionsMet(metaData)
     -- check startTime
     local now            = coreutils.UniversalTime()
     if metaData.startTime > now then
-        return false, "Assignment in the future (="..metaData.startTime..") (now ="..now..")"
+        return false, "assignment in the future (="..metaData.startTime..") (now ="..now..")"
     end
 
     -- check optional turtle conditions
     if metaData.needTurtle then
         -- check mandatory turtle 
         if not turtle then
-            return false, "Mandatory turtle not present"
+            return false, "mandatory turtle not present"
         end
 
         -- check enough fuel for assignment (including traveling there from current location)
@@ -186,7 +186,7 @@ function MetaDataConditionsMet(metaData)
         if fuelNeeded > 0 then
             local fuelLevel = turtle.getFuelLevel()
             if fuelLevel < fuelNeeded then
-                return false, "Not enough(="..fuelNeeded..") fuel present(="..fuelLevel..")"
+                return false, "not enough(="..fuelNeeded..") fuel present(="..fuelLevel..")"
             end
         end
 
@@ -195,7 +195,7 @@ function MetaDataConditionsMet(metaData)
             -- check mandatory pickaxe
             local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
             if not axePresent then
-                return false, "Mandatory pickaxe not present"
+                return false, "mandatory pickaxe not present"
             end
         end
 
@@ -206,7 +206,7 @@ function MetaDataConditionsMet(metaData)
 
             -- enough?
             if items < item.itemCount then
-                return false, "Not enough(="..item.itemCount..") "..item.itemName.." in inventory (="..items..")"
+                return false, "not enough(="..item.itemCount..") "..item.itemName.." in inventory (="..items..")"
             end
         end
     end
@@ -215,7 +215,7 @@ function MetaDataConditionsMet(metaData)
 end
 
 function ApplyToAssignment(assignmentId)
---    corelog.WriteToAssignmentLog("Running ApplyToAssignment")
+--    corelog.WriteToAssignmentLog("Running ApplyToAssignment", assignmentId)
 
     -- alleen solliciteren indien de assignment open is
     if coredht.GetData(db.dhtRoot, db.listRoot, assignmentId, "status") == "open" then
@@ -232,7 +232,7 @@ function ApplyToAssignment(assignmentId)
 end
 
 function AssignmentSelectionProcedure(assignmentId)
---    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure")
+--    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure", assignmentId)
 
     -- data van de assignment ophalen
     local assignment = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId)
@@ -271,18 +271,18 @@ function DoAssignment(assignment)
 
     -- call task function
     local f, err = loadstring("return "..assignment.taskFunction.."("..textutils.serialize(assignment.taskArgumentTable)..")")
-    corelog.WriteToAssignmentLog("Starting Task of Assignment "..assignmentId)
+    corelog.WriteToAssignmentLog("Starting task", assignmentId)
     if f then taskResult = f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
-    corelog.WriteToAssignmentLog("Task of Assignment "..assignmentId.." completed")
+    corelog.WriteToAssignmentLog("Completed task", assignmentId)
 
     -- call callBack function
     f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.callbackArgumentTable)..","..textutils.serialize(taskResult).. ")")
-    corelog.WriteToAssignmentLog("Calling callback function of Assignment "..assignmentId)
+    corelog.WriteToAssignmentLog("Calling callback function", assignmentId)
     if f then f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
 
     -- we have done all for this assignment that we needed to do
     EndAssignment(assignmentId)
-    corelog.WriteToAssignmentLog("Assignment "..assignmentId.." ended")
+    corelog.WriteToAssignmentLog("Ended", assignmentId)
 end
 
 function TakeAssignment(assignmentId)

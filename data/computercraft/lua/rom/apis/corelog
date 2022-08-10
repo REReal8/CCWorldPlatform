@@ -102,14 +102,18 @@ function Error(message)
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
 end
 
-function WriteToAssignmentLog(message, writeMode)
+function WriteToAssignmentLog(message, assignmentId, writeMode)
 	-- set the default
 	writeMode = writeMode or "append"
 
 	-- write message to the logfile	in assignment log format
     local now = coreutils.UniversalTime()
     local computerId = os.getComputerID()
-	coreutils.WriteToFile(db.assignmentLogFile, "| "..now.." | computer "..computerId.." | "..message.." |", writeMode)
+	local assignmentIdStr = ""
+	if assignmentId then
+		assignmentIdStr = "assignment "..assignmentId.." | "
+	end
+	coreutils.WriteToFile(db.assignmentLogFile, "| time "..now.." | computer "..computerId.." | "..assignmentIdStr..message.." |", writeMode)
 end
 
 --                         _
