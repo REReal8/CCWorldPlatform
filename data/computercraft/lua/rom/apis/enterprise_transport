@@ -41,7 +41,7 @@ end
 
 function Init(enterpriseId)
     -- create
-    coreutils.WriteToLog("Enterprise Transport "..enterpriseId.." created");
+    corelog.WriteToLog("Enterprise Transport "..enterpriseId.." created");
 
     -- ToDo: get this from message box later
 --    NewBuilderJob(enterpriseId)

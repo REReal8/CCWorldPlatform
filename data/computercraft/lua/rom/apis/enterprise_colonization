@@ -27,7 +27,7 @@ function CreateNewWorld(callback)
         callback - (string) function name to call once the world is created
     ]]--
     -- check input
-    if type(callback) ~= "string" then coreutils.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
 
     -- construct arguments
     local startLocation = {x= 3, y= 2, z= 1, dx=0, dy=1}

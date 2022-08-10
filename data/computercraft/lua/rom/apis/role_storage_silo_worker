@@ -113,8 +113,8 @@ function RetrieveItems_Task(data)
     local itemList      = data.itemList
     local dropLocation  = data.dropLocation
 
-    coreutils.WriteToLog("data")
-    coreutils.WriteToLog(data)
+    corelog.WriteToLog("data")
+    corelog.WriteToLog(data)
 
     -- get to work
     turtle.select(1)

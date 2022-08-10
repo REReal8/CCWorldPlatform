@@ -87,7 +87,7 @@ function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
     end
 
     -- found any?
-    if location == nil then coreutils.Error("enterprise_storage_silo.RetrieveItems: no free top chest") return nil end
+    if location == nil then corelog.Error("enterprise_storage_silo.RetrieveItems: no free top chest") return nil end
 
     -- part 2: make an assignment for the actual pickup
     local assignmentMeta        = {

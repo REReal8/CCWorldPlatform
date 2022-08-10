@@ -561,8 +561,8 @@ end
 function MoveTo(t, force)
 	if t == nil then
 		print("Cannot move to nil location")
-		coreutils.WriteToLog("function coremove.MoveTo: Cannot move to nil location")
-		coreutils.WriteToLog(debug.traceback())
+		corelog.WriteToLog("function coremove.MoveTo: Cannot move to nil location")
+		corelog.WriteToLog(debug.traceback())
 		return false
 	end
 
@@ -598,8 +598,8 @@ end
 function TurnTo( t )
 	if t == nil then
 		print("Cannot turn to nil location")
-		coreutils.WriteToLog("function coremove.TurnTo: Cannot turn to nil location")
-		coreutils.WriteToLog(debug.traceback())
+		corelog.WriteToLog("function coremove.TurnTo: Cannot turn to nil location")
+		corelog.WriteToLog(debug.traceback())
 		return false
 	end
 

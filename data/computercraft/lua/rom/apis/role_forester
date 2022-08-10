@@ -7,8 +7,8 @@ local db = {
 -- functions
 function Rondje(funcData)
     -- debug
-    coreutils.WriteToLog("Forester.Rondje()")
-    coreutils.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
+    corelog.WriteToLog("Forester.Rondje()")
+    corelog.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
 
     local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
 
@@ -146,7 +146,7 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
 
         -- hebben we nu een sappling?
         if coreinventory.SelectItem("minecraft:birch_sapling")  then turtle.placeDown()
-                                                                else coreutils.Error("No birch sapling to plant") end
+                                                                else corelog.Error("No birch sapling to plant") end
     end
 end
 

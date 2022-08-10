@@ -25,7 +25,7 @@ function AddWork(func, data)
     	os.queueEvent("dummy")
 		return work.last
     else
-        coreutils.WriteToLog("taskAPI.AddWork: func nil")
+        corelog.WriteToLog("taskAPI.AddWork: func nil")
     end
 end
 
@@ -37,7 +37,7 @@ function AddNextWork(func, data)
 		os.queueEvent("dummy")
 		return work.first
     else
-        coreutils.WriteToLog("taskAPI.AddNextWork: func nil")
+        corelog.WriteToLog("taskAPI.AddNextWork: func nil")
     end
 end
 
@@ -79,7 +79,7 @@ function Run()
 			NextWorkComplete()
 
 			-- do the post work -- weird thing, do all post work, regardless of protocol... !!!
-			for protocol, func in pairs(postWorkHandler) do coreutils.WriteToLog("Work, postWorkHandler, protocol = ", protocol) func() end
+			for protocol, func in pairs(postWorkHandler) do corelog.WriteToLog("Work, postWorkHandler, protocol = ", protocol) func() end
 
 			-- reset all idle timers -- weird, should be a db variable
 			local now = os.clock()

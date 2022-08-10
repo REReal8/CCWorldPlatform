@@ -25,16 +25,16 @@ function BuildBlueprint(buildData, callbackFunction, callbackArgumentTable)
     --    blueprint               --> blueprint to build   
     -- }
     if type(buildData) ~= "table" then
-        coreutils.Error("enterprise_construction.BuildBlueprint: bluePrintData not a table")
+        corelog.Error("enterprise_construction.BuildBlueprint: bluePrintData not a table")
         return false
     else
-        if type(buildData.blueprintStartpoint) ~= "table" then coreutils.Error("enterprise_construction.BuildBlueprint: blueprintStartpoint not a table") return false end
-        if type(buildData.blueprint) ~= "table" then coreutils.Error("enterprise_construction.BuildBlueprint: blueprint not a table") return false end
-        if type(buildData.blueprint.layerList) ~= "table" then coreutils.Error("enterprise_construction.BuildBlueprint: blueprint.layerList not a table") return false end
+        if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprintStartpoint not a table") return false end
+        if type(buildData.blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprint not a table") return false end
+        if type(buildData.blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprint.layerList not a table") return false end
     end
     --
     -- callbackFunction
-    if type(callbackFunction) ~= "string" then coreutils.Error("enterprise_construction.BuildBlueprint: callbackFunction not a string") return false end
+    if type(callbackFunction) ~= "string" then corelog.Error("enterprise_construction.BuildBlueprint: callbackFunction not a string") return false end
 
     -- construct assignment metadata
     local metaData = role_builder.BuildBlueprint_MetaData(buildData)
@@ -57,14 +57,14 @@ function BuildRectangularPattern(buildData, callbackFunction, callbackArgumentTa
     --    pattern                 --> pattern to build
     -- }
     if type(buildData) ~= "table" then
-        coreutils.Error("enterprise_construction.BuildRectangularPattern: buildData not a table")
+        corelog.Error("enterprise_construction.BuildRectangularPattern: buildData not a table")
         return false
     else
-        if type(buildData.startpoint) ~= "table" then coreutils.Error("enterprise_construction.BuildRectangularPattern: startpoint not a table") return false end
-        if type(buildData.buildFromAbove) ~= "boolean" then coreutils.Error("enterprise_construction.BuildRectangularPattern: startpoint not a boolean") return false end
---        if type(buildData.replacePresentObjects) ~= "boolean" then coreutils.Error("enterprise_construction.BuildRectangularPattern: replacePresentObjects not a boolean") return false end
+        if type(buildData.startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern: startpoint not a table") return false end
+        if type(buildData.buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern: startpoint not a boolean") return false end
+--        if type(buildData.replacePresentObjects) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern: replacePresentObjects not a boolean") return false end
         if type(buildData.pattern) ~= "table" then
-            coreutils.Error("enterprise_construction.BuildRectangularPattern: pattern not a table")
+            corelog.Error("enterprise_construction.BuildRectangularPattern: pattern not a table")
             return false
         else
         --[[
@@ -85,11 +85,11 @@ function BuildRectangularPattern(buildData, callbackFunction, callbackArgumentTa
     end
     --
     -- callbackFunction
-    if type(callbackFunction) ~= "string" then coreutils.Error("enterprise_construction.BuildRectangularPattern: callbackFunction not a string") return false end
+    if type(callbackFunction) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern: callbackFunction not a string") return false end
     --
     -- callbackArgumentTable
     callbackArgumentTable = callbackArgumentTable or {} --> if no callback arguments supplied {} is sufficient
-    if type(callbackArgumentTable) ~= "table" then coreutils.Error("enterprise_construction.BuildRectangularPattern: callbackArgumentTable not a table") return false end
+    if type(callbackArgumentTable) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern: callbackArgumentTable not a table") return false end
 
     -- construct assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)

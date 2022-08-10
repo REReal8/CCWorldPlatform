@@ -91,8 +91,8 @@ end
 
 function BuildBlueprint_Task(buildData)
     -- check input
-    if type(buildData.blueprint) ~= "table" then coreutils.Error("role_builder.BuildBlueprint_Task: blueprint not a table") return false end
-    if type(buildData.blueprint.escapeSequence) ~= "table" then coreutils.Error("role_builder.BuildBlueprint_Task: escape sequence not a table") return false end
+    if type(buildData.blueprint) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: blueprint not a table") return false end
+    if type(buildData.blueprint.escapeSequence) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: escape sequence not a table") return false end
 
     -- loop on layers
     for i, buildLayer in ipairs(buildData.blueprint.layerList) do
@@ -109,7 +109,7 @@ function BuildBlueprint_Task(buildData)
 
         -- build layer using internal task
         if BuildRectangularPattern_Task(layerBuildData) ~= true then
-            coreutils.Error("role_builder.BuildBlueprint_Task(): Failed building layer " ..i..". Remaining layers skipped.")
+            corelog.Error("role_builder.BuildBlueprint_Task(): Failed building layer " ..i..". Remaining layers skipped.")
             return false
         end
     end
@@ -127,8 +127,8 @@ end
 
 function BuildRectangularPattern_MetaData(buildData)
     -- check input
-    if type(buildData) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_MetaData: buildData not a table") return {} end
-    if type(buildData.pattern) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_MetaData: pattern not a table") return {} end
+    if type(buildData) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_MetaData: buildData not a table") return {} end
+    if type(buildData.pattern) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_MetaData: pattern not a table") return {} end
 
     -- determine needed items
     local itemList = BuildRectangularPattern_ItemsNeeded(buildData.pattern)
@@ -146,7 +146,7 @@ end
 
 function BuildRectangularPattern_ItemsNeeded(pattern)
     -- check input
-    if type(pattern.objectList) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_ItemsNeeded: objectList not a table") return {} end
+    if type(pattern.objectList) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_ItemsNeeded: objectList not a table") return {} end
 
     local itemList = {}
     for i, object in ipairs(pattern.objectList) do
@@ -199,13 +199,13 @@ end
 --]]
 function BuildRectangularPattern_Task(buildData)
     -- check input
-    if type(buildData) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_Task: buildData not a table") return false end
-    if type(buildData.pattern) ~= "table" then coreutils.Error("role_builder.BuildRectangularPattern_Task: pattern not a table") return false end
+    if type(buildData) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: buildData not a table") return false end
+    if type(buildData.pattern) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: pattern not a table") return false end
 
     -- check mandatory pickage!
     local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
     if not axePresent then
-        coreutils.Error("role_builder.BuildRectangularPattern_Task(): No pickaxe present, we are on strike!")
+        corelog.Error("role_builder.BuildRectangularPattern_Task(): No pickaxe present, we are on strike!")
         return false
     end
 
@@ -217,7 +217,7 @@ function BuildRectangularPattern_Task(buildData)
 
         -- enough?
         if items < item.itemCount then
-            coreutils.Warning("role_builder.BuildRectangularPattern_Task: Not enough(="..item.itemCount..") "..item.itemName.." (="..items..") in inventory to build the pattern")
+            corelog.Warning("role_builder.BuildRectangularPattern_Task: Not enough(="..item.itemCount..") "..item.itemName.." (="..items..") in inventory to build the pattern")
         end
     end
 
@@ -279,7 +279,7 @@ function BuildRectangularPattern_Task(buildData)
                             end
                         else
                             -- mandatory item not in inventory, error message and ignore
-                            coreutils.WriteToLog("Oops, BuildRectangularPattern_Task() item not in inventory: " .. object.block)
+                            corelog.WriteToLog("Oops, BuildRectangularPattern_Task() item not in inventory: " .. object.block)
                         end
                     end
 

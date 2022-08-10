@@ -104,7 +104,7 @@ function DHTReadySetup()
 end
 
 function FindBestVacancy()
---    coreutils.WriteToLog("Running FindBestVacancy")
+--    corelog.WriteToLog("Running FindBestVacancy")
 
     -- zoeken naar een job om op in te schrijven
     local jobs  = coredht.GetData(db.dhtRoot)
@@ -125,7 +125,7 @@ function FindBestVacancy()
 end
 
 function ApplyToJob(jobId)
---    coreutils.WriteToLog("Running ApplyToJob")
+--    corelog.WriteToLog("Running ApplyToJob")
 
     -- alleen solliciteren indien de job open is
     if coredht.GetData(db.dhtRoot, jobId, "status") == "open" then
@@ -143,7 +143,7 @@ function ApplyToJob(jobId)
 end
 
 function JobSelectionProcedure(jobId)
---    coreutils.WriteToLog("Running JobSelectionProcedure")
+--    corelog.WriteToLog("Running JobSelectionProcedure")
 
     -- data van de job ophalen
     local job = coredht.GetData(db.dhtRoot, jobId)
@@ -156,7 +156,7 @@ function JobSelectionProcedure(jobId)
 end
 
 function TakeJob(jobId)
---    coreutils.WriteToLog("Running TakeJob("..jobId..")")
+--    corelog.WriteToLog("Running TakeJob("..jobId..")")
 
     -- this computer is apparently executing this job
     db.currentJob   = jobId
@@ -173,7 +173,7 @@ function DoJob(job)
 
     -- task functie klaar maken
     local f, err = loadstring("return "..job.enterpriseName..".ProcessNextTask("..textutils.serialize(job.enterpriseId)..")")
-    if f then taskId = f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+    if f then taskId = f() else corelog.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
     -- loopje doen om inbox te lezen zolang de task nog bezig is
     local messagePresent    = true
@@ -183,7 +183,7 @@ function DoJob(job)
 
         -- hier ooit de inbox van deze enterprise verwerken
         local f, err = loadstring(job.enterpriseName..".ProcessNextMessage("..textutils.serialize(job.enterpriseId)..")")
-        if f then messagePresent = f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+        if f then messagePresent = f() else corelog.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
         -- ff wachten
         os.sleep(0.05)
@@ -191,7 +191,7 @@ function DoJob(job)
 
     -- klaar met de task
     local f, err = loadstring(job.enterpriseName..".TaskComplete("..textutils.serialize(job.enterpriseId)..")")
-    if f then f() else coreutils.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
+    if f then f() else corelog.Error("corejob.DoJob(): loadstring gaf geen functie terug, wel een error: "..err) end
 
     -- we have done all for this job that we needed to do
     QuitJob(job.jobId)

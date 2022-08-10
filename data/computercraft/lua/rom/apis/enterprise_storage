@@ -26,11 +26,11 @@ function StoreItems(itemList, location)
 --]]
 
     -- check our input
-    if type(itemList) ~= "table" then coreutils.Error('enterprise_storage.StoreItems: Invalid input') return nil end
+    if type(itemList) ~= "table" then corelog.Error('enterprise_storage.StoreItems: Invalid input') return nil end
 
     -- this site is best
     local site  = FindClosestSite(location)
-    if site == nil then coreutils.Error('enterprise_storage.StoreItems: No valid site') return nil end
+    if site == nil then corelog.Error('enterprise_storage.StoreItems: No valid site') return nil end
 
     -- let the site handle this request
     if site.type == "silo" then return enterprise_storage_silo.StoreItems(site, itemList)
@@ -51,13 +51,13 @@ function ItemsDelivered(itemList, location)
 --]]
 
     -- check our input
-    if type(itemList) ~= "table" or type(location) ~= "table" then coreutils.Error('enterprise_storage.ItemsDelivered: Invalid input') return nil end
+    if type(itemList) ~= "table" or type(location) ~= "table" then corelog.Error('enterprise_storage.ItemsDelivered: Invalid input') return nil end
 
     -- find the site this top chest location belongs to
     local site, topChest = FindSiteByTopChest(location)
 
     -- got anything?
-    if site == nil or topChest == nil then coreutils.Error('enterprise_storage.ItemsDelivered: No site found') return nil end
+    if site == nil or topChest == nil then corelog.Error('enterprise_storage.ItemsDelivered: No site found') return nil end
 
     -- what kind of site is this anyways?
     if site.type == "silo" then return enterprise_storage_silo.ItemsDelivered(site.sitesIndex, topChest.chestIndex, itemList, location)
@@ -85,7 +85,7 @@ function ItemPresent(itemName)
     }
 
     -- parameter must be a string
-    if type(itemName) ~= "string" then coreutils.Error("enterprise_storage.ItemPresent: itemName nog a string") return nil end
+    if type(itemName) ~= "string" then corelog.Error("enterprise_storage.ItemPresent: itemName nog a string") return nil end
 
     -- loop the sites
     for i, site in ipairs(sites) do
@@ -125,7 +125,7 @@ function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
     local site      = coredht.GetData(db.dhtRoot, db.dhtSites, sitesIndex)
 
     -- check paramters (should check if sitesIndex is really a valid sitesIndex)
-    if type(sitesIndex) ~= "number" or type(site) ~= "table" or type(itemList) ~= "table" or type(callback) ~= "string" then coreutils.Error("enterprise_storage.RetrieveItems: invalid paramters") return nil end
+    if type(sitesIndex) ~= "number" or type(site) ~= "table" or type(itemList) ~= "table" or type(callback) ~= "string" then corelog.Error("enterprise_storage.RetrieveItems: invalid paramters") return nil end
 
     -- tell this site do retrieve the items
     if site.type == "silo" then return enterprise_storage_silo.RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
@@ -150,7 +150,7 @@ function ItemsCollected(location)
     local site, topChest = FindSiteByTopChest(location)
 
     -- check what we got
-    if site == nil or topChest == nil then coreutils.Error("enterprise_storage.ItemsCollected: no site and/or topchest found") return nil end
+    if site == nil or topChest == nil then corelog.Error("enterprise_storage.ItemsCollected: no site and/or topchest found") return nil end
 
     -- let the site fix this
     if site.type == "silo" then enterprise_storage_silo.ItemsCollected(site, topChest)
@@ -178,7 +178,7 @@ function NewSite(siteData)
     end
 
     -- check our input
-    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then coreutils.Error('enterprise_storage.NewSite: Invalid input') return nil end
+    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.NewSite: Invalid input') return nil end
 
     -- what kind of storage is this?
     if siteData.type == 'silo' then return enterprise_storage_silo.NewSite(siteData)
@@ -197,7 +197,7 @@ function FindClosestSite(location)
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
 
     -- check if we have any site
-    if type(sites) ~= "table" or #sites == 0 then coreutils.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
+    if type(sites) ~= "table" or #sites == 0 then corelog.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
 
     -- we should look for the best site, for now just take the first
     return sites[1]

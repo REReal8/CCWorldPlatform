@@ -1,0 +1,130 @@
+local db	= {
+--	dbFilename  	= "/db/corelog.lua",
+	logfile			= "/log/log.txt",
+	protocol		= "corelog",
+	loggerChannel	= 65534,
+}
+
+local monitorLeft	= nil
+local monitorRight	= nil
+
+function Init()
+	-- place markers in the logfile
+	WriteToLog("--- starting up ---", "overwrite")
+end
+
+-- niet nodig voor utils
+function Setup()
+	-- start sending messages when we are ready to receive them too
+	coreevent.EventReadyFunction(EventReadySetup)
+
+	-- let others check our pulse
+	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol, "pulse request")
+
+	-- check if we have monitors on our side (and we are not a turtle, so a handheld or computer)
+	if peripheral.getType("left") == "monitor" and peripheral.getType("right") == "monitor" and not turtle then
+		-- get monitor handles
+		monitorLeft		= peripheral.wrap("left")
+		monitorRight	= peripheral.wrap("right")
+
+		-- start at the bottom
+		monitorLeft.clear()
+		local w, h = monitorLeft.getSize()
+		monitorLeft.setCursorPos(1,h)
+
+		-- we will be the logger of this system
+		coreassignment.RejectAllAssignments()
+
+		-- listen to the logger port
+		coreevent.OpenChannel(db.loggerChannel, db.protocol)
+
+		-- listen to our events
+		coreevent.AddEventListener(DoEventWriteToLog, db.protocol, "write to log")
+
+		-- show who's boss!
+		WriteToMonitor("--- starting up monitor ---", monitorLeft)
+	end
+end
+
+function EventReadySetup()
+	-- no need to do anything?
+end
+
+function WriteToLog(message, writeMode)
+	-- set the default
+	writeMode = writeMode or "append"
+
+	-- write to the logfile
+	coreutils.WriteToFile(db.logfile, message, writeMode)
+
+	-- send message
+	if monitorLeft then
+		-- we are the logging station, don't send message
+		WriteToMonitor(message, monitorLeft)
+	else
+
+		-- send message two whoever is loggin our stuff
+		coreevent.SendMessage({
+			channel		= db.loggerChannel,
+			protocol	= db.protocol,
+			subject		= "write to log",
+			message		= {text = message} })
+	end
+end
+
+function WriteToMonitor(message, monitor)
+	-- default monitor
+	monitor = monitor or monitorLeft
+
+	-- write to an attached monitor if available (usefull for a status monitor screen)
+	if monitor then
+		local w, h = monitor.getSize()
+
+		-- scroll the existing stuff up
+		monitor.scroll(1)
+
+		-- write the message
+		monitor.write(message)
+
+		-- set the cursus back at the start of the line
+		monitor.setCursorPos(1,h)
+	end
+end
+
+function Warning(message)
+	-- write to the logfile
+	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
+end
+
+function Error(message)
+	-- write to the logfile
+	coreutils.WriteToFile(db.logfile, "ERROR:", "append") -- ToDo: consider calling WriteToLog
+	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
+end
+
+
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
+
+function DoEventPulseRequest(subject, envelope)
+	local fuelLevel
+
+	-- computers don't have a fuel level
+	if turtle	then fuelLevel = turtle.getFuelLevel()
+				else fuelLevel = 0
+	end
+
+	-- send some information about us back
+    coreevent.ReplyToMessage(envelope, "pulse response", {fuelLevel=fuelLevel})
+end
+
+function DoEventWriteToLog(subject, envelope)
+	-- write the message on the monitor
+	WriteToMonitor(envelope.message.text, monitorLeft)
+end

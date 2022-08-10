@@ -11,7 +11,7 @@ function NIY(msg)
 	-- Not implemented yet, do nothing special
 	if type(msg) == 'string' then
 		print('Not implemented yet: '..msg)
-		coreutils.WriteToLog('Not implemented yet: '..msg)
+		corelog.WriteToLog('Not implemented yet: '..msg)
 	end
 end
 
@@ -31,6 +31,7 @@ function Init()
 	coremove.Init()
 	coretask.Init()
 	coreutils.Init()
+	corelog.Init()
 
 	enterprise.Init()
 
@@ -54,6 +55,7 @@ function Setup()
 	coremove.Setup()
 	coretask.Setup()
 	coreutils.Setup()
+	corelog.Setup()
 
 	enterprise.Setup()
 
