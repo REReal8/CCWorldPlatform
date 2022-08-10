@@ -141,7 +141,7 @@ function BuildSilo(siloData, callback)
         blueprintStartpoint = coremove.CopyLocation(siloData.location),
         blueprint = enterprise_storage.GetSiloL0_blueprint() -- ToDo: have this depend on siloData
     }
-    corelog.WriteToLog("enterprise_storage_silo.BuildSilo calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callback..")")
+    corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint(blueprintBuildData, callback, {})
 end
 
