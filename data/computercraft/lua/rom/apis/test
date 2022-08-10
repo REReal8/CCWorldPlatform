@@ -77,12 +77,32 @@ local testBuildPattern2 = {
     clearRemainingSpace = true,
 }
 
+local testBuildPattern3 = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3,                 block = "minecraft:torch"},
+        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 3, y = 0,                 block = "minecraft:torch"},
+        { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}
+
+local testBuildPattern4 = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+    },
+    clearRemainingSpace = true,
+}
+
 local testBlueprint1 = {
     layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
-        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern},
-        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(enterprise_storage.chestLayer_pattern)}
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = testBuildPattern3},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = testBuildPattern4},
+        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = testBuildPattern2},
+        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)}
     },
     escapeSequence = {
         { x= 3, y= 3, z=  1},

@@ -139,7 +139,7 @@ function BuildSilo(siloData, callback)
     -- let construction enterprise build the silo
     local blueprintBuildData = {
         blueprintStartpoint = coremove.CopyLocation(siloData.location),
-        blueprint = enterprise_storage.GetSiloL0_blueprint() -- ToDo: have this depend on siloData
+        blueprint = GetSiloL0_blueprint(siloData)
     }
     corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint(blueprintBuildData, callback, {})
@@ -249,3 +249,72 @@ function CheckIntegrity(site)
     )
 end
 
+--    _           _ _     _               _   _                                 _     _                       _       _
+--   | |         (_) |   | |             | | | |                        ___    | |   | |                     (_)     | |
+--   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___   ( _ )   | |__ | |_   _  ___ _ __  _ __ _ _ __ | |_ ___
+--   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|  / _ \/\ | '_ \| | | | |/ _ \ '_ \| '__| | '_ \| __/ __|
+--   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \ | (_>  < | |_) | | |_| |  __/ |_) | |  | | | | | |_\__ \
+--   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/  \___/\/ |_.__/|_|\__,_|\___| .__/|_|  |_|_| |_|\__|___/
+--                           | |                                                                  | |
+--                           |_|                                                                  |_|
+
+local topLayerL0_pattern = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3,                 block = "minecraft:torch"},
+        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 3, y = 0,                 block = "minecraft:torch"},
+        { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}
+
+local shaftLayer_pattern = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+    },
+    clearRemainingSpace = true,
+}
+
+local chestLayer_pattern = {
+    deltaX      = 3,
+    deltaY      = 3,
+    objectList  = {
+        { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
+        { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+
+        { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+
+        { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+        { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+
+        { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
+        { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}
+
+function GetSiloL0_blueprint(siteData)
+    -- construct layer list
+    if siteData.topChests ~= 2 then corelog.Warning("enterprise_storage_silo.GetSiloL0_blueprint: Not yet implemented for other (="..siteData.topChests..") than 2 top chests") end
+    local layerList = {
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, pattern = topLayerL0_pattern}, -- ToDo: use siteData.topChests
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = false, pattern = shaftLayer_pattern},
+    }
+    for i=1, siteData.layers, 1 do
+        table.insert(layerList, { startpoint = { x= 2, y= 2, z= -1-i}, buildFromAbove = false, pattern = role_builder.CopyPattern(chestLayer_pattern)})
+    end
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
+    }
+
+    return blueprint
+end
