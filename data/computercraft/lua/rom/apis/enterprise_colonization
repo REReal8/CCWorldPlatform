@@ -45,7 +45,7 @@ function CreateNewWorld(callbackFunction)
     local settleData = {startLocation = startLocation}
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, "enterprise_colonization.BuildStorageSite_Callback", {nextCallback = callbackFunction})
+    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, "enterprise_colonization.BuildStorageSite_Callback", {lastCallback = callbackFunction})
 end
 
 --    _                 _    __                  _   _
@@ -64,8 +64,17 @@ function BuildStorageSite_Callback(callbackData, taskResult)
         topChests=2,
         layers=2
     }
-    enterprise_storage.BuildSite(siteData, callbackData.nextCallback)
+    enterprise_storage.BuildSite(siteData, "enterprise_colonization.StartStorage_Callback", callbackData) -- ToDo: should we pass on this siteData somehow?
+end
 
+function StartStorage_Callback(callbackData, taskResult)
     -- Start new Storage Site
-    -- ToDo: implement with enterprise_storage.NewSite
+    local siteData = {
+        location={x=12, y=12, z= 1, dx=0, dy=1},
+        type="silo",
+        siloType="basic",
+        topChests=2,
+        layers=2
+    }
+    enterprise_storage.NewSite(siteData, callbackData.lastCallback)
 end

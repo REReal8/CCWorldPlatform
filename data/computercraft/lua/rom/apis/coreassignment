@@ -67,6 +67,7 @@ end
 
 -- coreassignment.Dummy_Callback
 function Dummy_Callback(emptyTable)
+    corelog.WriteToAssignmentLog("Dummy_Callback called")
     -- do nothing
 end
 
