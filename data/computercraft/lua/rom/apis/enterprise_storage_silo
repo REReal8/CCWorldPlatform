@@ -121,6 +121,30 @@ function ItemsCollected(site, topChest)
     coredht.SaveData("free", db.dhtRoot, db.dhtSites, site.sitesIndex, "topChests", topChest.chestIndex, "status")
 end
 
+function BuildSilo(siloData, callback)
+    --[[
+        This public function (service) builds a new silo.
+    
+        Return value:
+            nil
+    
+        Parameters:
+            siloData     - (table) data about this silo, like type and layout
+            callback     - (string) function name to call once the site is build
+    ]]
+    -- check input
+    if type(siloData) ~= "table" or type(siloData.location) ~= "table" or type(siloData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildSilo: Invalid siloData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildSilo: Invalid callback function') return nil end
+
+    -- let construction enterprise build the silo
+    local blueprintBuildData = {
+        blueprintStartpoint = coremove.CopyLocation(siloData.location),
+        blueprint = enterprise_storage.GetSiloL0_blueprint() -- ToDo: have this depend on siloData
+    }
+    corelog.WriteToLog("enterprise_storage_silo.BuildSilo calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callback..")")
+    enterprise_construction.BuildBlueprint(blueprintBuildData, callback, {})
+end
+
 function NewSite(siteData)
     -- variables
     local site  = {

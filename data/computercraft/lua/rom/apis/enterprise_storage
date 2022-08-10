@@ -157,6 +157,28 @@ function ItemsCollected(location)
     end
 end
 
+-- enterprise_storage.BuildSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
+function BuildSite(siteData, callback)
+--[[
+    This public function (service) builds a new site.
+
+    Return value:
+        nil
+
+    Parameters:
+        siteData     - (table) data about this site, like type and layout
+        callback     - (string) function name to call once the site is build
+]]
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildSite: Invalid siteData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildSite: Invalid callback function') return nil end
+
+    -- what kind of storage is this?
+    if siteData.type == 'silo' then 
+        enterprise_storage_silo.BuildSilo(siteData, callback)
+    end
+end
+
 -- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
 function NewSite(siteData)
 --[[
