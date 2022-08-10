@@ -44,11 +44,9 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
         -- ToDo: investigate if there is a way to check if the actual function exists and has the proper arguments without actually calling it
     end
 
-    -- create assignmentId
+    -- create assignment
     local assignmentId  = coreutils.NewId()
-
-    -- store assignment
-    coredht.SaveData({
+    local assignment = {
         assignmentId            = assignmentId,
         status                  = "open",
         applications            = {},
@@ -58,7 +56,20 @@ function AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFuncti
         taskArgumentTable       = taskArgumentTable,
         callbackFunction        = callbackFunction,
         callbackArgumentTable   = callbackArgumentTable,
-    }, db.dhtRoot, db.listRoot, assignmentId)
+    }
+
+    -- store assignment
+    coredht.SaveData(assignment, db.dhtRoot, db.listRoot, assignmentId)
+
+    -- log assignment
+    WriteToAssignmentLog("New assignment added: "..textutils.serialize(assignment))
+--    WriteToAssignmentLog(textutils.serialize(assignment))
+end
+
+function WriteToAssignmentLog(message) -- ToDo: log to a different file than the standard log.
+    local now = coreutils.UniversalTime()
+    local computerId = os.getComputerID()
+    corelog.WriteToLog("| "..now.." | computer "..computerId.." | "..message.." |")
 end
 
 -- coreassignment.Dummy_Callback
@@ -263,18 +274,23 @@ function DoAssignment(assignment)
     local taskResult = nil
 
     -- we have taken this assignment!
-    TakeAssignment(assignment.assignmentId)
+    local assignmentId = assignment.assignmentId
+    TakeAssignment(assignmentId)
 
     -- call task function
     local f, err = loadstring("return "..assignment.taskFunction.."("..textutils.serialize(assignment.taskArgumentTable)..")")
+    WriteToAssignmentLog("Starting Task of Assignment "..assignmentId)
     if f then taskResult = f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
+    WriteToAssignmentLog("Task of Assignment "..assignmentId.." completed")
 
     -- call callBack function
     f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.callbackArgumentTable)..","..textutils.serialize(taskResult).. ")")
+    WriteToAssignmentLog("Calling callback function of Assignment "..assignmentId)
     if f then f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
 
     -- we have done all for this assignment that we needed to do
-    EndAssignment(assignment.assignmentId)
+    EndAssignment(assignmentId)
+    WriteToAssignmentLog("Assignment "..assignmentId.." ended")
 end
 
 function TakeAssignment(assignmentId)
