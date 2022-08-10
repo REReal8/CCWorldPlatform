@@ -4,7 +4,6 @@ local db = {
     nTrees = 1,
     craftingLocation    = {x= 3, y= 2, z= 1, dx=0, dy=1},
     crafterLocation     = {x=12, y= 0, z= 1, dx=0, dy=1},
-    siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
 }
 
 
@@ -150,6 +149,7 @@ function Settle_Task(settleData)
     end
 
     -- create chests
+    corelog.WriteToLog(">Creating chests and torches<")
     LogToChests(chestsNeeded)
 
     -- create torches
@@ -162,10 +162,6 @@ function Settle_Task(settleData)
     -- finish the crafting station
     corelog.WriteToLog(">Finishing Crafting Station<")
     UpdateToCraftingStationL1()
-
-    -- make a first (small) silo
-    corelog.WriteToLog(">Building small silo<")
-    BuildSiloL0()
 end
 
 
@@ -526,21 +522,4 @@ function UpdateToCraftingStationL1()
 
     -- crafter temporary storage chest
     role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL1_pattern})
-end
-
-function BuildSiloL0()
-    -- ToDo: later make this internal code of enterprise_storage or role_silo_worker
-
-    -- check inventory
-    local chests    = coreinventory.CountItem("minecraft:chest")
-    local torches   = coreinventory.CountItem("minecraft:torch")
-
-    -- enough?
-    if chests < 18 or torches < 2 then
-        corelog.Error("Not building the small silo, not enough (chests: "..chests..", torches: "..torches..")")
-        return false
-    end
-
-    -- build blue print
-    role_builder.BuildBlueprint_Task({blueprintStartpoint = db.siloLocation, blueprint = enterprise_storage.GetSiloL0_blueprint()})
 end
