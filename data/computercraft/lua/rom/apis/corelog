@@ -1,6 +1,6 @@
 local db	= {
 	logfile			  = "/log/log.txt",
-	assignmentLogFile = "/log/assignmentLog.txt",
+	assignmentLogFile = "/log/coreassignment.log",
 	protocol		  = "corelog",
 	loggerChannel	  = 65534,
 }
