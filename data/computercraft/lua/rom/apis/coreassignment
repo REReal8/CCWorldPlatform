@@ -151,10 +151,14 @@ function FindBestAssignment()
         -- check assignment open
         if assignmentData.status == "open" then
             -- check metaconditions
-            if MetaDataConditionsMet(assignmentData.metaData) then
+            local success, skipReason = MetaDataConditionsMet(assignmentData.metaData)
+            if success then
                 return assignmentId
             else
-                -- ToDo: remember reason to skip for debugging purposes
+                if skipReason then
+                    -- Report reason for skipping for debugging purposes
+                    corelog.WriteToAssignmentLog("Skipping Assignment "..assignmentId.." because "..skipReason)
+                end
             end
         end
     end
@@ -167,16 +171,14 @@ function MetaDataConditionsMet(metaData)
     -- check startTime
     local now            = coreutils.UniversalTime()
     if metaData.startTime > now then
---        corelog.WriteToAssignmentLog("coreassignment.MetaDataConditionsMet: Assignment in the future (="..metaData.startTime..") (now ="..now..") => skipped")
-        return false
+        return false, "Assignment in the future (="..metaData.startTime..") (now ="..now..")"
     end
 
     -- check optional turtle conditions
     if metaData.needTurtle then
         -- check mandatory turtle 
         if not turtle then
-            corelog.WriteToAssignmentLog("coreassignment.MetaDataConditionsMet: Mandatory turtle not present => skipped")
-            return false
+            return false, "Mandatory turtle not present"
         end
 
         -- check enough fuel for assignment (including traveling there from current location)
@@ -184,8 +186,7 @@ function MetaDataConditionsMet(metaData)
         if fuelNeeded > 0 then
             local fuelLevel = turtle.getFuelLevel()
             if fuelLevel < fuelNeeded then
-                corelog.WriteToAssignmentLog("coreassignment.MetaDataConditionsMet: Not enough(="..fuelNeeded..") fuel present(="..fuelLevel..") => skipped")
-                return false
+                return false, "Not enough(="..fuelNeeded..") fuel present(="..fuelLevel..")"
             end
         end
 
@@ -194,8 +195,7 @@ function MetaDataConditionsMet(metaData)
             -- check mandatory pickaxe
             local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
             if not axePresent then
-                corelog.WriteToAssignmentLog("coreassignment.MetaDataConditionsMet: Mandatory pickaxe not present => skipped")
-                return false
+                return false, "Mandatory pickaxe not present"
             end
         end
 
@@ -206,13 +206,12 @@ function MetaDataConditionsMet(metaData)
 
             -- enough?
             if items < item.itemCount then
-                corelog.WriteToAssignmentLog("coreassignment.MetaDataConditionsMet: Not enough(="..item.itemCount..") "..item.itemName.." (="..items..") in inventory for assignment => skipped")
-                return false
+                return false, "Not enough(="..item.itemCount..") "..item.itemName.." in inventory (="..items..")"
             end
         end
     end
 
-    return true
+    return true, ""
 end
 
 function ApplyToAssignment(assignmentId)
