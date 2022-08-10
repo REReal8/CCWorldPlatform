@@ -101,6 +101,11 @@ function Error(message)
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
 end
 
+function WriteToAssignmentLog(message) -- ToDo: log to a different file than the standard log.
+    local now = coreutils.UniversalTime()
+    local computerId = os.getComputerID()
+    WriteToLog("| "..now.." | computer "..computerId.." | "..message.." |")
+end
 
 --                         _
 --                        | |
