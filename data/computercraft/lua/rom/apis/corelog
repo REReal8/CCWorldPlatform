@@ -1,7 +1,8 @@
 local db	= {
-	logfile			= "/log/log.txt",
-	protocol		= "corelog",
-	loggerChannel	= 65534,
+	logfile			  = "/log/log.txt",
+	assignmentLogFile = "/log/assignmentLog.txt",
+	protocol		  = "corelog",
+	loggerChannel	  = 65534,
 }
 
 local monitorLeft	= nil
@@ -101,10 +102,14 @@ function Error(message)
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
 end
 
-function WriteToAssignmentLog(message) -- ToDo: log to a different file than the standard log.
+function WriteToAssignmentLog(message, writeMode)
+	-- set the default
+	writeMode = writeMode or "append"
+
+	-- write message to the logfile	in assignment log format
     local now = coreutils.UniversalTime()
     local computerId = os.getComputerID()
-    WriteToLog("| "..now.." | computer "..computerId.." | "..message.." |")
+	coreutils.WriteToFile(db.assignmentLogFile, "| "..now.." | computer "..computerId.." | "..message.." |", writeMode)
 end
 
 --                         _
