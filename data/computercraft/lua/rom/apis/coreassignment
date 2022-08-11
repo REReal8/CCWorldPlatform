@@ -215,6 +215,7 @@ function MetaDataConditionsMet(metaData)
         end
 
         -- check items in inventory
+        -- ToDo: implement more efficient by using coreinventory.GetInventoryDetail
         for i, item in ipairs(metaData.itemsNeeded) do
             -- get items in inventory
             local items = coreinventory.CountItem(item.itemName)

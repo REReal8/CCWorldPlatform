@@ -11,6 +11,7 @@ local monitorRight	= nil
 function Init()
 	-- place markers in the logfile
 	WriteToLog("--- starting up ---", "overwrite")
+	WriteToAssignmentLog("--- starting up assignments ---", nil, "overwrite")
 end
 
 -- niet nodig voor utils
