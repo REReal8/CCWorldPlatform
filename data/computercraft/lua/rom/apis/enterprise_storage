@@ -157,8 +157,8 @@ function ItemsCollected(location)
     end
 end
 
--- enterprise_storage.BuildSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
-function BuildSite(siteData, callback, callbackData)
+-- enterprise_storage.BuildNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
+function BuildNewSite(siteData, callback, callbackData)
 --[[
     This public function (service) builds a new site.
 
@@ -171,20 +171,20 @@ function BuildSite(siteData, callback, callbackData)
         callbackData - (table) function data to supply to callback
 ]]
     -- check input
-    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildSite: Invalid siteData input') return nil end
-    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildSite: Invalid callback function') return nil end
+    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildNewSite: Invalid siteData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildNewSite: Invalid callback function') return nil end
     callbackData = callbackData or {}
 
     -- what kind of storage is this?
     if siteData.type == 'silo' then 
-        enterprise_storage_silo.BuildSilo(siteData, callback, callbackData)
+        enterprise_storage_silo.BuildNewSite(siteData, callback, callbackData)
     end
 end
 
--- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
-function NewSite(siteData)
+-- enterprise_storage.StartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
+function StartNewSite(siteData)
 --[[
-    This public function to notify the (enterprise) storage that a new site is ready for use
+    This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
 
     Return value:
         nil
@@ -202,10 +202,10 @@ function NewSite(siteData)
     end
 
     -- check our input
-    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.NewSite: Invalid input') return nil end
+    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.StartNewSite: Invalid input') return nil end
 
     -- what kind of storage is this?
-    if siteData.type == 'silo' then return enterprise_storage_silo.NewSite(siteData)
+    if siteData.type == 'silo' then return enterprise_storage_silo.StartNewSite(siteData)
     end
 end
 

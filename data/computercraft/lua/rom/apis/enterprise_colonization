@@ -68,7 +68,7 @@ function BuildStorageSite_Callback(callbackData, taskResult)
         topChests=2,
         layers=2
     }
-    enterprise_storage.BuildSite(siteData, "enterprise_colonization.StartStorage_Callback", callbackData) -- ToDo: should we pass on this siteData somehow?
+    enterprise_storage.BuildNewSite(siteData, "enterprise_colonization.StartStorage_Callback", callbackData) -- ToDo: should we pass on this siteData somehow?
 end
 
 function StartStorage_Callback(callbackData, taskResult)
@@ -80,5 +80,5 @@ function StartStorage_Callback(callbackData, taskResult)
         topChests=2,
         layers=2
     }
-    enterprise_storage.NewSite(siteData, callbackData.lastCallback)
+    enterprise_storage.StartNewSite(siteData, callbackData.lastCallback)
 end

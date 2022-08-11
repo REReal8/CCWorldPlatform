@@ -121,7 +121,7 @@ function ItemsCollected(site, topChest)
     coredht.SaveData("free", db.dhtRoot, db.dhtSites, site.sitesIndex, "topChests", topChest.chestIndex, "status")
 end
 
-function BuildSilo(siloData, callback, callbackData)
+function BuildNewSite(siteData, callback, callbackData)
     --[[
         This public function (service) builds a new silo.
     
@@ -129,24 +129,24 @@ function BuildSilo(siloData, callback, callbackData)
             nil
     
         Parameters:
-            siloData     - (table) data about this silo, like type and layout
+            siteData     - (table) data about this silo, like type and layout
             callback     - (string) function name to call once the site is build
             callbackData - (table) function data to supply to callback
     ]]
     -- check input
-    if type(siloData) ~= "table" or type(siloData.location) ~= "table" or type(siloData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildSilo: Invalid siloData input') return nil end
-    if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildSilo: Invalid callback function') return nil end
+    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite: Invalid siteData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite: Invalid callback function') return nil end
 
     -- let construction enterprise build the silo
     local blueprintBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(siloData.location),
-        blueprint = GetSiloL0_blueprint(siloData)
+        blueprintStartpoint = coremove.CopyLocation(siteData.location),
+        blueprint = GetSiloL0_blueprint(siteData)
     }
     corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint(blueprintBuildData, callback, callbackData)
 end
 
-function NewSite(siteData)
+function StartNewSite(siteData)
     -- variables
     local site  = {
         type            = "silo",
