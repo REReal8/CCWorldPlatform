@@ -21,6 +21,10 @@ function T_enterpise_colonization()
     enterprise_colonization.CreateNewWorld(callbackFunction)
 end
 
+function End(assignmentId)
+    coreassignment.EndAssignment(assignmentId)
+end
+
 function GoHome()
     coremove.GoTo({
         x	= 0,

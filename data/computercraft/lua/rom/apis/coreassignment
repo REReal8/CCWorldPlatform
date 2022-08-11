@@ -297,7 +297,6 @@ function DoAssignment(assignment)
 
     -- we have done all for this assignment that we needed to do
     EndAssignment(assignmentId)
-    corelog.WriteToAssignmentLog("Ended", assignmentId)
 end
 
 function TakeAssignment(assignmentId)
@@ -316,4 +315,5 @@ end
 function EndAssignment(assignmentId)
     -- easy
     coredht.SaveData(nil, db.dhtRoot, db.listRoot, assignmentId)
+    corelog.WriteToAssignmentLog("Ended", assignmentId)
 end
