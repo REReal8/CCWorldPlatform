@@ -103,7 +103,7 @@ function Run()
         -- did we get the assignment?
         if nextAssignment then
             DoAssignment(nextAssignment)
-        else os.sleep(0.25)     -- bapparently no assignment now
+        else os.sleep(0.25)     -- apparently no assignment for me now
         end
     end
 end
@@ -147,15 +147,25 @@ function FindBestAssignment()
     -- check assignmentList
     if not assignmentList or type(assignmentList) ~= "table" then corelog.Error("coreassignment.FindBestAssignment: invalid assignmentList") return nil end
 
-    -- look for best assignment
+    -- check for assignments
+    if next(assignmentList) == nil then
+--        corelog.WriteToAssignmentLog("There are no assignments")
+        return nil
+    end
+
+    -- select assignments satisfying meta conditions
     for assignmentId, assignmentData in pairs(assignmentList) do
         -- check assignment open
         if assignmentData.status == "open" then
             -- check metaconditions
-            local success, skipReason = MetaDataConditionsMet(assignmentData.metaData)
-            if success then
-                return assignmentId
+            local conditionsMet, skipReason = MetaDataConditionsMet(assignmentData.metaData)
+            if conditionsMet then
+                -- return assignmentId
             else
+                -- remove as candidate from assignment list
+                table.remove(assignmentList, assignmentId)
+
+                -- debug message
                 if skipReason then
                     -- Report reason for skipping for debugging purposes
                     corelog.WriteToAssignmentLog("Skipped because "..skipReason, assignmentId)
@@ -164,7 +174,13 @@ function FindBestAssignment()
         end
     end
 
+    -- find best assignment
+    for assignmentId, assignmentData in pairs(assignmentList) do
+        return assignmentId -- For now take first. ToDo: proper implementation, maybe based on fuel needed or how old it is?
+    end
+
     -- nothing found
+    corelog.WriteToAssignmentLog("No assignment satisfying conditions")
     return nil
 end
 
@@ -294,6 +310,8 @@ function TakeAssignment(assignmentId)
     if assignment.status == "open" then
         -- mark as staffed
         coredht.SaveData("staffed", db.dhtRoot, db.listRoot, assignmentId, "status")
+
+        corelog.WriteToAssignmentLog("Taken", assignmentId)
     end
 end
 
