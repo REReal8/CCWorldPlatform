@@ -3,13 +3,15 @@ local db = {}
 -- short hand for current test to run
 function T()
 --    T_role_builder_MetaDatas()
-    T_enterpise_colonization()
+--    T_enterpise_colonization()
 --    role_settler.BuildSiloL0()
 --    T_enterprise_construction1()
 --    T_enterprise_construction2()
 --    T_role_builder()
 --    T_enterprise_test()
 --    T_MetaDataConditionsMet()
+
+    T_enterprise_projects()
 end
 
 function T_enterpise_colonization()
@@ -208,6 +210,35 @@ function T_enterprise_test()
     corelog.WriteToLog("# Test 4")
     local callbackArgumentTable = {"calbackArg1"}
     enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackArgumentTable)
+end
+
+function T_enterprise_projects()
+    -- init
+    local testArgValue = 20
+    local projectDefinition = {
+        services    = {
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg1", valueSource = 0, sourceKey = "testArgSource" },
+            }},
+            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments", async = true, input = {
+                { keyName = "testArg2", valueSource = 0, sourceKey = "testArgSource" },
+            }},
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg3", valueSource = 0, sourceKey = "testArgSource" },
+            }},
+        },
+        returnData  = {
+            { keyName = "testBArg0", valueSource = 0, sourceKey = "testArgSource" },
+            { keyName = "testBArg1", valueSource = 1, sourceKey = "testArg1" },
+            { keyName = "testBArg2", valueSource = 2, sourceKey = "testArg2" },
+            { keyName = "testBArg3", valueSource = 3, sourceKey = "testArg3" },
+        }
+    }
+    local projectData = { testArgSource = testArgValue }
+    local callbackFunction = "test.Func1_Callback"
+    local callbackData = { "rootCallBackData" }
+
+    enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
 end
 
 function Func1_Callback(callbackArgumentTable, taskResult)

@@ -15,13 +15,13 @@
 --   |___/\___|_|    \_/ |_|\___\___||___/
 
 function TestPureLogicService(serviceArgument)
-    corelog.WriteToLog("enterprise_test.TestPureLogicService("..serviceArgument..")")
+    corelog.WriteToLog("enterprise_test.TestPureLogicService("..textutils.serialize(serviceArgument)..")")
 
     return serviceArgument
 end
 
 function TestServiceWithAssignment(serviceArgument)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment("..serviceArgument..")")
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment("..textutils.serialize(serviceArgument)..")")
 
     -- create assignment arguments
     local metaData = {
@@ -44,7 +44,7 @@ function TestServiceWithAssignment(serviceArgument)
 end
 
 function TestServiceWithAssignmentAndCallback(serviceArgument, callbackFunction)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..serviceArgument..", "..callbackFunction..")")
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..textutils.serialize(serviceArgument)..", "..callbackFunction..")")
 
     -- create assignment arguments
     local metaData = {
@@ -60,13 +60,13 @@ function TestServiceWithAssignmentAndCallback(serviceArgument, callbackFunction)
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction, {})
+    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction)
 
     return true
 end
 
 function TestServiceWithAssignmentAndCallbackAndArguments(serviceArgument, callbackFunction, callbackArgumentTable)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..serviceArgument..", "..callbackFunction..")")
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..textutils.serialize(serviceArgument)..", "..callbackFunction..")")
 
     -- create assignment arguments
     local metaData = {
