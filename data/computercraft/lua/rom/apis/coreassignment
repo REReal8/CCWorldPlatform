@@ -154,17 +154,15 @@ function FindBestAssignment()
     end
 
     -- select assignments satisfying meta conditions
+    local candidateIdList = {}
     for assignmentId, assignmentData in pairs(assignmentList) do
         -- check assignment open
         if assignmentData.status == "open" then
             -- check metaconditions
             local conditionsMet, skipReason = MetaDataConditionsMet(assignmentData.metaData)
             if conditionsMet then
-                -- return assignmentId
+                table.insert(candidateIdList, assignmentId)
             else
-                -- remove as candidate from assignment list
-                table.remove(assignmentList, assignmentId)
-
                 -- debug message
                 if skipReason then
                     -- Report reason for skipping for debugging purposes
@@ -175,12 +173,12 @@ function FindBestAssignment()
     end
 
     -- find best assignment
-    for assignmentId, assignmentData in pairs(assignmentList) do
+    for i, assignmentId in ipairs(candidateIdList) do
         return assignmentId -- For now take first. ToDo: proper implementation, maybe based on fuel needed or how old it is?
     end
 
     -- nothing found
-    corelog.WriteToAssignmentLog("No assignment satisfying conditions")
+    -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
     return nil
 end
 
