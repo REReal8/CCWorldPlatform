@@ -163,6 +163,7 @@ function StartNewSite(siteData)
 
     -- what kind of new silo is this?
     if siteData.siloType == "basic" then
+        corelog.WriteToLog(">Starting silo at "..textutils.serialise(site.location))
 
         -- defaults to input
         siteData.topChests  = siteData.topChests    or 2

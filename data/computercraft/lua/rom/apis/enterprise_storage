@@ -157,6 +157,53 @@ function ItemsCollected(location)
     end
 end
 
+-- enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
+function BuildAndStartNewSite(siteData, callback, callbackData)
+    --[[
+        This public function (service) builds a new storage site and starts it.
+    
+        Return value:
+            nil
+    
+        Parameters:
+            siteData     - (table) data about this site, like type and layout
+            callback     - (string) function name to call once the site is build and started
+            callbackData - (table) function data to supply to callback
+    ]]
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildAndStartNewSite: Invalid siteData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildAndStartNewSite: Invalid callback function') return nil end
+    callbackData = callbackData or {}
+
+    -- what kind of storage is this?
+    if siteData.type == 'silo' then
+        -- create project definition
+        local buildAndStartNewSiteProject = {
+            services    = {
+                { serviceName = "enterprise_storage.BuildNewSite", async = true, input = {
+                    { keyName = "location"  , valueSource = 0, sourceKey = "location" },
+                    { keyName = "type"      , valueSource = 0, sourceKey = "type" },
+                    { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
+                    { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
+                    { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+                }},
+                { serviceName = "enterprise_storage.StartNewSite", async = false, input = {
+                    { keyName = "location"  , valueSource = 0, sourceKey = "location" },
+                    { keyName = "type"      , valueSource = 0, sourceKey = "type" },
+                    { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
+                    { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
+                    { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+                }},
+            },
+            returnData  = {
+            }
+        }
+
+        -- start project
+        enterprise_projects.StartProject(buildAndStartNewSiteProject, siteData, callback, callbackData)
+    end
+end
+
 -- enterprise_storage.BuildNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 function BuildNewSite(siteData, callback, callbackData)
 --[[
