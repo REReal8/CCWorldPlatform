@@ -2,7 +2,7 @@ local db = {
     dhtRoot     = "projects",
 }
 
-function StartProject(projectDefinition, projectData, callbackFunction, callbackData)
+function StartProject(projectDefinition, projectInputData, callbackFunction, callbackData)
     -- data of the project
     local project   = {
         projectDefinition   = projectDefinition,
@@ -23,26 +23,25 @@ function StartProject(projectDefinition, projectData, callbackFunction, callback
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 
     -- let's start
-    NextProjectStep({projectId = project.projectId}, projectData)
+    NextProjectStep({projectId = project.projectId}, projectInputData) -- the input projectInputData is interpreted as the result of virtual step 0
 end
 
-function NextProjectStep(projectData, stepResults)
-
+function NextProjectStep(internalProjectData, stepResults)
     -- get the project informatino
-    local project   = coredht.GetData(db.dhtRoot, projectData.projectId)
+    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
 
     -- save the results for the previous step
     if type(stepResults) ~= "table" then stepResults = {} end
     project.outputs[ project.currentStep ] = stepResults
 
     -- was this the last step?
-    if #project.projectDefinition.services == project.currentStep then CompleteProject({projectId = project.projectId}) return nil end
+    if #project.projectDefinition.services == project.currentStep then CompleteProject(internalProjectData) return nil end
 
     -- next step
     project.currentStep = project.currentStep + 1
 
     -- save to dht
-    coredht.SaveData(project, db.dhtRoot, projectData.projectId)
+    coredht.SaveData(project, db.dhtRoot, internalProjectData.projectId)
 
     -- prepare to execute this step
     local step  = project.projectDefinition.services[ project.currentStep ]
@@ -50,7 +49,6 @@ function NextProjectStep(projectData, stepResults)
 
     -- make the input
     for i, inputDefinition in ipairs(step.input) do
-
         -- add the requested key
         input[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
     end
@@ -59,7 +57,7 @@ function NextProjectStep(projectData, stepResults)
     local serviceName           = step.serviceName
     local inputTableString      = textutils.serialize(input)
     local callbackString        = "'enterprise_projects.NextProjectStep'"
-    local callbackDataString    = textutils.serialize(projectData)
+    local callbackDataString    = textutils.serialize(internalProjectData)
 
     -- type of service?
     if step.async == true then
@@ -76,13 +74,13 @@ function NextProjectStep(projectData, stepResults)
         local results = f()
 
         -- recursive is the future!
-        NextProjectStep(projectData, results)
+        NextProjectStep(internalProjectData, results)
     end
 end
 
-function CompleteProject(projectData)
+function CompleteProject(internalProjectData)
     -- get the project informatino
-    local project   = coredht.GetData(db.dhtRoot, projectData.projectId)
+    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
     local input     = {}
 
     -- create the return data table
@@ -101,6 +99,6 @@ function CompleteProject(projectData)
     if f then f() else corelog.Error("enterprise_projects.CompleteProject(): loadstring did not supply a function, error given: "..err) end
 
     -- forget about this project
-    corelog.WriteToLog("Project done, projectID = "..projectData.projectId)
-    coredht.SaveData(nil, db.dhtRoot, projectData.projectId)
+    corelog.WriteToLog("Project done, projectID = "..internalProjectData.projectId)
+    coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
 end
