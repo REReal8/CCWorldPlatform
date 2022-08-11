@@ -22,9 +22,10 @@ function T_enterpise_colonization()
     -- test CreateNewWorld
     corelog.WriteToLog("# Test CreateNewWorld")
     local callbackFunction = "test.GoHomeCallBack"
+    local callbackData = {}
 
-    corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..")")
-    enterprise_colonization.CreateNewWorld(callbackFunction)
+    corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..", "..textutils.serialize(callbackData)..")")
+    enterprise_colonization.CreateNewWorld(callbackFunction, callbackData)
 end
 
 function End(assignmentId)

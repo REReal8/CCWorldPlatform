@@ -8,7 +8,7 @@
 --   |_|
 
 
-function CreateNewWorld(callbackFunction)
+function CreateNewWorld(callback, callbackData)
     --[[
     This public function creates a new CCWorldPlatform world.
         It bootstraps the world logic by building an initiating several enterprise (sites). 
@@ -25,19 +25,51 @@ function CreateNewWorld(callbackFunction)
         of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
 
     Return value:
-        if initiating the bootstrapping sequence was succesfull
+        nil
 
     Parameters:
-        callbackFunction - (string) function name to call once the world is created
+        callback     - (string) function name to call once the new world is created
+        callbackData - (table) function data to supply to callback
     ]]--
     -- check input
-    if type(callbackFunction) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
 
     -- construct arguments
-    local startLocation = {x= 3, y= 2, z= 1, dx=0, dy=1}
+    local settleData = {
+        startLocation   = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        siloLocation    = {x=12, y=12, z= 1, dx=0, dy=1},
+        type            = "silo",
+        siloType        = "basic",
+        topChests       = 2,
+        layers          = 2
+    }
+
+    -- create project definition
+    local createNewWorldProject = {
+        services    = {
+            { serviceName = "enterprise_colonization.FirstSettleStep", async = true, input = {
+                { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
+                { keyName = "location"  , valueSource = 0, sourceKey = "siloLocation" },
+                { keyName = "type"      , valueSource = 0, sourceKey = "type" },
+                { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
+                { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
+                { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+            }},
+        },
+        returnData  = {
+        }
+    }
+
+    -- start project
+    enterprise_projects.StartProject(createNewWorldProject, settleData, callback, callbackData)
+end
+
+function FirstSettleStep(settleData, callback, callbackData)
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(startLocation),
+        location = coremove.CopyLocation(settleData.startLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition the settler starts without fuel
@@ -46,10 +78,9 @@ function CreateNewWorld(callbackFunction)
             {itemName = "minecraft:birch_sapling", itemCount = 1}
         }
     }
-    local settleData = {startLocation = startLocation}
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, "enterprise_colonization.BuildStorageSite_Callback", {lastCallback = callbackFunction})
+    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -59,26 +90,3 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function BuildStorageSite_Callback(callbackData, taskResult)
-    -- Build Storage Site
-    local siteData = {
-        location={x=12, y=12, z= 1, dx=0, dy=1},
-        type="silo",
-        siloType="basic",
-        topChests=2,
-        layers=2
-    }
-    enterprise_storage.BuildNewSite(siteData, "enterprise_colonization.StartStorage_Callback", callbackData) -- ToDo: should we pass on this siteData somehow?
-end
-
-function StartStorage_Callback(callbackData, taskResult)
-    -- Start new Storage Site
-    local siteData = {
-        location={x=12, y=12, z= 1, dx=0, dy=1},
-        type="silo",
-        siloType="basic",
-        topChests=2,
-        layers=2
-    }
-    enterprise_storage.StartNewSite(siteData, callbackData.lastCallback)
-end
