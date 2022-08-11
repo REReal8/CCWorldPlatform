@@ -1,6 +1,7 @@
 local db	= {
 	logfile			  = "/log/log.txt",
 	assignmentLogFile = "/log/coreassignment.log",
+	projectsLogFile   = "/log/enterprise_projects.log",
 	protocol		  = "corelog",
 	loggerChannel	  = 65534,
 }
@@ -12,6 +13,7 @@ function Init()
 	-- place markers in the logfile
 	WriteToLog("--- starting up ---", "overwrite")
 	WriteToAssignmentLog("--- starting up assignments ---", nil, "overwrite")
+	WriteToProjectsLog("--- starting up projects ---", nil, "overwrite")
 end
 
 -- niet nodig voor utils
@@ -103,18 +105,33 @@ function Error(message)
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
 end
 
-function WriteToAssignmentLog(message, assignmentId, writeMode)
+function WriteToFormattedLog(message, id, logType, writeMode)
 	-- set the default
 	writeMode = writeMode or "append"
 
-	-- write message to the logfile	in assignment log format
+	-- write message to the logfile	in formatted log format
     local now = coreutils.UniversalTime()
     local computerId = os.getComputerID()
-	local assignmentIdStr = ""
-	if assignmentId then
-		assignmentIdStr = "assignment "..assignmentId.." | "
+	local idStr = "assignment"
+	local logFile = db.assignmentLogFile
+	if logType == "projects" then
+		idStr = "project"
+		logFile = db.projectsLogFile
 	end
-	coreutils.WriteToFile(db.assignmentLogFile, "| time "..now.." | computer "..computerId.." | "..assignmentIdStr..message.." |", writeMode)
+	if id then
+		idStr = idStr.." "..id.." | "
+	else
+		idStr = ""
+	end
+	coreutils.WriteToFile(logFile, "| time "..now.." | computer "..computerId.." | "..idStr..message.." |", writeMode)
+end
+
+function WriteToAssignmentLog(message, assignmentId, writeMode)
+	WriteToFormattedLog(message, assignmentId, "assignment", writeMode)
+end
+
+function WriteToProjectsLog(message, projectId, writeMode)
+	WriteToFormattedLog(message, projectId, "projects", writeMode)
 end
 
 --                         _

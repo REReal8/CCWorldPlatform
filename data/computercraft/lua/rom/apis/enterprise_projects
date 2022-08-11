@@ -19,7 +19,7 @@ function StartProject(projectDefinition, projectInputData, callbackFunction, cal
     if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
 
     -- save
-    corelog.WriteToLog("Project start, projectID = "..project.projectId)
+    corelog.WriteToProjectsLog("Add new: "..textutils.serialize(project), project.projectId)
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 
     -- let's start
@@ -27,15 +27,16 @@ function StartProject(projectDefinition, projectInputData, callbackFunction, cal
 end
 
 function NextProjectStep(internalProjectData, stepResults)
-    -- get the project informatino
+    -- get the project information
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
 
     -- save the results for the previous step
     if type(stepResults) ~= "table" then stepResults = {} end
     project.outputs[ project.currentStep ] = stepResults
+    corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
 
     -- was this the last step?
-    if #project.projectDefinition.services == project.currentStep then CompleteProject(internalProjectData) return nil end
+    if #project.projectDefinition.services == project.currentStep then EndProject(internalProjectData) return nil end
 
     -- next step
     project.currentStep = project.currentStep + 1
@@ -61,11 +62,14 @@ function NextProjectStep(internalProjectData, stepResults)
 
     -- type of service?
     if step.async == true then
+        corelog.WriteToProjectsLog("Start step "..project.currentStep.." async", project.projectId)
 
         -- async function call
         local f, err = loadstring(serviceName.."("..inputTableString..", "..callbackString..", "..callbackDataString..")")
         if f then f() else corelog.Error("enterprise_projects.NextProjectStep(): loadstring did not supply a function, error given: "..err) end
     else
+        corelog.WriteToProjectsLog("Start step "..project.currentStep.." sync", project.projectId)
+
         -- sync function call, use the results
         local f, err = loadstring("return "..serviceName.."("..inputTableString..")")
         if not f then corelog.Error("enterprise_projects.NextProjectStep(): loadstring did not supply a function, error given: "..err) return end
@@ -78,7 +82,7 @@ function NextProjectStep(internalProjectData, stepResults)
     end
 end
 
-function CompleteProject(internalProjectData)
+function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
     local input     = {}
@@ -95,10 +99,11 @@ function CompleteProject(internalProjectData)
     local inputTableString      = textutils.serialize(input)
 
     -- we are done, do the callback
+    corelog.WriteToProjectsLog("Calling callback function", project.projectId)
     local f, err = loadstring(callbackString.."("..callbackDataString..", "..inputTableString..")")
     if f then f() else corelog.Error("enterprise_projects.CompleteProject(): loadstring did not supply a function, error given: "..err) end
 
     -- forget about this project
-    corelog.WriteToLog("Project done, projectID = "..internalProjectData.projectId)
+    corelog.WriteToProjectsLog("Ended", project.projectId)
     coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
 end
