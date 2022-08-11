@@ -40,7 +40,11 @@ function CreateNewWorld(callbackFunction)
         location = coremove.CopyLocation(startLocation),
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 0                          --> per definition the settler starts without fuel
+        fuelNeeded = 0,                         --> per definition the settler starts without fuel
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:birch_sapling", itemCount = 1}
+        }
     }
     local settleData = {startLocation = startLocation}
 
