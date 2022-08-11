@@ -3,6 +3,13 @@ local db = {
 }
 
 function StartProject(projectDefinition, projectInputData, callbackFunction, callbackData)
+    -- check input
+    if type(projectDefinition) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectDefinition') return nil end
+    if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
+    if type(projectInputData) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectInputData') return nil end
+    if type(callbackFunction) ~= "string" then corelog.Error('enterprise_projects.StartProject: Invalid callbackFunction') return nil end
+    if type(callbackData) ~= "table" then callbackData = {} end
+
     -- data of the project
     local project   = {
         projectDefinition   = projectDefinition,
@@ -14,9 +21,6 @@ function StartProject(projectDefinition, projectInputData, callbackFunction, cal
         currentStep         = 0,
         outputs             = {}
     }
-
-    -- check the definition
-    if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
 
     -- save
     corelog.WriteToProjectsLog("Add new: "..textutils.serialize(project), project.projectId)
@@ -95,11 +99,11 @@ function EndProject(internalProjectData)
 
     -- prepare callback
     local callbackString        = project.callbackFunction
-    local callbackDataString    = textutils.serialise(project.callabackData)
+    local callbackDataString    = textutils.serialise(project.callbackData)
     local inputTableString      = textutils.serialize(input)
 
     -- we are done, do the callback
-    corelog.WriteToProjectsLog("Calling callback function", project.projectId)
+    corelog.WriteToProjectsLog("Calling callback function: "..callbackString.."("..callbackDataString..", "..inputTableString..")", project.projectId)
     local f, err = loadstring(callbackString.."("..callbackDataString..", "..inputTableString..")")
     if f then f() else corelog.Error("enterprise_projects.CompleteProject(): loadstring did not supply a function, error given: "..err) end
 
