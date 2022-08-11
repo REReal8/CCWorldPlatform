@@ -8,7 +8,7 @@
 --   |_|
 
 
-function CreateNewWorld(callback)
+function CreateNewWorld(callback, callbackData)
     --[[
     This public function creates a new CCWorldPlatform world.
         It bootstraps the world logic by building an initiating several enterprise (sites). 
@@ -18,32 +18,70 @@ function CreateNewWorld(callback)
             one axe
             one crafting station
             one birchSapling
-        It is not necessary for the turtle to have any energy.
+        It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
+
+        The function also defines the coordinate system by assuming the turtle starts at the location {x= 3, y= 2, z= 1, dx=0, dy=1}. This
+        allows for the initial forest that is build to fit in the 6x6 grid that is used in patterns with the lower left coordinate of the base 
+        of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
 
     Return value:
-        if initiating the bootstrapping sequence was succesfull
+        nil
 
     Parameters:
-        callback - (string) function name to call once the world is created
+        callback     - (string) function name to call once the new world is created
+        callbackData - (table) function data to supply to callback
     ]]--
     -- check input
-    if type(callback) ~= "string" then coreutils.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
 
     -- construct arguments
-    local startLocation = {x= 3, y= 2, z= 1, dx=0, dy=1}
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 0                          --> per definition the settler starts without fuel
+    local settleData = {
+        startLocation   = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        siloLocation    = {x=12, y=12, z= 1, dx=0, dy=1},
+        type            = "silo",
+        siloType        = "basic",
+        topChests       = 2,
+        layers          = 2
     }
-    local settleData = {startLocation = startLocation}
 
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, {})
+    -- create project definition
+    local createNewWorldProject = {
+        services    = {
+            { serviceName = "enterprise_colonization.FirstSettleStep", async = true, input = {
+                { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
+                { keyName = "location"  , valueSource = 0, sourceKey = "siloLocation" },
+                { keyName = "type"      , valueSource = 0, sourceKey = "type" },
+                { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
+                { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
+                { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+            }},
+        },
+        returnData  = {
+        }
+    }
+
+    -- start project
+    enterprise_projects.StartProject(createNewWorldProject, settleData, callback, callbackData)
 end
 
+function FirstSettleStep(settleData, callback, callbackData)
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 0,                         --> per definition the settler starts without fuel
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:birch_sapling", itemCount = 1}
+        }
+    }
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, callbackData)
+end
 
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)

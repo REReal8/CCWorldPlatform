@@ -2,21 +2,34 @@ local db = {}
 
 -- short hand for current test to run
 function T()
-    T_enterpise_colonization()
+--    T_enterprise_storage_buildAndStartNewSite()
+--    T_enterprise_projects()
+--    T_role_builder_MetaDatas()
+--    T_enterpise_colonization()
 --    role_settler.BuildSiloL0()
 --    T_enterprise_construction1()
 --    T_enterprise_construction2()
 --    T_role_builder()
 --    T_enterprise_test()
+--    T_MetaDataConditionsMet()
+end
+
+function T_enterprise_storage_buildAndStartNewSite()
+    enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 end
 
 function T_enterpise_colonization()
     -- test CreateNewWorld
-    coreutils.WriteToLog("# Test CreateNewWorld")
+    corelog.WriteToLog("# Test CreateNewWorld")
     local callbackFunction = "test.GoHomeCallBack"
+    local callbackData = {}
 
-    coreutils.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..")")
-    enterprise_colonization.CreateNewWorld(callbackFunction)
+    corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..", "..textutils.serialize(callbackData)..")")
+    enterprise_colonization.CreateNewWorld(callbackFunction, callbackData)
+end
+
+function End(assignmentId)
+    coreassignment.EndAssignment(assignmentId)
 end
 
 function GoHome()
@@ -45,7 +58,7 @@ end
 
 local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
 
-local testBuildPattern = {
+local testBuildPattern1 = {
     deltaX      = 4,
     deltaY      = 6,
     objectList  = {
@@ -56,12 +69,61 @@ local testBuildPattern = {
     clearRemainingSpace = true,
 }
 
-local testBlueprint = {
+local testBuildPattern2 = {
+    deltaX      = 3,
+    deltaY      = 3,
+    objectList  = {
+        { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
+        { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+
+        { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+
+        { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+        { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+
+        { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
+        { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}
+
+local testBuildPattern3 = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3,                 block = "minecraft:torch"},
+        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+        { x = 3, y = 0,                 block = "minecraft:torch"},
+        { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true,
+}
+
+local testBuildPattern4 = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+    },
+    clearRemainingSpace = true,
+}
+
+local testBlueprint1 = {
     layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
-        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern},
-        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(enterprise_storage.chestLayer_pattern)}
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = testBuildPattern3},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = testBuildPattern4},
+        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = testBuildPattern2},
+        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)}
+    },
+    escapeSequence = {
+        { x= 3, y= 3, z=  1},
+    }
+}
+
+local testBlueprint2 = {
+    layerList = {
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = testBuildPattern1},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = testBuildPattern2},
     },
     escapeSequence = {
         { x= 3, y= 3, z=  1},
@@ -70,28 +132,65 @@ local testBlueprint = {
 
 function T_enterprise_construction1()
     -- test service 1
-    coreutils.WriteToLog("# Test 1")
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
-    local callbackFunction = "test.ACallBack1"
+    corelog.WriteToLog("# Test 1")
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
+    local callbackFunction = "test.Func1_Callback"
 
-    coreutils.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
+    corelog.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
     enterprise_construction.BuildRectangularPattern(buildData, callbackFunction)
 end
 
 function T_enterprise_construction2()
     -- test service 2
-    coreutils.WriteToLog("# Test 2")
-    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
-    local callbackFunction = "test.ACallBack1"
+    corelog.WriteToLog("# Test 2")
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint1}
+    local callbackFunction = "test.Func1_Callback"
     local callbackArgumentTable = {}
-    coreutils.WriteToLog("T_enterprise_construction calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
+    corelog.WriteToLog("T_enterprise_construction calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
     enterprise_construction.BuildBlueprint(blueprintBuildData, callbackFunction, callbackArgumentTable)
 end
 
+function T_role_builder_MetaDatas()
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint2}
+
+    corelog.WriteToLog("BuildRectangularPattern_MetaData => "..textutils.serialize(role_builder.BuildRectangularPattern_MetaData(buildData)))
+    corelog.WriteToLog("BuildBlueprint_MetaData => "..textutils.serialize(role_builder.BuildBlueprint_MetaData(blueprintBuildData)))
+end
+
 function T_role_builder()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern}
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
 
     role_builder.BuildRectangularPattern_Task(buildData)
+end
+
+function T_MetaDataConditionsMet()
+    local now = coreutils.UniversalTime()
+    local metaData = {
+        startTime = now + 1000,
+        needTurtle = true,
+        needTool = true,
+        fuelNeeded = 500,
+--        fuelNeeded = 50000,
+        location = nil,
+        itemsNeeded = {
+            {itemName = "minecraft:torch", itemCount = 2},
+            {itemName = "minecraft:chest", itemCount = 2},
+        }
+    }
+
+    -- test startTime
+    corelog.WriteToLog("# Test StartTime condition")
+    if coreassignment.MetaDataConditionsMet(metaData) then
+        corelog.Error("test.T_MetaDataConditionsMet: Assignment in the future (="..metaData.startTime..") (now = "..now..") not skipped!")
+    end
+    metaData.startTime = now
+
+    -- test other conditions
+    corelog.WriteToLog("# Test Other conditions")
+    if not coreassignment.MetaDataConditionsMet(metaData) then
+       corelog.WriteToLog("test.T_MetaDataConditionsMet: Not all conditions met!")
+    end
 end
 
 function T_enterprise_test()
@@ -99,31 +198,60 @@ function T_enterprise_test()
     local testArg = 20
 
     -- test service 1
-    coreutils.WriteToLog("# Test 1")
+    corelog.WriteToLog("# Test 1")
     local testResult = enterprise_test.TestPureLogicService(testArg)
-    coreutils.WriteToLog("  TestPureLogicService("..testArg..") => " .. testResult .. ".")
+    corelog.WriteToLog("  TestPureLogicService("..testArg..") => " .. testResult .. ".")
 
     -- test service 2
-    coreutils.WriteToLog("# Test 2")
+    corelog.WriteToLog("# Test 2")
     enterprise_test.TestServiceWithAssignment(testArg)
 
     -- test service 3
-    coreutils.WriteToLog("# Test 3")
-    local callbackFunction = "test.ACallBack1"
+    corelog.WriteToLog("# Test 3")
+    local callbackFunction = "test.Func1_Callback"
     enterprise_test.TestServiceWithAssignmentAndCallback(testArg, callbackFunction)
 
     -- test service 4
-    coreutils.WriteToLog("# Test 4")
+    corelog.WriteToLog("# Test 4")
     local callbackArgumentTable = {"calbackArg1"}
     enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackArgumentTable)
 end
 
-function ACallBack1(callbackArgumentTable, taskResult)
-    coreutils.WriteToLog("test.ACallBack1("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+function T_enterprise_projects()
+    -- init
+    local testArgValue = 20
+    local projectDefinition = {
+        services    = {
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg1", valueSource = 0, sourceKey = "testArgSource" },
+            }},
+            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments", async = true, input = {
+                { keyName = "testArg2", valueSource = 0, sourceKey = "testArgSource" },
+            }},
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg3", valueSource = 0, sourceKey = "testArgSource" },
+            }},
+        },
+        returnData  = {
+            { keyName = "testBArg0", valueSource = 0, sourceKey = "testArgSource" },
+            { keyName = "testBArg1", valueSource = 1, sourceKey = "testArg1" },
+            { keyName = "testBArg2", valueSource = 2, sourceKey = "testArg2" },
+            { keyName = "testBArg3", valueSource = 3, sourceKey = "testArg3" },
+        }
+    }
+    local projectData = { testArgSource = testArgValue }
+    local callbackFunction = "test.Func1_Callback"
+    local callbackData = { "rootCallBackData" }
+
+    enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
+end
+
+function Func1_Callback(callbackArgumentTable, taskResult)
+    corelog.WriteToLog("test.Func1_Callback("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
 end
 
 function GoHomeCallBack(callbackArgumentTable, taskResult)
-    coreutils.WriteToLog("test.GoHomeCallBack("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+    corelog.WriteToLog("test.GoHomeCallBack("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
 
     GoHome()
 end
@@ -221,8 +349,8 @@ function BirchGrowToFile()
     local filename  = '/log/birchgrow.csv'
     local data = coredht.GetData("test", "BirchGrow")
 
-    coreutils.WriteToLog("data:")
-    coreutils.WriteToLog(data)
+    corelog.WriteToLog("data:")
+    corelog.WriteToLog(data)
 
     -- new file
     coreutils.WriteToFile(filename, "saplings;logs;sticks;fuelUsage;growTime;harvestTime", "overwrite")

@@ -26,11 +26,11 @@ function StoreItems(itemList, location)
 --]]
 
     -- check our input
-    if type(itemList) ~= "table" then coreutils.Error('enterprise_storage.StoreItems: Invalid input') return nil end
+    if type(itemList) ~= "table" then corelog.Error('enterprise_storage.StoreItems: Invalid input') return nil end
 
     -- this site is best
     local site  = FindClosestSite(location)
-    if site == nil then coreutils.Error('enterprise_storage.StoreItems: No valid site') return nil end
+    if site == nil then corelog.Error('enterprise_storage.StoreItems: No valid site') return nil end
 
     -- let the site handle this request
     if site.type == "silo" then return enterprise_storage_silo.StoreItems(site, itemList)
@@ -51,13 +51,13 @@ function ItemsDelivered(itemList, location)
 --]]
 
     -- check our input
-    if type(itemList) ~= "table" or type(location) ~= "table" then coreutils.Error('enterprise_storage.ItemsDelivered: Invalid input') return nil end
+    if type(itemList) ~= "table" or type(location) ~= "table" then corelog.Error('enterprise_storage.ItemsDelivered: Invalid input') return nil end
 
     -- find the site this top chest location belongs to
     local site, topChest = FindSiteByTopChest(location)
 
     -- got anything?
-    if site == nil or topChest == nil then coreutils.Error('enterprise_storage.ItemsDelivered: No site found') return nil end
+    if site == nil or topChest == nil then corelog.Error('enterprise_storage.ItemsDelivered: No site found') return nil end
 
     -- what kind of site is this anyways?
     if site.type == "silo" then return enterprise_storage_silo.ItemsDelivered(site.sitesIndex, topChest.chestIndex, itemList, location)
@@ -85,7 +85,7 @@ function ItemPresent(itemName)
     }
 
     -- parameter must be a string
-    if type(itemName) ~= "string" then coreutils.Error("enterprise_storage.ItemPresent: itemName nog a string") return nil end
+    if type(itemName) ~= "string" then corelog.Error("enterprise_storage.ItemPresent: itemName nog a string") return nil end
 
     -- loop the sites
     for i, site in ipairs(sites) do
@@ -106,7 +106,7 @@ function ItemPresent(itemName)
     return result
 end
 
--- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 12}, "coreassignment.DummyCallback", {})))
+-- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 12}, "coreassignment.Dummy_Callback", {})))
 function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
 --[[
     This public function is retrieving items from the storage. When the requested items are not
@@ -125,7 +125,7 @@ function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
     local site      = coredht.GetData(db.dhtRoot, db.dhtSites, sitesIndex)
 
     -- check paramters (should check if sitesIndex is really a valid sitesIndex)
-    if type(sitesIndex) ~= "number" or type(site) ~= "table" or type(itemList) ~= "table" or type(callback) ~= "string" then coreutils.Error("enterprise_storage.RetrieveItems: invalid paramters") return nil end
+    if type(sitesIndex) ~= "number" or type(site) ~= "table" or type(itemList) ~= "table" or type(callback) ~= "string" then corelog.Error("enterprise_storage.RetrieveItems: invalid paramters") return nil end
 
     -- tell this site do retrieve the items
     if site.type == "silo" then return enterprise_storage_silo.RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
@@ -150,17 +150,88 @@ function ItemsCollected(location)
     local site, topChest = FindSiteByTopChest(location)
 
     -- check what we got
-    if site == nil or topChest == nil then coreutils.Error("enterprise_storage.ItemsCollected: no site and/or topchest found") return nil end
+    if site == nil or topChest == nil then corelog.Error("enterprise_storage.ItemsCollected: no site and/or topchest found") return nil end
 
     -- let the site fix this
     if site.type == "silo" then enterprise_storage_silo.ItemsCollected(site, topChest)
     end
 end
 
--- enterprise_storage.NewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
-function NewSite(siteData)
+-- enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
+function BuildAndStartNewSite(siteData, callback, callbackData)
+    --[[
+        This public function (service) builds a new storage site and starts it.
+    
+        Return value:
+            nil
+    
+        Parameters:
+            siteData     - (table) data about this site, like type and layout
+            callback     - (string) function name to call once the site is build and started
+            callbackData - (table) function data to supply to callback
+    ]]
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildAndStartNewSite: Invalid siteData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildAndStartNewSite: Invalid callback function') return nil end
+    callbackData = callbackData or {}
+
+    -- what kind of storage is this?
+    if siteData.type == 'silo' then
+        -- create project definition
+        local buildAndStartNewSiteProject = {
+            services    = {
+                { serviceName = "enterprise_storage.BuildNewSite", async = true, input = {
+                    { keyName = "location"  , valueSource = 0, sourceKey = "location" },
+                    { keyName = "type"      , valueSource = 0, sourceKey = "type" },
+                    { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
+                    { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
+                    { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+                }},
+                { serviceName = "enterprise_storage.StartNewSite", async = false, input = {
+                    { keyName = "location"  , valueSource = 0, sourceKey = "location" },
+                    { keyName = "type"      , valueSource = 0, sourceKey = "type" },
+                    { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
+                    { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
+                    { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+                }},
+            },
+            returnData  = {
+            }
+        }
+
+        -- start project
+        enterprise_projects.StartProject(buildAndStartNewSiteProject, siteData, callback, callbackData)
+    end
+end
+
+-- enterprise_storage.BuildNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
+function BuildNewSite(siteData, callback, callbackData)
 --[[
-    This public function to notify the (enterprise) storage that a new site is ready for use
+    This public function (service) builds a new site.
+
+    Return value:
+        nil
+
+    Parameters:
+        siteData     - (table) data about this site, like type and layout
+        callback     - (string) function name to call once the site is build
+        callbackData - (table) function data to supply to callback
+]]
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildNewSite: Invalid siteData input') return nil end
+    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildNewSite: Invalid callback function') return nil end
+    callbackData = callbackData or {}
+
+    -- what kind of storage is this?
+    if siteData.type == 'silo' then 
+        enterprise_storage_silo.BuildNewSite(siteData, callback, callbackData)
+    end
+end
+
+-- enterprise_storage.StartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
+function StartNewSite(siteData)
+--[[
+    This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
 
     Return value:
         nil
@@ -178,10 +249,10 @@ function NewSite(siteData)
     end
 
     -- check our input
-    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then coreutils.Error('enterprise_storage.NewSite: Invalid input') return nil end
+    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.StartNewSite: Invalid input') return nil end
 
     -- what kind of storage is this?
-    if siteData.type == 'silo' then return enterprise_storage_silo.NewSite(siteData)
+    if siteData.type == 'silo' then return enterprise_storage_silo.StartNewSite(siteData)
     end
 end
 
@@ -197,7 +268,7 @@ function FindClosestSite(location)
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
 
     -- check if we have any site
-    if type(sites) ~= "table" or #sites == 0 then coreutils.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
+    if type(sites) ~= "table" or #sites == 0 then corelog.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
 
     -- we should look for the best site, for now just take the first
     return sites[1]
@@ -235,67 +306,3 @@ function CheckIntegrity(sitesIndex)
     end
 
 end
-
---    _           _ _     _               _   _                                 _     _                       _       _
---   | |         (_) |   | |             | | | |                        ___    | |   | |                     (_)     | |
---   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___   ( _ )   | |__ | |_   _  ___ _ __  _ __ _ _ __ | |_ ___
---   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|  / _ \/\ | '_ \| | | | |/ _ \ '_ \| '__| | '_ \| __/ __|
---   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \ | (_>  < | |_) | | |_| |  __/ |_) | |  | | | | | |_\__ \
---   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/  \___/\/ |_.__/|_|\__,_|\___| .__/|_|  |_|_| |_|\__|___/
---                           | |                                                                  | |
---                           |_|                                                                  |_|
-
-topLayerL0_pattern = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3,                 block = "minecraft:torch"},
-        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
-        { x = 3, y = 0,                 block = "minecraft:torch"},
-        { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true,
-}
-
-shaftLayer_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-    },
-    clearRemainingSpace = true,
-}
-
-chestLayer_pattern = {
-    deltaX      = 3,
-    deltaY      = 3,
-    objectList  = {
-        { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
-        { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
-
-        { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
-        { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
-
-        { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
-        { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
-
-        { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
-        { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true,
-}
-
--- ToDo: later wrap this within enterprise_storage (or role_silo_worker) such that this data can become private
-function GetSiloL0_blueprint()
-    return {
-        layerList = {
-            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = enterprise_storage.topLayerL0_pattern},
-            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = enterprise_storage.shaftLayer_pattern},
-            { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = enterprise_storage.chestLayer_pattern},
-            { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(enterprise_storage.chestLayer_pattern)}
-        },
-        escapeSequence = {
-            { x= 3, y= 3, z=  1},
-        }
-    }
-end
-

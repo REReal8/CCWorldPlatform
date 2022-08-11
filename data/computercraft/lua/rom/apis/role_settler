@@ -4,7 +4,6 @@ local db = {
     nTrees = 1,
     craftingLocation    = {x= 3, y= 2, z= 1, dx=0, dy=1},
     crafterLocation     = {x=12, y= 0, z= 1, dx=0, dy=1},
-    siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
 }
 
 
@@ -25,12 +24,13 @@ function Settle_Task(settleData)
     local birchSapling  = coreinventory.CountItem("minecraft:birch_sapling")
 
     -- stop if we don't meet the needs
+    -- ToDo: consider removing these checks as they are now also done by the assignment conditions logic
     if not axePresent or craftingTable == 0 or birchSapling == 0 then
         -- no good
-        print("Missing item(s) for a new start:")
-        if not axePresent       then print ("* Need a diamond axe")     end
-        if craftingTable == 0   then print ("* Need a crafting tabel")  end
-        if birchSapling  == 0   then print ("* Need a birch sapling")   end
+        corelog.Error("Missing item(s) for a new start:")
+        if not axePresent       then corelog.Error("* Need a diamond axe")     end
+        if craftingTable == 0   then corelog.Error("* Need a crafting tabel")  end
+        if birchSapling  == 0   then corelog.Error("* Need a birch sapling")   end
 
         -- done here
         return false
@@ -41,8 +41,8 @@ function Settle_Task(settleData)
     coremove.SetLocation(startLocation)
 
     -- plant the sappling
-    print (" ")
-    print (">Creating initial fuel and forest<")
+    corelog.WriteToLog(" ")
+    corelog.WriteToLog(">Creating initial fuel and forest<")
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
     db.nTrees = 1
@@ -83,11 +83,11 @@ function Settle_Task(settleData)
     coreinventory.Refuel({itemName = "minecraft:stick",         itemCount = sticks - 2}) -- crafting torch and furnace fuel
 
     -- we are ready to do more stuff!
-    print("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
-    print("We have "..turtle.getFuelLevel().." fuel")
+    corelog.WriteToLog("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
+    corelog.WriteToLog("We have "..turtle.getFuelLevel().." fuel")
 
     -- get into digging position
-    print (">Creating furnace<")
+    corelog.WriteToLog (">Creating furnace<")
     coreinventory.Equip("minecraft:diamond_pickaxe")
     turtle.digDown()
     coremove.Down()
@@ -118,11 +118,11 @@ function Settle_Task(settleData)
     if coreinventory.SelectItem("minecraft:dirt") then
         turtle.placeDown()
     else
-        print("No dirt to revert initial crafting location")
+        corelog.Warning("No dirt to revert initial crafting location")
     end
 
     -- build initial crafting location
-    print (">Creating initial crafting station<")
+    corelog.WriteToLog(">Creating initial crafting station<")
     BuildCraftingStationL0()
 
     -- craft torches
@@ -130,7 +130,7 @@ function Settle_Task(settleData)
 
     -- expand forest to max size
     local treesNeeded = 6
-    print (">Extending forest to " .. treesNeeded .. " trees<")
+    corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees<")
     while db.nTrees < treesNeeded do
         -- Harvest Forest
         HarvestForest(startLocation)
@@ -143,29 +143,26 @@ function Settle_Task(settleData)
     local chestsNeeded = 24
     local torchesNeeded = 6
     local logsNeeded = chestsNeeded * 2 + math.ceil(torchesNeeded / 2)
-    print(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
+    corelog.WriteToLog(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
         HarvestForest(startLocation)
     end
 
     -- create chests
+    corelog.WriteToLog(">Creating chests and torches<")
     LogToChests(chestsNeeded)
 
     -- create torches
     LogToTorches(torchesNeeded)
 
     -- redo first tree according to pattern
-    print(">Finishing Forest<")
+    corelog.WriteToLog(">Finishing Forest<")
     BuildForestTreePattern( 0, 0, 0)
 
     -- finish the crafting station
-    print(">Finishing Crafting Station<")
+    corelog.WriteToLog(">Finishing Crafting Station<")
     UpdateToCraftingStationL1()
-
-    -- make a first (small) silo
-    print(">Building small silo<")
-    BuildSiloL0()
 end
 
 
@@ -178,7 +175,7 @@ end
 
 
 function HarvestForest(startLocation)
-    print(" Harvesting Forest")
+    corelog.WriteToLog(" Harvesting Forest")
 
     -- go to first tree position
     coremove.GoTo(startLocation)
@@ -217,7 +214,7 @@ function Refuel()
 
     -- do we need to refuel?
     if fuelLevel < minFuel then
-        print(" Attempt refueling from " .. fuelLevel .. " to " .. refuelLevel .. ".")
+        corelog.WriteToLog(" Attempt refueling from " .. fuelLevel .. " to " .. refuelLevel .. ".")
         -- determine present en wanted, process the lowest value of both values
         local logs        = coreinventory.CountItem("minecraft:birch_log")
         local logsNeeded  = math.ceil((refuelLevel - fuelLevel ) / 60)    -- 1 log --> 4 planks, 4 planks have a burn value of 60 (15 each)
@@ -230,9 +227,9 @@ function Refuel()
         local planksPresent   = coreinventory.CountItem("minecraft:birch_planks")
         coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planksPresent})
 
-        print(" refueled to " .. turtle.getFuelLevel())
+        corelog.WriteToLog(" refueled to " .. turtle.getFuelLevel())
     else
-        print(" Already above (=" .. fuelLevel .. ") minumum(=" .. minFuel .. ") fuellevel.")
+        corelog.WriteToLog(" Already above (=" .. fuelLevel .. ") minumum(=" .. minFuel .. ") fuellevel.")
     end
 end
 
@@ -240,7 +237,7 @@ function LogToPlanks(planks)
     -- check input
     local logsNeeded = math.ceil(planks / 4)
     local logs = coreinventory.CountItem("minecraft:birch_log")
-    if logs < logsNeeded then print("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for planks(=" .. planks .. ")") return false end
+    if logs < logsNeeded then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for planks(=" .. planks .. ")") return false end
 
     -- craft
     role_alchemist.Craft({
@@ -264,7 +261,7 @@ function PlanksToStick(sticks)
     -- check input
     local planksNeeded = math.ceil(sticks / 2)
     local planks = coreinventory.CountItem("minecraft:birch_planks")
-    if planks < planksNeeded then print("Not enough planks(=" .. planksNeeded .. ") present(=" .. planks .. ") for sticks(=" .. sticks .. ")") return false end
+    if planks < planksNeeded then corelog.Warning("Not enough planks(=" .. planksNeeded .. ") present(=" .. planks .. ") for sticks(=" .. sticks .. ")") return false end
 
     -- craft
     role_alchemist.Craft({
@@ -296,7 +293,7 @@ function CobblestoneToFurnace(furnances)
     -- check input
     local stoneNeeded = math.ceil(furnances * 8)
     local stones = coreinventory.CountItem(stoneName)
-    if stones < stoneNeeded then print("Not enough stones(=" .. stoneNeeded .. ") present(=" .. stones .. ") for furnances(=" .. furnances .. ")") return false end
+    if stones < stoneNeeded then corelog.Warning("Not enough stones(=" .. stoneNeeded .. ") present(=" .. stones .. ") for furnances(=" .. furnances .. ")") return false end
 
     -- craft
     role_alchemist.Craft({
@@ -327,7 +324,7 @@ function LogToTorches(torches)
     local planksNeeded = math.ceil(charcoalNeeded + sticksNeeded / 4);
     local logsNeeded = math.ceil(planksNeeded / 4)
     local logs = coreinventory.CountItem("minecraft:birch_log")
-    if logs < logsNeeded then print("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for torches(=" .. torches .. ")") return false end
+    if logs < logsNeeded then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for torches(=" .. torches .. ")") return false end
 
     -- create planks (as fuel)
     LogToPlanks(planksNeeded)
@@ -347,7 +344,7 @@ function LogToChests(chests)
     local planksNeeded = chests * 8
     local logsNeeded = math.ceil(planksNeeded / 4)
     local logs = coreinventory.CountItem("minecraft:birch_log")
-    if (logs < logsNeeded) then print("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for chests(=" .. chests .. ")") return false end
+    if (logs < logsNeeded) then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for chests(=" .. chests .. ")") return false end
 
     -- create planks
     LogToPlanks(planksNeeded)
@@ -364,7 +361,7 @@ function PlanksToChests(chests)
     -- check input
     local planksNeeded = chests * 8
     local planks = coreinventory.CountItem(plankName)
-    if (planks < planksNeeded) then print("Not enough planks(=" .. planksNeeded .. ") present(=" .. planks .. ") for chests(=" .. chests .. ")") return false end
+    if (planks < planksNeeded) then corelog.Warning("Not enough planks(=" .. planksNeeded .. ") present(=" .. planks .. ") for chests(=" .. chests .. ")") return false end
 
     -- create chests
     role_alchemist.Craft({
@@ -396,10 +393,10 @@ function LogToCharcoal(charcoals)
     -- check input
     local logsNeeded = charcoals
     local logs = coreinventory.CountItem(logName)
-    if (logs < logsNeeded) then print("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for charcoal(=" .. charcoals .. ")") return false end
+    if (logs < logsNeeded) then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for charcoal(=" .. charcoals .. ")") return false end
     local planksNeeded = math.ceil(2 * charcoals / 3)
     local planks = coreinventory.CountItem(plankName)
-    if (logs < logsNeeded) then print("Not enough plank(=" .. planksNeeded .. ") fuel present(=" .. planks .. ") for charcoal(=" .. charcoals .. ")") return false end
+    if (logs < logsNeeded) then corelog.Warning("Not enough plank(=" .. planksNeeded .. ") fuel present(=" .. planks .. ") for charcoal(=" .. charcoals .. ")") return false end
 
     role_alchemist.Smelt({
         recipe  = {
@@ -458,7 +455,7 @@ end
 
 
 function TryExtendForest(nTrees)
-    print(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
+    corelog.WriteToLog(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
 
     -- craft torches
     LogToTorches(4)
@@ -517,7 +514,7 @@ function UpdateToCraftingStationL1()
 
     -- enough?
     if chests < 3 or torches < 2 then
-        print("Not finishing the crafting station, not enough (chests: "..chests..", torches: "..torches..")")
+        corelog.Error("Not finishing the crafting station, not enough (chests: "..chests..", torches: "..torches..")")
         return false
     end
 
@@ -526,21 +523,4 @@ function UpdateToCraftingStationL1()
 
     -- crafter temporary storage chest
     role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL1_pattern})
-end
-
-function BuildSiloL0()
-    -- ToDo: later make this internal code of enterprise_storage or role_silo_worker
-
-    -- check inventory
-    local chests    = coreinventory.CountItem("minecraft:chest")
-    local torches   = coreinventory.CountItem("minecraft:torch")
-
-    -- enough?
-    if chests < 18 or torches < 2 then
-        print("Not building the small silo, not enough (chests: "..chests..", torches: "..torches..")")
-        return false
-    end
-
-    -- build blue print
-    role_builder.BuildBlueprint_Task({blueprintStartpoint = db.siloLocation, blueprint = enterprise_storage.GetSiloL0_blueprint()})
 end

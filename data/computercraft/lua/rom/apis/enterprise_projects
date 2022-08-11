@@ -1,0 +1,113 @@
+local db = {
+    dhtRoot     = "projects",
+}
+
+function StartProject(projectDefinition, projectInputData, callbackFunction, callbackData)
+    -- check input
+    if type(projectDefinition) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectDefinition') return nil end
+    if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
+    if type(projectInputData) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectInputData') return nil end
+    if type(callbackFunction) ~= "string" then corelog.Error('enterprise_projects.StartProject: Invalid callbackFunction') return nil end
+    if type(callbackData) ~= "table" then callbackData = {} end
+
+    -- data of the project
+    local project   = {
+        projectDefinition   = projectDefinition,
+        callbackFunction    = callbackFunction,
+        callbackData        = callbackData,
+
+        projectId           = coreutils.NewId(),
+
+        currentStep         = 0,
+        outputs             = {}
+    }
+
+    -- save
+    corelog.WriteToProjectsLog("Add new: "..textutils.serialize(project), project.projectId)
+    coredht.SaveData(project, db.dhtRoot, project.projectId)
+
+    -- let's start
+    NextProjectStep({projectId = project.projectId}, projectInputData) -- the input projectInputData is interpreted as the result of virtual step 0
+end
+
+function NextProjectStep(internalProjectData, stepResults)
+    -- get the project information
+    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+
+    -- save the results for the previous step
+    if type(stepResults) ~= "table" then stepResults = {} end
+    project.outputs[ project.currentStep ] = stepResults
+    corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
+
+    -- was this the last step?
+    if #project.projectDefinition.services == project.currentStep then EndProject(internalProjectData) return nil end
+
+    -- next step
+    project.currentStep = project.currentStep + 1
+
+    -- save to dht
+    coredht.SaveData(project, db.dhtRoot, internalProjectData.projectId)
+
+    -- prepare to execute this step
+    local step  = project.projectDefinition.services[ project.currentStep ]
+    local input = {}
+
+    -- make the input
+    for i, inputDefinition in ipairs(step.input) do
+        -- add the requested key
+        input[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
+    end
+
+    -- prepare function call
+    local serviceName           = step.serviceName
+    local inputTableString      = textutils.serialize(input)
+    local callbackString        = "'enterprise_projects.NextProjectStep'"
+    local callbackDataString    = textutils.serialize(internalProjectData)
+
+    -- type of service?
+    if step.async == true then
+        corelog.WriteToProjectsLog("Start step "..project.currentStep.." async", project.projectId)
+
+        -- async function call
+        local f, err = loadstring(serviceName.."("..inputTableString..", "..callbackString..", "..callbackDataString..")")
+        if f then f() else corelog.Error("enterprise_projects.NextProjectStep(): loadstring did not supply a function, error given: "..err) end
+    else
+        corelog.WriteToProjectsLog("Start step "..project.currentStep.." sync", project.projectId)
+
+        -- sync function call, use the results
+        local f, err = loadstring("return "..serviceName.."("..inputTableString..")")
+        if not f then corelog.Error("enterprise_projects.NextProjectStep(): loadstring did not supply a function, error given: "..err) return end
+
+        -- execute the step and save the results
+        local results = f()
+
+        -- recursive is the future!
+        NextProjectStep(internalProjectData, results)
+    end
+end
+
+function EndProject(internalProjectData)
+    -- get the project informatino
+    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+    local input     = {}
+
+    -- create the return data table
+    for i, inputDefinition in ipairs(project.projectDefinition.returnData) do
+        -- add the requested key
+        input[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
+    end
+
+    -- prepare callback
+    local callbackString        = project.callbackFunction
+    local callbackDataString    = textutils.serialise(project.callbackData)
+    local inputTableString      = textutils.serialize(input)
+
+    -- we are done, do the callback
+    corelog.WriteToProjectsLog("Calling callback function: "..callbackString.."("..callbackDataString..", "..inputTableString..")", project.projectId)
+    local f, err = loadstring(callbackString.."("..callbackDataString..", "..inputTableString..")")
+    if f then f() else corelog.Error("enterprise_projects.CompleteProject(): loadstring did not supply a function, error given: "..err) end
+
+    -- forget about this project
+    corelog.WriteToProjectsLog("Ended", project.projectId)
+    coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
+end

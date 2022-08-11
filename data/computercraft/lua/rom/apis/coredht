@@ -64,7 +64,7 @@ end
 -- save data to the table db
 function SaveData(data, ...)
     -- safety
-    if not dhtReady then coreutils.WriteToLog("coredht.SaveData called before dht is ready. Traceback info: "..debug.traceback()) end
+    if not dhtReady then corelog.WriteToLog("coredht.SaveData called before dht is ready. Traceback info: "..debug.traceback()) end
 
     -- for debugging dht issues
     if false then
@@ -77,7 +77,7 @@ function SaveData(data, ...)
     end
 
     -- we should have a version readable
-    if type(db) ~= "table" or db._version == nil then coreutils.WriteToLog("coredht.SaveData db var not ok. Traceback info: "..debug.traceback()) end
+    if type(db) ~= "table" or db._version == nil then corelog.WriteToLog("coredht.SaveData db var not ok. Traceback info: "..debug.traceback()) end
 
     -- update the version
     db._version = db._version + 1
@@ -120,7 +120,7 @@ function SaveDataToDB(data, ...)
     -- check for all data
     if #listOfNodes == 0 then
         -- wow, overwriting the root is dangerous!
-        if type(data) ~= "table" then coreutils.WriteToLog("cvoredht.SaveDataToDB: not allowed to overwrite the dht root with something else then a table. Traceback: "..debug.traceback()) return data end
+        if type(data) ~= "table" then corelog.WriteToLog("cvoredht.SaveDataToDB: not allowed to overwrite the dht root with something else then a table. Traceback: "..debug.traceback()) return data end
 
         -- no keys, full database
         db = data
@@ -190,7 +190,7 @@ function DoEventAllDataTimer(subject, envelope)
     -- alleen als de dht nog niet ready is
     if not dhtReady then
         -- niet zo best, we hebben geen data gekregen!
-        coreutils.WriteToLog("coredht: all data timer verlopen zonder iets ontvangen te hebben")
+        corelog.WriteToLog("coredht: all data timer verlopen zonder iets ontvangen te hebben")
 
         -- we zetten nu de dht op ready, terwijl we weten dat het niet zo is...
         DoDHTReady()
@@ -214,7 +214,7 @@ end
 function DoEventSaveData(subject, envelope)
     -- check for version differences
     if db._version ~= 0 and db._version + 1 ~= envelope.message.version then
-        coreutils.WriteToLog("DHT WARNING: Saving data from ", envelope.from, " with version ", envelope.message.version, ". Current version is ", db._version)
+        corelog.WriteToLog("DHT WARNING: Saving data from ", envelope.from, " with version ", envelope.message.version, ". Current version is ", db._version)
     end
 
 	-- just save the data like a normal request from this computer

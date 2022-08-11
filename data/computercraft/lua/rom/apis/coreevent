@@ -107,7 +107,7 @@ function SendMessage(t)
 
 	-- input controleren
 	if protocol == "" or subject == "" then
-		coreutils.WriteToLog("SendMessage(): invalid parameters: protocol = "..protocol..", subject = "..subject, "a")
+		corelog.WriteToLog("SendMessage(): invalid parameters: protocol = "..protocol..", subject = "..subject, "a")
 		return nil
 	end
 
@@ -127,7 +127,7 @@ function SendMessage(t)
 		if not currentChannel then currentChannel = to[i] end
 
         -- usefull logging
-		-- coreutils.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
+		-- corelog.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
 
         -- actuall sending the message
 		if modem then
@@ -155,7 +155,7 @@ function SendMessage(t)
 				})
 			})
 
-			-- coreutils.WriteToLog("Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")")
+			-- corelog.WriteToLog("Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")")
 			-- don't write to log, since that will send a message and get's us in a loop
 		end
 	end
@@ -177,7 +177,7 @@ function SendMessageSaveReply(t)
 
 	-- input controleren
 	if protocol == "" or subject == "" then
-		coreutils.WriteToLog("SendMessageSaveReply(): invalid parameters: protocol = "..protocol..", subject = "..subject, "a")
+		corelog.WriteToLog("SendMessageSaveReply(): invalid parameters: protocol = "..protocol..", subject = "..subject, "a")
 		return nil
 	end
 
@@ -198,7 +198,7 @@ end
 function ReplyToMessage(envelope, subject, message)
 	-- we need some to send to, check!
 	if not envelope.from then
-		coreutils.WriteToLog("ReplyToMessage(): no from found, envelope.from = " .. (envelope.from or ""), "a")
+		corelog.WriteToLog("ReplyToMessage(): no from found, envelope.from = " .. (envelope.from or ""), "a")
 		return nil
 	end
 
@@ -322,7 +322,7 @@ function Run()
 		local period = os.clock() - now
 		if period > 0.16 then
 		    coredisplay.UpdateToDisplay("WARNING: "..event.." ("..(p1 or '')..") took "..period.." seconds", 5)
-		    coreutils.WriteToLog("WARNING: "..event.." ("..(p1 or '')..") took "..period.." seconds")
+		    corelog.WriteToLog("WARNING: "..event.." ("..(p1 or '')..") took "..period.." seconds")
 		end
 	end
 end
@@ -345,7 +345,7 @@ function ProcessModemMessageEvent(side, frequency, replyFrequency, message, dist
 		coreutils.WriteToFile("/event/"..envelope.protocol.."/"..envelope.subject, envelope, "overwrite")
 
 		-- log to monitor screen
-		coreutils.WriteToMonitor("to: "..me..", from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)
+		corelog.WriteToMonitor("to: "..me..", from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)
 
 		-- continue with this event
 		return envelope.protocol, envelope.subject, envelope, nil, nil, nil
@@ -354,12 +354,12 @@ function ProcessModemMessageEvent(side, frequency, replyFrequency, message, dist
 
 		-- not our message, continue without ajusting anything
 		coredisplay.UpdateToDisplay("Unknown modem_message", 5)
-		coreutils.WriteToLog("Unknown modem_message:")
-		coreutils.WriteToLog("    side           = "..side)
-		coreutils.WriteToLog("    frequency      = "..frequency)
-		coreutils.WriteToLog("    replyFrequency = "..replyFrequency)
-		coreutils.WriteToLog("    message        = "..message)
-		coreutils.WriteToLog("    distance       = "..distance)
+		corelog.WriteToLog("Unknown modem_message:")
+		corelog.WriteToLog("    side           = "..side)
+		corelog.WriteToLog("    frequency      = "..frequency)
+		corelog.WriteToLog("    replyFrequency = "..replyFrequency)
+		corelog.WriteToLog("    message        = "..message)
+		corelog.WriteToLog("    distance       = "..distance)
 		return 'modem_message', side, frequency, replyFrequency, message, distance
 	end
 end

@@ -134,11 +134,11 @@ function ProcessItemListMessage(message)
     local messageData   = message.data
 
     -- valid message?
-    if type(messageData.itemName) ~= "string" or type(messageData.itemCount) ~= "number" then coreutils.Warning("Received message without required fields") return nil end
+    if type(messageData.itemName) ~= "string" or type(messageData.itemCount) ~= "number" then corelog.Warning("Received message without required fields") return nil end
 
     -- do we know this item?
     local recipe = db.recipes[ messageData.itemName ]
-    if not recipe then coreutils.Warning("No recipe found for "..messageData.itemName) return nil end
+    if not recipe then corelog.Warning("No recipe found for "..messageData.itemName) return nil end
 
     -- to store our reaction
     local responseData  = { possibilities = {} }
@@ -255,7 +255,7 @@ function ProcessMakeItemMessage(message)
     messageData.ingredientsLocation = messageData.ingredientsLocation  or "inventory"  -- "inventory"|{location tabel}
 
     -- check if the item is known in our recipes
-    if type(db.recipes[ messageData.itemName ]) ~= "table" then coreutils.WriteToLog("No recipe for item "..messageData.itemName) return end
+    if type(db.recipes[ messageData.itemName ]) ~= "table" then corelog.WriteToLog("No recipe for item "..messageData.itemName) return end
 
     -- make a copy of the locations
     if type(messageData.ingredientsLocation) == "table" then messageData.ingredientsLocation = coremove.CopyLocation(messageData.ingredientsLocation) end

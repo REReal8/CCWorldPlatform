@@ -19,12 +19,12 @@ function Excavate(excavateData)
     --
     
     -- debugging
-    coreutils.WriteToLog("role_excavator:Excavate("..textutils.serialize(excavateData)..")")
+    corelog.WriteToLog("role_excavator:Excavate("..textutils.serialize(excavateData)..")")
 
     -- move to the excavation location
 --    local startLocation = coremove.GetRelativeLocationFront(excavateData.startLocation, 0)
     local startLocation = excavateData.startLocation
-    coreutils.WriteToLog("  got to startLocation=("..textutils.serialize(startLocation)..")")
+    corelog.WriteToLog("  got to startLocation=("..textutils.serialize(startLocation)..")")
     coremove.GoTo(excavateData.startLocation)
 
     -- ToDo: implement multiple levels
@@ -41,7 +41,7 @@ function Excavate(excavateData)
     -- excavate the level (max 3 hight)
     for iY=1, dimensions.dy do
         for iX=1, dimensions.dx-1 do
-            coreutils.WriteToLog("  (ix,iy)=("..iX..","..iY.."): loc="..textutils.serialize(coremove.GetLocation()))
+            corelog.WriteToLog("  (ix,iy)=("..iX..","..iY.."): loc="..textutils.serialize(coremove.GetLocation()))
             ExcavateForward(alsoDown, alsoUp)
         end
         
@@ -70,7 +70,7 @@ function Excavate(excavateData)
     -- optionally move back to start location
     if backToStartLocation then
         -- move to start location
-        coreutils.WriteToLog("  got back to startLocation=("..textutils.serialize(startLocation)..")")
+        corelog.WriteToLog("  got back to startLocation=("..textutils.serialize(startLocation)..")")
         coremove.GoTo(startLocation)
     end
 end
