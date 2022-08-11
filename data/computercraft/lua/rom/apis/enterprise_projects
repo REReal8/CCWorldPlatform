@@ -19,7 +19,7 @@ function StartProject(projectDefinition, projectData, callbackFunction, callback
     if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
 
     -- save
-    coredht.SaveData(nil, db.dhtRoot) -- ToDo: remove
+    corelog.WriteToLog("Project start, projectID = "..project.projectId)
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 
     -- let's start
@@ -27,11 +27,12 @@ function StartProject(projectDefinition, projectData, callbackFunction, callback
 end
 
 function NextProjectStep(projectData, stepResults)
-    corelog.WriteToLog("enterprise_projects.NextProjectStep( "..textutils.serialize(projectData)..", "..textutils.serialize(stepResults)..")")
+
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, projectData.projectId)
 
     -- save the results for the previous step
+    if type(stepResults) ~= "table" then stepResults = {} end
     project.outputs[ project.currentStep ] = stepResults
 
     -- was this the last step?
@@ -100,6 +101,6 @@ function CompleteProject(projectData)
     if f then f() else corelog.Error("enterprise_projects.CompleteProject(): loadstring did not supply a function, error given: "..err) end
 
     -- forget about this project
---    coredht.SaveData(nil, db.dhtRoot, projectData.projectId)
-print("!")
+    corelog.WriteToLog("Project done, projectID = "..projectData.projectId)
+    coredht.SaveData(nil, db.dhtRoot, projectData.projectId)
 end
