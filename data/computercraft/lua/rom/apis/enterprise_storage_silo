@@ -36,9 +36,9 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
     -- now we need to get some work done, time for a new assignment
     coreassignment.AddAssignment(
         assignmentMeta,                                         -- meta data about the assignment
-        "role_storage_silo_worker.ItemsDelivered_Task",          -- taskFunction
+        "role_storage_silo_worker.ItemsDelivered_Task",         -- taskFunction
         assignmentArguments,                                    -- taskArgumentTable
-        "coreassignment.Dummy_Callback",                         -- callbackFunction
+        "coreassignment.Dummy_Callback",                        -- callbackFunction
         {}                                                      -- callbackArgumentTable
     )
 end
@@ -124,15 +124,16 @@ end
 function BuildNewSite(siteData, callback, callbackData)
     --[[
         This public function (service) builds a new silo.
-    
+
         Return value:
             nil
-    
+
         Parameters:
             siteData     - (table) data about this silo, like type and layout
             callback     - (string) function name to call once the site is build
             callbackData - (table) function data to supply to callback
     ]]
+
     -- check input
     if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite: Invalid siteData input') return nil end
     if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite: Invalid callback function') return nil end
