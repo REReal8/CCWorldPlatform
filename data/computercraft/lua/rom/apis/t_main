@@ -3,6 +3,10 @@ function T_dummy()
     print("!")
 end
 
+function T_enterprise_factory_buildNewSite()
+    enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, type="basic"}, "coreassignment.Dummy_Callback", {})
+end
+
 function T_enterprise_storage_buildAndStartNewSite()
     enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 end

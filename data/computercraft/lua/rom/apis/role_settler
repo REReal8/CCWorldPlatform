@@ -134,10 +134,6 @@ function RemainingSettle_Task(settleData)
     -- check input
     local startLocation = settleData.startLocation
 
-    -- build initial crafting location
-    corelog.WriteToLog(">Creating initial crafting station<")
-    BuildCraftingStationL0()
-
     -- craft torches
     LogToTorches(4)
 
@@ -495,29 +491,6 @@ function BuildForestTreePattern(x, y, z)
     local point = coremove.GetRelativeLocation(db.forestLocation, x, y, z)
 
     role_builder.BuildRectangularPattern_Task({startpoint = point, buildFromAbove = true, replacePresentObjects = false, pattern = enterprise_forest.tree_pattern})
-end
-
-function BuildCraftingStationL0()
-    -- start location for this small crafter station
-    local crafterStart = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1)
-
-    -- go there
-    coremove.GoTo(crafterStart)
-
-    -- place for future chest
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -6), buildFromAbove  = true, pattern = enterprise_factory.storageChestL0_pattern})
-
-    -- we have a new crafting location!
-    db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
-
-    -- under the furnace layer
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -5), buildFromAbove  = true, pattern = enterprise_factory.underTheFurnanceLayerL0_pattern})
-
-    -- furnace layer
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -4), buildFromAbove  = true, pattern = enterprise_factory.furnanceLayerL0_pattern})
-
-    -- up to surface
-    coremove.GoTo(crafterStart)
 end
 
 function UpdateToCraftingStationL1()
