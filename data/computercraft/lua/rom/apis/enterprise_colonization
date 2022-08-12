@@ -47,7 +47,10 @@ function CreateNewWorld(callback, callbackData)
     -- create project definition
     local createNewWorldProject = {
         services    = {
-            { serviceName = "enterprise_colonization.FirstSettleStep", async = true, input = {
+            { serviceName = "enterprise_colonization.PrimarySettleStep", async = true, input = {
+                { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_colonization.SecondarySettleStep", async = true, input = {
                 { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
@@ -66,7 +69,7 @@ function CreateNewWorld(callback, callbackData)
     enterprise_projects.StartProject(createNewWorldProject, settleData, callback, callbackData)
 end
 
-function FirstSettleStep(settleData, callback, callbackData)
+function PrimarySettleStep(settleData, callback, callbackData)
     local metaData = {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(settleData.startLocation),
@@ -80,7 +83,25 @@ function FirstSettleStep(settleData, callback, callbackData)
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, callbackData)
+    coreassignment.AddAssignment(metaData, "role_settler.PrimarySettle_Task", settleData, callback, callbackData)
+end
+
+function SecondarySettleStep(settleData, callback, callbackData)
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 100, -- how much is needed for this step?
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:birch_sapling", itemCount = 1},
+            {itemName = "minecraft:birch_log", itemCount = 2},
+        }
+    }
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler.SecondarySettle_Task", settleData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

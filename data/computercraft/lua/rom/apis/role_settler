@@ -17,7 +17,7 @@ local db = {
 --   |_|
 
 
-function Settle_Task(settleData)
+function PrimarySettle_Task(settleData)
     -- ready to start?
     local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
     local craftingTable = coreinventory.CountItem("minecraft:crafting_table")
@@ -85,6 +85,11 @@ function Settle_Task(settleData)
     -- we are ready to do more stuff!
     corelog.WriteToLog("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
     corelog.WriteToLog("We have "..turtle.getFuelLevel().." fuel")
+end
+
+function SecondarySettle_Task(settleData)
+    -- check input
+    local startLocation = settleData.startLocation
 
     -- get into digging position
     corelog.WriteToLog (">Creating furnace<")
