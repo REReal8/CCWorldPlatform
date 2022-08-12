@@ -56,7 +56,7 @@ function DefaultMainMenu()
 			intro   = "Choose your action",
 			option  = {
 				{key = "e", desc = "Execute code",  	func = ExecuteCode,	    param = {step = 1}},
-				{key = "t", desc = "Execute test.T()",  func = ExecuteTest,	    param = {}},
+				{key = "t", desc = "Run test func",  	func = ExecuteTest,	    param = {}},
 				{key = "l", desc = "Load event",		func = LoadEvent,		param = {}},
 				{key = "m", desc = "Move turtle",   	func = MoveTurtle,	    param = {}},
 				{key = "q", desc = "Quit",          	func = core.DoQuit,		param = {}},
@@ -69,7 +69,7 @@ function DefaultMainMenu()
 			intro   = "Choose your action",
 			option  = {
 				{key = "e", desc = "Execute code",  	func = ExecuteCode,	    param = {step = 1}},
-				{key = "t", desc = "Execute test.T()",  func = ExecuteCode,	    param = {step = 1}},
+				{key = "t", desc = "Run test func",  	func = ExecuteTest,	    param = {}},
 				{key = "l", desc = "Load event",		func = LoadEvent,		param = {}},
 				{key = "q", desc = "Quit",          	func = core.DoQuit,		param = {}},
 			},
@@ -158,17 +158,48 @@ function ExecuteCode(t, code)
 end
 
 -- for executing custom code
-function ExecuteTest(t)
-	local f, err = loadstring("test.T()")
+function ExecuteTest(t, response)
 
-	-- valid function?
-	if f then
-		-- executing the code as wordt
-		coretask.AddWork(f)
-		UpdateToDisplay("test.T() is queued for execution")
+	-- which step are we anyways
+	if type(t) ~= "table" or type(t.func) ~= "string" then
+		-- variables
+		local functions	= {}
+		local options	= {}
+
+		-- get all functions in test file / object
+		for key, value in pairs(test) do
+
+			-- add key if the value is a function
+			if type(value) == "function" then table.insert(functions, key) end
+		end
+
+		-- order this shit
+		table.sort(functions)
+
+		-- create the list of options
+		for i, name in ipairs(functions) do options[i] = {key = IndexToKey(i), desc = name, func = ExecuteTest, param = {func = name}} end
+		table.insert(options, {key = "x", desc = "Back to main menu", func = function () return true end})
+
+		-- this is the next screen
+		NextScreen({
+			clear       = true,
+			intro       = "Choose a test function",
+			option      = options,
+			question    = "Make your choice"
+		})
 	else
-		UpdateToDisplay(err)
-		return false
+		-- seems out user has made a choice
+		local f, err = loadstring("test."..t.func.."()")
+
+		-- valid function?
+		if f then
+			-- executing the code as wordt
+			coretask.AddWork(f)
+			UpdateToDisplay(t.func.." is queued for execution")
+		else
+			UpdateToDisplay(err)
+			return false
+		end
 	end
 
 	-- done

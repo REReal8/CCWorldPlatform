@@ -2,6 +2,9 @@ local db = {}
 
 -- short hand for current test to run
 function T()
+    corelog.WriteToLog("Running T()")
+    print("!")
+
 --    T_enterprise_storage_buildAndStartNewSite()
 --    T_enterprise_projects()
 --    T_role_builder_MetaDatas()
@@ -13,7 +16,7 @@ function T()
 --    T_enterprise_test()
 --    T_MetaDataConditionsMet()
 end
-
+--[[
 function T_enterprise_storage_buildAndStartNewSite()
     enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 end
@@ -360,7 +363,7 @@ function BirchGrowToFile()
         coreutils.WriteToFile(filename, v.saplings..";"..v.logs..";"..v.sticks..";"..v.fuelUsage..";"..string.format("%.3f", v.growTime)..";"..string.format("%.3f", v.harvestTime), "append")
     end
 end
-
+--]]
 
 function Excavate()
     role_excavator.Excavate({
