@@ -167,7 +167,7 @@ function ExecuteTest(t, response)
 		local options	= {}
 
 		-- get all functions in test file / object
-		for key, value in pairs(test) do
+		for key, value in pairs(t_main) do
 
 			-- add key if the value is a function
 			if type(value) == "function" then table.insert(functions, key) end
@@ -189,7 +189,7 @@ function ExecuteTest(t, response)
 		})
 	else
 		-- seems out user has made a choice
-		local f, err = loadstring("test."..t.func.."()")
+		local f, err = loadstring("t_main".."."..t.func.."()")
 
 		-- valid function?
 		if f then
