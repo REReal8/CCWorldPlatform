@@ -1,0 +1,27 @@
+local db = {}
+
+function T_GoHome()
+    coremove.GoTo({
+        x	= 0,
+        y	= 0,
+        z	= 1,
+        dx	= 0,
+        dy	= 1,
+    })
+end
+
+function T_GoStart()
+    coremove.GoTo({x= 3, y= 2, z= 1, dx=0, dy=1})
+end
+
+function T_Reset()
+    coremove.SetLocation({
+        x	= 0,
+        y	= 0,
+        z	= 1,
+        dx	= 0,
+        dy	= 1,
+    })
+end
+
+

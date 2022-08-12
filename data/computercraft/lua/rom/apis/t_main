@@ -35,30 +35,6 @@ function End(assignmentId)
     coreassignment.EndAssignment(assignmentId)
 end
 
-function GoHome()
-    coremove.GoTo({
-        x	= 0,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
-    })
-end
-
-function GoStart()
-    coremove.GoTo({x= 3, y= 2, z= 1, dx=0, dy=1})
-end
-
-function Reset()
-    coremove.SetLocation({
-        x	= 0,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
-    })
-end
-
 local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
 
 local testBuildPattern1 = {
