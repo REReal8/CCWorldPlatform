@@ -1,5 +1,3 @@
-local db = {}
-
 function T_GoHome()
     coremove.GoTo({
         x	= 0,

@@ -166,7 +166,6 @@ function ExecuteTest(t)
 
 	if type(t) == "table" and type(t.func) == "string" and type(t.filename) == "string" then
 		-- execute function
---		corelog.WriteToLog("ExecuteTest: execute the test")
 
 		-- seems our user has made a choice
 		local f, err = loadstring(t.filename.."."..t.func.."()")
@@ -182,7 +181,6 @@ function ExecuteTest(t)
 		end
 	elseif type(t) == "table" and type(t.file) == "table" then
 		-- test functions screen
---		corelog.WriteToLog("ExecuteTest: functions screen")
 
 		-- variables
 		local functions	= {}
@@ -210,12 +208,12 @@ function ExecuteTest(t)
 		})
 	elseif type(t) ~= "table" or type(t.func) ~= "string" then
 		-- test files screen
-		corelog.WriteToLog("ExecuteTest: files screen")
 
 		-- test options
 		local options	= {
-			{key = "g", desc = "t_main", func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
-			{key = "m", desc = "t_move", func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
+			{key = "g", desc = "t_main", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
+			{key = "m", desc = "t_move", 			func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
+			{key = "c", desc = "t_construction", 	func = ExecuteTest, param = {file = t_construction, filename = "t_construction"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 
