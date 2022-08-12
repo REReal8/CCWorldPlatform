@@ -10,7 +10,7 @@
 
 function CreateNewWorld(callback, callbackData)
     --[[
-    This public function creates a new CCWorldPlatform world.
+    This public async function creates a new CCWorldPlatform world.
         It bootstraps the world logic by building an initiating several enterprise (sites). 
 
         The turtle should already have (either equiped or in it's inventory)
@@ -29,7 +29,7 @@ function CreateNewWorld(callback, callbackData)
 
     Parameters:
         callback     - (string) function name to call once the new world is created
-        callbackData - (table) function data to supply to callback
+        callbackData - (table) data to supply to callback
     ]]--
     -- check input
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
@@ -47,7 +47,16 @@ function CreateNewWorld(callback, callbackData)
     -- create project definition
     local createNewWorldProject = {
         services    = {
-            { serviceName = "enterprise_colonization.FirstSettleStep", async = true, input = {
+            { serviceName = "enterprise_colonization.PrimarySettleStep", async = true, input = {
+                { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_colonization.CollectCobbleStoneStep", async = true, input = {
+                { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_colonization.CreateFurnaceAndCleanupStep", async = true, input = {
+                { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_colonization.IntermediateSettleStep", async = true, input = {
                 { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
@@ -66,7 +75,7 @@ function CreateNewWorld(callback, callbackData)
     enterprise_projects.StartProject(createNewWorldProject, settleData, callback, callbackData)
 end
 
-function FirstSettleStep(settleData, callback, callbackData)
+function PrimarySettleStep(settleData, callback, callbackData)
     local metaData = {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(settleData.startLocation),
@@ -80,7 +89,58 @@ function FirstSettleStep(settleData, callback, callbackData)
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.Settle_Task", settleData, callback, callbackData)
+    coreassignment.AddAssignment(metaData, "role_settler.PrimarySettle_Task", settleData, callback, callbackData)
+end
+
+function CollectCobbleStoneStep(settleData, callback, callbackData)
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+        }
+    }
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler.CollectCobbleStone_Task", settleData, callback, callbackData)
+end
+
+function CreateFurnaceAndCleanupStep(settleData, callback, callbackData)
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 25, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:cobblestone", itemCount = 8},
+            {itemName = "minecraft:dirt", itemCount = 1}
+        }
+    }
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler.CreateFurnaceAndCleanup_Task", settleData, callback, callbackData)
+end
+
+function IntermediateSettleStep(settleData, callback, callbackData)
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:birch_sapling", itemCount = 1},
+            {itemName = "minecraft:birch_log", itemCount = 2},
+        }
+    }
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler.RemainingSettle_Task", settleData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
