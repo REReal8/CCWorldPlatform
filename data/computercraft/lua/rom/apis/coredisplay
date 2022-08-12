@@ -55,10 +55,11 @@ function DefaultMainMenu()
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "e", desc = "Execute code",  func = ExecuteCode,	    param = {step = 1}},
-				{key = "l", desc = "Load event",	func = LoadEvent,		param = {}},
-				{key = "m", desc = "Move turtle",   func = MoveTurtle,	    param = {}},
-				{key = "q", desc = "Quit",          func = core.DoQuit,		param = {}},
+				{key = "e", desc = "Execute code",  	func = ExecuteCode,	    param = {step = 1}},
+				{key = "t", desc = "Execute test.T()",  func = ExecuteTest,	    param = {}},
+				{key = "l", desc = "Load event",		func = LoadEvent,		param = {}},
+				{key = "m", desc = "Move turtle",   	func = MoveTurtle,	    param = {}},
+				{key = "q", desc = "Quit",          	func = core.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
 		}
@@ -67,9 +68,10 @@ function DefaultMainMenu()
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "e", desc = "Execute code",  func = ExecuteCode,	    param = {step = 1}},
-				{key = "l", desc = "Load event",	func = LoadEvent,		param = {}},
-				{key = "q", desc = "Quit",          func = core.DoQuit,		param = {}},
+				{key = "e", desc = "Execute code",  	func = ExecuteCode,	    param = {step = 1}},
+				{key = "t", desc = "Execute test.T()",  func = ExecuteCode,	    param = {step = 1}},
+				{key = "l", desc = "Load event",		func = LoadEvent,		param = {}},
+				{key = "q", desc = "Quit",          	func = core.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
 		}
@@ -149,6 +151,24 @@ function ExecuteCode(t, code)
 			UpdateToDisplay(err)
 			return false
 		end
+	end
+
+	-- done
+	return true
+end
+
+-- for executing custom code
+function ExecuteTest(t)
+	local f, err = loadstring("test.T()")
+
+	-- valid function?
+	if f then
+		-- executing the code as wordt
+		coretask.AddWork(f)
+		UpdateToDisplay("test.T() is queued for execution")
+	else
+		UpdateToDisplay(err)
+		return false
 	end
 
 	-- done
