@@ -2,7 +2,7 @@ local db = {}
 
 -- short hand for current test to run
 function T_()
-    corelog.WriteToLog("Running T()")
+    corelog.WriteToLog("Running T_()")
     print("!")
 
 --    T_enterprise_storage_buildAndStartNewSite()
