@@ -46,6 +46,7 @@ function BuildBlueprint_MetaData(buildData)
     }
 
     -- loop on layers
+    local lastLocation = coremove.CopyLocation(buildData.blueprintStartpoint)
     for i, buildLayer in ipairs(buildData.blueprint.layerList) do
         -- determine buildData for this layer
         local layerBuildData = {
@@ -62,7 +63,7 @@ function BuildBlueprint_MetaData(buildData)
         local layerMetaData = BuildRectangularPattern_MetaData(layerBuildData)
 
         -- update blueprint metadata
-        metaData.fuelNeeded = metaData.fuelNeeded + layerMetaData.fuelNeeded
+        metaData.fuelNeeded = metaData.fuelNeeded + NeededFuelToFrom(layerBuildData.startpoint, lastLocation) + layerMetaData.fuelNeeded
         for i, layerItemNeeded in ipairs(layerMetaData.itemsNeeded) do
             -- find item in itemlist (and increment counter if found)
             local itemAlreadyInList = false
@@ -81,10 +82,16 @@ function BuildBlueprint_MetaData(buildData)
                 table.insert(metaData.itemsNeeded, {itemName = layerItemNeeded.itemName, itemCount = layerItemNeeded.itemCount})
             end
         end
+
+        lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.pattern.deltaX, layerBuildData.pattern.deltaY, 0)
     end
 
     -- update metadata with escapeSequence (if present)
-    -- ToDo: implement
+    for i, escapeLocation in ipairs(buildData.blueprint.escapeSequence) do
+        metaData.fuelNeeded = metaData.fuelNeeded + NeededFuelToFrom(escapeLocation, lastLocation)
+
+        lastLocation = escapeLocation
+    end
 
     return metaData
 end
