@@ -211,16 +211,18 @@ function ExecuteTest(t)
 
 		-- test options
 		local options	= {
-			{key = "g", desc = "t_main", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
-			{key = "m", desc = "t_move", 			func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
-			{key = "c", desc = "t_construction", 	func = ExecuteTest, param = {file = t_construction, filename = "t_construction"}},
+			{key = "g", desc = "general", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
+			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
+			{key = "a", desc = "assignment", 		func = ExecuteTest, param = {file = t_assignment, filename = "t_assignment"}},
+			{key = "c", desc = "construction", 		func = ExecuteTest, param = {file = t_construction, filename = "t_construction"}},
+			{key = "f", desc = "foresting", 		func = ExecuteTest, param = {file = t_foresting, filename = "t_foresting"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 
 		-- this is the next screen
 		NextScreen({
 			clear       = true,
-			intro       = "Choose a test file",
+			intro       = "Choose a test type",
 			option      = options,
 			question    = "Make your choice"
 		})

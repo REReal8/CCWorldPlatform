@@ -1,0 +1,38 @@
+function End(assignmentId)
+    coreassignment.EndAssignment(assignmentId)
+end
+
+function T_MetaDataConditionsMet()
+    local now = coreutils.UniversalTime()
+    local metaData = {
+        startTime = now + 1000,
+        needTurtle = true,
+        needTool = true,
+        fuelNeeded = 500,
+--        fuelNeeded = 50000,
+        location = nil,
+        itemsNeeded = {
+            {itemName = "minecraft:torch", itemCount = 2},
+            {itemName = "minecraft:chest", itemCount = 2},
+        }
+    }
+
+    -- test startTime
+    corelog.WriteToLog("# Test StartTime condition")
+    if coreassignment.MetaDataConditionsMet(metaData) then
+        corelog.Error("t_main.T_MetaDataConditionsMet: Assignment in the future (="..metaData.startTime..") (now = "..now..") not skipped!")
+    end
+    metaData.startTime = now
+
+    -- test other conditions
+    corelog.WriteToLog("# Test Other conditions")
+    if not coreassignment.MetaDataConditionsMet(metaData) then
+       corelog.WriteToLog("t_main.T_MetaDataConditionsMet: Not all conditions met!")
+    end
+end
+
+
+
+
+
+
