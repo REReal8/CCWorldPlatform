@@ -505,16 +505,16 @@ function BuildCraftingStationL0()
     coremove.GoTo(crafterStart)
 
     -- place for future chest
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -6), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -6), buildFromAbove  = true, pattern = enterprise_factory.storageChestL0_pattern})
 
     -- we have a new crafting location!
     db.craftingLocation = coremove.GetRelativeLocation(crafterStart, 0, 0, -5)
 
     -- under the furnace layer
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -5), buildFromAbove  = true, pattern = enterprise_alchemie.underTheFurnanceLayerL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -5), buildFromAbove  = true, pattern = enterprise_factory.underTheFurnanceLayerL0_pattern})
 
     -- furnace layer
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -4), buildFromAbove  = true, pattern = enterprise_alchemie.furnanceLayerL0_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(crafterStart, 0, 0, -4), buildFromAbove  = true, pattern = enterprise_factory.furnanceLayerL0_pattern})
 
     -- up to surface
     coremove.GoTo(crafterStart)
@@ -532,8 +532,8 @@ function UpdateToCraftingStationL1()
     end
 
     -- build top layer
-    role_builder.BuildRectangularPattern_Task({startpoint = db.crafterLocation, buildFromAbove  = true, pattern = enterprise_alchemie.topLayerL1_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = db.crafterLocation, buildFromAbove  = true, pattern = enterprise_factory.topLayerL1_pattern})
 
     -- crafter temporary storage chest
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_alchemie.storageChestL1_pattern})
+    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_factory.storageChestL1_pattern})
 end
