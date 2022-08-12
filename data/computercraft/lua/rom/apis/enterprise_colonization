@@ -9,7 +9,7 @@
 
 
 function CreateNewWorld(callback, callbackData)
-    --[[
+--[[
     This public async function creates a new CCWorldPlatform world.
         It bootstraps the world logic by building an initiating several enterprise (sites). 
 
@@ -30,7 +30,7 @@ function CreateNewWorld(callback, callbackData)
     Parameters:
         callback     - (string) function name to call once the new world is created
         callbackData - (table) data to supply to callback
-    ]]--
+--]]
     -- check input
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
 
