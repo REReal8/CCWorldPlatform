@@ -165,7 +165,7 @@ function SaveDBToFile()
 
         -- is it a table?
         if type(value) == "table" then
-            local fileName = "/db/dht_"..key..".lua"
+            local fileName = "/debug/dht_"..key..".lua"
             coreutils.WriteToFile(fileName, "-- for manual reading only, changes to this file will be ignored", "overwrite")
             coreutils.WriteToFile(fileName, key.." =")
             coreutils.WriteToFile(fileName, value)
