@@ -1,10 +1,9 @@
--- [ 1] [ 2] [ 3] [ 4]
--- [ 5] [ 6] [ 7] [ 8]
--- [ 9] [10] [11] [12]
--- [13] [14] [15] [16]
-
 local db = {
-    enterpriseName  = "enterprise_factory",
+    -- turtle slots
+    -- [ 1] [ 2] [ 3] [ 4]
+    -- [ 5] [ 6] [ 7] [ 8]
+    -- [ 9] [10] [11] [12]
+    -- [13] [14] [15] [16]
     recipes        = {
         ["minecraft:stick"] = {
             crafting  = {
@@ -49,14 +48,89 @@ local db = {
     }
 }
 
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+
+
+--   _           _ _     _               _   _                      
+--   | |         (_) |   | |             | | | |                     
+--   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___ 
+--   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|
+--   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \
+--   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/
+--                           | |                                     
+--                           |_|                                     
+
+storageChestL0_pattern = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {},
+    clearRemainingSpace = true
+}
+
+underTheFurnanceLayerL0_pattern = {
+    deltaX      = 1,
+    deltaY      = 2,
+    objectList  = {},
+    clearRemainingSpace = true
+}
+
+furnanceLayerL0_pattern = {
+    deltaX      = 1,
+    deltaY      = 2,
+    objectList  = {
+        { x = 0, y = 1, block = "minecraft:furnace"},
+    },
+    clearRemainingSpace = true
+}
+
+storageChestL1_pattern = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+        { x = 0, y = 0, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = false
+}
+
+topLayerL1_pattern = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3, block = "minecraft:torch"},
+        { x = 2, y = 5, block = "minecraft:chest"},
+        { x = 3, y = 0, block = "minecraft:torch"},
+        { x = 4, y = 5, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true
+}
+
+--          _     _                                              _                        _                 _      
+--         | |   | |                                            | |                      | |               | |     
+--     ___ | | __| |  _ __ ___   ___  ___ ___  __ _  __ _  ___  | |__   __ _ ___  ___  __| |   ___ ___   __| | ___ 
+--    / _ \| |/ _` | | '_ ` _ \ / _ \/ __/ __|/ _` |/ _` |/ _ \ | '_ \ / _` / __|/ _ \/ _` |  / __/ _ \ / _` |/ _ \
+--   | (_) | | (_| | | | | | | |  __/\__ \__ \ (_| | (_| |  __/ | |_) | (_| \__ \  __/ (_| | | (_| (_) | (_| |  __/
+--    \___/|_|\__,_| |_| |_| |_|\___||___/___/\__,_|\__, |\___| |_.__/ \__,_|___/\___|\__,_|  \___\___/ \__,_|\___|
+--                                                   __/ |                                                         
+--                                                  |___/                                                          
+
 function NewAlchemieSite(data)
     -- data.location = {x=.., y=.., z=.., dx=.., dy=..}
     -- data.type = "simple" | "regular"
     local enterpriseId   = coreutils.NewId()
+    local enterpriseName  = "enterprise_factory"
+
 
     -- data verrijken
     data.enterpriseId   = enterpriseId
-    data.enterpriseName = db.enterpriseName
+    data.enterpriseName = enterpriseName
     data.topchests      = {}
     data.furnaces       = {}
     data.taskList       = {}
@@ -291,58 +365,3 @@ function ProcessMakeItemMessage(message)
         -- no recipe known for this item!
     end
 end
-
-
---   _           _ _     _               _   _                      
---   | |         (_) |   | |             | | | |                     
---   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___ 
---   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|
---   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \
---   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/
---                           | |                                     
---                           |_|                                     
-
-storageChestL0_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {},
-    clearRemainingSpace = true
-}
-
-underTheFurnanceLayerL0_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {},
-    clearRemainingSpace = true
-}
-
-furnanceLayerL0_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {
-        { x = 0, y = 1, block = "minecraft:furnace"},
-    },
-    clearRemainingSpace = true
-}
-
-storageChestL1_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = false
-}
-
-topLayerL1_pattern = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3, block = "minecraft:torch"},
-        { x = 2, y = 5, block = "minecraft:chest"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 4, y = 5, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true
-}
-
