@@ -1,7 +1,7 @@
 local db = {}
 
 -- short hand for current test to run
-function T()
+function T_()
     corelog.WriteToLog("Running T()")
     print("!")
 
