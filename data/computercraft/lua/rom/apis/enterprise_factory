@@ -57,7 +57,7 @@ local db = {
 --   | |
 --   |_|
 
--- enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, type="basic"}, "coreassignment.Dummy_Callback", {})
+-- enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, type="basic", upgrade=false}, "coreassignment.Dummy_Callback", {})
 function BuildNewSite(siteData, callback, callbackData)
 --[[
     This public async service builds a new factory site.
@@ -77,17 +77,27 @@ function BuildNewSite(siteData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- what kind of factory is this?
+    local factoryBuildData = nil
     if siteData.type == "basic" then
         -- let construction enterprise build the site
-        local factoryBuildData = {
+        factoryBuildData = {
             blueprintStartpoint = coremove.CopyLocation(siteData.location),
             blueprint = GetFactory_Basic_blueprint(siteData)
         }
-        corelog.WriteToLog(">Building factory at "..textutils.serialise(factoryBuildData.blueprintStartpoint))
-        enterprise_construction.BuildBlueprint(factoryBuildData, callback, callbackData)
+    elseif siteData.type == "simple" then
+        -- let construction enterprise build the site
+        factoryBuildData = {
+            blueprintStartpoint = coremove.CopyLocation(siteData.location),
+            blueprint = GetFactory_Simple_blueprint(siteData)
+        }
     else
         corelog.Error("enterprise_factory.BuildNewSite: Don't know how to build a factory of type "..siteData.type)
+        return -- ToDo do we want to call callback function with { false } or is it maybe better not to do so, to be able to manually correct?
     end
+
+    -- let construction enterprise build the site
+    corelog.WriteToLog(">Building "..siteData.type.." factory at "..textutils.serialise(factoryBuildData.blueprintStartpoint))
+    enterprise_construction.BuildBlueprint(factoryBuildData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -116,7 +126,7 @@ local furnanceLayerL0_pattern = {
     clearRemainingSpace = true
 }
 
-storageChestL1_pattern = {
+local storageChestL1_pattern = {
     deltaX      = 1,
     deltaY      = 1,
     objectList  = {
@@ -125,7 +135,7 @@ storageChestL1_pattern = {
     clearRemainingSpace = false
 }
 
-topLayerL1_pattern = {
+local topLayerL1_pattern = {
     deltaX      = 6,
     deltaY      = 6,
     objectList  = {
@@ -160,6 +170,31 @@ function GetFactory_Basic_blueprint(siteData)
         { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = furnanceLayerL0_pattern},
         { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
     }
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
+    }
+
+    return blueprint
+end
+
+function GetFactory_Simple_blueprint(siteData)
+    local onlyUpgrade = siteData.upgrade
+
+    -- construct layer list
+    local layerList = {
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, pattern = topLayerL1_pattern},
+    }
+    if not onlyUpgrade then
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = shaftLayer_pattern})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = aboveOrBelowFurnanceLayerL0_pattern})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = furnanceLayerL0_pattern})
+    end
+    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = storageChestL1_pattern})
 
     -- construct blueprint
     local blueprint = {

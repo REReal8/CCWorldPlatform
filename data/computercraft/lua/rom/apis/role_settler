@@ -1,11 +1,7 @@
--- the table that stores the data
 local db = {
     forestLocation      = {x= 0, y= 0, z= 1, dx=0, dy=1},
     nTrees = 1,
-    craftingLocation    = {x= 3, y= 2, z= 1, dx=0, dy=1},
-    crafterLocation     = {x=12, y= 0, z= 1, dx=0, dy=1},
 }
-
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -60,7 +56,7 @@ function PrimarySettle_Task(settleData)
     turtle.dig()
 
     -- eerste log omzetten naar planken
-    LogToPlanks(4)
+    LogToPlanks(startLocation, 4)
 
     -- nu kunnen we bijtanken
     coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4})
@@ -75,7 +71,7 @@ function PrimarySettle_Task(settleData)
     local sticks    = coreinventory.CountItem("minecraft:stick")
 
     -- logs to planks, leave 2 logs behind
-    LogToPlanks((logs - 2)*4)
+    LogToPlanks(startLocation, (logs - 2)*4)
     local planks    = coreinventory.CountItem("minecraft:birch_planks")
 
     -- burn the planks and the sticks
@@ -118,9 +114,12 @@ function CollectCobbleStone_Task(settleData)
 end
 
 function CreateFurnaceAndCleanup_Task(settleData)
+    -- check input
+    local craftingLocation = settleData.startLocation
+
     -- craft furnace
     corelog.WriteToLog (">Creating furnace & cleaning up initial crafting location<")
-    CobblestoneToFurnace(1)
+    CobblestoneToFurnace(craftingLocation, 1)
 
     -- remove initial crafting location
     if coreinventory.SelectItem("minecraft:dirt") then
@@ -133,19 +132,21 @@ end
 function RemainingSettle_Task(settleData)
     -- check input
     local startLocation = settleData.startLocation
+    local factoryLocation = settleData.factoryLocation
+    local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
 
     -- craft torches
-    LogToTorches(4)
+    LogToTorches(factoryLocation, craftingLocation, 4)
 
     -- expand forest to max size
     local treesNeeded = 6
     corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees<")
     while db.nTrees < treesNeeded do
         -- Harvest Forest
-        HarvestForest(startLocation)
+        HarvestForest(craftingLocation, startLocation)
 
         -- try extend forest
-        TryExtendForest(treesNeeded)
+        TryExtendForest(factoryLocation, craftingLocation, treesNeeded)
     end
 
     -- gather enough resources to craft all remaining items (chests, torches, ...)
@@ -155,23 +156,19 @@ function RemainingSettle_Task(settleData)
     corelog.WriteToLog(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
-        HarvestForest(startLocation)
+        HarvestForest(craftingLocation, startLocation)
     end
 
     -- create chests
     corelog.WriteToLog(">Creating chests and torches<")
-    LogToChests(chestsNeeded)
+    LogToChests(craftingLocation, chestsNeeded)
 
     -- create torches
-    LogToTorches(torchesNeeded)
+    LogToTorches(factoryLocation, craftingLocation, torchesNeeded)
 
     -- redo first tree according to pattern
     corelog.WriteToLog(">Finishing Forest<")
     BuildForestTreePattern( 0, 0, 0)
-
-    -- finish the crafting station
-    corelog.WriteToLog(">Finishing Crafting Station<")
-    UpdateToCraftingStationL1()
 end
 
 
@@ -183,7 +180,7 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 
-function HarvestForest(startLocation)
+function HarvestForest(craftingLocation, startLocation)
     corelog.WriteToLog(" Harvesting Forest")
 
     -- go to first tree position
@@ -200,7 +197,7 @@ function HarvestForest(startLocation)
     })
 
     -- refuel
-    Refuel()
+    Refuel(craftingLocation)
 end
 
 function WaitForTree()
@@ -215,7 +212,7 @@ function WaitForTree()
     end
 end
 
-function Refuel()
+function Refuel(craftingLocation)
     local fuelLevel     = turtle.getFuelLevel()
     local minFuel       = 500
     local refuelLevel   = 1000
@@ -230,7 +227,7 @@ function Refuel()
         local logsToBurn  = math.min(logs, logsNeeded)
 
         -- logs to planks
-        LogToPlanks(logsToBurn * 4)
+        LogToPlanks(craftingLocation, logsToBurn * 4)
 
         -- burn all the planks just crafted
         local planksPresent   = coreinventory.CountItem("minecraft:birch_planks")
@@ -242,7 +239,7 @@ function Refuel()
     end
 end
 
-function LogToPlanks(planks)
+function LogToPlanks(craftingLocation, planks)
     -- check input
     local logsNeeded = math.ceil(planks / 4)
     local logs = coreinventory.CountItem("minecraft:birch_log")
@@ -262,11 +259,11 @@ function LogToPlanks(planks)
         itemName = "minecraft:birch_planks",
         itemCount = planks,
         ingredientsLocation = "inventory",
-        workingLocation = db.craftingLocation,
+        workingLocation = craftingLocation,
     })
 end
 
-function PlanksToStick(sticks)
+function PlanksToStick(craftingLocation, sticks)
     -- check input
     local planksNeeded = math.ceil(sticks / 2)
     local planks = coreinventory.CountItem("minecraft:birch_planks")
@@ -290,11 +287,11 @@ function PlanksToStick(sticks)
         itemName = "minecraft:stick",
         itemCount = sticks,
         ingredientsLocation = "inventory",
-        workingLocation = db.craftingLocation,
+        workingLocation = craftingLocation,
     })
 end
 
-function CobblestoneToFurnace(furnances)
+function CobblestoneToFurnace(craftingLocation, furnances)
     --? put this static somewhere?
     local stoneName = "minecraft:cobblestone"
     local furnaceName = "minecraft:furnace"
@@ -322,11 +319,11 @@ function CobblestoneToFurnace(furnances)
         itemName = furnaceName,
         itemCount = 1,
         ingredientsLocation = "inventory",
-        workingLocation = db.craftingLocation,
+        workingLocation = craftingLocation,
     })
 end
 
-function LogToTorches(torches)
+function LogToTorches(factoryLocation, craftingLocation, torches)
     -- check input
     local sticksNeeded = math.ceil(torches / 4)
     local charcoalNeeded = math.ceil(torches / 4)
@@ -336,19 +333,19 @@ function LogToTorches(torches)
     if logs < logsNeeded then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for torches(=" .. torches .. ")") return false end
 
     -- create planks (as fuel)
-    LogToPlanks(planksNeeded)
+    LogToPlanks(craftingLocation, planksNeeded)
 
     -- create sticks
-    PlanksToStick(sticksNeeded)
+    PlanksToStick(craftingLocation, sticksNeeded)
 
     -- smelt log into charcoal
-    LogToCharcoal(charcoalNeeded)
+    LogToCharcoal(factoryLocation, charcoalNeeded)
 
     -- craft torches
-    CharcoalAndStickToTorch(torches)
+    CharcoalAndStickToTorch2(craftingLocation, torches)
 end
 
-function LogToChests(chests)
+function LogToChests(craftingLocation, chests)
     -- check input
     local planksNeeded = chests * 8
     local logsNeeded = math.ceil(planksNeeded / 4)
@@ -356,13 +353,13 @@ function LogToChests(chests)
     if (logs < logsNeeded) then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for chests(=" .. chests .. ")") return false end
 
     -- create planks
-    LogToPlanks(planksNeeded)
+    LogToPlanks(craftingLocation, planksNeeded)
 
     -- create chests
-    PlanksToChests(chests)
+    PlanksToChests(craftingLocation, chests)
 end
 
-function PlanksToChests(chests)
+function PlanksToChests(craftingLocation, chests)
     --? put this static somewhere?
     local plankName = "minecraft:birch_planks"
     local chestName = "minecraft:chest"
@@ -390,11 +387,11 @@ function PlanksToChests(chests)
         itemName = chestName,
         itemCount = chests,
         ingredientsLocation = "inventory",
-        workingLocation = db.craftingLocation,
+        workingLocation = craftingLocation,
     })
 end
 
-function LogToCharcoal(charcoals)
+function LogToCharcoal(factoryLocation, charcoals)
     --? put this static somewhere?
     local logName = "minecraft:birch_log"
     local plankName = "minecraft:birch_planks"
@@ -416,8 +413,8 @@ function LogToCharcoal(charcoals)
         fuel = "minecraft:birch_planks",    -- leave blank if you want te crafter to arrange the fuel
         ingredientsLocation = "inventory",
         itemCount = charcoals,
-        workingLocation = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, -3),
-        entryLocation   = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1),
+        workingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -3),
+        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
     })
 
     -- wait for the furnace
@@ -425,12 +422,12 @@ function LogToCharcoal(charcoals)
 
     -- get items from the furnace
     role_alchemist.Pickup({
-        workingLocation = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, -3),
-        entryLocation   = coremove.GetRelativeLocation(db.crafterLocation, 3, 3, 1),
+        workingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -3),
+        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
     })
 end
 
-function CharcoalAndStickToTorch(torches)
+function CharcoalAndStickToTorch2(craftingLocation, torches)
     role_alchemist.Craft({
         taskId = "0",
         alchemieType = "craft",
@@ -448,7 +445,7 @@ function CharcoalAndStickToTorch(torches)
         itemName = "minecraft:torch",
         itemCount = torches,
         ingredientsLocation = "inventory",
-        workingLocation = db.craftingLocation,
+        workingLocation = craftingLocation,
     })
 end
 
@@ -463,11 +460,11 @@ end
 --
 
 
-function TryExtendForest(nTrees)
+function TryExtendForest(factoryLocation, craftingLocation, nTrees)
     corelog.WriteToLog(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
 
     -- craft torches
-    LogToTorches(4)
+    LogToTorches(factoryLocation, craftingLocation, 4)
 
     while db.nTrees < nTrees do
         -- check input (sapling + 2x torch)
@@ -493,20 +490,4 @@ function BuildForestTreePattern(x, y, z)
     role_builder.BuildRectangularPattern_Task({startpoint = point, buildFromAbove = true, replacePresentObjects = false, pattern = enterprise_forest.tree_pattern})
 end
 
-function UpdateToCraftingStationL1()
-    -- check inventory
-    local chests    = coreinventory.CountItem("minecraft:chest")
-    local torches   = coreinventory.CountItem("minecraft:torch")
 
-    -- enough?
-    if chests < 3 or torches < 2 then
-        corelog.Error("Not finishing the crafting station, not enough (chests: "..chests..", torches: "..torches..")")
-        return false
-    end
-
-    -- build top layer
-    role_builder.BuildRectangularPattern_Task({startpoint = db.crafterLocation, buildFromAbove  = true, pattern = enterprise_factory.topLayerL1_pattern})
-
-    -- crafter temporary storage chest
-    role_builder.BuildRectangularPattern_Task({startpoint = coremove.GetRelativeLocation(db.craftingLocation, 0, 0, -1), buildFromAbove  = true, pattern = enterprise_factory.storageChestL1_pattern})
-end

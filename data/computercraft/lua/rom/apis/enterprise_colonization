@@ -45,7 +45,9 @@ function CreateNewWorld(callback, callbackData)
         layers          = 2,
 
         factoryLocation = {x=12, y= 0, z= 1, dx=0, dy=1},
-        factoryType     = "basic"
+        factoryType0    = "basic",
+        factoryType1    = "simple",
+        upgradeToSimple = true,
     }
 
     -- create project definition
@@ -62,10 +64,16 @@ function CreateNewWorld(callback, callbackData)
             }},
             { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
                 { keyName = "location"  , valueSource = 0, sourceKey = "factoryLocation" },
-                { keyName = "type"      , valueSource = 0, sourceKey = "factoryType" },
+                { keyName = "type"      , valueSource = 0, sourceKey = "factoryType0" },
             }},
             { serviceName = "enterprise_colonization.IntermediateSettleStep", async = true, input = {
                 { keyName = "startLocation"  , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "factoryLocation" , valueSource = 0, sourceKey = "factoryLocation" },
+            }},
+            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
+                { keyName = "location"  , valueSource = 0, sourceKey = "factoryLocation" },
+                { keyName = "type"      , valueSource = 0, sourceKey = "factoryType1" },
+                { keyName = "upgrade"   , valueSource = 0, sourceKey = "upgradeToSimple" },
             }},
             { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
                 { keyName = "location"  , valueSource = 0, sourceKey = "siloLocation" },

@@ -131,15 +131,18 @@ function BuildRectangularPattern_MetaData(buildData)
     if type(buildData.pattern) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_MetaData: pattern not a table") return {} end
 
     -- determine needed items
-    local itemList = BuildRectangularPattern_ItemsNeeded(buildData.pattern)
+    local pattern = buildData.pattern
+    local itemList = BuildRectangularPattern_ItemsNeeded(pattern)
+    local startpoint = buildData.startpoint
+    local fuelNeeded = pattern.deltaX * pattern.deltaY + NeededFuelToFrom(startpoint) + 5 -- some extra to correct for building from above or below
 
     -- return metadata
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(buildData.startpoint), -- copy needed because otherwise reference is used twice
+        location = coremove.CopyLocation(startpoint),
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 500, -- ToDo: calculate from actual movements needed
+        fuelNeeded = fuelNeeded,
         itemsNeeded = itemList
     }
 end
@@ -309,3 +312,10 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+
+function NeededFuelToFrom(endLocation, startLocation)
+    startLocation = startLocation or {x=0, y= 0, z= 0, dx=0, dy=1}
+
+    return math.abs(endLocation.x - startLocation.x) + math.abs(endLocation.y - startLocation.y) + math.abs(endLocation.z - startLocation.z)
+end
