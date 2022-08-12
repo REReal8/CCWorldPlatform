@@ -1,4 +1,4 @@
-function T_()
+function T_dummy()
     corelog.WriteToLog("Running T_()")
     print("!")
 end

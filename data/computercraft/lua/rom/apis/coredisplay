@@ -196,8 +196,8 @@ function ExecuteTest(t)
 		table.sort(functions)
 
 		-- create the list of options
-		for i, name in ipairs(functions) do options[i] = {key = IndexToKey(i), desc = name, func = ExecuteTest, param = {func = name, filename = t.filename}} end
-		table.insert(options, {key = "x", desc = "Back to main menu", func = function () return true end})
+		for i, name in ipairs(functions) do options[i] = {key = IndexToKey(i), desc = string.sub(name,3,-1), func = ExecuteTest, param = {func = name, filename = t.filename}} end
+		table.insert(options, {key = "x", desc = "Back to test menu", func = ExecuteTest, param = {}})
 
 		-- this is the next screen
 		NextScreen({
