@@ -179,8 +179,7 @@ function CheckIntegrity_Task(data)
 
         -- variables
         local changed       = false
-        local chest         = peripheral.find("minecraft:chest")
-        local list          = chest.list()
+        local list          = peripheral.call("front", "list")
         local items         = {}
         local itemsCount    = 0
 
