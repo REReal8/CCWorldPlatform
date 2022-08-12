@@ -168,8 +168,6 @@ function ExecuteTest(t, response)
 
 		-- get all functions in test file / object
 		for key, value in pairs(t_main) do
-			corelog.WriteToLog("(key,value)=("..key..",xx)")
-
 			-- add key if the value is a function and name starts with T_
 			if type(value) == "function" and string.find(key, "T_") then table.insert(functions, key) end
 		end
