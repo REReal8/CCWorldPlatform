@@ -232,7 +232,7 @@ end
 function GoHomeCallBack(callbackArgumentTable, taskResult)
     corelog.WriteToLog("t_main.GoHomeCallBack("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
 
-    GoHome()
+    t_move.T_GoHome()
 end
 
 function BirchGrow()
