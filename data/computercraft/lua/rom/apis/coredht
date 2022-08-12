@@ -159,6 +159,18 @@ function SaveDBToFile()
 
     -- save the db table to a file (this may take some time with larger dht's)
     coreutils.WriteToFile(filename, db, "overwrite")
+
+    -- create seperate files for each key (if the key is a table)
+    for key, value in pairs(db) do
+
+        -- is it a table?
+        if type(value) == "table" then
+            local fileName = "/db/dht_"..key..".lua"
+            coreutils.WriteToFile(fileName, "-- for manual reading only, changes to this file will be ignored", "overwrite")
+            coreutils.WriteToFile(fileName, key.." =")
+            coreutils.WriteToFile(fileName, value)
+        end
+    end
 end
 
 --                         _
