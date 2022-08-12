@@ -87,12 +87,12 @@ function PrimarySettle_Task(settleData)
     corelog.WriteToLog("We have "..turtle.getFuelLevel().." fuel")
 end
 
-function SecondarySettle_Task(settleData)
+function CollectCobbleStone_Task(settleData)
     -- check input
     local startLocation = settleData.startLocation
 
     -- get into digging position
-    corelog.WriteToLog (">Creating furnace<")
+    corelog.WriteToLog (">Collecting cobblestone<")
     coreinventory.Equip("minecraft:diamond_pickaxe")
     turtle.digDown()
     coremove.Down()
@@ -115,8 +115,11 @@ function SecondarySettle_Task(settleData)
     -- restore our crafting spot
     coremove.MoveTo({z = startLocation.z - 1})
     if coreinventory.SelectItem("minecraft:dirt") or coreinventory.SelectItem("minecraft:cobblestone") then turtle.placeDown() end
+end
 
+function CreateFurnaceAndCleanup_Task(settleData)
     -- craft furnace
+    corelog.WriteToLog (">Creating furnace & cleaning up initial crafting location<")
     CobblestoneToFurnace(1)
 
     -- remove initial crafting location
@@ -125,6 +128,11 @@ function SecondarySettle_Task(settleData)
     else
         corelog.Warning("No dirt to revert initial crafting location")
     end
+end
+
+function RemainingSettle_Task(settleData)
+    -- check input
+    local startLocation = settleData.startLocation
 
     -- build initial crafting location
     corelog.WriteToLog(">Creating initial crafting station<")
