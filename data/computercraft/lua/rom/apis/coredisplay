@@ -214,8 +214,8 @@ function ExecuteTest(t)
 
 		-- test options
 		local options	= {
-			{key = "g", desc = "file t_main", func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
-			{key = "m", desc = "file t_move", func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
+			{key = "g", desc = "t_main", func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
+			{key = "m", desc = "t_move", func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 
