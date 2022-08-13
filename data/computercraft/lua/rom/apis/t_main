@@ -35,7 +35,7 @@ function T_DummyURLTryoutCode()
 end
 
 function T_enterprise_factory_buildNewSite()
-    enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, type="basic"}, "coreassignment.Dummy_Callback", {})
+    enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1"}, "coreassignment.Dummy_Callback", {})
 end
 
 function T_enterprise_storage_buildAndStartNewSite()

@@ -57,7 +57,7 @@ local db = {
 --   | |
 --   |_|
 
--- enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, type="basic", upgrade=false}, "coreassignment.Dummy_Callback", {})
+-- enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1", upgrade=false}, "coreassignment.Dummy_Callback", {})
 function BuildNewSite(siteData, callback, callbackData)
 --[[
     This public async service builds a new factory site.
@@ -66,37 +66,37 @@ function BuildNewSite(siteData, callback, callbackData)
         nil
 
     Parameters:
-        siteData     - (table) data about this site, like type and layout
+        siteData     - (table) data about this site, like siteVersion and layout
         callback     - (string) function name to call once the site is build
         callbackData - (table) function data to supply to callback
 ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite: Invalid siteData input') return nil end
+    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite: Invalid siteData input') return nil end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite: Invalid callback function') return nil end
     callbackData = callbackData or {}
 
     -- what kind of factory is this?
     local factoryBuildData = nil
-    if siteData.type == "basic" then
+    if siteData.siteVersion == "v1" then
         -- let construction enterprise build the site
         factoryBuildData = {
             blueprintStartpoint = coremove.CopyLocation(siteData.location),
-            blueprint = GetFactory_Basic_blueprint(siteData)
+            blueprint = GetFactory_V1_blueprint(siteData)
         }
-    elseif siteData.type == "simple" then
+    elseif siteData.siteVersion == "v2" then
         -- let construction enterprise build the site
         factoryBuildData = {
             blueprintStartpoint = coremove.CopyLocation(siteData.location),
-            blueprint = GetFactory_Simple_blueprint(siteData)
+            blueprint = GetFactory_V2_blueprint(siteData)
         }
     else
-        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to build a factory of type "..siteData.type)
+        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to build a factory of version "..siteData.siteVersion)
         return -- ToDo do we want to call callback function with { false } or is it maybe better not to do so, to be able to manually correct?
     end
 
     -- let construction enterprise build the site
-    corelog.WriteToLog(">Building "..siteData.type.." factory at "..textutils.serialise(factoryBuildData.blueprintStartpoint))
+    corelog.WriteToLog(">Building factory version "..siteData.siteVersion.." at "..textutils.serialise(factoryBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint(factoryBuildData, callback, callbackData)
 end
 
@@ -162,7 +162,7 @@ local aboveOrBelowFurnanceLayerL0_pattern = {
     clearRemainingSpace = true
 }
 
-function GetFactory_Basic_blueprint(siteData)
+function GetFactory_V1_blueprint(siteData)
     -- construct layer list
     local layerList = {
         { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = shaftLayer_pattern},
@@ -182,7 +182,7 @@ function GetFactory_Basic_blueprint(siteData)
     return blueprint
 end
 
-function GetFactory_Simple_blueprint(siteData)
+function GetFactory_V2_blueprint(siteData)
     local onlyUpgrade = siteData.upgrade
 
     -- construct layer list
