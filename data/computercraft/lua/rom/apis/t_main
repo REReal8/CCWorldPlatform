@@ -3,6 +3,37 @@ function T_dummy()
     print("!")
 end
 
+function T_DummyURLTryoutCode()
+    -- This code is not yet implemented. Just meant as a way to tryout a possible format for using URL's to handle items based on a private discussion on Signal.
+
+    -- create project definition
+    local projectInputData = {
+        itemsSourceURL = "ccwitp://storage:silo1/topchest1?minecraft:item1=1&minecraft:item2=1",
+        itemsDestinationURL = "ccwitp://storage/"
+     }
+    local callbackFunction = "ACallBackFunction"
+    local callbackData = { }
+    local aTypicalServiceUsingItemsProject = {
+        services    = {
+            { serviceName = "enterprise_transport.GetItemsIntoInventory ", async = true, input = {
+                { keyName = "url"  , valueSource = 0, sourceKey = "itemsSourceURL" },
+            }},
+
+            -- other services (that require items in a turtle's iventory) to implement the typical service
+
+            { serviceName = "enterprise_transport.PutItemsFromInventory", async = false, input = {
+                { keyName = "url"  , valueSource = 0, sourceKey = "itemsDestinationURL" },
+            }},
+        },
+        returnData  = {
+            -- optional return data
+        }
+    }
+
+    -- start project
+    enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
+end
+
 function T_enterprise_factory_buildNewSite()
     enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, type="basic"}, "coreassignment.Dummy_Callback", {})
 end
