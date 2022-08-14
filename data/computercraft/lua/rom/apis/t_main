@@ -8,7 +8,7 @@ function T_DummyURLTryoutCode()
 
     -- create project definition
     local projectInputData = {
-        itemsSourceURL = "ccwitp://storage:silo1/topchest1?minecraft:item1=1&minecraft:item2=1",
+        itemsSourceURL = "ccwitp://storage/site=2/chest=4/?minecraft:birch_log=1&minecraft:torch=5",
         itemsDestinationURL = "ccwitp://storage/"
      }
     local callbackFunction = "ACallBackFunction"
