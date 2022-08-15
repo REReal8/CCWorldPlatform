@@ -625,6 +625,10 @@ function GoTo( t, force )
 	TurnTo( t )
 end
 
+function BlockDistance(loc1, loc2)
+	return math.abs(loc2.x - loc1.x) + math.abs(loc2.y - loc1.y) + math.abs(loc2.z - loc1.z)
+end
+
 -- local functions
 function SaveDB()
     -- save the db table to a file
