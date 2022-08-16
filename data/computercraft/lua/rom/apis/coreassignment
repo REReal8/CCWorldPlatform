@@ -292,6 +292,7 @@ function DoAssignment(assignment)
     corelog.WriteToAssignmentLog("Completed task", assignmentId)
 
     -- call callBack function
+    -- ToDo consider using coreutils.DoCallback
     f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.callbackArgumentTable)..","..textutils.serialize(taskResult).. ")")
     corelog.WriteToAssignmentLog("Calling callback function", assignmentId)
     if f then f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
