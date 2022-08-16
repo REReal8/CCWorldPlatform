@@ -250,6 +250,8 @@ function Equip(itemName)
         -- great!
         return turtle.equipRight()
     else
+        corelog.Warning("coreinventory.Equip: Could not find "..itemName.." => not equiped")
+
         -- not found, restore
         if slot then
             turtle.select(slot)
