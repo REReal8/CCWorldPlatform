@@ -54,33 +54,33 @@ function CreateNewWorld(callback, callbackData)
     local createNewWorldProject = {
         services    = {
             { serviceName = "enterprise_colonization.PrimarySettleStep", async = true, input = {
-                { keyName = "startLocation" , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_colonization.CollectCobbleStoneStep", async = true, input = {
-                { keyName = "startLocation" , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_colonization.CreateFurnaceAndCleanupStep", async = true, input = {
-                { keyName = "startLocation" , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
-                { keyName = "location"      , valueSource = 0, sourceKey = "factoryLocation" },
-                { keyName = "siteVersion"   , valueSource = 0, sourceKey = "factoryVersion1" },
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion1" },
             }},
             { serviceName = "enterprise_colonization.IntermediateSettleStep", async = true, input = {
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "factoryLocation"   , valueSource = 0, sourceKey = "factoryLocation" },
             }},
             { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
-                { keyName = "location"      , valueSource = 0, sourceKey = "factoryLocation" },
-                { keyName = "siteVersion"   , valueSource = 0, sourceKey = "factoryVersion2" },
-                { keyName = "upgrade"       , valueSource = 0, sourceKey = "upgradeToSimple" },
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion2" },
+                { keyName = "upgrade"           , valueSource = 0, sourceKey = "upgradeToSimple" },
             }},
             { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
-                { keyName = "location"  , valueSource = 0, sourceKey = "siloLocation" },
-                { keyName = "type"      , valueSource = 0, sourceKey = "type" },
-                { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
-                { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
-                { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+                { keyName = "location"          , valueSource = 0, sourceKey = "siloLocation" },
+                { keyName = "type"              , valueSource = 0, sourceKey = "type" },
+                { keyName = "siloType"          , valueSource = 0, sourceKey = "siloType" },
+                { keyName = "topChests"         , valueSource = 0, sourceKey = "topChests" },
+                { keyName = "layers"            , valueSource = 0, sourceKey = "layers" },
             }},
         },
         returnData  = {
