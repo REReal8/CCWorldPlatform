@@ -123,15 +123,85 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
 end
 
 function GetAvailableSmeltSpot(siteId)
-    -- ToDo: implement
-    corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: NOT YET IMPLEMENTED")
+     -- check input
+     if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: Invalid site id ") return nil end
 
-    -- 
-    return nil
+    -- get the site
+    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
+    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then
+        corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: Failed retrieving factory site "..siteId)
+        return nil
+    end
+
+     -- find first available spot
+     -- ToDo consider finding best spot based on some selection criterium
+     for i, spot in ipairs(site.smeltingSpots) do
+        -- take first
+        return spot
+     end
+
+     -- 
+     corelog.Warning("enterprise_factory_site.GetAvailableSmeltSpot: No available smelting spot in site "..siteId)
+     return nil
 end
 
-function SmeltItem(productionData, recipe, callback, callbackData)
+function SmeltItem(siteId, productionData, recipe, callback, callbackData)
+    --[[
+        This async function should smelt items at the site siteId.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                    - (table) {success = true} if the items were succesfully produced
+
+        Parameters:
+            siteId                  - (string) id of the factory site
+            productionData          - (table) data about the item to produce, 
+                itemName            - name of items to produce
+                itemAmount          - amount of items to produce
+            recipe                  - (table) smelting recipe
+            callback                - (string) name of function to call once the items are made
+            callbackData            - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.SmeltItem: Invalid site id ") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- get the site
+    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
+    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then 
+        corelog.Error("enterprise_factory_site.SmeltItem: Failed retrieving factory site "..siteId)
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- get available spot
+    local spot = GetAvailableSmeltSpot(site.siteId)
+    if spot == nil then corelog.Error('enterprise_factory.SmeltItem: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- gather assignment data
+    local spotLocation = spot.location
+    local smeltData = {
+--        itemName = productionData.itemName,
+        recipe = recipe,
+        itemCount = productionData.itemAmount,
+
+        workingLocation = coremove.GetRelativeLocation(site.baseLocation, spotLocation.x, spotLocation.y, spotLocation.z),
+
+        -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
+        fuelItemName = "minecraft:birch_planks",
+        fuelItemCount = productionData.itemAmount
+    }
+    local metaData = role_alchemist.Smelt_MetaData(smeltData)
+
+    -- mark spot as unavailable
+    -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_alchemist.Smelt_Task", smeltData, callback, callbackData)
+
+    -- update the site in the dht
     -- ToDo: implement
-    corelog.Error("enterprise_factory_site.SmeltItem: NOT YET IMPLEMENTED")
-    return coreutils.DoCallback(callback, callbackData, {success = false})
+
+    return nil
 end

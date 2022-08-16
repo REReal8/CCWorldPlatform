@@ -247,8 +247,8 @@ function LogToPlanks(craftingLocation, planks)
 
     -- craft
     role_alchemist.Craft_Task({
-        taskId = "0",
-        alchemieType = "craft",
+--        taskId = "0",
+--        alchemieType = "craft",
         recipe = {
             [6] = {
                 itemName = "minecraft:birch_log",
@@ -258,7 +258,7 @@ function LogToPlanks(craftingLocation, planks)
         },
         itemName = "minecraft:birch_planks",
         itemCount = planks,
-        ingredientsLocation = "inventory",
+--        ingredientsLocation = "inventory",
         workingLocation = craftingLocation,
     })
 end
@@ -271,8 +271,8 @@ function PlanksToStick(craftingLocation, sticks)
 
     -- craft
     role_alchemist.Craft_Task({
-        taskId = "0",
-        alchemieType = "craft",
+--        taskId = "0",
+--        alchemieType = "craft",
         recipe = {
             [6] = {
                 itemName = "minecraft:birch_planks",
@@ -286,7 +286,7 @@ function PlanksToStick(craftingLocation, sticks)
         },
         itemName = "minecraft:stick",
         itemCount = sticks,
-        ingredientsLocation = "inventory",
+--        ingredientsLocation = "inventory",
         workingLocation = craftingLocation,
     })
 end
@@ -303,8 +303,8 @@ function CobblestoneToFurnace(craftingLocation, furnances)
 
     -- craft
     role_alchemist.Craft_Task({
-        taskId = "0",
-        alchemieType = "craft",
+--        taskId = "0",
+--        alchemieType = "craft",
         recipe = {
              [6] = {itemName = stoneName, itemCount = 1},
              [7] = {itemName = stoneName, itemCount = 1},
@@ -318,7 +318,7 @@ function CobblestoneToFurnace(craftingLocation, furnances)
         },
         itemName = furnaceName,
         itemCount = 1,
-        ingredientsLocation = "inventory",
+--        ingredientsLocation = "inventory",
         workingLocation = craftingLocation,
     })
 end
@@ -371,8 +371,8 @@ function PlanksToChests(craftingLocation, chests)
 
     -- create chests
     role_alchemist.Craft_Task({
-        taskId = "0",
-        alchemieType = "craft",
+--        taskId = "0",
+--        alchemieType = "craft",
         recipe = {
              [6] = {itemName = plankName, itemCount = 1},
              [7] = {itemName = plankName, itemCount = 1},
@@ -386,19 +386,18 @@ function PlanksToChests(craftingLocation, chests)
         },
         itemName = chestName,
         itemCount = chests,
-        ingredientsLocation = "inventory",
+--        ingredientsLocation = "inventory",
         workingLocation = craftingLocation,
     })
 end
 
 function LogToCharcoal(factoryLocation, charcoals)
     --? put this static somewhere?
-    local logName = "minecraft:birch_log"
     local plankName = "minecraft:birch_planks"
 
     -- check input
     local logsNeeded = charcoals
-    local logs = coreinventory.CountItem(logName)
+    local logs = coreinventory.CountItem("minecraft:birch_log")
     if (logs < logsNeeded) then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for charcoal(=" .. charcoals .. ")") return false end
     local planksNeeded = math.ceil(2 * charcoals / 3)
     local planks = coreinventory.CountItem(plankName)
@@ -406,31 +405,31 @@ function LogToCharcoal(factoryLocation, charcoals)
 
     role_alchemist.Smelt_Task({
         recipe  = {
-            ingredient = logName,
-            itemName = "minecraft:charcoal",
+            itemName = "minecraft:birch_log",
+--            itemName = "minecraft:charcoal",
             yield = 1,
         },
-        fuel = "minecraft:birch_planks",    -- leave blank if you want te crafter to arrange the fuel
-        ingredientsLocation = "inventory",
+        fuelItemName = "minecraft:birch_planks",
+--        ingredientsLocation = "inventory",
         itemCount = charcoals,
         workingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -3),
-        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
+--        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
     })
 
     -- wait for the furnace
     os.sleep(10)
 
     -- get items from the furnace
-    role_alchemist.Pickup({
+    role_alchemist.Pickup_Task({
         workingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -3),
-        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
+--        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
     })
 end
 
 function CharcoalAndStickToTorch2(craftingLocation, torches)
     role_alchemist.Craft_Task({
-        taskId = "0",
-        alchemieType = "craft",
+--        taskId = "0",
+--        alchemieType = "craft",
         recipe = {
             [6] = {
                 itemName = "minecraft:charcoal",
@@ -444,7 +443,7 @@ function CharcoalAndStickToTorch2(craftingLocation, torches)
         },
         itemName = "minecraft:torch",
         itemCount = torches,
-        ingredientsLocation = "inventory",
+--        ingredientsLocation = "inventory",
         workingLocation = craftingLocation,
     })
 end

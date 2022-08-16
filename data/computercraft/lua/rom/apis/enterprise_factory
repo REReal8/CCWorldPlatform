@@ -15,10 +15,10 @@ local db = {
                 yield   = 4
             },
         },
-        ["minecraft:charcoal"] = {
+        ["minecraft:charcoal"] = { -- ToDo consider similar format to crafting to simpify code
             smelting  = {
                 itemName    = "minecraft:birch_log",
-                itemCount   = 1,
+--                itemCount   = 1,
                 yield       = 1,
             },
         },
@@ -564,8 +564,8 @@ function ProcessNextTask(enterpriseId)
 
     -- execute this command using the task queue
         if taskTable.alchemieType == "craft"    then return coretask.AddWork(role_alchemist.Craft_Task,  taskTable)
-    elseif taskTable.alchemieType == "smelt"    then return coretask.AddWork(role_alchemist.Smelt,  taskTable)
-    elseif taskTable.alchemieType == "pickup"   then return coretask.AddWork(role_alchemist.Pickup, taskTable)
+    elseif taskTable.alchemieType == "smelt"    then return coretask.AddWork(role_alchemist.Smelt_Task,  taskTable)
+    elseif taskTable.alchemieType == "pickup"   then return coretask.AddWork(role_alchemist.Pickup_Task, taskTable)
     end
 end
 

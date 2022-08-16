@@ -12,20 +12,46 @@ function T_RemoveSites()
     enterprise_factory.RemoveSites()
 end
 
-function T_ProduceItem()
+function T_ProduceCraftItem_service()
     enterprise_factory.ProduceItem({itemName = "minecraft:birch_planks", itemAmount=12}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
+function T_ProduceSmeltItem_service()
+    enterprise_factory.ProduceItem({itemName = "minecraft:charcoal", itemAmount=3}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
 function T_Craft_Task()
-    local craftData = { -- "minecraft:birch_planks"
+    local craftData = { -- produce "minecraft:birch_planks"
         recipe = {
-            [6]    = { itemName = "minecraft:birch_log", itemCount = 1 },
-           yield   = 4
+            [6]         = { itemName = "minecraft:birch_log", itemCount = 1 },
+           yield        = 4
         },
-        itemCount = 4,
+        itemCount       = 4,
         workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -4),
-        ingredientsLocation = nil
     }
 
     role_alchemist.Craft_Task(craftData)
+end
+
+function T_Smelt_Task()
+    local smeltData = { -- produce ""minecraft:charcoal"
+        recipe = {
+            itemName    = "minecraft:birch_log",
+            yield       = 1
+        },
+        itemCount       = 3,
+        workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -3),
+        fuelItemName    = "minecraft:birch_planks",
+        fuelItemCount   = 3,
+    }
+
+    role_alchemist.Smelt_Task(smeltData)
+end
+
+function T_Pickup_Task()
+    local pickupData = {
+        workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -3),
+    }
+
+    role_alchemist.Pickup_Task(pickupData)
 end

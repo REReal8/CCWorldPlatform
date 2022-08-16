@@ -5,7 +5,7 @@ local db = {
 
 function Craft_MetaData(craftData)
     --[[
-       This function returns the metadata for the Craft_Task supplies with argument craftData.
+       This function returns the metadata for the Craft_Task supplied with argument craftData.
    ]]
 
     -- check input
@@ -140,35 +140,114 @@ function Craft_Task(craftData)
     return {success = true}
 end
 
-function Smelt_Task(requestDetails)
+function Smelt_MetaData(smeltData)
+    --[[
+       This function returns the metadata for the Smelt_Task supplied with argument smeltData.
+   ]]
+
+    -- check input
+    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: craftData not a valid") return {success = false} end
+    if type(smeltData.recipe) ~= "table" or type(smeltData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: recipe not valid") return {success = false} end
+    if type(smeltData.itemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: itemCount not valid") return {success = false} end
+    if type(smeltData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: workingLocation not valid") return {success = false} end
+    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: fuelItemName not valid") return {success = false} end
+    if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: fuelItemCount not valid") return {success = false} end
+ 
+    -- determine needed items
+    local itemList = Smelt_ItemsNeeded(smeltData)
+    local workingLocation = smeltData.workingLocation
+    local currentLocation = coremove.GetLocation()-- ToDo: get this from outside somewhere? it assumed current turtle...
+    local fuelNeeded = coreinventory.NeededFuelToFrom(currentLocation, workingLocation) + 5 -- some extra to correct for building from above or below
+
+    -- return metadata
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(workingLocation),
+        needTool = false,
+        needTurtle = true,
+        fuelNeeded = fuelNeeded,
+        itemsNeeded = itemList
+    }
+end
+
+function Smelt_ItemsNeeded(smeltData)
+    -- check input
+    if type(smeltData.recipe) ~= "table" or type(smeltData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: recipe not valid") return {success = false} end
+    if type(smeltData.itemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: itemCount not valid") return {success = false} end
+    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: fuelItemName not valid") return {success = false} end
+    if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: fuelItemCount not valid") return {success = false} end
+
+    -- build item list
+    local itemList = {
+        { itemName = smeltData.recipe.itemName, itemCount = smeltData.itemCount / smeltData.recipe.yield }
+    }
+    if smeltData.fuelItemName == smeltData.recipe.itemName then
+        itemList[0].itemCount = itemList[0].itemCount + smeltData.fuelItemCount
+    else
+        table.insert(itemList, {itemName = smeltData.fuelItemName, itemCount = smeltData.fuelItemCount})
+    end
+
+    -- return itemList
+--    corelog.WriteToLog("Smelt_ItemsNeeded: itemList="..textutils.serialise(itemList))
+    return itemList
+end
+
+function Smelt_Task(smeltData)
+     --[[
+        This Task function smelts items.
+
+        Return value:
+                                        - (table) {success = true} if the smelting was succesfull
+
+        Parameters:
+            smeltData                   - (table) data about the smelting task
+                recipe                  - (table) smelting recipe
+                    itemName            - (string) name of item to produce
+                    yield               - (number) of items produced by recipe
+                itemCount               - (number) of items to produce
+                workingLocation         - (table) world location to do the smelting (in front of the furnance)
+                fuelItemName            - (string) name of fuel item to use
+                fuelItemCount           - (number) of fuel items to use
+    ]]
+    -- check input
+    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.Smelt_Task: smeltData not a valid") return {success = false} end
+    if type(smeltData.recipe) ~= "table" or type(smeltData.recipe.itemName) ~= "string" or type(smeltData.recipe.yield) ~= "number"then corelog.Error("role_alchemist.Smelt_Task: recipe not valid") return {success = false} end
+    if type(smeltData.itemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: itemCount not valid") return {success = false} end
+    if type(smeltData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_Task: workingLocation not valid") return {success = false} end
+    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_Task: fuelItemName not valid") return {success = false} end
+
     -- prepare
-    local times     = math.ceil(requestDetails.itemCount / requestDetails.recipe.yield)
+    local times = math.ceil(smeltData.itemCount / smeltData.recipe.yield)
 
     -- go to the furnace
-    coremove.GoTo(requestDetails.entryLocation)
-    coremove.GoTo(coremove.GetRelativeLocation(requestDetails.workingLocation, 0, 0, 1))
+--    coremove.GoTo(smeltData.entryLocation) -- ToDo: do differently
+--    coremove.GoTo(coremove.GetRelativeLocation(smeltData.workingLocation, 0, 0, 1))
+    coremove.GoTo(smeltData.workingLocation)
 
     -- move on top of the furnace
+    coremove.Up()
     coremove.Forward()
 
     -- fill furnace with it's ingredient
-    coreinventory.SelectItem(requestDetails.recipe.ingredient)
+    coreinventory.SelectItem(smeltData.recipe.itemName)
     turtle.dropDown(times)
 
     -- move to the front of the furnace
-    coremove.GoTo(requestDetails.workingLocation)
+    coremove.GoTo(smeltData.workingLocation)
 
     -- fill the furnace with fuel
-    coreinventory.SelectItem(requestDetails.fuel)
-    turtle.drop(1)
+    coreinventory.SelectItem(smeltData.fuelItemName)
+    turtle.drop(smeltData.fuelItemCount)
 end
 
-function Pickup(requestDetails)
+function Pickup_Task(pickupData)
     -- go to the furnace
-    coremove.GoTo(requestDetails.entryLocation)
-    coremove.GoTo(coremove.GetRelativeLocation(requestDetails.workingLocation, 0, 0, -1))
+--    coremove.GoTo(requestDetails.entryLocation)
+--    coremove.GoTo(coremove.GetRelativeLocation(smeltData.workingLocation, 0, 0, -1))
+    coremove.GoTo(pickupData.workingLocation)
 
     -- move below the furnace
+    coremove.Down()
     coremove.Forward()
 
     -- suck the furnace empty
