@@ -265,7 +265,7 @@ end
 
 function PrepareCraftingArea(recipe, times)
      --[[
-        This function (?prepares) the crafting area. ... ToDo: or does it actually do it?
+        This function prepares the crafting area within the turtle.
 
         Return value:
             nil
