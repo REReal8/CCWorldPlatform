@@ -1,0 +1,19 @@
+local baseLocation = {x=12, y= 0, z= 1, dx=0, dy=1}
+
+function T_BuildNewSite_service()
+    enterprise_factory.BuildNewSite({location = baseLocation, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
+function T_Craft_Task()
+    local craftData = { -- "minecraft:birch_planks"
+        recipe = {
+            [6]    = { itemName = "minecraft:birch_log", itemCount = 1 },
+           yield   = 4
+        },
+        itemCount = 4,
+        workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -4),
+        ingredientsLocation = nil
+    }
+
+    role_alchemist.Craft(craftData)
+end

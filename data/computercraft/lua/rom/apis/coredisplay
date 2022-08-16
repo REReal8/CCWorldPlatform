@@ -215,7 +215,8 @@ function ExecuteTest(t)
 			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
 			{key = "a", desc = "assignment", 		func = ExecuteTest, param = {file = t_assignment, filename = "t_assignment"}},
 			{key = "c", desc = "construction", 		func = ExecuteTest, param = {file = t_construction, filename = "t_construction"}},
-			{key = "f", desc = "foresting", 		func = ExecuteTest, param = {file = t_foresting, filename = "t_foresting"}},
+			{key = "f", desc = "factory", 			func = ExecuteTest, param = {file = t_factory, filename = "t_factory"}},
+			{key = "w", desc = "foresting", 		func = ExecuteTest, param = {file = t_foresting, filename = "t_foresting"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 
