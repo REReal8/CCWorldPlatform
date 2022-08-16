@@ -404,7 +404,7 @@ function LogToCharcoal(factoryLocation, charcoals)
     local planks = coreinventory.CountItem(plankName)
     if (logs < logsNeeded) then corelog.Warning("Not enough plank(=" .. planksNeeded .. ") fuel present(=" .. planks .. ") for charcoal(=" .. charcoals .. ")") return false end
 
-    role_alchemist.Smelt({
+    role_alchemist.Smelt_Task({
         recipe  = {
             ingredient = logName,
             itemName = "minecraft:charcoal",

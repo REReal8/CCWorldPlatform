@@ -140,7 +140,7 @@ function Craft_Task(craftData)
     return {success = true}
 end
 
-function Smelt(requestDetails)
+function Smelt_Task(requestDetails)
     -- prepare
     local times     = math.ceil(requestDetails.itemCount / requestDetails.recipe.yield)
 
