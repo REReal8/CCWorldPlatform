@@ -63,7 +63,7 @@ function BuildBlueprint_MetaData(buildData)
         local layerMetaData = BuildRectangularPattern_MetaData(layerBuildData)
 
         -- update blueprint metadata
-        metaData.fuelNeeded = metaData.fuelNeeded + NeededFuelToFrom(layerBuildData.startpoint, lastLocation) + layerMetaData.fuelNeeded
+        metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(layerBuildData.startpoint, lastLocation) + layerMetaData.fuelNeeded
         for i, layerItemNeeded in ipairs(layerMetaData.itemsNeeded) do
             -- find item in itemlist (and increment counter if found)
             local itemAlreadyInList = false
@@ -88,7 +88,7 @@ function BuildBlueprint_MetaData(buildData)
 
     -- update metadata with escapeSequence (if present)
     for i, escapeLocation in ipairs(buildData.blueprint.escapeSequence) do
-        metaData.fuelNeeded = metaData.fuelNeeded + NeededFuelToFrom(escapeLocation, lastLocation)
+        metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(escapeLocation, lastLocation)
 
         lastLocation = escapeLocation
     end
@@ -156,7 +156,7 @@ function BuildRectangularPattern_MetaData(buildData)
     local pattern = buildData.pattern
     local itemList = BuildRectangularPattern_ItemsNeeded(pattern)
     local startpoint = buildData.startpoint
-    local fuelNeeded = pattern.deltaX * pattern.deltaY + NeededFuelToFrom(startpoint) + 5 -- some extra to correct for building from above or below
+    local fuelNeeded = pattern.deltaX * pattern.deltaY + coreinventory.NeededFuelToFrom(startpoint) + 5 -- some extra to correct for building from above or below
 
     -- return metadata
     return {
@@ -337,9 +337,3 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-
-function NeededFuelToFrom(endLocation, startLocation)
-    startLocation = startLocation or {x=0, y= 0, z= 0, dx=0, dy=1}
-
-    return math.abs(endLocation.x - startLocation.x) + math.abs(endLocation.y - startLocation.y) + math.abs(endLocation.z - startLocation.z)
-end

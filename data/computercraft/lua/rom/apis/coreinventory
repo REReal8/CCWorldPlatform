@@ -294,4 +294,8 @@ function Refuel(fuel)
     return true
 end
 
+function NeededFuelToFrom(endLocation, startLocation)
+    startLocation = startLocation or {x=0, y= 0, z= 0, dx=0, dy=1}
 
+    return math.abs(endLocation.x - startLocation.x) + math.abs(endLocation.y - startLocation.y) + math.abs(endLocation.z - startLocation.z)
+end
