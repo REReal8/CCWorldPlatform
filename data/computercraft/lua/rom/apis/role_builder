@@ -97,9 +97,23 @@ function BuildBlueprint_MetaData(buildData)
 end
 
 function BuildBlueprint_Task(buildData)
+    --[[
+        This Task builds a blueprint.
+
+        Return value:
+                                - (table) {success = true} if the blueprint was succesfully build
+
+        Parameters:
+            buildData           - (table) data about the pattern
+                blueprintStartpoint     - (table) top lower left coordinate to start building the blueprint
+                blueprint               - (table) blueprint to build
+                    layerList           - (table) layer to build
+                    escapeSequence      - (table) escapeSequence of blueprint
+    ]]
+
     -- check input
-    if type(buildData.blueprint) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: blueprint not a table") return false end
-    if type(buildData.blueprint.escapeSequence) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: escape sequence not a table") return false end
+    if type(buildData.blueprint) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: blueprint not a table") return {success = false} end
+    if type(buildData.blueprint.escapeSequence) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: escape sequence not a table") return {success = false} end
 
     -- loop on layers
     for i, buildLayer in ipairs(buildData.blueprint.layerList) do
@@ -115,9 +129,10 @@ function BuildBlueprint_Task(buildData)
         }
 
         -- build layer using internal task
-        if BuildRectangularPattern_Task(layerBuildData) ~= true then
+        local result = BuildRectangularPattern_Task(layerBuildData)
+        if result.success ~= true then
             corelog.Error("role_builder.BuildBlueprint_Task(): Failed building layer " ..i..". Remaining layers skipped.")
-            return false
+            return {success = false}
         end
     end
 
@@ -129,7 +144,7 @@ function BuildBlueprint_Task(buildData)
                                                    escapeLocation.z))
     end
 
-    return true
+    return {success = true}
 end
 
 function BuildRectangularPattern_MetaData(buildData)
@@ -184,39 +199,41 @@ function BuildRectangularPattern_ItemsNeeded(pattern)
     return itemList
 end
 
---[[
-    Function to build a rectangular pattern (blueprint) in the x,y plane.
-
-    buildData = {
-        startpoint              --> lower left coordinate to start building the pattern
-        buildFromAbove          --> whether build should be done from above (true) or below (false)
-        replacePresentObjects   --> whether objects should be replaced if it is already present in the minecraft world (default = true)
-        pattern                 --> pattern to build
-    }
-
-    with pattern = {
-        deltaX                  --> x size of pattern
-        deltaY                  --> y size of pattern
-        objectList              --> array of objects to build
-        clearRemainingSpace     --> whether spce not in the objectlist should be cleared
-    }
-
-    with for each object = { 
-        x                       --> x coordinate within the pattern
-        y                       --> y coordinate within the pattern
-        block                   --> minecraft blocktype to build (e.g. "minecraft:torch")
-    }
---]]
 function BuildRectangularPattern_Task(buildData)
+     --[[
+        This Task builds a rectangular pattern in the x,y plane.
+
+        Return value:
+                                        - (table) {success = true} if the pattern was succesfully build
+
+        Parameters:
+            buildData                   - (table) data about the pattern
+                startpoint              - (table) lower left coordinate to start building the pattern
+                buildFromAbove          - (boolean) whether build should be done from above (true) or below (false)
+                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = true)
+                pattern                 - (table) pattern to build
+                    deltaX              - (number) x size of pattern
+                    deltaY              - (number) y size of pattern
+                    objectList          - (table) array of objects to build
+                    clearRemainingSpace - (boolean) whether spce not in the objectlist should be cleared
+
+            with for each object in objectList: 
+            { 
+                x                       - (table) x coordinate within the pattern
+                y                       - (table) y coordinate within the pattern
+                block                   - (string) minecraft blocktype to build (e.g. "minecraft:torch")
+            }
+    ]]
+
     -- check input
-    if type(buildData) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: buildData not a table") return false end
-    if type(buildData.pattern) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: pattern not a table") return false end
+    if type(buildData) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: buildData not a table") return {success = false} end
+    if type(buildData.pattern) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: pattern not a table") return {success = false} end
 
     -- check mandatory pickage!
     local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
     if not axePresent then
         corelog.Error("role_builder.BuildRectangularPattern_Task(): No pickaxe present, we are on strike!")
-        return false
+        return {success = false}
     end
 
     -- check if inventory has what we need
@@ -309,7 +326,7 @@ function BuildRectangularPattern_Task(buildData)
         end
     end
 
-    return true
+    return {success = true}
 end
 
 

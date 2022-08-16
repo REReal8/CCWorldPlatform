@@ -15,89 +15,103 @@
 --   |___/\___|_|    \_/ |_|\___\___||___/
 
 
--- Service to build a blueprint.
 -- ToDo: consider a distributed implementation (i.e. that uses multiple assignments for various parts of the blueprint)
-function BuildBlueprint(buildData, callbackFunction, callbackArgumentTable)
+function BuildBlueprint(buildData, callback, callbackData)
+    --[[
+        This async public service builds a blueprint.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                        - (table) {success = true} if the pattern was succesfully build
+
+        Parameters:
+            buildData                   - (table) data about what to build
+                blueprintStartpoint     - (table) top lower left coordinate to start building the blueprint
+                blueprint               - (table) blueprint to build
+                    layerList           - (table) layer to build
+                    escapeSequence      - (table) escapeSequence of blueprint
+            callback                    - (string) name of function to call once the pattern is build
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+
     -- check input
-    --
-    -- buildData = {
-    --    blueprintStartpoint     --> top lower left coordinate to start building the blueprint 
-    --    blueprint               --> blueprint to build   
-    -- }
     if type(buildData) ~= "table" then
         corelog.Error("enterprise_construction.BuildBlueprint: bluePrintData not a table")
-        return false
+        return coreutils.DoCallback(callback, callbackData, {success = false})
     else
-        if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprintStartpoint not a table") return false end
-        if type(buildData.blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprint not a table") return false end
-        if type(buildData.blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprint.layerList not a table") return false end
+        if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprintStartpoint not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(buildData.blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprint not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(buildData.blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint: blueprint.layerList not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     end
-    --
-    -- callbackFunction
-    if type(callbackFunction) ~= "string" then corelog.Error("enterprise_construction.BuildBlueprint: callbackFunction not a string") return false end
+    if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildBlueprint: callback not a string") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- construct assignment metadata
     local metaData = role_builder.BuildBlueprint_MetaData(buildData)
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_builder.BuildBlueprint_Task", buildData, callbackFunction, callbackArgumentTable)
+    coreassignment.AddAssignment(metaData, "role_builder.BuildBlueprint_Task", buildData, callback, callbackData)
 
     return true
 end
 
+function BuildRectangularPattern(buildData, callback, callbackData)
+    --[[
+        This async public service builds a rectangular pattern in the x,y plane.
 
--- Service to build a rectangular pattern in the x,y plane.
-function BuildRectangularPattern(buildData, callbackFunction, callbackArgumentTable)
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                        - (table) {success = true} if the pattern was succesfully build
+
+        Parameters:
+            buildData                   - (table) data about what to build
+                startpoint              - (table) lower left coordinate to start building the pattern
+                buildFromAbove          - (boolean) whether build should be done from above (true) or below (false)
+                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = true)
+                pattern                 - (table) pattern to build
+                    deltaX              - (number) x size of pattern
+                    deltaY              - (number) size of pattern
+                    objectList          - (table) array of objects to build, with for each object
+                        x               - (number) x coordinate within the pattern
+                        y               - (number) y coordinate within the pattern
+                        block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
+                    clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared                    
+            callback                    - (string) name of function to call once the pattern is build
+            callbackData                - (table) data to supply to callback function
+    ]]
+
     -- check input
-    --
-    -- buildData = {
-    --    startpoint              --> lower left coordinate to start building the pattern
-    --    buildFromAbove          --> whether build should be done from above (true) or below (false)
-    --    replacePresentObjects   --> whether objects should be replaced if it is already present in the minecraft world (default = true)
-    --    pattern                 --> pattern to build
-    -- }
     if type(buildData) ~= "table" then
         corelog.Error("enterprise_construction.BuildRectangularPattern: buildData not a table")
-        return false
+        return coreutils.DoCallback(callback, callbackData, {success = false})
     else
-        if type(buildData.startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern: startpoint not a table") return false end
-        if type(buildData.buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern: startpoint not a boolean") return false end
---        if type(buildData.replacePresentObjects) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern: replacePresentObjects not a boolean") return false end
+        if type(buildData.startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern: startpoint not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(buildData.buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern: startpoint not a boolean") return coreutils.DoCallback(callback, callbackData, {success = false}) end
         if type(buildData.pattern) ~= "table" then
             corelog.Error("enterprise_construction.BuildRectangularPattern: pattern not a table")
-            return false
+            return coreutils.DoCallback(callback, callbackData, {success = false})
         else
-        --[[
-        with pattern = {
-            deltaX                  --> x size of pattern
-            deltaY                  --> y size of pattern
-            objectList              --> array of objects to build
-            clearRemainingSpace     --> whether spce not in the objectlist should be cleared
-        }
-
-        with for each object = {
-            x                       --> x coordinate within the pattern
-            y                       --> y coordinate within the pattern
-            block                   --> minecraft blocktype to build (e.g. "minecraft:torch")
-        }
-        --]]
         end
     end
     --
     -- callbackFunction
-    if type(callbackFunction) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern: callbackFunction not a string") return false end
+    if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern: callback not a string") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     --
-    -- callbackArgumentTable
-    callbackArgumentTable = callbackArgumentTable or {} --> if no callback arguments supplied {} is sufficient
-    if type(callbackArgumentTable) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern: callbackArgumentTable not a table") return false end
+    -- callbackData
+    callbackData = callbackData or {} --> if no callback arguments supplied {} is sufficient
+    if type(callbackData) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern: callbackData not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- construct assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callbackFunction, callbackArgumentTable)
+    coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callback, callbackData)
 
-    return true
+    return nil
 end
 
 --    _                 _    __                  _   _
