@@ -1,0 +1,137 @@
+local db = {
+    dhtRoot     = "enterprise_factory",
+    dhtSites    = "sites",
+}
+
+function StartNewSite(siteStartData)
+    --[[
+        This function should make the site available for production.
+
+        Return value:
+                                    - (string) the id of the new production site
+
+        Parameters:
+            siteStartData           - (table) data about the site to start, 
+                version             - (string) version string of the site
+                baseLocation        - (table) world location of the base (lower left corner) of this site
+                craftingSpots       - (table) craftingSpots of this site
+                    location        - (table) location of spot relative to baseLocation
+                smeltingSpots       - (table) craftingSpots of this site
+                    location        - (table) location of spot relative to baseLocation
+    ]]
+
+    -- variables
+    local site = {
+        version         = siteStartData.version,
+        siteId          = coreutils.NewId(),
+
+        baseLocation    = siteStartData.baseLocation,
+--        entryLocation   = coremove.GetRelativeLocation(siteData.location, 3, 3, 1),
+
+        craftingSpots   =  siteStartData.craftingSpots,
+        smeltingSpots   =  siteStartData.smeltingSpots,
+    }
+
+    -- ToDo: initialise possible other data (like e.g. availability of spots)
+
+    -- save the new site to our sites
+    coredht.SaveData(site, db.dhtRoot, db.dhtSites, site.siteId)
+
+    return site.siteId
+end
+
+function GetAvailableCraftSpot(siteId)
+     -- check input
+     if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid site id ") return nil end
+
+    -- get the site
+    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
+    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then
+        corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Failed retrieving factory site "..siteId)
+        return nil
+    end
+
+     -- find first available spot
+     -- ToDo consider finding best spot based on some selection criterium
+     for i, spot in ipairs(site.craftingSpots) do
+        -- take first
+        return spot
+     end
+
+     -- 
+     corelog.Warning("enterprise_factory_site.GetAvailableCraftSpot: No available crafting spot in site "..siteId)
+     return nil
+end
+
+function CraftItem(siteId, productionData, recipe, callback, callbackData)
+    --[[
+        This async function should craft items at the site siteId.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                    - (table) {success = true} if the items were succesfully produced
+
+        Parameters:
+            siteId                  - (string) id of the factory site
+            productionData          - (table) data about the item to produce, 
+                itemName            - name of items to produce
+                itemAmount          - amount of items to produce
+            recipe                  - (table) crafting recipe
+            callback                - (string) name of function to call once the items are made
+            callbackData            - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.CraftItem: Invalid site id ") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- get the site
+    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
+    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then 
+        corelog.Error("enterprise_factory_site.CraftItem: Failed retrieving factory site "..siteId)
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- get available spot
+    local spot = GetAvailableCraftSpot(site.siteId)
+    if spot == nil then corelog.Error('enterprise_factory.CraftItem: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- gather assignment data
+    local spotLocation = spot.location
+    local craftData = {
+        itemName = productionData.itemName,
+        itemCount = productionData.itemAmount,
+
+        recipe = recipe,
+        workingLocation = coremove.GetRelativeLocation(site.baseLocation, spotLocation.x, spotLocation.y, spotLocation.z),
+    --  ToDo: consider if this is still wanted
+    --  ingredientsLocation = productionData.ingredientsURL,
+    }
+    local metaData = role_alchemist.Craft_MetaData(craftData)
+
+    -- mark spot as unavailable
+    -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_alchemist.Craft_Task", craftData, callback, callbackData)
+
+    -- update the site in the dht
+    -- ToDo: implement
+
+    return nil
+end
+
+function GetAvailableSmeltSpot(siteId)
+    -- ToDo: implement
+    corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: NOT YET IMPLEMENTED")
+
+    -- 
+    return nil
+end
+
+function SmeltItem(productionData, recipe, callback, callbackData)
+    -- ToDo: implement
+    corelog.Error("enterprise_factory_site.SmeltItem: NOT YET IMPLEMENTED")
+    return coreutils.DoCallback(callback, callbackData, {success = false})
+end

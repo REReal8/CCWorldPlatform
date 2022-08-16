@@ -1,4 +1,7 @@
 local db = {
+    dhtRoot     = "enterprise_factory",
+    dhtSites    = "sites",
+
     -- turtle slots
     -- [ 1] [ 2] [ 3] [ 4]
     -- [ 5] [ 6] [ 7] [ 8]
@@ -48,6 +51,19 @@ local db = {
     }
 }
 
+--[[
+    A factory is an enterprise that offers services to produce items based on recipes. 
+    
+    There are (currently) two techniques for producing items.
+        The crafting technique uses a crafting table to produce an output item from of a set of input items.
+        The smelting technique uses a furnace to produce an output item out out of an input item.
+
+    A factory is comprised of one or more factory sites. A site is comprised out of one or more crafting and/ or smelting spots. Furthermore a site should specify
+    one or more item input and one or more item output "spots". Technically the later are (should be) URL's locating the input and output of items. The most simple 
+    version of these input/ output "spots" are the inventory of a turtle.
+--]]
+
+
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -57,47 +73,193 @@ local db = {
 --   | |
 --   |_|
 
--- enterprise_factory.BuildNewSite({location={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1", upgrade=false}, "coreassignment.Dummy_Callback", {})
+-- enterprise_factory.BuildNewSite({baseLocation={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1", upgrade=false}, "coreassignment.Dummy_Callback", {})
 function BuildNewSite(siteData, callback, callbackData)
---[[
-    This public async service builds a new factory site.
+    --[[
+        This async public service builds a new factory site.
 
-    Return value:
-        nil
+        Return value:
+            nil 
 
-    Parameters:
-        siteData     - (table) data about this site, like siteVersion and layout
-        callback     - (string) function name to call once the site is build
-        callbackData - (table) function data to supply to callback
-]]
+        Async service return value (to callback):
+                                - (table) {success = true} if the site was succesfully build
+
+        Parameters:
+            siteData            - (table) data about this site
+                baseLocation    - (table) world location of the base (lower left corner) of this site
+                siteVersion     - (string) version string of the site
+                upgrade         - (boolean) if site should (only) be updated from previous version
+            callback            - (string) name of function to call once the site is build
+            callbackData        - (table) data to supply to callback function
+    ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite: Invalid siteData input') return nil end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite: Invalid callback function') return nil end
+    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
+        corelog.Error('enterprise_factory.BuildNewSite: Invalid siteData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_factory.BuildNewSite: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
     callbackData = callbackData or {}
 
-    -- what kind of factory is this?
-    local factoryBuildData = nil
-    if siteData.siteVersion == "v1" then
-        -- let construction enterprise build the site
-        factoryBuildData = {
-            blueprintStartpoint = coremove.CopyLocation(siteData.location),
-            blueprint = GetFactory_V1_blueprint(siteData)
-        }
+    -- get site build data
+    local siteBuildData = nil
+    if siteData.siteVersion == "v0" then
+        siteBuildData = GetV0SiteBuildData(siteData)
+    elseif siteData.siteVersion == "v1" then
+        siteBuildData = GetV1SiteBuildData(siteData)
     elseif siteData.siteVersion == "v2" then
-        -- let construction enterprise build the site
-        factoryBuildData = {
-            blueprintStartpoint = coremove.CopyLocation(siteData.location),
-            blueprint = GetFactory_V2_blueprint(siteData)
-        }
+        siteBuildData = GetV2SiteBuildData(siteData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to build a factory of version "..siteData.siteVersion)
-        return -- ToDo do we want to call callback function with { false } or is it maybe better not to do so, to be able to manually correct?
+        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to build a factory site of version "..siteData.siteVersion)
+        return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- let construction enterprise build the site
-    corelog.WriteToLog(">Building factory version "..siteData.siteVersion.." at "..textutils.serialise(factoryBuildData.blueprintStartpoint))
-    enterprise_construction.BuildBlueprint(factoryBuildData, callback, callbackData)
+    corelog.WriteToLog(">Building factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteBuildData.blueprintStartpoint))
+    enterprise_construction.BuildBlueprint(siteBuildData, callback, callbackData)
+end
+
+-- enterprise_factory.StartNewSite({baseLocation={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1"})
+function StartNewSite(siteData)
+    --[[
+        This sync public service ensures a new site is ready for use.
+
+        Return value:
+                                - (table) {success = true} if the site is ready for business
+
+        Parameters:
+            siteData            - (table) data about this site
+                baseLocation    - (table) world location of the base (lower left corner) of this site
+                siteVersion     - (string) version string of the site
+    --]]
+
+    -- check our input
+    if type(siteData) ~= "table" or type(siteData.baseLocation) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.StartNewSite: Invalid input') return {success = false} end
+
+    -- ensure enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+        coredht.SaveData({}, db.dhtRoot, db.dhtSites)
+    end
+
+    -- get site start data
+    local siteStartData = nil
+    if siteData.siteVersion == "v0" then
+        siteStartData = GetV0SiteStartData(siteData)
+    elseif siteData.siteVersion == "v1" then
+        siteStartData = GetV1SiteStartData(siteData)
+--    elseif siteData.siteVersion == "v2" then -- ToDo: implement
+--        siteStartData = GetV2SiteStartDate(siteData)
+    else
+        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to start a factory site of version "..siteData.siteVersion)
+        return {success = false}
+    end
+
+    -- start new site
+    local newSiteId = enterprise_factory_site.StartNewSite(siteStartData)
+    if type(newSiteId) ~= "string" then corelog.Error('enterprise_factory.StartNewSite: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
+
+    -- end
+    return {success = true}
+end
+
+function RemoveSites()
+    --[[
+        This function removes all sites from the factory. Currently this is intended for debugging purposes only.
+
+        Return value:
+                                - (table) {success = true} if the site is ready for business
+
+        Parameters:
+    --]]
+
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    if not sites or type(sites) ~= "table" then corelog.Warning("coreassignment.RemoveSites: not a lits of sites") return nil end
+
+    -- remove all assignments
+    for siteId, site in pairs(sites) do
+        RemoveSite(siteId)
+    end
+
+    -- end
+    return {success = true}
+end
+
+function RemoveSite(siteId)
+    --[[
+        This function removes a site from the factory. Currently this is intended for debugging purposes only.
+
+        Return value:
+                                - (table) {success = true} if the site is ready for business
+
+        Parameters:
+            siteId              - (string) id of the site
+    --]]
+
+    -- check our input
+    if type(siteId) ~= "string" then corelog.Error('enterprise_factory.RemoveSite: Invalid siteId') return {success = false} end
+
+    -- remove site
+    corelog.Warning('enterprise_factory.RemoveSite: Removing site '..siteId.." without doing anything with the data, structure and items present")
+    coredht.SaveData(nil, db.dhtRoot, db.dhtSites, siteId)
+
+    -- end
+    return {success = true}
+end
+
+--
+function ProduceItem(productionData , callback, callbackData)
+    --[[
+        This async public service produces items in a factory site.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                    - (table) {success = true} if the items were succesfully produced
+
+        Parameters:
+            productionData          - (table) data about the item to produce, 
+                itemName            - (string) name of items to produce
+                itemAmount          - (number) amount of items to produce
+                ToDo: consider adding requester location (amongst other to be able to select a more optimal (closest) site)
+            callback                - (string) name of function to call once the items are made
+            callbackData            - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(productionData) ~= "table" or type(productionData.itemName) ~= "string" or type(productionData.itemAmount) ~= "number" then
+        corelog.Error('enterprise_factory.ProduceItem: Invalid productionData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- select recipe to produce item
+    local itemName = productionData.itemName
+    if type(db.recipes[ itemName ]) ~= "table" then corelog.Error("enterprise_factory.ProduceItem: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local craftRecipe = db.recipes[ itemName ].crafting
+    local smeltRecipe = db.recipes[ itemName ].smelting
+
+    -- select a suitable site
+    local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
+    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem: No site available to produce '..textutils.serialize(productionData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- let site produce item
+    if recipe == craftRecipe then
+        enterprise_factory_site.CraftItem(siteId, productionData, recipe, callback, callbackData)
+    elseif recipe == smeltRecipe then
+        enterprise_factory_site.SmeltItem(siteId, productionData, recipe, callback, callbackData)
+    else
+        corelog.Error('enterprise_factory.ProduceItem: Unknown recipe type to produce '..textutils.serialize(productionData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
 end
 
 --    _                 _    __                  _   _
@@ -107,45 +269,11 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-
---    _           _ _     _               _   _                                 _     _                       _       _
---   | |         (_) |   | |             | | | |                        ___    | |   | |                     (_)     | |
---   | |__  _   _ _| | __| |  _ __   __ _| |_| |_ ___ _ __ _ __  ___   ( _ )   | |__ | |_   _  ___ _ __  _ __ _ _ __ | |_ ___
---   | '_ \| | | | | |/ _` | | '_ \ / _` | __| __/ _ \ '__| '_ \/ __|  / _ \/\ | '_ \| | | | |/ _ \ '_ \| '__| | '_ \| __/ __|
---   | |_) | |_| | | | (_| | | |_) | (_| | |_| ||  __/ |  | | | \__ \ | (_>  < | |_) | | |_| |  __/ |_) | |  | | | | | |_\__ \
---   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/  \___/\/ |_.__/|_|\__,_|\___| .__/|_|  |_|_| |_|\__|___/
---                           | |                                                                  | |
---                           |_|                                                                  |_|
-
-local furnanceLayerL0_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {
-        { x = 0, y = 1, block = "minecraft:furnace"},
-    },
-    clearRemainingSpace = true
-}
-
-local storageChestL1_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = false
-}
-
-local topLayerL1_pattern = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3, block = "minecraft:torch"},
-        { x = 2, y = 5, block = "minecraft:chest"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 4, y = 5, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true
-}
+--[[
+    A v0 site is comprised of 
+    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary storage for items not needed
+    - no smelting spot 
+--]]
 
 local shaftLayer_pattern = {
     deltaX      = 1,
@@ -155,19 +283,73 @@ local shaftLayer_pattern = {
     clearRemainingSpace = true,
 }
 
-local aboveOrBelowFurnanceLayerL0_pattern = {
+function GetV0SiteBuildData(siteData)
+    -- construct layer list
+    local layerList = {
+        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
+    }
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+        }
+    }
+
+    -- construct build data
+    local siteBuildData = {
+        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprint = blueprint
+    }
+
+    return siteBuildData
+end
+
+function GetV0SiteStartData(siteData)
+    -- construct start data
+    local startData = {
+        version = siteData.siteVersion,
+
+        baseLocation = coremove.CopyLocation(siteData.baseLocation),
+
+        craftingSpots = {
+            { location = { x= 0, y=0, z=0}}
+        },
+        smeltingSpots = {},
+        -- ToDo add URL's for input and output spots. For now (v0 en v1 of factory site) it is assumed both are the inventory of the current turtle
+    }
+
+    return startData
+end
+
+--[[
+    A v1 site is comprised of 
+    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary storage for items not needed.
+    - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below. 
+--]]
+
+local aboveOrBelowFurnanceLayerL1_pattern = {
     deltaX      = 1,
     deltaY      = 2,
     objectList  = {},
     clearRemainingSpace = true
 }
 
-function GetFactory_V1_blueprint(siteData)
+local furnanceLayerL1_pattern = {
+    deltaX      = 1,
+    deltaY      = 2,
+    objectList  = {
+        { x = 0, y = 1, block = "minecraft:furnace"},
+    },
+    clearRemainingSpace = true
+}
+
+function GetV1SiteBuildData(siteData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = shaftLayer_pattern},
-        { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = aboveOrBelowFurnanceLayerL0_pattern},
-        { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = furnanceLayerL0_pattern},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
+        { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = role_builder.CopyPattern(aboveOrBelowFurnanceLayerL1_pattern)},
+        { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = role_builder.CopyPattern(furnanceLayerL1_pattern)},
         { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
     }
 
@@ -179,22 +361,76 @@ function GetFactory_V1_blueprint(siteData)
         }
     }
 
-    return blueprint
+    -- construct build data
+    local siteBuildData = {
+        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprint = blueprint
+    }
+
+    return siteBuildData
 end
 
-function GetFactory_V2_blueprint(siteData)
+function GetV1SiteStartData(siteData)
+    -- construct start data
+    local startData = {
+        version = siteData.siteVersion,
+
+        baseLocation = coremove.CopyLocation(siteData.baseLocation),
+
+        craftingSpots = {
+            { location = { x= 3, y=3, z=-4}}
+        },
+        smeltingSpots = {
+            { location = { x= 3, y=3, z=-3}}
+        },
+        -- ToDo add URL's for input and output spots. For now (v0 en v1 of factory site) it is assumed both are the inventory of the current turtle
+    }
+
+    return startData
+end
+
+--[[
+    A v2 site is comprised of 
+    - one crafting spot. Below the crafting spot should is a chest as a temporary storage for items not needed.
+    - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
+
+    - ToDo and some additional chests of which we need to define what their exact purpose is.
+--]]
+
+local storageChestL2_pattern = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+        { x = 0, y = 0, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = false
+}
+
+local topLayerL2_pattern = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 0, y = 3, block = "minecraft:torch"},
+        { x = 2, y = 5, block = "minecraft:chest"},
+        { x = 3, y = 0, block = "minecraft:torch"},
+        { x = 4, y = 5, block = "minecraft:chest"},
+    },
+    clearRemainingSpace = true
+}
+
+function GetV2SiteBuildData(siteData)
     local onlyUpgrade = siteData.upgrade
 
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, pattern = topLayerL1_pattern},
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, pattern = role_builder.CopyPattern(topLayerL2_pattern)},
     }
     if not onlyUpgrade then
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = shaftLayer_pattern})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = aboveOrBelowFurnanceLayerL0_pattern})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = furnanceLayerL0_pattern})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = role_builder.CopyPattern(aboveOrBelowFurnanceLayerL1_pattern)})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = role_builder.CopyPattern(furnanceLayerL1_pattern)})
     end
-    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = storageChestL1_pattern})
+    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(storageChestL2_pattern)})
 
     -- construct blueprint
     local blueprint = {
@@ -204,7 +440,78 @@ function GetFactory_V2_blueprint(siteData)
         }
     }
 
-    return blueprint
+    -- construct build data
+    local siteBuildData = {
+        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprint = blueprint
+    }
+
+    return siteBuildData
+end
+
+function GetV2SiteStartData(siteData)
+    -- construct start data
+    local startData = {
+        version = siteData.siteVersion,
+
+        baseLocation = siteData.baseLocation,
+
+        craftingSpots = {
+            { location = { x= 3, y=3, z=-4}}
+        },
+        smeltingSpots = {
+            { location = { x= 3, y=3, z=-3}}
+        },
+        -- ToDo add URL's for input and output spots.
+    }
+
+    return startData
+end
+
+function FindAvailableSite(craftRecipe, smeltRecipe)
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- check if we have any site
+    if type(sites) ~= "table" then corelog.Warning('enterprise_factory.FindAvailableSite: no sites present') return nil, nil end
+
+    -- find available sites
+    local availableSitesInfo = {
+    }
+    for k, site in pairs(sites) do
+        local siteId = site.siteId
+        -- check it can craft recipe
+        if craftRecipe ~= nil then
+            local craftSpot = enterprise_factory_site.GetAvailableCraftSpot(siteId)
+            if craftSpot ~= nil then
+                table.insert(availableSitesInfo, {
+                    siteId = siteId,
+                    recipe = craftRecipe
+                })
+            end
+        end
+
+        -- check it can smelt recipe
+        if smeltRecipe ~= nil then
+            local smeltSpot = enterprise_factory_site.GetAvailableSmeltSpot(siteId)
+            if smeltSpot ~= nil then
+                table.insert(availableSitesInfo, {
+                    siteId = siteId,
+                    recipe = smeltRecipe
+                })
+            end
+        end
+    end
+
+    -- select best site
+    for i, siteInfo in ipairs(availableSitesInfo) do
+        -- for now take first
+        return siteInfo.siteId, siteInfo.recipe
+        -- ToDo: consider finding best site based on some selection criterium 
+    end
+
+    corelog.Warning('enterprise_factory.FindAvailableSite: no site available')
+    return nil, nil
 end
 
 --          _     _                                              _                        _                 _      
@@ -256,7 +563,7 @@ function ProcessNextTask(enterpriseId)
     coredht.SaveData(nil, "enterprises", enterpriseId, "taskList", taskId)
 
     -- execute this command using the task queue
-        if taskTable.alchemieType == "craft"    then return coretask.AddWork(role_alchemist.Craft,  taskTable)
+        if taskTable.alchemieType == "craft"    then return coretask.AddWork(role_alchemist.Craft_Task,  taskTable)
     elseif taskTable.alchemieType == "smelt"    then return coretask.AddWork(role_alchemist.Smelt,  taskTable)
     elseif taskTable.alchemieType == "pickup"   then return coretask.AddWork(role_alchemist.Pickup, taskTable)
     end

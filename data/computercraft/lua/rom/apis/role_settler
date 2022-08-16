@@ -246,7 +246,7 @@ function LogToPlanks(craftingLocation, planks)
     if logs < logsNeeded then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for planks(=" .. planks .. ")") return false end
 
     -- craft
-    role_alchemist.Craft({
+    role_alchemist.Craft_Task({
         taskId = "0",
         alchemieType = "craft",
         recipe = {
@@ -270,7 +270,7 @@ function PlanksToStick(craftingLocation, sticks)
     if planks < planksNeeded then corelog.Warning("Not enough planks(=" .. planksNeeded .. ") present(=" .. planks .. ") for sticks(=" .. sticks .. ")") return false end
 
     -- craft
-    role_alchemist.Craft({
+    role_alchemist.Craft_Task({
         taskId = "0",
         alchemieType = "craft",
         recipe = {
@@ -302,7 +302,7 @@ function CobblestoneToFurnace(craftingLocation, furnances)
     if stones < stoneNeeded then corelog.Warning("Not enough stones(=" .. stoneNeeded .. ") present(=" .. stones .. ") for furnances(=" .. furnances .. ")") return false end
 
     -- craft
-    role_alchemist.Craft({
+    role_alchemist.Craft_Task({
         taskId = "0",
         alchemieType = "craft",
         recipe = {
@@ -370,7 +370,7 @@ function PlanksToChests(craftingLocation, chests)
     if (planks < planksNeeded) then corelog.Warning("Not enough planks(=" .. planksNeeded .. ") present(=" .. planks .. ") for chests(=" .. chests .. ")") return false end
 
     -- create chests
-    role_alchemist.Craft({
+    role_alchemist.Craft_Task({
         taskId = "0",
         alchemieType = "craft",
         recipe = {
@@ -428,7 +428,7 @@ function LogToCharcoal(factoryLocation, charcoals)
 end
 
 function CharcoalAndStickToTorch2(craftingLocation, torches)
-    role_alchemist.Craft({
+    role_alchemist.Craft_Task({
         taskId = "0",
         alchemieType = "craft",
         recipe = {

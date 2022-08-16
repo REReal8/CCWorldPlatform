@@ -1,7 +1,19 @@
 local baseLocation = {x=12, y= 0, z= 1, dx=0, dy=1}
 
 function T_BuildNewSite_service()
-    enterprise_factory.BuildNewSite({location = baseLocation, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.BuildNewSite({baseLocation = baseLocation, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
+function T_StartNewSite_service()
+    enterprise_factory.StartNewSite({baseLocation = baseLocation, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
+function T_RemoveSites()
+    enterprise_factory.RemoveSites()
+end
+
+function T_ProduceItem()
+    enterprise_factory.ProduceItem({itemName = "minecraft:birch_planks", itemAmount=12}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
 function T_Craft_Task()
@@ -15,5 +27,5 @@ function T_Craft_Task()
         ingredientsLocation = nil
     }
 
-    role_alchemist.Craft(craftData)
+    role_alchemist.Craft_Task(craftData)
 end
