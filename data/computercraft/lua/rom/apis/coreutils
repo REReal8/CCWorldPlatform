@@ -113,6 +113,18 @@ function CoreUtilsProtocolName() -- ToDo: is this used? If not consider removing
 	return db.protocol
 end
 
+function DoCallback(callback, callbackData, result)
+    -- check input
+    if type(callback) ~= "string" then corelog.Error('coreutils.DoCallback: Invalid callback function') return nil end
+    if type(callbackData) ~= "table" then corelog.Error('coreutils.DoCallback: Invalid callback data') return nil end
+    if type(result) ~= "table" then corelog.Error('coreutils.DoCallback: Invalid calback result') return nil end
+
+    -- call callBack function
+    local stringToLoad = callback.."("..textutils.serialize(callbackData)..","..textutils.serialize(result).. ")"
+    local f, err = loadstring(stringToLoad)
+    if f then f() else corelog.Error("coreutils.DoCallback: loadstring("..stringToLoad..") did not supply a function, error given: "..err) end
+end
+
 --                         _
 --                        | |
 --     _____   _____ _ __ | |_ ___

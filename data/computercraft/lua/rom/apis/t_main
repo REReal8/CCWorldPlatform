@@ -72,8 +72,8 @@ function T_enterprise_test()
 
     -- test service 4
     corelog.WriteToLog("# Test 4")
-    local callbackArgumentTable = {"calbackArg1"}
-    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackArgumentTable)
+    local callbackData = {"calbackArg1"}
+    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackData)
 end
 
 function T_enterprise_projects()
@@ -105,12 +105,23 @@ function T_enterprise_projects()
     enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
 end
 
-function Func1_Callback(callbackArgumentTable, taskResult)
-    corelog.WriteToLog("t_main.Func1_Callback("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+function T_coreutils_DoCallback()
+    -- test CreateNewWorld
+    corelog.WriteToLog("# Test DoCallback")
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+    local result = {"some task result"}
+
+    corelog.WriteToLog("T_coreutils_DoCallback calling DoCallback("..callbackFunction..", "..textutils.serialize(callbackData)..", "..textutils.serialize(result)..")")
+    coreutils.DoCallback(callbackFunction, callbackData, result)
 end
 
-function GoHomeCallBack(callbackArgumentTable, taskResult)
-    corelog.WriteToLog("t_main.GoHomeCallBack("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(taskResult)..") called")
+function Func1_Callback(callbackData, taskResult)
+    corelog.WriteToLog("t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..") called")
+end
+
+function GoHomeCallBack(callbackData, taskResult)
+    corelog.WriteToLog("t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..") called")
 
     t_move.T_GoHome()
 end
