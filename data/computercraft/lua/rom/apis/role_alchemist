@@ -221,7 +221,6 @@ function Smelt_Task(smeltData)
 
     -- go to the furnace
 --    coremove.GoTo(smeltData.entryLocation) -- ToDo: do differently
---    coremove.GoTo(coremove.GetRelativeLocation(smeltData.workingLocation, 0, 0, 1))
     coremove.GoTo(smeltData.workingLocation)
 
     -- move on top of the furnace
@@ -242,8 +241,7 @@ end
 
 function Pickup_Task(pickupData)
     -- go to the furnace
---    coremove.GoTo(requestDetails.entryLocation)
---    coremove.GoTo(coremove.GetRelativeLocation(smeltData.workingLocation, 0, 0, -1))
+--    coremove.GoTo(requestDetails.entryLocation) -- ToDo: do differently
     coremove.GoTo(pickupData.workingLocation)
 
     -- move below the furnace
