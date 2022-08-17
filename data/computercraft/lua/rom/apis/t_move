@@ -8,6 +8,26 @@ function T_GoHome()
     })
 end
 
+function T_GoToLeftHome()
+    coremove.GoTo({
+        x	= -24,
+        y	= 0,
+        z	= 1,
+        dx	= 0,
+        dy	= 1,
+    })
+end
+
+function T_GoToRightHome()
+    coremove.GoTo({
+        x	= 24,
+        y	= 0,
+        z	= 1,
+        dx	= 0,
+        dy	= 1,
+    })
+end
+
 function T_GoStart()
     coremove.GoTo({x= 3, y= 2, z= 1, dx=0, dy=1})
 end
