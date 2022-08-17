@@ -39,6 +39,9 @@ function CreateNewWorld(callback, callbackData)
         startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
         factoryVersion0     = "v0",
 
+        planksName          = "minecraft:birch_planks",
+        planksAmount        = 4,
+
         siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
         type                = "silo",
         siloType            = "basic",
@@ -52,7 +55,8 @@ function CreateNewWorld(callback, callbackData)
 
         -- 
         plantFirstSaplingStep       = "PlantFirstSapling",
-        waitAndChopFirstTreeStep    = "WaitAndChopFirstTree",
+        waitFirstTreeStep           = "WaitFirstTree",
+        chopFirstTreeStep           = "ChopFirstTree",
         collectCobbleStoneStep      = "CollectCobbleStone",
         createFurnaceAndCleanupStep = "CreateFurnaceAndCleanup",
         remainingSettleStep         = "RemainingSettle",
@@ -74,7 +78,15 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitAndChopFirstTreeStep" },
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitFirstTreeStep" },
+                { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_factory.ProduceItem", async = true, input = {
+                { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
+                { keyName = "itemAmount"        , valueSource = 0, sourceKey = "planksAmount" },
+            }},
+            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "chopFirstTreeStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {

@@ -28,14 +28,14 @@ end
 
 function PlantFirstSapling_Task(settleData)
      --[[
-        This Task function does the first settling step: it plants the first sappling
+        This Task function does the first settling step: it plants the first sappling.
 
         Return value:
             task result                 - (table)      
-                success                 - (boolean) whether the primary settling was succesfull
+                success                 - (boolean) whether the task was succesfull
 
         Parameters:
-            settleData                  - (table) data about the smelting task
+            settleData                  - (table) data about the task
                 startLocation           - (table) locaton where first steps are to be taken
     ]]
 
@@ -48,7 +48,7 @@ function PlantFirstSapling_Task(settleData)
 
     -- plant the sappling
     corelog.WriteToLog(" ")
-    corelog.WriteToLog(">Creating initial fuel and forest<")
+    corelog.WriteToLog(">Planting first sapling<")
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
     db.nTrees = 1
@@ -57,7 +57,45 @@ function PlantFirstSapling_Task(settleData)
     return {success = true}
 end
 
-function WaitAndChopFirstTree_MetaData(settleData)
+function WaitFirstTree_MetaData(settleData)
+    corelog.WriteToLog("WaitFirstTree_MetaData")
+
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 0,                         --> per definition still no fuel
+        itemsNeeded = {
+        }
+    }
+end
+
+function WaitFirstTree_Task(settleData)
+    --[[
+        This Task function waits for the first tree to complete and chops one block in front.
+
+        Return value:
+            task result                 - (table)      
+                success                 - (boolean) whether the task was succesfull
+
+        Parameters:
+            settleData                  - (table) data about the task
+                startLocation           - (table) locaton where first steps are to be taken
+    ]]
+    -- equip pickage
+    coreinventory.Equip("minecraft:diamond_pickaxe")
+
+    -- wait for a tree
+    WaitForTree()
+
+    -- blok voor ons omhakken
+    turtle.dig()
+
+    return {success = true}
+end
+
+function ChopFirstTree_MetaData(settleData)
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(settleData.startLocation),
@@ -70,34 +108,25 @@ function WaitAndChopFirstTree_MetaData(settleData)
     }
 end
 
-function WaitAndChopFirstTree_Task(settleData)
+function ChopFirstTree_Task(settleData)
     --[[
-        This Task function waits for the first tree to complete and chops it. Then it uses some
-        of it to fuel the turtle.
+        This Task function chops (the remmainder of) the first tree. Then it uses some of it to fuel the turtle.
 
         Return value:
             task result                 - (table)      
-                success                 - (boolean) whether the primary settling was succesfull
+                success                 - (boolean) whether the task was succesfull
 
         Parameters:
-            settleData                  - (table) data about the smelting task
+            settleData                  - (table) data about the task
                 startLocation           - (table) locaton where first steps are to be taken
     ]]
     -- check input
     if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
     local startLocation = settleData.startLocation
-
-    -- equip pickage
-    coreinventory.Equip("minecraft:diamond_pickaxe")
-
-    -- wait for a tree
-    WaitForTree()
-
-    -- blok voor ons omhakken
-    turtle.dig()
+    corelog.WriteToLog(">Chopping first tree for initial fuel<")
 
     -- eerste log omzetten naar planken
-    LogToPlanks(startLocation, 4)
+--    LogToPlanks(startLocation, 4)
 
     -- nu kunnen we bijtanken
     coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4})
