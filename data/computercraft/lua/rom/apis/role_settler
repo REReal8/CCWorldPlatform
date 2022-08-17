@@ -90,14 +90,6 @@ function WaitAndChopFirstTree_Task(settleData)
     -- equip pickage
     coreinventory.Equip("minecraft:diamond_pickaxe")
 
-    -- ToDo: build factory version 0 from enterprise 
-
-    -- remove the ground under us, usefull for crafting later
-    turtle.digDown()
-
-    -- pick up any items under us (should be nothing though)
-    turtle.suckDown()
-
     -- wait for a tree
     WaitForTree()
 

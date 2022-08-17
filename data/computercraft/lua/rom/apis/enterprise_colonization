@@ -37,6 +37,7 @@ function CreateNewWorld(callback, callbackData)
     -- construct arguments
     local settleData = {
         startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        factoryVersion0     = "v0",
 
         siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
         type                = "silo",
@@ -63,6 +64,14 @@ function CreateNewWorld(callback, callbackData)
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "plantFirstSaplingStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
+            }},
+            { serviceName = "enterprise_factory.StartNewSite", async = false, input = {
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitAndChopFirstTreeStep" },
