@@ -2,6 +2,10 @@ function End(assignmentId)
     coreassignment.EndAssignment(assignmentId)
 end
 
+function T_EndAssignments()
+    coreassignment.EndAssignments()
+end
+
 function T_MetaDataConditionsMet()
     local now = coreutils.UniversalTime()
     local metaData = {

@@ -114,11 +114,12 @@ function RejectAllAssignments()
     db.rejectAllAssignments = true
 end
 
-function ClearAssignmentList()
+function EndAssignments()
     local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
-    if not assignmentList or type(assignmentList) ~= "table" then corelog.Warning("coreassignment.ClearAssignmentList: not a (valid) assignmentList") return nil end
+    if not assignmentList or type(assignmentList) ~= "table" then corelog.Warning("coreassignment.EndAssignments: not a (valid) assignmentList") return nil end
 
     -- remove all assignments
+    corelog.WriteToAssignmentLog("All Assignments are being ended!")
     for assignmentId, assignmentData in pairs(assignmentList) do
         -- check status and startTime
         EndAssignment(assignmentId)
