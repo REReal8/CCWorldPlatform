@@ -2,6 +2,7 @@ local db = {
     dhtRoot                 = "coreassignment",
     listRoot                = "assignmentList",
     rejectAllAssignments    = false,
+    lastSkipReason          = "",
 }
 
 --                _     _ _         __                  _   _
@@ -164,9 +165,11 @@ function FindBestAssignment()
                 table.insert(candidateIdList, assignmentId)
             else
                 -- debug message
-                if skipReason then
+                if skipReason and skipReason ~= db.lastSkipReason then
                     -- Report reason for skipping for debugging purposes
                     corelog.WriteToAssignmentLog("Skipped because "..skipReason, assignmentId)
+
+                    db.lastSkipReason = skipReason -- remember such that the log isn't floaded with similar messages
                 end
             end
         end
