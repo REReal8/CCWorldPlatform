@@ -3,6 +3,12 @@ function T_dummy()
     print("!")
 end
 
+function T_EmptyDHTLists()
+    enterprise_projects.RemoveProjects()
+    coreassignment.EndAssignments()
+    enterprise_factory.RemoveSites()
+end
+
 function T_enterprise_storage_buildAndStartNewSite()
     enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 end
