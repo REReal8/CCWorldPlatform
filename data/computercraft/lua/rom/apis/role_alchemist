@@ -253,11 +253,14 @@ function Pickup_Task(pickupData)
 --    coremove.GoTo(requestDetails.entryLocation) -- ToDo: do differently
     coremove.GoTo(pickupData.workingLocation)
 
+    -- remove remaining fuel from furnace
+    turtle.suck()
+
     -- move below the furnace
     coremove.Down()
     coremove.Forward()
 
-    -- suck the furnace empty
+    -- suck the results from furnace 
     turtle.suckUp()
 
     -- end
