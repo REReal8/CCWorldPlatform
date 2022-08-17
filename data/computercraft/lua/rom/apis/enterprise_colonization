@@ -92,68 +92,32 @@ function CreateNewWorld(callback, callbackData)
 end
 
 function PrimarySettleStep(settleData, callback, callbackData)
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 0,                         --> per definition the settler starts without fuel
-        itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
-            {itemName = "minecraft:birch_sapling", itemCount = 1}
-        }
-    }
+    -- get metaData
+    local metaData = role_settler.PrimarySettle_MetaData(settleData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_settler.PrimarySettle_Task", settleData, callback, callbackData)
 end
 
 function CollectCobbleStoneStep(settleData, callback, callbackData)
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 100, -- ToDo: how much is needed for this step?
-        itemsNeeded = {
-        }
-    }
+    -- get metaData
+    local metaData = role_settler.CollectCobbleStone_MetaData(settleData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_settler.CollectCobbleStone_Task", settleData, callback, callbackData)
 end
 
 function CreateFurnaceAndCleanupStep(settleData, callback, callbackData)
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 25, -- ToDo: how much is needed for this step?
-        itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
-            {itemName = "minecraft:cobblestone", itemCount = 8},
-            {itemName = "minecraft:dirt", itemCount = 1}
-        }
-    }
+    -- get metaData
+    local metaData = role_settler.CreateFurnaceAndCleanup_MetaData(settleData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_settler.CreateFurnaceAndCleanup_Task", settleData, callback, callbackData)
 end
 
 function IntermediateSettleStep(settleData, callback, callbackData)
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 100, -- ToDo: how much is needed for this step?
-        itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
-            {itemName = "minecraft:birch_sapling", itemCount = 1},
-            {itemName = "minecraft:birch_log", itemCount = 2},
-        }
-    }
+    -- get metaData
+    local metaData = role_settler.RemainingSettle_MetaData(settleData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_settler.RemainingSettle_Task", settleData, callback, callbackData)

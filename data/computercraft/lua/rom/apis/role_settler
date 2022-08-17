@@ -12,6 +12,19 @@ local db = {
 --   | |
 --   |_|
 
+function PrimarySettle_MetaData(settleData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 0,                         --> per definition the settler starts without fuel
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:birch_sapling", itemCount = 1}
+        }
+    }
+end
 
 function PrimarySettle_Task(settleData)
      --[[
@@ -83,6 +96,18 @@ function PrimarySettle_Task(settleData)
     return {success = true}
 end
 
+function CollectCobbleStone_MetaData(settleData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+        }
+    }
+end
+
 function CollectCobbleStone_Task(settleData)
     -- check input
     local startLocation = settleData.startLocation
@@ -116,6 +141,21 @@ function CollectCobbleStone_Task(settleData)
     return {success = true}
 end
 
+function CreateFurnaceAndCleanup_MetaData(settleData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 25, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:cobblestone", itemCount = 8},
+            {itemName = "minecraft:dirt", itemCount = 1}
+        }
+    }
+end
+
 function CreateFurnaceAndCleanup_Task(settleData)
     -- check input
     local craftingLocation = settleData.startLocation
@@ -133,6 +173,21 @@ function CreateFurnaceAndCleanup_Task(settleData)
 
     -- end
     return {success = true}
+end
+
+function RemainingSettle_MetaData(settleData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+            {itemName = "minecraft:birch_sapling", itemCount = 1},
+            {itemName = "minecraft:birch_log", itemCount = 2},
+        }
+    }
 end
 
 function RemainingSettle_Task(settleData)
