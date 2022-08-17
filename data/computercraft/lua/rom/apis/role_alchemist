@@ -137,6 +137,7 @@ function Craft_Task(craftData)
         coreinventory.DropAllItems("Down")
     end
 
+    -- end
     return {success = true}
 end
 
@@ -197,7 +198,9 @@ function Smelt_Task(smeltData)
         This Task function smelts items.
 
         Return value:
-                                        - (table) {success = true} if the smelting was succesfull
+            task result                 - (table)      
+                success                 - (boolean) whether the smelting was succesfull
+                smeltingTime            - (number) the time it will take to complete the smelting (in seconds)
 
         Parameters:
             smeltData                   - (table) data about the smelting task
@@ -237,6 +240,12 @@ function Smelt_Task(smeltData)
     -- fill the furnace with fuel
     coreinventory.SelectItem(smeltData.fuelItemName)
     turtle.drop(smeltData.fuelItemCount)
+
+    -- determine expected completion time
+    local smeltingTime = 10 * times -- one smelting operation is sayed to take 10 seconds
+
+    -- end
+    return {success = true, smeltingTime = smeltingTime}
 end
 
 function Pickup_Task(pickupData)
@@ -250,7 +259,51 @@ function Pickup_Task(pickupData)
 
     -- suck the furnace empty
     turtle.suckUp()
+
+    -- end
+    return {success = true}
 end
+
+function SmeltAndPickup_Task(smeltData)
+    --[[
+       This Task function smelts items, waits for them to be completed and picks them up.
+
+       Return value:
+                                       - (table) {success = true} if the smelting & pickup was succesfull
+
+       Parameters:
+           smeltData                   - (table) data about the smelting task
+               recipe                  - (table) smelting recipe
+                   itemName            - (string) name of item to produce
+                   yield               - (number) of items produced by recipe
+               itemCount               - (number) of items to produce
+               workingLocation         - (table) world location to do the smelting (in front of the furnance)
+               fuelItemName            - (string) name of fuel item to use
+               fuelItemCount           - (number) of fuel items to use
+    ]]
+
+    -- smelt
+    local smeltResult = Smelt_Task(smeltData)
+    if type(smeltResult) ~= "table" or smeltResult.success ~= true then
+        corelog.Error("role_alchemist.SmeltAndPickup_Task: smelting not succesfull")
+        return {success = false}
+    end
+
+    -- wait
+    local smeltingTime = smeltResult.smeltingTime
+    if type(smeltingTime) ~= "number" then
+        corelog.Error("role_alchemist.SmeltAndPickup_Task: smelting did not return time needed to smelt")
+        return {success = false}
+    end
+    os.sleep(smeltingTime)
+
+    -- pickup
+    Pickup_Task(smeltData)
+
+    -- end
+    return {success = true}
+end
+
 
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)

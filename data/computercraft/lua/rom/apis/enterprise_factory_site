@@ -145,9 +145,9 @@ function GetAvailableSmeltSpot(siteId)
      return nil
 end
 
-function SmeltItem(siteId, productionData, recipe, callback, callbackData)
+function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
     --[[
-        This async function should smelt items at the site siteId.
+        This async function should smelt items at the site siteId and pickup the results.
 
         Return value:
             nil
@@ -166,18 +166,18 @@ function SmeltItem(siteId, productionData, recipe, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.SmeltItem: Invalid site id ") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup: Invalid site id ") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get the site
     local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
     if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then 
-        corelog.Error("enterprise_factory_site.SmeltItem: Failed retrieving factory site "..siteId)
+        corelog.Error("enterprise_factory_site.SmeltItemAndPickup: Failed retrieving factory site "..siteId)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- get available spot
     local spot = GetAvailableSmeltSpot(site.siteId)
-    if spot == nil then corelog.Error('enterprise_factory.SmeltItem: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if spot == nil then corelog.Error('enterprise_factory.SmeltItemAndPickup: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
     local spotLocation = spot.location
@@ -198,7 +198,7 @@ function SmeltItem(siteId, productionData, recipe, callback, callbackData)
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, "role_alchemist.Smelt_Task", smeltData, callback, callbackData)
+    coreassignment.AddAssignment(metaData, "role_alchemist.SmeltAndPickup_Task", smeltData, callback, callbackData)
 
     -- update the site in the dht
     -- ToDo: implement

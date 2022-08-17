@@ -255,7 +255,8 @@ function ProduceItem(productionData , callback, callbackData)
     if recipe == craftRecipe then
         enterprise_factory_site.CraftItem(siteId, productionData, recipe, callback, callbackData)
     elseif recipe == smeltRecipe then
-        enterprise_factory_site.SmeltItem(siteId, productionData, recipe, callback, callbackData)
+        enterprise_factory_site.SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
+        -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
     else
         corelog.Error('enterprise_factory.ProduceItem: Unknown recipe type to produce '..textutils.serialize(productionData))
         return coreutils.DoCallback(callback, callbackData, {success = false})

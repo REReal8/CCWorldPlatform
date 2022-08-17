@@ -12,11 +12,11 @@ function T_RemoveSites()
     enterprise_factory.RemoveSites()
 end
 
-function T_ProduceCraftItem_service()
+function T_ProduceItem_service_Craft()
     enterprise_factory.ProduceItem({itemName = "minecraft:birch_planks", itemAmount=12}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
-function T_ProduceSmeltItem_service()
+function T_ProduceItem_service_Smelt()
     enterprise_factory.ProduceItem({itemName = "minecraft:charcoal", itemAmount=3}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
