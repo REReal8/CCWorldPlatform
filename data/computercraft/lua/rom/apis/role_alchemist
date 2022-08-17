@@ -17,8 +17,7 @@ function Craft_MetaData(craftData)
     -- determine needed items
     local itemList = Craft_ItemsNeeded(craftData.recipe, craftData.itemCount)
     local workingLocation = craftData.workingLocation
-    local currentLocation = coremove.GetLocation()-- ToDo: get this from outside somewhere? it assumed current turtle...
-    local fuelNeeded = coreinventory.NeededFuelToFrom(currentLocation, workingLocation) + 5 -- some extra to correct for building from above or below
+    local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
     -- return metadata
     return {
@@ -157,8 +156,7 @@ function Smelt_MetaData(smeltData)
     -- determine needed items
     local itemList = Smelt_ItemsNeeded(smeltData)
     local workingLocation = smeltData.workingLocation
-    local currentLocation = coremove.GetLocation()-- ToDo: get this from outside somewhere? it assumed current turtle...
-    local fuelNeeded = coreinventory.NeededFuelToFrom(currentLocation, workingLocation) + 5 -- some extra to correct for building from above or below
+    local fuelNeeded = 4 + 5 -- task starts at workingLocation, very little (4) movement from there, a few extra to be sure
 
     -- return metadata
     return {
@@ -263,8 +261,26 @@ function Pickup_Task(pickupData)
     -- suck the results from furnace 
     turtle.suckUp()
 
+    -- move back to workingLocation
+    coremove.GoTo(pickupData.workingLocation)
+
     -- end
     return {success = true}
+end
+
+function SmeltAndPickup_MetaData(smeltData)
+    --[[
+       This function returns the metadata for the SmeltAndPickup_Task supplied with argument smeltData.
+    ]]
+
+    -- metadata Smelt
+    local metaData = Smelt_MetaData(smeltData)
+
+    -- adjust for pickup
+    metaData.fuelNeeded = metaData.fuelNeeded + 4 -- pickup uses 4 fuel
+
+    -- end
+    return metaData
 end
 
 function SmeltAndPickup_Task(smeltData)

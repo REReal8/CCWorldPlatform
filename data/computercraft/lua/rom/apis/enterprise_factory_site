@@ -192,7 +192,7 @@ function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackDa
         fuelItemName = "minecraft:birch_planks",
         fuelItemCount = productionData.itemAmount
     }
-    local metaData = role_alchemist.Smelt_MetaData(smeltData)
+    local metaData = role_alchemist.SmeltAndPickup_MetaData(smeltData)
 
     -- mark spot as unavailable
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
