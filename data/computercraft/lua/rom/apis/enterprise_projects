@@ -33,6 +33,10 @@ end
 function NextProjectStep(internalProjectData, stepResults)
     -- get the project information
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+    if type(project) ~= "table" then
+        corelog.Error('enterprise_projects.NextProjectStep: Invalid/ no project retrieved from '..internalProjectData.projectId)
+        return nil
+    end
 
     -- save the results for the previous step
     if type(stepResults) ~= "table" then stepResults = {} end
