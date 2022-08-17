@@ -453,7 +453,7 @@ function LogToTorches(factoryLocation, craftingLocation, torches)
     LogToCharcoal(factoryLocation, charcoalNeeded)
 
     -- craft torches
-    CharcoalAndStickToTorch2(craftingLocation, torches)
+    CharcoalAndStickToTorch(craftingLocation, torches)
 end
 
 function LogToChests(craftingLocation, chests)
@@ -537,7 +537,7 @@ function LogToCharcoal(factoryLocation, charcoals)
     })
 end
 
-function CharcoalAndStickToTorch2(craftingLocation, torches)
+function CharcoalAndStickToTorch(craftingLocation, torches)
     role_alchemist.Craft_Task({
 --        taskId = "0",
 --        alchemieType = "craft",
