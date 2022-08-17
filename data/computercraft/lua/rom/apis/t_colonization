@@ -1,0 +1,12 @@
+function T_CreateNewWorld()
+    -- test CreateNewWorld
+    corelog.WriteToLog("# Test CreateNewWorld")
+    local callbackFunction = "t_main.GoHomeCallBack"
+    local callbackData = {"some callback data"}
+
+    corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..", "..textutils.serialize(callbackData)..")")
+    enterprise_colonization.CreateNewWorld(callbackFunction, callbackData)
+end
+
+
+

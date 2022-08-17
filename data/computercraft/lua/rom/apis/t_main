@@ -3,49 +3,8 @@ function T_dummy()
     print("!")
 end
 
-function T_DummyURLTryoutCode()
-    -- This code is not yet implemented. Just meant as a way to tryout a possible format for using URL's to handle items based on a private discussion on Signal.
-
-    -- create project definition
-    local projectInputData = {
-        itemsSourceURL = "ccwitp://storage/site=2/chest=4/?minecraft:birch_log=1&minecraft:torch=5",
-        itemsDestinationURL = "ccwitp://storage/"
-     }
-    local callbackFunction = "ACallBackFunction"
-    local callbackData = { }
-    local aTypicalServiceUsingItemsProject = {
-        services    = {
-            { serviceName = "enterprise_transport.GetItemsIntoInventory ", async = true, input = {
-                { keyName = "url"  , valueSource = 0, sourceKey = "itemsSourceURL" },
-            }},
-
-            -- other services (that require items in a turtle's iventory) to implement the typical service
-
-            { serviceName = "enterprise_transport.PutItemsFromInventory", async = false, input = {
-                { keyName = "url"  , valueSource = 0, sourceKey = "itemsDestinationURL" },
-            }},
-        },
-        returnData  = {
-            -- optional return data
-        }
-    }
-
-    -- start project
-    enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
-end
-
 function T_enterprise_storage_buildAndStartNewSite()
     enterprise_storage.BuildAndStartNewSite({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
-end
-
-function T_enterpise_colonization()
-    -- test CreateNewWorld
-    corelog.WriteToLog("# Test CreateNewWorld")
-    local callbackFunction = "t_main.GoHomeCallBack"
-    local callbackData = {}
-
-    corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld("..callbackFunction..", "..textutils.serialize(callbackData)..")")
-    enterprise_colonization.CreateNewWorld(callbackFunction, callbackData)
 end
 
 function T_enterprise_test()
@@ -70,35 +29,6 @@ function T_enterprise_test()
     corelog.WriteToLog("# Test 4")
     local callbackData = {"calbackArg1"}
     enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments(testArg, callbackFunction, callbackData)
-end
-
-function T_enterprise_projects()
-    -- init
-    local testArgValue = 20
-    local projectDefinition = {
-        services    = {
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
-                { keyName = "testArg1", valueSource = 0, sourceKey = "testArgSource" },
-            }},
-            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments", async = true, input = {
-                { keyName = "testArg2", valueSource = 0, sourceKey = "testArgSource" },
-            }},
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
-                { keyName = "testArg3", valueSource = 0, sourceKey = "testArgSource" },
-            }},
-        },
-        returnData  = {
-            { keyName = "testBArg0", valueSource = 0, sourceKey = "testArgSource" },
-            { keyName = "testBArg1", valueSource = 1, sourceKey = "testArg1" },
-            { keyName = "testBArg2", valueSource = 2, sourceKey = "testArg2" },
-            { keyName = "testBArg3", valueSource = 3, sourceKey = "testArg3" },
-        }
-    }
-    local projectData = { testArgSource = testArgValue }
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = { "rootCallBackData" }
-
-    enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
 end
 
 function T_coreutils_DoCallback()

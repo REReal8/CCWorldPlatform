@@ -214,9 +214,11 @@ function ExecuteTest(t)
 			{key = "g", desc = "general", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
 			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
 			{key = "a", desc = "assignment", 		func = ExecuteTest, param = {file = t_assignment, filename = "t_assignment"}},
+			{key = "p", desc = "projects", 			func = ExecuteTest, param = {file = t_projects, filename = "t_projects"}},
 			{key = "c", desc = "construction", 		func = ExecuteTest, param = {file = t_construction, filename = "t_construction"}},
 			{key = "f", desc = "factory", 			func = ExecuteTest, param = {file = t_factory, filename = "t_factory"}},
 			{key = "w", desc = "foresting", 		func = ExecuteTest, param = {file = t_foresting, filename = "t_foresting"}},
+			{key = "s", desc = "colonization", 		func = ExecuteTest, param = {file = t_colonization, filename = "t_colonization"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 

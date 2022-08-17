@@ -111,3 +111,16 @@ function EndProject(internalProjectData)
     corelog.WriteToProjectsLog("Ended", project.projectId)
     coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
 end
+
+function RemoveProjects()
+    local projects = coredht.GetData(db.dhtRoot)
+    if not projects or type(projects) ~= "table" then corelog.Warning("coreassignment.ClearProjects: projects not valid") return nil end
+
+    -- remove all assignments
+    corelog.WriteToProjectsLog("All projects are being removed!")
+    for projectId, project in pairs(projects) do
+        -- remove project
+        corelog.WriteToProjectsLog("Removed", projectId)
+        coredht.SaveData(nil, db.dhtRoot, projectId)
+    end
+end
