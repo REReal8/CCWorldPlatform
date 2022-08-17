@@ -50,7 +50,8 @@ function CreateNewWorld(callback, callbackData)
         upgradeToSimple     = true,
 
         -- 
-        primarySettleStep           = "PrimarySettle",
+        plantFirstSaplingStep       = "PlantFirstSapling",
+        waitAndChopFirstTreeStep    = "WaitAndChopFirstTree",
         collectCobbleStoneStep      = "CollectCobbleStone",
         createFurnaceAndCleanupStep = "CreateFurnaceAndCleanup",
         remainingSettleStep         = "RemainingSettle",
@@ -60,7 +61,11 @@ function CreateNewWorld(callback, callbackData)
     local createNewWorldProject = {
         services    = {
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "primarySettleStep" },
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "plantFirstSaplingStep" },
+                { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
+            }},
+            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitAndChopFirstTreeStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {

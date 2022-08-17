@@ -12,23 +12,23 @@ local db = {
 --   | |
 --   |_|
 
-function PrimarySettle_MetaData(settleData)
+function PlantFirstSapling_MetaData(settleData)
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(settleData.startLocation),
-        needTool = true,
+        needTool = false,
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition the settler starts without fuel
         itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
+--            {itemName = "minecraft:crafting_table", itemCount = 1},
             {itemName = "minecraft:birch_sapling", itemCount = 1}
         }
     }
 end
 
-function PrimarySettle_Task(settleData)
+function PlantFirstSapling_Task(settleData)
      --[[
-        This Task function does the first settling steps.
+        This Task function does the first settling step: it plants the first sappling
 
         Return value:
             task result                 - (table)      
@@ -52,6 +52,45 @@ function PrimarySettle_Task(settleData)
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
     db.nTrees = 1
+
+    -- end
+    return {success = true}
+end
+
+function WaitAndChopFirstTree_MetaData(settleData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 0,                         --> per definition still no fuel
+        itemsNeeded = {
+            {itemName = "minecraft:crafting_table", itemCount = 1},
+        }
+    }
+end
+
+function WaitAndChopFirstTree_Task(settleData)
+    --[[
+        This Task function waits for the first tree to complete and chops it. Then it uses some
+        of it to fuel the turtle.
+
+        Return value:
+            task result                 - (table)      
+                success                 - (boolean) whether the primary settling was succesfull
+
+        Parameters:
+            settleData                  - (table) data about the smelting task
+                startLocation           - (table) locaton where first steps are to be taken
+    ]]
+    -- check input
+    if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
+    local startLocation = settleData.startLocation
+
+    -- equip pickage
+    coreinventory.Equip("minecraft:diamond_pickaxe")
+
+    -- ToDo: build factory version 0 from enterprise 
 
     -- remove the ground under us, usefull for crafting later
     turtle.digDown()
