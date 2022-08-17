@@ -116,7 +116,7 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "furnaceAmount" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "cleanupStep" },
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "cleanupStep" }, -- ToDo replace by new service StopSite/ RemoveSite
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {

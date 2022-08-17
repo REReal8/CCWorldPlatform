@@ -242,10 +242,6 @@ function Cleanup_Task(settleData)
     -- check input
     local craftingLocation = settleData.startLocation
 
-    -- craft furnace
---    corelog.WriteToLog (">Creating furnace & cleaning up initial crafting location<")
---    CobblestoneToFurnace(craftingLocation, 1)
-
     -- remove initial crafting location
     corelog.WriteToLog (">Cleaning up initial crafting location<")
     if coreinventory.SelectItem("minecraft:dirt") then
