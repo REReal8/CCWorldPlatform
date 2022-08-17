@@ -9,64 +9,74 @@
 
 
 function CreateNewWorld(callback, callbackData)
---[[
-    This public async function creates a new CCWorldPlatform world.
-        It bootstraps the world logic by building an initiating several enterprise (sites). 
+    --[[
+        This public async function creates a new CCWorldPlatform world.
+            It bootstraps the world logic by building an initiating several enterprise (sites). 
 
-        The turtle should already have (either equiped or in it's inventory)
-            one modem
-            one axe
-            one crafting station
-            one birchSapling
-        It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
+            The turtle should already have (either equiped or in it's inventory)
+                one modem
+                one axe
+                one crafting station
+                one birchSapling
+            It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
 
-        The function also defines the coordinate system by assuming the turtle starts at the location {x= 3, y= 2, z= 1, dx=0, dy=1}. This
-        allows for the initial forest that is build to fit in the 6x6 grid that is used in patterns with the lower left coordinate of the base 
-        of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
+            The function also defines the coordinate system by assuming the turtle starts at the location {x= 3, y= 2, z= 1, dx=0, dy=1}. This
+            allows for the initial forest that is build to fit in the 6x6 grid that is used in patterns with the lower left coordinate of the base 
+            of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
 
-    Return value:
-        nil
+        Return value:
+            nil
 
-    Parameters:
-        callback     - (string) function name to call once the new world is created
-        callbackData - (table) data to supply to callback
---]]
+        Parameters:
+            callback     - (string) function name to call once the new world is created
+            callbackData - (table) data to supply to callback
+    --]]
     -- check input
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
 
     -- construct arguments
     local settleData = {
-        startLocation   = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
 
-        siloLocation    = {x=12, y=12, z= 1, dx=0, dy=1},
-        type            = "silo",
-        siloType        = "basic",
-        topChests       = 2,
-        layers          = 2,
+        siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
+        type                = "silo",
+        siloType            = "basic",
+        topChests           = 2,
+        layers              = 2,
 
-        factoryLocation = {x=12, y= 0, z= 1, dx=0, dy=1},
-        factoryVersion1 = "v1",
-        factoryVersion2 = "v2",
-        upgradeToSimple = true,
+        factoryLocation     = {x=12, y= 0, z= 1, dx=0, dy=1},
+        factoryVersion1     = "v1",
+        factoryVersion2     = "v2",
+        upgradeToSimple     = true,
+
+        -- 
+        primarySettleStep           = "PrimarySettle",
+        collectCobbleStoneStep      = "CollectCobbleStone",
+        createFurnaceAndCleanupStep = "CreateFurnaceAndCleanup",
+        remainingSettleStep         = "RemainingSettle",
     }
 
     -- create project definition
     local createNewWorldProject = {
         services    = {
-            { serviceName = "enterprise_colonization.PrimarySettleStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "primarySettleStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_colonization.CollectCobbleStoneStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "collectCobbleStoneStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_colonization.CreateFurnaceAndCleanupStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "createFurnaceAndCleanupStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion1" },
             }},
-            { serviceName = "enterprise_colonization.IntermediateSettleStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "remainingSettleStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "factoryLocation"   , valueSource = 0, sourceKey = "factoryLocation" },
             }},
@@ -91,42 +101,37 @@ function CreateNewWorld(callback, callbackData)
     enterprise_projects.StartProject(createNewWorldProject, settleData, callback, callbackData)
 end
 
-function PrimarySettleStep(settleData, callback, callbackData)
-    -- get metaData
-    local metaData = role_settler.PrimarySettle_MetaData(settleData)
-
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.PrimarySettle_Task", settleData, callback, callbackData)
-end
-
-function CollectCobbleStoneStep(settleData, callback, callbackData)
-    -- get metaData
-    local metaData = role_settler.CollectCobbleStone_MetaData(settleData)
-
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.CollectCobbleStone_Task", settleData, callback, callbackData)
-end
-
-function CreateFurnaceAndCleanupStep(settleData, callback, callbackData)
-    -- get metaData
-    local metaData = role_settler.CreateFurnaceAndCleanup_MetaData(settleData)
-
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.CreateFurnaceAndCleanup_Task", settleData, callback, callbackData)
-end
-
-function IntermediateSettleStep(settleData, callback, callbackData)
-    -- get metaData
-    local metaData = role_settler.RemainingSettle_MetaData(settleData)
-
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler.RemainingSettle_Task", settleData, callback, callbackData)
-end
-
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function SettlerStep(settleData, callback, callbackData)
+    --[[
+        This function wraps around a role_settler task. It first retrieves the meta data,
+        then it calls the task function.
+
+        Async service return value (to callback):
+            task result                 - (table) results of the task function
+
+        Parameters:
+            settleData                  - (table) data for the task
+                _stepName               - (string) name of Task.
+                <other settleData needed for the task function>
+    ]]
+    -- check input
+    if type(settleData) ~= "table" then corelog.Error("enterprise_colonization.SettlerStep: settleData not valid") return {success = false} end
+    if type(settleData._stepName) ~= "string" then corelog.Error("enterprise_colonization.SettlerStep: _stepName not valid") return {success = false} end
+
+    -- get metaData
+    local stepName = settleData._stepName
+    local metaDataFunctionName = "role_settler."..stepName.."_MetaData"
+    local metaData = coreutils.DoSyncService(metaDataFunctionName, settleData)
+    -- ToDo: consider removing _stepName from settleData
+
+    -- add assignment
+    coreassignment.AddAssignment(metaData, "role_settler."..stepName.."_Task", settleData, callback, callbackData)
+end
 
