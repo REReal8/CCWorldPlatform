@@ -255,7 +255,7 @@ function BuildRectangularPattern_Task(buildData)
     end
 
     -- go to starting location
-    coremove.GoTo(coremove.GetRelativeLocation(buildData.startpoint, 0, 0, deltaZ), true)
+    coremove.GoTo(coremove.GetRelativeLocation(buildData.startpoint, 0, 0, deltaZ), false)
 
     -- walk along x
     for x=0, buildData.pattern.deltaX - 1 do
