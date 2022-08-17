@@ -14,23 +14,20 @@ local db = {
 
 
 function PrimarySettle_Task(settleData)
-    -- ready to start?
-    local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
-    local craftingTable = coreinventory.CountItem("minecraft:crafting_table")
-    local birchSapling  = coreinventory.CountItem("minecraft:birch_sapling")
+     --[[
+        This Task function does the first settling steps.
 
-    -- stop if we don't meet the needs
-    -- ToDo: consider removing these checks as they are now also done by the assignment conditions logic
-    if not axePresent or craftingTable == 0 or birchSapling == 0 then
-        -- no good
-        corelog.Error("Missing item(s) for a new start:")
-        if not axePresent       then corelog.Error("* Need a diamond axe")     end
-        if craftingTable == 0   then corelog.Error("* Need a crafting tabel")  end
-        if birchSapling  == 0   then corelog.Error("* Need a birch sapling")   end
+        Return value:
+            task result                 - (table)      
+                success                 - (boolean) whether the primary settling was succesfull
 
-        -- done here
-        return false
-    end
+        Parameters:
+            settleData                  - (table) data about the smelting task
+                startLocation           - (table) locaton where first steps are to be taken
+    ]]
+
+    -- check input
+    if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
 
     -- coordinaten stelsel goed zetten
     local startLocation = settleData.startLocation
