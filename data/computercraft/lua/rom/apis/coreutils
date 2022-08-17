@@ -125,6 +125,22 @@ function DoCallback(callback, callbackData, result)
     if f then f() else corelog.Error("coreutils.DoCallback: loadstring("..stringToLoad..") did not supply a function, error given: "..err) end
 end
 
+function DoSyncService(service, serviceData)
+	-- check input
+	if type(service) ~= "string" then corelog.Error('coreutils.DoSyncService: service function not valid') return nil end
+	if type(serviceData) ~= "table" then corelog.Error('coreutils.DoSyncService: service data not valid') return nil end
+
+	-- sync function call, use the results
+	local f, err = loadstring("return "..service.."("..textutils.serialize(serviceData)..")")
+	if not f then corelog.Error("coreutils.DoSyncService(): loadstring did not supply a function, error given: "..err) return end
+
+	-- execute the step
+	local results = f()
+
+	-- end
+	return results
+end
+
 --                         _
 --                        | |
 --     _____   _____ _ __ | |_ ___

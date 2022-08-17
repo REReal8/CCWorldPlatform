@@ -14,7 +14,7 @@ function T_enterprise_test()
     -- test service 1
     corelog.WriteToLog("# Test 1")
     local testResult = enterprise_test.TestPureLogicService(testArg)
-    corelog.WriteToLog("  TestPureLogicService("..testArg..") => " .. testResult .. ".")
+    corelog.WriteToLog("  TestPureLogicService("..testArg..") => " ..textutils.serialize(testResult) .. ".")
 
     -- test service 2
     corelog.WriteToLog("# Test 2")
@@ -40,6 +40,17 @@ function T_coreutils_DoCallback()
 
     corelog.WriteToLog("T_coreutils_DoCallback calling DoCallback("..callbackFunction..", "..textutils.serialize(callbackData)..", "..textutils.serialize(result)..")")
     coreutils.DoCallback(callbackFunction, callbackData, result)
+end
+
+function T_coreutils_DoSyncService()
+    -- test CreateNewWorld
+    corelog.WriteToLog("# Test DoSyncService")
+    local serviceFunction = "enterprise_test.TestPureLogicService"
+    local serviceData = {"some service data"}
+
+    corelog.WriteToLog("T_coreutils_DoSyncService calling DoSyncService("..serviceFunction..", "..textutils.serialize(serviceData)..")")
+    local results = coreutils.DoSyncService(serviceFunction, serviceData)
+    corelog.WriteToLog("T_coreutils_DoSyncService results = "..textutils.serialize(results))
 end
 
 function Func1_Callback(callbackData, taskResult)
