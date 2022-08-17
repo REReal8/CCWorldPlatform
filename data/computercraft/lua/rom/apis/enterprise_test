@@ -14,14 +14,14 @@
 --   \__ \  __/ |   \ V /| | (_|  __/\__ \
 --   |___/\___|_|    \_/ |_|\___\___||___/
 
-function TestPureLogicService(serviceArgument)
-    corelog.WriteToLog("enterprise_test.TestPureLogicService("..textutils.serialize(serviceArgument)..")")
+function TestPureLogicService(serviceData)
+    corelog.WriteToLog("enterprise_test.TestPureLogicService("..textutils.serialize(serviceData)..")")
 
-    return serviceArgument
+    return { success = true}
 end
 
-function TestServiceWithAssignment(serviceArgument)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment("..textutils.serialize(serviceArgument)..")")
+function TestServiceWithAssignment(serviceData)
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment("..textutils.serialize(serviceData)..")")
 
     -- create assignment arguments
     local metaData = {
@@ -32,19 +32,17 @@ function TestServiceWithAssignment(serviceArgument)
         fuelNeeded = 0
     }
     local taskFunction = "enterprise_test.Func1_Task"
-    local taskArgumentTable = {
-        arg1 = serviceArgument
+    local taskData = {
+        arg1 = serviceData
     }
     local callbackFunction = "enterprise_test.ACallBackFunc1"
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction, {})
-
-    return true
+    coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, {})
 end
 
-function TestServiceWithAssignmentAndCallback(serviceArgument, callbackFunction)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..textutils.serialize(serviceArgument)..", "..callbackFunction..")")
+function TestServiceWithAssignmentAndCallback(serviceData, callbackFunction)
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..textutils.serialize(serviceData)..", "..callbackFunction..")")
 
     -- create assignment arguments
     local metaData = {
@@ -55,18 +53,16 @@ function TestServiceWithAssignmentAndCallback(serviceArgument, callbackFunction)
         fuelNeeded = 0
     }
     local taskFunction = "enterprise_test.Func1_Task"
-    local taskArgumentTable = {
-        arg1 = serviceArgument
+    local taskData = {
+        arg1 = serviceData
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction)
-
-    return true
+    coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, {})
 end
 
-function TestServiceWithAssignmentAndCallbackAndArguments(serviceArgument, callbackFunction, callbackArgumentTable)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..textutils.serialize(serviceArgument)..", "..callbackFunction..")")
+function TestServiceWithAssignmentAndCallbackAndArguments(serviceData, callbackFunction, callbackData)
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
 
     -- create assignment arguments
     local metaData = {
@@ -77,14 +73,12 @@ function TestServiceWithAssignmentAndCallbackAndArguments(serviceArgument, callb
         fuelNeeded = 0
     }
     local taskFunction = "enterprise_test.Func1_Task"
-    local taskArgumentTable = {
-        arg1 = serviceArgument
+    local taskData = {
+        arg1 = serviceData
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskArgumentTable, callbackFunction, callbackArgumentTable)
-
-    return true
+    coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -94,15 +88,15 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function Func1_Task(taskArgumentTable)
-    corelog.WriteToLog("enterprise_test.Func1_Task("..textutils.serialise(taskArgumentTable)..").")
+function Func1_Task(taskData)
+    corelog.WriteToLog("enterprise_test.Func1_Task("..textutils.serialise(taskData)..").")
 
-    return taskArgumentTable.arg1
+    return { success = true, input = taskData.arg1 }
 end
 
-function ACallBackFunc1(callbackArgumentTable, testResult)
-    corelog.WriteToLog("enterprise_test.ACallBackFunc1("..textutils.serialise(callbackArgumentTable)..", "..textutils.serialise(testResult)..") called.")
+function ACallBackFunc1(callbackData, testResult)
+    corelog.WriteToLog("enterprise_test.ACallBackFunc1("..textutils.serialise(callbackData)..", "..textutils.serialise(testResult)..") called.")
 
-    return callbackArgumentTable.arg1
+    return callbackData.arg1
 end
 
