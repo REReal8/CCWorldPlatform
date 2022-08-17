@@ -58,8 +58,6 @@ function PlantFirstSapling_Task(settleData)
 end
 
 function WaitFirstTree_MetaData(settleData)
-    corelog.WriteToLog("WaitFirstTree_MetaData")
-
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(settleData.startLocation),
@@ -103,18 +101,18 @@ function ChopFirstTree_MetaData(settleData)
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition still no fuel
         itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
         }
     }
 end
 
 function ChopFirstTree_Task(settleData)
     --[[
-        This Task function chops (the remmainder of) the first tree. Then it uses some of it to fuel the turtle.
+        This Task function chops (the remainder of) the first tree.
 
         Return value:
             task result                 - (table)      
                 success                 - (boolean) whether the task was succesfull
+                planksToProduceForFuel  - (number) of planks to create for refuel
 
         Parameters:
             settleData                  - (table) data about the task
@@ -124,9 +122,6 @@ function ChopFirstTree_Task(settleData)
     if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
     local startLocation = settleData.startLocation
     corelog.WriteToLog(">Chopping first tree for initial fuel<")
-
-    -- eerste log omzetten naar planken
---    LogToPlanks(startLocation, 4)
 
     -- nu kunnen we bijtanken
     coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4})
@@ -138,11 +133,40 @@ function ChopFirstTree_Task(settleData)
 
     -- rest van de planken als brandstof gebruiken, kisten maken we laten (waarschijnlijk beter om eerst fakkeltje te maken trouwens, wellicht later)
     local logs      = coreinventory.CountItem("minecraft:birch_log")
-    local sticks    = coreinventory.CountItem("minecraft:stick")
+    local planksToProduceForFuel = (logs - 2)*4
 
-    -- logs to planks, leave 2 logs behind
-    LogToPlanks(startLocation, (logs - 2)*4)
+    -- end
+    return {success = true, planksToProduceForFuel = planksToProduceForFuel}
+end
+
+function Refuel_MetaData(settleData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(settleData.startLocation),
+        needTool = false,
+        needTurtle = true,
+        fuelNeeded = 0,
+        itemsNeeded = {
+        }
+    }
+end
+
+function Refuel_Task(settleData)
+    --[[
+        This Task function uses planks and sticks to fuel the turtle.
+
+        Return value:
+            task result                 - (table)      
+                success                 - (boolean) whether the task was succesfull
+
+        Parameters:
+            settleData                  - (table) data about the task
+                startLocation           - (table) locaton where first steps are to be taken
+    ]]
+
+    --
     local planks    = coreinventory.CountItem("minecraft:birch_planks")
+    local sticks    = coreinventory.CountItem("minecraft:stick")
 
     -- burn the planks and the sticks
     coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planks}) -- last plank might be used als funace fuel
