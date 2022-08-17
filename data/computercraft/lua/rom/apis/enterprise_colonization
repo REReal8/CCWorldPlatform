@@ -37,30 +37,39 @@ function CreateNewWorld(callback, callbackData)
     -- construct arguments
     local settleData = {
         startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
-        factoryVersion0     = "v0",
-
-        planksName          = "minecraft:birch_planks",
-        planksAmount1       = 4,
-
-        siloLocation        = {x=12, y=12, z= 1, dx=0, dy=1},
-        type                = "silo",
-        siloType            = "basic",
-        topChests           = 2,
-        layers              = 2,
-
-        factoryLocation     = {x=12, y= 0, z= 1, dx=0, dy=1},
-        factoryVersion1     = "v1",
-        factoryVersion2     = "v2",
-        upgradeToSimple     = true,
-
-        -- 
         plantFirstSaplingStep       = "PlantFirstSapling",
+
+        factoryVersion0             = "v0",
+
         waitFirstTreeStep           = "WaitFirstTree",
+
+        planksName                  = "minecraft:birch_planks",
+        planksAmount1               = 4,
+
         chopFirstTreeStep           = "ChopFirstTree",
+
         refuelStep                  = "Refuel",
+
         collectCobbleStoneStep      = "CollectCobbleStone",
-        createFurnaceAndCleanupStep = "CreateFurnaceAndCleanup",
+
+        furnaceName                 = "minecraft:furnace",
+        furnaceAmount               = 1,
+
+        cleanupStep                 = "Cleanup",
+
+        factoryLocation             = {x=12, y= 0, z= 1, dx=0, dy=1},
+        factoryVersion1             = "v1",
+
         remainingSettleStep         = "RemainingSettle",
+
+        factoryVersion2             = "v2",
+        upgradeToSimple             = true,
+
+        siloLocation                = {x=12, y=12, z= 1, dx=0, dy=1},
+        type                        = "silo",
+        siloType                    = "basic",
+        topChests                   = 2,
+        layers                      = 2,
     }
 
     -- create project definition
@@ -102,8 +111,12 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "collectCobbleStoneStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
+            { serviceName = "enterprise_factory.ProduceItem", async = true, input = {
+                { keyName = "itemName"          , valueSource = 0, sourceKey = "furnaceName" },
+                { keyName = "itemAmount"        , valueSource = 0, sourceKey = "furnaceAmount" },
+            }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "createFurnaceAndCleanupStep" },
+                { keyName = "_stepName"         , valueSource = 0, sourceKey = "cleanupStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {

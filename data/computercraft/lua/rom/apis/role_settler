@@ -225,30 +225,29 @@ function CollectCobbleStone_Task(settleData)
     return {success = true}
 end
 
-function CreateFurnaceAndCleanup_MetaData(settleData)
+function Cleanup_MetaData(settleData)
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(settleData.startLocation),
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 25, -- ToDo: how much is needed for this step?
+        fuelNeeded = 0,
         itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
-            {itemName = "minecraft:cobblestone", itemCount = 8},
             {itemName = "minecraft:dirt", itemCount = 1}
         }
     }
 end
 
-function CreateFurnaceAndCleanup_Task(settleData)
+function Cleanup_Task(settleData)
     -- check input
     local craftingLocation = settleData.startLocation
 
     -- craft furnace
-    corelog.WriteToLog (">Creating furnace & cleaning up initial crafting location<")
-    CobblestoneToFurnace(craftingLocation, 1)
+--    corelog.WriteToLog (">Creating furnace & cleaning up initial crafting location<")
+--    CobblestoneToFurnace(craftingLocation, 1)
 
     -- remove initial crafting location
+    corelog.WriteToLog (">Cleaning up initial crafting location<")
     if coreinventory.SelectItem("minecraft:dirt") then
         turtle.placeDown()
     else
@@ -434,38 +433,6 @@ function PlanksToStick(craftingLocation, sticks)
         },
         itemName = "minecraft:stick",
         itemCount = sticks,
---        ingredientsLocation = "inventory",
-        workingLocation = craftingLocation,
-    })
-end
-
-function CobblestoneToFurnace(craftingLocation, furnances)
-    --? put this static somewhere?
-    local stoneName = "minecraft:cobblestone"
-    local furnaceName = "minecraft:furnace"
-
-    -- check input
-    local stoneNeeded = math.ceil(furnances * 8)
-    local stones = coreinventory.CountItem(stoneName)
-    if stones < stoneNeeded then corelog.Warning("Not enough stones(=" .. stoneNeeded .. ") present(=" .. stones .. ") for furnances(=" .. furnances .. ")") return false end
-
-    -- craft
-    role_alchemist.Craft_Task({
---        taskId = "0",
---        alchemieType = "craft",
-        recipe = {
-             [6] = {itemName = stoneName, itemCount = 1},
-             [7] = {itemName = stoneName, itemCount = 1},
-             [8] = {itemName = stoneName, itemCount = 1},
-            [10] = {itemName = stoneName, itemCount = 1},
-            [12] = {itemName = stoneName, itemCount = 1},
-            [14] = {itemName = stoneName, itemCount = 1},
-            [15] = {itemName = stoneName, itemCount = 1},
-            [16] = {itemName = stoneName, itemCount = 1},
-            yield = 1
-        },
-        itemName = furnaceName,
-        itemCount = 1,
 --        ingredientsLocation = "inventory",
         workingLocation = craftingLocation,
     })

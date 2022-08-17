@@ -48,6 +48,19 @@ local db = {
                 yield   = 1
             },
         },
+        ["minecraft:furnace"] = {
+            crafting  = {
+                 [6]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                 [7]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                 [8]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                [10]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                [12]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                [14]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                [15]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                [16]    = { itemName = "minecraft:cobblestone",    itemCount = 1 },
+                yield   = 1
+            },
+        },
     }
 }
 
