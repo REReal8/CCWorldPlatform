@@ -1,16 +1,24 @@
 local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
 
-function T_BuildAndStartNewSite_service()
+function T_BuildAndStartNewV0Site_service()
     enterprise_factory.BuildAndStartNewSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
-function T_BuildNewSite_service()
+function T_BuildNewV0Site_service()
+    enterprise_factory.BuildNewSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
+function T_BuildNewV1Site_service()
     enterprise_factory.BuildNewSite({baseLocation = baseLocationV1, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
 function T_StartNewSite_service()
     enterprise_factory.StartNewSite({baseLocation = baseLocationV1, siteVersion="v1", siteAlreadyBuild=true}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
+function T_DismantleV0Site_service()
+    enterprise_factory.DismantleSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
 function T_RemoveSites()
