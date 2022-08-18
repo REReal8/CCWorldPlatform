@@ -111,9 +111,9 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "furnaceName" },
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "furnaceAmount" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "cleanupStep" }, -- ToDo replace by new service StopSite/ RemoveSite
-                { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
+            { serviceName = "enterprise_factory.DismantleSite", async = true, input = { -- ToDo: add Stopping Site
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
             { serviceName = "enterprise_factory.BuildAndStartNewSite", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
