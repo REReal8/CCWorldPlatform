@@ -86,7 +86,59 @@ local db = {
 --   | |
 --   |_|
 
--- enterprise_factory.BuildNewSite({baseLocation={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1", upgrade=false}, "coreassignment.Dummy_Callback", {})
+function BuildAndStartNewSite(siteData, callback, callbackData)
+    --[[
+        This async public service builds a new factory site and ensures it's ready for use.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the site was succesfully build and is ready for use.
+
+        Parameters:
+            siteData            - (table) data about this site
+                baseLocation    - (table) world location of the base (lower left corner) of this site
+                siteVersion     - (string) version string of the site
+                upgrade         - (boolean) if site should (only) be updated from a previous version
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
+        corelog.Error('enterprise_factory.BuildAndStartNewSite: Invalid siteData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_factory.BuildAndStartNewSite: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- create project definition
+    local buildAndStartNewSiteProject = {
+        services    = {
+            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
+                { keyName = "upgrade"           , valueSource = 0, sourceKey = "upgrade" },
+            }},
+            { serviceName = "enterprise_factory.StartNewSite", async = false, input = {
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
+                { keyName = "siteAlreadyBuild"  , valueSource = 1, sourceKey = "success" }
+            }},
+        },
+        returnData  = {
+            { keyName = "success"               , valueSource = 2, sourceKey = "success" },
+        }
+    }
+
+    -- start project
+    enterprise_projects.StartProject(buildAndStartNewSiteProject, siteData, callback, callbackData)
+end
+
 function BuildNewSite(siteData, callback, callbackData)
     --[[
         This async public service builds a new factory site.
@@ -102,8 +154,8 @@ function BuildNewSite(siteData, callback, callbackData)
             siteData            - (table) data about this site
                 baseLocation    - (table) world location of the base (lower left corner) of this site
                 siteVersion     - (string) version string of the site
-                upgrade         - (boolean) if site should (only) be updated from previous version
-            callback            - (string) name of function to call once the site is build
+                upgrade         - (boolean) if site should (only) be updated from a previous version
+            callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
 
@@ -136,23 +188,28 @@ function BuildNewSite(siteData, callback, callbackData)
     enterprise_construction.BuildBlueprint(siteBuildData, callback, callbackData)
 end
 
--- enterprise_factory.StartNewSite({baseLocation={x=12, y= 0, z= 1, dx=0, dy=1}, siteVersion="v1"})
 function StartNewSite(siteData)
     --[[
         This sync public service ensures a new site is ready for use.
 
         Return value:
-                                - (table)
-                success         - (boolean) whether the site is ready for business
+                                    - (table)
+                success             - (boolean) whether the site is ready for business
 
         Parameters:
-            siteData            - (table) data about this site
-                baseLocation    - (table) world location of the base (lower left corner) of this site
-                siteVersion     - (string) version string of the site
+            siteData                - (table) data about this site
+                baseLocation        - (table) world location of the base (lower left corner) of this site
+                siteVersion         - (string) version string of the site
+                siteAlreadyBuild    - (boolean) confirmation that the site was already physically build
     --]]
 
-    -- check our input
+    -- check input
     if type(siteData) ~= "table" or type(siteData.baseLocation) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.StartNewSite: Invalid input') return {success = false} end
+    if type(siteData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite: siteAlreadyBuild not valid") return {success = false} end
+    if not siteData.siteAlreadyBuild then
+        corelog.Warning("enterprise_factory.StartNewSite: Site not (yet) succesfully build => we will not start it")
+        return {success = false}
+    end
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -245,7 +302,7 @@ function ProduceItem(productionData , callback, callbackData)
                 itemName            - (string) name of items to produce
                 itemAmount          - (number) amount of items to produce
                 ToDo: consider adding requester location (amongst other to be able to select a more optimal (closest) site)
-            callback                - (string) name of function to call once the items are made
+            callback                - (string) name of function to call once service is ready
             callbackData            - (table) data to supply to callback function
     ]]
 

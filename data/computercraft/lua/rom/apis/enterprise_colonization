@@ -79,11 +79,7 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "plantFirstSaplingStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
-                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
-                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
-            }},
-            { serviceName = "enterprise_factory.StartNewSite", async = false, input = {
+            { serviceName = "enterprise_factory.BuildAndStartNewSite", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
@@ -101,7 +97,7 @@ function CreateNewWorld(callback, callbackData)
             }},
             { serviceName = "enterprise_factory.ProduceItem", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
-                { keyName = "itemAmount"        , valueSource = 6, sourceKey = "planksToProduceForFuel" },
+                { keyName = "itemAmount"        , valueSource = 5, sourceKey = "planksToProduceForFuel" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "refuelStep" },
@@ -119,7 +115,7 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "cleanupStep" }, -- ToDo replace by new service StopSite/ RemoveSite
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
+            { serviceName = "enterprise_factory.BuildAndStartNewSite", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion1" },
             }},

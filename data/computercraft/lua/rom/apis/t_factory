@@ -1,11 +1,16 @@
-local baseLocation = {x=12, y= 0, z= 1, dx=0, dy=1}
+local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
+local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
+
+function T_BuildAndStartNewSite_service()
+    enterprise_factory.BuildAndStartNewSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
 
 function T_BuildNewSite_service()
-    enterprise_factory.BuildNewSite({baseLocation = baseLocation, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.BuildNewSite({baseLocation = baseLocationV1, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
 function T_StartNewSite_service()
-    enterprise_factory.StartNewSite({baseLocation = baseLocation, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.StartNewSite({baseLocation = baseLocationV1, siteVersion="v1", siteAlreadyBuild=true}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
 function T_RemoveSites()
@@ -27,7 +32,7 @@ function T_Craft_Task()
            yield        = 4
         },
         itemCount       = 4,
-        workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -4),
+        workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -4),
     }
 
     role_alchemist.Craft_Task(craftData)
@@ -40,7 +45,7 @@ function T_Smelt_Task()
             yield       = 1
         },
         itemCount       = 3,
-        workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -3),
+        workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -3),
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = 3,
     }
@@ -50,7 +55,7 @@ end
 
 function T_Pickup_Task()
     local pickupData = {
-        workingLocation = coremove.GetRelativeLocation(baseLocation, 3, 3, -3),
+        workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -3),
     }
 
     role_alchemist.Pickup_Task(pickupData)
