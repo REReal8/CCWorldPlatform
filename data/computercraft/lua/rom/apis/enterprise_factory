@@ -95,7 +95,8 @@ function BuildNewSite(siteData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table) {success = true} if the site was succesfully build
+                                - (table)
+                success         - (boolean) whether the site was succesfully build
 
         Parameters:
             siteData            - (table) data about this site
@@ -141,7 +142,8 @@ function StartNewSite(siteData)
         This sync public service ensures a new site is ready for use.
 
         Return value:
-                                - (table) {success = true} if the site is ready for business
+                                - (table)
+                success         - (boolean) whether the site is ready for business
 
         Parameters:
             siteData            - (table) data about this site
@@ -185,7 +187,8 @@ function RemoveSites()
         This function removes all sites from the factory. Currently this is intended for debugging purposes only.
 
         Return value:
-                                - (table) {success = true} if the site is ready for business
+                                - (table)
+                success         - (boolean) whether all the sites were removed
 
         Parameters:
     --]]
@@ -207,7 +210,8 @@ function RemoveSite(siteId)
         This function removes a site from the factory. Currently this is intended for debugging purposes only.
 
         Return value:
-                                - (table) {success = true} if the site is ready for business
+                                - (table)
+                success         - (boolean) whether the sites was removed
 
         Parameters:
             siteId              - (string) id of the site
@@ -233,7 +237,8 @@ function ProduceItem(productionData , callback, callbackData)
             nil
 
         Async service return value (to callback):
-                                    - (table) {success = true} if the items were succesfully produced
+                                    - (table)
+                success             - (boolean) whether the items were succesfully produced
 
         Parameters:
             productionData          - (table) data about the item to produce, 
