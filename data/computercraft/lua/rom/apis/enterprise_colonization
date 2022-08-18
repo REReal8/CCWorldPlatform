@@ -124,7 +124,7 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "factoryLocation"   , valueSource = 0, sourceKey = "factoryLocation" },
             }},
-            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
+            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = { -- ToDo handle stopping & restarting in case of upgrade
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion2" },
                 { keyName = "upgrade"           , valueSource = 0, sourceKey = "upgradeToSimple" },
