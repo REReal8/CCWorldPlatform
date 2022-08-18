@@ -32,12 +32,84 @@ function StartNewSite(siteStartData)
         smeltingSpots   =  siteStartData.smeltingSpots,
     }
 
-    -- ToDo: initialise possible other data (like e.g. availability of spots)
+    -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)
 
     -- save the new site to our sites
     coredht.SaveData(site, db.dhtRoot, db.dhtSites, site.siteId)
 
     return site.siteId
+end
+
+function StopSite(siteData, callback, callbackData)
+    --[[
+        This async public function stops a factory site. Stopping implies
+          - the site is immediatly no longer available for new business
+          - wait for all active work (production) on site to be ended
+          - remove the site from the factory 
+
+        Return value:
+            nil 
+
+        Async immediatly return value (to callback):
+                                - (table)
+                success         - (boolean) when the site was succesfully stopped
+
+        Parameters:
+            siteData            - (table) data about the site
+                baseLocation    - (table) world location of the base (lower left corner) of the site
+                siteVersion     - (string) version string of the site
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
+        corelog.Error('enterprise_factory.StopSite: Invalid siteData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_factory.StopSite: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    callbackData = callbackData or {}
+
+    -- find the site
+    local site = FindSiteBySiteData(siteData)
+    if type(site) ~="table" then
+        corelog.Error("enterprise_factory_site.StopSite: Failed retrieving factory site for siteData = "..textutils.serialise(siteData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- stop doing business for this site
+    -- ToDo: implement
+
+    -- wait for active work done
+    -- ToDo: implement
+
+    -- remove site from factory
+    corelog.WriteToLog('  enterprise_factory.StopSite: Removing site '..site.siteId)
+    coredht.SaveData(nil, db.dhtRoot, db.dhtSites, site.siteId)
+
+    -- do callback
+    coreutils.DoCallback(callback, callbackData, {success = true})
+end
+
+function FindSiteBySiteData(siteData)
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- check if we have any site
+    if type(sites) ~= "table" then corelog.Warning('enterprise_factory.FindSiteBySiteData: no sites present') return nil end
+
+    -- loop on sites
+    for k, site in pairs(sites) do
+        -- is this the one?
+        if coremove.IsSameLocation(site.baseLocation, siteData.baseLocation) and site.version == siteData.siteVersion then
+            return site
+        end
+    end
+
+    return nil
 end
 
 function GetAvailableCraftSpot(siteId)

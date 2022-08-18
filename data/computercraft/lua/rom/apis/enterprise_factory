@@ -136,6 +136,7 @@ function BuildAndStartNewSite(siteData, callback, callbackData)
     }
 
     -- start project
+    corelog.WriteToLog(">Building and starting factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
     enterprise_projects.StartProject(buildAndStartNewSiteProject, siteData, callback, callbackData)
 end
 
@@ -184,7 +185,6 @@ function BuildNewSite(siteData, callback, callbackData)
     end
 
     -- let construction enterprise build the site
-    corelog.WriteToLog(">Building factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint(siteBuildData, callback, callbackData)
 end
 
@@ -239,9 +239,61 @@ function StartNewSite(siteData)
     return {success = true}
 end
 
+function StopAndDismantleSite(siteData, callback, callbackData)
+    --[[
+        This async public service stops and dismantles a site.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the site was succesfully stopped and dismantled.
+
+        Parameters:
+            siteData            - (table) data about this site
+                baseLocation    - (table) world location of the base (lower left corner) of this site
+                siteVersion     - (string) version string of the site
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
+        corelog.Error('enterprise_factory.StopAndDismantleSite: Invalid siteData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_factory.StopAndDismantleSite: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- create project definition
+    local stopAndDismantleSiteProject = {
+        services    = {
+            { serviceName = "enterprise_factory.StopSite", async = true, input = {
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
+            }},
+            { serviceName = "enterprise_factory.DismantleSite", async = true, input = {
+                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
+                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
+                { keyName = "siteStopped"       , valueSource = 1, sourceKey = "success" }
+            }},
+        },
+        returnData  = {
+            { keyName = "success"               , valueSource = 2, sourceKey = "success" },
+        }
+    }
+
+    -- start project
+    corelog.WriteToLog(">Stopping and dismantling factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
+    enterprise_projects.StartProject(stopAndDismantleSiteProject, siteData, callback, callbackData)
+end
+
 function DismantleSite(siteData, callback, callbackData)
     --[[
-        This async public service that dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
+        This async public service dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
         Possibly part of the world is restored to a neutral (e.g. flat) state.
 
         Return value:
@@ -252,9 +304,10 @@ function DismantleSite(siteData, callback, callbackData)
                 success         - (boolean) whether the site was succesfully dismantled
 
         Parameters:
-            dismantleData       - (table) data about the site
+            siteData            - (table) data about the site
                 baseLocation    - (table) world location of the base (lower left corner) of the site
                 siteVersion     - (string) version string of the site
+                siteStopped     - (boolean) confirmation that the site was already stopped
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
@@ -269,6 +322,11 @@ function DismantleSite(siteData, callback, callbackData)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
+    if type(siteData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite: siteStopped not valid") return {success = false} end
+    if not siteData.siteStopped then
+        corelog.Warning("enterprise_factory.DismantleSite: Site not (yet) stopped => we will not dismantle it")
+        return {success = false}
+    end
 
     -- get site dismantal data
     local siteDismantleBuildData = nil
@@ -285,8 +343,44 @@ function DismantleSite(siteData, callback, callbackData)
     end
 
     -- let construction enterprise dismantle the site
-    corelog.WriteToLog(">DismantleSite factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteDismantleBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint(siteDismantleBuildData, callback, callbackData)
+end
+
+function StopSite(siteData, callback, callbackData)
+    --[[
+        This async public service stops a factory site. Stopping implies
+          - the site is immediatly no longer available for new business
+          - wait for all active work (production) on site to be ended
+          - remove the site from the factory 
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) when the site was succesfully stopped
+
+        Parameters:
+            siteData            - (table) data about the site
+                baseLocation    - (table) world location of the base (lower left corner) of the site
+                siteVersion     - (string) version string of the site
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
+        corelog.Error('enterprise_factory.StopSite: Invalid siteData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_factory.StopSite: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    callbackData = callbackData or {}
+
+    -- pass on the request to site file
+    enterprise_factory_site.StopSite(siteData, callback, callbackData)
 end
 
 function RemoveSites()

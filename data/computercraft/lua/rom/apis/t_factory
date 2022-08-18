@@ -17,8 +17,16 @@ function T_StartNewSite_service()
     enterprise_factory.StartNewSite({baseLocation = baseLocationV1, siteVersion="v1", siteAlreadyBuild=true}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
+function T_StopAndDismantleV0Site_service()
+    enterprise_factory.StopAndDismantleSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
 function T_DismantleV0Site_service()
-    enterprise_factory.DismantleSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.DismantleSite({baseLocation = baseLocationV0, siteVersion="v0", siteStopped=true}, "coreassignment.Dummy_Callback", {"some callback data"})
+end
+
+function T_StopV0Site_service()
+    enterprise_factory.StopSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
 function T_RemoveSites()

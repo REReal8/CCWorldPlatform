@@ -111,7 +111,7 @@ function CreateNewWorld(callback, callbackData)
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "furnaceName" },
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "furnaceAmount" },
             }},
-            { serviceName = "enterprise_factory.DismantleSite", async = true, input = { -- ToDo: add Stopping Site
+            { serviceName = "enterprise_factory.StopAndDismantleSite", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},

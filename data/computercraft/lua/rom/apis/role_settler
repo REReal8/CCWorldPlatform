@@ -48,7 +48,7 @@ function PlantFirstSapling_Task(settleData)
 
     -- plant the sappling
     corelog.WriteToLog(" ")
-    corelog.WriteToLog(">Planting first sapling<")
+    corelog.WriteToLog(">Planting first sapling")
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
     db.nTrees = 1
@@ -85,6 +85,7 @@ function WaitFirstTree_Task(settleData)
     coreinventory.Equip("minecraft:diamond_pickaxe")
 
     -- wait for a tree
+    corelog.WriteToLog(">Waiting for first tree")
     WaitForTree()
 
     -- blok voor ons omhakken
@@ -121,7 +122,7 @@ function ChopFirstTree_Task(settleData)
     -- check input
     if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
     local startLocation = settleData.startLocation
-    corelog.WriteToLog(">Chopping first tree for initial fuel<")
+    corelog.WriteToLog(">Chopping first tree")
 
     -- nu kunnen we bijtanken
     coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4})
@@ -165,6 +166,7 @@ function Refuel_Task(settleData)
     ]]
 
     --
+    corelog.WriteToLog(">Refueling (2)")
     local planks    = coreinventory.CountItem("minecraft:birch_planks")
     local sticks    = coreinventory.CountItem("minecraft:stick")
 
@@ -197,7 +199,7 @@ function CollectCobbleStone_Task(settleData)
     local startLocation = settleData.startLocation
 
     -- get into digging position
-    corelog.WriteToLog (">Collecting cobblestone<")
+    corelog.WriteToLog (">Collecting cobblestone")
     coreinventory.Equip("minecraft:diamond_pickaxe")
     turtle.digDown()
     coremove.Down()
@@ -225,35 +227,6 @@ function CollectCobbleStone_Task(settleData)
     return {success = true}
 end
 
-function Cleanup_MetaData(settleData)
-    return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 0,
-        itemsNeeded = {
-            {itemName = "minecraft:dirt", itemCount = 1}
-        }
-    }
-end
-
-function Cleanup_Task(settleData)
-    -- check input
-    local craftingLocation = settleData.startLocation
-
-    -- remove initial crafting location
-    corelog.WriteToLog (">Cleaning up initial crafting location<")
-    if coreinventory.SelectItem("minecraft:dirt") then
-        turtle.placeDown()
-    else
-        corelog.Warning("No dirt to revert initial crafting location")
-    end
-
-    -- end
-    return {success = true}
-end
-
 function RemainingSettle_MetaData(settleData)
     return {
         startTime = coreutils.UniversalTime(),
@@ -276,11 +249,12 @@ function RemainingSettle_Task(settleData)
     local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
 
     -- craft torches
+    corelog.WriteToLog (">Making first torches")
     LogToTorches(factoryLocation, craftingLocation, 4)
 
     -- expand forest to max size
     local treesNeeded = 6
-    corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees<")
+    corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees")
     while db.nTrees < treesNeeded do
         -- Harvest Forest
         HarvestForest(craftingLocation, startLocation)
@@ -293,21 +267,21 @@ function RemainingSettle_Task(settleData)
     local chestsNeeded = 24
     local torchesNeeded = 6
     local logsNeeded = chestsNeeded * 2 + math.ceil(torchesNeeded / 2)
-    corelog.WriteToLog(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches<")
+    corelog.WriteToLog(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
         HarvestForest(craftingLocation, startLocation)
     end
 
     -- create chests
-    corelog.WriteToLog(">Creating chests and torches<")
+    corelog.WriteToLog(">Creating chests and torches")
     LogToChests(craftingLocation, chestsNeeded)
 
     -- create torches
     LogToTorches(factoryLocation, craftingLocation, torchesNeeded)
 
     -- redo first tree according to pattern
-    corelog.WriteToLog(">Finishing Forest<")
+    corelog.WriteToLog(">Finishing Forest")
     BuildForestTreePattern( 0, 0, 0)
 
     -- end
