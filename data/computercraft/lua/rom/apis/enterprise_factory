@@ -65,13 +65,13 @@ local db = {
 }
 
 --[[
-    A factory is an enterprise that offers services to produce items based on recipes. 
+    The factory is an enterprise that offers services to produce items based on recipes. 
     
     There are (currently) two techniques for producing items.
-        The crafting technique uses a crafting table to produce an output item from of a set of input items.
-        The smelting technique uses a furnace to produce an output item out out of an input item.
+        The crafting technique uses a crafting table to produce an output item from of a set of input items (inrgedients).
+        The smelting technique uses a furnace to produce an output item out out of an input item (ingredient).
 
-    A factory is comprised of one or more factory sites. A site is comprised out of one or more crafting and/ or smelting spots. Furthermore a site should specify
+    The factory is comprised of one or more factory sites. A site is comprised out of one or more crafting and/ or smelting spots. Furthermore a site should specify
     one or more item input and one or more item output "spots". Technically the later are (should be) URL's locating the input and output of items. The most simple 
     version of these input/ output "spots" are the inventory of a turtle.
 --]]
@@ -432,7 +432,9 @@ end
 --
 function ProduceItem(productionData , callback, callbackData)
     --[[
-        This async public service produces items in a factory site.
+        This async public service produces (multiple instances of) an item of a specific itemName in a factory site. It does so 
+        by first determining a recipe that can produce the item. Subsequently it used the recipe ingredients to produce the
+        requested amount of items with the corresponding recipe technique (i.e. crafting or smelting).
 
         Return value:
             nil
