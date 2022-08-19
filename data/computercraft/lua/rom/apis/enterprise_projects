@@ -47,6 +47,61 @@ function StartProject(projectDefinition, projectInputData, callbackFunction, cal
     NextProjectStep({projectId = project.projectId}, projectInputData) -- the input projectInputData is interpreted as the result of virtual step 0
 end
 
+function RemoveProjects()
+    local projects = coredht.GetData(db.dhtRoot)
+    if not projects or type(projects) ~= "table" then corelog.Warning("coreassignment.ClearProjects: projects not valid") return nil end
+
+    -- remove all assignments
+    corelog.WriteToProjectsLog("All projects are being removed!")
+    for projectId, project in pairs(projects) do
+        -- remove project
+        corelog.WriteToProjectsLog("Removed", projectId)
+        coredht.SaveData(nil, db.dhtRoot, projectId)
+    end
+end
+
+function AllTrue(serviceData) -- ToDo: considering naming this query service differently. maybe AND?
+    --[[
+        This sync public query service returns if all supplied boolean arguments are true. 
+        
+        It can typically be used as the last step of a sequence of steps in a project description to combine the success results of all steps into one.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether all supplied boolean arguments are true.
+
+        Parameters:
+            serviceData             - (table) data of this service
+                <boolean argument1> - (boolean) a boolean argument
+                <boolean argument2> - (boolean) another boolean argument
+                <boolean argumentN> - (boolean) and another boolean argument
+                <other argument1>    - (not boolean) a none boolean argument
+                <other argumentN>    - (not boolean) another none boolean argument
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_projects.AllTrue: Invalid input") return {success = false} end
+
+    -- use remaining input
+    local allTrue = true
+    for key, serviceArgument in pairs(serviceData) do
+        -- check if it's boolean
+        if type(serviceArgument) =="boolean" then
+            allTrue = allTrue and serviceArgument
+        end
+    end
+
+    -- end
+    return {success = allTrue}
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
 function NextProjectStep(internalProjectData, stepResults)
     -- get the project information
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
@@ -132,23 +187,3 @@ function EndProject(internalProjectData)
     corelog.WriteToProjectsLog("Ended", project.projectId)
     coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
 end
-
-function RemoveProjects()
-    local projects = coredht.GetData(db.dhtRoot)
-    if not projects or type(projects) ~= "table" then corelog.Warning("coreassignment.ClearProjects: projects not valid") return nil end
-
-    -- remove all assignments
-    corelog.WriteToProjectsLog("All projects are being removed!")
-    for projectId, project in pairs(projects) do
-        -- remove project
-        corelog.WriteToProjectsLog("Removed", projectId)
-        coredht.SaveData(nil, db.dhtRoot, projectId)
-    end
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/

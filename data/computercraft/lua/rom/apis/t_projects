@@ -13,14 +13,17 @@ function T_CombineStepResults()
                 { keyName = "serviceResult" , valueSource = 0, sourceKey = "falseServiceResult" },
             }},
             { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
-                { keyName = "testArg3"      , valueSource = 0, sourceKey = "testData4" },
+                { keyName = "testArg4"      , valueSource = 0, sourceKey = "testData4" },
+            }},
+            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+                { keyName = "success1", valueSource = 1, sourceKey = "success" },
+                { keyName = "success2", valueSource = 2, sourceKey = "success" },
+                { keyName = "success3", valueSource = 3, sourceKey = "success" },
+                { keyName = "success4", valueSource = 4, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success1", valueSource = 1, sourceKey = "success" },
-            { keyName = "success2", valueSource = 2, sourceKey = "success" },
-            { keyName = "success3", valueSource = 3, sourceKey = "success" },
-            { keyName = "success4", valueSource = 4, sourceKey = "success" },
+            { keyName = "success", valueSource = 5, sourceKey = "success" },
         }
     }
     local projectData = { 
