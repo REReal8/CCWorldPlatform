@@ -1,0 +1,98 @@
+local db = {
+}
+
+--[[
+    The Item Service Provider (ISP) is an enterprise that offers services to handle items.
+
+    Other enterprises can register unique URLs (representing e.g. sites/ spots/ chests etc) at the ISP enabling them to get 
+    certain service requests via the ISP. In order to be able to register at the ISP an enterprise must implement a set of services. 
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function ItemsAvailableAt(queryData)
+    --[[
+        This sync public service queries the URL (base, i.e. "ccwprp://host:port/path", part of the URL) for the availability of
+        items ("query" component of the URL).
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether all the queried items are available at the URL
+
+        Parameters:
+            queryData               - (table) data about the query
+                itemQueryURL        - (table) a URL specifying the items availability that needs to be queried
+                                        (the "query" component of the URL specifies the items to query for)
+    --]]
+
+    -- check input
+    if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
+        corelog.Error("enterprise_isp.ItemsAvailableAt: Invalid queryData input")
+        return {success = false}
+    end
+
+    -- ToDo: implement
+    if (true) then
+        corelog.Error("enterprise_isp.ItemsAvailableAt: Service not yet implemented!")
+        return {success = false}
+    end
+
+    -- end
+    return {success = true}
+end
+
+function TransferItemsFromTo(transferData, callback, callbackData)
+    --[[
+        This async public service relays the transfer of items from a source to a destination URL.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the items were succesfully transferred
+
+        Parameters:
+            transferData        - (table) data about the transfer
+                sourceURL       - (table) a URL specifying where the items that need transfer can be located
+                                    (the "query" component of the URL specifies the items to be transferred)
+                destinationURL  - (table) a URL specifying where the items need to be transferred to
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function            
+    --]]
+
+    -- check input
+    if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "string" or type(transferData.destinationURL) ~= "string" then
+        corelog.Error("enterprise_isp.TransferItemsFromTo: Invalid transferData input")
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error("enterprise_isp.TransferItemsFromTo: Invalid callback function")
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    callbackData = callbackData or {}
+
+    -- ToDo: implement
+    if (true) then
+        corelog.Error("enterprise_isp.TransferItemsFromTo: Service not yet implemented!")
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- end
+    return nil
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
