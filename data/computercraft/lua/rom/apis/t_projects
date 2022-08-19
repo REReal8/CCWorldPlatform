@@ -15,7 +15,7 @@ function T_CombineStepResults()
             { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
                 { keyName = "testArg4"      , valueSource = 0, sourceKey = "testData4" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AllTrue", async = false, input = { -- ToDo: consider introducing simple syntax to the projectDefinition whether this step should automatically be added at the end of the sequence
                 { keyName = "success1", valueSource = 1, sourceKey = "success" },
                 { keyName = "success2", valueSource = 2, sourceKey = "success" },
                 { keyName = "success3", valueSource = 3, sourceKey = "success" },
