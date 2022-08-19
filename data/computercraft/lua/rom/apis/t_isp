@@ -23,9 +23,13 @@ function T_DummyURLTryoutCode()
                 { keyName = "sourceURL"         , valueSource = 0, sourceKey = "itemsLocalOutputURL" },
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "itemsDestinationURL" },
             }},
+            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "successN"          , valueSource = 2 --[[ likely higher]], sourceKey = "success" },
+            }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 2 --[[ likely higher]], sourceKey = "success" },
+            { keyName = "success"               , valueSource = 3 --[[ likely higher]], sourceKey = "success" },
         }
     }
 
