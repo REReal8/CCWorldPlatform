@@ -1,3 +1,41 @@
+function T_CombineStepResults()
+    -- init
+    local projectDefinition = {
+        services    = {
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg1"      , valueSource = 0, sourceKey = "testData1" },
+            }},
+            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments", async = true, input = {
+                { keyName = "testArg2"      , valueSource = 0, sourceKey = "testData2" },
+            }},
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg3"      , valueSource = 0, sourceKey = "testData3" },
+                { keyName = "serviceResult" , valueSource = 0, sourceKey = "falseServiceResult" },
+            }},
+            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+                { keyName = "testArg3"      , valueSource = 0, sourceKey = "testData4" },
+            }},
+        },
+        returnData  = {
+            { keyName = "success1", valueSource = 1, sourceKey = "success" },
+            { keyName = "success2", valueSource = 2, sourceKey = "success" },
+            { keyName = "success3", valueSource = 3, sourceKey = "success" },
+            { keyName = "success4", valueSource = 4, sourceKey = "success" },
+        }
+    }
+    local projectData = { 
+        testData1 = "some testData1",
+        testData2 = "some testData2",
+        testData3 = "some testData3",
+        falseServiceResult = {success = false},
+        testData4 = "some testData4",
+    }
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = { "rootCallBackData" }
+
+    enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
+end
+
 function T_StartProject()
     -- init
     local testArgValue = 20

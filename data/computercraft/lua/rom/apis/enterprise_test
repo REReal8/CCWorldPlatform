@@ -1,3 +1,7 @@
+--[[
+    The test enterprise offers test services for debugging/ testing purposes.
+--]]
+
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -7,17 +11,22 @@
 --   | |
 --   |_|
 
---                        _
---                       (_)
---    ___  ___ _ ____   ___  ___ ___  ___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \/ __|
---   \__ \  __/ |   \ V /| | (_|  __/\__ \
---   |___/\___|_|    \_/ |_|\___\___||___/
-
 function TestPureLogicService(serviceData)
     corelog.WriteToLog("enterprise_test.TestPureLogicService("..textutils.serialize(serviceData)..")")
 
-    return { success = true}
+    -- check input
+    if type(serviceData) ~= "table" then
+        corelog.Error('enterprise_factory.TestPureLogicService: Invalid serviceData input')
+        return {success = false}
+    end
+
+    -- determine result to return
+    local serviceResult = { success = true}
+    if type(serviceData.serviceResult) == "table" then
+        serviceResult = serviceData.serviceResult
+    end
+
+    return serviceResult
 end
 
 function TestServiceWithAssignment(serviceData)
@@ -96,7 +105,5 @@ end
 
 function ACallBackFunc1(callbackData, testResult)
     corelog.WriteToLog("enterprise_test.ACallBackFunc1("..textutils.serialise(callbackData)..", "..textutils.serialise(testResult)..") called.")
-
-    return callbackData.arg1
 end
 
