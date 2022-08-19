@@ -2,6 +2,23 @@ local db = {
     dhtRoot     = "projects",
 }
 
+--[[
+    The projects enterprise offers services to group together multiple enterprise services based on a predefined project definition.
+
+    Currently the project definition can contain a sequence of services that need to be executed.
+
+    For another description of this enterprise and it's usage see https://github.com/REReal8/CCWorldPlatform/wiki/enterprise_projects 
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
 function StartProject(projectDefinition, projectInputData, callbackFunction, callbackData)
     -- check input
     if type(projectDefinition) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectDefinition') return nil end
@@ -128,3 +145,10 @@ function RemoveProjects()
         coredht.SaveData(nil, db.dhtRoot, projectId)
     end
 end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
