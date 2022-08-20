@@ -3,10 +3,10 @@ function T_DummyURLTryoutCode()
 
     -- create project definition
     local projectInputData = {
-        itemsSourceURL = "ccwitp://storage/site=2/outputchest=4/?minecraft:birch_log=1&minecraft:torch=5",
-        itemsLocalInputURL = "ccwitp://factory/site=3/inputchest=2",
-        itemsLocalOutputURL = "ccwitp://factory/site=3/ouputchest=1",
-        itemsDestinationURL = "ccwitp://storage/"
+        itemsSourceURL = "ccwprp://storage/site=2/outputchest=4/?minecraft:birch_log=1&minecraft:torch=5",
+        itemsLocalInputURL = "ccwprp://factory/site=3/inputchest=2",
+        itemsLocalOutputURL = "ccwprp://factory/site=3/ouputchest=1",
+        itemsDestinationURL = "ccwprp://storage/"
      }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
@@ -36,5 +36,3 @@ function T_DummyURLTryoutCode()
     -- start project
     enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
 end
-
-
