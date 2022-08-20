@@ -213,6 +213,7 @@ function ExecuteTest(t)
 		local options	= {
 			{key = "g", desc = "general", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
 			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
+			{key = "u", desc = "url", 				func = ExecuteTest, param = {file = t_url, filename = "t_url"}},
 			{key = "a", desc = "assignment", 		func = ExecuteTest, param = {file = t_assignment, filename = "t_assignment"}},
 			{key = "p", desc = "projects", 			func = ExecuteTest, param = {file = t_projects, filename = "t_projects"}},
 			{key = "i", desc = "isp", 				func = ExecuteTest, param = {file = t_isp, filename = "t_isp"}},
