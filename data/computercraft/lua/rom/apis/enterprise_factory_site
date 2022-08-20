@@ -23,7 +23,7 @@ function StartNewSite(siteStartData)
     -- variables
     local site = {
         version         = siteStartData.version,
-        siteId          = coreutils.NewId(),
+        siteId          = coreutils.NewId(), -- ToDo consider using an internal (to the factory) counter. This might make use in an URL easier.
 
         baseLocation    = siteStartData.baseLocation,
 --        entryLocation   = coremove.GetRelativeLocation(siteData.location, 3, 3, 1),
