@@ -61,13 +61,13 @@ function New(host, port, path, query)
         self._host = h
     end
 
+    local hostPattern = "%a+"
     -- aUrl.setHostURI("storage")
     local setHostURI = function (hURI)
         -- check input
         if type(hURI) ~= "string" then corelog.Error("url.setHost: invalid host URI type: "..type(hURI)) return end
 
-        local hostPattern = "%a+"
-        setHost(string.gmatch(hURI, hostPattern)) -- in effect this should be the same as setHost(hURI)
+        setHost(string.match(hURI, hostPattern)) -- in effect this should be the same as setHost(hURI)
     end
 
     local getPort = function ()
@@ -90,12 +90,12 @@ function New(host, port, path, query)
     end
 
     -- aUrl.setPortURI(":1")
+    local portPattern = ":%d+"
     local setPortURI = function (pURI)
         -- check input
         if type(pURI) ~= "string" then corelog.Error("url.setPortURI: invalid port URI type: "..type(pURI)) return end
 
         if pURI ~= "" then
-            local portPattern = ":%d+"
             local i, j = string.find(pURI, portPattern)
             if i ~= nil then
                 local p = string.sub(pURI, i+1, j)
@@ -104,7 +104,7 @@ function New(host, port, path, query)
                 corelog.Warning("url.setPortURI: invalid port URI value: "..pURI)
             end
         else
-            corelog.WriteToLog("url.setPortURI: port URI value empty: "..pURI)
+--            corelog.WriteToLog("url.setPortURI: port URI value empty: "..pURI)
         end
     end
 
@@ -136,15 +136,15 @@ function New(host, port, path, query)
         -- check input
         if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid path URI type: "..type(pURI)) return end
 
-        local pathSegmentPattern = "%/(%a+)%=(%w+)"
         if pURI ~= "" then
             local p = {}
+            local pathSegmentPattern = "%/(%a+)%=(%w+)"
             for key, value in string.gmatch(pURI, pathSegmentPattern) do
                 p[key] = value
             end
             setPath(p)
         else
-            corelog.WriteToLog("url.setPathURI: path URI value empty: "..pURI)
+--            corelog.WriteToLog("url.setPathURI: path URI value empty: "..pURI)
         end
     end
 
@@ -177,23 +177,64 @@ function New(host, port, path, query)
         if qURI ~= "" then
             local q = {}
             -- first
-            local mainPattern = "(%a+%:?%a+%_?%a+)%=(%w+)" -- %:? and %_? to allow for optional : and _ in e.g. "minecraft:birch_log"
-            local firstQuerySegmentPattern = "%?"..mainPattern
-            local key1, value1 = string.match(qURI, firstQuerySegmentPattern)
+            local querySegmentPattern = "[%?%&]([_%:%a]+)%=(%w+)" -- [_%:%a] to allow for optional _ and : in e.g. "minecraft:birch_log"
+            local key1, value1 = string.match(qURI, querySegmentPattern)
             q[key1] = value1
             -- second and higher
-            local otherQuerySegmentPattern = "%&"..mainPattern
-            for key, value in string.gmatch(qURI, otherQuerySegmentPattern) do
+            for key, value in string.gmatch(qURI, querySegmentPattern) do
                 q[key] = value
             end
             setQuery(q)
         else
-            corelog.WriteToLog("url.setQueryURI: path URI value empty: "..qURI)
+--            corelog.WriteToLog("url.setQueryURI: query URI value empty: "..qURI)
         end
     end
 
-    local toURI = function ()
+    local getURI = function ()
         return getSchemeURI()..getAuthorityURI()..getPathURI()..getQueryURI()
+    end
+
+    local setURI = function (fullURI)
+        -- get & set host
+        local remainingURL = fullURI
+        local hostURIPattern = "^"..getSchemeURI().."("..hostPattern..")"
+        local hostURI = string.match(remainingURL, hostURIPattern)
+        if type(hostURI) ~= "string" then corelog.Error("url.setURI: could not find mandatory host in URI: "..fullURI) return end
+--        corelog.WriteToLog("hostURI="..(hostURI or "<nil>"))
+        setHostURI(hostURI)
+
+        remainingURL = string.gsub(remainingURL, hostURIPattern, "", 1) -- remove for easier next match
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+
+        -- get  & set optional port
+        local portURIPattern = "^("..portPattern..")"
+        local portURI = string.match(remainingURL, portURIPattern) or ""
+--        corelog.WriteToLog("portURI="..(portURI or "<nil>"))
+        setPortURI(portURI)
+
+        remainingURL = string.gsub(remainingURL, portURIPattern, "", 1) -- remove for easier next match
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+
+        -- get  & set optional path
+        local pathURIPattern = "^([%/%w%=]+)"
+        local pathURI = string.match(remainingURL, pathURIPattern) or ""
+--        corelog.WriteToLog("pathURI="..(pathURI or "<nil>"))
+        setPathURI(pathURI)
+
+        remainingURL = string.gsub(remainingURL, pathURIPattern, "", 1) -- remove for easier next match
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+
+        -- get  & set optional query
+        local queryURIPattern = "^([%?][%&_%:%=%w]+)"
+        local queryURI = string.match(remainingURL, queryURIPattern) or ""
+--        corelog.WriteToLog("queryURI="..(queryURI or "<nil>"))
+
+        remainingURL = string.gsub(remainingURL, queryURIPattern, "", 1)
+        if remainingURL ~= "" then corelog.Warning("url.setURI: remainingURL not empty at end of matching patterns: "..remainingURL) end
+
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL) -- should be empty!
+
+        setQueryURI(queryURI)
     end
 
     --                _     _ _         __                  _   _
@@ -231,14 +272,15 @@ function New(host, port, path, query)
         setQuery = setQuery,
         setQueryURI = setQueryURI,
 
-        toURI = toURI,
+        getURI = getURI,
+        setURI = setURI,
     }
 end
 
 function NewFromURI(uri)
-    local theURL = url.New()
+    local aNewURL = url.New()
 
-    corelog.Error("url.NewFromURI: Not fully implemented yet") -- ToDo: try implement using the various patters above
+    aNewURL.setURI(uri)
 
-    return theURL
+    return aNewURL
 end
