@@ -69,7 +69,7 @@ function TransferItemsFromTo(transferData, callback, callbackData)
     --]]
 
     -- check input
-    if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "string" or type(transferData.destinationURL) ~= "string" then
+    if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "table" or type(transferData.destinationURL) ~= "table" then
         corelog.Error("enterprise_isp.TransferItemsFromTo: Invalid transferData input")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
