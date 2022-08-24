@@ -1,10 +1,30 @@
+local host = "storage"
+local port = "1"
+local path = {site = 3, inputChest = 7}
+local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
+
+local hostURI = "storage"
+local portURI = ":1"
+local pathURI = "/site=3/inputChest=7"
+local queryURI = "?minecraft:birch_log=3&minecraft:torch=5"
+
+function T_URL_Serializing()
+    -- new URL
+    corelog.WriteToLog("* URL serialize")
+    local aURL = url.New(host, port, path, query)
+    corelog.WriteToLog(" aURL.getURI() = "..aURL.getURI())
+
+    corelog.WriteToLog(" aURL type = "..type(aURL))
+    corelog.WriteToLog(" 0: aURL = "..textutils.serialize(aURL.getURI()))
+    corelog.WriteToLog(" 1: aURL = "..aURL.getURI())
+    corelog.WriteToLog(" 2: aURL = "..textutils.serialize(aURL))
+    corelog.WriteToLog(" 3: aURL = "..aURL)
+end
+
 function T_URLs()
     -- worldLocationURL
     corelog.WriteToLog("* URL getter tests")
-    local host = "storage"
-    local port = "1"
-    local path = {site = 3, inputChest = 7}
-    local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
+
     local storageURL = url.New(host, port, path, query)
     corelog.WriteToLog(" storageURL.getScheme() = "..storageURL.getScheme())
     corelog.WriteToLog(" storageURL.getSchemeURI() = "..storageURL.getSchemeURI())
@@ -40,10 +60,6 @@ function T_URLs()
 
     -- uriSetterURL
     corelog.WriteToLog("* URL setter from URI tests")
-    local hostURI = "storage"
-    local portURI = ":1"
-    local pathURI = "/site=3/inputChest=7"
-    local queryURI = "?minecraft:birch_log=3&minecraft:torch=5"
     local uriSetterURL = url.New()
     uriSetterURL.setHostURI(hostURI)
     corelog.WriteToLog(" uriSetterURL.getHost() = "..uriSetterURL.getHost())
