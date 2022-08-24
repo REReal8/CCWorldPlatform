@@ -8,6 +8,70 @@ local portURI = ":1"
 local pathURI = "/site=3/inputChest=7"
 local queryURI = "?minecraft:birch_log=3&minecraft:torch=5"
 
+function ANewFunc(Bla)
+    local bla = Bla
+
+    Func1 = function ()
+        return "func result"
+    end
+
+    return { 
+        bla,
+--        func1 = func1,
+    }
+end
+
+--local MyClass = {} -- the table representing the class, which will double as the metatable for the instances
+--MyClass.__index = MyClass -- failed table lookups on the instances should fallback to the class table, to get methods
+
+--[[
+function MyClass.new(init)
+  local self = setmetatable({}, MyClass)
+  self.value = init
+  return self
+end
+]]
+
+MyClass = { value = 0}
+
+function MyClass:new(o)
+    o = o or {}   -- create object if user does not provide one
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function MyClass:set_value(newval)
+  self.value = newval
+end
+
+function MyClass:get_value()
+  return self.value
+end
+
+function T_MyClass()
+    -- new URL
+    corelog.WriteToLog("* Simple MyClass")
+--    local myObj = MyClass.new{value = 5}
+    local myObj = MyClass.new({value = 5})
+    corelog.WriteToLog(" type(myObj) = "..type(myObj))
+    corelog.WriteToLog(" myObj = "..textutils.serialize(myObj))
+    -- tbl:name(arg) is a shortcut for tbl.name(tbl, arg), except tbl is evaluated only once
+--    corelog.WriteToLog(myObj:get_value()) --> 5
+    myObj:set_value(6)
+    corelog.WriteToLog(myObj:get_value()) --> 6
+end
+
+function T_Func_Serializing()
+    -- new URL
+    corelog.WriteToLog("* Func struct serialize")
+    local aFuncNew = ANewFunc("data")
+    corelog.WriteToLog(" type(aFuncNew) = "..type(aFuncNew))
+    corelog.WriteToLog(" aFuncNew = "..textutils.serialize(aFuncNew))
+    corelog.WriteToLog(" type(aFuncNew.Func1) = "..type(aFuncNew.Func1()))
+    corelog.WriteToLog(" aFuncNew.Func1 = "..textutils.serialize(aFuncNew.Func1()))
+end
+
 function T_URL_Serializing()
     -- new URL
     corelog.WriteToLog("* URL serialize")
