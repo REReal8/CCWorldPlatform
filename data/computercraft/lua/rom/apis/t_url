@@ -84,26 +84,26 @@ function T_URLs()
     -- new from URI
     corelog.WriteToLog("* URL from URI tests (0)")
     local newURI0=uriSetterURL:getSchemeURI()..hostURI..portURI..pathURI..queryURI
-    local fromURI_URL0 = url.NewFromURI(newURI0)
+    local fromURI_URL0 = url.URLClass:newFromURI(newURI0)
     corelog.WriteToLog(" fromURI_URL0:getURI() = "..fromURI_URL0:getURI())
 
     corelog.WriteToLog("* URL from URI tests (1: no host)")
     local newURI1=uriSetterURL:getSchemeURI()..portURI..pathURI..queryURI
-    local fromURI_URL1 = url.NewFromURI(newURI1) -- note: should fail
+    local fromURI_URL1 = url.URLClass:newFromURI(newURI1) -- note: should fail
     corelog.WriteToLog(" fromURI_URL1:getURI() = "..fromURI_URL1:getURI())
 
     corelog.WriteToLog("* URL from URI tests (2: no port)")
     local newURI2=uriSetterURL:getSchemeURI()..hostURI..pathURI..queryURI
-    local fromURI_URL2 = url.NewFromURI(newURI2)
+    local fromURI_URL2 = url.URLClass:newFromURI(newURI2)
     corelog.WriteToLog(" fromURI_URL2:getURI() = "..fromURI_URL2:getURI())
 
     corelog.WriteToLog("* URL from URI tests (3: no path)")
     local newURI3=uriSetterURL:getSchemeURI()..hostURI..portURI..queryURI
-    local fromURI_URL3 = url.NewFromURI(newURI3)
+    local fromURI_URL3 = url.URLClass:newFromURI(newURI3)
     corelog.WriteToLog(" fromURI_URL3:getURI() = "..fromURI_URL3:getURI())
 
     corelog.WriteToLog("* URL from URI tests (4: no query)")
     local newURI4=uriSetterURL:getSchemeURI()..hostURI..portURI..pathURI
-    local fromURI_URL4 = url.NewFromURI(newURI4)
+    local fromURI_URL4 = url.URLClass:newFromURI(newURI4)
     corelog.WriteToLog(" fromURI_URL4:getURI() = "..fromURI_URL4:getURI())
 end

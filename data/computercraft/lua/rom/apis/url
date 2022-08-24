@@ -43,7 +43,7 @@ function URLClass:new(o)
     return o
 end
 
-function NewFromURI(uri)
+function URLClass:newFromURI(uri)
     local aNewURL = URLClass:new()
 
     aNewURL:setURI(uri)
