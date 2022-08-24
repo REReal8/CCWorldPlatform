@@ -4,8 +4,7 @@
 
     See https://github.com/REReal8/CCWorldPlatform/wiki/Uniform-Resource-Locators for more on URLs
 
-    Note that the syntax used is such that it prepares for a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html . 
-    ToDo: is it possible to do proper oo as described within CC (I failed with the file naming up until now)?
+    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html . 
 --]]
 
 URLClass = {
