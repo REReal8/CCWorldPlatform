@@ -8,279 +8,254 @@
     ToDo: is it possible to do proper oo as described within CC (I failed with the file naming up until now)?
 --]]
 
-function New(host, port, path, query)
+URLClass = {
+    _host = "",
+    _port = "",
+    _path = {},
+    _query = {},
+}
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function URLClass:new(o)
     --[[
         Constructs an URL object.
 
-        Return values:
-                                - public methods of a URL
-        
         Parameters:
-            host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "storage")
-            port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")  
-            path                - [optional] (table) of key-value pairs with path segments
-                                    (e.g. {x=12, y=12, z= 1} indicating a location in the "world" host)
-            query               - [optional] (table) of key-value pairs with (item) query segments
-                                    (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
+                                - (table) table with
+                host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "storage")
+                port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")  
+                path                - [optional] (table) of key-value pairs with path segments
+                                        (e.g. {x=12, y=12, z= 1} indicating a location in the "world" host)
+                query               - [optional] (table) of key-value pairs with (item) query segments
+                                        (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
     --]]
 
-    --    _                 _    __                  _   _
-    --   | |               | |  / _|                | | (_)
-    --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
-    --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
-    --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
-    --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-    local self = {
-        _host = host or "",
-        _port = port or "",
-        _path = path or {},
-        _query = query or {},
-    }
-
-    local getScheme = function ()
-        return "ccwprp" -- always the same
-    end
-
-    local getSchemeURI = function ()
-        return getScheme().."://"
-    end
-
-    local getHost = function ()
-        return self._host
-    end
-
-    local getHostURI = function ()
-        return getHost()
-    end
-
-    local setHost = function (h)
-        -- check input
-        if type(h) ~= "string" then corelog.Error("url.setHost: invalid host type: "..type(h)) return end
-
-        self._host = h
-    end
-
-    local hostPattern = "%a+"
-    -- aUrl.setHostURI("storage")
-    local setHostURI = function (hURI)
-        -- check input
-        if type(hURI) ~= "string" then corelog.Error("url.setHost: invalid host URI type: "..type(hURI)) return end
-
-        setHost(string.match(hURI, hostPattern)) -- in effect this should be the same as setHost(hURI)
-    end
-
-    local getPort = function ()
-        return self._port
-    end
-
-    local getPortURI = function ()
-        local portURI = getPort()
-        if portURI ~= "" then
-            portURI = ":"..portURI
-        end
-        return portURI
-    end
-
-    local setPort = function (p)
-        -- check input
-        if type(p) ~= "string" then corelog.Error("url.setPort: invalid port type: "..type(p)) return end
-
-        self._port = p
-    end
-
-    -- aUrl.setPortURI(":1")
-    local portPattern = ":%d+"
-    local setPortURI = function (pURI)
-        -- check input
-        if type(pURI) ~= "string" then corelog.Error("url.setPortURI: invalid port URI type: "..type(pURI)) return end
-
-        if pURI ~= "" then
-            local i, j = string.find(pURI, portPattern)
-            if i ~= nil then
-                local p = string.sub(pURI, i+1, j)
-                setPort(p)
-            else
-                corelog.Warning("url.setPortURI: invalid port URI value: "..pURI)
-            end
-        else
---            corelog.WriteToLog("url.setPortURI: port URI value empty: "..pURI)
-        end
-    end
-
-    local getAuthorityURI = function ()
-        return getHostURI()..getPortURI()
-    end
-
-    local getPath = function ()
-        return self._path
-    end
-
-    local getPathURI = function ()
-        local pathURI = ""
-        for key, value in pairs(getPath()) do
-            pathURI = pathURI.."/"..key.."="..value
-        end
-        return pathURI
-    end
-
-    local setPath = function (p)
-        -- check input
-        if type(p) ~= "table" then corelog.Error("url.setPath: invalid path type: "..type(p)) return end
-
-        self._path = p
-    end
-
-    -- aUrl.setPathURI("/site=3/inputChest=7")
-    local setPathURI = function (pURI)
-        -- check input
-        if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid path URI type: "..type(pURI)) return end
-
-        if pURI ~= "" then
-            local p = {}
-            local pathSegmentPattern = "%/(%a+)%=(%w+)"
-            for key, value in string.gmatch(pURI, pathSegmentPattern) do
-                p[key] = value
-            end
-            setPath(p)
-        else
---            corelog.WriteToLog("url.setPathURI: path URI value empty: "..pURI)
-        end
-    end
-
-    local getQuery = function ()
-        return self._query
-    end
-
-    local getQueryURI = function ()
-        local queryURI = ""
-        local delimiter = "?"
-        for key, value in pairs(getQuery()) do
-            queryURI = queryURI..delimiter..key.."="..value
-            delimiter = "&" 
-        end
-        return queryURI
-    end
-
-    local setQuery = function (q)
-        -- check input
-        if type(q) ~= "table" then corelog.Error("url.setQuery: invalid query type: "..type(q)) return end
-
-        self._query = q
-    end
-
-    -- aUrl.setQueryURI("?minecraft:birch_log=3&minecraft:torch=5")
-    local setQueryURI = function (qURI)
-        -- check input
-        if type(qURI) ~= "string" then corelog.Error("url.setQueryURI: invalid query URI type: "..type(qURI)) return end
-
-        if qURI ~= "" then
-            local q = {}
-            -- first
-            local querySegmentPattern = "[%?%&]([_%:%a]+)%=(%w+)" -- [_%:%a] to allow for optional _ and : in e.g. "minecraft:birch_log"
-            local key1, value1 = string.match(qURI, querySegmentPattern)
-            q[key1] = value1
-            -- second and higher
-            for key, value in string.gmatch(qURI, querySegmentPattern) do
-                q[key] = value
-            end
-            setQuery(q)
-        else
---            corelog.WriteToLog("url.setQueryURI: query URI value empty: "..qURI)
-        end
-    end
-
-    local getURI = function ()
-        return getSchemeURI()..getAuthorityURI()..getPathURI()..getQueryURI()
-    end
-
-    local setURI = function (fullURI)
-        -- get & set host
-        local remainingURL = fullURI
-        local hostURIPattern = "^"..getSchemeURI().."("..hostPattern..")"
-        local hostURI = string.match(remainingURL, hostURIPattern)
-        if type(hostURI) ~= "string" then corelog.Error("url.setURI: could not find mandatory host in URI: "..fullURI) return end
---        corelog.WriteToLog("hostURI="..(hostURI or "<nil>"))
-        setHostURI(hostURI)
-
-        remainingURL = string.gsub(remainingURL, hostURIPattern, "", 1) -- remove for easier next match
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
-
-        -- get  & set optional port
-        local portURIPattern = "^("..portPattern..")"
-        local portURI = string.match(remainingURL, portURIPattern) or ""
---        corelog.WriteToLog("portURI="..(portURI or "<nil>"))
-        setPortURI(portURI)
-
-        remainingURL = string.gsub(remainingURL, portURIPattern, "", 1) -- remove for easier next match
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
-
-        -- get  & set optional path
-        local pathURIPattern = "^([%/%w%=]+)"
-        local pathURI = string.match(remainingURL, pathURIPattern) or ""
---        corelog.WriteToLog("pathURI="..(pathURI or "<nil>"))
-        setPathURI(pathURI)
-
-        remainingURL = string.gsub(remainingURL, pathURIPattern, "", 1) -- remove for easier next match
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
-
-        -- get  & set optional query
-        local queryURIPattern = "^([%?][%&_%:%=%w]+)"
-        local queryURI = string.match(remainingURL, queryURIPattern) or ""
---        corelog.WriteToLog("queryURI="..(queryURI or "<nil>"))
-
-        remainingURL = string.gsub(remainingURL, queryURIPattern, "", 1)
-        if remainingURL ~= "" then corelog.Warning("url.setURI: remainingURL not empty at end of matching patterns: "..remainingURL) end
-
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL) -- should be empty!
-
-        setQueryURI(queryURI)
-    end
-
-    --                _     _ _         __                  _   _
-    --               | |   | (_)       / _|                | | (_)
-    --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
-    --   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
-    --   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
-    --   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-    --   | |
-    --   |_|
-
-    return {
-        getScheme = getScheme,
-        getSchemeURI = getSchemeURI,
-
-        getHost = getHost,
-        getHostURI = getHostURI,
-        setHost = setHost,
-        setHostURI = setHostURI,
-
-        getPort = getPort,
-        getPortURI = getPortURI,
-        setPort = setPort,
-        setPortURI = setPortURI,
-
-        getAuthorityURI = getAuthorityURI,
-
-        getPath = getPath,
-        getPathURI = getPathURI,
-        setPath = setPath,
-        setPathURI = setPathURI,
-
-        getQuery = getQuery,
-        getQueryURI = getQueryURI,
-        setQuery = setQuery,
-        setQueryURI = setQueryURI,
-
-        getURI = getURI,
-        setURI = setURI,
-    }
+    o = o or {}   -- create object if user does not provide one
+    setmetatable(o, self)
+    self.__index = self
+    return o
 end
 
 function NewFromURI(uri)
-    local aNewURL = url.New()
+    local aNewURL = URLClass:new()
 
-    aNewURL.setURI(uri)
+    aNewURL:setURI(uri)
 
     return aNewURL
 end
+
+function URLClass:getScheme()
+    return "ccwprp" -- always the same
+end
+
+function URLClass:getSchemeURI()
+    return self:getScheme().."://"
+end
+
+function URLClass:getHost()
+    return self._host
+end
+
+function URLClass:getHostURI()
+    return self:getHost()
+end
+
+function URLClass:setHost(h)
+    -- check input
+    if type(h) ~= "string" then corelog.Error("url.setHost: invalid host type: "..type(h)) return end
+
+    self._host = h
+end
+
+local hostPattern = "%a+"
+-- aUrl.setHostURI("storage")
+function URLClass:setHostURI(hURI)
+    -- check input
+    if type(hURI) ~= "string" then corelog.Error("url.setHost: invalid host URI type: "..type(hURI)) return end
+
+    self:setHost(string.match(hURI, hostPattern)) -- in effect this should be the same as setHost(hURI)
+end
+
+function URLClass:getPort()
+    return self._port
+end
+
+function URLClass:getPortURI()
+    local portURI = self:getPort()
+    if portURI ~= "" then
+        portURI = ":"..portURI
+    end
+    return portURI
+end
+
+function URLClass:setPort(p)
+    -- check input
+    if type(p) ~= "string" then corelog.Error("url.setPort: invalid port type: "..type(p)) return end
+
+    self._port = p
+end
+
+-- aUrl.setPortURI(":1")
+local portPattern = ":%d+"
+function URLClass:setPortURI (pURI)
+    -- check input
+    if type(pURI) ~= "string" then corelog.Error("url.setPortURI: invalid port URI type: "..type(pURI)) return end
+
+    if pURI ~= "" then
+        local i, j = string.find(pURI, portPattern)
+        if i ~= nil then
+            local p = string.sub(pURI, i+1, j)
+            self:setPort(p)
+        else
+            corelog.Warning("url.setPortURI: invalid port URI value: "..pURI)
+        end
+    else
+--            corelog.WriteToLog("url.setPortURI: port URI value empty: "..pURI)
+    end
+end
+
+function URLClass:getAuthorityURI()
+    return self:getHostURI()..self:getPortURI()
+end
+
+function URLClass:getPath()
+    return self._path
+end
+
+function URLClass:getPathURI()
+    local pathURI = ""
+    for key, value in pairs(self:getPath()) do
+        pathURI = pathURI.."/"..key.."="..value
+    end
+    return pathURI
+end
+
+function URLClass:setPath(p)
+    -- check input
+    if type(p) ~= "table" then corelog.Error("url.setPath: invalid path type: "..type(p)) return end
+
+    self._path = p
+end
+
+-- aUrl.setPathURI("/site=3/inputChest=7")
+function URLClass:setPathURI(pURI)
+    -- check input
+    if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid path URI type: "..type(pURI)) return end
+
+    if pURI ~= "" then
+        local p = {}
+        local pathSegmentPattern = "%/(%a+)%=(%w+)"
+        for key, value in string.gmatch(pURI, pathSegmentPattern) do
+            p[key] = value
+        end
+        self:setPath(p)
+    else
+--            corelog.WriteToLog("url.setPathURI: path URI value empty: "..pURI)
+    end
+end
+
+function URLClass:getQuery()
+    return self._query
+end
+
+function URLClass:getQueryURI()
+    local queryURI = ""
+    local delimiter = "?"
+    for key, value in pairs(self:getQuery()) do
+        queryURI = queryURI..delimiter..key.."="..value
+        delimiter = "&" 
+    end
+    return queryURI
+end
+
+function URLClass:setQuery(q)
+    -- check input
+    if type(q) ~= "table" then corelog.Error("url.setQuery: invalid query type: "..type(q)) return end
+
+    self._query = q
+end
+
+-- aUrl.setQueryURI("?minecraft:birch_log=3&minecraft:torch=5")
+function URLClass:setQueryURI(qURI)
+    -- check input
+    if type(qURI) ~= "string" then corelog.Error("url.setQueryURI: invalid query URI type: "..type(qURI)) return end
+
+    if qURI ~= "" then
+        local q = {}
+        -- first
+        local querySegmentPattern = "[%?%&]([_%:%a]+)%=(%w+)" -- [_%:%a] to allow for optional _ and : in e.g. "minecraft:birch_log"
+        local key1, value1 = string.match(qURI, querySegmentPattern)
+        q[key1] = value1
+        -- second and higher
+        for key, value in string.gmatch(qURI, querySegmentPattern) do
+            q[key] = value
+        end
+        self:setQuery(q)
+    else
+--            corelog.WriteToLog("url.setQueryURI: query URI value empty: "..qURI)
+    end
+end
+
+function URLClass:getURI()
+    return self:getSchemeURI()..self:getAuthorityURI()..self:getPathURI()..self:getQueryURI()
+end
+
+function URLClass:setURI(fullURI)
+    -- get & set host
+    local remainingURL = fullURI
+    local hostURIPattern = "^"..self:getSchemeURI().."("..hostPattern..")"
+    local hostURI = string.match(remainingURL, hostURIPattern)
+    if type(hostURI) ~= "string" then corelog.Error("url.setURI: could not find mandatory host in URI: "..fullURI) return end
+--        corelog.WriteToLog("hostURI="..(hostURI or "<nil>"))
+    self:setHostURI(hostURI)
+
+    remainingURL = string.gsub(remainingURL, hostURIPattern, "", 1) -- remove for easier next match
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+
+    -- get  & set optional port
+    local portURIPattern = "^("..portPattern..")"
+    local portURI = string.match(remainingURL, portURIPattern) or ""
+--        corelog.WriteToLog("portURI="..(portURI or "<nil>"))
+    self:setPortURI(portURI)
+
+    remainingURL = string.gsub(remainingURL, portURIPattern, "", 1) -- remove for easier next match
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+
+    -- get  & set optional path
+    local pathURIPattern = "^([%/%w%=]+)"
+    local pathURI = string.match(remainingURL, pathURIPattern) or ""
+--        corelog.WriteToLog("pathURI="..(pathURI or "<nil>"))
+    self:setPathURI(pathURI)
+
+    remainingURL = string.gsub(remainingURL, pathURIPattern, "", 1) -- remove for easier next match
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+
+    -- get  & set optional query
+    local queryURIPattern = "^([%?][%&_%:%=%w]+)"
+    local queryURI = string.match(remainingURL, queryURIPattern) or ""
+--        corelog.WriteToLog("queryURI="..(queryURI or "<nil>"))
+
+    remainingURL = string.gsub(remainingURL, queryURIPattern, "", 1)
+    if remainingURL ~= "" then corelog.Warning("url.setURI: remainingURL not empty at end of matching patterns: "..remainingURL) end
+
+--        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL) -- should be empty!
+
+    self:setQueryURI(queryURI)
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+
