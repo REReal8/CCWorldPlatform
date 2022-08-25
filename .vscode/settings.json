@@ -1,0 +1,38 @@
+{
+    "Lua.diagnostics.globals": [
+        "corelog",
+        "coreutils",
+        "coremove",
+        "coreinventory",
+        "turtle",
+        "textutils",
+        "coredht",
+        "fs",
+        "coreevent",
+        "enterprise_projects",
+        "coreassignment",
+        "enterprise_construction",
+        "enterprise_factory_site",
+        "role_builder",
+        "coretask",
+        "role_alchemist",
+        "enterprise",
+        "corejob",
+        "system",
+        "core",
+        "url",
+        "enterprise_isp",
+        "enterprise_turtle",
+        "t_main",
+        "t_move",
+        "t_url",
+        "term",
+        "enterprise_factory",
+        "enterprise_storage",
+        "enterprise_test"
+    ],
+    "Lua.diagnostics.disable": [
+        "deprecated",
+        "undefined-field"
+    ]
+}
