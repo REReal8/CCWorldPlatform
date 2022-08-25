@@ -188,14 +188,11 @@ function URLClass:setQueryURI(qURI)
     if type(qURI) ~= "string" then corelog.Error("url.setQueryURI: invalid query URI type: "..type(qURI)) return end
 
     if qURI ~= "" then
+        -- loop on query segments
         local q = {}
-        -- first
-        local querySegmentPattern = "[%?%&]([_%:%a]+)%=(%w+)" -- [_%:%a] to allow for optional _ and : in e.g. "minecraft:birch_log"
-        local key1, value1 = string.match(qURI, querySegmentPattern)
-        q[key1] = value1
-        -- second and higher
+        local querySegmentPattern = "[%?%&]([_%:%a]+)%=(%d+)" -- [_%:%a] to allow for optional _ and : in e.g. "minecraft:birch_log"
         for key, value in string.gmatch(qURI, querySegmentPattern) do
-            q[key] = value
+            q[key] = tonumber(value)
         end
         self:setQuery(q)
     else
