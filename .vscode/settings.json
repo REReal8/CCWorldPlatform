@@ -29,7 +29,14 @@
         "term",
         "enterprise_factory",
         "enterprise_storage",
-        "enterprise_test"
+        "enterprise_test",
+        "t_assignment",
+        "t_projects",
+        "t_isp",
+        "t_construction",
+        "t_factory",
+        "t_foresting",
+        "t_colonization"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
