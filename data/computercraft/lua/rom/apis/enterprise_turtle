@@ -43,11 +43,23 @@ function ItemsAvailableVia(queryData)
     if host ~= hostName then corelog.Error("enterprise_turtle.ItemsAvailableVia: I am not the host for `"..host.."` queries.") return {success = false} end
 
     -- select turtle
-    -- ToDo: based on port #
+    -- ToDo: based on port # (does this imply this to be an async service?)
     corelog.Warning("enterprise_turtle.ItemsAvailableVia: Selection of specific turtle not yet implemented.")
 
     -- query turtle for items
-    corelog.Warning("enterprise_turtle.ItemsAvailableVia: Quering turtle inventory not yet implemented.") 
+    local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    local inventory = coreinventory.GetInventoryDetail()
+    for itemName, itemCount in pairs(query) do
+        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.ItemsAvailableVia: itemCount of wrong type = "..type(itemName)..".") return {success = false} end
+
+        local inventoryCount = inventory.items[itemName]
+        if inventoryCount == nil or inventoryCount < itemCount then
+            corelog.WriteToLog("enterprise_turtle.ItemsAvailableVia: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return {success = false}
+        end
+    end
+
+    -- end
     return {success = true} -- assume the inventory has it for now ToDo: implement properly
 end
 

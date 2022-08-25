@@ -28,7 +28,7 @@ local db = {
 --   | |
 --   |_|
 
-function ItemsAvailableVia(queryData)
+function ItemsAvailableVia(queryData) -- ToDo: investigate if this (sometimes) needs to be an async service
     --[[
         This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
