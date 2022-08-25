@@ -14,7 +14,7 @@
 
 local hostName = "turtle"
 
-function ItemsAvailableAt(queryData)
+function ItemsAvailableVia(queryData)
     --[[
         This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
@@ -32,22 +32,22 @@ function ItemsAvailableAt(queryData)
 
     -- check input
     if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
-        corelog.Error("enterprise_isp.ItemsAvailableAt: Invalid queryData input.")
+        corelog.Error("enterprise_isp.ItemsAvailableVia: Invalid queryData input.")
         return {success = false}
     end
 
     -- check host is from this enterprise
     local itemQueryURL = queryData.itemQueryURL
     local host = itemQueryURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableAt: Invalid host input.") return {success = false} end
-    if host ~= hostName then corelog.Error("enterprise_turtle.ItemsAvailableAt: I am not the host for `"..host.."` queries.") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia: Invalid host input.") return {success = false} end
+    if host ~= hostName then corelog.Error("enterprise_turtle.ItemsAvailableVia: I am not the host for `"..host.."` queries.") return {success = false} end
 
     -- select turtle
     -- ToDo: based on port #
-    corelog.Warning("enterprise_turtle.ItemsAvailableAt: Selection of specific turtle not yet implemented.")
+    corelog.Warning("enterprise_turtle.ItemsAvailableVia: Selection of specific turtle not yet implemented.")
 
     -- query turtle for items
-    corelog.Warning("enterprise_turtle.ItemsAvailableAt: Quering turtle inventory not yet implemented.") 
+    corelog.Warning("enterprise_turtle.ItemsAvailableVia: Quering turtle inventory not yet implemented.") 
     return {success = true} -- assume the inventory has it for now ToDo: implement properly
 end
 

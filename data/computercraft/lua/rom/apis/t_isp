@@ -55,15 +55,15 @@ function T_TransferItemsFromTo()
     enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
 end
 
-function T_ItemsAvailableAt()
-    corelog.WriteToLog("* Test ItemsAvailableAt:")
+function T_ItemsAvailableVia()
+    corelog.WriteToLog("* Test ItemsAvailableVia:")
     -- create transferData
     local queryData = {
         itemQueryURL = url.URLClass:newFromURI(turtleQueryURI),
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableAt("..textutils.serialize(queryData)..")")
-    local result = enterprise_isp.ItemsAvailableAt(queryData)
+    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia("..textutils.serialize(queryData)..")")
+    local result = enterprise_isp.ItemsAvailableVia(queryData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end

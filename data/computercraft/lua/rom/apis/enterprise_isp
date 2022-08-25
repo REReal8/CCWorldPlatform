@@ -7,13 +7,13 @@ local db = {
     those items.
 
     The ISP provides the following services
-        ItemsAvailableAt        - providing if a set of items are available at an itemQueryURL
+        ItemsAvailableVia        - providing if a set of items are available at an itemQueryURL
         TransferItemsFromTo     - transferring items from a sourceURL to a destinationURL
         
     The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
     to be an ISH it needs to implement the following services:
 
-        ItemsAvailableAt        - providing if a set of items are available at the ISH
+        ItemsAvailableVia        - providing if a set of items are available at the ISH
     ToDo: consider adding these
         GetItemsIntoTurtle      - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle 
         PutItemsFromTurtle      - ensuring a set of items are transferred from the inventory of a turtle to the ISH. 
@@ -28,14 +28,14 @@ local db = {
 --   | |
 --   |_|
 
-function ItemsAvailableAt(queryData)
+function ItemsAvailableVia(queryData)
     --[[
         This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
         Return value:
                                     - (table)
-                success             - (boolean) whether all the queried items are available at the URL
+                success             - (boolean) whether all the queried items are available via the URL
 
         Parameters:
             queryData               - (table) data about the query
@@ -46,7 +46,7 @@ function ItemsAvailableAt(queryData)
 
     -- check input
     if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
-        corelog.Error("enterprise_isp.ItemsAvailableAt: Invalid queryData input")
+        corelog.Error("enterprise_isp.ItemsAvailableVia: Invalid queryData input")
         return {success = false}
     end
 
@@ -54,14 +54,14 @@ function ItemsAvailableAt(queryData)
     local itemQueryURL = queryData.itemQueryURL
 --    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
     local host = itemQueryURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableAt: Invalid host input") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia: Invalid host input") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)
 
     -- relay to ISH service
     if host == "turtle" then
-        return enterprise_turtle.ItemsAvailableAt(queryData)
+        return enterprise_turtle.ItemsAvailableVia(queryData)
     else
-        corelog.Error("enterprise_isp.ItemsAvailableAt: Not implemented for "..host .." ISH") return {success = false}
+        corelog.Error("enterprise_isp.ItemsAvailableVia: Not implemented for "..host .." ISH") return {success = false}
     end
 end
 
