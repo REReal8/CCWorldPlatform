@@ -2,10 +2,21 @@ local db = {
 }
 
 --[[
-    The Item Service Provider (ISP) is an enterprise that offers services to handle items.
+    The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
+    items to be handled acros (possibly) multiple enterprises the ISP can be seen as a single(ton) entry point (or hub or router) for handling 
+    those items.
 
-    Other enterprises can register unique URLs (representing e.g. sites/ spots/ chests etc) at the ISP enabling them to get 
-    certain service requests via the ISP. In order to be able to register at the ISP an enterprise must implement a set of services. 
+    The ISP provides the following services
+        ItemsAvailableAt        - providing if a set of items are available at an itemQueryURL
+        TransferItemsFromTo     - transferring items from a sourceURL to a destinationURL
+        
+    The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
+    to be an ISH it needs to implement the following services:
+
+        ItemsAvailableAt        - providing if a set of items are available at the ISH
+    ToDo: consider adding these
+        GetItemsIntoTurtle      - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle 
+        PutItemsFromTurtle      - ensuring a set of items are transferred from the inventory of a turtle to the ISH. 
 --]]
 
 --                _     _ _         __                  _   _
@@ -19,8 +30,8 @@ local db = {
 
 function ItemsAvailableAt(queryData)
     --[[
-        This sync public service queries the URL (base, i.e. "ccwprp://host:port/path", part of the URL) for the availability of
-        items ("query" component of the URL).
+        This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
+        and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
         Return value:
                                     - (table)
@@ -29,6 +40,7 @@ function ItemsAvailableAt(queryData)
         Parameters:
             queryData               - (table) data about the query
                 itemQueryURL        - (table) a URL specifying the items availability that needs to be queried
+                                        (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
@@ -38,14 +50,19 @@ function ItemsAvailableAt(queryData)
         return {success = false}
     end
 
-    -- ToDo: implement
-    if (true) then
-        corelog.Error("enterprise_isp.ItemsAvailableAt: Service not yet implemented!")
-        return {success = false}
-    end
+    -- get ISH
+    local itemQueryURL = queryData.itemQueryURL
+--    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
+    local host = itemQueryURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableAt: Invalid host input") return {success = false} end
+--    corelog.WriteToLog("enterprise_isp: host = "..host)
 
-    -- end
-    return {success = true}
+    -- relay to ISH service
+    if host == "turtle" then
+        return enterprise_turtle.ItemsAvailableAt(queryData)
+    else
+        corelog.Error("enterprise_isp.ItemsAvailableAt: Not implemented for "..host .." ISH") return {success = false}
+    end
 end
 
 function TransferItemsFromTo(transferData, callback, callbackData)

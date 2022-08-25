@@ -1,18 +1,25 @@
-function T_DummyURLTryoutCode()
-    -- This code is not yet implemented. Just meant as a way to tryout a possible format for using URL's to handle items based on a private discussion on Signal.
+local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
+local turtleQueryURI = "ccwprp://turtle/"..queryPartURI
+local turtleURI = "ccwprp://turtle/"
+local storageQueryURI = "ccwprp://storage/site=2/outputchest=4/"..queryPartURI
+local storageURI = "ccwprp://storage/"
+local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
+local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
 
+local callbackFunction = "t_main.Func1_Callback"
+local callbackData = {"some callback data"}
+
+function T_ISPUsingProject()
     -- create project definition
     local projectInputData = {
-        itemsSourceURL = url.URLClass:newFromURI("ccwprp://storage/site=2/outputchest=4/?minecraft:birch_log=1&minecraft:torch=5"),
-        itemsLocalInputURL = url.URLClass:newFromURI("ccwprp://factory/site=3/inputchest=2"),
-        itemsLocalOutputURL = url.URLClass:newFromURI("ccwprp://factory/site=3/ouputchest=1"),
-        itemsDestinationURL = url.URLClass:newFromURI("ccwprp://storage/")
+        itemsSourceURL = url.URLClass:newFromURI(storageQueryURI),
+        itemsLocalInputURL = url.URLClass:newFromURI(factoryInputChestURI),
+        itemsLocalOutputURL = url.URLClass:newFromURI(factoryOutputChestURI),
+        itemsDestinationURL = url.URLClass:newFromURI(storageURI)
      }
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
     local aTypicalServiceUsingItemsProject = {
         services    = {
-            { serviceName = "enterprise_isp.TransferItemsFromTo ", async = true, input = {
+            { serviceName = "enterprise_isp.TransferItemsFromTo", async = true, input = {
                 { keyName = "sourceURL"         , valueSource = 0, sourceKey = "itemsSourceURL" },
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "itemsLocalInputURL" },
             }},
@@ -33,6 +40,30 @@ function T_DummyURLTryoutCode()
         }
     }
 
-    -- start project
+    -- call test method
     enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
+end
+
+function T_TransferItemsFromTo()
+    -- create transferData
+    local transferData = {
+        sourceURL =  url.URLClass:newFromURI(storageQueryURI),
+        destinationURL = url.URLClass:newFromURI(factoryInputChestURI),
+    }
+
+    -- call test method
+    enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
+end
+
+function T_ItemsAvailableAt()
+    corelog.WriteToLog("* Test ItemsAvailableAt:")
+    -- create transferData
+    local queryData = {
+        itemQueryURL = url.URLClass:newFromURI(turtleQueryURI),
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableAt("..textutils.serialize(queryData)..")")
+    local result = enterprise_isp.ItemsAvailableAt(queryData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
 end
