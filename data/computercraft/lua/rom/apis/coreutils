@@ -130,6 +130,9 @@ function DoSyncService(service, serviceData)
 	if type(service) ~= "string" then corelog.Error('coreutils.DoSyncService: service function not valid') return nil end
 	if type(serviceData) ~= "table" then corelog.Error('coreutils.DoSyncService: service data not valid') return nil end
 
+    -- check service actually exists
+    -- ToDo: implement
+
 	-- sync function call, use the results
 	local f, err = loadstring("return "..service.."("..textutils.serialize(serviceData)..")")
 	if not f then corelog.Error("coreutils.DoSyncService(): loadstring did not supply a function, error given: "..err) return end
