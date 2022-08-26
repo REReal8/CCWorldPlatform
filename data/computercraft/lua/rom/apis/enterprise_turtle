@@ -25,8 +25,8 @@ function ItemsAvailableVia(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                itemQueryURL        - (table) a URL specifying the items availability that needs to be queried
-                                        (the "base" component of the URL should specify this ISH)
+                itemQueryURL        - (table) a URL stating the items availability that needs to be queried
+                                        (the "base" component of the URL specifies this ISH)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
@@ -44,7 +44,7 @@ function ItemsAvailableVia(queryData)
 
     -- select turtle
     -- ToDo: based on port # (does this imply this to be an async service?)
-    corelog.Warning("enterprise_turtle.ItemsAvailableVia: Selection of specific turtle not yet implemented.")
+    corelog.Warning("enterprise_turtle.ItemsAvailableVia: Selection of specific turtle not (?yet) implemented.")
 
     -- query turtle for items
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
@@ -60,7 +60,77 @@ function ItemsAvailableVia(queryData)
     end
 
     -- end
-    return {success = true} -- assume the inventory has it for now ToDo: implement properly
+    return {success = true}
+end
+
+function GetItemsIntoTurtle(transferData, callback, callbackData)
+    --[[
+        This async public ISH service ensures a set of items are gathered in the ISH and transferred to the inventory of a turtle.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the items were succesfully transferred to a turtle
+                turtleURL       - (table) a URL stating the turtle and the gathered set of items it has in it's inventory
+
+        Parameters:
+            transferData        - (table) data about the transfer
+                sourceURL       - (table) a URL stating where the items that need transfer can be located
+                                    (the "query" component of the URL specifies the items to be transferred)
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function                                                
+    --]]
+
+    -- check input
+    if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "table" then
+        corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Invalid transferData input.")
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- check host is from this enterprise
+    local sourceURL = url.URLClass:new(transferData.sourceURL) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
+    local host = sourceURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Invalid host input.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if host ~= hostName then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: I am not the host for `"..host.."` queries.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- check turtle id's
+    local currentTurtleId = tostring(os.getComputerID())
+    local sourceTurtleId = sourceURL:getPort()
+    if sourceTurtleId and sourceTurtleId ~= "" and currentTurtleId ~= sourceTurtleId then
+        corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Get items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).")
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- create partial output turtleURL
+    local turtleURL = url.URLClass:new()
+    turtleURL:setHost(host)
+    turtleURL:setPort(currentTurtleId)
+
+    -- check if current turtle has the requested items in it's inventory
+    -- ToDo: consider also checking if items are available (i.e. not reserved)
+    local sourceQuery = sourceURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    local inventory = coreinventory.GetInventoryDetail()
+    for itemName, itemCount in pairs(sourceQuery) do
+        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: itemName of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: itemCount of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+        local inventoryCount = inventory.items[itemName]
+        if inventoryCount == nil or inventoryCount < itemCount then
+            corelog.WriteToLog("enterprise_turtle.GetItemsIntoTurtle: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
+        end
+    end
+    turtleURL:setQuery(sourceQuery)
+
+    -- end
+    local result = {success = true, turtleURL = turtleURL}
+    return coreutils.DoCallback(callback, callbackData, result)
+end
+
+function PutItemsFromTurtle(transferData, callback, callbackData)
+    corelog.Error("enterprise_turtle.PutItemsFromTurtle: Method not implemented (for transferData="..textutils.serialize(transferData)..").") 
+    return coreutils.DoCallback(callback, callbackData, {success = false})
 end
 
 --    _                 _    __                  _   _

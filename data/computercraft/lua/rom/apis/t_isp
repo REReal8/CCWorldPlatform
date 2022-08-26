@@ -1,8 +1,8 @@
 local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
-local turtleQueryURI = "ccwprp://turtle/"..queryPartURI
-local turtleURI = "ccwprp://turtle/"
-local storageQueryURI = "ccwprp://storage/site=2/outputchest=4/"..queryPartURI
-local storageURI = "ccwprp://storage/"
+local turtleURI = "ccwprp://turtle"
+local turtleQueryURI = turtleURI..queryPartURI
+local storageURI = "ccwprp://storage"
+local storageQueryURI = storageURI.."/site=2/outputchest=4/"..queryPartURI
 local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
 local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
 
@@ -44,19 +44,22 @@ function T_ISPUsingProject()
     enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
 end
 
-function T_TransferItemsFromTo()
+function T_TransferItemsFromTo_Turtle()
+    corelog.WriteToLog("* Test TransferItemsFromTo for turtles:")
     -- create transferData
     local transferData = {
-        sourceURL =  url.URLClass:newFromURI(storageQueryURI),
-        destinationURL = url.URLClass:newFromURI(factoryInputChestURI),
+--        sourceURL =  url.URLClass:newFromURI(storageQueryURI),
+--        destinationURL = url.URLClass:newFromURI(factoryInputChestURI),
+        sourceURL =  url.URLClass:newFromURI(turtleQueryURI),
+        destinationURL = url.URLClass:newFromURI(turtleURI),
     }
 
     -- call test method
     enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
 end
 
-function T_ItemsAvailableVia()
-    corelog.WriteToLog("* Test ItemsAvailableVia:")
+function T_ItemsAvailableVia_Turtle()
+    corelog.WriteToLog("* Test ItemsAvailableVia for turtles:")
     -- create transferData
     local queryData = {
         itemQueryURL = url.URLClass:newFromURI(turtleQueryURI),
