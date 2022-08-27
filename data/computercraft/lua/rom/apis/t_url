@@ -1,5 +1,5 @@
 local host = "storage"
-local port = "1"
+local port = 1
 local path = {site = 3, inputChest = 7}
 local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
 
@@ -40,7 +40,7 @@ function T_URLs()
     corelog.WriteToLog(" storageURL:getHost() = "..storageURL:getHost())
     corelog.WriteToLog(" storageURL:getHostURI() = "..storageURL:getHostURI())
 
-    corelog.WriteToLog(" storageURL:getPort() = "..textutils.serialize(storageURL:getPort()))
+    corelog.WriteToLog(" storageURL:getPort() = "..storageURL:getPort())
     corelog.WriteToLog(" storageURL:getPortURI() = "..storageURL:getPortURI())
 
     corelog.WriteToLog(" storageURL:getAuthorityURI() = "..storageURL:getAuthorityURI())

@@ -96,9 +96,9 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     if host ~= hostName then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: I am not the host for `"..host.."` queries.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check turtle id's
-    local currentTurtleId = tostring(os.getComputerID())
+    local currentTurtleId = os.getComputerID()
     local sourceTurtleId = sourceURL:getPort()
-    if sourceTurtleId and sourceTurtleId ~= "" and currentTurtleId ~= sourceTurtleId then
+    if sourceTurtleId and currentTurtleId ~= sourceTurtleId then
         corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Get items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end

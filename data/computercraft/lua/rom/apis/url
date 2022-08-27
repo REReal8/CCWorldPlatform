@@ -9,7 +9,7 @@
 
 URLClass = {
     _host = "",
-    _port = "",
+    _port = nil,
     _path = {},
     _query = {},
 }
@@ -88,16 +88,17 @@ function URLClass:getPort()
 end
 
 function URLClass:getPortURI()
-    local portURI = self:getPort()
-    if portURI ~= "" then
-        portURI = ":"..portURI
+    local port = self:getPort()
+    local portURI = ""
+    if port ~= nil then
+        portURI = ":"..port
     end
     return portURI
 end
 
 function URLClass:setPort(p)
     -- check input
-    if type(p) ~= "string" then corelog.Error("url.setPort: invalid port type: "..type(p)) return end
+    if type(p) ~= "number" then corelog.Error("url.setPort: invalid port type: "..type(p)) return end
 
     self._port = p
 end
@@ -111,7 +112,7 @@ function URLClass:setPortURI (pURI)
     if pURI ~= "" then
         local i, j = string.find(pURI, portPattern)
         if i ~= nil then
-            local p = string.sub(pURI, i+1, j)
+            local p = tonumber(string.sub(pURI, i+1, j))
             self:setPort(p)
         else
             corelog.Warning("url.setPortURI: invalid port URI value: "..pURI)
