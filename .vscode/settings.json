@@ -37,7 +37,9 @@
         "t_factory",
         "t_foresting",
         "t_colonization",
-        "enterprise_storage_silo"
+        "enterprise_storage_silo",
+        "read",
+        "write"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
