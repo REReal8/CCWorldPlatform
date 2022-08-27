@@ -1,6 +1,7 @@
 --[[
-    The Turtle enterprise offers services fror turtles.
+    The Turtle enterprise offers services related to turtles.
 
+    This enterprise is an Item Service Host (ISH), hence it offers the mandatory services for an ISH (like e.g. ItemsAvailableVia, GetItemsIntoTurtle and PutItemsFromTurtle).
 --]]
 
 --                _     _ _         __                  _   _

@@ -15,7 +15,6 @@ local db = {
 
         ItemsAvailableVia       - providing if a set of items are available at the ISH.
         GetItemsIntoTurtle      - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
-    ToDo: consider adding these
         PutItemsFromTurtle      - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
 --]]
 
