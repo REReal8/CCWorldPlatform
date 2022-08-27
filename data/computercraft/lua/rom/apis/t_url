@@ -25,33 +25,32 @@ function T_URL_Serializing()
 end
 
 function T_URLs()
-    -- worldLocationURL
-    corelog.WriteToLog("* Test URL getter")
-
-    local storageURL = url.URLClass:new({
+    -- getterURL
+    corelog.WriteToLog("* URL getter tests")
+    local getterURL = url.URLClass:new({
         _host = host,
         _port = port,
         _path = path,
         _query = query,
     })
-    corelog.WriteToLog(" storageURL:getScheme() = "..storageURL:getScheme())
-    corelog.WriteToLog(" storageURL:getSchemeURI() = "..storageURL:getSchemeURI())
+    corelog.WriteToLog(" getterURL:getScheme() = "..getterURL:getScheme())
+    corelog.WriteToLog(" getterURL:getSchemeURI() = "..getterURL:getSchemeURI())
 
-    corelog.WriteToLog(" storageURL:getHost() = "..storageURL:getHost())
-    corelog.WriteToLog(" storageURL:getHostURI() = "..storageURL:getHostURI())
+    corelog.WriteToLog(" getterURL:getHost() = "..getterURL:getHost())
+    corelog.WriteToLog(" getterURL:getHostURI() = "..getterURL:getHostURI())
 
-    corelog.WriteToLog(" storageURL:getPort() = "..storageURL:getPort())
-    corelog.WriteToLog(" storageURL:getPortURI() = "..storageURL:getPortURI())
+    corelog.WriteToLog(" getterURL:getPort() = "..getterURL:getPort())
+    corelog.WriteToLog(" getterURL:getPortURI() = "..getterURL:getPortURI())
 
-    corelog.WriteToLog(" storageURL:getAuthorityURI() = "..storageURL:getAuthorityURI())
+    corelog.WriteToLog(" getterURL:getAuthorityURI() = "..getterURL:getAuthorityURI())
 
-    corelog.WriteToLog(" storageURL:getPath() = "..textutils.serialize(storageURL:getPath()))
-    corelog.WriteToLog(" storageURL:getPathURI() = "..storageURL:getPathURI())
+    corelog.WriteToLog(" getterURL:getPath() = "..textutils.serialize(getterURL:getPath()))
+    corelog.WriteToLog(" getterURL:getPathURI() = "..getterURL:getPathURI())
 
-    corelog.WriteToLog(" storageURL:getQuery() = "..textutils.serialize(storageURL:getQuery()))
-    corelog.WriteToLog(" storageURL:getQueryURI() = "..storageURL:getQueryURI())
+    corelog.WriteToLog(" getterURL:getQuery() = "..textutils.serialize(getterURL:getQuery()))
+    corelog.WriteToLog(" getterURL:getQueryURI() = "..getterURL:getQueryURI())
 
-    corelog.WriteToLog(" storageURL:getURI() = "..storageURL:getURI())
+    corelog.WriteToLog(" getterURL:getURI() = "..getterURL:getURI())
 
     -- setterURL
     corelog.WriteToLog("* URL setter tests")
