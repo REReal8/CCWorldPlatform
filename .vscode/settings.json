@@ -40,7 +40,8 @@
         "enterprise_storage_silo",
         "read",
         "write",
-        "enterprise_chests"
+        "enterprise_chests",
+        "peripheral"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
