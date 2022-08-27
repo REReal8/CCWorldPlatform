@@ -39,7 +39,8 @@
         "t_colonization",
         "enterprise_storage_silo",
         "read",
-        "write"
+        "write",
+        "enterprise_chests"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
