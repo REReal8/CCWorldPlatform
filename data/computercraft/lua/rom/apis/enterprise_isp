@@ -1,6 +1,3 @@
-local db = {
-}
-
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
     items to be handled acros (possibly) multiple enterprises the ISP can be seen as a single(ton) entry point (or hub or router) for handling 
