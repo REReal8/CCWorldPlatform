@@ -96,6 +96,7 @@ end
 
 function Warning(message)
 	-- write to the logfile
+	coreutils.WriteToFile(db.logfile, "WARNING:", "append") -- ToDo: consider calling WriteToLog
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
 end
 
