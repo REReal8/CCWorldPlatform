@@ -136,7 +136,6 @@ function TransferItemsFromTo(transferData, callback, callbackData)
                 { keyName = "sourceURL"         , valueSource = 0, sourceKey = "sourceURL" },
             }},
             { serviceName = destinationEnterprise..".PutItemsFromTurtle", async = true, input = {
-                { keyName = "itemsInTurtle"     , valueSource = 1, sourceKey = "success" },
                 { keyName = "turtleSourceURL"   , valueSource = 1, sourceKey = "turtleURL" },
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "destinationURL" },
             }},
