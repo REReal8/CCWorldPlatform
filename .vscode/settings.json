@@ -41,7 +41,8 @@
         "read",
         "write",
         "enterprise_chests",
-        "peripheral"
+        "peripheral",
+        "sleep"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
