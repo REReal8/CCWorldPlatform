@@ -211,10 +211,11 @@ function ItemsAvailableVia(queryData)
 
     -- select chest
     local chestId = itemQueryURL:getPath().id
-    if type(chestId) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia: Invalid path input `"..host.."` queries.") return {success = false} end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia: Invalid path input: "..textutils.serialize(itemQueryURL:getPath())..".") return {success = false} end
 
     -- get chest
     local chest = GetChestById(chestId)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia: Chest (id="..chestId..") not found.") return {success = false} end
 
     -- query chests inventory
 
@@ -403,7 +404,7 @@ function GetChestById(chestId)
     local chests = coredht.GetData(db.dhtRoot, db.dhtCites)
 
     -- check if we have any chest
-    if type(chests) ~= "table" then corelog.Warning('enterprise_chests.FindChestByChestData: no chests present') return nil end
+    if type(chests) ~= "table" then corelog.Warning('enterprise_chests.GetChestById: no chests present') return nil end
 
     -- loop on chests
     for k, chest in pairs(chests) do
