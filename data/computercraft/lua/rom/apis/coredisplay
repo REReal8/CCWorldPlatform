@@ -284,7 +284,8 @@ function ExecuteEnterpriseTest(t)
 		local options	= {
 			{key = "p", desc = "projects", 			func = ExecuteEnterpriseTest, param = {file = t_projects, filename = "t_projects"}},
 			{key = "i", desc = "isp", 				func = ExecuteEnterpriseTest, param = {file = t_isp, filename = "t_isp"}},
-			{key = "c", desc = "construction", 		func = ExecuteEnterpriseTest, param = {file = t_construction, filename = "t_construction"}},
+			{key = "b", desc = "construction", 		func = ExecuteEnterpriseTest, param = {file = t_construction, filename = "t_construction"}},
+			{key = "c", desc = "chests", 			func = ExecuteEnterpriseTest, param = {file = t_chests, filename = "t_chests"}},
 			{key = "f", desc = "factory", 			func = ExecuteEnterpriseTest, param = {file = t_factory, filename = "t_factory"}},
 			{key = "w", desc = "foresting", 		func = ExecuteEnterpriseTest, param = {file = t_foresting, filename = "t_foresting"}},
 			{key = "s", desc = "colonization", 		func = ExecuteEnterpriseTest, param = {file = t_colonization, filename = "t_colonization"}},

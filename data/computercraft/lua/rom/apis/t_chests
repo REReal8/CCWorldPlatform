@@ -1,0 +1,36 @@
+local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
+
+local callbackFunction = "t_main.Func1_Callback"
+local callbackData = {"some callback data"}
+
+local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere
+local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
+
+function T_GetItemsIntoTurtle()
+    corelog.WriteToLog("* Test GetItemsIntoTurtle for chests:")
+    -- create transferData
+    local sourceURL = enterprise_chests.GetChestURL(sourceChestId)
+    sourceURL:setQueryURI(queryPartURI)
+    local transferData = {
+        sourceURL =  sourceURL,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_chests.GetItemsIntoTurtle(transferData, callbackFunction, callbackData)
+end
+
+function T_ItemsAvailableVia()
+    corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
+    -- create transferData
+    local queryURL = enterprise_chests.GetChestURL(sourceChestId)
+    queryURL:setQueryURI(queryPartURI)
+    local queryData = {
+        itemQueryURL = queryURL,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.ItemsAvailableVia("..textutils.serialize(queryData)..")")
+    local result = enterprise_chests.ItemsAvailableVia(queryData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
+end

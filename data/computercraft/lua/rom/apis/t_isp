@@ -46,7 +46,7 @@ end
 local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere
 local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
 
-function T_TransferItemsFromTo_Chests()
+function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as partly already present in t_chests
     corelog.WriteToLog("* Test TransferItemsFromTo for chests:")
     -- create transferData
     local sourceURL = enterprise_chests.GetChestURL(sourceChestId)
@@ -60,21 +60,6 @@ function T_TransferItemsFromTo_Chests()
     -- call test method
     corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
     enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
-end
-
-function T_ItemsAvailableVia_Chest()
-    corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
-    -- create transferData
-    local queryURL = enterprise_chests.GetChestURL(sourceChestId)
-    queryURL:setQueryURI(queryPartURI)
-    local queryData = {
-        itemQueryURL = queryURL,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia("..textutils.serialize(queryData)..")")
-    local result = enterprise_isp.ItemsAvailableVia(queryData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
 function T_TransferItemsFromTo_Turtle()
