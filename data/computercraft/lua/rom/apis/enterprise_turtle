@@ -1,7 +1,10 @@
 --[[
     The Turtle enterprise provides services related to turtles.
 
-    This enterprise is an Item Service Host (ISH), hence it offers the mandatory services for an ISH (like e.g. ItemsAvailableVia, GetItemsIntoTurtle and PutItemsFromTurtle).
+    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services  and functions for an ISH (like e.g. ItemsAvailableVia, GetItemsIntoTurtle and PutItemsFromTurtle).
+
+    Additionally it provides the following public function
+        GetTurtleURL         - provide the URL of a turtle
 --]]
 
 --                _     _ _         __                  _   _
@@ -14,6 +17,43 @@
 --   |_|
 
 local hostName = "turtle"
+
+function GetISHURL()
+    --[[
+        This sync public ISH function provides the (base) URL of this ISH.
+
+        Return value:
+            ishURL                  - (table) URL of this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(hostName)
+
+    return hostURL
+end
+
+function GetTurtleURL(turtleId)
+    --[[
+        This sync public ISH function provide the URL of a turtle in the ISH.
+
+        Return value:
+            turtleURL               - (table) URL of the turtle
+
+        Parameters:
+            turtleId                - (number) id of the turtle
+    --]]
+
+    -- check input
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid turtleId input.") return end
+
+    local turtleURL = GetISHURL()
+    turtleURL:setPort(turtleId)
+
+    return turtleURL
+end
 
 function ItemsAvailableVia(queryData)
     --[[
@@ -38,7 +78,7 @@ function ItemsAvailableVia(queryData)
     end
 
     -- check host is from this enterprise
-    local itemQueryURL = queryData.itemQueryURL
+    local itemQueryURL = url.URLClass:new(queryData.itemQueryURL)
     local host = itemQueryURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia: Invalid host input.") return {success = false} end
     if host ~= hostName then corelog.Error("enterprise_turtle.ItemsAvailableVia: I am not the host for `"..host.."` queries.") return {success = false} end
@@ -112,9 +152,8 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     -- do the (virtual) transfer
 
     -- create (partial) output turtleURL
-    local turtleURL = url.URLClass:new()
-    turtleURL:setHost(host)
-    turtleURL:setPort(currentTurtleId)
+    local turtleURL = GetTurtleURL(currentTurtleId)
+    if turtleURL == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Invalid turtleURL created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check if current turtle has the requested items in it's inventory
     -- ToDo: consider also checking if items are available (i.e. not reserved)

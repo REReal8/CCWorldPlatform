@@ -1,6 +1,5 @@
 local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
-local turtleURI = "ccwprp://turtle"
-local turtleQueryURI = turtleURI..queryPartURI
+
 local storageURI = "ccwprp://storage"
 local storageQueryURI = storageURI.."/site=2/outputchest=4/"..queryPartURI
 local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
@@ -44,25 +43,63 @@ function T_ISPUsingProject()
     enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
 end
 
-function T_TransferItemsFromTo_Turtle()
-    corelog.WriteToLog("* Test TransferItemsFromTo for turtles:")
+local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere
+local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
+
+function T_TransferItemsFromTo_Chests()
+    corelog.WriteToLog("* Test TransferItemsFromTo for chests:")
     -- create transferData
+    local sourceURL = enterprise_chests.GetChestURL(sourceChestId)
+    sourceURL:setQueryURI(queryPartURI)
+    local destinationURL = enterprise_chests.GetChestURL(destinationChestId)
     local transferData = {
---        sourceURL =  url.URLClass:newFromURI(storageQueryURI),
---        destinationURL = url.URLClass:newFromURI(factoryInputChestURI),
-        sourceURL =  url.URLClass:newFromURI(turtleQueryURI),
-        destinationURL = url.URLClass:newFromURI(turtleURI),
+        sourceURL =  sourceURL,
+        destinationURL = destinationURL,
     }
 
     -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
+end
+
+function T_ItemsAvailableVia_Chest()
+    corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
+    -- create transferData
+    local queryURL = enterprise_chests.GetChestURL(sourceChestId)
+    queryURL:setQueryURI(queryPartURI)
+    local queryData = {
+        itemQueryURL = queryURL,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia("..textutils.serialize(queryData)..")")
+    local result = enterprise_isp.ItemsAvailableVia(queryData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
+end
+
+function T_TransferItemsFromTo_Turtle()
+    corelog.WriteToLog("* Test TransferItemsFromTo for turtles:")
+    -- create transferData
+    local sourceURL = enterprise_turtle.GetISHURL()
+    sourceURL:setQueryURI(queryPartURI)
+    local destinationURL = enterprise_turtle.GetISHURL()
+    local transferData = {
+        sourceURL =  sourceURL,
+        destinationURL = destinationURL,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
     enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
 end
 
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia for turtles:")
     -- create transferData
+    local queryURL = enterprise_turtle.GetISHURL()
+    queryURL:setQueryURI(queryPartURI)
     local queryData = {
-        itemQueryURL = url.URLClass:newFromURI(turtleQueryURI),
+        itemQueryURL = queryURL,
     }
 
     -- call test method
