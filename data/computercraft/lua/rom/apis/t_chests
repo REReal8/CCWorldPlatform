@@ -3,13 +3,68 @@ local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
 local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
 
-local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere
-local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
+local chest1Id = nil
+local chest2Id = nil
+
+function T_RegisterChest1()
+    corelog.WriteToLog("* Test RegisterChest 1:")
+    -- create chest data
+    local chestData  = {
+        location = {x= 8, y= 5, z= 1, dx=0, dy=1},
+        accessMethod = "front"
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.RegisterChest("..textutils.serialize(chestData)..")")
+    local result = enterprise_chests.RegisterChest(chestData, callbackFunction, callbackData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
+    if result.success then
+        chest1Id = result.id
+    end
+end
+
+function T_RegisterChest2()
+    corelog.WriteToLog("* Test RegisterChest 2:")
+      -- create chest data
+    local chestData  = {
+        location = {x= 10, y= 5, z= 1, dx=0, dy=1},
+        accessMethod = "top"
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.RegisterChest("..textutils.serialize(chestData)..")")
+    local result = enterprise_chests.RegisterChest(chestData, callbackFunction, callbackData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
+    if result.success then
+        chest2Id = result.id
+    end
+end
+
+function T_DelistChests()
+    corelog.WriteToLog("* Test DelistChests (1 + 2):")
+    -- create chest data 1
+    local chestData1  = {
+        id = chest1Id
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.DelistChest("..textutils.serialize(chestData1)..")")
+    enterprise_chests.DelistChest(chestData1, callbackFunction, callbackData)
+
+    -- create chest data 1
+    local chestData2  = {
+        id = chest2Id
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.DelistChest("..textutils.serialize(chestData2)..")")
+    enterprise_chests.DelistChest(chestData2, callbackFunction, callbackData)
+end
 
 function T_GetItemsIntoTurtle()
     corelog.WriteToLog("* Test GetItemsIntoTurtle for chests:")
     -- create transferData
-    local sourceURL = enterprise_chests.GetChestURL(sourceChestId)
+    local sourceURL = enterprise_chests.GetChestURL(chest1Id)
     sourceURL:setQueryURI(queryPartURI)
     local transferData = {
         sourceURL =  sourceURL,
@@ -23,7 +78,7 @@ end
 function T_ItemsAvailableVia()
     corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
     -- create transferData
-    local queryURL = enterprise_chests.GetChestURL(sourceChestId)
+    local queryURL = enterprise_chests.GetChestURL(chest1Id)
     queryURL:setQueryURI(queryPartURI)
     local queryData = {
         itemQueryURL = queryURL,

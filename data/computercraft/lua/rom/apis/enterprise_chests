@@ -97,7 +97,7 @@ function RegisterChest(chestData)
     end
 
     -- save the chest
-    coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.Id)
+    coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.id)
 
     -- end
     local result = {
@@ -156,7 +156,7 @@ function DelistChest(chestData, callback, callbackData)
 
     -- remove site from enteprise
     corelog.WriteToLog('  enterprise_chests.DelistChest: Removing chest '..chest.id)
-    coredht.SaveData(nil, db.dhtRoot, db.dhtSites, chest.id)
+    coredht.SaveData(nil, db.dhtRoot, db.dhtChests, chest.id)
 
     -- do callback
     coreutils.DoCallback(callback, callbackData, {success = true})
@@ -219,10 +219,10 @@ function ItemsAvailableVia(queryData)
 
     -- query chests inventory
 
-
-
-
     -- ToDo implement (below is enterprise turtle code)
+
+
+
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(query) do
@@ -401,7 +401,7 @@ end
 
 function GetChestById(chestId)
     -- chests ophalen
-    local chests = coredht.GetData(db.dhtRoot, db.dhtCites)
+    local chests = coredht.GetData(db.dhtRoot, db.dhtChests)
 
     -- check if we have any chest
     if type(chests) ~= "table" then corelog.Warning('enterprise_chests.GetChestById: no chests present') return nil end
