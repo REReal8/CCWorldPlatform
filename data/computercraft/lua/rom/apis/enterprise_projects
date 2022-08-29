@@ -47,15 +47,15 @@ function StartProject(projectDefinition, projectInputData, callbackFunction, cal
     NextProjectStep({projectId = project.projectId}, projectInputData) -- the input projectInputData is interpreted as the result of virtual step 0
 end
 
-function RemoveProjects()
+function DeleteProjects()
     local projects = coredht.GetData(db.dhtRoot)
-    if not projects or type(projects) ~= "table" then corelog.Warning("coreassignment.ClearProjects: projects not valid") return nil end
+    if not projects or type(projects) ~= "table" then corelog.Warning("coreassignment.DeleteProjects: projects not valid") return nil end
 
-    -- remove all assignments
-    corelog.WriteToProjectsLog("All projects are being removed!")
+    -- remove all projects
+    corelog.WriteToProjectsLog("All projects are being deleted!")
     for projectId, project in pairs(projects) do
         -- remove project
-        corelog.WriteToProjectsLog("Removed", projectId)
+        corelog.WriteToProjectsLog("Deleted", projectId)
         coredht.SaveData(nil, db.dhtRoot, projectId)
     end
 end
