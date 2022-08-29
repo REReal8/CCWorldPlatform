@@ -68,7 +68,7 @@ function T_StartProject()
     enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
 end
 
-function T_RemoveProjects()
-    enterprise_projects.RemoveProjects()
+function T_DeleteProjects()
+    enterprise_projects.DeleteProjects()
 end
 

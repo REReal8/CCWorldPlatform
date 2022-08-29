@@ -29,8 +29,8 @@ function T_StopV0Site_service()
     enterprise_factory.StopSite({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
 end
 
-function T_RemoveSites()
-    enterprise_factory.RemoveSites()
+function T_DeleteSites()
+    enterprise_factory.DeleteSites()
 end
 
 function T_ProduceItem_service_Craft()

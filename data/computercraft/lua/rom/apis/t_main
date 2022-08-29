@@ -4,9 +4,9 @@ function T_dummy()
 end
 
 function T_EmptyDHTLists()
-    enterprise_projects.RemoveProjects()
+    enterprise_projects.DeleteProjects()
     coreassignment.EndAssignments()
-    enterprise_factory.RemoveSites()
+    enterprise_factory.DeleteSites()
 end
 
 function T_enterprise_storage_buildAndStartNewSite()

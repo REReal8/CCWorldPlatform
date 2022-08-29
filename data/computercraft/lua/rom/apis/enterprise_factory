@@ -383,9 +383,9 @@ function StopSite(siteData, callback, callbackData)
     enterprise_factory_site.StopSite(siteData, callback, callbackData)
 end
 
-function RemoveSites()
+function DeleteSites()
     --[[
-        This function removes all sites from the factory. Currently this is intended for debugging purposes only.
+        This function deletes all sites from the factory. Currently this is intended for debugging purposes only.
 
         Return value:
                                 - (table)
@@ -395,20 +395,20 @@ function RemoveSites()
     --]]
 
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
-    if not sites or type(sites) ~= "table" then corelog.Warning("coreassignment.RemoveSites: not a lits of sites") return nil end
+    if not sites or type(sites) ~= "table" then corelog.Warning("coreassignment.DeleteSites: not a lits of sites") return nil end
 
     -- remove all assignments
     for siteId, site in pairs(sites) do
-        RemoveSite(siteId)
+        DeleteSite(siteId)
     end
 
     -- end
     return {success = true}
 end
 
-function RemoveSite(siteId)
+function DeleteSite(siteId)
     --[[
-        This function removes a site from the factory. Currently this is intended for debugging purposes only.
+        This function deletes a site from the factory. Currently this is intended for debugging purposes only.
 
         Return value:
                                 - (table)
@@ -419,10 +419,10 @@ function RemoveSite(siteId)
     --]]
 
     -- check our input
-    if type(siteId) ~= "string" then corelog.Error('enterprise_factory.RemoveSite: Invalid siteId') return {success = false} end
+    if type(siteId) ~= "string" then corelog.Error('enterprise_factory.DeleteSite: Invalid siteId') return {success = false} end
 
     -- remove site
-    corelog.Warning('enterprise_factory.RemoveSite: Removing site '..siteId.." without doing anything with the data, structure and items present")
+    corelog.Warning('enterprise_factory.DeleteSite: Removing site '..siteId.." without doing anything with the data, structure and items present")
     coredht.SaveData(nil, db.dhtRoot, db.dhtSites, siteId)
 
     -- end
