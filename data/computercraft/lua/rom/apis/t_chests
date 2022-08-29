@@ -6,12 +6,29 @@ local callbackData = {"some callback data"}
 local chest1Id = nil
 local chest2Id = nil
 
+function T_DeleteChests()
+    enterprise_chests.DeleteChests()
+end
+
+function T_GetChestSlotsInventory()
+    corelog.WriteToLog("* Test GetChestSlotsInventory")
+    -- create chest data
+    local chestIdData  = {
+        id = chest1Id
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.GetChestSlotsInventory("..textutils.serialize(chestIdData)..")")
+    local result = enterprise_chests.GetChestSlotsInventory(chestIdData, callbackFunction, callbackData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
+end
+
 function T_RegisterChest1()
     corelog.WriteToLog("* Test RegisterChest 1:")
     -- create chest data
     local chestData  = {
-        location = {x= 8, y= 5, z= 1, dx=0, dy=1},
-        accessMethod = "front"
+        location        = {x= 14, y= 17, z= 1, dx=0, dy=1},
+        accessDirection = "top"
     }
 
     -- call test method
@@ -27,8 +44,8 @@ function T_RegisterChest2()
     corelog.WriteToLog("* Test RegisterChest 2:")
       -- create chest data
     local chestData  = {
-        location = {x= 10, y= 5, z= 1, dx=0, dy=1},
-        accessMethod = "top"
+        location        = {x= 16, y= 17, z= 1, dx=0, dy=1},
+        accessDirection = "front"
     }
 
     -- call test method

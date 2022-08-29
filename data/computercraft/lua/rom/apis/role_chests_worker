@@ -1,0 +1,124 @@
+function GetChestInventory_MetaData(taskData)
+    --[[
+        This function returns the metadata for the GetChestInventory_Task supplied with argument taskData.
+    --]]
+
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_MetaData: taskData not a valid") return {success = false} end
+    local location = taskData.location
+    if type(location) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_MetaData: location not valid") return {success = false} end
+    local accessDirection = taskData.accessDirection
+    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetChestInventory_MetaData: invalid accessDirection") return {success = false} end
+
+    -- determine needed items
+    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
+
+    -- return metadata
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(workingLocation),
+        needTool = false,
+        needTurtle = true,
+        fuelNeeded = fuelNeeded,
+        itemsNeeded = {}
+    }
+end
+
+function GetWorkingLocation(location, accessDirection)
+    -- check input
+    if type(location) ~= "table" then corelog.Error("role_chest_worker.GetWorkingLocation: location not valid") return nil end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetWorkingLocation: invalid accessDirection") return nil end
+
+    -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
+    local workingDirection = coremove.CopyLocation(location)
+    if accessDirection == "bottom" then 
+        workingDirection = coremove.GetRelativeLocationDown(workingDirection)
+    elseif accessDirection == "top" then 
+        workingDirection = coremove.GetRelativeLocationUp(workingDirection)
+    elseif accessDirection == "left" then 
+        workingDirection = coremove.GetRelativeLocationRight(workingDirection)
+        workingDirection = coremove.GetRelativeLocationFront(workingDirection, - 1) -- back
+    elseif accessDirection == "right" then
+        workingDirection = coremove.GetRelativeLocationLeft(workingDirection)
+        workingDirection = coremove.GetRelativeLocationFront(workingDirection, - 1) -- back
+    elseif accessDirection == "front" then
+        workingDirection = coremove.GetRelativeLocationFront(workingDirection)
+        workingDirection = coremove.GetRelativeLocationLeft(workingDirection, 2) -- ensure facing back to location
+    elseif accessDirection == "back" then
+        workingDirection = coremove.GetRelativeLocationFront(workingDirection, - 1) -- back
+    else corelog.Error("role_chest_worker.GetWorkingLocation: Unsupported accessDirection="..accessDirection) return nil end
+
+    -- end
+    return workingDirection
+end
+
+function GetPeripheralName(accessDirection)
+    -- check input
+    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetPeripheralName: invalid accessDirection") return nil end
+
+    -- determine peripheralName from accessDirection
+    local peripheralName = "front"
+    if accessDirection == "bottom" then
+        peripheralName = "top"
+    elseif accessDirection == "top" then
+        peripheralName = "bottom"
+    end
+
+    -- end
+    return peripheralName
+end
+
+function GetChestInventory_Task(taskData)
+    --[[
+        This Task function get the inventory of a chest.
+
+        Return value:
+                                - (table)
+                success         - (boolean) when the inventory was succesfully retrieved
+                slots           - (table) the slots inventory of a chest
+
+        Parameters:
+            taskData            - (table) data about the chest
+                location        - (table) location of the chest
+                accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
+    --]]
+
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: taskData not a valid") return {success = false} end
+    local location = taskData.location
+    if type(location) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: location not valid") return {success = false} end
+    local accessDirection = taskData.accessDirection
+    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetChestInventory_Task: invalid accessDirection") return {success = false} end
+
+    -- move to workingLocation
+    local workingLocation = GetWorkingLocation(location, accessDirection)
+    if type(workingLocation) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: Failed to determine workingLocation") return {success = false} end
+--    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
+    coremove.GoTo(workingLocation)
+
+    -- get access to chest
+    local peripheralName = GetPeripheralName(accessDirection)
+    local chest = peripheral.wrap(peripheralName)
+    if type(chest) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+
+    -- get inventory
+    local slots = chest.list()
+
+    -- end
+    local result = {
+        success = true,
+        slots = slots,
+    }
+    return result
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--
+--
+

@@ -70,11 +70,11 @@ function RegisterChest(chestData)
         Parameters:
             chestData               - (table) data to the chest
                 location            - (table) location of the chest
-                accessMethod        - (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                accessDirection     - (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     --]]
 
     -- check input
-    if type(chestData) ~= "table" or type(chestData.location) ~= "table" then
+    if type(chestData) ~= "table" or type(chestData.location) ~= "table" or type(chestData.accessDirection) ~= "string" then
         corelog.Error("enterprise_chests.RegisterChest: Invalid chestData input.")
         return {success = false}
     end
@@ -83,10 +83,13 @@ function RegisterChest(chestData)
     local chest = {
         id              = coreutils.NewId(),
 
-        location        = chestData.location,
-        accessMethod    = chestData.accessMethod
+        location        = coremove.CopyLocation(chestData.location),
+        accessDirection = chestData.accessDirection,
 
-        -- ToDo: add empty item data
+        inventory = { -- assumed to be empty
+            items   = {},
+            slots   = {},
+        },
     }
 
     -- ensure enterprise has a key in the dht
@@ -109,7 +112,7 @@ end
 
 function DelistChest(chestData, callback, callbackData)
     --[[
-        This async public service delists ("removes") a chests from the enterprise. Delisting implies
+        This async public service delists ("removes") a chest from the enterprise. Delisting implies
             - the chest is immediatly no longer available for new business (e.g. adding/ removing items)
             - wait for all active work on chest to be ended
             - remove the chest from the enterprise 
@@ -125,7 +128,7 @@ function DelistChest(chestData, callback, callbackData)
 
         Parameters:
             chestData           - (table) data about the chest
-                id              - (string) id of the chest to delist.
+                id              - (string) id of the chest.
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
@@ -217,21 +220,18 @@ function ItemsAvailableVia(queryData)
     local chest = GetChestById(chestId)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia: Chest (id="..chestId..") not found.") return {success = false} end
 
-    -- query chests inventory
-
     -- ToDo implement (below is enterprise turtle code)
 
-
-
+    -- query chests inventory
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
-    local inventory = coreinventory.GetInventoryDetail()
-    for itemName, itemCount in pairs(query) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia: itemCount of wrong type = "..type(itemName)..".") return {success = false} end
+    local inventory = chest.inventory
+    for name, count in pairs(query) do
+        if type(name) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia: itemName of wrong type = "..type(name)..".") return {success = false} end
+        if type(count) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia: itemCount of wrong type = "..type(count)..".") return {success = false} end
 
-        local inventoryCount = inventory.items[itemName]
-        if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return {success = false}
+        local inventoryCount = inventory.items[name]
+        if inventoryCount == nil or inventoryCount < count then
+            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia: not enough (="..count..") "..name.." items in inventory (="..(inventoryCount or 0)..") of chest "..chestId..".") return {success = false}
         end
     end
 
@@ -399,8 +399,27 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
+function DeleteChests()
+    local chests = coredht.GetData(db.dhtRoot, db.dhtChests)
+    if not chests or type(chests) ~= "table" then corelog.Warning("coreassignment.DeleteChests: chests not valid") return nil end
+
+    -- remove all
+    corelog.Warning("All chests are being deleted!")
+    for chestId, chest in pairs(chests) do
+        -- remove
+        corelog.Warning("  deleting chest "..chestId)
+        coredht.SaveData(nil, db.dhtRoot, db.dhtChests, chestId)
+    end
+end
+
 function GetChestById(chestId)
     -- chests ophalen
+    local chest = coredht.GetData(db.dhtRoot, db.dhtChests, chestId)
+    if type(chest) ~= "table" then corelog.Warning("enterprise_chests.GetChestById: chest "..chestId.."not found") end
+
+    return chest
+
+    --[[
     local chests = coredht.GetData(db.dhtRoot, db.dhtChests)
 
     -- check if we have any chest
@@ -415,4 +434,54 @@ function GetChestById(chestId)
     end
 
     return nil
+    --]]
 end
+
+function GetChestSlotsInventory(chestIdData, callback, callbackData)
+    --[[
+        This async private service gets the actual slots inventory from a chest. The slots inventory is retrieved by the list method
+        as described here: https://tweaked.cc/generic_peripheral/inventory.html
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) when the inventory was succesfully retrieved
+                slots           - (table) the slots inventory of a chest
+
+        Parameters:
+            chestIdData         - (table) data about the chest
+                id              - (string) id of the chest.
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(chestIdData) ~= "table" or type(chestIdData.id) ~= "string" then
+        corelog.Error('enterprise_chests.GetChestSlotsInventory: Invalid chestIdData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_chests.GetChestSlotsInventory: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    callbackData = callbackData or {}
+
+    -- get the chest
+    local chest = GetChestById(chestIdData.id)
+    if type(chest) ~="table" then
+        corelog.Error("enterprise_chests.GetChestSlotsInventory: Failed retrieving chest for chestIdData = "..textutils.serialise(chestIdData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- get inventory via assignment
+    local taskData = {
+        location = coremove.CopyLocation(chest.location),
+        accessDirection = chest.accessDirection,
+    }
+
+    local metaData = role_chests_worker.GetChestInventory_MetaData(taskData)
+    coreassignment.AddAssignment(metaData, "role_chests_worker.GetChestInventory_Task", taskData, callback, callbackData)
+end
+

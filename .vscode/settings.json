@@ -43,7 +43,8 @@
         "enterprise_chests",
         "peripheral",
         "sleep",
-        "t_chests"
+        "t_chests",
+        "role_chests_worker"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
