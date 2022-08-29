@@ -418,23 +418,6 @@ function GetChestById(chestId)
     if type(chest) ~= "table" then corelog.Warning("enterprise_chests.GetChestById: chest "..chestId.."not found") end
 
     return chest
-
-    --[[
-    local chests = coredht.GetData(db.dhtRoot, db.dhtChests)
-
-    -- check if we have any chest
-    if type(chests) ~= "table" then corelog.Warning('enterprise_chests.GetChestById: no chests present') return nil end
-
-    -- loop on chests
-    for k, chest in pairs(chests) do
-        -- is this the one?
-        if chest.id == chestId then
-            return chest
-        end
-    end
-
-    return nil
-    --]]
 end
 
 function GetChestSlotsInventory(chestIdData, callback, callbackData)
