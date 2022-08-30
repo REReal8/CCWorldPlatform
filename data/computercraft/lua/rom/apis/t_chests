@@ -3,15 +3,45 @@ local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
 local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
 
-local chest1Id = nil
-local chest2Id = nil
-
 function T_DeleteChests()
     enterprise_chests.DeleteChests()
 end
 
-function T_FetchChestSlotsInventory()
-    corelog.WriteToLog("* Test FetchChestSlotsInventory")
+function T_RegisterAndUpdateChest()
+    corelog.WriteToLog("* Test Register and Update chest")
+
+    -- create project definition
+    local testProject = {
+        services    = {
+            { serviceName = "enterprise_chests.RegisterChest", async = false, input = {
+                { keyName = "location"          , valueSource = 0, sourceKey = "chestLocation" },
+                { keyName = "accessDirection"   , valueSource = 0, sourceKey = "chestAccessDirection" },
+            }},
+            { serviceName = "enterprise_chests.UpdateChestRecord", async = true, input = {
+                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+            }},
+            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+            }},
+        },
+        returnData  = {
+            { keyName = "success", valueSource = 3, sourceKey = "success" },
+        }
+    }
+    local projectData = {
+        chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
+        chestAccessDirection = "back"
+    }
+
+    -- start test project
+    enterprise_projects.StartProject(testProject, projectData, callbackFunction, callbackData)
+end
+
+local chest1Id = nil
+
+function T_FetchChestSlotsInventory1() -- note: this is a private service (so should normally not be accessed from outside enterprise)
+    corelog.WriteToLog("* Test FetchChestSlotsInventory 1")
     -- create chest data
     local chestIdData  = {
         id = chest1Id
@@ -40,25 +70,8 @@ function T_RegisterChest1()
     end
 end
 
-function T_RegisterChest2()
-    corelog.WriteToLog("* Test RegisterChest 2:")
-      -- create chest data
-    local chestData  = {
-        location        = {x= 16, y= 17, z= 1, dx=0, dy=1},
-        accessDirection = "front"
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.RegisterChest("..textutils.serialize(chestData)..")")
-    local result = enterprise_chests.RegisterChest(chestData, callbackFunction, callbackData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
-    if result.success then
-        chest2Id = result.id
-    end
-end
-
 function T_DelistChests()
-    corelog.WriteToLog("* Test DelistChests (1 + 2):")
+    corelog.WriteToLog("* Test DelistChests 1:")
     -- create chest data 1
     local chestData1  = {
         id = chest1Id
@@ -67,15 +80,6 @@ function T_DelistChests()
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.DelistChest("..textutils.serialize(chestData1)..")")
     enterprise_chests.DelistChest(chestData1, callbackFunction, callbackData)
-
-    -- create chest data 1
-    local chestData2  = {
-        id = chest2Id
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.DelistChest("..textutils.serialize(chestData2)..")")
-    enterprise_chests.DelistChest(chestData2, callbackFunction, callbackData)
 end
 
 function T_GetItemsIntoTurtle()

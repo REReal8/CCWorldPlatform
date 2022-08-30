@@ -87,8 +87,8 @@ function RegisterChest(chestData)
         accessDirection = chestData.accessDirection,
 
         inventory = { -- assumed to be empty
-            items   = {},
             slots   = {},
+            items   = {},
         },
     }
 
@@ -163,6 +163,66 @@ function DelistChest(chestIdData, callback, callbackData)
 
     -- do callback
     coreutils.DoCallback(callback, callbackData, {success = true})
+end
+
+function UpdateChestRecord(chestIdData, callback, callbackData)
+    --[[
+        This async public service brings the records of a chest up-to-date by fetching parameters and (re)setting the chest records.
+
+        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could              
+        typically be used for development purposes of if for some reason (e.g. after a turtle crash) the chest records could have been corrupted.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) if the chest record is succesfully updated
+
+        Parameters:
+            chestIdData         - (table) data about the chest
+                id              - (string) id of the chest.
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(chestIdData) ~= "table" or type(chestIdData.id) ~= "string" then
+        corelog.Error('enterprise_chests.UpdateChestRecord: Invalid chestData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_chests.UpdateChestRecord: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    callbackData = callbackData or {}
+
+    -- create project definition
+    local updateChestRecordsProject = {
+        services    = {
+            { serviceName = "enterprise_chests.FetchChestSlotsInventory", async = true, input = {
+                { keyName = "id"        , valueSource = 0, sourceKey = "id" },
+            }},
+            { serviceName = "enterprise_chests.SetChestRecord", async = false, input = {
+                { keyName = "id"        , valueSource = 0, sourceKey = "id" },
+                { keyName = "slots"     , valueSource = 1, sourceKey = "slots" },
+            }},
+            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+                { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
+            }},
+        },
+        returnData  = {
+            { keyName = "success", valueSource = 3, sourceKey = "success" },
+        }
+    }
+    local projectData = {
+        id = chestIdData.id,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Updating records for chest "..projectData.id..".")
+    enterprise_projects.StartProject(updateChestRecordsProject, projectData, callback, callbackData)
 end
 
 local hostName = "chests"
@@ -418,6 +478,68 @@ function GetChestById(chestId)
     return chest
 end
 
+function SetChestRecord(serviceData)
+    --[[
+        This sync private service sets a chest record based on (already obtained) parameters (like e.g. the slots inventory). 
+        
+        Return value:
+                                - (table)
+                success         - (boolean) whether the records were succesfully set
+
+        Parameters:
+            serviceData         - (table) data for this service
+                id              - (string) id of the chest.
+                slots           - (string) slots inventory of the chest.
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" or type(serviceData.id) ~= "string" or type(serviceData.slots) ~= "table" then
+        corelog.Error('enterprise_chests.SetChestRecord: Invalid serviceData input')
+        return {success = false}
+    end
+
+    -- get the chest
+    local chestId = serviceData.id
+    local chest = GetChestById(chestId)
+    if type(chest) ~="table" then
+        corelog.Error("enterprise_chests.SetChestRecord: Failed retrieving chest for chestIdData = "..chestId)
+        return {success = false}
+    end
+
+    -- determine items inventory
+    local slots = serviceData.slots
+    local inventory = DetermineInventory(slots)
+
+    -- set record
+    chest.inventory = inventory
+
+    -- save record
+    coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.id)
+
+    -- end
+    return {success = true}
+end
+
+function DetermineInventory(slots)
+    -- construct inventory
+    local inventory = {
+        slots   = slots, -- ToDo: concider deep copy
+        items   = {},
+    }
+
+    -- loop on slots
+    for slot, item in pairs(slots) do
+        -- right item?
+        if type(item) == "table" then
+            -- add to items
+            inventory.items[ item.name ]  = (inventory.items[ item.name ] or 0) + item.count
+        end
+    end
+
+    -- end
+    return inventory
+end
+
 function FetchChestSlotsInventory(chestIdData, callback, callbackData)
     --[[
         This async private service fetches the slots inventory from a chest. 
@@ -455,12 +577,11 @@ function FetchChestSlotsInventory(chestIdData, callback, callbackData)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
-    -- get inventory via assignment
+    -- get inventory with assignment
     local taskData = {
         location = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
     }
-
     local metaData = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData)
     coreassignment.AddAssignment(metaData, "role_chests_worker.FetchChestSlotsInventory_Task", taskData, callback, callbackData)
 end
