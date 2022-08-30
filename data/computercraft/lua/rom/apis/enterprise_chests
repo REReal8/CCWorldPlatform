@@ -523,7 +523,7 @@ end
 function DetermineInventory(slots)
     -- construct inventory
     local inventory = {
-        slots   = slots, -- ToDo: concider deep copy
+        slots   = slots, -- ToDo: consider deep copy
         items   = {},
     }
 

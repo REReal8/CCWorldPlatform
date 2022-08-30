@@ -40,16 +40,16 @@ end
 
 local chest1Id = nil
 
-function T_FetchChestSlotsInventory1() -- note: this is a private service (so should normally not be accessed from outside enterprise)
-    corelog.WriteToLog("* Test FetchChestSlotsInventory 1")
+function T_UpdateChestRecord1()
+    corelog.WriteToLog("* Test UpdateChestRecord 1")
     -- create chest data
     local chestIdData  = {
         id = chest1Id
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.FetchChestSlotsInventory("..textutils.serialize(chestIdData)..")")
-    local result = enterprise_chests.FetchChestSlotsInventory(chestIdData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord("..textutils.serialize(chestIdData)..")")
+    local result = enterprise_chests.UpdateChestRecord(chestIdData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
