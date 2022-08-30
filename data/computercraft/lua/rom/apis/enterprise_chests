@@ -220,8 +220,6 @@ function ItemsAvailableVia(queryData)
     local chest = GetChestById(chestId)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia: Chest (id="..chestId..") not found.") return {success = false} end
 
-    -- ToDo implement (below is enterprise turtle code)
-
     -- query chests inventory
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = chest.inventory
@@ -420,11 +418,10 @@ function GetChestById(chestId)
     return chest
 end
 
-function GetChestSlotsInventory(chestIdData, callback, callbackData)
+function FetchChestSlotsInventory(chestIdData, callback, callbackData)
     --[[
-        This async private service gets the actual slots inventory from a chest. The slots inventory is retrieved by the list method
-        as described here: https://tweaked.cc/generic_peripheral/inventory.html
-
+        This async private service fetches the slots inventory from a chest. 
+        
         Return value:
             nil 
 
@@ -442,11 +439,11 @@ function GetChestSlotsInventory(chestIdData, callback, callbackData)
 
     -- check input
     if type(chestIdData) ~= "table" or type(chestIdData.id) ~= "string" then
-        corelog.Error('enterprise_chests.GetChestSlotsInventory: Invalid chestIdData input')
+        corelog.Error('enterprise_chests.FetchChestSlotsInventory: Invalid chestIdData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_chests.GetChestSlotsInventory: Invalid callback function')
+        corelog.Error('enterprise_chests.FetchChestSlotsInventory: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
@@ -454,7 +451,7 @@ function GetChestSlotsInventory(chestIdData, callback, callbackData)
     -- get the chest
     local chest = GetChestById(chestIdData.id)
     if type(chest) ~="table" then
-        corelog.Error("enterprise_chests.GetChestSlotsInventory: Failed retrieving chest for chestIdData = "..textutils.serialise(chestIdData))
+        corelog.Error("enterprise_chests.FetchChestSlotsInventory: Failed retrieving chest for chestIdData = "..textutils.serialise(chestIdData))
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
@@ -464,7 +461,7 @@ function GetChestSlotsInventory(chestIdData, callback, callbackData)
         accessDirection = chest.accessDirection,
     }
 
-    local metaData = role_chests_worker.GetChestInventory_MetaData(taskData)
-    coreassignment.AddAssignment(metaData, "role_chests_worker.GetChestInventory_Task", taskData, callback, callbackData)
+    local metaData = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData)
+    coreassignment.AddAssignment(metaData, "role_chests_worker.FetchChestSlotsInventory_Task", taskData, callback, callbackData)
 end
 

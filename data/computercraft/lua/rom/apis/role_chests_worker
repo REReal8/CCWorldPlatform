@@ -1,14 +1,14 @@
-function GetChestInventory_MetaData(taskData)
+function FetchChestSlotsInventory_MetaData(taskData)
     --[[
-        This function returns the metadata for the GetChestInventory_Task supplied with argument taskData.
+        This function returns the metadata for the FetchChestSlotsInventory_Task supplied with argument taskData.
     --]]
 
     -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_MetaData: taskData not a valid") return {success = false} end
+    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_MetaData: taskData not a valid") return {success = false} end
     local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_MetaData: location not valid") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_MetaData: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetChestInventory_MetaData: invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_MetaData: invalid accessDirection") return {success = false} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -69,9 +69,11 @@ function GetPeripheralName(accessDirection)
     return peripheralName
 end
 
-function GetChestInventory_Task(taskData)
+function FetchChestSlotsInventory_Task(taskData)
     --[[
-        This Task function get the inventory of a chest.
+        This Task function fetches the slots inventory of a chest.
+
+        The slots inventory is retrieved by the list method as described here: https://tweaked.cc/generic_peripheral/inventory.html
 
         Return value:
                                 - (table)
@@ -85,22 +87,22 @@ function GetChestInventory_Task(taskData)
     --]]
 
     -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: taskData not a valid") return {success = false} end
+    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: taskData not a valid") return {success = false} end
     local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: location not valid") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetChestInventory_Task: invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: invalid accessDirection") return {success = false} end
 
     -- move to workingLocation
     local workingLocation = GetWorkingLocation(location, accessDirection)
-    if type(workingLocation) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: Failed to determine workingLocation") return {success = false} end
+    if type(workingLocation) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: Failed to determine workingLocation") return {success = false} end
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
 
     -- get access to chest
     local peripheralName = GetPeripheralName(accessDirection)
     local chest = peripheral.wrap(peripheralName)
-    if type(chest) ~= "table" then corelog.Error("role_chest_worker.GetChestInventory_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- get inventory
     local slots = chest.list()

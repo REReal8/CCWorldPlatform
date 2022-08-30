@@ -10,16 +10,16 @@ function T_DeleteChests()
     enterprise_chests.DeleteChests()
 end
 
-function T_GetChestSlotsInventory()
-    corelog.WriteToLog("* Test GetChestSlotsInventory")
+function T_FetchChestSlotsInventory()
+    corelog.WriteToLog("* Test FetchChestSlotsInventory")
     -- create chest data
     local chestIdData  = {
         id = chest1Id
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.GetChestSlotsInventory("..textutils.serialize(chestIdData)..")")
-    local result = enterprise_chests.GetChestSlotsInventory(chestIdData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.FetchChestSlotsInventory("..textutils.serialize(chestIdData)..")")
+    local result = enterprise_chests.FetchChestSlotsInventory(chestIdData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
