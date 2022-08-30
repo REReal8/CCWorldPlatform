@@ -110,7 +110,7 @@ function RegisterChest(chestData)
     return result
 end
 
-function DelistChest(chestData, callback, callbackData)
+function DelistChest(chestIdData, callback, callbackData)
     --[[
         This async public service delists ("removes") a chest from the enterprise. Delisting implies
             - the chest is immediatly no longer available for new business (e.g. adding/ removing items)
@@ -127,14 +127,14 @@ function DelistChest(chestData, callback, callbackData)
                 success         - (boolean) when the chest was succesfully delisted
 
         Parameters:
-            chestData           - (table) data about the chest
+            chestIdData         - (table) data about the chest
                 id              - (string) id of the chest.
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(chestData) ~= "table" or type(chestData.id) ~= "string" then
+    if type(chestIdData) ~= "table" or type(chestIdData.id) ~= "string" then
         corelog.Error('enterprise_chests.DelistChest: Invalid chestData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
@@ -145,9 +145,9 @@ function DelistChest(chestData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- get the chest
-    local chest = GetChestById(chestData.id)
+    local chest = GetChestById(chestIdData.id)
     if type(chest) ~="table" then
-        corelog.Error("enterprise_chests.DelistChest: Failed retrieving chest for chestData = "..textutils.serialise(chestData))
+        corelog.Error("enterprise_chests.DelistChest: Failed retrieving chest for chestData = "..textutils.serialise(chestIdData))
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
