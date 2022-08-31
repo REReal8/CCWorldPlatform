@@ -334,44 +334,39 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     if type(host) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid host input.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if host ~= hostName then corelog.Error("enterprise_chests.GetItemsIntoTurtle: I am not a host from a `"..host.."` item source.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- ToDo implement (below is enterprise turtle code)
+    -- select chest
+    local chestId = sourceURL:getPath().id
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid path input: "..textutils.serialize(sourceURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
+    -- create project definition
+    local getItemsIntoTurtleProject = {
+        services    = {
+            { serviceName = "enterprise_chests.FetchItemsFromChestIntoTurtle", async = true, input = {
+                { keyName = "chestId"   , valueSource = 0, sourceKey = "chestId" },
+                { keyName = "itemQuery" , valueSource = 0, sourceKey = "itemQuery" },
+            }},
+            { serviceName = "enterprise_chests.SetChestRecord", async = false, input = {
+                { keyName = "id"        , valueSource = 0, sourceKey = "chestId" },
+                { keyName = "slots"     , valueSource = 1, sourceKey = "slots" },
+            }},
+            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+                { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
+            }},
+        },
+        returnData  = {
+            { keyName = "success", valueSource = 3, sourceKey = "success" },
+            { keyName = "turtleURL", valueSource = 1, sourceKey = "turtleURL" },
+        }
+    }
+    local projectData = {
+        chestId     = chestId,
+        itemQuery   = sourceURL:getQuery()
+    }
 
-
-
-    -- check turtle id's
-    local currentTurtleId = os.getComputerID()
-    local sourceTurtleId = sourceURL:getPort()
-    if sourceTurtleId and currentTurtleId ~= sourceTurtleId then
-        corelog.Error("enterprise_chests.GetItemsIntoTurtle: Get items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-
-    -- do the (virtual) transfer
-
-    -- create (partial) output turtleURL
-    local turtleURL = url.URLClass:new()
-    turtleURL:setHost(host)
-    turtleURL:setPort(currentTurtleId)
-
-    -- check if current turtle has the requested items in it's inventory
-    -- ToDo: consider also checking if items are available (i.e. not reserved)
-    local sourceQuery = sourceURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
-    local inventory = coreinventory.GetInventoryDetail()
-    for itemName, itemCount in pairs(sourceQuery) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: itemName of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: itemCount of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-        local inventoryCount = inventory.items[itemName]
-        if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_chests.GetItemsIntoTurtle: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
-        end
-    end
-    turtleURL:setQuery(sourceQuery)
-
-    -- end
-    local result = {success = true, turtleURL = turtleURL}
-    return coreutils.DoCallback(callback, callbackData, result)
+    -- start project
+    corelog.WriteToLog(">Getting "..sourceURL:getQueryURI().." from chest "..projectData.chestId.." into a turtle.")
+    enterprise_projects.StartProject(getItemsIntoTurtleProject, projectData, callback, callbackData)
 end
 
 function PutItemsFromTurtle(transferData, callback, callbackData)
@@ -577,7 +572,7 @@ function FetchChestSlotsInventory(chestIdData, callback, callbackData)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
-    -- get inventory with assignment
+    -- fetch with an assignment
     local taskData = {
         location = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
@@ -586,3 +581,51 @@ function FetchChestSlotsInventory(chestIdData, callback, callbackData)
     coreassignment.AddAssignment(metaData, "role_chests_worker.FetchChestSlotsInventory_Task", taskData, callback, callbackData)
 end
 
+function FetchItemsFromChestIntoTurtle(serviceData, callback, callbackData)
+    --[[
+        This async private service fetches items from a chest into the inventory of a turtle.
+        
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the items were succesfully fetched
+                slots           - (table) the slots inventory of the chest (after the items have been removed)
+                turtleURL       - (table) a URL stating the turtle and the items it has gotton in it's inventory
+
+        Parameters:
+            serviceData         - (table) data about the chest
+                chestId         - (string) id of the chest.
+                itemQuery       - (table) with items to be fetched
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" or type(serviceData.chestId) ~= "string" or type(serviceData.itemQuery) ~= "table" then
+        corelog.Error('enterprise_chests.FetchItemsFromChestIntoTurtle: Invalid serviceData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then 
+        corelog.Error('enterprise_chests.FetchItemsFromChestIntoTurtle: Invalid callback function')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    callbackData = callbackData or {}
+
+    -- get the chest
+    local chest = GetChestById(serviceData.chestId)
+    if type(chest) ~="table" then
+        corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle: Failed retrieving chest for serviceData = "..textutils.serialise(serviceData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- fetch with an assignment
+    local taskData = {
+        location        = coremove.CopyLocation(chest.location),
+        accessDirection = chest.accessDirection,
+        itemQuery       = serviceData.itemQuery
+    }
+    local metaData = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData)
+    coreassignment.AddAssignment(metaData, "role_chests_worker.FetchItemsFromChestIntoTurtle_Task", taskData, callback, callbackData)
+end
