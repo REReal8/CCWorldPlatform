@@ -10,9 +10,23 @@ end
 function T_RegisterAndUpdateChest()
     corelog.WriteToLog("* Test Register and Update chest")
 
-    -- create project definition
-    local testProject = {
-        services    = {
+    -- create project
+    local projectData = {
+        chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
+        chestAccessDirection = "back"
+    }
+    local serviceData = {
+        projectDefinition = GetRegisterAndUpdateChestProject(),
+        projectInputData = projectData,
+    }
+
+    -- start project
+    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
+end
+
+function GetRegisterAndUpdateChestProject()
+    return {
+        services = {
             { serviceName = "enterprise_chests.RegisterChest", async = false, input = {
                 { keyName = "location"          , valueSource = 0, sourceKey = "chestLocation" },
                 { keyName = "accessDirection"   , valueSource = 0, sourceKey = "chestAccessDirection" },
@@ -25,22 +39,11 @@ function T_RegisterAndUpdateChest()
                 { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
             }},
         },
-        returnData  = {
+        returnData = {
             { keyName = "success"               , valueSource = 3, sourceKey = "success" },
             { keyName = "id"                    , valueSource = 1, sourceKey = "id" },
         }
     }
-    local projectData = {
-        chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
-        chestAccessDirection = "back"
-    }
-    local serviceData = {
-        projectDefinition = testProject,
-        projectInputData = projectData,
-    }
-
-    -- start test project
-    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
 end
 
 local chest1Id = nil
