@@ -140,9 +140,13 @@ function CreateNewWorld(callback, callbackData)
         returnData  = {
         }
     }
+    local serviceData = {
+        projectDefinition = createNewWorldProject,
+        projectInputData = settleData,
+    }
 
     -- start project
-    enterprise_projects.StartProject(createNewWorldProject, settleData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

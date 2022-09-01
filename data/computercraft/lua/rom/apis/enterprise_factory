@@ -134,10 +134,14 @@ function BuildAndStartNewSite(siteData, callback, callbackData)
             { keyName = "success"               , valueSource = 2, sourceKey = "success" },
         }
     }
+    local serviceData = {
+        projectDefinition = buildAndStartNewSiteProject,
+        projectInputData = siteData,
+    }
 
     -- start project
     corelog.WriteToLog(">Building and starting factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
-    enterprise_projects.StartProject(buildAndStartNewSiteProject, siteData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 
 function BuildNewSite(siteData, callback, callbackData)
@@ -285,10 +289,14 @@ function StopAndDismantleSite(siteData, callback, callbackData)
             { keyName = "success"               , valueSource = 2, sourceKey = "success" },
         }
     }
+    local serviceData = {
+        projectDefinition = stopAndDismantleSiteProject,
+        projectInputData = siteData,
+    }
 
     -- start project
     corelog.WriteToLog(">Stopping and dismantling factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
-    enterprise_projects.StartProject(stopAndDismantleSiteProject, siteData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 
 function DismantleSite(siteData, callback, callbackData)

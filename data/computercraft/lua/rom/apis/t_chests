@@ -34,9 +34,13 @@ function T_RegisterAndUpdateChest()
         chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
         chestAccessDirection = "back"
     }
+    local serviceData = {
+        projectDefinition = testProject,
+        projectInputData = projectData,
+    }
 
     -- start test project
-    enterprise_projects.StartProject(testProject, projectData, callbackFunction, callbackData)
+    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
 end
 
 local chest1Id = nil

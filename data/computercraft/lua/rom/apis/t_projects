@@ -26,7 +26,7 @@ function T_CombineStepResults()
             { keyName = "success", valueSource = 5, sourceKey = "success" },
         }
     }
-    local projectData = { 
+    local projectData = {
         testData1 = "some testData1",
         testData2 = "some testData2",
         testData3 = "some testData3",
@@ -35,8 +35,12 @@ function T_CombineStepResults()
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = { "rootCallBackData" }
+    local serviceData = {
+        projectDefinition = projectDefinition,
+        projectInputData = projectData,
+    }
 
-    enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
+    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
 end
 
 function T_StartProject()
@@ -64,8 +68,12 @@ function T_StartProject()
     local projectData = { testArgSource = testArgValue }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = { "rootCallBackData" }
+    local serviceData = {
+        projectDefinition = projectDefinition,
+        projectInputData = projectData,
+    }
 
-    enterprise_projects.StartProject(projectDefinition, projectData, callbackFunction, callbackData)
+    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
 end
 
 function T_DeleteProjects()

@@ -257,10 +257,14 @@ function UpdateChestRecord(chestIdData, callback, callbackData)
     local projectData = {
         id = chestIdData.id,
     }
+    local serviceData = {
+        projectDefinition = updateChestRecordsProject,
+        projectInputData = projectData,
+    }
 
     -- start project
     corelog.WriteToLog(">Updating records for chest "..projectData.id..".")
-    enterprise_projects.StartProject(updateChestRecordsProject, projectData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 
 function GetISHURL()
@@ -402,10 +406,14 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
         chestId     = chestId,
         itemQuery   = sourceURL:getQuery()
     }
+    local serviceData = {
+        projectDefinition = getItemsIntoTurtleProject,
+        projectInputData = projectData,
+    }
 
     -- start project
     corelog.WriteToLog(">Getting "..sourceURL:getQueryURI().." from chest "..projectData.chestId.." into a turtle.")
-    enterprise_projects.StartProject(getItemsIntoTurtleProject, projectData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 
 function PutItemsFromTurtle(transferData, callback, callbackData)
@@ -473,10 +481,14 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
         chestId         = chestId,
         turtleSourceURL = transferData.turtleSourceURL
     }
+    local serviceData = {
+        projectDefinition = putItemsIntoChestProject,
+        projectInputData = projectData,
+    }
 
     -- start project
     corelog.WriteToLog(">Putting items from turtle URL "..transferData.turtleSourceURL:getURI().." into chest "..projectData.chestId..".")
-    enterprise_projects.StartProject(putItemsIntoChestProject, projectData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

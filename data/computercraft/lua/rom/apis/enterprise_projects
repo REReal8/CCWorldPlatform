@@ -19,18 +19,40 @@ local db = {
 --   | |
 --   |_|
 
-function StartProject(projectDefinition, projectInputData, callbackFunction, callbackData)
+function StartProject(serviceData, callback, callbackData)
+    --[[
+        This async public service starts a project.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the project was successfully executed
+                <other results> - (?) as defined in the project definition
+
+        Parameters:
+            serviceData             - (table) data for this service
+                projectDefinition   - (table) definition of the project
+                projectInputData    - (table) input datat to the project
+            callback                - (string) name of function to call once service is ready
+            callbackData            - (table) data to supply to callback function
+    ]]
+
     -- check input
-    if type(projectDefinition) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectDefinition') return nil end
+    if type(serviceData) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid serviceData') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local projectDefinition = serviceData.projectDefinition
+    if type(projectDefinition) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectDefinition') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
-    if type(projectInputData) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectInputData') return nil end
-    if type(callbackFunction) ~= "string" then corelog.Error('enterprise_projects.StartProject: Invalid callbackFunction') return nil end
-    if type(callbackData) ~= "table" then callbackData = {} end
+    local projectInputData = serviceData.projectInputData
+    if type(projectInputData) ~= "table" then corelog.Error('enterprise_projects.StartProject: Invalid projectInputData') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error('enterprise_projects.StartProject: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
     -- data of the project
     local project   = {
         projectDefinition   = projectDefinition,
-        callbackFunction    = callbackFunction,
+        callbackFunction    = callback,
         callbackData        = callbackData,
 
         projectId           = coreutils.NewId(),

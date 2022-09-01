@@ -159,10 +159,14 @@ function TransferItemsFromTo(transferData, callback, callbackData)
         sourceURL = transferData.sourceURL,
         destinationURL = transferData.destinationURL,
     }
+    local serviceData = {
+        projectDefinition = transferItemsProject,
+        projectInputData = projectData,
+    }
 
     -- start project
     corelog.WriteToLog(">Transferring items from "..projectData.sourceURL:getURI().." to "..projectData.destinationURL:getURI()..".")
-    enterprise_projects.StartProject(transferItemsProject, projectData, callback, callbackData)
+    enterprise_projects.StartProject(serviceData, callback, callbackData)
 
     -- end
     return nil

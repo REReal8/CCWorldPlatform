@@ -38,9 +38,13 @@ function T_ISPUsingProject()
             { keyName = "success"               , valueSource = 3 --[[ likely higher]], sourceKey = "success" },
         }
     }
+    local serviceData = {
+        projectDefinition = aTypicalServiceUsingItemsProject,
+        projectInputData = projectInputData,
+    }
 
     -- call test method
-    enterprise_projects.StartProject(aTypicalServiceUsingItemsProject, projectInputData, callbackFunction, callbackData)
+    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
 end
 
 local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere

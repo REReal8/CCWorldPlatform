@@ -248,9 +248,13 @@ function BuildAndStartNewSite(siteData, callback, callbackData)
             returnData  = {
             }
         }
+        local serviceData = {
+            projectDefinition = buildAndStartNewSiteProject,
+            projectInputData = siteData,
+        }
 
         -- start project
-        enterprise_projects.StartProject(buildAndStartNewSiteProject, siteData, callback, callbackData)
+        enterprise_projects.StartProject(serviceData, callback, callbackData)
     end
 
     -- nothing to return
