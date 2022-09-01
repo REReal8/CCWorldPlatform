@@ -43,7 +43,7 @@ function GetTurtleURL(serviceData)
         Return value:
                                     - (table)
                 success             - (boolean) wether the URL was correctly obtained
-                turtleURL           - (table) URL of the turtle
+                url                 - (table) URL of the turtle
 
         Parameters:
             serviceData             - (table) data for this service
@@ -62,7 +62,7 @@ function GetTurtleURL(serviceData)
     -- end
     local result = {
         success = true,
-        turtleURL = turtleURL,
+        url = turtleURL,
     }
     return result
 end
@@ -194,7 +194,7 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     -- create (partial) output turtleURL
     local getURLResult = GetTurtleURL({turtleId = currentTurtleId})
     if not getURLResult.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Failed creating turtleURL.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local turtleURL = getURLResult.turtleURL
+    local turtleURL = getURLResult.url
     if turtleURL == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Invalid turtleURL created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check if current turtle has the requested items in it's inventory

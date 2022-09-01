@@ -38,7 +38,7 @@ function GetChestURL(serviceData)
         Return value:
                                     - (table)
                 success             - (boolean) wether the URL was correctly obtained
-                chestURL            - (table) URL of the chest in the ISH
+                url                 - (table) URL of the chest in the ISH
 
         Parameters:
             serviceData             - (table) data for this service
