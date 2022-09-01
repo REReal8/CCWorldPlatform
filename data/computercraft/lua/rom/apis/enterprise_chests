@@ -137,6 +137,7 @@ function RegisterChest(chestData)
     end
 
     -- save the chest
+    corelog.WriteToLog(">Registering chest "..chest.id..".")
     coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.id)
 
     -- end

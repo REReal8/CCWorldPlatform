@@ -47,7 +47,7 @@ local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere
 local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
 
 function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as partly already present in t_chests
-    corelog.WriteToLog("* Test TransferItemsFromTo for chests:")
+    corelog.WriteToLog("* Test TransferItemsFromTo between chests:")
     -- create transferData
     local sourceURL = enterprise_chests.GetChestURL({chestId = sourceChestId}).url
     sourceURL:setQueryURI(queryPartURI)
@@ -62,8 +62,8 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
     enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
 end
 
-function T_TransferItemsFromTo_Turtle()
-    corelog.WriteToLog("* Test TransferItemsFromTo for turtles:")
+function T_TransferItemsFromTo_Turtles()
+    corelog.WriteToLog("* Test TransferItemsFromTo between turtles:")
     -- create transferData
     local sourceURL = enterprise_turtle.GetISHURL()
     sourceURL:setQueryURI(queryPartURI)

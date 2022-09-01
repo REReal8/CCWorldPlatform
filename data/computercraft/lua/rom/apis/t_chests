@@ -26,7 +26,8 @@ function T_RegisterAndUpdateChest()
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 3, sourceKey = "success" },
+            { keyName = "success"               , valueSource = 3, sourceKey = "success" },
+            { keyName = "id"                    , valueSource = 1, sourceKey = "id" },
         }
     }
     local projectData = {
@@ -70,7 +71,7 @@ function T_RegisterChest1()
     end
 end
 
-function T_DelistChests()
+function T_DelistChest1()
     corelog.WriteToLog("* Test DelistChests 1:")
     -- create chest data 1
     local chestData1  = {
@@ -82,7 +83,7 @@ function T_DelistChests()
     enterprise_chests.DelistChest(chestData1, callbackFunction, callbackData)
 end
 
-function T_GetItemsIntoTurtle()
+function T_GetItemsIntoTurtle1()
     corelog.WriteToLog("* Test GetItemsIntoTurtle for chests:")
     -- create transferData
     local sourceURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
@@ -96,7 +97,7 @@ function T_GetItemsIntoTurtle()
     enterprise_chests.GetItemsIntoTurtle(transferData, callbackFunction, callbackData)
 end
 
-function T_PutItemsFromTurtle()
+function T_PutItemsFromTurtle1()
     corelog.WriteToLog("* Test PutItemsFromTurtle for chests:")
     -- create transferData
     local currentTurtleId = os.getComputerID()
@@ -113,7 +114,7 @@ function T_PutItemsFromTurtle()
     enterprise_chests.PutItemsFromTurtle(transferData, callbackFunction, callbackData)
 end
 
-function T_ItemsAvailableVia()
+function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
     -- create transferData
     local queryURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
