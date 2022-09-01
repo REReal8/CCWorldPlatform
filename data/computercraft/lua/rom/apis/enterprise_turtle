@@ -5,8 +5,6 @@
 
     Furthermore it provides the following additional services
         IsTurtleURL     - provide if URL is of a turtle
-
-    Additionally it provides the following public function
         GetTurtleURL    - provide the URL of a turtle
 --]]
 
@@ -38,24 +36,35 @@ function GetISHURL()
     return hostURL
 end
 
-function GetTurtleURL(turtleId) -- ToDo consider converting to service
+function GetTurtleURL(serviceData)
     --[[
-        This sync public ISH function provide the URL of a turtle in the ISH.
+        This sync public services provides the URL of a turtle in the ISH.
 
         Return value:
-            turtleURL               - (table) URL of the turtle
+                                    - (table)
+                success             - (boolean) wether the URL was correctly obtained
+                turtleURL           - (table) URL of the turtle
 
         Parameters:
-            turtleId                - (number) id of the turtle
+            serviceData             - (table) data for this service
+                turtleId            - (number) id of the turtle
     --]]
 
     -- check input
-    if type(turtleId) ~= "number" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid turtleId input.") return end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid serviceData input.") return {success = false} end
+    local turtleId = serviceData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid turtleId input.") return {success = false} end
 
+    -- construct URL
     local turtleURL = GetISHURL()
     turtleURL:setPort(turtleId)
 
-    return turtleURL
+    -- end
+    local result = {
+        success = true,
+        turtleURL = turtleURL,
+    }
+    return result
 end
 
 function IsTurtleURL(queryData)
@@ -183,7 +192,9 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     -- do the (virtual) transfer
 
     -- create (partial) output turtleURL
-    local turtleURL = GetTurtleURL(currentTurtleId)
+    local getURLResult = GetTurtleURL({turtleId = currentTurtleId})
+    if not getURLResult.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Failed creating turtleURL.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleURL = getURLResult.turtleURL
     if turtleURL == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Invalid turtleURL created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check if current turtle has the requested items in it's inventory

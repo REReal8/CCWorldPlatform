@@ -164,7 +164,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
 
     -- construct turtleURL
     local currentTurtleId = os.getComputerID()
-    local turtleURL = enterprise_turtle.GetTurtleURL(currentTurtleId) -- ToDo: conside if it correct that a role calls a enterprise method...
+    local turtleURL = enterprise_turtle.GetTurtleURL(currentTurtleId).turtleURL -- ToDo: conside if it correct that a role calls a enterprise method...
     if turtleURL == nil then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: Invalid turtleURL created.") return {success = false} end
     turtleURL:setQuery(itemResultQuery)
 
