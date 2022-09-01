@@ -179,7 +179,7 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     -- check source is for this enterprise
     local sourceURL = url.URLClass:new(transferData.sourceURL) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
     local sourceIsTurtle = IsTurtleURL({ aURL = sourceURL})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle: Invalid turtle source URL (="..sourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle: Invalid turtle source URL (="..sourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check turtle id's
     local currentTurtleId = os.getComputerID()
@@ -249,7 +249,7 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
     end
     callbackData = callbackData or {}
 
-    -- check source is for this enterprise
+    -- check source is a turtle
     local turtleSourceURL = url.URLClass:new(transferData.turtleSourceURL) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
     local sourceIsTurtle = IsTurtleURL({ aURL = turtleSourceURL})
     if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle: Invalid turtle source URL (="..turtleSourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
