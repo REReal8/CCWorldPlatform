@@ -156,14 +156,17 @@ function FindBestAssignment()
     end
 
     -- select assignments satisfying meta conditions
-    local candidateIdList = {}
+    local candidateList = {}
     for assignmentId, assignmentData in pairs(assignmentList) do
         -- check assignment open
         if assignmentData.status == "open" then
             -- check metaconditions
             local conditionsMet, skipReason = MetaDataConditionsMet(assignmentData.metaData)
             if conditionsMet then
-                table.insert(candidateIdList, assignmentId)
+                table.insert(candidateList, {
+                    id = assignmentId,
+                    metaData = assignmentData.metaData,
+                })
             else
                 -- debug message
                 if skipReason and skipReason ~= db.lastSkipReason then
@@ -176,14 +179,48 @@ function FindBestAssignment()
         end
     end
 
-    -- find best assignment
-    for i, assignmentId in ipairs(candidateIdList) do
-        return assignmentId -- For now take first. ToDo: proper implementation, maybe based on fuel needed or how old it is?
+    -- select best assignment
+    local bestCandidateData = nil
+    for i, candidateData in ipairs(candidateList) do
+        bestCandidateData = BestCandidate(bestCandidateData, candidateData)
     end
 
-    -- nothing found
-    -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
-    return nil
+    -- end
+    if bestCandidateData then
+        return bestCandidateData.id
+    else
+        -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
+        return nil
+    end
+end
+
+function BestCandidate(candidateData1, candidateData2)
+    -- check for data
+    if not candidateData1 then
+        return candidateData2
+    end
+    if not candidateData2 then
+        return candidateData1
+    end
+
+    -- check needTurtleId
+    local needTurtleId1 = candidateData1.metaData.needTurtleId
+    local needTurtleId2 = candidateData2.metaData.needTurtleId
+    if needTurtleId1 and not needTurtleId2 then
+        return candidateData1
+    elseif needTurtleId2 and not needTurtleId1 then
+        return candidateData2
+    else -- both are equal w.r.t. this condition
+    end
+
+    -- check fuelNeeded
+    -- ToDo implement
+
+    -- check age
+    -- ToDo implement
+
+    -- nothing else distinquishes the candidates => take first 
+    return candidateData1
 end
 
 function MetaDataConditionsMet(metaData)
@@ -198,6 +235,14 @@ function MetaDataConditionsMet(metaData)
         -- check mandatory turtle 
         if not turtle then
             return false, "mandatory turtle not present"
+        end
+
+        -- check needTurtleId
+        if metaData.needTurtleId then
+            local currentTurtleId = os.getComputerID()
+            if currentTurtleId ~= metaData.needTurtleId then 
+                return false, "turtle does not have(="..currentTurtleId..") mandatory turtleId (="..metaData.needTurtleId..")"
+            end
         end
 
         -- check enough fuel for assignment (including traveling there from current location)
