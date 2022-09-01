@@ -106,7 +106,8 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
                                 - (table)
                 success         - (boolean) whether the items were succesfully fetched
                 slots           - (table) the slots inventory of the chest (after the items have been removed)
-                turtleURL       - (table) a URL stating the turtle and the items it has gotton in it's inventor
+                turtleId        - (number) id of the turtle that has items in it's inventory
+                itemResultQuery - (table) items retrieved into turtle
 
         Parameters:
             taskData            - (table) data about the chest
@@ -162,19 +163,15 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
     local slots = chest.list()
     -- ToDo: consider dubble checking only exactly the requested items were moved to the turtle => itemResultQuery
 
-    -- construct turtleURL
+    -- get turtleId
     local currentTurtleId = os.getComputerID()
-    local turtleURL = enterprise_turtle.GetTurtleURL({ -- ToDo: conside if it correct that a role calls a enterprise method...
-        turtleId = currentTurtleId,
-        itemQuery = itemResultQuery,
-    }).url
-    if turtleURL == nil then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: Invalid turtleURL created.") return {success = false} end
 
     -- end
     local result = {
-        success = true,
-        slots = slots,
-        turtleURL = turtleURL,
+        success         = true,
+        slots           = slots,
+        turtleId        = currentTurtleId,
+        itemResultQuery = itemResultQuery,
     }
     return result
 end

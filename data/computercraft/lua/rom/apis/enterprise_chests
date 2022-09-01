@@ -370,13 +370,17 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     -- select chest
     local chestId = sourceURL:getPath().id
     if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid path input: "..textutils.serialize(sourceURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
+    
     -- create project definition
     local getItemsIntoTurtleProject = {
         services    = {
             { serviceName = "enterprise_chests.FetchItemsFromChestIntoTurtle", async = true, input = {
                 { keyName = "chestId"   , valueSource = 0, sourceKey = "chestId" },
                 { keyName = "itemQuery" , valueSource = 0, sourceKey = "itemQuery" },
+            }},
+            { serviceName = "enterprise_turtle.GetTurtleURL", async = false, input = {
+                { keyName = "turtleId"  , valueSource = 1, sourceKey = "turtleId" },
+                { keyName = "itemQuery" , valueSource = 1, sourceKey = "itemResultQuery" },
             }},
             { serviceName = "enterprise_chests.SetChestRecord", async = false, input = {
                 { keyName = "id"        , valueSource = 0, sourceKey = "chestId" },
@@ -385,11 +389,12 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
             { serviceName = "enterprise_projects.AllTrue", async = false, input = {
                 { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"  , valueSource = 3, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 3, sourceKey = "success" },
-            { keyName = "turtleURL", valueSource = 1, sourceKey = "turtleURL" },
+            { keyName = "success", valueSource = 4, sourceKey = "success" },
+            { keyName = "turtleURL", valueSource = 2, sourceKey = "url" },
         }
     }
     local projectData = {

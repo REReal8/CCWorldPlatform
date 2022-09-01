@@ -51,7 +51,7 @@ function GetTurtleURL(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 turtleId            - (number) id of the turtle
-                itemQuery          - (table) items to locate in turtle
+                itemQuery           - (table) items to locate in turtle
     --]]
 
     -- check input
