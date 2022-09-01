@@ -1,6 +1,7 @@
 local db = {
     dhtRoot     = "enterprise_chests",
     dhtChests   = "chests",
+    hostName    = "chests",
 }
 
 --[[
@@ -30,8 +31,6 @@ local db = {
 --   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --   | |
 --   |_|
-
-local hostName = "chests"
 
 function GetChestURL(serviceData)
     --[[
@@ -87,7 +86,7 @@ function IsChestURL(queryData)
     local aURL = url.URLClass:new(queryData.aURL)
     local host = aURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == hostName then
+    if host == db.hostName then
         return {success = true} -- ToDo: consider distinquishing between service failure and question answer
     else
         return {success = false}
@@ -275,7 +274,7 @@ function GetISHURL()
     --]]
 
     local hostURL = url.URLClass:new()
-    hostURL:setHost(hostName)
+    hostURL:setHost(db.hostName)
 
     return hostURL
 end

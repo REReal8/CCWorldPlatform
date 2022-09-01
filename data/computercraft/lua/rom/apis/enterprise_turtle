@@ -1,3 +1,8 @@
+local db = {
+    hostName    = "turtle",
+}
+
+
 --[[
     The Turtle enterprise provides services related to turtles.
 
@@ -17,8 +22,6 @@
 --   | |
 --   |_|
 
-local hostName = "turtle"
-
 function GetISHURL()
     --[[
         This sync public ISH function provides the (base) URL of this ISH.
@@ -31,7 +34,7 @@ function GetISHURL()
     --]]
 
     local hostURL = url.URLClass:new()
-    hostURL:setHost(hostName)
+    hostURL:setHost(db.hostName)
 
     return hostURL
 end
@@ -90,7 +93,7 @@ function IsTurtleURL(queryData)
     local aURL = url.URLClass:new(queryData.aURL)
     local host = aURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_turtle.IsTurtleURL: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == hostName then
+    if host == db.hostName then
         return {success = true} -- ToDo: consider distinquishing between service failure and question answer
     else
         return {success = false}
