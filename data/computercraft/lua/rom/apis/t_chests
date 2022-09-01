@@ -96,6 +96,23 @@ function T_GetItemsIntoTurtle()
     enterprise_chests.GetItemsIntoTurtle(transferData, callbackFunction, callbackData)
 end
 
+function T_PutItemsFromTurtle()
+    corelog.WriteToLog("* Test PutItemsFromTurtle for chests:")
+    -- create transferData
+    local currentTurtleId = os.getComputerID()
+    local turtleSourceURL = enterprise_turtle.GetTurtleURL({turtleId = currentTurtleId}).url
+    turtleSourceURL:setQueryURI(queryPartURI)
+    local destinationURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
+    local transferData = {
+        turtleSourceURL = turtleSourceURL,
+        destinationURL  = destinationURL,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_chests.PutItemsFromTurtle(transferData, callbackFunction, callbackData)
+end
+
 function T_ItemsAvailableVia()
     corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
     -- create transferData

@@ -4,11 +4,11 @@ function FetchChestSlotsInventory_MetaData(taskData)
     --]]
 
     -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_MetaData: taskData not a valid") return {success = false} end
+    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: taskData not a valid") return {success = false} end
     local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_MetaData: location not valid") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_MetaData: invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: invalid accessDirection") return {success = false} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -43,22 +43,22 @@ function FetchChestSlotsInventory_Task(taskData)
     --]]
 
     -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: taskData not a valid") return {success = false} end
+    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: taskData not a valid") return {success = false} end
     local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: location not valid") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: invalid accessDirection") return {success = false} end
 
     -- move to workingLocation
     local workingLocation = GetWorkingLocation(location, accessDirection)
-    if type(workingLocation) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: Failed to determine workingLocation") return {success = false} end
+    if type(workingLocation) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: Failed to determine workingLocation") return {success = false} end
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
 
     -- get access to chest
     local peripheralName = GetPeripheralName(accessDirection)
     local chest = peripheral.wrap(peripheralName)
-    if type(chest) ~= "table" then corelog.Error("role_chest_worker.FetchChestSlotsInventory_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- get inventory
     local slots = chest.list()
@@ -77,11 +77,11 @@ function FetchItemsFromChestIntoTurtle_MetaData(taskData)
     --]]
 
     -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_MetaData: taskData not a valid") return {success = false} end
+    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: taskData not valid") return {success = false} end
     local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_MetaData: location not valid") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_MetaData: invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: invalid accessDirection") return {success = false} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -110,58 +110,60 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
                 itemResultQuery - (table) items retrieved into turtle
 
         Parameters:
-            taskData            - (table) data about the chest
+            taskData            - (table) data about the task
                 location        - (table) location of the chest
                 accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
-                itemQuery       - (table) with items to be fetched
+                itemQuery       - (table) which items to be fetched
     --]]
 
     -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: taskData not a valid") return {success = false} end
+    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: taskData not valid") return {success = false} end
     local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: location not valid") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid accessDirection") return {success = false} end
     local itemQuery = taskData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: invalid itemQuery") return {success = false} end
+    if type(itemQuery) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid itemQuery") return {success = false} end
 
     -- move to workingLocation
     local workingLocation = GetWorkingLocation(location, accessDirection)
-    if type(workingLocation) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: Failed to determine workingLocation") return {success = false} end
+    if type(workingLocation) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Failed to determine workingLocation") return {success = false} end
 --    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
     coremove.GoTo(workingLocation)
 
     -- get access to chest
     local chestName = GetPeripheralName(accessDirection)
     local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- loop on requested items
     local itemResultQuery = {}
     for requestItemName, requestItemCount in pairs(itemQuery) do
         -- check
-        if type(requestItemName) ~= "string" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
-        if type(requestItemCount) ~= "number" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
-        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest")
+        if type(requestItemName) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
+        if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
+        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
+
+        -- ToDo: implement handling multiple item stacks
 
         -- empty first slot
         local firstSlot = 1
-        if not MakeSlotEmpty(chestName, firstSlot) then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: Failed making slot "..firstSlot.." empty.") return {success = false} end
+        if not MakeSlotEmpty(chestName, firstSlot) then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Failed making slot "..firstSlot.." empty.") return {success = false} end
 
         -- move requested item to first slot
         local itemsTransferred = TransferTo(chestName, requestItemName, requestItemCount, firstSlot)
-        if itemsTransferred ~= requestItemCount then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..itemsTransferred..") in inventory of chest.") return {success = false} end
+        if itemsTransferred ~= requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..itemsTransferred..") in inventory of chest.") return {success = false} end
 
         -- suck items into turtle
 --        corelog.WriteToLog("   sucking "..itemsTransferred.." "..requestItemName.."'s from slot "..firstSlot)
         local itemsSucked = Suck(chestName, itemsTransferred)
-        if itemsSucked ~= itemsTransferred then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..itemsTransferred..") "..requestItemName.." items sucked (="..itemsSucked..") in inventory of chest.") return {success = false} end
+        if itemsSucked ~= itemsTransferred then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..itemsTransferred..") "..requestItemName.." items sucked (="..itemsSucked..") from chest.") return {success = false} end
         itemResultQuery[requestItemName] = tonumber(itemsSucked)
     end
 
     -- get final inventory
     local slots = chest.list()
-    -- ToDo: consider dubble checking only exactly the requested items were moved to the turtle => itemResultQuery
+    -- ToDo: consider double checking only exactly the requested items were moved to the turtle => itemResultQuery
 
     -- get turtleId
     local currentTurtleId = os.getComputerID()
@@ -172,6 +174,128 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
         slots           = slots,
         turtleId        = currentTurtleId,
         itemResultQuery = itemResultQuery,
+    }
+    return result
+end
+
+function PutItemsFromTurtleIntoChest_MetaData(taskData)
+    --[[
+        This function returns the metadata for the PutItemsFromTurtleIntoChest_Task supplied with argument taskData.
+    --]]
+
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: taskData not valid") return {success = false} end
+    local turtleId = taskData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid turtleId") return {success = false} end
+    local itemQuery = taskData.itemQuery
+    if type(itemQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid itemQuery") return {success = false} end
+    local location = taskData.location
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: location not valid") return {success = false} end
+    local accessDirection = taskData.accessDirection
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid accessDirection") return {success = false} end
+
+    -- determine needed items
+    local workingLocation = GetWorkingLocation(location, accessDirection)
+    local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
+
+    -- return metadata
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(workingLocation),
+        needTool = false,
+        needTurtle = true,
+        needTurtleId = turtleId,
+        fuelNeeded = fuelNeeded,
+        itemsNeeded = {}
+    }
+end
+
+function PutItemsFromTurtleIntoChest_Task(taskData)
+    --[[
+        This Task function puts items from a the inventory of a turtle into a chest.
+
+        Return value:
+                                - (table)
+                success         - (boolean) whether the items were succesfully put
+                slots           - (table) the slots inventory of the chest (after the items have been put)
+
+        Parameters:
+            taskData            - (table) data about the task
+                turtleId        - (number) id of the turtle that has the items
+                itemQuery       - (table) which items to be put
+                location        - (table) location of the chest
+                accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
+    --]]
+
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: taskData not valid") return {success = false} end
+    local turtleId = taskData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid turtleId") return {success = false} end
+    local itemQuery = taskData.itemQuery
+    if type(itemQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid itemQuery") return {success = false} end
+    local location = taskData.location
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: location not valid") return {success = false} end
+    local accessDirection = taskData.accessDirection
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid accessDirection") return {success = false} end
+
+    -- check correct turtle
+    local currentTurtleId = os.getComputerID()
+    if currentTurtleId ~= turtleId then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: incorrect turtle(id="..currentTurtleId..") to execute specific turtle(id="..turtleId..")") return {success = false} end
+
+    -- move to workingLocation
+    local workingLocation = GetWorkingLocation(location, accessDirection)
+    if type(workingLocation) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: Failed to determine workingLocation") return {success = false} end
+--    corelog.WriteToLog("  moving to workingLocation="..textutils.serialize(workingLocation))
+    coremove.GoTo(workingLocation)
+
+    -- get access to chest
+    local chestName = GetPeripheralName(accessDirection)
+    local chest = peripheral.wrap(chestName)
+    if type(chest) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
+
+    -- loop on requested items
+    for requestItemName, requestItemCount in pairs(itemQuery) do
+        -- check
+        if type(requestItemName) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
+        if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
+        corelog.WriteToLog("   putting "..requestItemCount.." "..requestItemName.."'s from turtle into chest")
+
+        -- check enough items
+        local turtleInventory = coreinventory.GetInventoryDetail()
+        if turtleInventory.items[requestItemName] < requestItemCount then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..turtleInventory.items[requestItemName]..") in inventory of turtle.") return {success = false} end
+
+        -- drop the items into chest
+        -- ToDo: handling (not enough) space in chest
+        local remainingItemsToDrop = requestItemCount
+        for slot, turtleItem in pairs(turtleInventory.slots) do
+            -- check
+            if type(turtleItem) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: turtleItem of wrong type = "..type(turtleItem)..".") return {success = false} end
+
+            -- requested item in turtle slot?
+            if turtleItem.itemName == requestItemName then
+                -- select turtle slot
+                turtle.select(slot)
+
+                -- move items to 
+                local countToDrop = math.min(remainingItemsToDrop, turtleItem.itemCount)
+                corelog.WriteToLog("   dropping "..countToDrop.." "..turtleItem.itemName.." from turtle slot "..slot.." to chest")
+                local itemsDropped = Drop(chestName, countToDrop)
+
+                -- more to move for this requested item?
+                remainingItemsToDrop = remainingItemsToDrop - itemsDropped
+                if remainingItemsToDrop <= 0 then break end
+            end
+        end
+    end
+
+    -- get final inventory
+    local slots = chest.list()
+    -- ToDo: consider double checking only exactly the requested items were put into the chest
+
+    -- end
+    local result = {
+        success         = true,
+        slots           = slots,
     }
     return result
 end
@@ -187,8 +311,8 @@ end
 
 function GetWorkingLocation(location, accessDirection)
     -- check input
-    if type(location) ~= "table" then corelog.Error("role_chest_worker.GetWorkingLocation: location not valid") return nil end
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetWorkingLocation: invalid accessDirection") return nil end
+    if type(location) ~= "table" then corelog.Error("role_chests_worker.GetWorkingLocation: location not valid") return nil end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.GetWorkingLocation: invalid accessDirection") return nil end
 
     -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
     local workingDirection = coremove.CopyLocation(location)
@@ -207,7 +331,7 @@ function GetWorkingLocation(location, accessDirection)
         workingDirection = coremove.GetRelativeLocationLeft(workingDirection, 2) -- ensure facing back to location
     elseif accessDirection == "back" then
         workingDirection = coremove.GetRelativeLocationFront(workingDirection, - 1) -- back
-    else corelog.Error("role_chest_worker.GetWorkingLocation: Unsupported accessDirection="..accessDirection) return nil end
+    else corelog.Error("role_chests_worker.GetWorkingLocation: Unsupported accessDirection="..accessDirection) return nil end
 
     -- end
     return workingDirection
@@ -215,7 +339,7 @@ end
 
 function GetPeripheralName(accessDirection)
     -- check input
-    if type(accessDirection) ~= "string" then corelog.Error("role_chest_worker.GetPeripheralName: invalid accessDirection") return nil end
+    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.GetPeripheralName: invalid accessDirection") return nil end
 
     -- determine peripheralName from accessDirection
     local peripheralName = "front"
@@ -231,7 +355,7 @@ end
 
 function MakeSlotEmpty(chestName, slotToClear)
     local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_chest_worker.MakeSlotEmpty: No chest with chestName = "..chestName..".") return false end
+    if type(chest) ~= "table" then corelog.Error("role_chests_worker.MakeSlotEmpty: No chest with chestName = "..chestName..".") return false end
 
     -- get slots inventory
     local slots = chest.list()
@@ -250,7 +374,7 @@ function MakeSlotEmpty(chestName, slotToClear)
                 end
             end
         end
-        if toSlot == 0 then corelog.Error("role_chest_worker.MakeSlotEmpty: could not find suitable slot to move "..countToMove.." "..nameToMove.."'s from slot "..slotToClear.." to.") return false end
+        if toSlot == 0 then corelog.Error("role_chests_worker.MakeSlotEmpty: could not find suitable slot to move "..countToMove.." "..nameToMove.."'s from slot "..slotToClear.." to.") return false end
 
 --        corelog.WriteToLog("   moving "..countToMove.." "..nameToMove.." from slot "..slotToClear.." to slot "..toSlot..".")
         chest.pushItems(chestName, 1, countToMove, toSlot)
@@ -264,7 +388,7 @@ end
 
 function TransferTo(chestName, itemName, itemCount, slotDestination)
     local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_chest_worker.TransferTo: No chest with chestName = "..chestName..".") return 0 end
+    if type(chest) ~= "table" then corelog.Error("role_chests_worker.TransferTo: No chest with chestName = "..chestName..".") return 0 end
 
     local slots = chest.list()
     local remainingItemsToMove = itemCount
@@ -272,7 +396,7 @@ function TransferTo(chestName, itemName, itemCount, slotDestination)
         -- skip slotDestination
         if slot ~= slotDestination then
             -- check
-            if type(chestItem) ~= "table" then corelog.Error("role_chest_worker.FetchItemsFromChestIntoTurtle_Task: chestItem of wrong type = "..type(chestItem)..".") return 0 end
+            if type(chestItem) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: chestItem of wrong type = "..type(chestItem)..".") return 0 end
 
             -- requested item in slot?
             if chestItem.name == itemName then
@@ -300,7 +424,22 @@ function Suck(chestName, itemCount)
     elseif chestName == "front" then
         turtle.suck(itemCount)
     else
-        corelog.Error("role_chest_worker.Suck: Don't know how to suck "..chestName..".") return 0
+        corelog.Error("role_chests_worker.Suck: Don't know how to suck "..chestName..".") return 0
+    end
+
+    -- end
+    return itemCount
+end
+
+function Drop(chestName, itemCount)
+    if chestName == "bottom" then
+        turtle.dropDown(itemCount)
+    elseif chestName == "top" then
+        turtle.dropUp(itemCount)
+    elseif chestName == "front" then
+        turtle.drop(itemCount)
+    else
+        corelog.Error("role_chests_worker.Drop: Don't know how to drop "..chestName..".") return 0
     end
 
     -- end
