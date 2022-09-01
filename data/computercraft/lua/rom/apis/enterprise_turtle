@@ -51,16 +51,19 @@ function GetTurtleURL(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 turtleId            - (number) id of the turtle
+                itemQuery          - (table) items to locate in turtle
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid serviceData input.") return {success = false} end
     local turtleId = serviceData.turtleId
     if type(turtleId) ~= "number" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid turtleId input.") return {success = false} end
+    local itemQuery = serviceData.itemQuery or {}
 
     -- construct URL
     local turtleURL = GetISHURL()
     turtleURL:setPort(turtleId)
+    turtleURL:setQuery(itemQuery)
 
     -- end
     local result = {
