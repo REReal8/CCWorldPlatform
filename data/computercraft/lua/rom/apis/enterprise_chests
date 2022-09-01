@@ -11,8 +11,6 @@ local db = {
     Furthermore it provides the following additional services
         RegisterChest       - to register ("add") a chest that can be serviced by this enterprise
         DelistChest         - to delist ("remove") a chest from being serviced by this enterprise
-
-    Additionally it provides the following public functions
         GetChestURL         - provide the URL of a chest
 
     The enterprise does not provide services to build/ dismantle chests. This is to be done by other (enterprise) code. In a sense the enterprise_chests is not the
@@ -33,27 +31,35 @@ local db = {
 --   | |
 --   |_|
 
-function GetChestURL(chestId)
+function GetChestURL(serviceData)
     --[[
-        This sync public function provide the URL of a chest in the ISH.
+        This sync public services provides the URL of a chest in the ISH.
 
         Return value:
-            chestURL                - (table) URL of the chest in the ISH
+                                    - (table)
+                success             - (boolean) wether the URL was correctly obtained
+                chestURL            - (table) URL of the chest in the ISH
 
         Parameters:
-            chestId                 - (string) id of the chest
+            serviceData             - (table) data for this service
+                chestId             - (string) id of the chest
     --]]
 
     -- check input
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetChestURL: Invalid chestId input.") return end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestURL: Invalid serviceData input.") return {success = false} end
+    local chestId = serviceData.chestId
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetChestURL: Invalid chestId input.") return {success = false} end
 
+    -- construct URL
     local chestURL = GetISHURL()
-    local chestPath = {
-        id = chestId
-    }
-    chestURL:setPath(chestPath)
+    chestURL:setPath({id = chestId})
 
-    return chestURL
+    -- end
+    local result = {
+        success = true,
+        url = chestURL,
+    }
+    return result
 end
 
 function RegisterChest(chestData)
