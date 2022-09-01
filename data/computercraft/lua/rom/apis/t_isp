@@ -49,9 +49,9 @@ local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
 function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as partly already present in t_chests
     corelog.WriteToLog("* Test TransferItemsFromTo for chests:")
     -- create transferData
-    local sourceURL = enterprise_chests.GetChestURL(sourceChestId).url
+    local sourceURL = enterprise_chests.GetChestURL({chestId = sourceChestId}).url
     sourceURL:setQueryURI(queryPartURI)
-    local destinationURL = enterprise_chests.GetChestURL(destinationChestId).url
+    local destinationURL = enterprise_chests.GetChestURL({chestId = destinationChestId}).url
     local transferData = {
         sourceURL =  sourceURL,
         destinationURL = destinationURL,

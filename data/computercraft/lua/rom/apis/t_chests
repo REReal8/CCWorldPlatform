@@ -85,7 +85,7 @@ end
 function T_GetItemsIntoTurtle()
     corelog.WriteToLog("* Test GetItemsIntoTurtle for chests:")
     -- create transferData
-    local sourceURL = enterprise_chests.GetChestURL(chest1Id).url
+    local sourceURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
     sourceURL:setQueryURI(queryPartURI)
     local transferData = {
         sourceURL =  sourceURL,
@@ -99,7 +99,7 @@ end
 function T_ItemsAvailableVia()
     corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
     -- create transferData
-    local queryURL = enterprise_chests.GetChestURL(chest1Id).url
+    local queryURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
     queryURL:setQueryURI(queryPartURI)
     local queryData = {
         itemQueryURL = queryURL,
