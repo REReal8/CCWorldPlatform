@@ -45,7 +45,9 @@
         "sleep",
         "t_chests",
         "role_chests_worker",
-        "enterprise_colonization"
+        "enterprise_colonization",
+        "role_forester",
+        "enterprise_forest"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
