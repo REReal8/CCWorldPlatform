@@ -93,7 +93,7 @@ end
 function T_GetItemsIntoTurtle1()
     corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
     -- create transferData
-    local sourceURL = enterprise_chests.GetChestURL_SSrv({chestId = chest1Id}).url
+    local sourceURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
     sourceURL:setQueryURI(queryPartURI)
     local transferData = {
         sourceURL =  sourceURL,
@@ -110,7 +110,7 @@ function T_PutItemsFromTurtle1()
     local currentTurtleId = os.getComputerID()
     local turtleSourceURL = enterprise_turtle.GetTurtleURL_ASrv({turtleId = currentTurtleId}).url
     turtleSourceURL:setQueryURI(queryPartURI)
-    local destinationURL = enterprise_chests.GetChestURL_SSrv({chestId = chest1Id}).url
+    local destinationURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
     local transferData = {
         turtleSourceURL = turtleSourceURL,
         destinationURL  = destinationURL,
@@ -124,7 +124,7 @@ end
 function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia_ASrv for chest:")
     -- create transferData
-    local queryURL = enterprise_chests.GetChestURL_SSrv({chestId = chest1Id}).url
+    local queryURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
     queryURL:setQueryURI(queryPartURI)
     local queryData = {
         itemQueryURL = queryURL,

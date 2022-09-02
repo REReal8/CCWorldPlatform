@@ -23,7 +23,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData1" },
             }},
             { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
-                { keyName = "chestId"           , valueSource = 1, sourceKey = "id" },
+                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
                 { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemsToTransferQuery" },
             }},
             { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
@@ -31,7 +31,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData2" },
             }},
             { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
-                { keyName = "chestId"           , valueSource = 3, sourceKey = "id" },
+                { keyName = "id"                , valueSource = 3, sourceKey = "id" },
             }},
 
             -- TransferItemsFromTo_ASrv
