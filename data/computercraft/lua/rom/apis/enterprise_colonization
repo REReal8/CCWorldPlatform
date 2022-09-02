@@ -138,17 +138,34 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "topChests"         , valueSource = 0, sourceKey = "topChests" },
                 { keyName = "layers"            , valueSource = 0, sourceKey = "layers" },
             }},
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
+                { keyName = "success4"          , valueSource = 4, sourceKey = "success" },
+                { keyName = "success5"          , valueSource = 5, sourceKey = "success" },
+                { keyName = "success6"          , valueSource = 6, sourceKey = "success" },
+                { keyName = "success7"          , valueSource = 7, sourceKey = "success" },
+                { keyName = "success8"          , valueSource = 8, sourceKey = "success" },
+                { keyName = "success9"          , valueSource = 9, sourceKey = "success" },
+                { keyName = "success10"         , valueSource = 10, sourceKey = "success" },
+                { keyName = "success11"         , valueSource = 11, sourceKey = "success" },
+                { keyName = "success12"         , valueSource = 12, sourceKey = "success" },
+                { keyName = "success13"         , valueSource = 13, sourceKey = "success" },
+                { keyName = "success14"         , valueSource = 14, sourceKey = "success" },
+            }},
         },
         returnData  = {
+            { keyName = "success"               , valueSource = 15, sourceKey = "success" },
         }
     }
-    local serviceData = {
+    local projectData = {
         projectDefinition = createNewWorldProject,
         projectInputData = settleData,
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
