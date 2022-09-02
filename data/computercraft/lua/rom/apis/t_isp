@@ -12,44 +12,44 @@ local callbackData = {"some callback data"}
 --local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
 
 function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as partly already present in t_chests
-    corelog.WriteToLog("* Test TransferItemsFromTo between chests:")
+    corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between chests:")
 
     -- create project definition
     local transferItemsBetweenChestsProject = {
         services    = {
             -- preparation
-            { serviceName = "enterprise_projects.StartProject", async = true, input = {
+            { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
                 { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition1" },
                 { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData1" },
             }},
-            { serviceName = "enterprise_chests.GetChestURL", async = false, input = {
+            { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
                 { keyName = "chestId"           , valueSource = 1, sourceKey = "id" },
                 { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemsToTransferQuery" },
             }},
-            { serviceName = "enterprise_projects.StartProject", async = true, input = {
+            { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
                 { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition2" },
                 { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData2" },
             }},
-            { serviceName = "enterprise_chests.GetChestURL", async = false, input = {
+            { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
                 { keyName = "chestId"           , valueSource = 3, sourceKey = "id" },
             }},
 
-            -- TransferItemsFromTo
-            { serviceName = "enterprise_isp.TransferItemsFromTo", async = true, input = {
+            -- TransferItemsFromTo_ASrv
+            { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
                 { keyName = "sourceURL"         , valueSource = 2, sourceKey = "url" },
                 { keyName = "destinationURL"    , valueSource = 4, sourceKey = "url" },
             }},
 
             -- cleanup
-            { serviceName = "enterprise_chests.DelistChest", async = true, input = {
+            { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
                 { keyName = "id"                , valueSource = 1, sourceKey = "id" },
             }},
-            { serviceName = "enterprise_chests.DelistChest", async = true, input = {
+            { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
                 { keyName = "id"                , valueSource = 3, sourceKey = "id" },
             }},
 
             -- wrap-up
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
                 { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
@@ -90,7 +90,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
     }
 
     -- start project
-    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function T_ISPUsingProject()
@@ -103,18 +103,18 @@ function T_ISPUsingProject()
      }
     local aTypicalServiceUsingItemsProject = {
         services    = {
-            { serviceName = "enterprise_isp.TransferItemsFromTo", async = true, input = {
+            { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
                 { keyName = "sourceURL"         , valueSource = 0, sourceKey = "itemsSourceURL" },
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "itemsLocalInputURL" },
             }},
 
             -- other services (that e.g. could require items in a turtle's iventory) to implement the typical service
 
-            { serviceName = "enterprise_isp.TransferItemsFromTo", async = true, input = {
+            { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
                 { keyName = "sourceURL"         , valueSource = 0, sourceKey = "itemsLocalOutputURL" },
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "itemsDestinationURL" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
                 { keyName = "successN"          , valueSource = 2 --[[ likely higher]], sourceKey = "success" },
             }},
@@ -129,11 +129,11 @@ function T_ISPUsingProject()
     }
 
     -- call test method
-    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function T_TransferItemsFromTo_Turtles()
-    corelog.WriteToLog("* Test TransferItemsFromTo between turtles:")
+    corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
     local sourceURL = enterprise_turtle.GetISHURL()
     sourceURL:setQueryURI(queryPartURI)
@@ -144,12 +144,12 @@ function T_TransferItemsFromTo_Turtles()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_isp.TransferItemsFromTo_ASrv(transferData, callbackFunction, callbackData)
 end
 
 function T_ItemsAvailableVia_Turtle()
-    corelog.WriteToLog("* Test ItemsAvailableVia for turtles:")
+    corelog.WriteToLog("* Test ItemsAvailableVia_ASrv for turtles:")
     -- create transferData
     local queryURL = enterprise_turtle.GetISHURL()
     queryURL:setQueryURI(queryPartURI)
@@ -158,7 +158,7 @@ function T_ItemsAvailableVia_Turtle()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia("..textutils.serialize(queryData)..")")
-    local result = enterprise_isp.ItemsAvailableVia(queryData)
+    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia_ASrv("..textutils.serialize(queryData)..")")
+    local result = enterprise_isp.ItemsAvailableVia_ASrv(queryData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end

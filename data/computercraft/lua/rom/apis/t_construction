@@ -79,8 +79,8 @@ function T_BuildRectangularPattern_Service()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
-    corelog.WriteToLog("T_enterprise_construction calling BuildRectangularPattern("..textutils.serialise(buildData)..", "..callbackFunction..")")
-    enterprise_construction.BuildRectangularPattern(buildData, callbackFunction, callbackData)
+    corelog.WriteToLog("T_enterprise_construction calling BuildRectangularPattern_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
+    enterprise_construction.BuildRectangularPattern_ASrv(buildData, callbackFunction, callbackData)
 end
 
 function T_BuildBlueprint_Service()
@@ -89,8 +89,8 @@ function T_BuildBlueprint_Service()
     local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint1}
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
-    corelog.WriteToLog("T_enterprise_construction calling BuildBlueprint("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
-    enterprise_construction.BuildBlueprint(blueprintBuildData, callbackFunction, callbackData)
+    corelog.WriteToLog("T_enterprise_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
+    enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callbackFunction, callbackData)
 end
 
 function T_role_builder_MetaDatas()

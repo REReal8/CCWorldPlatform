@@ -8,7 +8,7 @@
 --   |_|
 
 
-function CreateNewWorld(callback, callbackData)
+function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     --[[
         This public async function creates a new CCWorldPlatform world.
             It bootstraps the world logic by building an initiating several enterprise (sites). 
@@ -28,11 +28,13 @@ function CreateNewWorld(callback, callbackData)
             nil
 
         Parameters:
-            callback     - (string) function name to call once the new world is created
-            callbackData - (table) data to supply to callback
+            serviceData         - (table) data about the service
+                <currently none>
+            callback            - (string) function name to call once the new world is created
+            callbackData        - (table) data to supply to callback
     --]]
     -- check input
-    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld: callback not a string") return false end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: callback not a string") return false end
 
     -- construct arguments
     local settleData = {
@@ -75,61 +77,61 @@ function CreateNewWorld(callback, callbackData)
     -- create project definition
     local createNewWorldProject = {
         services    = {
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "plantFirstSaplingStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_factory.BuildAndStartNewSite", async = true, input = {
+            { serviceName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitFirstTreeStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_factory.ProduceItem", async = true, input = {
+            { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "planksAmount1" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "chopFirstTreeStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_factory.ProduceItem", async = true, input = {
+            { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
                 { keyName = "itemAmount"        , valueSource = 5, sourceKey = "planksToProduceForFuel" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "refuelStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "collectCobbleStoneStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_factory.ProduceItem", async = true, input = {
+            { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "furnaceName" },
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "furnaceAmount" },
             }},
-            { serviceName = "enterprise_factory.StopAndDismantleSite", async = true, input = {
+            { serviceName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
-            { serviceName = "enterprise_factory.BuildAndStartNewSite", async = true, input = {
+            { serviceName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion1" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep", async = true, input = {
+            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "remainingSettleStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "factoryLocation"   , valueSource = 0, sourceKey = "factoryLocation" },
             }},
-            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = { -- ToDo handle stopping & restarting in case of upgrade
+            { serviceName = "enterprise_factory.BuildNewSite_ASrv", async = true, input = { -- ToDo handle stopping & restarting in case of upgrade
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion2" },
                 { keyName = "upgrade"           , valueSource = 0, sourceKey = "upgradeToSimple" },
             }},
-            { serviceName = "enterprise_storage.BuildAndStartNewSite", async = true, input = {
+            { serviceName = "enterprise_storage.BuildAndStartNewSite_ASrv", async = true, input = {
                 { keyName = "location"          , valueSource = 0, sourceKey = "siloLocation" },
                 { keyName = "type"              , valueSource = 0, sourceKey = "type" },
                 { keyName = "siloType"          , valueSource = 0, sourceKey = "siloType" },
@@ -146,7 +148,7 @@ function CreateNewWorld(callback, callbackData)
     }
 
     -- start project
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -156,7 +158,7 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function SettlerStep(settleData, callback, callbackData)
+function SettlerStep_ASrv(settleData, callback, callbackData)
     --[[
         This function wraps around a role_settler task. It first retrieves the meta data,
         then it calls the task function.
@@ -170,8 +172,8 @@ function SettlerStep(settleData, callback, callbackData)
                 <other settleData needed for the task function>
     ]]
     -- check input
-    if type(settleData) ~= "table" then corelog.Error("enterprise_colonization.SettlerStep: settleData not valid") return {success = false} end
-    if type(settleData._stepName) ~= "string" then corelog.Error("enterprise_colonization.SettlerStep: _stepName not valid") return {success = false} end
+    if type(settleData) ~= "table" then corelog.Error("enterprise_colonization.SettlerStep_ASrv: settleData not valid") return {success = false} end
+    if type(settleData._stepName) ~= "string" then corelog.Error("enterprise_colonization.SettlerStep_ASrv: _stepName not valid") return {success = false} end
 
     -- get metaData
     local stepName = settleData._stepName

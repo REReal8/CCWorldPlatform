@@ -86,7 +86,7 @@ local db = {
 --   | |
 --   |_|
 
-function BuildAndStartNewSite(siteData, callback, callbackData)
+function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     --[[
         This async public service builds a new factory site and ensures it's ready for use.
 
@@ -108,23 +108,23 @@ function BuildAndStartNewSite(siteData, callback, callbackData)
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.BuildAndStartNewSite: Invalid siteData input')
+        corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.BuildAndStartNewSite: Invalid callback function')
+        corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- create project definition
     local buildAndStartNewSiteProject = {
         services    = {
-            { serviceName = "enterprise_factory.BuildNewSite", async = true, input = {
+            { serviceName = "enterprise_factory.BuildNewSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
                 { keyName = "upgrade"           , valueSource = 0, sourceKey = "upgrade" },
             }},
-            { serviceName = "enterprise_factory.StartNewSite", async = false, input = {
+            { serviceName = "enterprise_factory.StartNewSite_SSrv", async = false, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
                 { keyName = "siteAlreadyBuild"  , valueSource = 1, sourceKey = "success" }
@@ -141,10 +141,10 @@ function BuildAndStartNewSite(siteData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Building and starting factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
-function BuildNewSite(siteData, callback, callbackData)
+function BuildNewSite_ASrv(siteData, callback, callbackData)
     --[[
         This async public service builds a new factory site.
 
@@ -166,11 +166,11 @@ function BuildNewSite(siteData, callback, callbackData)
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.BuildNewSite: Invalid siteData input')
+        corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid siteData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.BuildNewSite: Invalid callback function')
+        corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
@@ -184,15 +184,15 @@ function BuildNewSite(siteData, callback, callbackData)
     elseif siteData.siteVersion == "v2" then
         siteBuildData = GetV2SiteBuildData(siteData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to build a factory site of version "..siteData.siteVersion)
+        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteData.siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- let construction enterprise build the site
-    enterprise_construction.BuildBlueprint(siteBuildData, callback, callbackData)
+    enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback, callbackData)
 end
 
-function StartNewSite(siteData)
+function StartNewSite_SSrv(siteData)
     --[[
         This sync public service ensures a new site is ready for use.
 
@@ -208,10 +208,10 @@ function StartNewSite(siteData)
     --]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.baseLocation) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.StartNewSite: Invalid input') return {success = false} end
-    if type(siteData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite: siteAlreadyBuild not valid") return {success = false} end
+    if type(siteData) ~= "table" or type(siteData.baseLocation) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.StartNewSite_SSrv: Invalid input') return {success = false} end
+    if type(siteData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite_SSrv: siteAlreadyBuild not valid") return {success = false} end
     if not siteData.siteAlreadyBuild then
-        corelog.Warning("enterprise_factory.StartNewSite: Site not (yet) succesfully build => we will not start it")
+        corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it")
         return {success = false}
     end
 
@@ -231,19 +231,19 @@ function StartNewSite(siteData)
 --    elseif siteData.siteVersion == "v2" then -- ToDo: implement
 --        siteStartData = GetV2SiteStartDate(siteData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite: Don't know how to start a factory site of version "..siteData.siteVersion)
+        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteData.siteVersion)
         return {success = false}
     end
 
     -- start new site
-    local newSiteId = enterprise_factory_site.StartNewSite(siteStartData)
-    if type(newSiteId) ~= "string" then corelog.Error('enterprise_factory.StartNewSite: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
+    local newSiteId = enterprise_factory_site.StartNewSite_SSrv(siteStartData)
+    if type(newSiteId) ~= "string" then corelog.Error('enterprise_factory.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
 
     -- end
     return {success = true}
 end
 
-function StopAndDismantleSite(siteData, callback, callbackData)
+function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
     --[[
         This async public service stops and dismantles a site.
 
@@ -264,22 +264,22 @@ function StopAndDismantleSite(siteData, callback, callbackData)
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.StopAndDismantleSite: Invalid siteData input')
+        corelog.Error('enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.StopAndDismantleSite: Invalid callback function')
+        corelog.Error('enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- create project definition
     local stopAndDismantleSiteProject = {
         services    = {
-            { serviceName = "enterprise_factory.StopSite", async = true, input = {
+            { serviceName = "enterprise_factory.StopSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
             }},
-            { serviceName = "enterprise_factory.DismantleSite", async = true, input = {
+            { serviceName = "enterprise_factory.DismantleSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
                 { keyName = "siteStopped"       , valueSource = 1, sourceKey = "success" }
@@ -296,10 +296,10 @@ function StopAndDismantleSite(siteData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Stopping and dismantling factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
-function DismantleSite(siteData, callback, callbackData)
+function DismantleSite_ASrv(siteData, callback, callbackData)
     --[[
         This async public service dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
         Possibly part of the world is restored to a neutral (e.g. flat) state.
@@ -322,17 +322,17 @@ function DismantleSite(siteData, callback, callbackData)
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.DismantleSite: Invalid siteData input')
+        corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid siteData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.DismantleSite: Invalid callback function')
+        corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
-    if type(siteData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite: siteStopped not valid") return {success = false} end
+    if type(siteData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite_ASrv: siteStopped not valid") return {success = false} end
     if not siteData.siteStopped then
-        corelog.Warning("enterprise_factory.DismantleSite: Site not (yet) stopped => we will not dismantle it")
+        corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it")
         return {success = false}
     end
 
@@ -346,15 +346,15 @@ function DismantleSite(siteData, callback, callbackData)
 --    elseif dismantleData.siteVersion == "v2" then
 --        siteDismantleBuildData = GetV2SiteDismantleBuildData(siteData)
     else
-        corelog.Error("enterprise_factory.DismantleSite: Don't know how to dismantle a factory site of version "..siteData.siteVersion)
+        corelog.Error("enterprise_factory.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteData.siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- let construction enterprise dismantle the site
-    enterprise_construction.BuildBlueprint(siteDismantleBuildData, callback, callbackData)
+    enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback, callbackData)
 end
 
-function StopSite(siteData, callback, callbackData)
+function StopSite_ASrv(siteData, callback, callbackData)
     --[[
         This async public service stops a factory site. Stopping implies
           - the site is immediatly no longer available for new business
@@ -378,18 +378,79 @@ function StopSite(siteData, callback, callbackData)
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.StopSite: Invalid siteData input')
+        corelog.Error('enterprise_factory.StopSite_ASrv: Invalid siteData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.StopSite: Invalid callback function')
+        corelog.Error('enterprise_factory.StopSite_ASrv: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
 
     -- pass on the request to site file
-    enterprise_factory_site.StopSite(siteData, callback, callbackData)
+    enterprise_factory_site.StopSite_ASrv(siteData, callback, callbackData)
 end
+
+function ProduceItem_ASrv(productionData , callback, callbackData)
+    --[[
+        This async public service produces (multiple instances of) an item of a specific itemName in a factory site. It does so 
+        by first determining a recipe that can produce the item. Subsequently it used the recipe ingredients to produce the
+        requested amount of items with the corresponding recipe technique (i.e. crafting or smelting).
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                    - (table)
+                success             - (boolean) whether the items were succesfully produced
+
+        Parameters:
+            productionData          - (table) data about the item to produce, 
+                itemName            - (string) name of items to produce
+                itemAmount          - (number) amount of items to produce
+                ToDo: consider adding requester location (amongst other to be able to select a more optimal (closest) site)
+            callback                - (string) name of function to call once service is ready
+            callbackData            - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(productionData) ~= "table" or type(productionData.itemName) ~= "string" or type(productionData.itemAmount) ~= "number" then
+        corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid productionData input')
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- select recipe to produce item
+    local itemName = productionData.itemName
+    if type(db.recipes[ itemName ]) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local craftRecipe = db.recipes[ itemName ].crafting
+    local smeltRecipe = db.recipes[ itemName ].smelting
+
+    -- select a suitable site
+    local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
+    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(productionData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- let site produce item
+    if recipe == craftRecipe then
+        enterprise_factory_site.CraftItem(siteId, productionData, recipe, callback, callbackData)
+    elseif recipe == smeltRecipe then
+        enterprise_factory_site.SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
+        -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
+    else
+        corelog.Error('enterprise_factory.ProduceItem_ASrv: Unknown recipe type to produce '..textutils.serialize(productionData))
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function DeleteSites()
     --[[
@@ -436,68 +497,6 @@ function DeleteSite(siteId)
     -- end
     return {success = true}
 end
-
---
-function ProduceItem(productionData , callback, callbackData)
-    --[[
-        This async public service produces (multiple instances of) an item of a specific itemName in a factory site. It does so 
-        by first determining a recipe that can produce the item. Subsequently it used the recipe ingredients to produce the
-        requested amount of items with the corresponding recipe technique (i.e. crafting or smelting).
-
-        Return value:
-            nil
-
-        Async service return value (to callback):
-                                    - (table)
-                success             - (boolean) whether the items were succesfully produced
-
-        Parameters:
-            productionData          - (table) data about the item to produce, 
-                itemName            - (string) name of items to produce
-                itemAmount          - (number) amount of items to produce
-                ToDo: consider adding requester location (amongst other to be able to select a more optimal (closest) site)
-            callback                - (string) name of function to call once service is ready
-            callbackData            - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(productionData) ~= "table" or type(productionData.itemName) ~= "string" or type(productionData.itemAmount) ~= "number" then
-        corelog.Error('enterprise_factory.ProduceItem: Invalid productionData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
-
-    -- select recipe to produce item
-    local itemName = productionData.itemName
-    if type(db.recipes[ itemName ]) ~= "table" then corelog.Error("enterprise_factory.ProduceItem: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local craftRecipe = db.recipes[ itemName ].crafting
-    local smeltRecipe = db.recipes[ itemName ].smelting
-
-    -- select a suitable site
-    local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
-    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem: No site available to produce '..textutils.serialize(productionData))
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-
-    -- let site produce item
-    if recipe == craftRecipe then
-        enterprise_factory_site.CraftItem(siteId, productionData, recipe, callback, callbackData)
-    elseif recipe == smeltRecipe then
-        enterprise_factory_site.SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
-        -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
-    else
-        corelog.Error('enterprise_factory.ProduceItem: Unknown recipe type to produce '..textutils.serialize(productionData))
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 --[[
     A v0 site is comprised of 

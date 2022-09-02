@@ -4,15 +4,15 @@
     those items.
 
     The ISP provides the following services
-        ItemsAvailableVia       - providing if a set of items are available at an itemQueryURL
-        TransferItemsFromTo     - transferring items from a sourceURL to a destinationURL
+        ItemsAvailableVia_ASrv      - providing if a set of items are available at an itemQueryURL
+        TransferItemsFromTo_ASrv    - transferring items from a sourceURL to a destinationURL
         
     The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
     to be an ISH it needs to implement the following services:
 
-        ItemsAvailableVia       - providing if a set of items are available at the ISH.
-        GetItemsIntoTurtle      - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
-        PutItemsFromTurtle      - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
+        ItemsAvailableVia_ASrv      - providing if a set of items are available at the ISH.
+        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
+        PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
 
     Furthermore it needs to implement the following additional functions
         GetISHURL               - provide the base URL of the ISH
@@ -27,13 +27,13 @@
 --   | |
 --   |_|
 
-function ItemsAvailableVia(queryData) -- ToDo: investigate if this (sometimes) needs to be an async service
+function ItemsAvailableVia_ASrv(queryData) -- ToDo: investigate if this (sometimes) needs to be an async service
     --[[
         This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
         This service is implemented using the following underlying ISH services
-            ItemsAvailableVia
+            ItemsAvailableVia_ASrv
 
         Return value:
                                     - (table)
@@ -48,7 +48,7 @@ function ItemsAvailableVia(queryData) -- ToDo: investigate if this (sometimes) n
 
     -- check input
     if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia: Invalid queryData input.")
+        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Invalid queryData input.")
         return {success = false}
     end
 
@@ -56,26 +56,26 @@ function ItemsAvailableVia(queryData) -- ToDo: investigate if this (sometimes) n
     local itemQueryURL = queryData.itemQueryURL
 --    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
     local host = itemQueryURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia: Invalid host input.") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Invalid host input.") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)
 
     -- relay to ISH service
     if host == "turtle" then
-        return enterprise_turtle.ItemsAvailableVia(queryData)
+        return enterprise_turtle.ItemsAvailableVia_ASrv(queryData)
     elseif host == "chests" then
-        return enterprise_chests.ItemsAvailableVia(queryData)
+        return enterprise_chests.ItemsAvailableVia_ASrv(queryData)
     else
-        corelog.Error("enterprise_isp.ItemsAvailableVia: Not implemented for "..host .." ISH.") return {success = false}
+        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Not implemented for "..host .." ISH.") return {success = false}
     end
 end
 
-function TransferItemsFromTo(transferData, callback, callbackData)
+function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --[[
         This async public service relays the transfer of items from a source to a destination URL.
 
         This service is implemented using the following underlying ISH services
-            GetItemsIntoTurtle
-            PutItemsFromTurtle
+            GetItemsIntoTurtle_ASrv
+            PutItemsFromTurtle_ASrv
 
         Return value:
             nil 
@@ -95,11 +95,11 @@ function TransferItemsFromTo(transferData, callback, callbackData)
 
     -- check input
     if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "table" or type(transferData.destinationURL) ~= "table" then
-        corelog.Error("enterprise_isp.TransferItemsFromTo: Invalid transferData input.")
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData input.")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error("enterprise_isp.TransferItemsFromTo: Invalid callback function.")
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
@@ -108,7 +108,7 @@ function TransferItemsFromTo(transferData, callback, callbackData)
     local sourceURL = url.URLClass:new(transferData.sourceURL)
     local sourceHost = sourceURL:getHost()
     if type(sourceHost) ~= "string" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia: sourceHost of wrong type = "..type(sourceHost)..".")
+        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: sourceHost of wrong type = "..type(sourceHost)..".")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     local sourceEnterprise = nil
@@ -117,14 +117,14 @@ function TransferItemsFromTo(transferData, callback, callbackData)
     elseif sourceHost == "chests" then
         sourceEnterprise = "enterprise_chests"
     else
-        corelog.Error("enterprise_isp.TransferItemsFromTo: Not implemented for "..sourceHost .." source ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..sourceHost .." source ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- determine destination enterprise name
     local destinationURL = url.URLClass:new(transferData.destinationURL)
     local destinationHost = destinationURL:getHost()
     if type(destinationHost) ~= "string" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia: destinationHost of wrong type = "..type(destinationHost)..".")
+        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: destinationHost of wrong type = "..type(destinationHost)..".")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     local destinationEnterprise = nil
@@ -133,20 +133,20 @@ function TransferItemsFromTo(transferData, callback, callbackData)
     elseif destinationHost == "chests" then
         destinationEnterprise = "enterprise_chests"
     else
-        corelog.Error("enterprise_isp.TransferItemsFromTo: Not implemented for "..destinationHost .." destination ISH.") coreutils.DoCallback(callback, callbackData, {success = false})
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- create project definition
     local transferItemsProject = {
         services    = {
-            { serviceName = sourceEnterprise..".GetItemsIntoTurtle", async = true, input = {
+            { serviceName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, input = {
                 { keyName = "sourceURL"         , valueSource = 0, sourceKey = "sourceURL" },
             }},
-            { serviceName = destinationEnterprise..".PutItemsFromTurtle", async = true, input = {
+            { serviceName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, input = {
                 { keyName = "turtleSourceURL"   , valueSource = 1, sourceKey = "turtleURL" },
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "destinationURL" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1", valueSource = 1, sourceKey = "success" },
                 { keyName = "success2", valueSource = 2, sourceKey = "success" },
             }},
@@ -166,7 +166,7 @@ function TransferItemsFromTo(transferData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Transferring items from "..projectData.sourceURL:getURI().." to "..projectData.destinationURL:getURI()..".")
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 
     -- end
     return nil

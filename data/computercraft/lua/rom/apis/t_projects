@@ -2,20 +2,20 @@ function T_CombineStepResults()
     -- init
     local projectDefinition = {
         services    = {
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
                 { keyName = "testArg1"      , valueSource = 0, sourceKey = "testData1" },
             }},
-            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments", async = true, input = {
+            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, input = {
                 { keyName = "testArg2"      , valueSource = 0, sourceKey = "testData2" },
             }},
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
                 { keyName = "testArg3"      , valueSource = 0, sourceKey = "testData3" },
                 { keyName = "serviceResult" , valueSource = 0, sourceKey = "falseServiceResult" },
             }},
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
                 { keyName = "testArg4"      , valueSource = 0, sourceKey = "testData4" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = { -- ToDo: consider introducing simple syntax to the projectDefinition whether this step should automatically be added at the end of the sequence
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = { -- ToDo: consider introducing simple syntax to the projectDefinition whether this step should automatically be added at the end of the sequence
                 { keyName = "success1", valueSource = 1, sourceKey = "success" },
                 { keyName = "success2", valueSource = 2, sourceKey = "success" },
                 { keyName = "success3", valueSource = 3, sourceKey = "success" },
@@ -40,7 +40,7 @@ function T_CombineStepResults()
         projectInputData = projectData,
     }
 
-    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function T_StartProject()
@@ -48,13 +48,13 @@ function T_StartProject()
     local testArgValue = 20
     local projectDefinition = {
         services    = {
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
                 { keyName = "testArg1", valueSource = 0, sourceKey = "testArgSource" },
             }},
-            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments", async = true, input = {
+            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, input = {
                 { keyName = "testArg2", valueSource = 0, sourceKey = "testArgSource" },
             }},
-            { serviceName = "enterprise_test.TestPureLogicService", async = false, input = {
+            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
                 { keyName = "testArg3", valueSource = 0, sourceKey = "testArgSource" },
             }},
         },
@@ -73,7 +73,7 @@ function T_StartProject()
         projectInputData = projectData,
     }
 
-    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function T_DeleteProjects()

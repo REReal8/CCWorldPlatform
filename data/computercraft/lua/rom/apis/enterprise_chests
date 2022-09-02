@@ -7,14 +7,14 @@ local db = {
 --[[
     The chests enterprise provides services to perform operation on chests.
 
-    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia, GetItemsIntoTurtle and PutItemsFromTurtle).
+    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_ASrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        RegisterChest       - to register ("add") a chest that can be serviced by this enterprise
-        DelistChest         - to delist ("remove") a chest from being serviced by this enterprise
-        GetChestURL         - provide the URL of a chest
-        IsChestURL          - answers the question if a URL is that of a chest
-        UpdateChestRecord   - brings the records of a chest up-to-date by fetching parameters
+        RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
+        DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
+        GetChestURL_SSrv        - provide the URL of a chest
+        IsChestURL_QSrv         - answers the question if a URL is that of a chest
+        UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 
     The enterprise does not provide services to build/ dismantle chests. This is to be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them. 
@@ -34,7 +34,7 @@ local db = {
 --   | |
 --   |_|
 
-function GetChestURL(serviceData)
+function GetChestURL_SSrv(serviceData)
     --[[
         This sync public services provides the URL of (the items in) a chest in the ISH.
 
@@ -50,9 +50,9 @@ function GetChestURL(serviceData)
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestURL: Invalid serviceData") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestURL_SSrv: Invalid serviceData") return {success = false} end
     local chestId = serviceData.chestId
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetChestURL: Invalid chestId") return {success = false} end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetChestURL_SSrv: Invalid chestId") return {success = false} end
     local itemQuery = serviceData.itemQuery or {}
 
     -- construct URL
@@ -68,7 +68,7 @@ function GetChestURL(serviceData)
     return result
 end
 
-function IsChestURL(queryData)
+function IsChestURL_QSrv(queryData)
     --[[
         This sync public service answers the question if a URL is that of a chest.
         
@@ -82,13 +82,13 @@ function IsChestURL(queryData)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsChestURL: Invalid v") return {success = false} end
+    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid v") return {success = false} end
     local aURL = url.URLClass:new(queryData.aURL)
-    if type(aURL) ~= "table" then corelog.Error("enterprise_chests.IsChestURL: Invalid aURL") return {success = false} end
+    if type(aURL) ~= "table" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid aURL") return {success = false} end
 
     -- check if of this ISH
     local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
     if host == db.hostName then
         return {success = true} -- ToDo: consider distinquishing between service failure and question answer
     else
@@ -96,7 +96,7 @@ function IsChestURL(queryData)
     end
 end
 
-function RegisterChest(chestData)
+function RegisterChest_SSrv(chestData) -- ToDo: consider returning chestURL instead of chestId
     --[[
         This sync public service registers ("adds") a chest to the enterprise.
 
@@ -114,11 +114,11 @@ function RegisterChest(chestData)
     --]]
 
     -- check input
-    if type(chestData) ~= "table" then corelog.Error("enterprise_chests.RegisterChest: Invalid chestData") return {success = false} end
+    if type(chestData) ~= "table" then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid chestData") return {success = false} end
     local location = chestData.location
-    if type(location) ~= "table" then corelog.Error("enterprise_chests.RegisterChest: Invalid location") return {success = false} end
+    if type(location) ~= "table" then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid location") return {success = false} end
     local accessDirection = chestData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("enterprise_chests.RegisterChest: Invalid accessDirection") return {success = false} end
+    if type(accessDirection) ~= "string" then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid accessDirection") return {success = false} end
 
     -- create new chest
     local chest = {
@@ -152,7 +152,7 @@ function RegisterChest(chestData)
     return result
 end
 
-function DelistChest(chestIdData, callback, callbackData)
+function DelistChest_ASrv(chestIdData, callback, callbackData)
     --[[
         This async public service delists ("removes") a chest from the enterprise. Delisting implies
             - the chest is immediatly no longer available for new business (e.g. adding/ removing items)
@@ -176,16 +176,16 @@ function DelistChest(chestIdData, callback, callbackData)
     ]]
 
     -- check input
-    if type(chestIdData) ~= "table" then corelog.Error("enterprise_chests.DelistChest: Invalid chestIdData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestIdData) ~= "table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid chestIdData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local id = chestIdData.id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.DelistChest: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.DelistChest: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get the chest
     local chest = GetChestById(id)
     if type(chest) ~="table" then
-        corelog.Error("enterprise_chests.DelistChest: Failed retrieving chest for chestData = "..textutils.serialise(chestIdData))
+        corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest for chestData = "..textutils.serialise(chestIdData))
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
@@ -203,7 +203,7 @@ function DelistChest(chestIdData, callback, callbackData)
     coreutils.DoCallback(callback, callbackData, {success = true})
 end
 
-function UpdateChestRecord(chestIdData, callback, callbackData)
+function UpdateChestRecord_ASrv(chestIdData, callback, callbackData)
     --[[
         This async public service brings the records of a chest up-to-date by fetching parameters and (re)setting the chest records.
 
@@ -225,23 +225,23 @@ function UpdateChestRecord(chestIdData, callback, callbackData)
     ]]
 
     -- check input
-    if type(chestIdData) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord: Invalid chestIdData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestIdData) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid chestIdData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local chestId = chestIdData.id
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.UpdateChestRecord: Invalid id") return {success = false} end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.UpdateChestRecord: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid id") return {success = false} end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- create project definition
     local updateChestRecordsProject = {
         services    = {
-            { serviceName = "enterprise_chests.FetchChestSlotsInventory", async = true, input = {
+            { serviceName = "enterprise_chests.FetchChestSlotsInventory_ASrv", async = true, input = {
                 { keyName = "id"        , valueSource = 0, sourceKey = "id" },
             }},
-            { serviceName = "enterprise_chests.SetChestRecord", async = false, input = {
+            { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
                 { keyName = "id"        , valueSource = 0, sourceKey = "id" },
                 { keyName = "slots"     , valueSource = 1, sourceKey = "slots" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
             }},
@@ -260,7 +260,7 @@ function UpdateChestRecord(chestIdData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Updating records for chest "..projectData.id..".")
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
 function GetISHURL()
@@ -280,7 +280,7 @@ function GetISHURL()
     return hostURL
 end
 
-function ItemsAvailableVia(queryData)
+function ItemsAvailableVia_ASrv(queryData)
     --[[
         This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
@@ -297,32 +297,32 @@ function ItemsAvailableVia(queryData)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia: Invalid queryData") return {success = false} end
+    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid queryData") return {success = false} end
     local itemQueryURL = url.URLClass:new(queryData.itemQueryURL)
-    if type(itemQueryURL) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia: Invalid itemQueryURL") return {success = false} end
+    if type(itemQueryURL) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid itemQueryURL") return {success = false} end
 
     -- check itemQueryURL is for this enterprise
-    local itemQueryIsChest = IsChestURL({ aURL = itemQueryURL})
-    if not itemQueryIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
+    local itemQueryIsChest = IsChestURL_QSrv({ aURL = itemQueryURL})
+    if not itemQueryIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
 
     -- select chest
     local chestId = itemQueryURL:getPath().id
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia: Invalid path input: "..textutils.serialize(itemQueryURL:getPath())..".") return {success = false} end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid path input: "..textutils.serialize(itemQueryURL:getPath())..".") return {success = false} end
 
     -- get chest
     local chest = GetChestById(chestId)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia: Chest (id="..chestId..") not found.") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Chest (id="..chestId..") not found.") return {success = false} end
 
     -- query chests inventory
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = chest.inventory
     for name, count in pairs(query) do
-        if type(name) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia: itemName of wrong type = "..type(name)..".") return {success = false} end
-        if type(count) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia: itemCount of wrong type = "..type(count)..".") return {success = false} end
+        if type(name) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: itemName of wrong type = "..type(name)..".") return {success = false} end
+        if type(count) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: itemCount of wrong type = "..type(count)..".") return {success = false} end
 
         local inventoryCount = inventory.items[name]
         if inventoryCount == nil or inventoryCount < count then
-            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia: not enough (="..count..") "..name.." items in inventory (="..(inventoryCount or 0)..") of chest "..chestId..".") return {success = false}
+            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_ASrv: not enough (="..count..") "..name.." items in inventory (="..(inventoryCount or 0)..") of chest "..chestId..".") return {success = false}
         end
     end
 
@@ -330,7 +330,7 @@ function ItemsAvailableVia(queryData)
     return {success = true}
 end
 
-function GetItemsIntoTurtle(transferData, callback, callbackData)
+function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     --[[
         This async public ISH service ensures items are gathered in the ISH and transferred to the inventory of a turtle.
 
@@ -351,36 +351,36 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
     --]]
 
     -- check input
-    if type(transferData) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(transferData) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceURL = url.URLClass:new(transferData.sourceURL)
-    if type(sourceURL) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid sourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(sourceURL) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check source is for this enterprise
-    local sourceIsChest = IsChestURL({ aURL = sourceURL})
-    if not sourceIsChest.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid sourceURL (="..sourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceIsChest = IsChestURL_QSrv({ aURL = sourceURL})
+    if not sourceIsChest.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get chestId
     local chestId = sourceURL:getPath().id
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle: Invalid path input: "..textutils.serialize(sourceURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid path input: "..textutils.serialize(sourceURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local getItemsIntoTurtleProject = {
         services    = {
-            { serviceName = "enterprise_chests.FetchItemsFromChestIntoTurtle", async = true, input = {
+            { serviceName = "enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv", async = true, input = {
                 { keyName = "chestId"   , valueSource = 0, sourceKey = "chestId" },
                 { keyName = "itemQuery" , valueSource = 0, sourceKey = "itemQuery" },
             }},
-            { serviceName = "enterprise_turtle.GetTurtleURL", async = false, input = {
+            { serviceName = "enterprise_turtle.GetTurtleURL_ASrv", async = false, input = {
                 { keyName = "turtleId"  , valueSource = 1, sourceKey = "turtleId" },
                 { keyName = "itemQuery" , valueSource = 1, sourceKey = "itemResultQuery" },
             }},
-            { serviceName = "enterprise_chests.SetChestRecord", async = false, input = {
+            { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
                 { keyName = "id"        , valueSource = 0, sourceKey = "chestId" },
                 { keyName = "slots"     , valueSource = 1, sourceKey = "slots" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
                 { keyName = "success3"  , valueSource = 3, sourceKey = "success" },
@@ -402,10 +402,10 @@ function GetItemsIntoTurtle(transferData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Getting "..sourceURL:getQueryURI().." from chest "..projectData.chestId.." into a turtle.")
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
-function PutItemsFromTurtle(transferData, callback, callbackData)
+function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     --[[
         This async public ISH service ensures items are transferred from the inventory of a turtle towards the ISH.
 
@@ -427,34 +427,34 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
     --]]
 
     -- check input
-    if type(transferData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(transferData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local turtleSourceURL = url.URLClass:new(transferData.turtleSourceURL)
-    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationURL = url.URLClass:new(transferData.destinationURL)
-    if type(destinationURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid destinationURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(destinationURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destinationURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check destination is for this enterprise
-    local destinationIsChest = IsChestURL({ aURL = destinationURL})
-    if not destinationIsChest.success then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid destination URL (="..destinationURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationIsChest = IsChestURL_QSrv({ aURL = destinationURL})
+    if not destinationIsChest.success then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get chestId
     local chestId = destinationURL:getPath().id
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid path input: "..textutils.serialize(destinationURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid path input: "..textutils.serialize(destinationURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local putItemsIntoChestProject = {
         services    = {
-            { serviceName = "enterprise_chests.PutItemsFromTurtleIntoChest", async = true, input = {
+            { serviceName = "enterprise_chests.PutItemsFromTurtleIntoChest_ASrv", async = true, input = {
                 { keyName = "chestId"           , valueSource = 0, sourceKey = "chestId" },
                 { keyName = "turtleSourceURL"   , valueSource = 0, sourceKey = "turtleSourceURL" },
             }},
-            { serviceName = "enterprise_chests.SetChestRecord", async = false, input = {
+            { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
                 { keyName = "id"                , valueSource = 0, sourceKey = "chestId" },
                 { keyName = "slots"             , valueSource = 1, sourceKey = "slots" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
             }},
@@ -474,7 +474,7 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Putting items from turtle URL "..turtleSourceURL:getURI().." into chest "..projectData.chestId..".")
-    enterprise_projects.StartProject(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -505,7 +505,7 @@ function GetChestById(chestId)
     return chest
 end
 
-function SetChestRecord(serviceData)
+function SetChestRecord_SSrv(serviceData)
     --[[
         This sync private service sets a chest record based on (already obtained) parameters (like e.g. the slots inventory). 
         
@@ -520,16 +520,16 @@ function SetChestRecord(serviceData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.SetChestRecord: Invalid serviceData") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Invalid serviceData") return {success = false} end
     local chestId = serviceData.id
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.SetChestRecord: Invalid id") return {success = false} end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Invalid id") return {success = false} end
     local slots = serviceData.slots
-    if type(slots) ~= "table" then corelog.Error("enterprise_chests.SetChestRecord: Invalid slots") return {success = false} end
+    if type(slots) ~= "table" then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Invalid slots") return {success = false} end
 
     -- get the chest
     local chest = GetChestById(chestId)
     if type(chest) ~="table" then
-        corelog.Error("enterprise_chests.SetChestRecord: Failed retrieving chest for chestIdData = "..chestId)
+        corelog.Error("enterprise_chests.SetChestRecord_SSrv: Failed retrieving chest for chestIdData = "..chestId)
         return {success = false}
     end
 
@@ -566,7 +566,7 @@ function DetermineInventory(slots)
     return inventory
 end
 
-function FetchChestSlotsInventory(chestIdData, callback, callbackData)
+function FetchChestSlotsInventory_ASrv(chestIdData, callback, callbackData)
     --[[
         This async private service fetches the slots inventory from a chest. 
         
@@ -586,15 +586,15 @@ function FetchChestSlotsInventory(chestIdData, callback, callbackData)
     ]]
 
     -- check input
-    if type(chestIdData) ~= "table" then corelog.Error("enterprise_chests.FetchChestSlotsInventory: Invalid chestIdData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestIdData) ~= "table" then corelog.Error("enterprise_chests.FetchChestSlotsInventory_ASrv: Invalid chestIdData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local chestId = chestIdData.id
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.FetchChestSlotsInventory: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.FetchChestSlotsInventory: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.FetchChestSlotsInventory_ASrv: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.FetchChestSlotsInventory_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get the chest
     local chest = GetChestById(chestId)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.FetchChestSlotsInventory: Failed retrieving chest for chestId = "..chestId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~="table" then corelog.Error("enterprise_chests.FetchChestSlotsInventory_ASrv: Failed retrieving chest for chestId = "..chestId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- fetch with an assignment
     local taskData = {
@@ -605,7 +605,7 @@ function FetchChestSlotsInventory(chestIdData, callback, callbackData)
     coreassignment.AddAssignment(metaData, "role_chests_worker.FetchChestSlotsInventory_Task", taskData, callback, callbackData)
 end
 
-function FetchItemsFromChestIntoTurtle(serviceData, callback, callbackData)
+function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
     --[[
         This async private service fetches items from a chest into the inventory of a turtle.
         
@@ -627,17 +627,17 @@ function FetchItemsFromChestIntoTurtle(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local chestId = serviceData.chestId
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle: Invalid chestId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid chestId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local itemQuery = serviceData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle: Invalid itemQuery") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid itemQuery") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get the chest
     local chest = GetChestById(chestId)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle: Failed retrieving chest for chestId = "..chestId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~="table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Failed retrieving chest for chestId = "..chestId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- fetch with an assignment
     local taskData = {
@@ -649,7 +649,7 @@ function FetchItemsFromChestIntoTurtle(serviceData, callback, callbackData)
     coreassignment.AddAssignment(metaData, "role_chests_worker.FetchItemsFromChestIntoTurtle_Task", taskData, callback, callbackData)
 end
 
-function PutItemsFromTurtleIntoChest(serviceData, callback, callbackData)
+function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
     --[[
         This async private service puts items from a the inventory of a turtle into a chest.
         
@@ -670,21 +670,21 @@ function PutItemsFromTurtleIntoChest(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local turtleSourceURL = url.URLClass:new(serviceData.turtleSourceURL)
-    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest: Invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local chestId = serviceData.chestId
-    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest: Invalid chestId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chestId) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid chestId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check source is a turtle
-    local sourceIsTurtle = enterprise_turtle.IsTurtleURL({ aURL = turtleSourceURL})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest: Invalid turtle source URL (="..turtleSourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceIsTurtle = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleSourceURL})
+    if not sourceIsTurtle.success then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleSourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get the chest
     local chest = GetChestById(serviceData.chestId)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest: Failed retrieving chest for serviceData = "..textutils.serialise(serviceData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~="table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Failed retrieving chest for serviceData = "..textutils.serialise(serviceData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- put with an assignment
     local taskData = {

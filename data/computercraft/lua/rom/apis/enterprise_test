@@ -11,12 +11,12 @@
 --   | |
 --   |_|
 
-function TestPureLogicService(serviceData)
-    corelog.WriteToLog("enterprise_test.TestPureLogicService("..textutils.serialize(serviceData)..")")
+function TestPureLogicService_SSrv(serviceData)
+    corelog.WriteToLog("enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
 
     -- check input
     if type(serviceData) ~= "table" then
-        corelog.Error('enterprise_factory.TestPureLogicService: Invalid serviceData input')
+        corelog.Error('enterprise_factory.TestPureLogicService_SSrv: Invalid serviceData input')
         return {success = false}
     end
 
@@ -29,8 +29,8 @@ function TestPureLogicService(serviceData)
     return serviceResult
 end
 
-function TestServiceWithAssignment(serviceData)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment("..textutils.serialize(serviceData)..")")
+function TestServiceWithAssignment_ASrv(serviceData)
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment_ASrv("..textutils.serialize(serviceData)..")")
 
     -- create assignment arguments
     local metaData = {
@@ -50,8 +50,8 @@ function TestServiceWithAssignment(serviceData)
     coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, {})
 end
 
-function TestServiceWithAssignmentAndCallback(serviceData, callbackFunction)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback("..textutils.serialize(serviceData)..", "..callbackFunction..")")
+function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callbackFunction)
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..")")
 
     -- create assignment arguments
     local metaData = {
@@ -70,8 +70,8 @@ function TestServiceWithAssignmentAndCallback(serviceData, callbackFunction)
     coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, {})
 end
 
-function TestServiceWithAssignmentAndCallbackAndArguments(serviceData, callbackFunction, callbackData)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
+function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(serviceData, callbackFunction, callbackData)
+    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
 
     -- create assignment arguments
     local metaData = {

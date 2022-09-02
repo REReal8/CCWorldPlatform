@@ -21,20 +21,20 @@ function T_RegisterAndUpdateChest()
     }
 
     -- start project
-    enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function GetRegisterAndUpdateChestProject()
     return {
         services = {
-            { serviceName = "enterprise_chests.RegisterChest", async = false, input = {
+            { serviceName = "enterprise_chests.RegisterChest_SSrv", async = false, input = {
                 { keyName = "location"          , valueSource = 0, sourceKey = "chestLocation" },
                 { keyName = "accessDirection"   , valueSource = 0, sourceKey = "chestAccessDirection" },
             }},
-            { serviceName = "enterprise_chests.UpdateChestRecord", async = true, input = {
+            { serviceName = "enterprise_chests.UpdateChestRecord_ASrv", async = true, input = {
                 { keyName = "id"                , valueSource = 1, sourceKey = "id" },
             }},
-            { serviceName = "enterprise_projects.AllTrue", async = false, input = {
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
             }},
@@ -49,20 +49,20 @@ end
 local chest1Id = nil
 
 function T_UpdateChestRecord1()
-    corelog.WriteToLog("* Test UpdateChestRecord 1")
+    corelog.WriteToLog("* Test UpdateChestRecord_ASrv 1")
     -- create chest data
     local chestIdData  = {
         id = chest1Id
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord("..textutils.serialize(chestIdData)..")")
-    local result = enterprise_chests.UpdateChestRecord(chestIdData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(chestIdData)..")")
+    local result = enterprise_chests.UpdateChestRecord_ASrv(chestIdData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
 function T_RegisterChest1()
-    corelog.WriteToLog("* Test RegisterChest 1:")
+    corelog.WriteToLog("* Test RegisterChest_SSrv 1:")
     -- create chest data
     local chestData  = {
         location        = {x= 14, y= 17, z= 1, dx=0, dy=1},
@@ -70,8 +70,8 @@ function T_RegisterChest1()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.RegisterChest("..textutils.serialize(chestData)..")")
-    local result = enterprise_chests.RegisterChest(chestData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.RegisterChest_SSrv("..textutils.serialize(chestData)..")")
+    local result = enterprise_chests.RegisterChest_SSrv(chestData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
     if result.success then
         chest1Id = result.id
@@ -86,52 +86,52 @@ function T_DelistChest1()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.DelistChest("..textutils.serialize(chestData1)..")")
-    enterprise_chests.DelistChest(chestData1, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.DelistChest_ASrv("..textutils.serialize(chestData1)..")")
+    enterprise_chests.DelistChest_ASrv(chestData1, callbackFunction, callbackData)
 end
 
 function T_GetItemsIntoTurtle1()
-    corelog.WriteToLog("* Test GetItemsIntoTurtle for chests:")
+    corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
     -- create transferData
-    local sourceURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
+    local sourceURL = enterprise_chests.GetChestURL_SSrv({chestId = chest1Id}).url
     sourceURL:setQueryURI(queryPartURI)
     local transferData = {
         sourceURL =  sourceURL,
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_chests.GetItemsIntoTurtle(transferData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callbackFunction, callbackData)
 end
 
 function T_PutItemsFromTurtle1()
-    corelog.WriteToLog("* Test PutItemsFromTurtle for chests:")
+    corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
     -- create transferData
     local currentTurtleId = os.getComputerID()
-    local turtleSourceURL = enterprise_turtle.GetTurtleURL({turtleId = currentTurtleId}).url
+    local turtleSourceURL = enterprise_turtle.GetTurtleURL_ASrv({turtleId = currentTurtleId}).url
     turtleSourceURL:setQueryURI(queryPartURI)
-    local destinationURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
+    local destinationURL = enterprise_chests.GetChestURL_SSrv({chestId = chest1Id}).url
     local transferData = {
         turtleSourceURL = turtleSourceURL,
         destinationURL  = destinationURL,
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_chests.PutItemsFromTurtle(transferData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callbackFunction, callbackData)
 end
 
 function T_ItemsAvailableVia1()
-    corelog.WriteToLog("* Test ItemsAvailableVia for chest:")
+    corelog.WriteToLog("* Test ItemsAvailableVia_ASrv for chest:")
     -- create transferData
-    local queryURL = enterprise_chests.GetChestURL({chestId = chest1Id}).url
+    local queryURL = enterprise_chests.GetChestURL_SSrv({chestId = chest1Id}).url
     queryURL:setQueryURI(queryPartURI)
     local queryData = {
         itemQueryURL = queryURL,
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.ItemsAvailableVia("..textutils.serialize(queryData)..")")
-    local result = enterprise_chests.ItemsAvailableVia(queryData)
+    corelog.WriteToLog("  calling enterprise_chests.ItemsAvailableVia_ASrv("..textutils.serialize(queryData)..")")
+    local result = enterprise_chests.ItemsAvailableVia_ASrv(queryData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end

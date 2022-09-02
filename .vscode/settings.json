@@ -44,7 +44,8 @@
         "peripheral",
         "sleep",
         "t_chests",
-        "role_chests_worker"
+        "role_chests_worker",
+        "enterprise_colonization"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
