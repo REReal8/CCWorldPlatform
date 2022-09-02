@@ -107,14 +107,13 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid callback function')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = siteData.baseLocation
+    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteVersion = siteData.siteVersion
+    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
     -- create project definition
     local buildAndStartNewSiteProject = {
@@ -165,14 +164,12 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid siteData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid callback function')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = siteData.baseLocation
+    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteVersion = siteData.siteVersion
+    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get site build data
@@ -208,12 +205,13 @@ function StartNewSite_SSrv(siteData)
     --]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.baseLocation) ~= "table" or type(siteData.siteVersion) ~= "string" then corelog.Error('enterprise_factory.StartNewSite_SSrv: Invalid input') return {success = false} end
-    if type(siteData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite_SSrv: siteAlreadyBuild not valid") return {success = false} end
-    if not siteData.siteAlreadyBuild then
-        corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it")
-        return {success = false}
-    end
+    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid siteData") return {success = false} end
+    local baseLocation = siteData.baseLocation
+    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid baseLocation") return {success = false} end
+    local siteVersion = siteData.siteVersion
+    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid siteVersion") return {success = false} end
+    if type(siteData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Invalid siteAlreadyBuild") return {success = false} end
+    if not siteData.siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -263,14 +261,13 @@ function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = siteData.baseLocation
+    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteVersion = siteData.siteVersion
+    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
     -- create project definition
     local stopAndDismantleSiteProject = {
@@ -321,20 +318,15 @@ function DismantleSite_ASrv(siteData, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid siteData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid callback function')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = siteData.baseLocation
+    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteVersion = siteData.siteVersion
+    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
-    if type(siteData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite_ASrv: siteStopped not valid") return {success = false} end
-    if not siteData.siteStopped then
-        corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it")
-        return {success = false}
-    end
+    if type(siteData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite_ASrv: siteStopped not valid") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not siteData.siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get site dismantal data
     local siteDismantleBuildData = nil
@@ -377,14 +369,12 @@ function StopSite_ASrv(siteData, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.StopSite_ASrv: Invalid siteData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.StopSite_ASrv: Invalid callback function')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = siteData.baseLocation
+    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteVersion = siteData.siteVersion
+    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error('enterprise_factory.StopSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- pass on the request to site file
@@ -394,7 +384,7 @@ end
 function ProduceItem_ASrv(productionData , callback, callbackData)
     --[[
         This async public service produces (multiple instances of) an item of a specific itemName in a factory site. It does so 
-        by first determining a recipe that can produce the item. Subsequently it used the recipe ingredients to produce the
+        by first determining a recipe that can produce the item. Subsequently it uses the recipe ingredients to produce the
         requested amount of items with the corresponding recipe technique (i.e. crafting or smelting).
 
         Return value:
@@ -414,24 +404,22 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
     ]]
 
     -- check input
-    if type(productionData) ~= "table" or type(productionData.itemName) ~= "string" or type(productionData.itemAmount) ~= "number" then
-        corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid productionData input')
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(productionData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productionData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemName = productionData.itemName
+    if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemAmount = productionData.itemAmount
+    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- select recipe to produce item
-    local itemName = productionData.itemName
     if type(db.recipes[ itemName ]) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local craftRecipe = db.recipes[ itemName ].crafting
     local smeltRecipe = db.recipes[ itemName ].smelting
 
     -- select a suitable site
     local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
-    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(productionData))
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(productionData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- let site produce item
     if recipe == craftRecipe then
