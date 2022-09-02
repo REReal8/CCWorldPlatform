@@ -1,4 +1,5 @@
 local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
+local multipleStacksQueryPartURI = "?minecraft:birch_log=80&minecraft:torch=1"
 
 local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
@@ -94,7 +95,7 @@ function T_GetItemsIntoTurtle1()
     corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
     -- create transferData
     local sourceURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
-    sourceURL:setQueryURI(queryPartURI)
+    sourceURL:setQueryURI(multipleStacksQueryPartURI)
     local transferData = {
         sourceURL =  sourceURL,
     }
@@ -109,7 +110,7 @@ function T_PutItemsFromTurtle1()
     -- create transferData
     local currentTurtleId = os.getComputerID()
     local turtleSourceURL = enterprise_turtle.GetTurtleURL_ASrv({turtleId = currentTurtleId}).url
-    turtleSourceURL:setQueryURI(queryPartURI)
+    turtleSourceURL:setQueryURI(multipleStacksQueryPartURI)
     local destinationURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
     local transferData = {
         turtleSourceURL = turtleSourceURL,

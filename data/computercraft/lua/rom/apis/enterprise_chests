@@ -90,7 +90,7 @@ function IsChestURL_QSrv(queryData)
     local host = aURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
     if host == db.hostName then
-        return {success = true} -- ToDo: consider distinquishing between service failure and question answer
+        return {success = true}
     else
         return {success = false}
     end
@@ -544,17 +544,8 @@ function DetermineInventory(slots)
     -- construct inventory
     local inventory = {
         slots   = slots, -- ToDo: consider deep copy
-        items   = {},
+        items   = role_chests_worker.DetermineItemsInventory(slots),
     }
-
-    -- loop on slots
-    for slot, item in pairs(slots) do
-        -- right item?
-        if type(item) == "table" then
-            -- add to items
-            inventory.items[ item.name ]  = (inventory.items[ item.name ] or 0) + item.count
-        end
-    end
 
     -- end
     return inventory

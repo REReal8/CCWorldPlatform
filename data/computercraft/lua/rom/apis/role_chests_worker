@@ -144,21 +144,44 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
         if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
         corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
 
-        -- ToDo: implement handling multiple item stacks
+        -- check enough items
+        local items = DetermineItemsInventory(chest.list())
+        if items[requestItemName] < requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..items[requestItemName]..") in chest.") return {success = false} end
 
         -- empty first slot
         local firstSlot = 1
         if not MakeSlotEmpty(chestName, firstSlot) then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Failed making slot "..firstSlot.." empty.") return {success = false} end
 
-        -- move requested item to first slot
-        local itemsTransferred = TransferTo(chestName, requestItemName, requestItemCount, firstSlot)
-        if itemsTransferred ~= requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..itemsTransferred..") in inventory of chest.") return {success = false} end
+        -- transfer to first slot and suck until enough
+--        slots = chest.list()
+        local remainingItemsToMove = requestItemCount
+--        for slot, chestItem in pairs(slots) do
+        for iSlot = 1, chest.size() do
+                -- skip firstSlot
+            if iSlot ~= firstSlot then
+                -- get item details
+                local chestItem = chest.getItemDetail(iSlot)
+--                if type(chestItem) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: chestItem of wrong type = "..type(chestItem)..".") return 0 end
 
-        -- suck items into turtle
---        corelog.WriteToLog("   sucking "..itemsTransferred.." "..requestItemName.."'s from slot "..firstSlot)
-        local itemsSucked = Suck(chestName, itemsTransferred)
-        if itemsSucked ~= itemsTransferred then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..itemsTransferred..") "..requestItemName.." items sucked (="..itemsSucked..") from chest.") return {success = false} end
-        itemResultQuery[requestItemName] = tonumber(itemsSucked)
+                -- requested item in slot?
+                if chestItem and chestItem.name == requestItemName then
+                    -- move items to 
+                    local countToMove = math.min(remainingItemsToMove, chestItem.count)
+--                    corelog.WriteToLog("   moving "..countToMove.." "..chestItem.name.." from slot "..iSlot.." to slot "..firstSlot)
+                    chest.pushItems(chestName, iSlot, countToMove, firstSlot)
+
+                    -- suck the items
+                    local itemsSucked = Suck(chestName, countToMove)
+--                    corelog.WriteToLog("   itemsSucked "..itemsSucked)
+                    if itemsSucked ~= countToMove then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..countToMove..") "..requestItemName.." items sucked (="..itemsSucked..") from chest.") return {success = false} end
+                    itemResultQuery[requestItemName] = (itemResultQuery[requestItemName] or 0) + tonumber(itemsSucked)
+
+                    -- more to move for this requested item?
+                    remainingItemsToMove = remainingItemsToMove - countToMove
+                    if remainingItemsToMove <= 0 then break end
+                end
+            end
+        end
     end
 
     -- get final inventory
@@ -361,59 +384,40 @@ function MakeSlotEmpty(chestName, slotToClear)
     local slots = chest.list()
     if slots[slotToClear] then
         -- find slot for item in slot (either empty or with room)
-        local countToMove = slots[slotToClear].count
-        local nameToMove = slots[slotToClear].name
-        local toSlot = 0
+        local countToClear = slots[slotToClear].count
+        local nameToClear = slots[slotToClear].name
+        local remainingItemsToMove = countToClear
+--        corelog.WriteToLog("   moving "..countToClear.." "..nameToClear.." from slot "..slotToClear.." (e).")
         for iSlot=1,chest.size() do
-            local chestItem = slots[iSlot]
             -- skip slotToClear
             if iSlot ~= slotToClear then
-                if not chestItem or chestItem.name == nameToMove then
-                    toSlot = iSlot
-                    break
+                -- determine countToMove
+                local countToMove = 0
+                local chestItem = slots[iSlot]
+                if not chestItem then -- empty slot
+                    countToMove = remainingItemsToMove
+                elseif chestItem.name == nameToClear then
+--                    corelog.WriteToLog("     chestItem.count="..chestItem.count.." (e).")
+                    countToMove = math.min(remainingItemsToMove, coreinventory.GetStackSize(nameToClear) - chestItem.count)
+                end
+
+                -- move items
+                if countToMove > 0 then
+--                    corelog.WriteToLog("     try moving "..countToMove.." "..nameToClear.." from slot "..slotToClear.." to slot "..iSlot.." (e).")
+                    local countTransferred = chest.pushItems(chestName, 1, countToMove, iSlot)
+--                    corelog.WriteToLog("     countTransferred="..countTransferred.." (e).")
+                    remainingItemsToMove = remainingItemsToMove - countTransferred
+                    if remainingItemsToMove == 0 then break end
                 end
             end
         end
-        if toSlot == 0 then corelog.Error("role_chests_worker.MakeSlotEmpty: could not find suitable slot to move "..countToMove.." "..nameToMove.."'s from slot "..slotToClear.." to.") return false end
-
---        corelog.WriteToLog("   moving "..countToMove.." "..nameToMove.." from slot "..slotToClear.." to slot "..toSlot..".")
-        chest.pushItems(chestName, 1, countToMove, toSlot)
+        if remainingItemsToMove ~= 0 then corelog.Error("role_chests_worker.MakeSlotEmpty: could not find suitable slot to move remaining "..remainingItemsToMove.." "..nameToClear.."'s from slot "..slotToClear.." to.") return false end
     else
 --        corelog.WriteToLog("   slot "..slotToClear.." already empty")
     end
 
     -- end
     return true
-end
-
-function TransferTo(chestName, itemName, itemCount, slotDestination)
-    local chest = peripheral.wrap(chestName)
-    if type(chest) ~= "table" then corelog.Error("role_chests_worker.TransferTo: No chest with chestName = "..chestName..".") return 0 end
-
-    local slots = chest.list()
-    local remainingItemsToMove = itemCount
-    for slot, chestItem in pairs(slots) do
-        -- skip slotDestination
-        if slot ~= slotDestination then
-            -- check
-            if type(chestItem) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: chestItem of wrong type = "..type(chestItem)..".") return 0 end
-
-            -- requested item in slot?
-            if chestItem.name == itemName then
-                -- move items to 
-                local countToMove = math.min(remainingItemsToMove, chestItem.count)
---                corelog.WriteToLog("   moving "..countToMove.." "..chestItem.name.." from slot "..slot.." to slot "..slotDestination)
-                chest.pushItems(chestName, slot, countToMove, slotDestination)
-
-                -- more to move for this requested item?
-                remainingItemsToMove = remainingItemsToMove - countToMove
-                if remainingItemsToMove <= 0 then break end
-            end
-        end
-    end
-
-    -- end
-    return itemCount - remainingItemsToMove -- items transferred
 end
 
 function Suck(chestName, itemCount)
@@ -444,4 +448,21 @@ function Drop(chestName, itemCount)
 
     -- end
     return itemCount
+end
+
+function DetermineItemsInventory(slots)
+    -- construct item inventory
+    local items = {}
+
+    -- loop on slots
+    for slot, item in pairs(slots) do
+        -- right item?
+        if type(item) == "table" then
+            -- add to items
+            items[ item.name ]  = (items[ item.name ] or 0) + item.count
+        end
+    end
+
+    -- end
+    return items
 end
