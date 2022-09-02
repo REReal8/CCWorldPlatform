@@ -41,7 +41,7 @@ end
 
 function GetTurtleURL(serviceData)
     --[[
-        This sync public services provides the URL of a turtle in the ISH.
+        This sync public services provides the URL of (the items in) a turtle in the ISH.
 
         Return value:
                                     - (table)
@@ -51,7 +51,7 @@ function GetTurtleURL(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 turtleId            - (number) id of the turtle
-                itemQuery           - (table) items to locate in turtle
+                itemQuery           - (table) optional items to locate in turtle
     --]]
 
     -- check input

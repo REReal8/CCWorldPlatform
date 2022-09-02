@@ -34,7 +34,7 @@ local db = {
 
 function GetChestURL(serviceData)
     --[[
-        This sync public services provides the URL of a chest in the ISH.
+        This sync public services provides the URL of (the items in) a chest in the ISH.
 
         Return value:
                                     - (table)
@@ -44,16 +44,19 @@ function GetChestURL(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 chestId             - (string) id of the chest
+                itemQuery           - (table) optional items to locate in chest
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestURL: Invalid serviceData input.") return {success = false} end
     local chestId = serviceData.chestId
     if type(chestId) ~= "string" then corelog.Error("enterprise_chests.GetChestURL: Invalid chestId input.") return {success = false} end
+    local itemQuery = serviceData.itemQuery or {}
 
     -- construct URL
     local chestURL = GetISHURL()
     chestURL:setPath({id = chestId})
+    chestURL:setQuery(itemQuery)
 
     -- end
     local result = {
@@ -196,7 +199,7 @@ function DelistChest(chestIdData, callback, callbackData)
     -- ToDo: implement
 
     -- remove site from enteprise
-    corelog.WriteToLog('  enterprise_chests.DelistChest: Removing chest '..chest.id)
+    corelog.WriteToLog(">Delisting chest "..chest.id)
     coredht.SaveData(nil, db.dhtRoot, db.dhtChests, chest.id)
 
     -- do callback
@@ -438,18 +441,15 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
     --]]
 
     -- check input
-    if type(transferData) ~= "table" or type(transferData.turtleSourceURL) ~= "table" or type(transferData.destinationURL) ~= "table" then
-        corelog.Error("enterprise_isp.PutItemsFromTurtle: Invalid transferData input.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error("enterprise_isp.PutItemsFromTurtle: Invalid callback function.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(transferData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle: transferData not valid") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleSourceURL = url.URLClass:new(transferData.turtleSourceURL)
+    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle: invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationURL = url.URLClass:new(transferData.destinationURL)
+    if type(destinationURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle: invalid destinationURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check destination is for this enterprise
-    local destinationURL = url.URLClass:new(transferData.destinationURL)
     local destinationIsChest = IsChestURL({ aURL = destinationURL})
     if not destinationIsChest.success then corelog.Error("enterprise_chests.PutItemsFromTurtle: Invalid destination URL (="..destinationURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
@@ -479,7 +479,7 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
     }
     local projectData = {
         chestId         = chestId,
-        turtleSourceURL = transferData.turtleSourceURL
+        turtleSourceURL = turtleSourceURL
     }
     local serviceData = {
         projectDefinition = putItemsIntoChestProject,
@@ -487,7 +487,7 @@ function PutItemsFromTurtle(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Putting items from turtle URL "..transferData.turtleSourceURL:getURI().." into chest "..projectData.chestId..".")
+    corelog.WriteToLog(">Putting items from turtle URL "..turtleSourceURL:getURI().." into chest "..projectData.chestId..".")
     enterprise_projects.StartProject(serviceData, callback, callbackData)
 end
 

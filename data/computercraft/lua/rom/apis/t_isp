@@ -17,21 +17,50 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
     -- create project definition
     local transferItemsBetweenChestsProject = {
         services    = {
+            -- preparation
             { serviceName = "enterprise_projects.StartProject", async = true, input = {
                 { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition1" },
-                { keyName = "projectInputData" , valueSource = 0, sourceKey = "projectInputData1" },
+                { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData1" },
+            }},
+            { serviceName = "enterprise_chests.GetChestURL", async = false, input = {
+                { keyName = "chestId"           , valueSource = 1, sourceKey = "id" },
+                { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemsToTransferQuery" },
             }},
             { serviceName = "enterprise_projects.StartProject", async = true, input = {
                 { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition2" },
-                { keyName = "projectInputData" , valueSource = 0, sourceKey = "projectInputData2" },
+                { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData2" },
             }},
+            { serviceName = "enterprise_chests.GetChestURL", async = false, input = {
+                { keyName = "chestId"           , valueSource = 3, sourceKey = "id" },
+            }},
+
+            -- TransferItemsFromTo
+            { serviceName = "enterprise_isp.TransferItemsFromTo", async = true, input = {
+                { keyName = "sourceURL"         , valueSource = 2, sourceKey = "url" },
+                { keyName = "destinationURL"    , valueSource = 4, sourceKey = "url" },
+            }},
+
+            -- cleanup
+            { serviceName = "enterprise_chests.DelistChest", async = true, input = {
+                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+            }},
+            { serviceName = "enterprise_chests.DelistChest", async = true, input = {
+                { keyName = "id"                , valueSource = 3, sourceKey = "id" },
+            }},
+
+            -- wrap-up
             { serviceName = "enterprise_projects.AllTrue", async = false, input = {
-                { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
+                { keyName = "success4"          , valueSource = 4, sourceKey = "success" },
+                { keyName = "success5"          , valueSource = 5, sourceKey = "success" },
+                { keyName = "success6"          , valueSource = 5, sourceKey = "success" },
+                { keyName = "success7"          , valueSource = 5, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 3, sourceKey = "success" },
+            { keyName = "success", valueSource = 8, sourceKey = "success" },
         }
     }
     local serviceData = {
@@ -44,32 +73,24 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 chestAccessDirection = "top",
             },
 
+            -- query
+            itemsToTransferQuery = {
+                ["minecraft:birch_log"] = 3,
+                ["minecraft:torch"] = 5,
+            },
+
             -- chest 2
             projectDefinition2 = t_chests.GetRegisterAndUpdateChestProject(),
             projectInputData2 = {
                 chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
                 chestAccessDirection = "back",
             },
+
         },
     }
 
     -- start project
     enterprise_projects.StartProject(serviceData, callbackFunction, callbackData)
-
-    --[[
-    -- create transferData
-    local sourceURL = enterprise_chests.GetChestURL({chestId = sourceChestId}).url
-    sourceURL:setQueryURI(queryPartURI)
-    local destinationURL = enterprise_chests.GetChestURL({chestId = destinationChestId}).url
-    local transferData = {
-        sourceURL =  sourceURL,
-        destinationURL = destinationURL,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_isp.TransferItemsFromTo(transferData, callbackFunction, callbackData)
-    ]]
 end
 
 function T_ISPUsingProject()
