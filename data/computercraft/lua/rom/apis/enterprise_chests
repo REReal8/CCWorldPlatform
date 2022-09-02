@@ -13,6 +13,8 @@ local db = {
         RegisterChest       - to register ("add") a chest that can be serviced by this enterprise
         DelistChest         - to delist ("remove") a chest from being serviced by this enterprise
         GetChestURL         - provide the URL of a chest
+        IsChestURL          - answers the question if a URL is that of a chest
+        UpdateChestRecord   - brings the records of a chest up-to-date by fetching parameters
 
     The enterprise does not provide services to build/ dismantle chests. This is to be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them. 
