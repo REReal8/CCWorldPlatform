@@ -335,16 +335,13 @@ function DoAssignment(assignment)
     TakeAssignment(assignmentId)
 
     -- call task function
-    local f, err = loadstring("return "..assignment.taskFunction.."("..textutils.serialize(assignment.taskData)..")")
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
-    if f then taskResult = f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
+    taskResult = coreutils.DoSyncService(assignment.taskFunction, assignment.taskData)
     corelog.WriteToAssignmentLog("Completed task", assignmentId)
 
     -- call callBack function
-    -- ToDo consider using coreutils.DoCallback
-    f, err = loadstring(assignment.callbackFunction.."("..textutils.serialize(assignment.callbackData)..","..textutils.serialize(taskResult).. ")")
     corelog.WriteToAssignmentLog("Calling callback function", assignmentId)
-    if f then f() else corelog.Error("coreassignment.DoAssignment(): loadstring did not supply a function, error given: "..err) end
+    coreutils.DoCallback(assignment.callbackFunction, assignment.callbackData, taskResult)
 
     -- we have done all for this assignment that we needed to do
     EndAssignment(assignmentId)

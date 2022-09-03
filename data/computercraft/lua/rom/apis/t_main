@@ -16,26 +16,24 @@ end
 
 function T_enterprise_test()
     -- init
-    local testArg = 20
+    local testData = {
+        testArg = 20,
+    }
 
-    -- test service 1
-    corelog.WriteToLog("# Test 1")
-    local testResult = enterprise_test.TestPureLogicService_SSrv(testArg)
-    corelog.WriteToLog("  TestPureLogicService_SSrv("..testArg..") => " ..textutils.serialize(testResult) .. ".")
+    -- test sync service
+    corelog.WriteToLog("# Test sync Service")
+    local testResult = enterprise_test.TestPureLogicService_SSrv(testData)
+    corelog.WriteToLog("  testResult = "..textutils.serialize(testResult))
 
-    -- test service 2
-    corelog.WriteToLog("# Test 2")
-    enterprise_test.TestServiceWithAssignment_ASrv(testArg)
-
-    -- test service 3
-    corelog.WriteToLog("# Test 3")
+    -- test async service 1
+    corelog.WriteToLog("# Test async service 1")
     local callbackFunction = "t_main.Func1_Callback"
-    enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(testArg, callbackFunction)
+    enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(testData, callbackFunction)
 
-    -- test service 4
-    corelog.WriteToLog("# Test 4")
-    local callbackData = {"calbackArg1"}
-    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(testArg, callbackFunction, callbackData)
+    -- test async service 2
+    corelog.WriteToLog("# Test async service 2")
+    local callbackData = {"some callback data"}
+    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(testData, callbackFunction, callbackData)
 end
 
 function T_coreutils_DoCallback()
@@ -61,11 +59,11 @@ function T_coreutils_DoSyncService()
 end
 
 function Func1_Callback(callbackData, taskResult)
-    corelog.WriteToLog("t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..") called")
+    corelog.WriteToLog("  doing t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 end
 
 function GoHomeCallBack(callbackData, taskResult)
-    corelog.WriteToLog("t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..") called")
+    corelog.WriteToLog("  doing t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     t_move.T_GoHome()
 end

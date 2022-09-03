@@ -3,27 +3,27 @@ function T_CombineStepResults()
     local projectDefinition = {
         services    = {
             { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg1"      , valueSource = 0, sourceKey = "testData1" },
+                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData1" },
             }},
             { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, input = {
-                { keyName = "testArg2"      , valueSource = 0, sourceKey = "testData2" },
+                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData2" },
             }},
             { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg3"      , valueSource = 0, sourceKey = "testData3" },
+                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData3" },
                 { keyName = "serviceResult" , valueSource = 0, sourceKey = "falseServiceResult" },
             }},
             { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg4"      , valueSource = 0, sourceKey = "testData4" },
+                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData4" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = { -- ToDo: consider introducing simple syntax to the projectDefinition whether this step should automatically be added at the end of the sequence
-                { keyName = "success1", valueSource = 1, sourceKey = "success" },
-                { keyName = "success2", valueSource = 2, sourceKey = "success" },
-                { keyName = "success3", valueSource = 3, sourceKey = "success" },
-                { keyName = "success4", valueSource = 4, sourceKey = "success" },
+                { keyName = "success1"      , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"      , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"      , valueSource = 3, sourceKey = "success" },
+                { keyName = "success4"      , valueSource = 4, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 5, sourceKey = "success" },
+            { keyName = "success"           , valueSource = 5, sourceKey = "success" },
         }
     }
     local projectData = {
@@ -49,20 +49,20 @@ function T_StartProject()
     local projectDefinition = {
         services    = {
             { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg1", valueSource = 0, sourceKey = "testArgSource" },
+                { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
             }},
             { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, input = {
-                { keyName = "testArg2", valueSource = 0, sourceKey = "testArgSource" },
+                { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
             }},
             { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg3", valueSource = 0, sourceKey = "testArgSource" },
+                { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
             }},
         },
         returnData  = {
-            { keyName = "testBArg0", valueSource = 0, sourceKey = "testArgSource" },
-            { keyName = "testBArg1", valueSource = 1, sourceKey = "testArg1" },
-            { keyName = "testBArg2", valueSource = 2, sourceKey = "testArg2" },
-            { keyName = "testBArg3", valueSource = 3, sourceKey = "testArg3" },
+            { keyName = "testBArg0"     , valueSource = 0, sourceKey = "testArgSource" },
+            { keyName = "testBArg1"     , valueSource = 1, sourceKey = "input" },
+            { keyName = "testBArg2"     , valueSource = 2, sourceKey = "input" },
+            { keyName = "testBArg3"     , valueSource = 3, sourceKey = "input" },
         }
     }
     local projectData = { testArgSource = testArgValue }

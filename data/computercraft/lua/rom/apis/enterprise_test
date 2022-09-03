@@ -12,25 +12,34 @@
 --   |_|
 
 function TestPureLogicService_SSrv(serviceData)
-    corelog.WriteToLog("enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
-
     -- check input
-    if type(serviceData) ~= "table" then
-        corelog.Error('enterprise_factory.TestPureLogicService_SSrv: Invalid serviceData input')
-        return {success = false}
-    end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid serviceData") return {success = false} end
+    local testArg = serviceData.testArg
+    if type(testArg) == "nil" then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid testArg (nil)") return {success = false} end
+
+    corelog.WriteToLog(">calling enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
 
     -- determine result to return
-    local serviceResult = { success = true}
+    local serviceResult = { 
+        success = true,
+        input = testArg,
+    }
     if type(serviceData.serviceResult) == "table" then
-        serviceResult = serviceData.serviceResult
+        serviceResult.success = serviceData.serviceResult.success
     end
 
     return serviceResult
 end
 
-function TestServiceWithAssignment_ASrv(serviceData)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignment_ASrv("..textutils.serialize(serviceData)..")")
+function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callback)
+      -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid serviceData") return {success = false} end
+    local testArg = serviceData.testArg
+    if type(testArg) == "nil" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid testArg (nil)") return {success = false} end
+    local callbackData = {}
+    if type(callback) ~= "string" then corelog.Error('enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callback..")")
 
     -- create assignment arguments
     local metaData = {
@@ -42,16 +51,22 @@ function TestServiceWithAssignment_ASrv(serviceData)
     }
     local taskFunction = "enterprise_test.Func1_Task"
     local taskData = {
-        arg1 = serviceData
+        arg1 = testArg
     }
-    local callbackFunction = "enterprise_test.ACallBackFunc1"
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, {})
+    coreassignment.AddAssignment(metaData, taskFunction, taskData, callback, callbackData)
 end
 
-function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callbackFunction)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..")")
+function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(serviceData, callback, callbackData)
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid serviceData") return {success = false} end
+    local testArg = serviceData.testArg
+    if type(testArg) == "nil" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid testArg (nil)") return {success = false} end
+    if type(callback) ~= "string" then corelog.Error('enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
 
     -- create assignment arguments
     local metaData = {
@@ -63,31 +78,11 @@ function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callbackFunction
     }
     local taskFunction = "enterprise_test.Func1_Task"
     local taskData = {
-        arg1 = serviceData
+        arg1 = testArg
     }
 
     -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, {})
-end
-
-function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(serviceData, callbackFunction, callbackData)
-    corelog.WriteToLog("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
-
-    -- create assignment arguments
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
-        needTool = false,
-        needTurtle = false,
-        fuelNeeded = 0
-    }
-    local taskFunction = "enterprise_test.Func1_Task"
-    local taskData = {
-        arg1 = serviceData
-    }
-
-    -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskData, callbackFunction, callbackData)
+    coreassignment.AddAssignment(metaData, taskFunction, taskData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -98,12 +93,12 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function Func1_Task(taskData)
-    corelog.WriteToLog("enterprise_test.Func1_Task("..textutils.serialise(taskData)..").")
+    corelog.WriteToLog("  doing enterprise_test.Func1_Task("..textutils.serialise(taskData)..").")
 
     return { success = true, input = taskData.arg1 }
 end
 
 function ACallBackFunc1(callbackData, testResult)
-    corelog.WriteToLog("enterprise_test.ACallBackFunc1("..textutils.serialise(callbackData)..", "..textutils.serialise(testResult)..") called.")
+    corelog.WriteToLog("  doing enterprise_test.ACallBackFunc1("..textutils.serialise(callbackData)..", "..textutils.serialise(testResult)..").")
 end
 

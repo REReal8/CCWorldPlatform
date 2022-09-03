@@ -115,9 +115,9 @@ end
 
 function DoCallback(callback, callbackData, result)
     -- check input
-    if type(callback) ~= "string" then corelog.Error('coreutils.DoCallback: Invalid callback function') return nil end
-    if type(callbackData) ~= "table" then corelog.Error('coreutils.DoCallback: Invalid callback data') return nil end
-    if type(result) ~= "table" then corelog.Error('coreutils.DoCallback: Invalid calback result') return nil end
+    if type(callback) ~= "string" then corelog.Error("coreutils.DoCallback: Invalid callback function") return nil end
+    if type(callbackData) ~= "table" then corelog.Error("coreutils.DoCallback: Invalid callbackData") return nil end
+    if type(result) ~= "table" then corelog.Error("coreutils.DoCallback: Invalid calback result") return nil end
 
     -- call callBack function
     local stringToLoad = callback.."("..textutils.serialize(callbackData)..","..textutils.serialize(result).. ")"
@@ -127,8 +127,8 @@ end
 
 function DoSyncService(service, serviceData)
 	-- check input
-	if type(service) ~= "string" then corelog.Error('coreutils.DoSyncService: service function not valid') return nil end
-	if type(serviceData) ~= "table" then corelog.Error('coreutils.DoSyncService: service data not valid') return nil end
+	if type(service) ~= "string" then corelog.Error("coreutils.DoSyncService: Invalid service function") return nil end
+	if type(serviceData) ~= "table" then corelog.Error("coreutils.DoSyncService: Invalid serviceData") return nil end
 
     -- check service actually exists
     -- ToDo: implement
