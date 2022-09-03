@@ -33,15 +33,12 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
 
 
     -- check input
-    if type(buildData) ~= "table" then
-        corelog.Error("enterprise_construction.BuildBlueprint_ASrv: bluePrintData not a table")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    else
-        if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: blueprintStartpoint not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(buildData.blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: blueprint not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(buildData.blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: blueprint.layerList not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    end
+    if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprintStartpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid layerList") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: callback not a string") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
     -- construct assignment metadata
     local metaData = role_builder.BuildBlueprint_MetaData(buildData)
@@ -80,25 +77,12 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     ]]
 
     -- check input
-    if type(buildData) ~= "table" then
-        corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: buildData not a table")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    else
-        if type(buildData.startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: startpoint not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(buildData.buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: startpoint not a boolean") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(buildData.pattern) ~= "table" then
-            corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: pattern not a table")
-            return coreutils.DoCallback(callback, callbackData, {success = false})
-        else
-        end
-    end
-    --
-    -- callbackFunction
-    if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: callback not a string") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    --
-    -- callbackData
-    callbackData = callbackData or {} --> if no callback arguments supplied {} is sufficient
-    if type(callbackData) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: callbackData not a table") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid startpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildFromAbove") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.pattern) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid pattern") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
     -- construct assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
