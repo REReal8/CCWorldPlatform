@@ -31,7 +31,6 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
             callbackData                - (table) data to supply to callback function
     ]]
 
-
     -- check input
     if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprintStartpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
