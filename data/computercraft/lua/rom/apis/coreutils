@@ -133,15 +133,36 @@ function DoSyncService(service, serviceData)
     -- check service actually exists
     -- ToDo: implement
 
-	-- sync function call, use the results
+	-- prepare sync service call
 	local f, err = loadstring("return "..service.."("..textutils.serialize(serviceData)..")")
 	if not f then corelog.Error("coreutils.DoSyncService(): loadstring did not supply a function, error given: "..err) return end
 
-	-- execute the step
+	-- execute the service
 	local results = f()
 
 	-- end
 	return results
+end
+
+function DoASyncService(service, serviceData, callback, callbackData)
+	-- check input
+	if type(service) ~= "string" then corelog.Error("coreutils.DoASyncService: Invalid service function") return nil end
+	if type(serviceData) ~= "table" then corelog.Error("coreutils.DoASyncService: Invalid serviceData") return nil end
+	if type(callback) ~= "string" then corelog.Error("coreutils.DoASyncService: Invalid callback function") return nil end
+	if type(callbackData) ~= "table" then corelog.Error("coreutils.DoASyncService: Invalid callbackData") return nil end
+
+    -- check service actually exists
+    -- ToDo: implement
+
+	-- prepare async service call
+	local f, err = loadstring(service.."("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
+	if not f then corelog.Error("coreutils.DoASyncService(): loadstring did not supply a function, error given: "..err) return nil end
+
+	-- execute the service
+	f()
+
+	-- end
+	return nil
 end
 
 --                         _

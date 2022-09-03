@@ -266,7 +266,7 @@ function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local siteVersion = siteData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- create project definition
