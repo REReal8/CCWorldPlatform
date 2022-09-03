@@ -123,7 +123,7 @@ function T_PutItemsFromTurtle1()
 end
 
 function T_ItemsAvailableVia1()
-    corelog.WriteToLog("* Test ItemsAvailableVia_ASrv for chest:")
+    corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for chest:")
     -- create transferData
     local queryURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
     queryURL:setQueryURI(queryPartURI)
@@ -132,7 +132,7 @@ function T_ItemsAvailableVia1()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.ItemsAvailableVia_ASrv("..textutils.serialize(queryData)..")")
-    local result = enterprise_chests.ItemsAvailableVia_ASrv(queryData)
+    corelog.WriteToLog("  calling enterprise_chests.ItemsAvailableVia_SSrv("..textutils.serialize(queryData)..")")
+    local result = enterprise_chests.ItemsAvailableVia_SSrv(queryData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end

@@ -4,13 +4,13 @@
     those items.
 
     The ISP provides the following services
-        ItemsAvailableVia_ASrv      - providing if a set of items are available at an itemQueryURL
+        ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemQueryURL
         TransferItemsFromTo_ASrv    - transferring items from a sourceURL to a destinationURL
         
     The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
     to be an ISH it needs to implement the following services:
 
-        ItemsAvailableVia_ASrv      - providing if a set of items are available at the ISH.
+        ItemsAvailableVia_SSrv      - providing if a set of items are available at the ISH.
         GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
         PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
 
@@ -27,13 +27,13 @@
 --   | |
 --   |_|
 
-function ItemsAvailableVia_ASrv(queryData) -- ToDo: investigate if this (sometimes) needs to be an async service
+function ItemsAvailableVia_SSrv(queryData) -- ToDo: investigate if this (sometimes) needs to be an async service
     --[[
         This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
         This service is implemented using the following underlying ISH services
-            ItemsAvailableVia_ASrv
+            ItemsAvailableVia_SSrv
 
         Return value:
                                     - (table)
@@ -48,7 +48,7 @@ function ItemsAvailableVia_ASrv(queryData) -- ToDo: investigate if this (sometim
 
     -- check input
     if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Invalid queryData input.")
+        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData input.")
         return {success = false}
     end
 
@@ -56,16 +56,16 @@ function ItemsAvailableVia_ASrv(queryData) -- ToDo: investigate if this (sometim
     local itemQueryURL = queryData.itemQueryURL
 --    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
     local host = itemQueryURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Invalid host input.") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host input.") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)
 
     -- relay to ISH service
     if host == "turtle" then
-        return enterprise_turtle.ItemsAvailableVia_ASrv(queryData)
+        return enterprise_turtle.ItemsAvailableVia_SSrv(queryData)
     elseif host == "chests" then
-        return enterprise_chests.ItemsAvailableVia_ASrv(queryData)
+        return enterprise_chests.ItemsAvailableVia_SSrv(queryData)
     else
-        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Not implemented for "..host .." ISH.") return {success = false}
+        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Not implemented for "..host .." ISH.") return {success = false}
     end
 end
 
@@ -108,7 +108,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local sourceURL = url.URLClass:new(transferData.sourceURL)
     local sourceHost = sourceURL:getHost()
     if type(sourceHost) ~= "string" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: sourceHost of wrong type = "..type(sourceHost)..".")
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     local sourceEnterprise = nil
@@ -124,7 +124,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local destinationURL = url.URLClass:new(transferData.destinationURL)
     local destinationHost = destinationURL:getHost()
     if type(destinationHost) ~= "string" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: destinationHost of wrong type = "..type(destinationHost)..".")
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     local destinationEnterprise = nil

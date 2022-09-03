@@ -149,7 +149,7 @@ function T_TransferItemsFromTo_Turtles()
 end
 
 function T_ItemsAvailableVia_Turtle()
-    corelog.WriteToLog("* Test ItemsAvailableVia_ASrv for turtles:")
+    corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
     local queryURL = enterprise_turtle.GetTurtleURL_SSrv({}).url
     queryURL:setQueryURI(queryPartURI)
@@ -158,7 +158,7 @@ function T_ItemsAvailableVia_Turtle()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia_ASrv("..textutils.serialize(queryData)..")")
-    local result = enterprise_isp.ItemsAvailableVia_ASrv(queryData)
+    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia_SSrv("..textutils.serialize(queryData)..")")
+    local result = enterprise_isp.ItemsAvailableVia_SSrv(queryData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end

@@ -7,7 +7,7 @@ local db = {
 --[[
     The chests enterprise provides services to perform operation on chests.
 
-    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_ASrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
@@ -277,7 +277,7 @@ function GetISHURL()
     return hostURL
 end
 
-function ItemsAvailableVia_ASrv(queryData)
+function ItemsAvailableVia_SSrv(queryData)
     --[[
         This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
@@ -294,32 +294,32 @@ function ItemsAvailableVia_ASrv(queryData)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid queryData") return {success = false} end
+    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
     local itemQueryURL = url.URLClass:new(queryData.itemQueryURL)
-    if type(itemQueryURL) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid itemQueryURL") return {success = false} end
+    if type(itemQueryURL) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid itemQueryURL") return {success = false} end
 
     -- check itemQueryURL is for this enterprise
     local itemQueryIsChest = IsChestURL_QSrv({ aURL = itemQueryURL})
-    if not itemQueryIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
+    if not itemQueryIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
 
     -- select chest
     local id = itemQueryURL:getPath().id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Invalid path input: "..textutils.serialize(itemQueryURL:getPath())..".") return {success = false} end
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid path input: "..textutils.serialize(itemQueryURL:getPath())..".") return {success = false} end
 
     -- get chest
     local chest = GetChestById(id)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: Chest (id="..id..") not found.") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Chest (id="..id..") not found.") return {success = false} end
 
     -- query chests inventory
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = chest.inventory
     for name, count in pairs(query) do
-        if type(name) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: itemName of wrong type = "..type(name)..".") return {success = false} end
-        if type(count) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia_ASrv: itemCount of wrong type = "..type(count)..".") return {success = false} end
+        if type(name) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(name)..".") return {success = false} end
+        if type(count) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemCount of wrong type = "..type(count)..".") return {success = false} end
 
         local inventoryCount = inventory.items[name]
         if inventoryCount == nil or inventoryCount < count then
-            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_ASrv: not enough (="..count..") "..name.." items in inventory (="..(inventoryCount or 0)..") of chest "..id..".") return {success = false}
+            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_SSrv: not enough (="..count..") "..name.." items in inventory (="..(inventoryCount or 0)..") of chest "..id..".") return {success = false}
         end
     end
 

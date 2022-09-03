@@ -6,7 +6,7 @@ local db = {
 --[[
     The Turtle enterprise provides services related to turtles.
 
-    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_ASrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
         IsTurtleURL_QSrv    - provide if URL is of a turtle
@@ -102,7 +102,7 @@ function IsTurtleURL_QSrv(queryData)
     end
 end
 
-function ItemsAvailableVia_ASrv(queryData) -- ToDo correct name to ItemsAvailableVia_SSrv
+function ItemsAvailableVia_SSrv(queryData)
     --[[
         This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
@@ -120,30 +120,30 @@ function ItemsAvailableVia_ASrv(queryData) -- ToDo correct name to ItemsAvailabl
 
     -- check input
     if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia_ASrv: Invalid queryData input.")
+        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData input.")
         return {success = false}
     end
 
     -- check itemQueryURL is for this enterprise
     local itemQueryURL = url.URLClass:new(queryData.itemQueryURL)
     local itemQueryIsTurtle = IsTurtleURL_QSrv({ aURL = itemQueryURL})
-    if not itemQueryIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_ASrv: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
+    if not itemQueryIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
 
     -- select turtle
     local currentTurtleId = os.getComputerID()
     local itemQueryTurtleId = itemQueryURL:getPort()
-    if itemQueryTurtleId and currentTurtleId ~= itemQueryTurtleId then corelog.Error("enterprise_turtle.ItemsAvailableVia_ASrv: Querying items in one (id="..itemQueryTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    if itemQueryTurtleId and currentTurtleId ~= itemQueryTurtleId then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Querying items in one (id="..itemQueryTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- query turtle for items
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(query) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia_ASrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.ItemsAvailableVia_ASrv: itemCount of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: itemCount of wrong type = "..type(itemName)..".") return {success = false} end
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_turtle.ItemsAvailableVia_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return {success = false}
+            corelog.WriteToLog("enterprise_turtle.ItemsAvailableVia_SSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return {success = false}
         end
     end
 
