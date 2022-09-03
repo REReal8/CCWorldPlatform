@@ -328,15 +328,13 @@ function AssignmentSelectionProcedure(assignmentId)
 end
 
 function DoAssignment(assignment)
-    local taskResult = nil
-
     -- we have taken this assignment!
     local assignmentId = assignment.assignmentId
     TakeAssignment(assignmentId)
 
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
-    taskResult = coreutils.DoSyncService(assignment.taskFunction, assignment.taskData)
+    local taskResult = coreutils.DoSyncService(assignment.taskFunction, assignment.taskData)
     corelog.WriteToAssignmentLog("Completed task", assignmentId)
 
     -- call callBack function
