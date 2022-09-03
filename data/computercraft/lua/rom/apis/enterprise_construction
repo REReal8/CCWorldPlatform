@@ -11,10 +11,9 @@
 --   | |
 --   |_|
 
--- ToDo: consider a distributed implementation (i.e. that uses multiple assignments for various parts of the blueprint)
 function BuildBlueprint_ASrv(buildData, callback, callbackData)
     --[[
-        This async public service builds a blueprint.
+        This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
             nil 
@@ -50,12 +49,12 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_builder.BuildBlueprint_Task", buildData, callback, callbackData)
 
-    return true
+    return nil
 end
 
 function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     --[[
-        This async public service builds a rectangular pattern in the x,y plane.
+        This async public service builds a rectangular pattern in the x,y plane as a single assignment/ task.
 
         Return value:
             nil 
