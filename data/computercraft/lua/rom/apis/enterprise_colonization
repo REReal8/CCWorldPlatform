@@ -38,31 +38,32 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
 
     -- construct arguments
     local settleData = {
-        startLocation       = {x= 3, y= 2, z= 1, dx=0, dy=1},
-        plantFirstSaplingStep       = "PlantFirstSapling",
+        role_settler                = "role_settler",
+        startLocation               = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        plantFirstSaplingTask       = "PlantFirstSapling",
 
         factoryVersion0             = "v0",
 
-        waitFirstTreeStep           = "WaitFirstTree",
+        waitFirstTreeTask           = "WaitFirstTree",
 
         planksName                  = "minecraft:birch_planks",
         planksAmount1               = 4,
 
-        chopFirstTreeStep           = "ChopFirstTree",
+        chopFirstTreeTask           = "ChopFirstTree",
 
-        refuelStep                  = "Refuel",
+        refuelTask                  = "Refuel",
 
-        collectCobbleStoneStep      = "CollectCobbleStone",
+        collectCobbleStoneTask      = "CollectCobbleStone",
 
         furnaceName                 = "minecraft:furnace",
         furnaceAmount               = 1,
 
-        cleanupStep                 = "Cleanup",
+        cleanupTask                 = "Cleanup",
 
         factoryLocation             = {x=12, y= 0, z= 1, dx=0, dy=1},
         factoryVersion1             = "v1",
 
-        remainingSettleStep         = "RemainingSettle",
+        remainingSettleTask         = "RemainingSettle",
 
         factoryVersion2             = "v2",
         upgradeToSimple             = true,
@@ -77,16 +78,18 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     -- create project definition
     local createNewWorldProject = {
         services    = {
-            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "plantFirstSaplingStep" },
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
+                { keyName = "taskName"          , valueSource = 0, sourceKey = "plantFirstSaplingTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitFirstTreeStep" },
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
+                { keyName = "taskName"          , valueSource = 0, sourceKey = "waitFirstTreeTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_turtle.GetTurtleURL_SSrv", async = false, input = {
@@ -96,8 +99,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "planksAmount1" },
                 { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "chopFirstTreeStep" },
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
+                { keyName = "taskName"          , valueSource = 0, sourceKey = "chopFirstTreeTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
@@ -105,12 +109,14 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "itemAmount"        , valueSource = 6, sourceKey = "planksToProduceForFuel" },
                 { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "refuelStep" },
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
+                { keyName = "taskName"          , valueSource = 0, sourceKey = "refuelTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "collectCobbleStoneStep" },
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
+                { keyName = "taskName"          , valueSource = 0, sourceKey = "collectCobbleStoneTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
             { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
@@ -126,8 +132,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion1" },
             }},
-            { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
-                { keyName = "_stepName"         , valueSource = 0, sourceKey = "remainingSettleStep" },
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
+                { keyName = "taskName"          , valueSource = 0, sourceKey = "remainingSettleTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "factoryLocation"   , valueSource = 0, sourceKey = "factoryLocation" },
             }},
@@ -180,31 +187,3 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function SettlerStep_ASrv(settleData, callback, callbackData)
-    --[[
-        This function wraps around a role_settler task. It first retrieves the meta data,
-        then it calls the task function.
-
-        Async service return value (to callback):
-            task result                 - (table) results of the task function
-
-        Parameters:
-            settleData                  - (table) data for the task
-                _stepName               - (string) name of Task.
-                <other settleData needed for the task function>
-    ]]
-    -- check input
-    if type(settleData) ~= "table" then corelog.Error("enterprise_colonization.SettlerStep_ASrv: settleData not valid") return {success = false} end
-    if type(settleData._stepName) ~= "string" then corelog.Error("enterprise_colonization.SettlerStep_ASrv: _stepName not valid") return {success = false} end
-
-    -- get metaData
-    local stepName = settleData._stepName
-    local metaDataFunctionName = "role_settler."..stepName.."_MetaData"
-    local metaData = coreutils.DoSyncService(metaDataFunctionName, settleData)
-    -- ToDo: consider removing _stepName from settleData
-
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_settler."..stepName.."_Task", settleData, callback, callbackData)
-end
-
