@@ -369,7 +369,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
                 { keyName = "id"        , valueSource = 0, sourceKey = "id" },
                 { keyName = "itemQuery" , valueSource = 0, sourceKey = "itemQuery" },
             }},
-            { serviceName = "enterprise_turtle.GetTurtleURL_ASrv", async = false, input = {
+            { serviceName = "enterprise_turtle.GetTurtleURL_SSrv", async = false, input = {
                 { keyName = "turtleId"  , valueSource = 1, sourceKey = "turtleId" },
                 { keyName = "itemQuery" , valueSource = 1, sourceKey = "itemResultQuery" },
             }},

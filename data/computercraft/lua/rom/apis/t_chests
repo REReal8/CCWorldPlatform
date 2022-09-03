@@ -109,7 +109,7 @@ function T_PutItemsFromTurtle1()
     corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
     -- create transferData
     local currentTurtleId = os.getComputerID()
-    local turtleSourceURL = enterprise_turtle.GetTurtleURL_ASrv({turtleId = currentTurtleId}).url
+    local turtleSourceURL = enterprise_turtle.GetTurtleURL_SSrv({turtleId = currentTurtleId}).url
     turtleSourceURL:setQueryURI(multipleStacksQueryPartURI)
     local destinationURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
     local transferData = {
