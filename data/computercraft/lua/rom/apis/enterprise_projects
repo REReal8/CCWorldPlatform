@@ -146,38 +146,30 @@ function NextProjectStep(internalProjectData, stepResults)
     -- save to dht
     coredht.SaveData(project, db.dhtRoot, internalProjectData.projectId)
 
-    -- prepare to execute this step
-    local step  = project.projectDefinition.services[ project.currentStep ]
-    local input = {}
+    -- get new step
+    local step = project.projectDefinition.services[ project.currentStep ]
 
-    -- make the input
+    -- prepare step service call
+    local serviceName = step.serviceName
+    local serviceData = {}
     for i, inputDefinition in ipairs(step.input) do
         -- add the requested key
-        input[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
+        serviceData[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
     end
-
-    -- prepare function call
-    local serviceName           = step.serviceName
-    local inputTableString      = textutils.serialize(input)
-    local callbackString        = "'enterprise_projects.NextProjectStep'"
-    local callbackDataString    = textutils.serialize(internalProjectData)
 
     -- type of service?
     if step.async == true then
         corelog.WriteToProjectsLog("Start step "..project.currentStep.." async", project.projectId)
 
-        -- async function call
-        local f, err = loadstring(serviceName.."("..inputTableString..", "..callbackString..", "..callbackDataString..")")
-        if f then f() else corelog.Error("enterprise_projects.NextProjectStep(): loadstring did not supply a function, error given: "..err) end
+        -- do async function call
+        local callback          = "'enterprise_projects.NextProjectStep'"
+        local callbackData      = internalProjectData
+        coreutils.DoASyncService(serviceName, serviceData, callback, callbackData)
     else
         corelog.WriteToProjectsLog("Start step "..project.currentStep.." sync", project.projectId)
 
-        -- sync function call, use the results
-        local f, err = loadstring("return "..serviceName.."("..inputTableString..")")
-        if not f then corelog.Error("enterprise_projects.NextProjectStep(): loadstring did not supply a function, error given: "..err) return end
-
-        -- execute the step and save the results
-        local results = f()
+        -- do sync function call, keep the results
+        local results = coreutils.DoSyncService(serviceName, serviceData)
 
         -- recursive is the future!
         NextProjectStep(internalProjectData, results)
@@ -187,23 +179,18 @@ end
 function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
-    local input     = {}
+    local projectResult = {}
 
-    -- create the return data table
+    -- create the projectResult
     for i, inputDefinition in ipairs(project.projectDefinition.returnData) do
         -- add the requested key
-        input[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
+        projectResult[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
     end
-
-    -- prepare callback
-    local callbackString        = project.callbackFunction
-    local callbackDataString    = textutils.serialise(project.callbackData)
-    local inputTableString      = textutils.serialize(input)
+    corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResult), project.projectId)
 
     -- we are done, do the callback
-    corelog.WriteToProjectsLog("Calling callback function: "..callbackString.."("..callbackDataString..", "..inputTableString..")", project.projectId)
-    local f, err = loadstring(callbackString.."("..callbackDataString..", "..inputTableString..")")
-    if f then f() else corelog.Error("enterprise_projects.CompleteProject(): loadstring did not supply a function, error given: "..err) end
+    corelog.WriteToProjectsLog("Calling callback function", project.projectId)
+    coreutils.DoCallback(project.callbackFunction, project.callbackData, projectResult)
 
     -- forget about this project
     corelog.WriteToProjectsLog("Ended", project.projectId)
