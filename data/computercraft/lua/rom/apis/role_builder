@@ -210,7 +210,7 @@ function BuildRectangularPattern_Task(buildData)
             buildData                   - (table) data about the pattern
                 startpoint              - (table) lower left coordinate to start building the pattern
                 buildFromAbove          - (boolean) whether build should be done from above (true) or below (false)
-                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = true)
+                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = false)
                 pattern                 - (table) pattern to build
                     deltaX              - (number) x size of pattern
                     deltaY              - (number) y size of pattern
