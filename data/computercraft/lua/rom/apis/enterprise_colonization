@@ -89,9 +89,12 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "waitFirstTreeStep" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
+            { serviceName = "enterprise_turtle.GetTurtleURL_SSrv", async = false, input = {
+            }},
             { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "planksAmount1" },
+                { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "chopFirstTreeStep" },
@@ -99,7 +102,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             }},
             { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
-                { keyName = "itemAmount"        , valueSource = 5, sourceKey = "planksToProduceForFuel" },
+                { keyName = "itemAmount"        , valueSource = 6, sourceKey = "planksToProduceForFuel" },
+                { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
             { serviceName = "enterprise_colonization.SettlerStep_ASrv", async = true, input = {
                 { keyName = "_stepName"         , valueSource = 0, sourceKey = "refuelStep" },
@@ -112,6 +116,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "furnaceName" },
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "furnaceAmount" },
+                { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
             { serviceName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, input = {
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
@@ -153,10 +158,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "success12"         , valueSource = 12, sourceKey = "success" },
                 { keyName = "success13"         , valueSource = 13, sourceKey = "success" },
                 { keyName = "success14"         , valueSource = 14, sourceKey = "success" },
+                { keyName = "success14"         , valueSource = 15, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 15, sourceKey = "success" },
+            { keyName = "success"               , valueSource = 16, sourceKey = "success" },
         }
     }
     local projectData = {
