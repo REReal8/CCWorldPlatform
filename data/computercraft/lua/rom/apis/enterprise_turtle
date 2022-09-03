@@ -50,14 +50,13 @@ function GetTurtleURL_ASrv(serviceData)
 
         Parameters:
             serviceData             - (table) data for this service
-                turtleId            - (number) id of the turtle
+                turtleId            - (number) optional id of the turtle (if none is provided the current turtle computer id is used)
                 itemQuery           - (table) optional items to locate in turtle
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid serviceData input.") return {success = false} end
-    local turtleId = serviceData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid turtleId input.") return {success = false} end
+    local turtleId = serviceData.turtleId or os.getComputerID()
     local itemQuery = serviceData.itemQuery or {}
 
     -- construct URL
@@ -103,7 +102,7 @@ function IsTurtleURL_QSrv(queryData)
     end
 end
 
-function ItemsAvailableVia_ASrv(queryData)
+function ItemsAvailableVia_ASrv(queryData) -- ToDo correct name to ItemsAvailableVia_SSrv
     --[[
         This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
@@ -131,8 +130,9 @@ function ItemsAvailableVia_ASrv(queryData)
     if not itemQueryIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_ASrv: Invalid itemQueryURL (="..itemQueryURL:getURI()..").") return {success = false} end
 
     -- select turtle
-    -- ToDo: based on port # (does this imply this to be an async service?)
-    corelog.Warning("enterprise_turtle.ItemsAvailableVia_ASrv: Selection of specific turtle not (?yet) implemented.")
+    local currentTurtleId = os.getComputerID()
+    local itemQueryTurtleId = itemQueryURL:getPort()
+    if itemQueryTurtleId and currentTurtleId ~= itemQueryTurtleId then corelog.Error("enterprise_turtle.ItemsAvailableVia_ASrv: Querying items in one (id="..itemQueryTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- query turtle for items
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}

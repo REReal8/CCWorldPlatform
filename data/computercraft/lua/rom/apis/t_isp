@@ -135,9 +135,9 @@ end
 function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
-    local sourceURL = enterprise_turtle.GetISHURL()
+    local sourceURL = enterprise_turtle.GetTurtleURL_ASrv({}).url
     sourceURL:setQueryURI(queryPartURI)
-    local destinationURL = enterprise_turtle.GetISHURL()
+    local destinationURL = enterprise_turtle.GetTurtleURL_ASrv({}).url
     local transferData = {
         sourceURL =  sourceURL,
         destinationURL = destinationURL,
@@ -151,7 +151,7 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_ASrv for turtles:")
     -- create transferData
-    local queryURL = enterprise_turtle.GetISHURL()
+    local queryURL = enterprise_turtle.GetTurtleURL_ASrv({}).url
     queryURL:setQueryURI(queryPartURI)
     local queryData = {
         itemQueryURL = queryURL,
