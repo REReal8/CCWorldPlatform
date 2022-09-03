@@ -15,7 +15,7 @@
         PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
 
     Furthermore it needs to implement the following additional functions
-        GetISHURL               - provide the base URL of the ISH
+        GetISHURL                   - provide the base URL of the ISH
 --]]
 
 --                _     _ _         __                  _   _
