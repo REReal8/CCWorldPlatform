@@ -139,7 +139,7 @@ function ItemsAvailableVia_SSrv(queryData)
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(query) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: itemCount of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
@@ -209,7 +209,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(sourceQuery) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemCount of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemCount of wrong type = "..type(itemCount)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
@@ -281,7 +281,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(sourceQuery) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemCount of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemCount of wrong type = "..type(itemCount)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
