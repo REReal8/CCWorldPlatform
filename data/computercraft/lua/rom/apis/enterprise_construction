@@ -85,6 +85,8 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- do something else first.
+
     -- construct assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
