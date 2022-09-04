@@ -44,8 +44,6 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_builder.BuildBlueprint_Task", buildData, callback, callbackData)
-
-    return nil
 end
 
 function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
@@ -62,7 +60,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
             buildData                   - (table) data about what to build
                 startpoint              - (table) lower left coordinate to start building the pattern
                 buildFromAbove          - (boolean) whether build should be done from above (true) or below (false)
-                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = true)
+                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = false)
                 pattern                 - (table) pattern to build
                     deltaX              - (number) x size of pattern
                     deltaY              - (number) size of pattern
@@ -70,16 +68,20 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
                         x               - (number) x coordinate within the pattern
                         y               - (number) y coordinate within the pattern
                         block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
-                    clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared                    
+                    clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
     if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid startpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildFromAbove") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.pattern) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid pattern") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local startpoint = buildData.startpoint
+    if type(startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid startpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local buildFromAbove = buildData.buildFromAbove
+    if type(buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildFromAbove") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local pattern = buildData.pattern
+    if type(pattern) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid pattern") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.materialsURL) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid materialsURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -88,8 +90,6 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
 
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callback, callbackData)
-
-    return nil
 end
 
 --    _                 _    __                  _   _
