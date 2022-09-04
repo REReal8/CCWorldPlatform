@@ -313,13 +313,13 @@ function ItemsAvailableVia_SSrv(queryData)
     -- query chests inventory
     local query = itemQueryURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = chest.inventory
-    for name, count in pairs(query) do
-        if type(name) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(name)..".") return {success = false} end
-        if type(count) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemCount of wrong type = "..type(count)..".") return {success = false} end
+    for itemName, itemCount in pairs(query) do
+        if type(itemName) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
 
-        local inventoryCount = inventory.items[name]
-        if inventoryCount == nil or inventoryCount < count then
-            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_SSrv: not enough (="..count..") "..name.." items in inventory (="..(inventoryCount or 0)..") of chest "..id..".") return {success = false}
+        local inventoryCount = inventory.items[itemName]
+        if inventoryCount == nil or inventoryCount < itemCount then
+            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_SSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..") of chest "..id..".") return {success = false}
         end
     end
 
