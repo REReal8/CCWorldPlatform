@@ -20,8 +20,7 @@ function PlantFirstSapling_MetaData(settleData)
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition the settler starts without fuel
         itemsNeeded = {
---            {itemName = "minecraft:crafting_table", itemCount = 1},
-            {itemName = "minecraft:birch_sapling", itemCount = 1}
+            ["minecraft:birch_sapling"] = 1,
         }
     }
 end
@@ -235,9 +234,9 @@ function RemainingSettle_MetaData(settleData)
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
         itemsNeeded = {
-            {itemName = "minecraft:crafting_table", itemCount = 1},
-            {itemName = "minecraft:birch_sapling", itemCount = 1},
-            {itemName = "minecraft:birch_log", itemCount = 2},
+            ["minecraft:crafting_table"] = 1,
+            ["minecraft:birch_sapling"] = 1,
+            ["minecraft:birch_log"] = 2
         }
     }
 end

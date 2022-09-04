@@ -11,11 +11,12 @@ function Craft_MetaData(craftData)
     -- check input
     if type(craftData) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: craftData not a valid") return {success = false} end
     if type(craftData.recipe) ~= "table" or type(craftData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: recipe not valid") return {success = false} end
-    if type(craftData.itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: itemCount not valid") return {success = false} end
+    local itemCount = craftData.itemCount
+    if type(itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: Invalid itemCount") return {success = false} end
     if type(craftData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: workingLocation not valid") return {success = false} end
- 
+
     -- determine needed items
-    local itemList = Craft_ItemsNeeded(craftData.recipe, craftData.itemCount)
+    local itemList = Craft_ItemsNeeded(craftData.recipe, itemCount)
     local workingLocation = craftData.workingLocation
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
@@ -30,10 +31,10 @@ function Craft_MetaData(craftData)
     }
 end
 
-function Craft_ItemsNeeded(recipe, itemCount)
+function Craft_ItemsNeeded(recipe, itemProduceCount)
     -- check input
     if type(recipe) ~= "table" or type(recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: recipe not valid") return {success = false} end
-    if type(itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: itemCount not valid") return {success = false} end
+    if type(itemProduceCount) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: itemProduceCount not valid") return {success = false} end
 
     -- build item list
     local itemList = {}
@@ -41,32 +42,17 @@ function Craft_ItemsNeeded(recipe, itemCount)
     for k, ingredientInfo in pairs(recipe) do
         -- loop on only ingredients (skip yield)
         if type(ingredientInfo) == "table" then
-            local itemName = ingredientInfo.itemName
-
-            -- find item in itemlist (and increment counter if found)
-            local itemAlreadyInList = false
-            for j, item in ipairs(itemList) do
-                -- right item?
-                if item.itemName == itemName then
-                    item.itemCount = item.itemCount + ingredientInfo.itemCount
-
-                    itemAlreadyInList = true
-                    break
-                end
-            end
-
-            -- add new item to itemlist
-            if not itemAlreadyInList then
-                table.insert(itemList, {itemName = itemName, itemCount = ingredientInfo.itemCount})
-            end
+            -- increment counter
+            local ingredientItemName = ingredientInfo.itemName
+            itemList[ingredientItemName] = (itemList[ingredientItemName] or 0) + ingredientInfo.itemCount
         elseif type(ingredientInfo) == "number" then
             yield = ingredientInfo
         end
     end
 
-    -- correct for yield and itemCount
-    for i, item in ipairs(itemList) do
-        item.itemCount = item.itemCount * itemCount / yield
+    -- correct for yield and itemProduceCount
+    for itemName, itemCount in pairs(itemList) do
+        itemList[itemName] = itemList[itemName] * itemProduceCount / yield
     end
 
     -- return itemList
@@ -93,12 +79,13 @@ function Craft_Task(craftData)
     -- check input
     if type(craftData) ~= "table" then corelog.Error("role_alchemist.Craft_Task: craftData not a valid") return {success = false} end
     if type(craftData.recipe) ~= "table" or type(craftData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_Task: recipe not valid") return {success = false} end
-    if type(craftData.itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_Task: itemCount not valid") return {success = false} end
+    local itemCount = craftData.itemCount
+    if type(itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_Task: Invalid itemCount") return {success = false} end
     if type(craftData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_Task: workingLocation not valid") return {success = false} end
 
     -- calculate how many times we need to "do" the recipe
     local crafting  = craftData.recipe
-    local times     = math.ceil(craftData.itemCount / crafting.yield)
+    local times     = math.ceil(itemCount / crafting.yield)
 
     -- only if we get an location, not needed when working from inventory
     -- ToDo: consider if we need to keep this at this level
@@ -178,13 +165,9 @@ function Smelt_ItemsNeeded(smeltData)
 
     -- build item list
     local itemList = {
-        { itemName = smeltData.recipe.itemName, itemCount = smeltData.itemCount / smeltData.recipe.yield }
+        [smeltData.recipe.itemName] = smeltData.itemCount / smeltData.recipe.yield,
     }
-    if smeltData.fuelItemName == smeltData.recipe.itemName then
-        itemList[0].itemCount = itemList[0].itemCount + smeltData.fuelItemCount
-    else
-        table.insert(itemList, {itemName = smeltData.fuelItemName, itemCount = smeltData.fuelItemCount})
-    end
+    itemList[smeltData.fuelItemName] = (itemList[smeltData.fuelItemName] or 0) + smeltData.fuelItemCount
 
     -- return itemList
 --    corelog.WriteToLog("Smelt_ItemsNeeded: itemList="..textutils.serialise(itemList))

@@ -295,13 +295,13 @@ function MetaDataConditionsMet(metaData)
 
         -- check items in inventory
         -- ToDo: implement more efficient by using coreinventory.GetInventoryDetail
-        for i, item in ipairs(metaData.itemsNeeded) do
+        for itemName, itemCount in pairs(metaData.itemsNeeded) do
             -- get items in inventory
-            local items = coreinventory.CountItem(item.itemName)
+            local items = coreinventory.CountItem(itemName)
 
             -- enough?
-            if items < item.itemCount then
-                return false, "not enough(="..item.itemCount..") "..item.itemName.." in inventory (="..items..")"
+            if items < itemCount then
+                return false, "not enough(="..itemCount..") "..itemName.." in inventory (="..items..")"
             end
         end
     end

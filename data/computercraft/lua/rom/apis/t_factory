@@ -34,20 +34,25 @@ function T_DeleteSites()
 end
 
 function T_ProduceItem_service_Craft()
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+
     enterprise_factory.ProduceItem_ASrv({
         itemName        = "minecraft:birch_planks",
         itemAmount      = 12,
         ingredientsURL  = enterprise_turtle.GetTurtleURL_SSrv({ })
-    },
-    "coreassignment.Dummy_Callback", {"some callback data"})
+    }, callbackFunction, callbackData)
 end
 
 function T_ProduceItem_service_Smelt()
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+
     enterprise_factory.ProduceItem_ASrv({
         itemName        = "minecraft:charcoal",
         itemAmount      = 3,
         ingredientsURL  = enterprise_turtle.GetTurtleURL_SSrv({ })
-    }, "coreassignment.Dummy_Callback", {"some callback data"})
+    }, callbackFunction, callbackData)
 end
 
 function T_Craft_Task()

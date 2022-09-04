@@ -64,8 +64,8 @@ function T_MetaDataConditionsMet()
     -- test itemsNeeded
     corelog.WriteToLog("# Test itemsNeeded")
     local itemsNeeded = {
-        {itemName = "minecraft:torch", itemCount = 1},
-        {itemName = "minecraft:chest", itemCount = 1000},
+        ["minecraft:torch"] = 1,
+        ["minecraft:chest"] = 1000,
     }
     metaData.itemsNeeded = itemsNeeded
     conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)

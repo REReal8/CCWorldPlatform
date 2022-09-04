@@ -64,23 +64,9 @@ function BuildBlueprint_MetaData(buildData)
 
         -- update blueprint metadata
         metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(layerBuildData.startpoint, lastLocation) + layerMetaData.fuelNeeded
-        for i, layerItemNeeded in ipairs(layerMetaData.itemsNeeded) do
-            -- find item in itemlist (and increment counter if found)
-            local itemAlreadyInList = false
-            for j, itemNeeded in ipairs(metaData.itemsNeeded) do
-                -- right item?
-                if itemNeeded.itemName == layerItemNeeded.itemName then
-                    itemNeeded.itemCount = itemNeeded.itemCount + layerItemNeeded.itemCount
-
-                    itemAlreadyInList = true
-                    break
-                end
-            end
-
-            -- add new item to itemsNeeded
-            if not itemAlreadyInList then
-                table.insert(metaData.itemsNeeded, {itemName = layerItemNeeded.itemName, itemCount = layerItemNeeded.itemCount})
-            end
+        for layerItemName, layerItemCount in pairs(layerMetaData.itemsNeeded) do
+            -- increment item counter
+            metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
         end
 
         lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.pattern.deltaX, layerBuildData.pattern.deltaY, 0)
@@ -175,27 +161,13 @@ function BuildRectangularPattern_ItemsNeeded(pattern)
 
     local itemList = {}
     for i, object in ipairs(pattern.objectList) do
-        local itemName = object.block
+        local patternItemName = object.block
 
-        -- find item in itemlist (and increment counter if found)
-        local itemAlreadyInList = false
-        for j, item in ipairs(itemList) do
-            -- right item?
-            if item.itemName == itemName then
-                item.itemCount = item.itemCount + 1
-
-                itemAlreadyInList = true
-                break
-            end
-        end
-
-        -- add new item to itemlist
-        if not itemAlreadyInList then
-            table.insert(itemList, {itemName = itemName, itemCount = 1})
-        end
+        -- increment item counter
+        itemList[patternItemName] = (itemList[patternItemName] or 0) + 1
     end
 
-    -- return itemList
+    -- end
     return itemList
 end
 
@@ -238,13 +210,13 @@ function BuildRectangularPattern_Task(buildData)
 
     -- check if inventory has what we need
     local itemList = BuildRectangularPattern_ItemsNeeded(buildData.pattern)
-    for i, item in ipairs(itemList) do
+    for itemName, itemCount in pairs(itemList) do
         -- get items in inventory
-        local items = coreinventory.CountItem(item.itemName)
+        local inventoryItemCount = coreinventory.CountItem(itemName)
 
         -- enough?
-        if items < item.itemCount then
-            corelog.Warning("role_builder.BuildRectangularPattern_Task: Not enough(="..item.itemCount..") "..item.itemName.." (="..items..") in inventory to build the pattern")
+        if inventoryItemCount < itemCount then
+            corelog.Warning("role_builder.BuildRectangularPattern_Task: Not enough(="..itemCount..") "..itemName.." (="..inventoryItemCount..") in inventory to build the pattern")
         end
     end
 
