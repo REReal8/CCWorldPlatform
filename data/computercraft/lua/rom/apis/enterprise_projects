@@ -95,7 +95,7 @@ function AreAllTrue_QSrv(serviceData)
     local allTrue = true
     for key, serviceArgument in pairs(serviceData) do
         -- check if it's boolean
-        if type(serviceArgument) =="boolean" then
+        if type(serviceArgument) == "boolean" then
             allTrue = allTrue and serviceArgument
         end
     end
