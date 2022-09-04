@@ -152,7 +152,7 @@ function URLClass:setPathURI(pURI)
 
     if pURI ~= "" then
         local p = {}
-        local pathSegmentPattern = "%/(%a+)%=(%w+)"
+        local pathSegmentPattern = "%/(%a+)%=([%w%:]+)"
         for key, value in string.gmatch(pURI, pathSegmentPattern) do
             p[key] = value
         end
@@ -227,7 +227,7 @@ function URLClass:setURI(fullURI)
 --        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
 
     -- get  & set optional path
-    local pathURIPattern = "^([%/%w%=]+)"
+    local pathURIPattern = "^([%/%w%=%:]+)"
     local pathURI = string.match(remainingURL, pathURIPattern) or ""
 --        corelog.WriteToLog("pathURI="..(pathURI or "<nil>"))
     self:setPathURI(pathURI)
