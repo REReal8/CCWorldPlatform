@@ -110,7 +110,6 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"              , valueSource = 1, sourceKey = "success" },
                 { keyName = "success2"              , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"              , valueSource = 3, sourceKey = "success" },
             }},
         },
         returnData  = {
