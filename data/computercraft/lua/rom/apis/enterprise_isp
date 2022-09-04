@@ -47,13 +47,11 @@ function ItemsAvailableVia_SSrv(queryData) -- ToDo: investigate if this (sometim
     --]]
 
     -- check input
-    if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then
-        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData input.")
-        return {success = false}
-    end
+    if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
+    local itemQueryURL = queryData.itemQueryURL
+    if type(itemQueryURL) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemQueryURL") return {success = false} end
 
     -- get ISH
-    local itemQueryURL = queryData.itemQueryURL
 --    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
     local host = itemQueryURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host input.") return {success = false} end
@@ -94,23 +92,17 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --]]
 
     -- check input
-    if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "table" or type(transferData.destinationURL) ~= "table" then
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData input.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(transferData) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceURL = url.URLClass:new(transferData.sourceURL)
+    if type(sourceURL) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationURL = url.URLClass:new(transferData.destinationURL)
+    if type(destinationURL) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- determine source enterprise name
-    local sourceURL = url.URLClass:new(transferData.sourceURL)
     local sourceHost = sourceURL:getHost()
-    if type(sourceHost) ~= "string" then
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(sourceHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceEnterprise = nil
     if sourceHost == "turtle" then
         sourceEnterprise = "enterprise_turtle"
@@ -121,12 +113,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
 
     -- determine destination enterprise name
-    local destinationURL = url.URLClass:new(transferData.destinationURL)
     local destinationHost = destinationURL:getHost()
-    if type(destinationHost) ~= "string" then
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(destinationHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationEnterprise = nil
     if destinationHost == "turtle" then
         destinationEnterprise = "enterprise_turtle"
