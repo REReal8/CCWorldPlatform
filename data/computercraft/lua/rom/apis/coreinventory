@@ -104,8 +104,8 @@ function SelectItem(itemName)
 end
 
 function CountItem(itemName)
-    -- keep count
-    local count = 0
+    -- keep itemCount
+    local itemCount = 0
 
     -- loop all slots
     for slot=1,16 do
@@ -114,11 +114,11 @@ function CountItem(itemName)
         local itemDetail = GetItemDetail(slot)
 
         -- right item?
-        if type(itemDetail) == "table" and itemDetail.name == itemName then count = count + itemDetail.count end
+        if type(itemDetail) == "table" and itemDetail.name == itemName then itemCount = itemCount + itemDetail.count end
     end
 
     -- we're done
-    return count
+    return itemCount
 end
 
 function GetAllItems(direction)
