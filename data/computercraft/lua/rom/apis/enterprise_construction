@@ -91,6 +91,11 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     -- construct assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
+    -- update materialsURL with itemsNeeded
+    materialsURL:setQuery(metaData.itemsNeeded)
+    corelog.WriteToLog("materialsURL="..materialsURL:getURI())
+    -- ToDo: use materialsURL
+
     -- add assignment
     coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callback, callbackData)
 end
