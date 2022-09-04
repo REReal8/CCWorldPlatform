@@ -72,14 +72,18 @@ local testBlueprint2 = {
     }
 }
 
-function T_BuildRectangularPattern_Service()
+function T_BuildRectangularPattern_FromTurtle()
     -- test service 1
-    corelog.WriteToLog("# Test 1")
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
+    corelog.WriteToLog("# Test BuildRectangularPattern_ASrv (from turtle)")
+    local buildData = {
+        startpoint = testStartLocation,
+        buildFromAbove = true,
+        pattern = testBuildPattern1,
+    }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
-    corelog.WriteToLog("T_enterprise_construction calling BuildRectangularPattern_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
+    corelog.WriteToLog("T_construction calling BuildRectangularPattern_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callbackFunction, callbackData)
 end
 
@@ -89,7 +93,7 @@ function T_BuildBlueprint_Service()
     local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint1}
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
-    corelog.WriteToLog("T_enterprise_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
+    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
     enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callbackFunction, callbackData)
 end
 
@@ -102,7 +106,7 @@ function T_role_builder_MetaDatas()
 end
 
 function T_BuildRectangularPattern_Task()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, pattern = testBuildPattern1}
 
     role_builder.BuildRectangularPattern_Task(buildData)
 end
