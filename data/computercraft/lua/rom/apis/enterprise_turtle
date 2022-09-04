@@ -293,6 +293,79 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     return coreutils.DoCallback(callback, callbackData, {success = true})
 end
 
+function GetTaskMetaData_SSrv(serviceData) -- ToDo: consider removing if this service is never used (currently not (anymore))
+    --[[
+        This sync public service retrieves meta data from a Task metadata function.
+
+        A metadata function takes one parameter
+            taskData                    - (table) data to supply to metadata function to be able to determine the metadata of the Task
+        and return
+            metaData                    - (table) with metadata of the task function
+
+        Return value:
+                                        - (table)
+            success                     - (boolean) whether service was executed successfully.
+            metaData                    - (table) with metadata on the Task
+
+        Parameters:
+            serviceData                 - (table) data for this service
+                metaDataFunctionName    - (string) name of the the task function to execute
+                taskData                - (table) data to supply to task function to be able to perform the task
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetTaskMetaData_SSrv: Invalid serviceData") return {success = false} end
+    local metaDataFunctionName = serviceData.metaDataFunctionName
+    if type(metaDataFunctionName) ~= "string" then corelog.Error("enterprise_turtle.GetTaskMetaData_SSrv: Invalid metaDataFunctionName") return {success = false} end
+    local taskData = serviceData.taskData
+    if type(taskData) ~= "table" then corelog.Error("enterprise_turtle.GetTaskMetaData_SSrv: Invalid taskData") return {success = false} end
+
+    -- get metaData
+    local metaData = coreutils.DoSyncService(metaDataFunctionName, taskData)
+
+    -- end
+    local serviceResults = {
+        success = true,
+        metaData = metaData,
+    }
+    return serviceResults
+end
+
+function DoAssignment_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async public service executes a Task with an assignment. 
+
+        A task function takes one parameter
+            taskData                - (table) data to supply to task function to be able to perform the task
+        and return
+            taskResult              - (table) with return data of the task function
+
+        Async service return value (to callback):
+            task result             - (table) results of the task function
+
+        Parameters:
+            serviceData             - (table) data for this service
+                taskFunctionName    - (string) name of the the task function to execute
+                metaData            - (table) with metadata on the Task
+                taskData            - (table) data to supply to task function to be able to perform the task
+            callback                - (string) name of function to call once service (assignment) is ready
+            callbackData            - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.DoAssignment_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local taskFunctionName = serviceData.taskFunctionName
+    if type(taskFunctionName) ~= "string" then corelog.Error("enterprise_turtle.DoAssignment_ASrv: Invalid taskFunctionName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local metaData = serviceData.metaData
+    if type(metaData) ~= "table" then corelog.Error("enterprise_turtle.DoAssignment_ASrv: Invalid metaData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local taskData = serviceData.taskData
+    if type(taskData) ~= "table" then corelog.Error("enterprise_turtle.DoAssignment_ASrv: Invalid taskData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- add assignment
+    corelog.WriteToLog(">Doing Assignment "..taskFunctionName..".")
+    coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
+end
+
 function GetMetaDataAndDoAssignment_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service wraps around a turtle assignment. It first retrieves meta data from a metadata function, then it 

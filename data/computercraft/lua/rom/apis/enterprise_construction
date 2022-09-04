@@ -88,16 +88,57 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- construct assignment metadata
+    -- get assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
     -- update materialsURL with itemsNeeded
-    materialsURL:setQuery(metaData.itemsNeeded)
+    materialsURL:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
     corelog.WriteToLog("materialsURL="..materialsURL:getURI())
-    -- ToDo: use materialsURL
 
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_builder.BuildRectangularPattern_Task", buildData, callback, callbackData)
+    -- create project service data
+    local buildRectangularPatternProject = {
+        services    = {
+            { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
+                { keyName = "sourceURL"             , valueSource = 0, sourceKey = "materialsURL" },
+                { keyName = "destinationURL"        , valueSource = 0, sourceKey = "materialsLocalURL" },
+            }},
+            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+                { keyName = "taskFunctionName"      , valueSource = 0, sourceKey = "taskFunctionName" },
+                { keyName = "metaData"              , valueSource = 0, sourceKey = "metaData" },
+                { keyName = "taskData"              , valueSource = 0, sourceKey = "taskData" },
+            }},
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
+                { keyName = "success1"              , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"              , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"              , valueSource = 3, sourceKey = "success" },
+            }},
+        },
+        returnData  = {
+            { keyName = "success"                   , valueSource = 3, sourceKey = "success" },
+        }
+    }
+    local materialsLocalURL = enterprise_turtle.GetTurtleURL_SSrv({ }).url
+    local projectData = {
+        materialsURL                = materialsURL,
+        materialsLocalURL           = materialsLocalURL,
+
+        taskFunctionName            = "role_builder.BuildRectangularPattern_Task",
+        metaData                    = metaData,
+        taskData = {
+            startpoint              = startpoint,
+            buildFromAbove          = buildFromAbove,
+            replacePresentObjects   = replacePresentObjects,
+            pattern                 = pattern,
+        }
+    }
+    local serviceData = {
+        projectDefinition = buildRectangularPatternProject,
+        projectInputData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Building pattern at "..textutils.serialise(startpoint))
+    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
