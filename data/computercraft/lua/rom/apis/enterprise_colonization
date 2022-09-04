@@ -78,7 +78,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     -- create project definition
     local createNewWorldProject = {
         services    = {
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+            { serviceName = "enterprise_turtle.GetMetaDataAndDoAssignment_ASrv", async = true, input = {
                 { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "plantFirstSaplingTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
@@ -87,7 +87,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "startLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion0" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+            { serviceName = "enterprise_turtle.GetMetaDataAndDoAssignment_ASrv", async = true, input = {
                 { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "waitFirstTreeTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
@@ -99,7 +99,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "itemAmount"        , valueSource = 0, sourceKey = "planksAmount1" },
                 { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+            { serviceName = "enterprise_turtle.GetMetaDataAndDoAssignment_ASrv", async = true, input = {
                 { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "chopFirstTreeTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
@@ -109,12 +109,12 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "itemAmount"        , valueSource = 6, sourceKey = "planksToProduceForFuel" },
                 { keyName = "ingredientsURL"    , valueSource = 4, sourceKey = "url" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+            { serviceName = "enterprise_turtle.GetMetaDataAndDoAssignment_ASrv", async = true, input = {
                 { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "refuelTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+            { serviceName = "enterprise_turtle.GetMetaDataAndDoAssignment_ASrv", async = true, input = {
                 { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "collectCobbleStoneTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
@@ -132,7 +132,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "baseLocation"      , valueSource = 0, sourceKey = "factoryLocation" },
                 { keyName = "siteVersion"       , valueSource = 0, sourceKey = "factoryVersion1" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
+            { serviceName = "enterprise_turtle.GetMetaDataAndDoAssignment_ASrv", async = true, input = {
                 { keyName = "roleFilename"      , valueSource = 0, sourceKey = "role_settler" },
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "remainingSettleTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
