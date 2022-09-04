@@ -340,6 +340,7 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
 
     -- add assignment
     local taskFunctionName = roleFilename.."."..taskName.."_Task"
+    corelog.WriteToLog(">Doing Assignment "..taskFunctionName..".")
     coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
 end
 
