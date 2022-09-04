@@ -1,4 +1,5 @@
 local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation2  = {x= 6, y= 0, z= 1, dx=0, dy=1}
 
 local testBuildPattern1 = {
     deltaX      = 4,
@@ -79,12 +80,78 @@ function T_BuildRectangularPattern_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         pattern = testBuildPattern1,
+        materialsURL = enterprise_turtle.GetTurtleURL_SSrv({ }).url
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
     corelog.WriteToLog("T_construction calling BuildRectangularPattern_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callbackFunction, callbackData)
+end
+
+function T_BuildRectangularPattern_FromChest()
+    -- test service 
+    corelog.WriteToLog("# Test BuildRectangularPattern_ASrv (from chest)")
+
+    -- create project definition
+    local buildRectangularPattern_ASrvProject = {
+        services    = {
+            -- preparation
+            { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
+                { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition" },
+                { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData" },
+            }},
+            { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
+                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+            }},
+
+            -- BuildRectangularPattern_ASrv
+            { serviceName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, input = {
+                { keyName = "startpoint"        , valueSource = 0, sourceKey = "startpoint" },
+                { keyName = "buildFromAbove"    , valueSource = 0, sourceKey = "buildFromAbove" },
+                { keyName = "pattern"           , valueSource = 0, sourceKey = "pattern" },
+
+                { keyName = "materialsURL"      , valueSource = 2, sourceKey = "url" },
+            }},
+
+            -- cleanup
+            { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
+                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+            }},
+
+            -- wrap-up
+            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
+                { keyName = "success4"          , valueSource = 4, sourceKey = "success" },
+            }},
+        },
+        returnData  = {
+            { keyName = "success", valueSource = 5, sourceKey = "success" },
+        }
+    }
+    local serviceData = {
+        projectDefinition = buildRectangularPattern_ASrvProject,
+        projectInputData = {
+            -- chest
+            projectDefinition   = t_chests.GetRegisterAndUpdateChestProject(),
+            projectInputData    = {
+                chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
+                chestAccessDirection = "top",
+            },
+
+            -- build data
+            startpoint          = testStartLocation2,
+            buildFromAbove      = true,
+            pattern             = testBuildPattern1,
+        },
+    }
+
+    -- start project
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function T_BuildBlueprint_Service()
