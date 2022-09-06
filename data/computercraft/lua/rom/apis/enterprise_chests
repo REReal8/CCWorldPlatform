@@ -335,62 +335,63 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the items were succesfully transferred to a turtle
-                turtleURL       - (table) a URL stating the turtle and the items it has gotton in it's inventory
+                                    - (table)
+                success             - (boolean) whether the items were succesfully transferred to a turtle
+                turtleItemsLocation - (URL) stating a specific turtle and the items it has gotton in it's inventory
 
         Parameters:
-            transferData        - (table) data about the transfer
-                sourceURL       - (table) a URL stating where the items that need transfer can be located (in/ by this ISH)
-                                    (the "query" component of the URL specifies the items to be transferred)
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function                                                
+            transferData            - (table) data about the transfer
+                sourceItemsLocation - (URL) stating where the items that need transfer can be located
+                                        (the "query" component of the URL specifies the items to be transferred)
+                                        (the "host" component of the URL should specify this host (i.e. a chest) where the items are located)                                        
+            callback                - (string) name of function to call once service is ready
+            callbackData            - (table) data to supply to callback function                                                
     --]]
 
     -- check input
     if type(transferData) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local sourceURL = url.URLClass:new(transferData.sourceURL)
-    if type(sourceURL) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceItemsLocation = url.URLClass:new(transferData.sourceItemsLocation)
+    if type(sourceItemsLocation) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check source is for this enterprise
-    local sourceIsChest = IsChestURL_QSrv({ aURL = sourceURL})
-    if not sourceIsChest.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceIsChest = IsChestURL_QSrv({ aURL = sourceItemsLocation})
+    if not sourceIsChest.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocation:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get id
-    local id = sourceURL:getPath().id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid path input: "..textutils.serialize(sourceURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local id = sourceItemsLocation:getPath().id
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid path input: "..textutils.serialize(sourceItemsLocation:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local getItemsIntoTurtleProject = {
         services    = {
             { serviceName = "enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv", async = true, input = {
-                { keyName = "id"        , valueSource = 0, sourceKey = "id" },
-                { keyName = "itemQuery" , valueSource = 0, sourceKey = "itemQuery" },
+                { keyName = "id"                , valueSource = 0, sourceKey = "id" },
+                { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemQuery" },
             }},
             { serviceName = "enterprise_turtle.GetTurtleURL_SSrv", async = false, input = {
-                { keyName = "turtleId"  , valueSource = 1, sourceKey = "turtleId" },
-                { keyName = "itemQuery" , valueSource = 1, sourceKey = "itemResultQuery" },
+                { keyName = "turtleId"          , valueSource = 1, sourceKey = "turtleId" },
+                { keyName = "itemQuery"         , valueSource = 1, sourceKey = "itemResultQuery" },
             }},
             { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
-                { keyName = "id"        , valueSource = 0, sourceKey = "id" },
-                { keyName = "slots"     , valueSource = 1, sourceKey = "slots" },
+                { keyName = "id"                , valueSource = 0, sourceKey = "id" },
+                { keyName = "slots"             , valueSource = 1, sourceKey = "slots" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"  , valueSource = 3, sourceKey = "success" },
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 4, sourceKey = "success" },
-            { keyName = "turtleURL", valueSource = 2, sourceKey = "url" },
+            { keyName = "success"               , valueSource = 4, sourceKey = "success" },
+            { keyName = "turtleItemsLocation"   , valueSource = 2, sourceKey = "url" },
         }
     }
     local projectData = {
         id          = id,
-        itemQuery   = sourceURL:getQuery()
+        itemQuery   = sourceItemsLocation:getQuery()
     }
     local serviceData = {
         projectDefinition = getItemsIntoTurtleProject,
@@ -398,7 +399,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Getting "..sourceURL:getQueryURI().." from chest "..projectData.id.." into a turtle.")
+    corelog.WriteToLog(">Getting "..sourceItemsLocation:getQueryURI().." from chest "..id.." into a turtle.")
     enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
@@ -412,57 +413,66 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the items were succesfully transferred to the ISH.
+                                        - (table)
+                success                 - (boolean) whether the items were succesfully transferred to the ISH.
+                destinationItemsLocation- (URL) stating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocation, 
+                                            the "path" should be a specific chest, and the "query" should be equal to the "query" component of the turtleSourceURL)
 
         Parameters:
-            transferData        - (table) data about the transfer
-                turtleSourceURL - (table) a URL stating the turtle and items in it's inventory that need to be transferred
-                destinationURL  - (table) a URL stating where the items need to be transferred to (in/ by this ISH)
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function                                                
+            transferData                - (table) data about the transfer
+                turtleItemsLocation     - (URL) stating a specific turtle and the items in it's inventory that need to be put
+                destinationHostLocation - (URL) stating where the items need to be transferred to (i.e. a chest in this host)
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function                                                
     --]]
 
     -- check input
     if type(transferData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local turtleSourceURL = url.URLClass:new(transferData.turtleSourceURL)
-    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationURL = url.URLClass:new(transferData.destinationURL)
-    if type(destinationURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destinationURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleItemsLocation = url.URLClass:new(transferData.turtleItemsLocation)
+    if type(turtleItemsLocation) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid turtleItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocation = url.URLClass:new(transferData.destinationHostLocation)
+    if type(destinationHostLocation) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destinationHostLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- check destination is for this enterprise
-    local destinationIsChest = IsChestURL_QSrv({ aURL = destinationURL})
-    if not destinationIsChest.success then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- check destination is for this enterprise (i.e. a chest)
+    local destinationIsChest = IsChestURL_QSrv({ aURL = destinationHostLocation})
+    if not destinationIsChest.success then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destination host (="..destinationHostLocation:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get id
-    local id = destinationURL:getPath().id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid path input: "..textutils.serialize(destinationURL:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local id = destinationHostLocation:getPath().id
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid path input: "..textutils.serialize(destinationHostLocation:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- set (expected) destinationItemsLocation
+    local destinationItemsLocation = url.URLClass:new(destinationHostLocation)
+    destinationItemsLocation:setQuery(coreutils.DeepCopy(turtleItemsLocation:getQuery()))
 
     -- create project definition
     local putItemsIntoChestProject = {
         services    = {
             { serviceName = "enterprise_chests.PutItemsFromTurtleIntoChest_ASrv", async = true, input = {
-                { keyName = "id"                , valueSource = 0, sourceKey = "id" },
-                { keyName = "turtleSourceURL"   , valueSource = 0, sourceKey = "turtleSourceURL" },
+                { keyName = "id"                    , valueSource = 0, sourceKey = "id" },
+                { keyName = "turtleItemsLocation"   , valueSource = 0, sourceKey = "turtleItemsLocation" },
             }},
             { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
-                { keyName = "id"                , valueSource = 0, sourceKey = "id" },
-                { keyName = "slots"             , valueSource = 1, sourceKey = "slots" },
+                { keyName = "id"                    , valueSource = 0, sourceKey = "id" },
+                { keyName = "slots"                 , valueSource = 1, sourceKey = "slots" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+                { keyName = "success1"              , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"              , valueSource = 2, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 3, sourceKey = "success" },
+            { keyName = "success"                   , valueSource = 3, sourceKey = "success" },
+            { keyName = "destinationItemsLocation"  , valueSource = 0, sourceKey = "destinationItemsLocation" },
         }
     }
     local projectData = {
-        id              = id,
-        turtleSourceURL = turtleSourceURL
+        id                      = id,
+        turtleItemsLocation     = turtleItemsLocation,
+        destinationItemsLocation= destinationItemsLocation
     }
     local serviceData = {
         projectDefinition = putItemsIntoChestProject,
@@ -470,7 +480,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Putting items from turtle URL "..turtleSourceURL:getURI().." into chest "..projectData.id..".")
+    corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocation:getURI().." into chest "..projectData.id..".")
     enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
@@ -642,30 +652,30 @@ function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the items were succesfully put
-                slots           - (table) the slots inventory of the chest (after the items have been put)
+                                    - (table)
+                success             - (boolean) whether the items were succesfully put
+                slots               - (table) the slots inventory of the chest (after the items have been put)
 
         Parameters:
-            serviceData         - (table) data about the service
-                turtleSourceURL - (table) a URL stating the turtle and items in it's inventory that need to be transferred
-                id              - (string) id of the chest
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
+            serviceData             - (table) data about the service
+                turtleItemsLocation - (URL) stating a specific turtle and the items in it's inventory that need to be put
+                id                  - (string) id of the chest
+            callback                - (string) name of function to call once service is ready
+            callbackData            - (table) data to supply to callback function
     ]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local turtleSourceURL = url.URLClass:new(serviceData.turtleSourceURL)
-    if type(turtleSourceURL) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid turtleSourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleItemsLocation = url.URLClass:new(serviceData.turtleItemsLocation)
+    if type(turtleItemsLocation) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid turtleItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local id = serviceData.id
     if type(id) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check source is a turtle
-    local sourceIsTurtle = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleSourceURL})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleSourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceIsTurtle = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocation})
+    if not sourceIsTurtle.success then corelog.Error("enterprise_chests.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocation:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get the chest
     local chest = GetChestById(id)
@@ -673,8 +683,8 @@ function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
 
     -- put with an assignment
     local taskData = {
-        turtleId        = turtleSourceURL:getPort(),
-        itemQuery       = turtleSourceURL:getQuery(),
+        turtleId        = turtleItemsLocation:getPort(),
+        itemQuery       = turtleItemsLocation:getQuery(),
         location        = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
     }

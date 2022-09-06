@@ -90,7 +90,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
                 sourceItemsLocation     - (URL) stating where the items that need transfer can be located 
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL specifies the host where the items are located)
-                destinationHostLocation - (URL) stating the destination host location (of the the items)
+                destinationHostLocation - (URL) stating where the items need to be transferred to
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function            
     --]]
@@ -132,24 +132,25 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local transferItemsProject = {
         services    = {
             { serviceName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, input = {
-                { keyName = "sourceURL"         , valueSource = 0, sourceKey = "sourceURL" },
+                { keyName = "sourceItemsLocation"       , valueSource = 0, sourceKey = "sourceItemsLocation" },
             }},
             { serviceName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, input = {
-                { keyName = "turtleSourceURL"   , valueSource = 1, sourceKey = "turtleURL" },
-                { keyName = "destinationURL"    , valueSource = 0, sourceKey = "destinationURL" },
+                { keyName = "turtleItemsLocation"       , valueSource = 1, sourceKey = "turtleItemsLocation" },
+                { keyName = "destinationHostLocation"   , valueSource = 0, sourceKey = "destinationHostLocation" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 3, sourceKey = "success" },
+            { keyName = "success"                       , valueSource = 3, sourceKey = "success" },
+            { keyName = "destinationItemsLocation"      , valueSource = 2, sourceKey = "destinationItemsLocation" },
         }
     }
     local projectData = {
-        sourceURL       = sourceItemsLocation,
-        destinationURL  = destinationHostLocation,
+        sourceItemsLocation     = sourceItemsLocation,
+        destinationHostLocation = destinationHostLocation,
     }
     local serviceData = {
         projectDefinition   = transferItemsProject,
@@ -157,7 +158,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Transferring items from "..projectData.sourceURL:getURI().." to "..projectData.destinationURL:getURI()..".")
+    corelog.WriteToLog(">Transferring items from "..sourceItemsLocation:getURI().." to "..destinationHostLocation:getURI()..".")
     enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 
     -- end

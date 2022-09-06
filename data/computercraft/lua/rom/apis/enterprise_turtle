@@ -96,7 +96,7 @@ function IsTurtleURL_QSrv(queryData)
     local host = aURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_turtle.IsTurtleURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
     if host == db.hostName then
-        return {success = true} -- ToDo: consider distinquishing between service failure and question answer
+        return {success = true}
     else
         return {success = false}
     end
@@ -159,37 +159,33 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the items were succesfully transferred to a turtle
-                turtleURL       - (table) a URL stating the turtle and the items it has gotton in it's inventory
+                                    - (table)
+                success             - (boolean) whether the items were succesfully transferred to a turtle
+                turtleItemsLocation - (URL) stating a specific turtle and the items it has gotton in it's inventory
 
         Parameters:
-            transferData        - (table) data about the transfer
-                sourceURL       - (table) a URL stating where the items that need transfer can be located (in/ by this ISH)
-                                    (the "query" component of the URL specifies the items to be transferred)
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function                                                
+            transferData            - (table) data about the transfer
+                sourceItemsLocation - (URL) stating where the items that need transfer can be located
+                                        (the "query" component of the URL specifies the items to be transferred)
+                                        (the "host" component of the URL should specify this host (i.e. a turtle) where the items are located)
+            callback                - (string) name of function to call once service is ready
+            callbackData            - (table) data to supply to callback function                                                
     --]]
 
     -- check input
-    if type(transferData) ~= "table" or type(transferData.sourceURL) ~= "table" then
-        corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid transferData input.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error("enterprise_isp.GetItemsIntoTurtle_ASrv: Invalid callback function.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(transferData) ~= "table" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceItemsLocation = url.URLClass:new(transferData.sourceItemsLocation)
+    if type(sourceItemsLocation) ~= "table" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid sourceItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check source is for this enterprise
-    local sourceURL = url.URLClass:new(transferData.sourceURL) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
-    local sourceIsTurtle = IsTurtleURL_QSrv({ aURL = sourceURL})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtle source URL (="..sourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceIsTurtle = IsTurtleURL_QSrv({ aURL = sourceItemsLocation})
+    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtle source URL (="..sourceItemsLocation:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check turtle id's
     local currentTurtleId = os.getComputerID()
-    local sourceTurtleId = sourceURL:getPort()
+    local sourceTurtleId = sourceItemsLocation:getPort()
     if sourceTurtleId and currentTurtleId ~= sourceTurtleId then
         corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Get items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).")
         return coreutils.DoCallback(callback, callbackData, {success = false})
@@ -197,15 +193,15 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
 
     -- do the (virtual) transfer
 
-    -- create (partial) output turtleURL
+    -- create (partial) output turtleItemsLocation
     local getURLResult = GetTurtleURL_SSrv({turtleId = currentTurtleId})
-    if not getURLResult.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Failed creating turtleURL.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local turtleURL = getURLResult.url
-    if turtleURL == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleURL created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not getURLResult.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Failed creating turtleItemsLocation.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleItemsLocation = getURLResult.url
+    if turtleItemsLocation == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocation created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check if current turtle has the requested items in it's inventory
     -- ToDo: consider also checking if items are available (i.e. not reserved)
-    local sourceQuery = sourceURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    local sourceQuery = sourceItemsLocation:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(sourceQuery) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -216,10 +212,13 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
             corelog.WriteToLog("enterprise_turtle.GetItemsIntoTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
         end
     end
-    turtleURL:setQuery(sourceQuery)
+    turtleItemsLocation:setQuery(sourceQuery)
 
     -- end
-    local result = {success = true, turtleURL = turtleURL}
+    local result = {
+        success             = true,
+        turtleItemsLocation = turtleItemsLocation,
+    }
     return coreutils.DoCallback(callback, callbackData, result)
 end
 
@@ -233,40 +232,39 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the items were succesfully transferred to the ISH.
+                                        - (table)
+                success                 - (boolean) whether the items were succesfully transferred to the ISH.
+                destinationItemsLocation- (URL) stating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocation, 
+                                            the "port" should be a specific turtle, and the "query" should be equal to the "query" component of the turtleSourceURL)
 
         Parameters:
-            transferData        - (table) data about the transfer
-                turtleSourceURL - (table) a URL stating the turtle and items in it's inventory that need to be transferred
-                destinationURL  - (table) a URL stating where the items need to be transferred to (in/ by this ISH)
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function                                                
+            transferData                - (table) data about the transfer
+                turtleItemsLocation     - (URL) stating a specific turtle and the items in it's inventory that need to be put
+                destinationHostLocation - (URL) stating where the items need to be transferred to (i.e. a turtle in this host)
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function                                                
     --]]
 
     -- check input
-    if type(transferData) ~= "table" or type(transferData.turtleSourceURL) ~= "table" or type(transferData.destinationURL) ~= "table" then
-        corelog.Error("enterprise_isp.PutItemsFromTurtle_ASrv: Invalid transferData input.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-    if type(callback) ~= "string" then 
-        corelog.Error("enterprise_isp.PutItemsFromTurtle_ASrv: Invalid callback function.")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    if type(transferData) ~= "table" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleItemsLocation = url.URLClass:new(transferData.turtleItemsLocation) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
+    if type(turtleItemsLocation) ~= "table" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtleItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocation = url.URLClass:new(transferData.destinationHostLocation) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
+    if type(destinationHostLocation) ~= "table" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destinationHostLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- check source is a turtle
-    local turtleSourceURL = url.URLClass:new(transferData.turtleSourceURL) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
-    local sourceIsTurtle = IsTurtleURL_QSrv({ aURL = turtleSourceURL})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source URL (="..turtleSourceURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceIsTurtle = IsTurtleURL_QSrv({ aURL = turtleItemsLocation})
+    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source URL (="..turtleItemsLocation:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- check destination is for this enterprise
-    local destinationURL = url.URLClass:new(transferData.destinationURL) -- needed in case service was called indirectly via a loadstring (hence use of serialize)
-    local destinationIsTurtle = IsTurtleURL_QSrv({ aURL = destinationURL})
-    if not destinationIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationURL:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- check destination is for this enterprise (i.e. a turtle)
+    local destinationIsTurtle = IsTurtleURL_QSrv({ aURL = destinationHostLocation})
+    if not destinationIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationHostLocation:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check turtle id's
-    local sourceTurtleId = turtleSourceURL:getPort()
+    local sourceTurtleId = turtleItemsLocation:getPort()
     if sourceTurtleId == nil then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source input (i.e., no turtle id).") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local currentTurtleId = os.getComputerID()
     if currentTurtleId ~= sourceTurtleId then
@@ -274,10 +272,8 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
-    -- do the (virtual) transfer
-
-    -- check if destination/source/current turtle has the items in it's inventory
-    local sourceQuery = turtleSourceURL:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    -- do the (virtual) transfer, i.e. check if source = current = destination turtle has the items in it's inventory
+    local sourceQuery = turtleItemsLocation:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(sourceQuery) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -285,12 +281,17 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_turtle.PutItemsFromTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
+            corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
         end
     end
+    local destinationItemsLocation = url.URLClass:new(turtleItemsLocation)
 
     -- end
-    return coreutils.DoCallback(callback, callbackData, {success = true})
+    local result = {
+        success                     = true,
+        destinationItemsLocation    = destinationItemsLocation,
+    }
+    return coreutils.DoCallback(callback, callbackData, result)
 end
 
 function GetTaskMetaData_SSrv(serviceData) -- ToDo: consider removing if this service is never used (currently not (anymore))
