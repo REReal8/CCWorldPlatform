@@ -101,6 +101,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocation return value 
     --          of that service should specify which turtle has the items in it's inventory.
     local materialsLocalHostLocation = enterprise_turtle.GetISHURL()
+    corelog.WriteToLog("materialsLocalHostLocation="..materialsLocalHostLocation:getURI())
 
     -- create project service data
     local buildRectangularPatternProject = {
