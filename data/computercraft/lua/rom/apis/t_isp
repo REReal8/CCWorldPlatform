@@ -19,19 +19,19 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
         services    = {
             -- preparation
             { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
-                { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition1" },
-                { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData1" },
+                { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition1" },
+                { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData1" },
             }},
             { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
-                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
-                { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemsToTransferQuery" },
+                { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
+                { keyName = "itemQuery"                 , valueSource = 0, sourceKey = "itemsToTransferQuery" },
             }},
             { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
-                { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition2" },
-                { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData2" },
+                { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition2" },
+                { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData2" },
             }},
             { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
-                { keyName = "id"                , valueSource = 3, sourceKey = "id" },
+                { keyName = "id"                        , valueSource = 3, sourceKey = "id" },
             }},
 
             -- TransferItemsFromTo_ASrv
@@ -42,25 +42,26 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
 
             -- cleanup
             { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
-                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+                { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
             }},
             { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
-                { keyName = "id"                , valueSource = 3, sourceKey = "id" },
+                { keyName = "id"                        , valueSource = 3, sourceKey = "id" },
             }},
 
             -- wrap-up
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
-                { keyName = "success4"          , valueSource = 4, sourceKey = "success" },
-                { keyName = "success5"          , valueSource = 5, sourceKey = "success" },
-                { keyName = "success6"          , valueSource = 5, sourceKey = "success" },
-                { keyName = "success7"          , valueSource = 5, sourceKey = "success" },
+                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"                  , valueSource = 3, sourceKey = "success" },
+                { keyName = "success4"                  , valueSource = 4, sourceKey = "success" },
+                { keyName = "success5"                  , valueSource = 5, sourceKey = "success" },
+                { keyName = "success6"                  , valueSource = 5, sourceKey = "success" },
+                { keyName = "success7"                  , valueSource = 5, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 8, sourceKey = "success" },
+            { keyName = "success"                       , valueSource = 8, sourceKey = "success" },
+            { keyName = "destinationItemsLocation"      , valueSource = 5, sourceKey = "destinationItemsLocation" },
         }
     }
     local serviceData = {
@@ -69,7 +70,8 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
             -- chest 1
             projectDefinition1 = t_chests.GetRegisterAndUpdateChestProject(),
             projectInputData1 = {
-                chestLocation        = {x= 14, y= 17, z= 1, dx=0, dy=1},
+--                chestLocation        = {x= 14, y= 17, z= 1, dx=0, dy=1},
+                chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
                 chestAccessDirection = "top",
             },
 
@@ -82,7 +84,8 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
             -- chest 2
             projectDefinition2 = t_chests.GetRegisterAndUpdateChestProject(),
             projectInputData2 = {
-                chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
+--                chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
+                chestLocation        = {x= 8, y= 5, z= 1, dx=0, dy=1},
                 chestAccessDirection = "back",
             },
 
