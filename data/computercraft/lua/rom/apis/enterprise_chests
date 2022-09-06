@@ -12,7 +12,8 @@ local db = {
     Furthermore it provides the following additional services
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
-        GetChestURL_SSrv        - provide the URL of a chest
+        GetChestLocation_SSrv   - provide the URL of a chest
+        GetItemLocation_SSrv    - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 
@@ -34,9 +35,9 @@ local db = {
 --   | |
 --   |_|
 
-function GetChestURL_SSrv(serviceData)
+function GetChestLocation_SSrv(serviceData)
     --[[
-        This sync public services provides the URL of (the items in) a chest in the ISH.
+        This sync public services provides the URL of a chest in the ISH.
 
         Return value:
                                     - (table)
@@ -46,24 +47,55 @@ function GetChestURL_SSrv(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 id                  - (string) id of the chest
-                itemQuery           - (table) optional items to locate in chest
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestURL_SSrv: Invalid serviceData") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestLocation_SSrv: Invalid serviceData") return {success = false} end
     local id = serviceData.id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetChestURL_SSrv: Invalid id") return {success = false} end
-    local itemQuery = serviceData.itemQuery or {}
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetChestLocation_SSrv: Invalid id") return {success = false} end
 
     -- construct URL
     local chestURL = GetISHURL()
     chestURL:setPath({id = id})
-    chestURL:setQuery(itemQuery)
 
     -- end
     local result = {
         success = true,
         url = chestURL,
+    }
+    return result
+end
+
+function GetItemLocation_SSrv(serviceData)
+        --[[
+        This sync public services provides the URL of items in a chest in the ISH.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) wether the URL was correctly obtained
+                url                 - (table) URL of the items in a chest in the ISH
+
+        Parameters:
+            serviceData             - (table) data for this service
+                id                  - (string) id of the chest
+                itemQuery           - (table) optional items to locate in chest
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetItemLocation_SSrv: Invalid serviceData") return {success = false} end
+    local id = serviceData.id
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemLocation_SSrv: Invalid id") return {success = false} end
+    local itemQuery = serviceData.itemQuery
+    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.GetItemLocation_SSrv: Invalid itemQuery") return {success = false} end
+
+    -- construct URL
+    local itemURL = GetChestLocation_SSrv(serviceData).url
+    itemURL:setQuery(itemQuery)
+
+    -- end
+    local result = {
+        success = true,
+        url = itemURL,
     }
     return result
 end
@@ -370,7 +402,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
                 { keyName = "id"                , valueSource = 0, sourceKey = "id" },
                 { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemQuery" },
             }},
-            { serviceName = "enterprise_turtle.GetTurtleURL_SSrv", async = false, input = {
+            { serviceName = "enterprise_turtle.GetItemLocation_SSrv", async = false, input = {
                 { keyName = "turtleId"          , valueSource = 1, sourceKey = "turtleId" },
                 { keyName = "itemQuery"         , valueSource = 1, sourceKey = "itemResultQuery" },
             }},

@@ -1,6 +1,10 @@
-local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
+local itemQuery = {
+    ["minecraft:birch_log"] = 1,
+    ["minecraft:torch"]     = 5,
+}
 
 local storageURI = "ccwprp://storage"
+local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
 local storageQueryURI = storageURI.."/site=2/outputchest=4/"..queryPartURI
 local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
 local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
@@ -22,7 +26,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition1" },
                 { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData1" },
             }},
-            { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
+            { serviceName = "enterprise_chests.GetItemLocation_SSrv", async = false, input = {
                 { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
                 { keyName = "itemQuery"                 , valueSource = 0, sourceKey = "itemsToTransferQuery" },
             }},
@@ -30,7 +34,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition2" },
                 { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData2" },
             }},
-            { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
+            { serviceName = "enterprise_chests.GetChestLocation_SSrv", async = false, input = {
                 { keyName = "id"                        , valueSource = 3, sourceKey = "id" },
             }},
 
@@ -138,9 +142,8 @@ end
 function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
-    local sourceItemsLocation = enterprise_turtle.GetTurtleURL_SSrv({}).url
-    sourceItemsLocation:setQueryURI(queryPartURI)
-    local destinationHostLocation = enterprise_turtle.GetTurtleURL_SSrv({}).url
+    local sourceItemsLocation = enterprise_turtle.GetItemLocation_SSrv({ itemQuery = itemQuery }).url
+    local destinationHostLocation = enterprise_turtle.GetTurtleLocation_SSrv({}).url
     local transferData = {
         sourceItemsLocation =  sourceItemsLocation,
         destinationHostLocation = destinationHostLocation,
@@ -154,8 +157,7 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
-    local queryItemsLocation = enterprise_turtle.GetTurtleURL_SSrv({}).url
-    queryItemsLocation:setQueryURI(queryPartURI)
+    local queryItemsLocation = enterprise_turtle.GetItemLocation_SSrv({ itemQuery = itemQuery }).url
     local queryData = {
         queryItemsLocation = queryItemsLocation,
     }

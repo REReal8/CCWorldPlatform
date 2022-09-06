@@ -9,8 +9,9 @@ local db = {
     This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        IsTurtleURL_QSrv    - provide if URL is of a turtle
-        GetTurtleURL_SSrv   - provide the URL of a turtle
+        IsTurtleURL_QSrv        - provide if URL is of a turtle
+        GetTurtleLocation_SSrv  - provide the URL of a turtle
+        GetItemLocation_SSrv    - provide the URL of items in a turtle
 --]]
 
 --                _     _ _         __                  _   _
@@ -39,9 +40,9 @@ function GetISHURL()
     return hostURL
 end
 
-function GetTurtleURL_SSrv(serviceData)
-    --[[
-        This sync public services provides the URL of (the items in) a turtle in the ISH.
+function GetTurtleLocation_SSrv(serviceData)
+        --[[
+        This sync public services provides the URL of a turtle in the ISH.
 
         Return value:
                                     - (table)
@@ -51,23 +52,52 @@ function GetTurtleURL_SSrv(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 turtleId            - (number) optional id of the turtle (if none is provided the current turtle computer id is used)
-                itemQuery           - (table) optional items to locate in turtle
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetTurtletURL: Invalid serviceData input.") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetTurtleLocation_SSrv: Invalid serviceData") return {success = false} end
     local turtleId = serviceData.turtleId or os.getComputerID()
-    local itemQuery = serviceData.itemQuery or {}
 
     -- construct URL
     local turtleURL = GetISHURL()
     turtleURL:setPort(turtleId)
-    turtleURL:setQuery(itemQuery)
 
     -- end
     local result = {
         success = true,
         url = turtleURL,
+    }
+    return result
+end
+
+function GetItemLocation_SSrv(serviceData)
+    --[[
+        This sync public services provides the URL of the items in a turtle in the ISH.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) wether the URL was correctly obtained
+                url                 - (table) URL of the items in the inventory of a turtle
+
+        Parameters:
+            serviceData             - (table) data for this service
+                turtleId            - (number) optional id of the turtle (if none is provided the current turtle computer id is used)
+                itemQuery           - (table) optional items to locate in turtle
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetItemLocation_SSrv: Invalid serviceData") return {success = false} end
+    local itemQuery = serviceData.itemQuery
+    if type(itemQuery) ~= "table" then corelog.Error("enterprise_turtle.GetItemLocation_SSrv: Invalid itemQuery") return {success = false} end
+
+    -- construct URL
+    local itemURL = GetTurtleLocation_SSrv(serviceData).url
+    itemURL:setQuery(itemQuery)
+
+    -- end
+    local result = {
+        success = true,
+        url = itemURL,
     }
     return result
 end
@@ -192,7 +222,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     -- do the (virtual) transfer
 
     -- create (partial) output turtleItemsLocation
-    local getURLResult = GetTurtleURL_SSrv({turtleId = currentTurtleId})
+    local getURLResult = GetTurtleLocation_SSrv({turtleId = currentTurtleId})
     if not getURLResult.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Failed creating turtleItemsLocation.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local turtleItemsLocation = getURLResult.url
     if turtleItemsLocation == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocation created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end

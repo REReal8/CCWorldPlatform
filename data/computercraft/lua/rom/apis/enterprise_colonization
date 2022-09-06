@@ -92,7 +92,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyName = "taskName"          , valueSource = 0, sourceKey = "waitFirstTreeTask" },
                 { keyName = "startLocation"     , valueSource = 0, sourceKey = "startLocation" },
             }},
-            { serviceName = "enterprise_turtle.GetTurtleURL_SSrv", async = false, input = {
+            { serviceName = "enterprise_turtle.GetTurtleLocation_SSrv", async = false, input = {
             }},
             { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
                 { keyName = "itemName"          , valueSource = 0, sourceKey = "planksName" },
