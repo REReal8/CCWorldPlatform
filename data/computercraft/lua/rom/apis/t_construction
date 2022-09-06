@@ -80,7 +80,7 @@ function T_BuildRectangularPattern_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         pattern = testBuildPattern1,
-        materialsURL = enterprise_turtle.GetTurtleURL_SSrv({ }).url
+        materialsItemsLocation = enterprise_turtle.GetTurtleURL_SSrv({ }).url
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
@@ -98,33 +98,33 @@ function T_BuildRectangularPattern_FromChest()
         services    = {
             -- preparation
             { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
-                { keyName = "projectDefinition" , valueSource = 0, sourceKey = "projectDefinition" },
-                { keyName = "projectInputData"  , valueSource = 0, sourceKey = "projectInputData" },
+                { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition" },
+                { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData" },
             }},
             { serviceName = "enterprise_chests.GetChestURL_SSrv", async = false, input = {
-                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+                { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
             }},
 
             -- BuildRectangularPattern_ASrv
             { serviceName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, input = {
-                { keyName = "startpoint"        , valueSource = 0, sourceKey = "startpoint" },
-                { keyName = "buildFromAbove"    , valueSource = 0, sourceKey = "buildFromAbove" },
-                { keyName = "pattern"           , valueSource = 0, sourceKey = "pattern" },
+                { keyName = "startpoint"                , valueSource = 0, sourceKey = "startpoint" },
+                { keyName = "buildFromAbove"            , valueSource = 0, sourceKey = "buildFromAbove" },
+                { keyName = "pattern"                   , valueSource = 0, sourceKey = "pattern" },
 
-                { keyName = "materialsURL"      , valueSource = 2, sourceKey = "url" },
+                { keyName = "materialsItemsLocation"    , valueSource = 2, sourceKey = "url" },
             }},
 
             -- cleanup
             { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
-                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+                { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
             }},
 
             -- wrap-up
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
-                { keyName = "success4"          , valueSource = 4, sourceKey = "success" },
+                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
+                { keyName = "success3"                  , valueSource = 3, sourceKey = "success" },
+                { keyName = "success4"                  , valueSource = 4, sourceKey = "success" },
             }},
         },
         returnData  = {

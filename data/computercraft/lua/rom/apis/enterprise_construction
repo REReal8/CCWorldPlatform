@@ -69,7 +69,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
                         y               - (number) y coordinate within the pattern
                         block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
                     clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
-                materialsURL            - (table) a URL stating where the building materials can be located
+                materialsItemsLocation  - (URL) stating where the building materials can be located
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]
@@ -83,43 +83,49 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     local replacePresentObjects = buildData.replacePresentObjects
     local pattern = buildData.pattern
     if type(pattern) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid pattern") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.materialsURL) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid materialsURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsURL = url.URLClass:new(buildData.materialsURL)
+    if type(buildData.materialsItemsLocation) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid materialsItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local materialsItemsLocation = url.URLClass:new(buildData.materialsItemsLocation)
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
-    -- update materialsURL with itemsNeeded
-    materialsURL:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
-    corelog.WriteToLog("materialsURL="..materialsURL:getURI())
+    -- update materialsSourceItemsLocation with itemsNeeded
+    materialsItemsLocation:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
+    corelog.WriteToLog("materialsSourceItemsLocation="..materialsItemsLocation:getURI())
+
+    -- set local output location
+    -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle 
+    --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of) 
+    --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocation return value 
+    --          of that service should specify which turtle has the items in it's inventory.
+    local materialsLocalHostLocation = enterprise_turtle.GetISHURL()
 
     -- create project service data
     local buildRectangularPatternProject = {
         services    = {
             { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
-                { keyName = "sourceURL"             , valueSource = 0, sourceKey = "materialsURL" },
-                { keyName = "destinationURL"        , valueSource = 0, sourceKey = "materialsLocalURL" },
+                { keyName = "sourceItemsLocation"       , valueSource = 0, sourceKey = "materialsItemsLocation" },
+                { keyName = "destinationHostLocation"   , valueSource = 0, sourceKey = "materialsLocalHostLocation" },
             }},
             { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"      , valueSource = 0, sourceKey = "taskFunctionName" },
-                { keyName = "metaData"              , valueSource = 0, sourceKey = "metaData" },
-                { keyName = "taskData"              , valueSource = 0, sourceKey = "taskData" },
+                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "taskFunctionName" },
+                { keyName = "metaData"                  , valueSource = 0, sourceKey = "metaData" },
+                { keyName = "taskData"                  , valueSource = 0, sourceKey = "taskData" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"              , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"              , valueSource = 2, sourceKey = "success" },
+                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
             }},
         },
         returnData  = {
             { keyName = "success"                   , valueSource = 3, sourceKey = "success" },
         }
     }
-    local materialsLocalURL = enterprise_turtle.GetTurtleURL_SSrv({ }).url
     local projectData = {
-        materialsURL                = materialsURL,
-        materialsLocalURL           = materialsLocalURL,
+        materialsItemsLocation      = materialsItemsLocation,
+        materialsLocalHostLocation  = materialsLocalHostLocation,
 
         taskFunctionName            = "role_builder.BuildRectangularPattern_Task",
         metaData                    = metaData,

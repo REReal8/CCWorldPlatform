@@ -5,7 +5,7 @@
 
     The ISP provides the following services
         ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemQueryURL
-        TransferItemsFromTo_ASrv    - transferring items from a sourceURL to a destinationURL
+        TransferItemsFromTo_ASrv    - transferring items from a sourceItemsLocation to a destinationHostLocation
         
     The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
     to be an ISH it needs to implement the following services:
@@ -69,7 +69,7 @@ end
 
 function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --[[
-        This async public service relays the transfer of items from a source to a destination URL.
+        This async public service relays the transfer of items from an item source to a destination host.
 
         This service is implemented using the following underlying ISH services
             GetItemsIntoTurtle_ASrv
@@ -79,29 +79,33 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the items were succesfully transferred
+                                        - (table)
+                success                 - (boolean) whether the service was executed succesfully
+                destinationItemsLocation- (URL) stating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocation, and
+                                            the "query" should be equal to the "query" component of the sourceItemsLocation)
 
         Parameters:
-            transferData        - (table) data about the transfer
-                sourceURL       - (table) a URL stating where the items that need transfer can be located
-                                    (the "query" component of the URL specifies the items to be transferred)
-                destinationURL  - (table) a URL stating where the items need to be transferred to
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function            
+            transferData                - (table) data about the transfer
+                sourceItemsLocation     - (URL) stating where the items that need transfer can be located 
+                                            (the "query" component of the URL specifies the items to be transferred)
+                                            (the "host" component of the URL specifies the host where the items are located)
+                destinationHostLocation - (URL) stating the destination host location (of the the items)
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function            
     --]]
 
     -- check input
     if type(transferData) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local sourceURL = url.URLClass:new(transferData.sourceURL)
-    if type(sourceURL) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationURL = url.URLClass:new(transferData.destinationURL)
-    if type(destinationURL) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationURL") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceItemsLocation = url.URLClass:new(transferData.sourceItemsLocation)
+    if type(sourceItemsLocation) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocation = url.URLClass:new(transferData.destinationHostLocation)
+    if type(destinationHostLocation) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationHostLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- determine source enterprise name
-    local sourceHost = sourceURL:getHost()
+    local sourceHost = sourceItemsLocation:getHost()
     if type(sourceHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceEnterprise = nil
     if sourceHost == "turtle" then
@@ -113,7 +117,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
 
     -- determine destination enterprise name
-    local destinationHost = destinationURL:getHost()
+    local destinationHost = destinationHostLocation:getHost()
     if type(destinationHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationEnterprise = nil
     if destinationHost == "turtle" then
@@ -135,21 +139,21 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
                 { keyName = "destinationURL"    , valueSource = 0, sourceKey = "destinationURL" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1", valueSource = 1, sourceKey = "success" },
-                { keyName = "success2", valueSource = 2, sourceKey = "success" },
+                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
+                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 3, sourceKey = "success" },
+            { keyName = "success"               , valueSource = 3, sourceKey = "success" },
         }
     }
     local projectData = {
-        sourceURL = transferData.sourceURL,
-        destinationURL = transferData.destinationURL,
+        sourceURL       = sourceItemsLocation,
+        destinationURL  = destinationHostLocation,
     }
     local serviceData = {
-        projectDefinition = transferItemsProject,
-        projectInputData = projectData,
+        projectDefinition   = transferItemsProject,
+        projectInputData    = projectData,
     }
 
     -- start project
