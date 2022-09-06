@@ -27,7 +27,7 @@
 --   | |
 --   |_|
 
-function ItemsAvailableVia_SSrv(queryData) -- ToDo: investigate if this (sometimes) needs to be an async service
+function ItemsAvailableVia_SSrv(queryData)
     --[[
         This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
@@ -41,20 +41,20 @@ function ItemsAvailableVia_SSrv(queryData) -- ToDo: investigate if this (sometim
 
         Parameters:
             queryData               - (table) data about the query
-                itemQueryURL        - (table) a URL stating the items availability that needs to be queried
+                queryItemsLocation  - (URL) stating the items availability that needs to be queried
                                         (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" or type(queryData.itemQueryURL) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
-    local itemQueryURL = queryData.itemQueryURL
-    if type(itemQueryURL) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemQueryURL") return {success = false} end
+    if type(queryData) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
+    local queryItemsLocation = queryData.queryItemsLocation
+    if type(queryItemsLocation) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryItemsLocation") return {success = false} end
 
     -- get ISH
 --    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
-    local host = itemQueryURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host input.") return {success = false} end
+    local host = queryItemsLocation:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)
 
     -- relay to ISH service

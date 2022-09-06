@@ -154,10 +154,10 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
-    local queryURL = enterprise_turtle.GetTurtleURL_SSrv({}).url
-    queryURL:setQueryURI(queryPartURI)
+    local queryItemsLocation = enterprise_turtle.GetTurtleURL_SSrv({}).url
+    queryItemsLocation:setQueryURI(queryPartURI)
     local queryData = {
-        itemQueryURL = queryURL,
+        queryItemsLocation = queryItemsLocation,
     }
 
     -- call test method

@@ -66,7 +66,8 @@ function T_RegisterChest1()
     corelog.WriteToLog("* Test RegisterChest_SSrv 1:")
     -- create chest data
     local chestData  = {
-        location        = {x= 14, y= 17, z= 1, dx=0, dy=1},
+--        location        = {x= 14, y= 17, z= 1, dx=0, dy=1},
+        location        = {x= 2, y= 5, z= 1, dx=0, dy=1},
         accessDirection = "top"
     }
 
@@ -126,10 +127,10 @@ end
 function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for chest:")
     -- create transferData
-    local queryURL = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
-    queryURL:setQueryURI(queryPartURI)
+    local queryItemsLocation = enterprise_chests.GetChestURL_SSrv({id = chest1Id}).url
+    queryItemsLocation:setQueryURI(queryPartURI)
     local queryData = {
-        itemQueryURL = queryURL,
+        queryItemsLocation = queryItemsLocation,
     }
 
     -- call test method
