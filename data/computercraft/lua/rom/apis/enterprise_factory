@@ -397,7 +397,7 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
             productionData              - (table) data about the item to produce, 
                 itemName                - (string) name of items to produce
                 itemAmount              - (number) amount of items to produce
-                ingredientsHostLocation - (URL) stating where production ingredients can be located
+                ingredientsHostLocator - (URL) stating where production ingredients can be located
                 ToDo: consider adding requester location (amongst other to be able to select a more optimal (closest) site)
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
@@ -409,8 +409,8 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
     if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local itemAmount = productionData.itemAmount
     if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local ingredientsHostLocation = productionData.ingredientsHostLocation
-    if type(ingredientsHostLocation) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local ingredientsHostLocator = productionData.ingredientsHostLocator
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -423,7 +423,7 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
     local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
     if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(productionData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- ToDo: implement getting ingredients from ingredientsHostLocation
+    -- ToDo: implement getting ingredients from ingredientsHostLocator
 
     -- let site produce item
     if recipe == craftRecipe then

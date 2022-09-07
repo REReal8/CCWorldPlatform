@@ -40,7 +40,7 @@ function T_ProduceItem_service_Craft()
     enterprise_factory.ProduceItem_ASrv({
         itemName                = "minecraft:birch_planks",
         itemAmount              = 12,
-        ingredientsHostLocation = enterprise_turtle.GetTurtleLocation_SSrv({ })
+        ingredientsHostLocator = enterprise_turtle.GetTurtleLocator_SSrv({ })
     }, callbackFunction, callbackData)
 end
 
@@ -51,7 +51,7 @@ function T_ProduceItem_service_Smelt()
     enterprise_factory.ProduceItem_ASrv({
         itemName                = "minecraft:charcoal",
         itemAmount              = 3,
-        ingredientsHostLocation = enterprise_turtle.GetTurtleLocation_SSrv({ })
+        ingredientsHostLocator = enterprise_turtle.GetTurtleLocator_SSrv({ })
     }, callbackFunction, callbackData)
 end
 

@@ -5,7 +5,7 @@
 
     The ISP provides the following services
         ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemQueryURL
-        TransferItemsFromTo_ASrv    - transferring items from a sourceItemsLocation to a destinationHostLocation
+        TransferItemsFromTo_ASrv    - transferring items from a sourceItemsLocator to a destinationHostLocator
         
     The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
     to be an ISH it needs to implement the following services:
@@ -41,19 +41,19 @@ function ItemsAvailableVia_SSrv(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                queryItemsLocation  - (URL) stating the items availability that needs to be queried
+                queryItemsLocator   - (URL) stating the items availability that needs to be queried
                                         (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
     if type(queryData) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
-    local queryItemsLocation = queryData.queryItemsLocation
-    if type(queryItemsLocation) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryItemsLocation") return {success = false} end
+    local queryItemsLocator = queryData.queryItemsLocator
+    if type(queryItemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryItemsLocator") return {success = false} end
 
     -- get ISH
 --    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
-    local host = queryItemsLocation:getHost()
+    local host = queryItemsLocator:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)
 
@@ -81,31 +81,31 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service was executed succesfully
-                destinationItemsLocation- (URL) stating the final ISH and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocation, and
-                                            the "query" should be equal to the "query" component of the sourceItemsLocation)
+                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                            the "query" should be equal to the "query" component of the sourceItemsLocator)
 
         Parameters:
             transferData                - (table) data about the transfer
-                sourceItemsLocation     - (URL) stating where the items that need transfer can be located 
+                sourceItemsLocator      - (URL) stating where the items that need transfer can be located 
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL specifies the host where the items are located)
-                destinationHostLocation - (URL) stating where the items need to be transferred to
+                destinationHostLocator  - (URL) stating where the items need to be transferred to
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function            
     --]]
 
     -- check input
     if type(transferData) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local sourceItemsLocation = url.URLClass:new(transferData.sourceItemsLocation)
-    if type(sourceItemsLocation) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocation = url.URLClass:new(transferData.destinationHostLocation)
-    if type(destinationHostLocation) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationHostLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceItemsLocator = url.URLClass:new(transferData.sourceItemsLocator)
+    if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(transferData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- determine source enterprise name
-    local sourceHost = sourceItemsLocation:getHost()
+    local sourceHost = sourceItemsLocator:getHost()
     if type(sourceHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceEnterprise = nil
     if sourceHost == "turtle" then
@@ -117,7 +117,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
 
     -- determine destination enterprise name
-    local destinationHost = destinationHostLocation:getHost()
+    local destinationHost = destinationHostLocator:getHost()
     if type(destinationHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationEnterprise = nil
     if destinationHost == "turtle" then
@@ -132,11 +132,11 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local transferItemsProject = {
         services    = {
             { serviceName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocation"       , valueSource = 0, sourceKey = "sourceItemsLocation" },
+                { keyName = "sourceItemsLocator"        , valueSource = 0, sourceKey = "sourceItemsLocator" },
             }},
             { serviceName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, input = {
-                { keyName = "turtleItemsLocation"       , valueSource = 1, sourceKey = "turtleItemsLocation" },
-                { keyName = "destinationHostLocation"   , valueSource = 0, sourceKey = "destinationHostLocation" },
+                { keyName = "turtleItemsLocator"        , valueSource = 1, sourceKey = "turtleItemsLocator" },
+                { keyName = "destinationHostLocator"    , valueSource = 0, sourceKey = "destinationHostLocator" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
@@ -145,12 +145,12 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         },
         returnData  = {
             { keyName = "success"                       , valueSource = 3, sourceKey = "success" },
-            { keyName = "destinationItemsLocation"      , valueSource = 2, sourceKey = "destinationItemsLocation" },
+            { keyName = "destinationItemsLocator"       , valueSource = 2, sourceKey = "destinationItemsLocator" },
         }
     }
     local projectData = {
-        sourceItemsLocation     = sourceItemsLocation,
-        destinationHostLocation = destinationHostLocation,
+        sourceItemsLocator      = sourceItemsLocator,
+        destinationHostLocator  = destinationHostLocator,
     }
     local serviceData = {
         projectDefinition   = transferItemsProject,
@@ -158,7 +158,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Transferring items from "..sourceItemsLocation:getURI().." to "..destinationHostLocation:getURI()..".")
+    corelog.WriteToLog(">Transferring items from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..".")
     enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 
     -- end

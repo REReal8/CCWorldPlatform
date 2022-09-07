@@ -26,7 +26,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition1" },
                 { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData1" },
             }},
-            { serviceName = "enterprise_chests.GetItemLocation_SSrv", async = false, input = {
+            { serviceName = "enterprise_chests.GetItemLocator_SSrv", async = false, input = {
                 { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
                 { keyName = "itemQuery"                 , valueSource = 0, sourceKey = "itemsToTransferQuery" },
             }},
@@ -34,14 +34,14 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
                 { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition2" },
                 { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData2" },
             }},
-            { serviceName = "enterprise_chests.GetChestLocation_SSrv", async = false, input = {
+            { serviceName = "enterprise_chests.GetChestLocator_SSrv", async = false, input = {
                 { keyName = "id"                        , valueSource = 3, sourceKey = "id" },
             }},
 
             -- TransferItemsFromTo_ASrv
             { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocation"       , valueSource = 2, sourceKey = "url" },
-                { keyName = "destinationHostLocation"   , valueSource = 4, sourceKey = "url" },
+                { keyName = "sourceItemsLocator"       , valueSource = 2, sourceKey = "url" },
+                { keyName = "destinationHostLocator"   , valueSource = 4, sourceKey = "url" },
             }},
 
             -- cleanup
@@ -65,7 +65,7 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
         },
         returnData  = {
             { keyName = "success"                       , valueSource = 8, sourceKey = "success" },
-            { keyName = "destinationItemsLocation"      , valueSource = 5, sourceKey = "destinationItemsLocation" },
+            { keyName = "destinationItemsLocator"      , valueSource = 5, sourceKey = "destinationItemsLocator" },
         }
     }
     local serviceData = {
@@ -103,23 +103,23 @@ end
 function T_ISPUsingProject()
     -- create project definition
     local projectInputData = {
-        sourceItemsLocation = url.URLClass:newFromURI(storageQueryURI),
-        localInputHostLocation = url.URLClass:newFromURI(factoryInputChestURI),
+        sourceItemsLocator = url.URLClass:newFromURI(storageQueryURI),
+        localInputHostLocator = url.URLClass:newFromURI(factoryInputChestURI),
         localOutputItemsLocation = url.URLClass:newFromURI(factoryOutputChestURI),
-        destinationHostLocation = url.URLClass:newFromURI(storageURI)
+        destinationHostLocator = url.URLClass:newFromURI(storageURI)
      }
     local aTypicalServiceUsingItemsProject = {
         services    = {
             { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocation"       , valueSource = 0, sourceKey = "sourceItemsLocation" },
-                { keyName = "destinationHostLocation"   , valueSource = 0, sourceKey = "localInputHostLocation" },
+                { keyName = "sourceItemsLocator"       , valueSource = 0, sourceKey = "sourceItemsLocator" },
+                { keyName = "destinationHostLocator"   , valueSource = 0, sourceKey = "localInputHostLocator" },
             }},
 
             -- other services (that e.g. could require items in a turtle's iventory) to implement the typical service
 
             { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocation"       , valueSource = 0, sourceKey = "localOutputItemsLocation" },
-                { keyName = "destinationHostLocation"   , valueSource = 0, sourceKey = "destinationHostLocation" },
+                { keyName = "sourceItemsLocator"       , valueSource = 0, sourceKey = "localOutputItemsLocation" },
+                { keyName = "destinationHostLocator"   , valueSource = 0, sourceKey = "destinationHostLocator" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
                 { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
@@ -142,11 +142,11 @@ end
 function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
-    local sourceItemsLocation = enterprise_turtle.GetItemLocation_SSrv({ itemQuery = itemQuery }).url
-    local destinationHostLocation = enterprise_turtle.GetTurtleLocation_SSrv({}).url
+    local sourceItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ itemQuery = itemQuery }).url
+    local destinationHostLocator = enterprise_turtle.GetTurtleLocator_SSrv({}).url
     local transferData = {
-        sourceItemsLocation =  sourceItemsLocation,
-        destinationHostLocation = destinationHostLocation,
+        sourceItemsLocator =  sourceItemsLocator,
+        destinationHostLocator = destinationHostLocator,
     }
 
     -- call test method
@@ -157,9 +157,9 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
-    local queryItemsLocation = enterprise_turtle.GetItemLocation_SSrv({ itemQuery = itemQuery }).url
+    local queryItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ itemQuery = itemQuery }).url
     local queryData = {
-        queryItemsLocation = queryItemsLocation,
+        queryItemsLocator = queryItemsLocator,
     }
 
     -- call test method
