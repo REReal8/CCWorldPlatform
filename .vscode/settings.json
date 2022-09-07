@@ -48,7 +48,8 @@
         "enterprise_colonization",
         "role_forester",
         "enterprise_forest",
-        "t_turtle"
+        "t_turtle",
+        "role_settler"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
