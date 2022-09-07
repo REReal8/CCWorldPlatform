@@ -1,5 +1,5 @@
 local itemQuery = {
-    ["minecraft:birch_log"] = 1,
+    ["minecraft:birch_log"] = 3,
     ["minecraft:torch"]     = 5,
 }
 
@@ -12,10 +12,7 @@ local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
 local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
 
---local sourceChestId = "0:1" -- ToDo: consider getting from elsewhere
---local destinationChestId = "0:2" -- ToDo: consider getting from elsewhere
-
-function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as partly already present in t_chests
+function T_TransferItemsFromTo_Chests()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between chests:")
 
     -- create project definition
@@ -74,21 +71,16 @@ function T_TransferItemsFromTo_Chests() -- ToDo: consider removing/ changing as 
             -- chest 1
             projectDefinition1 = t_chests.GetRegisterAndUpdateChestProject(),
             projectInputData1 = {
---                chestLocation        = {x= 14, y= 17, z= 1, dx=0, dy=1},
                 chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
                 chestAccessDirection = "top",
             },
 
             -- query
-            itemsToTransferQuery = {
-                ["minecraft:birch_log"] = 3,
-                ["minecraft:torch"] = 5,
-            },
+            itemsToTransferQuery = itemQuery,
 
             -- chest 2
             projectDefinition2 = t_chests.GetRegisterAndUpdateChestProject(),
             projectInputData2 = {
---                chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
                 chestLocation        = {x= 8, y= 5, z= 1, dx=0, dy=1},
                 chestAccessDirection = "back",
             },
@@ -137,33 +129,4 @@ function T_ISPUsingProject()
 
     -- call test method
     enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
-end
-
-function T_TransferItemsFromTo_Turtles()
-    corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
-    -- create transferData
-    local sourceItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = itemQuery }).url
-    local destinationHostLocator = enterprise_turtle.GetISHURL_SSrv({ }).url
-    local transferData = {
-        sourceItemsLocator =  sourceItemsLocator,
-        destinationHostLocator = destinationHostLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_isp.TransferItemsFromTo_ASrv(transferData, callbackFunction, callbackData)
-end
-
-function T_ItemsAvailableVia_Turtle()
-    corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
-    -- create transferData
-    local queryItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = itemQuery }).url
-    local queryData = {
-        queryItemsLocator = queryItemsLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.ItemsAvailableVia_SSrv("..textutils.serialize(queryData)..")")
-    local result = enterprise_isp.ItemsAvailableVia_SSrv(queryData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
 end

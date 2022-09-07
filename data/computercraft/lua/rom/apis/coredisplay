@@ -283,9 +283,10 @@ function ExecuteEnterpriseTest(t)
 		-- test options
 		local options	= {
 			{key = "p", desc = "projects", 			func = ExecuteEnterpriseTest, param = {file = t_projects, filename = "t_projects"}},
+			{key = "t", desc = "turtle", 			func = ExecuteEnterpriseTest, param = {file = t_turtle, filename = "t_turtle"}},
+			{key = "c", desc = "chests", 			func = ExecuteEnterpriseTest, param = {file = t_chests, filename = "t_chests"}},
 			{key = "i", desc = "isp", 				func = ExecuteEnterpriseTest, param = {file = t_isp, filename = "t_isp"}},
 			{key = "b", desc = "construction", 		func = ExecuteEnterpriseTest, param = {file = t_construction, filename = "t_construction"}},
-			{key = "c", desc = "chests", 			func = ExecuteEnterpriseTest, param = {file = t_chests, filename = "t_chests"}},
 			{key = "f", desc = "factory", 			func = ExecuteEnterpriseTest, param = {file = t_factory, filename = "t_factory"}},
 			{key = "w", desc = "foresting", 		func = ExecuteEnterpriseTest, param = {file = t_foresting, filename = "t_foresting"}},
 			{key = "s", desc = "colonization", 		func = ExecuteEnterpriseTest, param = {file = t_colonization, filename = "t_colonization"}},
