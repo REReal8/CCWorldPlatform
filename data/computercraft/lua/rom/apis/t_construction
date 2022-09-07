@@ -80,7 +80,7 @@ function T_BuildRectangularPattern_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         pattern = testBuildPattern1,
-        materialsHostLocator = enterprise_turtle.GetTurtleLocator_SSrv({ }).url
+        materialsHostLocator = enterprise_turtle.GetISHURL_SSrv({ }).url
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}

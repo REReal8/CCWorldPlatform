@@ -9,7 +9,8 @@ local db = {
     This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        IsTurtleURL_QSrv        - provide if URL is of a turtle
+        GetISHURL_SSrv         - provide host URL of this ISH 
+        IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemLocator_SSrv    - provide the URL of items in a turtle
 --]]
@@ -40,6 +41,25 @@ function GetISHURL()
     return hostURL
 end
 
+function GetISHURL_SSrv(serviceData)
+    --[[
+        This sync public service provides the (base) URL of this ISH.
+
+        Return value:
+            ishURL                  - (table) URL of this ISH
+
+        Parameters:
+            serviceData             - (table) empty
+    --]]
+
+    -- end
+    local result = {
+        success = true,
+        url = GetISHURL(),
+    }
+    return result
+end
+
 function GetTurtleLocator_SSrv(serviceData)
         --[[
         This sync public services provides the URL of a turtle in the ISH.
@@ -51,12 +71,13 @@ function GetTurtleLocator_SSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data for this service
-                turtleId            - (number) optional id of the turtle (if none is provided the current turtle computer id is used)
+                turtleId            - (number) id of the turtle
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetTurtleLocator_SSrv: Invalid serviceData") return {success = false} end
-    local turtleId = serviceData.turtleId or os.getComputerID()
+    local turtleId = serviceData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_turtle.GetTurtleLocator_SSrv: Invalid turtleId") return {success = false} end
 
     -- construct URL
     local turtleURL = GetISHURL()
@@ -81,12 +102,14 @@ function GetItemLocator_SSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data for this service
-                turtleId            - (number) optional id of the turtle (if none is provided the current turtle computer id is used)
+                turtleId            - (number) id of the turtle
                 itemQuery           - (table) optional items to locate in turtle
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetItemLocator_SSrv: Invalid serviceData") return {success = false} end
+    local turtleId = serviceData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_turtle.GetItemLocator_SSrv: Invalid turtleId") return {success = false} end
     local itemQuery = serviceData.itemQuery
     if type(itemQuery) ~= "table" then corelog.Error("enterprise_turtle.GetItemLocator_SSrv: Invalid itemQuery") return {success = false} end
 

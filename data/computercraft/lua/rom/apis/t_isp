@@ -142,8 +142,8 @@ end
 function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
-    local sourceItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ itemQuery = itemQuery }).url
-    local destinationHostLocator = enterprise_turtle.GetTurtleLocator_SSrv({}).url
+    local sourceItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = itemQuery }).url
+    local destinationHostLocator = enterprise_turtle.GetISHURL_SSrv({ }).url
     local transferData = {
         sourceItemsLocator =  sourceItemsLocator,
         destinationHostLocator = destinationHostLocator,
@@ -157,7 +157,7 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
-    local queryItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ itemQuery = itemQuery }).url
+    local queryItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = itemQuery }).url
     local queryData = {
         queryItemsLocator = queryItemsLocator,
     }

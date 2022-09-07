@@ -115,7 +115,7 @@ end
 function T_PutItemsFromTurtle1()
     corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
     -- create transferData
-    local turtleItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ itemQuery = multipleStacksItemQuery }).url
+    local turtleItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = multipleStacksItemQuery }).url
     local destinationHostLocator = enterprise_chests.GetChestLocator_SSrv({id = chest1Id}).url
     local transferData = {
         turtleItemsLocator     = turtleItemsLocator,
