@@ -69,7 +69,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
                         y               - (number) y coordinate within the pattern
                         block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
                     clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
-                materialsItemsLocation  - (URL) stating where the building materials can be located
+                materialsHostLocation   - (URL) stating where the building materials can be located
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]
@@ -83,17 +83,18 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     local replacePresentObjects = buildData.replacePresentObjects
     local pattern = buildData.pattern
     if type(pattern) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid pattern") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.materialsItemsLocation) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid materialsItemsLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsItemsLocation = url.URLClass:new(buildData.materialsItemsLocation)
+    if type(buildData.materialsHostLocation) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid materialsHostLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local materialsHostLocation = url.URLClass:new(buildData.materialsHostLocation)
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
-    -- update materialsSourceItemsLocation with itemsNeeded
+    -- determine materialsItemsLocation (by update materialsHostLocation with itemsNeeded)
+    local materialsItemsLocation = materialsHostLocation
     materialsItemsLocation:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
-    corelog.WriteToLog("materialsSourceItemsLocation="..materialsItemsLocation:getURI())
+    corelog.WriteToLog("materialsItemsLocation="..materialsItemsLocation:getURI())
 
     -- set local output location
     -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle 

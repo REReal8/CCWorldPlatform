@@ -80,7 +80,7 @@ function T_BuildRectangularPattern_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         pattern = testBuildPattern1,
-        materialsItemsLocation = enterprise_turtle.GetTurtleLocation_SSrv({ }).url
+        materialsHostLocation = enterprise_turtle.GetTurtleLocation_SSrv({ }).url
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
@@ -111,7 +111,7 @@ function T_BuildRectangularPattern_FromChest()
                 { keyName = "buildFromAbove"            , valueSource = 0, sourceKey = "buildFromAbove" },
                 { keyName = "pattern"                   , valueSource = 0, sourceKey = "pattern" },
 
-                { keyName = "materialsItemsLocation"    , valueSource = 2, sourceKey = "url" },
+                { keyName = "materialsHostLocation"     , valueSource = 2, sourceKey = "url" },
             }},
 
             -- cleanup
