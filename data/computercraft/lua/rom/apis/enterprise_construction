@@ -69,7 +69,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
                         y               - (number) y coordinate within the pattern
                         block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
                     clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
-                materialsHostLocator    - (URL) stating where the host of the building materials can be located
+                materialsHostLocator    - (URL) locating the host of the building materials
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]
