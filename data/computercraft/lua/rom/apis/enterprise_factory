@@ -138,7 +138,7 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Building and starting factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
+    corelog.WriteToLog(">Building and starting factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
     enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
 end
 
@@ -168,23 +168,30 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local siteVersion = siteData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local upgrade = siteData.upgrade or false
+    if type(upgrade) ~= "boolean" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid upgrade") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get site build data
     local siteBuildData = nil
-    if siteData.siteVersion == "v0" then
+    if siteVersion == "v0" then
         siteBuildData = GetV0SiteBuildData(siteData)
-    elseif siteData.siteVersion == "v1" then
+    elseif siteVersion == "v1" then
         siteBuildData = GetV1SiteBuildData(siteData)
-    elseif siteData.siteVersion == "v2" then
+    elseif siteVersion == "v2" then
         siteBuildData = GetV2SiteBuildData(siteData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteData.siteVersion)
+        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
-    -- let construction enterprise build the site
+    -- let construction enterprise build the site    
+    if upgrade then
+        corelog.WriteToLog("  >Upgrading factory site at "..textutils.serialise(baseLocation).." to version "..siteVersion)
+    else
+        corelog.WriteToLog("  >Building factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
+    end
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback, callbackData)
 end
 
