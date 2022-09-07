@@ -91,10 +91,10 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     -- get assignment metadata
     local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
 
-    -- determine materialsItemsLocation (by update materialsHostLocator with itemsNeeded)
-    local materialsItemsLocation = materialsHostLocator
-    materialsItemsLocation:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
-    corelog.WriteToLog("materialsItemsLocation="..materialsItemsLocation:getURI())
+    -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
+    local materialsItemsLocator = materialsHostLocator
+    materialsItemsLocator:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
+    corelog.WriteToLog("materialsItemsLocator="..materialsItemsLocator:getURI())
 
     -- set local output location
     -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle 
@@ -108,7 +108,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     local buildRectangularPatternProject = {
         services    = {
             { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocator"        , valueSource = 0, sourceKey = "materialsItemsLocation" },
+                { keyName = "sourceItemsLocator"        , valueSource = 0, sourceKey = "materialsItemsLocator" },
                 { keyName = "destinationHostLocator"    , valueSource = 0, sourceKey = "materialsLocalHostLocator" },
             }},
             { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
@@ -126,7 +126,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
         }
     }
     local projectData = {
-        materialsItemsLocation      = materialsItemsLocation,
+        materialsItemsLocator      = materialsItemsLocator,
         materialsLocalHostLocator  = materialsLocalHostLocator,
 
         taskFunctionName            = "role_builder.BuildRectangularPattern_Task",
