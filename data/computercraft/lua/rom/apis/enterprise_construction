@@ -114,10 +114,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "taskFunctionName" },
                 { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
-                -- ToDo: add setting metaData.needTurtleId from destinationItemsLocator output of TransferItemsFromTo_ASrv of step 1
---                { keyDef = "metaData.needTurtleId"     , valueSource = 1, keyDefSource = "destinationItemsLocator.port" },
---                or likely better
---                { keyDef = "metaData.needItemsLocator" , valueSource = 1, keyDefSource = "destinationItemsLocator" },
+                { keyDef = "metaData.needTurtleId"  , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
                 { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
