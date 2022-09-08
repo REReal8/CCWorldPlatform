@@ -94,49 +94,49 @@ function T_BuildRectangularPattern_FromChest()
     corelog.WriteToLog("# Test BuildRectangularPattern_ASrv (from chest)")
 
     -- create project definition
-    local buildRectangularPattern_ASrvProject = {
-        services    = {
+    local buildRectangularPattern_ASrvProjectDef = {
+        steps   = {
             -- preparation
-            { serviceName = "enterprise_projects.StartProject_ASrv", async = true, input = {
-                { keyName = "projectDefinition"         , valueSource = 0, sourceKey = "projectDefinition" },
-                { keyName = "projectInputData"          , valueSource = 0, sourceKey = "projectInputData" },
+            { stepName = "enterprise_projects.StartProject_ASrv", async = true, stepDataDef = {
+                { keyDef = "projectDef"             , valueSource = 0, keyDefSource = "projectDef" },
+                { keyDef = "projectData"            , valueSource = 0, keyDefSource = "projectData" },
             }},
-            { serviceName = "enterprise_chests.GetChestLocator_SSrv", async = false, input = {
-                { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
+            { stepName = "enterprise_chests.GetChestLocator_SSrv", async = false, stepDataDef = {
+                { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
             }},
 
             -- BuildRectangularPattern_ASrv
-            { serviceName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, input = {
-                { keyName = "startpoint"                , valueSource = 0, sourceKey = "startpoint" },
-                { keyName = "buildFromAbove"            , valueSource = 0, sourceKey = "buildFromAbove" },
-                { keyName = "pattern"                   , valueSource = 0, sourceKey = "pattern" },
+            { stepName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, stepDataDef = {
+                { keyDef = "startpoint"             , valueSource = 0, keyDefSource = "startpoint" },
+                { keyDef = "buildFromAbove"         , valueSource = 0, keyDefSource = "buildFromAbove" },
+                { keyDef = "pattern"                , valueSource = 0, keyDefSource = "pattern" },
 
-                { keyName = "materialsHostLocator"     , valueSource = 2, sourceKey = "url" },
+                { keyDef = "materialsHostLocator"   , valueSource = 2, keyDefSource = "url" },
             }},
 
             -- cleanup
-            { serviceName = "enterprise_chests.DelistChest_ASrv", async = true, input = {
-                { keyName = "id"                        , valueSource = 1, sourceKey = "id" },
+            { stepName = "enterprise_chests.DelistChest_ASrv", async = true, stepDataDef = {
+                { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
             }},
 
             -- wrap-up
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"                  , valueSource = 3, sourceKey = "success" },
-                { keyName = "success4"                  , valueSource = 4, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success4"               , valueSource = 4, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 5, sourceKey = "success" },
+            { keyDef = "success"                    , valueSource = 5, keyDefSource = "success" },
         }
     }
-    local serviceData = {
-        projectDefinition = buildRectangularPattern_ASrvProject,
-        projectInputData = {
+    local projectServiceData = {
+        projectDef  = buildRectangularPattern_ASrvProjectDef,
+        projectData = {
             -- chest
-            projectDefinition   = t_chests.GetRegisterAndUpdateChestProject(),
-            projectInputData    = {
+            projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
+            projectData = {
                 chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
                 chestAccessDirection = "top",
             },
@@ -151,7 +151,7 @@ function T_BuildRectangularPattern_FromChest()
     -- start project
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
-    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
 function T_BuildBlueprint_Service()

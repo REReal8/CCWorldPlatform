@@ -115,31 +115,31 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- create project definition
-    local buildAndStartNewSiteProject = {
-        services    = {
-            { serviceName = "enterprise_factory.BuildNewSite_ASrv", async = true, input = {
-                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
-                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
-                { keyName = "upgrade"           , valueSource = 0, sourceKey = "upgrade" },
+    local buildAndStartNewSiteProjectDef = {
+        steps   = {
+            { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "upgrade"            , valueSource = 0, keyDefSource = "upgrade" },
             }},
-            { serviceName = "enterprise_factory.StartNewSite_SSrv", async = false, input = {
-                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
-                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
-                { keyName = "siteAlreadyBuild"  , valueSource = 1, sourceKey = "success" }
+            { stepName = "enterprise_factory.StartNewSite_SSrv", async = false, stepDataDef = {
+                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "siteAlreadyBuild"   , valueSource = 1, keyDefSource = "success" }
             }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 2, sourceKey = "success" },
+            { keyDef = "success"                , valueSource = 2, keyDefSource = "success" },
         }
     }
-    local serviceData = {
-        projectDefinition = buildAndStartNewSiteProject,
-        projectInputData = siteData,
+    local projectServiceData = {
+        projectDef  = buildAndStartNewSiteProjectDef,
+        projectData = siteData,
     }
 
     -- start project
     corelog.WriteToLog(">Building and starting factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 function BuildNewSite_ASrv(siteData, callback, callbackData)
@@ -276,30 +276,30 @@ function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- create project definition
-    local stopAndDismantleSiteProject = {
-        services    = {
-            { serviceName = "enterprise_factory.StopSite_ASrv", async = true, input = {
-                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
-                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
+    local stopAndDismantleSiteProjectDef = {
+        steps   = {
+            { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
             }},
-            { serviceName = "enterprise_factory.DismantleSite_ASrv", async = true, input = {
-                { keyName = "baseLocation"      , valueSource = 0, sourceKey = "baseLocation" },
-                { keyName = "siteVersion"       , valueSource = 0, sourceKey = "siteVersion" },
-                { keyName = "siteStopped"       , valueSource = 1, sourceKey = "success" }
+            { stepName = "enterprise_factory.DismantleSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "siteStopped"        , valueSource = 1, keyDefSource = "success" }
             }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 2, sourceKey = "success" },
+            { keyDef = "success"                , valueSource = 2, keyDefSource = "success" },
         }
     }
-    local serviceData = {
-        projectDefinition = stopAndDismantleSiteProject,
-        projectInputData = siteData,
+    local projectServiceData = {
+        projectDef  = stopAndDismantleSiteProjectDef,
+        projectData = siteData,
     }
 
     -- start project
     corelog.WriteToLog(">Stopping and dismantling factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 function DismantleSite_ASrv(siteData, callback, callbackData)

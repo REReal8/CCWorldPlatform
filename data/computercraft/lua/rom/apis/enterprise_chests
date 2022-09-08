@@ -261,35 +261,35 @@ function UpdateChestRecord_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- create project definition
-    local updateChestRecordsProject = {
-        services    = {
-            { serviceName = "enterprise_chests.FetchChestSlotsInventory_ASrv", async = true, input = {
-                { keyName = "id"        , valueSource = 0, sourceKey = "id" },
+    local updateChestRecordsProjectDef = {
+        steps   = {
+            { stepName = "enterprise_chests.FetchChestSlotsInventory_ASrv", async = true, stepDataDef = {
+                { keyDef = "id"         , valueSource = 0, keyDefSource = "id" },
             }},
-            { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
-                { keyName = "id"        , valueSource = 0, sourceKey = "id" },
-                { keyName = "slots"     , valueSource = 1, sourceKey = "slots" },
+            { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
+                { keyDef = "id"         , valueSource = 0, keyDefSource = "id" },
+                { keyDef = "slots"      , valueSource = 1, keyDefSource = "slots" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"  , valueSource = 2, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"   , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success", valueSource = 3, sourceKey = "success" },
+            { keyDef = "success"        , valueSource = 3, keyDefSource = "success" },
         }
     }
     local projectData = {
         id = id,
     }
-    local serviceData = {
-        projectDefinition = updateChestRecordsProject,
-        projectInputData = projectData,
+    local projectServiceData = {
+        projectDef  = updateChestRecordsProjectDef,
+        projectData = projectData,
     }
 
     -- start project
     corelog.WriteToLog(">Updating records for chest "..projectData.id..".")
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 function GetISHURL()
@@ -396,43 +396,43 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid path input: "..textutils.serialize(sourceItemsLocator:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
-    local getItemsIntoTurtleProject = {
-        services    = {
-            { serviceName = "enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv", async = true, input = {
-                { keyName = "id"                , valueSource = 0, sourceKey = "id" },
-                { keyName = "itemQuery"         , valueSource = 0, sourceKey = "itemQuery" },
+    local getItemsIntoTurtleProjectDef = {
+        steps   = {
+            { stepName = "enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
+                { keyDef = "id"             , valueSource = 0, keyDefSource = "id" },
+                { keyDef = "itemQuery"      , valueSource = 0, keyDefSource = "itemQuery" },
             }},
-            { serviceName = "enterprise_turtle.GetItemLocator_SSrv", async = false, input = {
-                { keyName = "turtleId"          , valueSource = 1, sourceKey = "turtleId" },
-                { keyName = "itemQuery"         , valueSource = 1, sourceKey = "itemResultQuery" },
+            { stepName = "enterprise_turtle.GetItemLocator_SSrv", async = false, stepDataDef = {
+                { keyDef = "turtleId"       , valueSource = 1, keyDefSource = "turtleId" },
+                { keyDef = "itemQuery"      , valueSource = 1, keyDefSource = "itemResultQuery" },
             }},
-            { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
-                { keyName = "id"                , valueSource = 0, sourceKey = "id" },
-                { keyName = "slots"             , valueSource = 1, sourceKey = "slots" },
+            { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
+                { keyDef = "id"             , valueSource = 0, keyDefSource = "id" },
+                { keyDef = "slots"          , valueSource = 1, keyDefSource = "slots" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"          , valueSource = 3, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"       , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"       , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"       , valueSource = 3, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"               , valueSource = 4, sourceKey = "success" },
-            { keyName = "turtleItemsLocator"    , valueSource = 2, sourceKey = "url" },
+            { keyDef = "success"            , valueSource = 4, keyDefSource = "success" },
+            { keyDef = "turtleItemsLocator" , valueSource = 2, keyDefSource = "url" },
         }
     }
     local projectData = {
         id          = id,
         itemQuery   = sourceItemsLocator:getQuery()
     }
-    local serviceData = {
-        projectDefinition = getItemsIntoTurtleProject,
-        projectInputData = projectData,
+    local projectServiceData = {
+        projectDef  = getItemsIntoTurtleProjectDef,
+        projectData = projectData,
     }
 
     -- start project
     corelog.WriteToLog(">Getting "..sourceItemsLocator:getQueryURI().." from chest "..id.." into a turtle.")
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
@@ -481,24 +481,24 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     destinationItemsLocator:setQuery(coreutils.DeepCopy(turtleItemsLocator:getQuery()))
 
     -- create project definition
-    local putItemsIntoChestProject = {
-        services    = {
-            { serviceName = "enterprise_chests.PutItemsFromTurtleIntoChest_ASrv", async = true, input = {
-                { keyName = "id"                    , valueSource = 0, sourceKey = "id" },
-                { keyName = "turtleItemsLocator"    , valueSource = 0, sourceKey = "turtleItemsLocator" },
+    local putItemsIntoChestProjectDef = {
+        steps   = {
+            { stepName = "enterprise_chests.PutItemsFromTurtleIntoChest_ASrv", async = true, stepDataDef = {
+                { keyDef = "id"                 , valueSource = 0, keyDefSource = "id" },
+                { keyDef = "turtleItemsLocator" , valueSource = 0, keyDefSource = "turtleItemsLocator" },
             }},
-            { serviceName = "enterprise_chests.SetChestRecord_SSrv", async = false, input = {
-                { keyName = "id"                    , valueSource = 0, sourceKey = "id" },
-                { keyName = "slots"                 , valueSource = 1, sourceKey = "slots" },
+            { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
+                { keyDef = "id"                 , valueSource = 0, keyDefSource = "id" },
+                { keyDef = "slots"              , valueSource = 1, keyDefSource = "slots" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"              , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"              , valueSource = 2, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"           , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"           , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"                   , valueSource = 3, sourceKey = "success" },
-            { keyName = "destinationItemsLocator"   , valueSource = 0, sourceKey = "destinationItemsLocator" },
+            { keyDef = "success"                   , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "destinationItemsLocator", valueSource = 0, keyDefSource = "destinationItemsLocator" },
         }
     }
     local projectData = {
@@ -506,14 +506,14 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
         turtleItemsLocator      = turtleItemsLocator,
         destinationItemsLocator = destinationItemsLocator
     }
-    local serviceData = {
-        projectDefinition       = putItemsIntoChestProject,
-        projectInputData        = projectData,
+    local projectServiceData = {
+        projectDef  = putItemsIntoChestProjectDef,
+        projectData = projectData,
     }
 
     -- start project
     corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocator:getURI().." into chest "..projectData.id..".")
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

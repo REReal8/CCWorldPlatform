@@ -1,29 +1,29 @@
 function T_CombineStepResults()
     -- init
-    local projectDefinition = {
-        services    = {
-            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData1" },
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData1" },
             }},
-            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, input = {
-                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData2" },
+            { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData2" },
             }},
-            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData3" },
-                { keyName = "serviceResult" , valueSource = 0, sourceKey = "falseServiceResult" },
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData3" },
+                { keyDef = "serviceResult"  , valueSource = 0, keyDefSource = "falseServiceResult" },
             }},
-            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg"       , valueSource = 0, sourceKey = "testData4" },
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData4" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = { -- ToDo: consider introducing simple syntax to the projectDefinition whether this step should automatically be added at the end of the sequence
-                { keyName = "success1"      , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"      , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"      , valueSource = 3, sourceKey = "success" },
-                { keyName = "success4"      , valueSource = 4, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = { -- ToDo: consider introducing simple syntax to the projectDef whether this step should automatically be added at the end of a sequence
+                { keyDef = "success1"       , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"       , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"       , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success4"       , valueSource = 4, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"           , valueSource = 5, sourceKey = "success" },
+            { keyDef = "success"            , valueSource = 5, keyDefSource = "success" },
         }
     }
     local projectData = {
@@ -35,34 +35,34 @@ function T_CombineStepResults()
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = { "rootCallBackData" }
-    local serviceData = {
-        projectDefinition = projectDefinition,
-        projectInputData = projectData,
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
     }
 
-    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
 function T_StartProject()
     -- init
     local testArgValue = 20
-    local projectDefinition = {
-        services    = {
-            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testArgSource" },
             }},
-            { serviceName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, input = {
-                { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
+            { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testArgSource" },
             }},
-            { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg"   , valueSource = 0, sourceKey = "testTableSource.key3.nKey2" },
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTableSource.key3.nKey2" },
             }},
         },
         returnData  = {
-            { keyName = "testBArg0"     , valueSource = 0, sourceKey = "testArgSource" },
-            { keyName = "testBArg1"     , valueSource = 1, sourceKey = "input" },
-            { keyName = "testBArg2"     , valueSource = 2, sourceKey = "input" },
-            { keyName = "testBArg3"     , valueSource = 3, sourceKey = "input" },
+            { keyDef = "testBArg0"      , valueSource = 0, keyDefSource = "testArgSource" },
+            { keyDef = "testBArg1"      , valueSource = 1, keyDefSource = "input" },
+            { keyDef = "testBArg2"      , valueSource = 2, keyDefSource = "input" },
+            { keyDef = "testBArg3"      , valueSource = 3, keyDefSource = "input" },
         }
     }
     local projectData = { 
@@ -79,12 +79,12 @@ function T_StartProject()
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = { "rootCallBackData" }
-    local serviceData = {
-        projectDefinition = projectDefinition,
-        projectInputData = projectData,
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
     }
 
-    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
 function T_DeleteProjects()

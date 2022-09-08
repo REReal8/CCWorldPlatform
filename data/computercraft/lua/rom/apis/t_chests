@@ -22,33 +22,33 @@ function T_RegisterAndUpdateChest()
         chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
         chestAccessDirection = "back"
     }
-    local serviceData = {
-        projectDefinition = GetRegisterAndUpdateChestProject(),
-        projectInputData = projectData,
+    local projectServiceData = {
+        projectDef  = GetRegisterAndUpdateChestProjectDef(),
+        projectData = projectData,
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(serviceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
-function GetRegisterAndUpdateChestProject()
+function GetRegisterAndUpdateChestProjectDef()
     return {
-        services = {
-            { serviceName = "enterprise_chests.RegisterChest_SSrv", async = false, input = {
-                { keyName = "location"          , valueSource = 0, sourceKey = "chestLocation" },
-                { keyName = "accessDirection"   , valueSource = 0, sourceKey = "chestAccessDirection" },
+        steps = {
+            { stepName = "enterprise_chests.RegisterChest_SSrv", async = false, stepDataDef = {
+                { keyDef = "location"           , valueSource = 0, keyDefSource = "chestLocation" },
+                { keyDef = "accessDirection"    , valueSource = 0, keyDefSource = "chestAccessDirection" },
             }},
-            { serviceName = "enterprise_chests.UpdateChestRecord_ASrv", async = true, input = {
-                { keyName = "id"                , valueSource = 1, sourceKey = "id" },
+            { stepName = "enterprise_chests.UpdateChestRecord_ASrv", async = true, stepDataDef = {
+                { keyDef = "id"                 , valueSource = 1, keyDefSource = "id" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"          , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"          , valueSource = 2, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"           , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"           , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData = {
-            { keyName = "success"               , valueSource = 3, sourceKey = "success" },
-            { keyName = "id"                    , valueSource = 1, sourceKey = "id" },
+            { keyDef = "success"                , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
         }
     }
 end

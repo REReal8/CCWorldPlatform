@@ -228,33 +228,33 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     -- what kind of storage is this?
     if siteData.type == 'silo' then
         -- create project definition
-        local buildAndStartNewSiteProject = {
-            services    = {
-                { serviceName = "enterprise_storage.BuildNewSite_ASrv", async = true, input = {
-                    { keyName = "location"  , valueSource = 0, sourceKey = "location" },
-                    { keyName = "type"      , valueSource = 0, sourceKey = "type" },
-                    { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
-                    { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
-                    { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+        local buildAndStartNewSiteProjecDef = {
+            steps   = {
+                { stepName = "enterprise_storage.BuildNewSite_ASrv", async = true, stepDataDef = {
+                    { keyDef = "location"   , valueSource = 0, keyDefSource = "location" },
+                    { keyDef = "type"       , valueSource = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"   , valueSource = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"  , valueSource = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"     , valueSource = 0, keyDefSource = "layers" },
                 }},
-                { serviceName = "enterprise_storage.StartNewSite_SSrv", async = false, input = {
-                    { keyName = "location"  , valueSource = 0, sourceKey = "location" },
-                    { keyName = "type"      , valueSource = 0, sourceKey = "type" },
-                    { keyName = "siloType"  , valueSource = 0, sourceKey = "siloType" },
-                    { keyName = "topChests" , valueSource = 0, sourceKey = "topChests" },
-                    { keyName = "layers"    , valueSource = 0, sourceKey = "layers" },
+                { stepName = "enterprise_storage.StartNewSite_SSrv", async = false, stepDataDef = {
+                    { keyDef = "location"   , valueSource = 0, keyDefSource = "location" },
+                    { keyDef = "type"       , valueSource = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"   , valueSource = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"  , valueSource = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"     , valueSource = 0, keyDefSource = "layers" },
                 }},
             },
             returnData  = {
             }
         }
-        local serviceData = {
-            projectDefinition = buildAndStartNewSiteProject,
-            projectInputData = siteData,
+        local projectServiceData = {
+            projectDef  = buildAndStartNewSiteProjecDef,
+            projectData = siteData,
         }
 
         -- start project
-        enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+        enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
     end
 
     -- nothing to return

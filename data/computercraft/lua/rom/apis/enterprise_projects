@@ -32,26 +32,26 @@ function StartProject_ASrv(serviceData, callback, callbackData)
                 <other results> - (?) as defined in the project definition
 
         Parameters:
-            serviceData             - (table) data for this service
-                projectDefinition   - (table) definition of the project
-                projectInputData    - (table) input datat to the project
-            callback                - (string) name of function to call once service is ready
-            callbackData            - (table) data to supply to callback function
+            serviceData         - (table) data for this service
+                projectDef      - (table) definition of the project
+                projectData     - (table) input data to the project
+            callback            - (string) name of function to call once service is ready
+            callbackData        - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error('enterprise_projects.StartProject_ASrv: Invalid serviceData') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local projectDefinition = serviceData.projectDefinition
-    if type(projectDefinition) ~= "table" then corelog.Error('enterprise_projects.StartProject_ASrv: Invalid projectDefinition') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(projectDefinition.returnData) ~= "table" then projectDefinition.returnData = {} end
-    local projectInputData = serviceData.projectInputData
-    if type(projectInputData) ~= "table" then corelog.Error('enterprise_projects.StartProject_ASrv: Invalid projectInputData') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error('enterprise_projects.StartProject_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local projectDef = serviceData.projectDef
+    if type(projectDef) ~= "table" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid projectDef") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(projectDef.returnData) ~= "table" then projectDef.returnData = {} end
+    local projectData = serviceData.projectData
+    if type(projectData) ~= "table" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid projectData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- data of the project
     local project   = {
-        projectDefinition   = projectDefinition,
+        projectDef          = projectDef,
         callbackFunction    = callback,
         callbackData        = callbackData,
 
@@ -66,7 +66,7 @@ function StartProject_ASrv(serviceData, callback, callbackData)
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 
     -- let's start
-    NextProjectStep({projectId = project.projectId}, projectInputData) -- the input projectInputData is interpreted as the result of virtual step 0
+    NextProjectStep({projectId = project.projectId}, projectData) -- the input projectData is interpreted as the result of virtual step 0
 end
 
 function AreAllTrue_QSrv(serviceData)
@@ -135,7 +135,7 @@ function NextProjectStep(internalProjectData, stepResults)
     corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
 
     -- was this the last step?
-    if #project.projectDefinition.services == project.currentStep then EndProject(internalProjectData) return nil end
+    if #project.projectDef.steps == project.currentStep then EndProject(internalProjectData) return nil end
 
     -- next step
     project.currentStep = project.currentStep + 1
@@ -144,23 +144,23 @@ function NextProjectStep(internalProjectData, stepResults)
     coredht.SaveData(project, db.dhtRoot, internalProjectData.projectId)
 
     -- get new step
-    local step = project.projectDefinition.services[ project.currentStep ]
+    local step = project.projectDef.steps[ project.currentStep ]
 
-    -- prepare next service step
-    local serviceName = step.serviceName
+    -- prepare step service call
+    local serviceName = step.stepName
     local serviceData = {}
-    for i, inputDefinition in ipairs(step.input) do
+    for i, inputDef in ipairs(step.stepDataDef) do
         -- get sourceStepData
-        local sourceStepNr = inputDefinition.valueSource
+        local sourceStepNr = inputDef.valueSource
         local sourceStepData = project.outputs[ sourceStepNr ]
         if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for step "..i) TerminateProject(internalProjectData) return nil end
 
         -- get sourceValue
-        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDefinition.sourceKey)
+        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDef.keyDefSource)
         if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceValue for step "..i) TerminateProject(internalProjectData) return nil end
 
         -- add the requested key
-        local setSuccess = SetNestedIndexValue(serviceData, inputDefinition.keyName, sourceValue)
+        local setSuccess = SetNestedIndexValue(serviceData, inputDef.keyDef, sourceValue)
         if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting serviceData for step "..i) TerminateProject(internalProjectData) return nil end
     end
 
@@ -260,18 +260,18 @@ function EndProject(internalProjectData)
     local projectResult = {}
 
     -- create the projectResult
-    for i, inputDefinition in ipairs(project.projectDefinition.returnData) do
+    for i, inputDef in ipairs(project.projectDef.returnData) do
         -- get sourceStepData
-        local sourceStepNr = inputDefinition.valueSource
+        local sourceStepNr = inputDef.valueSource
         local sourceStepData = project.outputs[ sourceStepNr ]
         if type(sourceStepData) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid sourceStepData for "..i) break end
 
         -- get sourceValue
-        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDefinition.sourceKey)
+        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDef.keyDefSource)
         if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid sourceValue step "..i) break end
 
         -- add the requested key
-        local setSuccess = SetNestedIndexValue(projectResult, inputDefinition.keyName, sourceValue)
+        local setSuccess = SetNestedIndexValue(projectResult, inputDef.keyDef, sourceValue)
         if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting projectResult step "..i) break end
     end
     corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResult), project.projectId)
