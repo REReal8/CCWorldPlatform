@@ -146,7 +146,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
 
         -- check enough items
         local items = DetermineItemsInventory(chest.list())
-        if items[requestItemName] < requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..items[requestItemName]..") in chest.") return {success = false} end
+        if not items[requestItemName] or items[requestItemName] < requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in chest.") return {success = false} end
 
         -- empty first slot
         local firstSlot = 1
