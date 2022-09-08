@@ -1,3 +1,5 @@
+local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
 local itemQuery = {
     ["minecraft:birch_log"] = 3,
     ["minecraft:torch"]     = 5,
@@ -71,7 +73,8 @@ function T_TransferItemsFromTo_Chests()
             -- chest 1
             projectDef1     = t_chests.GetRegisterAndUpdateChestProjectDef(),
             projectData1    = {
-                chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
+--                chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
+                chestLocation        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
                 chestAccessDirection = "top",
             },
 
@@ -81,7 +84,8 @@ function T_TransferItemsFromTo_Chests()
             -- chest 2
             projectDef2     = t_chests.GetRegisterAndUpdateChestProjectDef(),
             projectData2    = {
-                chestLocation        = {x= 8, y= 5, z= 1, dx=0, dy=1},
+--                chestLocation        = {x= 8, y= 5, z= 1, dx=0, dy=1},
+                chestLocation        = coremove.GetRelativeLocation(testStartLocation2, 2, 5, 0),
                 chestAccessDirection = "back",
             },
 

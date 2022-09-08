@@ -1,5 +1,5 @@
-local testStartLocation  = {x= 0, y= 0, z= 1, dx=0, dy=1}
-local testStartLocation2  = {x= 6, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
 
 local testBuildPattern1 = {
     deltaX      = 4,
@@ -136,8 +136,8 @@ function T_BuildRectangularPattern_FromChest()
         projectData = {
             -- chest
             projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
-            projectData = {
-                chestLocation        = {x= 2, y= 5, z= 1, dx=0, dy=1},
+            projectData = { 
+                chestLocation        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
                 chestAccessDirection = "top",
             },
 
