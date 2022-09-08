@@ -191,7 +191,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
                 { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
                 { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
-                { keyDef = "success14"                  , valueSource = 15, keyDefSource = "success" },
+                { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
             }},
         },
         returnData  = {
