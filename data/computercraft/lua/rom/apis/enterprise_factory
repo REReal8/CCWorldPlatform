@@ -131,7 +131,7 @@ function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
             }},
         },
         returnData  = {
-            { keyDef = "success"                , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success"                    , valueSource = 2, keyDefSource = "success" },
         }
     }
     local projectServiceData = {

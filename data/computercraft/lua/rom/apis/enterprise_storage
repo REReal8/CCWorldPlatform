@@ -213,10 +213,14 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
         Return value:
             nil
 
+        Async service return value (to callback):
+                            - (table)
+                success     - (boolean) whether the service was executed successfully
+
         Parameters:
-            siteData     - (table) data about this site, like type and layout
-            callback     - (string) function name to call once the site is build and started
-            callbackData - (table) function data to supply to callback
+            siteData        - (table) data about this site, like type and layout
+            callback        - (string) function name to call once the site is build and started
+            callbackData    - (table) function data to supply to callback
     ]]
 
     -- check input
@@ -244,8 +248,13 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
                     { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
                     { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
                 }},
+                { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                    { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                    { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                }},
             },
             returnData  = {
+                { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
             }
         }
         local projectServiceData = {
@@ -264,13 +273,14 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     --[[
         This public function (service) builds a new site.
 
-        Return value:
-            nil
+        Async service return value (to callback):
+                            - (table)
+                success     - (boolean) whether the service was executed successfully
 
         Parameters:
-            siteData     - (table) data about this site, like type and layout
-            callback     - (string) function name to call once the site is build
-            callbackData - (table) function data to supply to callback
+            siteData        - (table) data about this site, like type and layout
+            callback        - (string) function name to call once the site is build
+            callbackData    - (table) function data to supply to callback
     ]]
 
     -- check input
@@ -286,15 +296,16 @@ end
 
 -- enterprise_storage.StartNewSite_SSrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
 function StartNewSite_SSrv(siteData)
---[[
-    This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
+    --[[
+        This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
 
-    Return value:
-        nil
+        Return value:
+                            - (table)
+                success     - (boolean) whether the site is ready for business
 
-    Parameters:
-        siteData - (table) data about this site, like type and layout
---]]
+        Parameters:
+            siteData        - (table) data about this site, like type and layout
+    ]]
 
     -- just check if our enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -305,12 +316,13 @@ function StartNewSite_SSrv(siteData)
     end
 
     -- check our input
-    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.StartNewSite_SSrv: Invalid input') return nil end
+    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.StartNewSite_SSrv: Invalid input') return {success = false} end
 
     -- what kind of storage is this?
     if siteData.type == 'silo' then enterprise_storage_silo.StartNewSite_SSrv(siteData) end
 
-    -- nothing to return
+    -- end
+    return {success = true}
 end
 
 --    _                 _    __                  _   _
