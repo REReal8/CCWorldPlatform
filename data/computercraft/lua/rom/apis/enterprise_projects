@@ -188,12 +188,12 @@ function GetFieldValueFromKeyDef(stepData, keyDef)
     local fieldValue = stepData
 
     -- loop on indexing
-    local indexingPattern = "(%w+)[%.]?"
-    for indexName in string.gmatch(keyDef, indexingPattern) do
-        if type(indexName) ~= "string" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(indexName)..") indexName") return nil end
+    local indexingPattern = "([%_%w]+)[%.]?"
+    for keyName in string.gmatch(keyDef, indexingPattern) do
+        if type(keyName) ~= "string" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(keyName)..") keyName") return nil end
         if type(fieldValue) ~= "table" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Can't index further into fieldValue="..fieldValue.." (type="..type(fieldValue)..")") return nil end
-        fieldValue = fieldValue[indexName]
-        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(fieldValue)..") fieldValue") return nil end
+        fieldValue = fieldValue[keyName]
+        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid fieldValue (type="..type(fieldValue)..") for key "..keyName) return nil end
     end
 
     -- end
@@ -225,7 +225,7 @@ function SetFieldValueFromKeyDef(stepData, keyDef, fieldValue)
     local remainingKeyDef = keyDef
     local lastField = nil
     local lastKeyName = nil
-    local indexingPatternB = "^(%w+)[%.]?"
+    local indexingPatternB = "^([%_%w]+)[%.]?"
 
     -- handle (nested) keys
     while remainingKeyDef ~= "" do
@@ -257,6 +257,7 @@ function TerminateProject(internalProjectData)
     if type(project) ~= "table" then corelog.Error("enterprise_projects.TerminateProject: Invalid/ no project retrieved from "..internalProjectData.projectId) return nil end
 
     corelog.WriteToProjectsLog("Warning!: Early Termination", project.projectId)
+    corelog.Error("Early Termination of project "..project.projectId)
 
     EndProject(internalProjectData)
 end
