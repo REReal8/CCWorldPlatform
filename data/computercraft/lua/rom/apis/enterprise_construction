@@ -114,6 +114,10 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
             { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
                 { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "taskFunctionName" },
                 { keyName = "metaData"                  , valueSource = 0, sourceKey = "metaData" },
+                -- ToDo: add setting metaData.needTurtleId from destinationItemsLocator output of TransferItemsFromTo_ASrv of step 1
+--                { keyName = "metaData.needTurtleId"     , valueSource = 1, sourceKey = "destinationItemsLocator.port" },
+--                or likely better
+--                { keyName = "metaData.needItemsLocator" , valueSource = 1, sourceKey = "destinationItemsLocator" },
                 { keyName = "taskData"                  , valueSource = 0, sourceKey = "taskData" },
             }},
             { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
@@ -122,7 +126,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
             }},
         },
         returnData  = {
-            { keyName = "success"                   , valueSource = 3, sourceKey = "success" },
+            { keyName = "success"                       , valueSource = 3, sourceKey = "success" },
         }
     }
     local projectData = {

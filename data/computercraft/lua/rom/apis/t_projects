@@ -55,7 +55,7 @@ function T_StartProject()
                 { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
             }},
             { serviceName = "enterprise_test.TestPureLogicService_SSrv", async = false, input = {
-                { keyName = "testArg"   , valueSource = 0, sourceKey = "testArgSource" },
+                { keyName = "testArg"   , valueSource = 0, sourceKey = "testTableSource.key3.nKey2" },
             }},
         },
         returnData  = {
@@ -65,7 +65,18 @@ function T_StartProject()
             { keyName = "testBArg3"     , valueSource = 3, sourceKey = "input" },
         }
     }
-    local projectData = { testArgSource = testArgValue }
+    local projectData = { 
+        testArgSource = testArgValue,
+        testTableSource = {
+            key1 = 11,
+            key2 = 22,
+            key3 = {
+                nKey1 = 111,
+                nKey2 = 222,
+                nKey3 = 333,
+            }
+        }
+    }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = { "rootCallBackData" }
     local serviceData = {

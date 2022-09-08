@@ -127,10 +127,10 @@ end
 function NextProjectStep(internalProjectData, stepResults)
     -- get the project information
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
-    if type(project) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid/ no project retrieved from "..internalProjectData.projectId) return nil end
+    if type(project) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid/ no project retrieved from "..internalProjectData.projectId) TerminateProject(internalProjectData) return nil end
 
     -- save the results for the previous step
-    if type(stepResults) ~= "table" then stepResults = {} end
+    if type(stepResults) ~= "table" then stepResults = {} end -- ToDo: consider checking (or even enforcing?) {success = true}
     project.outputs[ project.currentStep ] = stepResults
     corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
 
@@ -146,17 +146,22 @@ function NextProjectStep(internalProjectData, stepResults)
     -- get new step
     local step = project.projectDefinition.services[ project.currentStep ]
 
-    -- prepare step service call
+    -- prepare next service step
     local serviceName = step.serviceName
     local serviceData = {}
     for i, inputDefinition in ipairs(step.input) do
+        -- get sourceStepData
+        local sourceStepNr = inputDefinition.valueSource
+        local sourceStepData = project.outputs[ sourceStepNr ]
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for step "..i) TerminateProject(internalProjectData) return nil end
+
+        -- get sourceValue
+        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDefinition.sourceKey)
+        if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceValue for step "..i) TerminateProject(internalProjectData) return nil end
+
         -- add the requested key
-        local projectOutput = project.outputs[ inputDefinition.valueSource ]
-        if type(projectOutput) ~= "table" then 
-            corelog.Warning("enterprise_projects.NextProjectStep: Invalid projectOutput for step "..i)
-        else
-            serviceData[ inputDefinition.keyName ] = projectOutput[ inputDefinition.sourceKey ]
-        end
+        local setSuccess = SetNestedIndexValue(serviceData, inputDefinition.keyName, sourceValue)
+        if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting serviceData for step "..i) TerminateProject(internalProjectData) return nil end
     end
 
     -- type of service?
@@ -178,6 +183,77 @@ function NextProjectStep(internalProjectData, stepResults)
     end
 end
 
+local indexingPattern = "(%w+)[%.]?"
+
+function GetNestedIndexSourceValue(sourceStepData, sourceKeyName)
+    -- check input
+
+    --        corelog.WriteToProjectsLog("    sourceKeyName = "..sourceKeyName.."", project.projectId)
+    local sourceValue = sourceStepData
+
+    -- loop on indexing
+    for indexName in string.gmatch(sourceKeyName, indexingPattern) do
+        if type(indexName) ~= "string" then corelog.Error("enterprise_projects.GetNestedIndexSourceValue: Invalid (type="..type(indexName)..") indexName") return nil end
+        if type(sourceValue) ~= "table" then corelog.Error("enterprise_projects.GetNestedIndexSourceValue: Can't index further into sourceValue="..sourceValue.." (type="..type(sourceValue)..")") return nil end
+        sourceValue = sourceValue[indexName]
+        if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.GetNestedIndexSourceValue: Invalid (type="..type(sourceValue)..") sourceValue") return nil end
+    end
+    --        corelog.WriteToProjectsLog("    sourceValue = "..textutils.serialize(sourceValue).."", project.projectId)
+
+    -- end
+    return sourceValue
+end
+
+function SetNestedIndexValue(resultData, keyName, sourceValue)
+    -- check input
+
+    -- loop on indexing
+    local indexedData = resultData
+    for indexName in string.gmatch(keyName, indexingPattern) do
+        if type(indexName) ~= "string" then corelog.Error("enterprise_projects.SetNestedIndexValue: Invalid (type="..type(indexName)..") indexName") return false end
+        corelog.WriteToProjectsLog("    indexName = "..indexName.."")
+        if type(indexedData) ~= "table" then corelog.Error("enterprise_projects.SetNestedIndexValue: Can't index further into indexedData="..indexedData.." (type="..type(indexedData)..")") return false end
+        corelog.WriteToProjectsLog("    indexedData = "..textutils.serialize(indexedData).." (1)")
+
+        indexedData = indexedData[indexName]
+--        if type(indexedData) == "nil" then corelog.Error("enterprise_projects.SetNestedIndexValue: Invalid (type="..type(indexedData)..") indexedData") return false end
+    end
+    indexedData = sourceValue
+    corelog.WriteToProjectsLog("    indexedData = "..textutils.serialize(indexedData).." (2)")
+
+--[[
+    local a = {
+        ["l1"] = {
+            ["l2"] = {
+                ["l3"] = "waarde"
+            }
+
+        }
+    }
+
+    a["l1"]["l2"]["l3"] = "nieuwe waarde 1"
+    a.l1.l2.l3 = "nieuwe waarde 2"
+
+    local b = a
+    b = b.l1
+    b = b.l2
+    b = b.l3
+    b = "nieuwe waarde 3"
+]]
+
+    -- end
+    return true
+end
+
+function TerminateProject(internalProjectData)
+    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+    if type(project) ~= "table" then corelog.Error("enterprise_projects.TerminateProject: Invalid/ no project retrieved from "..internalProjectData.projectId) return nil end
+
+    corelog.WriteToProjectsLog("Warning!: Early Termination", project.projectId)
+
+    EndProject(internalProjectData)
+end
+
 function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
@@ -185,8 +261,18 @@ function EndProject(internalProjectData)
 
     -- create the projectResult
     for i, inputDefinition in ipairs(project.projectDefinition.returnData) do
+        -- get sourceStepData
+        local sourceStepNr = inputDefinition.valueSource
+        local sourceStepData = project.outputs[ sourceStepNr ]
+        if type(sourceStepData) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid sourceStepData for "..i) break end
+
+        -- get sourceValue
+        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDefinition.sourceKey)
+        if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid sourceValue step "..i) break end
+
         -- add the requested key
-        projectResult[ inputDefinition.keyName ] = project.outputs[ inputDefinition.valueSource ][ inputDefinition.sourceKey ]
+        local setSuccess = SetNestedIndexValue(projectResult, inputDefinition.keyName, sourceValue)
+        if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting projectResult step "..i) break end
     end
     corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResult), project.projectId)
 
