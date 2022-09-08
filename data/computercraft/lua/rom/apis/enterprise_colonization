@@ -47,6 +47,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         factoryLocation             = coremove.CopyLocation(factoryLocation),
     }
     local settleData = {
+        materialsHostLocator        = enterprise_turtle.GetISHURL_SSrv({ }).url,
+
         primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
 
@@ -54,6 +56,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
 
         factoryVersion0             = "v0",
+        upgradeFalse                = false,
 
         waitFirstTreeMetaData       = role_settler.WaitFirstTree_MetaData(primaryTaskData),
         waitFirstTree_Task          = "role_settler.WaitFirstTree_Task",
@@ -83,7 +86,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         remainingSettle_Task        = "role_settler.RemainingSettle_Task",
 
         factoryVersion2             = "v2",
-        upgradeToSimple             = true,
+        upgradeToV2                 = true,
 
         siloLocation                = {x=12, y=12, z= 1, dx=0, dy=1},
         type                        = "silo",
@@ -103,6 +106,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
+                { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "waitFirstTree_Task" },
@@ -144,10 +149,13 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion1" },
+                { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "remainingSettle_Task" },
@@ -157,7 +165,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = { -- ToDo handle stopping & restarting in case of upgrade
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion2" },
-                { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeToSimple" },
+                { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeToV2" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_storage.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "location"                   , valueSource = 0, keyDefSource = "siloLocation" },
@@ -165,6 +174,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "siloType"                   , valueSource = 0, keyDefSource = "siloType" },
                 { keyDef = "topChests"                  , valueSource = 0, keyDefSource = "topChests" },
                 { keyDef = "layers"                     , valueSource = 0, keyDefSource = "layers" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },

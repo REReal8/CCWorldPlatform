@@ -27,23 +27,76 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
                 blueprint               - (table) blueprint to build
                     layerList           - (table) layer to build
                     escapeSequence      - (table) escapeSequence of blueprint
+                materialsHostLocator    - (URL) locating the host of the building materials
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
     if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprintStartpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid layerList") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local blueprintStartpoint = buildData.blueprintStartpoint
+    if type(blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprintStartpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local blueprint = buildData.blueprint
+    if type(blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid layerList") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(buildData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local materialsHostLocator = url.URLClass:new(buildData.materialsHostLocator)
     if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: callback not a string") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- construct assignment metadata
     local metaData = role_builder.BuildBlueprint_MetaData(buildData)
 
-    -- add assignment
-    coreassignment.AddAssignment(metaData, "role_builder.BuildBlueprint_Task", buildData, callback, callbackData)
+    -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
+    local materialsItemsLocator = materialsHostLocator
+    materialsItemsLocator:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
+--    corelog.WriteToLog("   materialsItemsLocator="..materialsItemsLocator:getURI())
+
+    -- set local output location
+    local materialsLocalHostLocator = enterprise_turtle.GetISHURL()
+--    corelog.WriteToLog("   materialsLocalHostLocator="..materialsLocalHostLocator:getURI())
+
+    -- create project service data
+    local buildBlueprintProjectDef = {
+        steps   = {
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+            }},
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "taskFunctionName" },
+                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
+                { keyDef = "metaData.needTurtleId"  , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
+                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+        }
+    }
+    local projectData = {
+        materialsItemsLocator       = materialsItemsLocator,
+        materialsLocalHostLocator   = materialsLocalHostLocator,
+
+        taskFunctionName            = "role_builder.BuildBlueprint_Task",
+        metaData                    = metaData,
+        taskData = {
+            blueprintStartpoint     = blueprintStartpoint,
+            blueprint               = blueprint,
+        }
+    }
+    local projectServiceData = {
+        projectDef  = buildBlueprintProjectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Building blueprint at "..textutils.serialise(blueprintStartpoint))
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
@@ -94,7 +147,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
     local materialsItemsLocator = materialsHostLocator
     materialsItemsLocator:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
-    corelog.WriteToLog("materialsItemsLocator="..materialsItemsLocator:getURI())
+--    corelog.WriteToLog("   materialsItemsLocator="..materialsItemsLocator:getURI())
 
     -- set local output location
     -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle 
@@ -102,7 +155,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value 
     --          of that service should specify which turtle has the items in it's inventory.
     local materialsLocalHostLocator = enterprise_turtle.GetISHURL()
-    corelog.WriteToLog("materialsLocalHostLocator="..materialsLocalHostLocator:getURI())
+--    corelog.WriteToLog("   materialsLocalHostLocator="..materialsLocalHostLocator:getURI())
 
     -- create project service data
     local buildRectangularPatternProjectDef = {
@@ -127,8 +180,8 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
         }
     }
     local projectData = {
-        materialsItemsLocator      = materialsItemsLocator,
-        materialsLocalHostLocator  = materialsLocalHostLocator,
+        materialsItemsLocator       = materialsItemsLocator,
+        materialsLocalHostLocator   = materialsLocalHostLocator,
 
         taskFunctionName            = "role_builder.BuildRectangularPattern_Task",
         metaData                    = metaData,

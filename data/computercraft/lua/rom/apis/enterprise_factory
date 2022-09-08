@@ -85,7 +85,7 @@ local db = {
 --   | |
 --   |_|
 
-function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
+function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service builds a new factory site and ensures it's ready for use.
 
@@ -93,23 +93,24 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the site was succesfully build and is ready for use.
+                                        - (table)
+                success                 - (boolean) whether the site was succesfully build and is ready for use.
 
         Parameters:
-            siteData            - (table) data about this site
-                baseLocation    - (table) world location of the base (lower left corner) of this site
-                siteVersion     - (string) version string of the site
-                upgrade         - (boolean) if site should (only) be updated from a previous version
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
+            serviceData                 - (table) data about this site
+                baseLocation            - (table) world location of the base (lower left corner) of this site
+                siteVersion             - (string) version string of the site
+                upgrade                 - (boolean) if site should (only) be updated from a previous version
+                materialsHostLocator    - (URL) locating the host of the building materials
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = siteData.baseLocation
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = siteData.siteVersion
+    local siteVersion = serviceData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
@@ -118,14 +119,15 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     local buildAndStartNewSiteProjectDef = {
         steps   = {
             { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
-                { keyDef = "upgrade"            , valueSource = 0, keyDefSource = "upgrade" },
+                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "upgrade"                , valueSource = 0, keyDefSource = "upgrade" },
+                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_factory.StartNewSite_SSrv", async = false, stepDataDef = {
-                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
-                { keyDef = "siteAlreadyBuild"   , valueSource = 1, keyDefSource = "success" }
+                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "siteAlreadyBuild"       , valueSource = 1, keyDefSource = "success" }
             }},
         },
         returnData  = {
@@ -134,7 +136,7 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     }
     local projectServiceData = {
         projectDef  = buildAndStartNewSiteProjectDef,
-        projectData = siteData,
+        projectData = serviceData,
     }
 
     -- start project
@@ -142,7 +144,7 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function BuildNewSite_ASrv(siteData, callback, callbackData)
+function BuildNewSite_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service builds a new factory site.
 
@@ -154,21 +156,24 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
                 success         - (boolean) whether the site was succesfully build
 
         Parameters:
-            siteData            - (table) data about this site
-                baseLocation    - (table) world location of the base (lower left corner) of this site
-                siteVersion     - (string) version string of the site
-                upgrade         - (boolean) if site should (only) be updated from a previous version
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
+            serviceData                 - (table) data about this service
+                baseLocation            - (table) world location of the base (lower left corner) of this site
+                siteVersion             - (string) version string of the site
+                upgrade                 - (boolean) if site should (only) be updated from a previous version
+                materialsHostLocator    - (URL) locating the host of the building materials
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = siteData.baseLocation
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = siteData.siteVersion
+    local siteVersion = serviceData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local upgrade = siteData.upgrade or false
+    local upgrade = serviceData.upgrade or false
+    if type(serviceData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local materialsHostLocator = url.URLClass:new(serviceData.materialsHostLocator)
     if type(upgrade) ~= "boolean" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid upgrade") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
@@ -176,15 +181,16 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     -- get site build data
     local siteBuildData = nil
     if siteVersion == "v0" then
-        siteBuildData = GetV0SiteBuildData(siteData)
+        siteBuildData = GetV0SiteBuildData(serviceData)
     elseif siteVersion == "v1" then
-        siteBuildData = GetV1SiteBuildData(siteData)
+        siteBuildData = GetV1SiteBuildData(serviceData)
     elseif siteVersion == "v2" then
-        siteBuildData = GetV2SiteBuildData(siteData)
+        siteBuildData = GetV2SiteBuildData(serviceData)
     else
         corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
+    siteBuildData.materialsHostLocator = materialsHostLocator
 
     -- let construction enterprise build the site    
     if upgrade then
@@ -195,7 +201,7 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback, callbackData)
 end
 
-function StartNewSite_SSrv(siteData)
+function StartNewSite_SSrv(serviceData)
     --[[
         This sync public service ensures a new site is ready for use.
 
@@ -204,20 +210,20 @@ function StartNewSite_SSrv(siteData)
                 success             - (boolean) whether the site is ready for business
 
         Parameters:
-            siteData                - (table) data about this site
+            serviceData             - (table) data about this service
                 baseLocation        - (table) world location of the base (lower left corner) of this site
                 siteVersion         - (string) version string of the site
                 siteAlreadyBuild    - (boolean) confirmation that the site was already physically build
     --]]
 
     -- check input
-    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid siteData") return {success = false} end
-    local baseLocation = siteData.baseLocation
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid serviceData") return {success = false} end
+    local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid baseLocation") return {success = false} end
-    local siteVersion = siteData.siteVersion
+    local siteVersion = serviceData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid siteVersion") return {success = false} end
-    if type(siteData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Invalid siteAlreadyBuild") return {success = false} end
-    if not siteData.siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
+    if type(serviceData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Invalid siteAlreadyBuild") return {success = false} end
+    if not serviceData.siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -228,14 +234,14 @@ function StartNewSite_SSrv(siteData)
 
     -- get site start data
     local siteStartData = nil
-    if siteData.siteVersion == "v0" then
-        siteStartData = GetV0SiteStartData(siteData)
-    elseif siteData.siteVersion == "v1" then
-        siteStartData = GetV1SiteStartData(siteData)
---    elseif siteData.siteVersion == "v2" then -- ToDo: implement
---        siteStartData = GetV2SiteStartDate(siteData)
+    if siteVersion == "v0" then
+        siteStartData = GetV0SiteStartData(serviceData)
+    elseif siteVersion == "v1" then
+        siteStartData = GetV1SiteStartData(serviceData)
+--    elseif siteVersion == "v2" then -- ToDo: implement
+--        siteStartData = GetV2SiteStartDate(serviceData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteData.siteVersion)
+        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
         return {success = false}
     end
 
@@ -247,7 +253,7 @@ function StartNewSite_SSrv(siteData)
     return {success = true}
 end
 
-function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
+function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service stops and dismantles a site.
 
@@ -259,18 +265,19 @@ function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
                 success         - (boolean) whether the site was succesfully stopped and dismantled.
 
         Parameters:
-            siteData            - (table) data about this site
-                baseLocation    - (table) world location of the base (lower left corner) of this site
-                siteVersion     - (string) version string of the site
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
+            serviceData                 - (table) data about this service
+                baseLocation            - (table) world location of the base (lower left corner) of this site
+                siteVersion             - (string) version string of the site
+                materialsHostLocator    - (URL) locating the host of the building materials
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = siteData.baseLocation
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = siteData.siteVersion
+    local siteVersion = serviceData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
@@ -279,30 +286,31 @@ function StopAndDismantleSite_ASrv(siteData, callback, callbackData)
     local stopAndDismantleSiteProjectDef = {
         steps   = {
             { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
             }},
             { stepName = "enterprise_factory.DismantleSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"        , valueSource = 0, keyDefSource = "siteVersion" },
-                { keyDef = "siteStopped"        , valueSource = 1, keyDefSource = "success" }
+                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
+                { keyDef = "siteStopped"            , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success"                    , valueSource = 2, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
         projectDef  = stopAndDismantleSiteProjectDef,
-        projectData = siteData,
+        projectData = serviceData,
     }
 
     -- start project
-    corelog.WriteToLog(">Stopping and dismantling factory site version "..siteData.siteVersion.." at "..textutils.serialise(siteData.baseLocation))
+    corelog.WriteToLog(">Stopping and dismantling factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function DismantleSite_ASrv(siteData, callback, callbackData)
+function DismantleSite_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
         Possibly part of the world is restored to a neutral (e.g. flat) state.
@@ -311,48 +319,52 @@ function DismantleSite_ASrv(siteData, callback, callbackData)
             nil 
 
         Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the site was succesfully dismantled
+                                        - (table)
+                success                 - (boolean) whether the site was succesfully dismantled
 
         Parameters:
-            siteData            - (table) data about the site
-                baseLocation    - (table) world location of the base (lower left corner) of the site
-                siteVersion     - (string) version string of the site
-                siteStopped     - (boolean) confirmation that the site was already stopped
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
+            serviceData                 - (table) data about this service
+                baseLocation            - (table) world location of the base (lower left corner) of the site
+                siteVersion             - (string) version string of the site
+                siteStopped             - (boolean) confirmation that the site was already stopped
+                materialsHostLocator    - (URL) locating the host of the building materials
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = siteData.baseLocation
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = siteData.siteVersion
+    local siteVersion = serviceData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local materialsHostLocator = url.URLClass:new(serviceData.materialsHostLocator)
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
-    if type(siteData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite_ASrv: siteStopped not valid") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if not siteData.siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite_ASrv: siteStopped not valid") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceData.siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get site dismantal data
     local siteDismantleBuildData = nil
-    if siteData.siteVersion == "v0" then
-        siteDismantleBuildData = GetV0SiteDismantleBuildData(siteData)
+    if siteVersion == "v0" then
+        siteDismantleBuildData = GetV0SiteDismantleBuildData(serviceData)
 -- ToDo implement for v1 and v2
---    elseif dismantleData.siteVersion == "v1" then
---        siteDismantleBuildData = GetV1SiteDismantleBuildData(siteData)
---    elseif dismantleData.siteVersion == "v2" then
---        siteDismantleBuildData = GetV2SiteDismantleBuildData(siteData)
+--    elseif siteVersion == "v1" then
+--        siteDismantleBuildData = GetV1SiteDismantleBuildData(serviceData)
+--    elseif siteVersion == "v2" then
+--        siteDismantleBuildData = GetV2SiteDismantleBuildData(serviceData)
     else
-        corelog.Error("enterprise_factory.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteData.siteVersion)
+        corelog.Error("enterprise_factory.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
+    siteDismantleBuildData.materialsHostLocator = materialsHostLocator
 
     -- let construction enterprise dismantle the site
     enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback, callbackData)
 end
 
-function StopSite_ASrv(siteData, callback, callbackData)
+function StopSite_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service stops a factory site. Stopping implies
           - the site is immediatly no longer available for new business
@@ -367,7 +379,7 @@ function StopSite_ASrv(siteData, callback, callbackData)
                 success         - (boolean) when the site was succesfully stopped
 
         Parameters:
-            siteData            - (table) data about the site
+            serviceData         - (table) data about this service
                 baseLocation    - (table) world location of the base (lower left corner) of the site
                 siteVersion     - (string) version string of the site
             callback            - (string) name of function to call once service is ready
@@ -375,19 +387,19 @@ function StopSite_ASrv(siteData, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteData) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = siteData.baseLocation
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = siteData.siteVersion
+    local siteVersion = serviceData.siteVersion
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.StopSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- pass on the request to site file
-    enterprise_factory_site.StopSite_ASrv(siteData, callback, callbackData)
+    enterprise_factory_site.StopSite_ASrv(serviceData, callback, callbackData)
 end
 
-function ProduceItem_ASrv(productionData , callback, callbackData)
+function ProduceItem_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service produces (multiple instances of) an item of a specific itemName in a factory site. It does so 
         by first determining a recipe that can produce the item. Subsequently it uses the recipe ingredients to produce the
@@ -401,7 +413,7 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
                 success                 - (boolean) whether the items were succesfully produced
 
         Parameters:
-            productionData              - (table) data about the item to produce, 
+            serviceData                 - (table) data about the item to produce, 
                 itemName                - (string) name of items to produce
                 itemAmount              - (number) amount of items to produce
                 ingredientsHostLocator  - (URL) locating the host of the production ingredients
@@ -411,12 +423,12 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
     ]]
 
     -- check input
-    if type(productionData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productionData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemName = productionData.itemName
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productionData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemName = serviceData.itemName
     if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemAmount = productionData.itemAmount
+    local itemAmount = serviceData.itemAmount
     if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local ingredientsHostLocator = productionData.ingredientsHostLocator
+    local ingredientsHostLocator = serviceData.ingredientsHostLocator
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
@@ -428,18 +440,18 @@ function ProduceItem_ASrv(productionData , callback, callbackData)
 
     -- select a suitable site
     local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
-    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(productionData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(serviceData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- ToDo: implement getting ingredients from ingredientsHostLocator
 
     -- let site produce item
     if recipe == craftRecipe then
-        enterprise_factory_site.CraftItem(siteId, productionData, recipe, callback, callbackData)
+        enterprise_factory_site.CraftItem(siteId, serviceData, recipe, callback, callbackData)
     elseif recipe == smeltRecipe then
-        enterprise_factory_site.SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
+        enterprise_factory_site.SmeltItemAndPickup(siteId, serviceData, recipe, callback, callbackData)
         -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
     else
-        corelog.Error('enterprise_factory.ProduceItem_ASrv: Unknown recipe type to produce '..textutils.serialize(productionData))
+        corelog.Error('enterprise_factory.ProduceItem_ASrv: Unknown recipe type to produce '..textutils.serialize(serviceData))
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 end
@@ -520,7 +532,7 @@ local shaftLayerRestore_pattern = {
     clearRemainingSpace = false,
 }
 
-function GetV0SiteBuildData(siteData)
+function GetV0SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
         { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
@@ -535,14 +547,14 @@ function GetV0SiteBuildData(siteData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
         blueprint = blueprint
     }
 
     return siteBuildData
 end
 
-function GetV0SiteDismantleBuildData(siteData)
+function GetV0SiteDismantleBuildData(serviceData)
     -- construct layer list
     local layerList = {
         { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayerRestore_pattern)},
@@ -557,19 +569,19 @@ function GetV0SiteDismantleBuildData(siteData)
 
     -- construct build data
     local siteDismantleBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
         blueprint = blueprint
     }
 
     return siteDismantleBuildData
 end
 
-function GetV0SiteStartData(siteData)
+function GetV0SiteStartData(serviceData)
     -- construct start data
     local startData = {
-        version = siteData.siteVersion,
+        version = serviceData.siteVersion,
 
-        baseLocation = coremove.CopyLocation(siteData.baseLocation),
+        baseLocation = coremove.CopyLocation(serviceData.baseLocation),
 
         craftingSpots = {
             { location = { x= 0, y=0, z=0}} -- ToDo: consider renaming to relLocation (relative location)
@@ -603,7 +615,7 @@ local furnanceLayerL1_pattern = {
     clearRemainingSpace = true
 }
 
-function GetV1SiteBuildData(siteData)
+function GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
         { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
@@ -622,19 +634,19 @@ function GetV1SiteBuildData(siteData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
         blueprint = blueprint
     }
 
     return siteBuildData
 end
 
-function GetV1SiteStartData(siteData)
+function GetV1SiteStartData(serviceData)
     -- construct start data
     local startData = {
-        version = siteData.siteVersion,
+        version = serviceData.siteVersion,
 
-        baseLocation = coremove.CopyLocation(siteData.baseLocation),
+        baseLocation = coremove.CopyLocation(serviceData.baseLocation),
 
         craftingSpots = {
             { location = { x= 3, y=3, z=-4}} -- ToDo: consider renaming to relLocation (relative location)
@@ -677,8 +689,8 @@ local topLayerL2_pattern = {
     clearRemainingSpace = true
 }
 
-function GetV2SiteBuildData(siteData)
-    local onlyUpgrade = siteData.upgrade
+function GetV2SiteBuildData(serviceData)
+    local onlyUpgrade = serviceData.upgrade
 
     -- construct layer list
     local layerList = {
@@ -701,19 +713,19 @@ function GetV2SiteBuildData(siteData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(siteData.baseLocation),
+        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
         blueprint = blueprint
     }
 
     return siteBuildData
 end
 
-function GetV2SiteStartData(siteData)
+function GetV2SiteStartData(serviceData)
     -- construct start data
     local startData = {
-        version = siteData.siteVersion,
+        version = serviceData.siteVersion,
 
-        baseLocation = siteData.baseLocation,
+        baseLocation = serviceData.baseLocation,
 
         craftingSpots = {
             { location = { x= 3, y=3, z=-4}} -- ToDo: consider renaming to relLocation (relative location)

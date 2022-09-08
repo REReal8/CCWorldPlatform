@@ -206,7 +206,6 @@ function ItemsCollected(argumentTable) -- location
     if site.type == "silo" then enterprise_storage_silo.ItemsCollected(site, topChest) end
 end
 
--- enterprise_storage.BuildAndStartNewSite_ASrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     --[[
         This public function (service) builds a new storage site and starts it.
@@ -231,18 +230,19 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
         local buildAndStartNewSiteProjecDef = {
             steps   = {
                 { stepName = "enterprise_storage.BuildNewSite_ASrv", async = true, stepDataDef = {
-                    { keyDef = "location"   , valueSource = 0, keyDefSource = "location" },
-                    { keyDef = "type"       , valueSource = 0, keyDefSource = "type" },
-                    { keyDef = "siloType"   , valueSource = 0, keyDefSource = "siloType" },
-                    { keyDef = "topChests"  , valueSource = 0, keyDefSource = "topChests" },
-                    { keyDef = "layers"     , valueSource = 0, keyDefSource = "layers" },
+                    { keyDef = "location"               , valueSource = 0, keyDefSource = "location" },
+                    { keyDef = "type"                   , valueSource = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"               , valueSource = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
+                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
                 }},
                 { stepName = "enterprise_storage.StartNewSite_SSrv", async = false, stepDataDef = {
-                    { keyDef = "location"   , valueSource = 0, keyDefSource = "location" },
-                    { keyDef = "type"       , valueSource = 0, keyDefSource = "type" },
-                    { keyDef = "siloType"   , valueSource = 0, keyDefSource = "siloType" },
-                    { keyDef = "topChests"  , valueSource = 0, keyDefSource = "topChests" },
-                    { keyDef = "layers"     , valueSource = 0, keyDefSource = "layers" },
+                    { keyDef = "location"               , valueSource = 0, keyDefSource = "location" },
+                    { keyDef = "type"                   , valueSource = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"               , valueSource = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
                 }},
             },
             returnData  = {
@@ -260,22 +260,22 @@ function BuildAndStartNewSite_ASrv(siteData, callback, callbackData)
     -- nothing to return
 end
 
--- enterprise_storage.BuildNewSite_ASrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2}, "coreassignment.Dummy_Callback", {})
 function BuildNewSite_ASrv(siteData, callback, callbackData)
---[[
-    This public function (service) builds a new site.
+    --[[
+        This public function (service) builds a new site.
 
-    Return value:
-        nil
+        Return value:
+            nil
 
-    Parameters:
-        siteData     - (table) data about this site, like type and layout
-        callback     - (string) function name to call once the site is build
-        callbackData - (table) function data to supply to callback
-]]
+        Parameters:
+            siteData     - (table) data about this site, like type and layout
+            callback     - (string) function name to call once the site is build
+            callbackData - (table) function data to supply to callback
+    ]]
+
     -- check input
-    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage.BuildNewSite_ASrv: Invalid siteData input') return nil end
-    if type(callback) ~= "string" then corelog.Error('enterprise_storage.BuildNewSite_ASrv: Invalid callback function') return nil end
+    if type(siteData) ~= "table" or type(siteData.type) ~= "string" then corelog.Error("enterprise_storage.BuildNewSite_ASrv: Invalid siteData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_storage.BuildNewSite_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- what kind of storage is this?

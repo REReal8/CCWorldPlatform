@@ -1,5 +1,5 @@
-local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
-local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
+local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation2    = coremove.GetRelativeLocation(testStartLocation, 0, 6, 0)
 
 local testBuildPattern1 = {
     deltaX      = 4,
@@ -53,9 +53,9 @@ local testBuildPattern4 = {
 
 local testBlueprint1 = {
     layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = testBuildPattern3},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = testBuildPattern4},
-        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = testBuildPattern2},
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = role_builder.CopyPattern(testBuildPattern3)},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern4)},
+        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)},
         { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)}
     },
     escapeSequence = {
@@ -65,8 +65,8 @@ local testBlueprint1 = {
 
 local testBlueprint2 = {
     layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = testBuildPattern1},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = testBuildPattern2},
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = role_builder.CopyPattern(testBuildPattern1)},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)},
     },
     escapeSequence = {
         { x= 3, y= 3, z=  1},
@@ -156,11 +156,15 @@ end
 
 function T_BuildBlueprint_Service()
     -- test service 2
-    corelog.WriteToLog("# Test 2")
-    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint1}
+    corelog.WriteToLog("# Test BuildBlueprint_Service")
+    local blueprintBuildData = {
+        blueprintStartpoint     = coremove.GetRelativeLocation(testStartLocation, 0, 12, 0),
+        blueprint               = testBlueprint1,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url,
+    }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
-    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
+--    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
     enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callbackFunction, callbackData)
 end
 

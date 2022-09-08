@@ -129,19 +129,23 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
             nil
 
         Parameters:
-            siteData     - (table) data about this silo, like type and layout
-            callback     - (string) function name to call once the site is build
-            callbackData - (table) function data to supply to callback
+            siteData                    - (table) data about this silo, like type and layout
+                materialsHostLocator    - (URL) locating the host of the building materials
+            callback                    - (string) function name to call once the site is build
+            callbackData                - (table) function data to supply to callback
     ]]
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid siteData input') return nil end
+    if type(siteData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local materialsHostLocator = url.URLClass:new(siteData.materialsHostLocator)
     if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid callback function') return nil end
 
     -- let construction enterprise build the silo
     local blueprintBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(siteData.location),
-        blueprint = GetSiloL0_blueprint(siteData)
+        blueprintStartpoint     = coremove.CopyLocation(siteData.location),
+        blueprint               = GetSiloL0_blueprint(siteData),
+        materialsHostLocator    = materialsHostLocator,
     }
     corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint))
     enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback, callbackData)

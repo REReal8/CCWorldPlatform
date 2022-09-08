@@ -2,31 +2,62 @@ local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
 
 function T_BuildAndStartNewV0Site_service()
-    enterprise_factory.BuildAndStartNewSite_ASrv({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.BuildAndStartNewSite_ASrv({
+        baseLocation            = baseLocationV0,
+        siteVersion             = "v0",
+        upgrade                 = false,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_BuildNewV0Site_service()
-    enterprise_factory.BuildNewSite_ASrv({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.BuildNewSite_ASrv({
+        baseLocation            = baseLocationV0,
+        siteVersion             = "v0",
+        upgrade                 = false,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_BuildNewV1Site_service()
-    enterprise_factory.BuildNewSite_ASrv({baseLocation = baseLocationV1, siteVersion="v1"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.BuildNewSite_ASrv({
+        baseLocation            = baseLocationV1,
+        siteVersion             = "v1",
+        upgrade                 = false,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_StartNewSite_service()
-    enterprise_factory.StartNewSite_SSrv({baseLocation = baseLocationV1, siteVersion="v1", siteAlreadyBuild=true}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.StartNewSite_SSrv({
+        baseLocation        = baseLocationV1,
+        siteVersion         = "v1",
+        siteAlreadyBuild    = true
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_StopAndDismantleV0Site_service()
-    enterprise_factory.StopAndDismantleSite_ASrv({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.StopAndDismantleSite_ASrv({
+        baseLocation            = baseLocationV0,
+        siteVersion             = "v0",
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_DismantleV0Site_service()
-    enterprise_factory.DismantleSite_ASrv({baseLocation = baseLocationV0, siteVersion="v0", siteStopped=true}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.DismantleSite_ASrv({
+        baseLocation            = baseLocationV0,
+        siteVersion             = "v0",
+        siteStopped             = true,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_StopV0Site_service()
-    enterprise_factory.StopSite_ASrv({baseLocation = baseLocationV0, siteVersion="v0"}, "coreassignment.Dummy_Callback", {"some callback data"})
+    enterprise_factory.StopSite_ASrv({
+        baseLocation    = baseLocationV0,
+        siteVersion     = "v0"
+    }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_DeleteSites()
@@ -51,7 +82,7 @@ function T_ProduceItem_service_Smelt()
     enterprise_factory.ProduceItem_ASrv({
         itemName                = "minecraft:charcoal",
         itemAmount              = 3,
-        ingredientsHostLocator = enterprise_turtle.GetISHURL_SSrv({ })
+        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ })
     }, callbackFunction, callbackData)
 end
 
