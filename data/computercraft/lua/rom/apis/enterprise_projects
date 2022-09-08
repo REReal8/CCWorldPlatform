@@ -146,102 +146,109 @@ function NextProjectStep(internalProjectData, stepResults)
     -- get new step
     local step = project.projectDef.steps[ project.currentStep ]
 
-    -- prepare step service call
-    local serviceName = step.stepName
-    local serviceData = {}
-    for i, inputDef in ipairs(step.stepDataDef) do
-        -- get sourceStepData
-        local sourceStepNr = inputDef.valueSource
-        local sourceStepData = project.outputs[ sourceStepNr ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for step "..i) TerminateProject(internalProjectData) return nil end
+    -- prepare stepData
+    local stepData = {}
+    for iField, fieldDef in ipairs(step.stepDataDef) do
+        -- get stepDataSource
+        local valueSourceIndex = fieldDef.valueSource -- ToDo: consider renaming valueSource => valueSourceIndex
+        local stepDataSource = project.outputs[ valueSourceIndex ]
+        if type(stepDataSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepDataSource for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
 
-        -- get sourceValue
-        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDef.keyDefSource)
-        if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceValue for step "..i) TerminateProject(internalProjectData) return nil end
+        -- get fieldValue
+        local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.keyDefSource)
+        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.NextProjectStep: Invalid fieldValue for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
 
-        -- add the requested key
-        local setSuccess = SetNestedIndexValue(serviceData, inputDef.keyDef, sourceValue)
-        if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting serviceData for step "..i) TerminateProject(internalProjectData) return nil end
+        -- add field 
+        local setSuccess = SetFieldValueFromKeyDef(stepData, fieldDef.keyDef, fieldValue)
+        if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting stepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
     end
 
-    -- type of service?
+    -- type of step?
+    local serviceName = step.stepName -- note: possibly later also none service steps, for now it always is a service
     if step.async == true then
         corelog.WriteToProjectsLog("Start step "..project.currentStep.." async", project.projectId)
 
         -- do async function call
         local callback          = "'enterprise_projects.NextProjectStep'"
         local callbackData      = internalProjectData
-        coreutils.DoASyncService(serviceName, serviceData, callback, callbackData)
+        coreutils.DoASyncService(serviceName, stepData, callback, callbackData)
     else
         corelog.WriteToProjectsLog("Start step "..project.currentStep.." sync", project.projectId)
 
         -- do sync function call, keep the results
-        local results = coreutils.DoSyncService(serviceName, serviceData)
+        local results = coreutils.DoSyncService(serviceName, stepData)
 
         -- recursive is the future!
         NextProjectStep(internalProjectData, results)
     end
 end
 
-local indexingPattern = "(%w+)[%.]?"
-
-function GetNestedIndexSourceValue(sourceStepData, sourceKeyName)
+function GetFieldValueFromKeyDef(stepData, keyDef)
     -- check input
-
-    --        corelog.WriteToProjectsLog("    sourceKeyName = "..sourceKeyName.."", project.projectId)
-    local sourceValue = sourceStepData
+    local fieldValue = stepData
 
     -- loop on indexing
-    for indexName in string.gmatch(sourceKeyName, indexingPattern) do
-        if type(indexName) ~= "string" then corelog.Error("enterprise_projects.GetNestedIndexSourceValue: Invalid (type="..type(indexName)..") indexName") return nil end
-        if type(sourceValue) ~= "table" then corelog.Error("enterprise_projects.GetNestedIndexSourceValue: Can't index further into sourceValue="..sourceValue.." (type="..type(sourceValue)..")") return nil end
-        sourceValue = sourceValue[indexName]
-        if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.GetNestedIndexSourceValue: Invalid (type="..type(sourceValue)..") sourceValue") return nil end
+    local indexingPattern = "(%w+)[%.]?"
+    for indexName in string.gmatch(keyDef, indexingPattern) do
+        if type(indexName) ~= "string" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(indexName)..") indexName") return nil end
+        if type(fieldValue) ~= "table" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Can't index further into fieldValue="..fieldValue.." (type="..type(fieldValue)..")") return nil end
+        fieldValue = fieldValue[indexName]
+        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(fieldValue)..") fieldValue") return nil end
     end
-    --        corelog.WriteToProjectsLog("    sourceValue = "..textutils.serialize(sourceValue).."", project.projectId)
 
     -- end
-    return sourceValue
+    return fieldValue
 end
 
-function SetNestedIndexValue(resultData, keyName, sourceValue)
+function SetFieldValueFromKeyDef(stepData, keyDef, fieldValue)
+    --[[
+        The intend of this method is to assign fieldValue to stepData indexed by the (keyName) compoments in keyDef, i.e.
+
+        with 
+            keyDef = "keyName1.keyName2 ... .keyNameN"
+        do
+            stepData.keyName1.keyName2 ... .keyNameN = fieldValue
+        or (equivalently):
+            stepData["keyName1"]["keyName2"] ... ["keyNameN"] = fieldValue
+    ]]
+
     -- check input
+    if type(stepData) ~= "table" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid stepData") return false end
+    if type(keyDef) ~= "string" and keyDef ~= "" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid keyDef") return false end
+    if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid fieldValue (nil)") return false end
 
-    -- loop on indexing
-    local indexedData = resultData
-    for indexName in string.gmatch(keyName, indexingPattern) do
-        if type(indexName) ~= "string" then corelog.Error("enterprise_projects.SetNestedIndexValue: Invalid (type="..type(indexName)..") indexName") return false end
-        corelog.WriteToProjectsLog("    indexName = "..indexName.."")
-        if type(indexedData) ~= "table" then corelog.Error("enterprise_projects.SetNestedIndexValue: Can't index further into indexedData="..indexedData.." (type="..type(indexedData)..")") return false end
-        corelog.WriteToProjectsLog("    indexedData = "..textutils.serialize(indexedData).." (1)")
+--    corelog.WriteToProjectsLog("   stepData = "..textutils.serialize(stepData).."")
+--    corelog.WriteToProjectsLog("   keyDef = "..keyDef.."")
+--    corelog.WriteToProjectsLog("   fieldValue = "..textutils.serialize(fieldValue).."")
 
-        indexedData = indexedData[indexName]
---        if type(indexedData) == "nil" then corelog.Error("enterprise_projects.SetNestedIndexValue: Invalid (type="..type(indexedData)..") indexedData") return false end
+    -- init
+    local remainingKeyDef = keyDef
+    local lastField = nil
+    local lastKeyName = nil
+    local indexingPatternB = "^(%w+)[%.]?"
+
+    -- handle (nested) keys
+    while remainingKeyDef ~= "" do
+        if lastField == nil then
+            -- no nested keys =>
+            lastField = stepData
+        else
+            if type(lastField) ~= "table" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid lastField (type="..type(lastField)..")") return false end
+            lastField = lastField[lastKeyName]
+        end
+
+        lastKeyName = string.match(remainingKeyDef, indexingPatternB)
+        if type(lastKeyName) ~= "string" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid lastKeyName (type="..type(lastKeyName)..")") return false end
+        remainingKeyDef = string.gsub(remainingKeyDef, indexingPatternB, "", 1)
     end
-    indexedData = sourceValue
-    corelog.WriteToProjectsLog("    indexedData = "..textutils.serialize(indexedData).." (2)")
 
---[[
-    local a = {
-        ["l1"] = {
-            ["l2"] = {
-                ["l3"] = "waarde"
-            }
-
-        }
-    }
-
-    a["l1"]["l2"]["l3"] = "nieuwe waarde 1"
-    a.l1.l2.l3 = "nieuwe waarde 2"
-
-    local b = a
-    b = b.l1
-    b = b.l2
-    b = b.l3
-    b = "nieuwe waarde 3"
-]]
+    -- set fieldValue
+    if type(lastField) == "nil" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid lastField (nil)") return false end
+    if type(lastKeyName) ~= "string" then corelog.Error("enterprise_projects.SetFieldValueFromKeyDef: Invalid lastKeyName (type="..type(lastKeyName)..")") return false end
+    lastField[lastKeyName] = fieldValue
 
     -- end
+--    corelog.WriteToProjectsLog("   stepData = "..textutils.serialize(stepData).." (final)")
     return true
 end
 
@@ -257,28 +264,28 @@ end
 function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
-    local projectResult = {}
+    local projectResults = {}
 
     -- create the projectResult
-    for i, inputDef in ipairs(project.projectDef.returnData) do
-        -- get sourceStepData
-        local sourceStepNr = inputDef.valueSource
-        local sourceStepData = project.outputs[ sourceStepNr ]
-        if type(sourceStepData) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid sourceStepData for "..i) break end
+    for iField, fieldDef in ipairs(project.projectDef.returnData) do
+        -- get stepDataSource
+        local valueSourceIndex = fieldDef.valueSource
+        local stepDataSource = project.outputs[ valueSourceIndex ]
+        if type(stepDataSource) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid stepDataSource for field "..fieldDef.keyDef) break end
 
-        -- get sourceValue
-        local sourceValue = GetNestedIndexSourceValue(sourceStepData, inputDef.keyDefSource)
-        if type(sourceValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid sourceValue step "..i) break end
+        -- get fieldValue
+        local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.keyDefSource)
+        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid fieldValue field "..fieldDef.keyDef) break end
 
-        -- add the requested key
-        local setSuccess = SetNestedIndexValue(projectResult, inputDef.keyDef, sourceValue)
-        if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting projectResult step "..i) break end
+        -- add the requested field
+        local setSuccess = SetFieldValueFromKeyDef(projectResults, fieldDef.keyDef, fieldValue)
+        if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting resultData field "..fieldDef.keyDef) break end
     end
-    corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResult), project.projectId)
+    corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResults), project.projectId)
 
     -- we are done, do the callback
     corelog.WriteToProjectsLog("Calling callback function", project.projectId)
-    coreutils.DoCallback(project.callbackFunction, project.callbackData, projectResult)
+    coreutils.DoCallback(project.callbackFunction, project.callbackData, projectResults)
 
     -- forget about this project
     corelog.WriteToProjectsLog("Ended", project.projectId)
