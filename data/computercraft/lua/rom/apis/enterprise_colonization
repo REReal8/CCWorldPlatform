@@ -93,108 +93,108 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     }
 
     -- create project definition
-    local createNewWorldProject = {
-        services    = {
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "plantFirstSapling_Task" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "plantFirstSaplingMetaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "primaryTaskData" },
+    local createNewWorldProjectDef = {
+        steps   = {
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { serviceName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, input = {
-                { keyName = "baseLocation"              , valueSource = 0, sourceKey = "startLocation" },
-                { keyName = "siteVersion"               , valueSource = 0, sourceKey = "factoryVersion0" },
+            { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
+                { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "waitFirstTree_Task" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "waitFirstTreeMetaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "primaryTaskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "waitFirstTree_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { serviceName = "enterprise_turtle.GetISHURL_SSrv", async = false, input = {
+            { stepName = "enterprise_turtle.GetISHURL_SSrv", async = false, stepDataDef = {
             }},
-            { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
-                { keyName = "itemName"                  , valueSource = 0, sourceKey = "planksName" },
-                { keyName = "itemAmount"                , valueSource = 0, sourceKey = "planksAmount1" },
-                { keyName = "ingredientsHostLocator"    , valueSource = 4, sourceKey = "url" },
+            { stepName = "enterprise_factory.ProduceItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "itemName"                   , valueSource = 0, keyDefSource = "planksName" },
+                { keyDef = "itemAmount"                 , valueSource = 0, keyDefSource = "planksAmount1" },
+                { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "chopFirstTree_Task" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "chopFirstTreeMetaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "primaryTaskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "chopFirstTreeMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
-                { keyName = "itemName"                  , valueSource = 0, sourceKey = "planksName" },
-                { keyName = "itemAmount"                , valueSource = 6, sourceKey = "planksToProduceForFuel" },
-                { keyName = "ingredientsHostLocator"    , valueSource = 4, sourceKey = "url" },
+            { stepName = "enterprise_factory.ProduceItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "itemName"                   , valueSource = 0, keyDefSource = "planksName" },
+                { keyDef = "itemAmount"                 , valueSource = 6, keyDefSource = "planksToProduceForFuel" },
+                { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "refuel_Task" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "refuelMetaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "primaryTaskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "refuelMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "collectCobbleStone_Task" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "collectCobbleStoneMetaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "primaryTaskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "collectCobbleStoneMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { serviceName = "enterprise_factory.ProduceItem_ASrv", async = true, input = {
-                { keyName = "itemName"                  , valueSource = 0, sourceKey = "furnaceName" },
-                { keyName = "itemAmount"                , valueSource = 0, sourceKey = "furnaceAmount" },
-                { keyName = "ingredientsHostLocator"    , valueSource = 4, sourceKey = "url" },
+            { stepName = "enterprise_factory.ProduceItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "itemName"                   , valueSource = 0, keyDefSource = "furnaceName" },
+                { keyDef = "itemAmount"                 , valueSource = 0, keyDefSource = "furnaceAmount" },
+                { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
             }},
-            { serviceName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, input = {
-                { keyName = "baseLocation"              , valueSource = 0, sourceKey = "startLocation" },
-                { keyName = "siteVersion"               , valueSource = 0, sourceKey = "factoryVersion0" },
+            { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
+                { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
             }},
-            { serviceName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, input = {
-                { keyName = "baseLocation"              , valueSource = 0, sourceKey = "factoryLocation" },
-                { keyName = "siteVersion"               , valueSource = 0, sourceKey = "factoryVersion1" },
+            { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
+                { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion1" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "remainingSettle_Task" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "remainingSettleMetaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "remainingSettleTaskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "remainingSettle_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "remainingSettleMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "remainingSettleTaskData" },
             }},
-            { serviceName = "enterprise_factory.BuildNewSite_ASrv", async = true, input = { -- ToDo handle stopping & restarting in case of upgrade
-                { keyName = "baseLocation"              , valueSource = 0, sourceKey = "factoryLocation" },
-                { keyName = "siteVersion"               , valueSource = 0, sourceKey = "factoryVersion2" },
-                { keyName = "upgrade"                   , valueSource = 0, sourceKey = "upgradeToSimple" },
+            { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = { -- ToDo handle stopping & restarting in case of upgrade
+                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
+                { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion2" },
+                { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeToSimple" },
             }},
-            { serviceName = "enterprise_storage.BuildAndStartNewSite_ASrv", async = true, input = {
-                { keyName = "location"                  , valueSource = 0, sourceKey = "siloLocation" },
-                { keyName = "type"                      , valueSource = 0, sourceKey = "type" },
-                { keyName = "siloType"                  , valueSource = 0, sourceKey = "siloType" },
-                { keyName = "topChests"                 , valueSource = 0, sourceKey = "topChests" },
-                { keyName = "layers"                    , valueSource = 0, sourceKey = "layers" },
+            { stepName = "enterprise_storage.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "location"                   , valueSource = 0, keyDefSource = "siloLocation" },
+                { keyDef = "type"                       , valueSource = 0, keyDefSource = "type" },
+                { keyDef = "siloType"                   , valueSource = 0, keyDefSource = "siloType" },
+                { keyDef = "topChests"                  , valueSource = 0, keyDefSource = "topChests" },
+                { keyDef = "layers"                     , valueSource = 0, keyDefSource = "layers" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
-                { keyName = "success3"                  , valueSource = 3, sourceKey = "success" },
-                { keyName = "success4"                  , valueSource = 4, sourceKey = "success" },
-                { keyName = "success5"                  , valueSource = 5, sourceKey = "success" },
-                { keyName = "success6"                  , valueSource = 6, sourceKey = "success" },
-                { keyName = "success7"                  , valueSource = 7, sourceKey = "success" },
-                { keyName = "success8"                  , valueSource = 8, sourceKey = "success" },
-                { keyName = "success9"                  , valueSource = 9, sourceKey = "success" },
-                { keyName = "success10"                 , valueSource = 10, sourceKey = "success" },
-                { keyName = "success11"                 , valueSource = 11, sourceKey = "success" },
-                { keyName = "success12"                 , valueSource = 12, sourceKey = "success" },
-                { keyName = "success13"                 , valueSource = 13, sourceKey = "success" },
-                { keyName = "success14"                 , valueSource = 14, sourceKey = "success" },
-                { keyName = "success14"                 , valueSource = 15, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"                   , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success4"                   , valueSource = 4, keyDefSource = "success" },
+                { keyDef = "success5"                   , valueSource = 5, keyDefSource = "success" },
+                { keyDef = "success6"                   , valueSource = 6, keyDefSource = "success" },
+                { keyDef = "success7"                   , valueSource = 7, keyDefSource = "success" },
+                { keyDef = "success8"                   , valueSource = 8, keyDefSource = "success" },
+                { keyDef = "success9"                   , valueSource = 9, keyDefSource = "success" },
+                { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
+                { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
+                { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
+                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
+                { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
+                { keyDef = "success14"                  , valueSource = 15, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"                       , valueSource = 16, sourceKey = "success" },
+            { keyDef = "success"                        , valueSource = 16, keyDefSource = "success" },
         }
     }
-    local projectData = {
-        projectDefinition = createNewWorldProject,
-        projectInputData = settleData,
+    local projectServiceData = {
+        projectDef  = createNewWorldProjectDef,
+        projectData = settleData,
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

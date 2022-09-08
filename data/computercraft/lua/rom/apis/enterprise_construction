@@ -105,24 +105,24 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     corelog.WriteToLog("materialsLocalHostLocator="..materialsLocalHostLocator:getURI())
 
     -- create project service data
-    local buildRectangularPatternProject = {
-        services    = {
-            { serviceName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocator"        , valueSource = 0, sourceKey = "materialsItemsLocator" },
-                { keyName = "destinationHostLocator"    , valueSource = 0, sourceKey = "materialsLocalHostLocator" },
+    local buildRectangularPatternProjectDef = {
+        steps   = {
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
             }},
-            { serviceName = "enterprise_turtle.DoAssignment_ASrv", async = true, input = {
-                { keyName = "taskFunctionName"          , valueSource = 0, sourceKey = "taskFunctionName" },
-                { keyName = "metaData"                  , valueSource = 0, sourceKey = "metaData" },
-                { keyName = "taskData"                  , valueSource = 0, sourceKey = "taskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "taskFunctionName" },
+                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
+                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"                   , valueSource = 3, sourceKey = "success" },
+            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
         }
     }
     local projectData = {
@@ -138,14 +138,14 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
             pattern                 = pattern,
         }
     }
-    local serviceData = {
-        projectDefinition = buildRectangularPatternProject,
-        projectInputData = projectData,
+    local projectServiceData = {
+        projectDef  = buildRectangularPatternProjectDef,
+        projectData = projectData,
     }
 
     -- start project
     corelog.WriteToLog(">Building pattern at "..textutils.serialise(startpoint))
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

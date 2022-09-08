@@ -129,37 +129,37 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
 
     -- create project definition
-    local transferItemsProject = {
-        services    = {
-            { serviceName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, input = {
-                { keyName = "sourceItemsLocator"        , valueSource = 0, sourceKey = "sourceItemsLocator" },
+    local transferItemsProjectDef = {
+        steps   = {
+            { stepName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "sourceItemsLocator" },
             }},
-            { serviceName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, input = {
-                { keyName = "turtleItemsLocator"        , valueSource = 1, sourceKey = "turtleItemsLocator" },
-                { keyName = "destinationHostLocator"    , valueSource = 0, sourceKey = "destinationHostLocator" },
+            { stepName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
+                { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
+                { keyDef = "destinationHostLocator"     , valueSource = 0, keyDefSource = "destinationHostLocator" },
             }},
-            { serviceName = "enterprise_projects.AreAllTrue_QSrv", async = false, input = {
-                { keyName = "success1"                  , valueSource = 1, sourceKey = "success" },
-                { keyName = "success2"                  , valueSource = 2, sourceKey = "success" },
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyName = "success"                       , valueSource = 3, sourceKey = "success" },
-            { keyName = "destinationItemsLocator"       , valueSource = 2, sourceKey = "destinationItemsLocator" },
+            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
         }
     }
     local projectData = {
         sourceItemsLocator      = sourceItemsLocator,
         destinationHostLocator  = destinationHostLocator,
     }
-    local serviceData = {
-        projectDefinition   = transferItemsProject,
-        projectInputData    = projectData,
+    local projectServiceData = {
+        projectDef  = transferItemsProjectDef,
+        projectData = projectData,
     }
 
     -- start project
     corelog.WriteToLog(">Transferring items from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..".")
-    enterprise_projects.StartProject_ASrv(serviceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 
     -- end
     return nil
