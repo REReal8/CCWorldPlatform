@@ -49,7 +49,8 @@
         "role_forester",
         "enterprise_forest",
         "t_turtle",
-        "role_settler"
+        "role_settler",
+        "t_storage"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

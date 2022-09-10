@@ -1,0 +1,21 @@
+function T_buildAndStartNewSite()
+    enterprise_storage.BuildAndStartNewSite_ASrv({
+        location                = {x=12, y=12, z= 1, dx=0, dy=1},
+        type                    = "silo",
+        siloType                = "basic",
+        topChests               = 2,
+        layers                  = 2,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url,
+    }, "t_main.Func1_Callback", {"some callback data"})
+end
+
+
+
+
+
+
+
+
+
+
+
