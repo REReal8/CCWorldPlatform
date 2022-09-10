@@ -8,7 +8,8 @@ function T_ProduceItem_service_Craft()
     enterprise_factory.ProduceItem_ASrv({
         itemName                = "minecraft:birch_planks",
         itemAmount              = 12,
-        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ })
+        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ }).url,
+        productsHostLocator     = enterprise_turtle.GetISHURL_SSrv({ }).url,
     }, callbackFunction, callbackData)
 end
 
@@ -19,7 +20,8 @@ function T_ProduceItem_service_Smelt()
     enterprise_factory.ProduceItem_ASrv({
         itemName                = "minecraft:charcoal",
         itemAmount              = 3,
-        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ })
+        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ }).url,
+        productsHostLocator     = enterprise_turtle.GetISHURL_SSrv({ }).url,
     }, callbackFunction, callbackData)
 end
 

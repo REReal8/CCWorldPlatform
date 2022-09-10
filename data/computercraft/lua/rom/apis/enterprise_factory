@@ -401,23 +401,24 @@ end
 
 function ProduceItem_ASrv(serviceData, callback, callbackData)
     --[[
-        This async public service produces (multiple instances of) an item of a specific itemName in a factory site. It does so 
-        by first determining a recipe that can produce the item. Subsequently it uses the recipe ingredients to produce the
-        requested amount of items with the corresponding recipe technique (i.e. crafting or smelting).
+        This async public service produces multiple instances of a specific item in a factory site. It does so 
+        by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
+        After that it produces the requested amount of items with the corresponding recipe technique (i.e. crafting or smelting). 
+        Finally it delivers the created items to requested ISH.
 
         Return value:
             nil
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the items were succesfully produced
+                success                 - (boolean) whether the service executed correctly
 
         Parameters:
-            serviceData                 - (table) data about the item to produce, 
-                itemName                - (string) name of items to produce
+            serviceData                 - (table) data for the service
+                itemName                - (string) name of item to produce
                 itemAmount              - (number) amount of items to produce
-                ingredientsHostLocator  - (URL) locating the host of the production ingredients
-                ToDo: consider adding requester location (amongst other to be able to select a more optimal (closest) site)
+                ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved
+                productsHostLocator     - (URL) locating where (i.e. at which ISH) the produced items need to be deliverd
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]
@@ -428,8 +429,10 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local itemAmount = serviceData.itemAmount
     if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local ingredientsHostLocator = serviceData.ingredientsHostLocator
+    local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productsHostLocator = url.URLClass:new(serviceData.productsHostLocator)
+    if type(productsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -442,7 +445,9 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
     if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(serviceData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- ToDo: implement getting ingredients from ingredientsHostLocator
+    -- ToDo: implement retrieving ingredients from ingredientsHostLocator
+
+    -- ToDo: implement delivering products to productsHostLocator
 
     -- let site produce item
     if recipe == craftRecipe then

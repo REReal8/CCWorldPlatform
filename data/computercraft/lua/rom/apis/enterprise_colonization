@@ -48,6 +48,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     }
     local settleData = {
         materialsHostLocator        = enterprise_turtle.GetISHURL_SSrv({ }).url,
+--        productsHostLocator         = enterprise_turtle.GetISHURL_SSrv({ }).url,
 
         primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
@@ -120,6 +121,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "itemName"                   , valueSource = 0, keyDefSource = "planksName" },
                 { keyDef = "itemAmount"                 , valueSource = 0, keyDefSource = "planksAmount1" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "productsHostLocator"        , valueSource = 4, keyDefSource = "url" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
@@ -130,6 +132,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "itemName"                   , valueSource = 0, keyDefSource = "planksName" },
                 { keyDef = "itemAmount"                 , valueSource = 6, keyDefSource = "planksToProduceForFuel" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "productsHostLocator"        , valueSource = 4, keyDefSource = "url" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
@@ -145,6 +148,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "itemName"                   , valueSource = 0, keyDefSource = "furnaceName" },
                 { keyDef = "itemAmount"                 , valueSource = 0, keyDefSource = "furnaceAmount" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "productsHostLocator"        , valueSource = 4, keyDefSource = "url" },
             }},
             { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
