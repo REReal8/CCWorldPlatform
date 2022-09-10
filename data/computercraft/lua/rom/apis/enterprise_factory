@@ -443,7 +443,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
 
     -- select a suitable site
     local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
-    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error('enterprise_factory.ProduceItem_ASrv: No site available to produce '..textutils.serialize(serviceData)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- ToDo: implement retrieving ingredients from ingredientsHostLocator
 
@@ -456,7 +456,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
         enterprise_factory_site.SmeltItemAndPickup(siteId, serviceData, recipe, callback, callbackData)
         -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
     else
-        corelog.Error('enterprise_factory.ProduceItem_ASrv: Unknown recipe type to produce '..textutils.serialize(serviceData))
+        corelog.Error("enterprise_factory.ProduceItem_ASrv: Unknown recipe type to produce "..itemAmount.." "..itemName.."'s")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 end
