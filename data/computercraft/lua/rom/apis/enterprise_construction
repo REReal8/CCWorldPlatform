@@ -27,7 +27,7 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
                 blueprint               - (table) blueprint to build
                     layerList           - (table) layer to build
                     escapeSequence      - (table) escapeSequence of blueprint
-                materialsHostLocator    - (URL) locating the host of the building materials
+                materialsHostLocator    - (URL) locating where (i.e. at which ISH) the building materials can be retrieved
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]
@@ -122,7 +122,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
                         y               - (number) y coordinate within the pattern
                         block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
                     clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
-                materialsHostLocator    - (URL) locating the host of the building materials
+                materialsHostLocator    - (URL) locating where (i.e. at which ISH) the building materials can be retrieved
             callback                    - (string) name of function to call once the pattern is build
             callbackData                - (table) data to supply to callback function
     ]]

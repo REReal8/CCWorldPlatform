@@ -87,10 +87,10 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
 
         Parameters:
             transferData                - (table) data about the transfer
-                sourceItemsLocator      - (URL) stating where the items that need transfer can be located 
+                sourceItemsLocator      - (URL) locating the items that need transfer
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL specifies the host where the items are located)
-                destinationHostLocator  - (URL) stating where the items need to be transferred to
+                destinationHostLocator  - (URL) locating where (i.e. to which ISH) the items need to be transferred to
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function            
     --]]
