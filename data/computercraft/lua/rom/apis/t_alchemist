@@ -1,0 +1,37 @@
+local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
+
+function T_Craft_Task()
+    local craftData = { -- produce "minecraft:birch_planks"
+        recipe = {
+            [6]         = { itemName = "minecraft:birch_log", itemCount = 1 },
+           yield        = 4
+        },
+        itemCount       = 4,
+        workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -4),
+    }
+
+    role_alchemist.Craft_Task(craftData)
+end
+
+function T_Smelt_Task()
+    local smeltData = { -- produce ""minecraft:charcoal"
+        recipe = {
+            itemName    = "minecraft:birch_log",
+            yield       = 1
+        },
+        itemCount       = 3,
+        workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -3),
+        fuelItemName    = "minecraft:birch_planks",
+        fuelItemCount   = 3,
+    }
+
+    role_alchemist.Smelt_Task(smeltData)
+end
+
+function T_Pickup_Task()
+    local pickupData = {
+        workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -3),
+    }
+
+    role_alchemist.Pickup_Task(pickupData)
+end
