@@ -497,7 +497,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
             }},
         },
         returnData  = {
-            { keyDef = "success"                   , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"                , valueSource = 3, keyDefSource = "success" },
             { keyDef = "destinationItemsLocator", valueSource = 0, keyDefSource = "destinationItemsLocator" },
         }
     }
