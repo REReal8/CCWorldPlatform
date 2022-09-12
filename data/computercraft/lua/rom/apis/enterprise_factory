@@ -417,8 +417,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
             serviceData                 - (table) data for the service
                 itemName                - (string) name of item to produce
                 itemAmount              - (number) amount of items to produce
-                ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved
-                productsHostLocator     - (URL) locating where (i.e. at which ISH) the produced items need to be deliverd
+                ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved by the factory
+                productsHostLocator     - (URL) locating where (i.e. at which ISH) the produced items need to be delivered by the factory
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]

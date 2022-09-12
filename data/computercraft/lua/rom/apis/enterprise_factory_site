@@ -109,21 +109,17 @@ function StopSite_ASrv(siteData, callback, callbackData)
     coreutils.DoCallback(callback, callbackData, {success = true})
 end
 
-function GetAvailableSiteData(recipe) -- ToDo: make this a service?
+function GetAvailableSiteData(recipe)
     --[[
         This public method finds and selects a suitable factory site for producing items from a recipe.
 
         Return value:
-                                        - (table)
-                siteProduceItemData     - (boolean) (partial) productionData to produce item
+                siteProduceItemData     - (table) (partial) productionData to produce item
 
         Parameters:
---?            serviceData                - (table) data for the service
-                recipe                  - (table) item base recipe (including possibly both a crafting as smelting recipe)
+            recipe                      - (table) item base recipe (including possibly both a crafting as smelting recipe)
 --?                itemName                - (string) name of item to produce
 --?                itemAmount              - (number) amount of items to produce
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
     ]]
 
     -- check input
@@ -164,7 +160,7 @@ function GetAvailableSiteData(recipe) -- ToDo: make this a service?
                             siteId              = siteId,
                             siteInputLocator    = inputLocator,
                             siteOutputLocator   = outputLocator,
-                            -- ToDo: consider adding the spot here!
+                            productionSpot      = craftSpot,
                             productionMethod    = "craft",
                             recipe              = craftRecipe,
                         })
@@ -181,6 +177,7 @@ function GetAvailableSiteData(recipe) -- ToDo: make this a service?
                             siteId              = siteId,
                             siteInputLocator    = inputLocator,
                             siteOutputLocator   = outputLocator,
+                            productionSpot      = smeltSpot,
                             productionMethod    = "smelt",
                             recipe              = smeltRecipe,
                         })
@@ -221,7 +218,10 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 siteId                  - (string) id of the factory site
                 itemName                - (string) name of item to produce
                 itemAmount              - (number) amount of items to produce
-                productionMethod        = (string) production method to use
+                siteInputLocator        - (table) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
+                sietOutputLocator       - (table) locating where the produced items need to be delivered locally "within" the site
+                productionSpot          - (table) location of production spot
+                productionMethod        - (string) production method to use
                 recipe                  - (table) production recipe  - ToDo keep?
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
