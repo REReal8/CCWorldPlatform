@@ -26,9 +26,9 @@ function StartNewSite(siteStartData)
                 inputLocators       - (table) with inputLocator's of this site
                 outputLocators      - (table) with outputLocator's of this site
                 craftingSpots       - (table) craftingSpots of this site
-                    location        - (table) location of spot relative to baseLocation
+                    location        - (table) location of spot
                 smeltingSpots       - (table) craftingSpots of this site
-                    location        - (table) location of spot relative to baseLocation
+                    location        - (table) location of spot
     ]]
 
     -- variables
@@ -157,7 +157,6 @@ function GetAvailableSiteData(recipe)
                     local craftSpot = GetAvailableCraftSpot(site)
                     if craftSpot ~= nil then
                         table.insert(availableSitesInfo, {
-                            siteId              = siteId,
                             siteInputLocator    = inputLocator,
                             siteOutputLocator   = outputLocator,
                             productionSpot      = craftSpot,
@@ -174,7 +173,6 @@ function GetAvailableSiteData(recipe)
                     local smeltSpot = GetAvailableSmeltSpot(site)
                     if smeltSpot ~= nil then
                         table.insert(availableSitesInfo, {
-                            siteId              = siteId,
                             siteInputLocator    = inputLocator,
                             siteOutputLocator   = outputLocator,
                             productionSpot      = smeltSpot,
@@ -215,13 +213,12 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data for the service
-                siteId                  - (string) id of the factory site
-                itemName                - (string) name of item to produce
-                itemAmount              - (number) amount of items to produce
+--                itemName                - (string) name of item to produce
                 siteInputLocator        - (table) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
-                sietOutputLocator       - (table) locating where the produced items need to be delivered locally "within" the site
-                productionSpot          - (table) location of production spot
+                siteOutputLocator       - (table) locating where the produced items need to be delivered locally "within" the site
                 productionMethod        - (string) production method to use
+                productionSpot          - (table) location of production spot
+                itemAmount              - (number) amount of items to produce
                 recipe                  - (table) production recipe  - ToDo keep?
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
@@ -229,27 +226,25 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteId = serviceData.siteId
-    if type(siteId) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid siteId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemName = serviceData.itemName
-    if type(itemName) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemAmount = serviceData.itemAmount
-    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+--    local itemName = serviceData.itemName
+--    if type(itemName) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionMethod = serviceData.productionMethod
     if type(productionMethod) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productionMethod") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local recipe = serviceData.recipe
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid recipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- ToDo: implement retrieving ingredients from siteInputLocator into turtle inventory
+
+    -- ToDo: implement delivering products from turtle inventory to siteOutputLocator
+
     -- produce with productionMethod 
     if productionMethod == "craft" then
-        CraftItem(siteId, serviceData, recipe, callback, callbackData)
+        CraftItem_ASrv(serviceData, callback, callbackData)
     elseif productionMethod == "smelt" then
-        SmeltItemAndPickup(siteId, serviceData, recipe, callback, callbackData)
+        SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
         -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
     else
-        corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Unknown recipe type to produce "..itemAmount.." "..itemName.."'s")
+        corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.")
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 end
@@ -311,9 +306,9 @@ function GetAvailableCraftSpot(site)
     return nil
 end
 
-function CraftItem(siteId, productionData, recipe, callback, callbackData)
+function CraftItem_ASrv(serviceData, callback, callbackData)
     --[[
-        This async function should craft items at the site siteId.
+        This async sewrvice should craft items at the productionSpot.
 
         Return value:
             nil
@@ -322,35 +317,35 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
                                     - (table) {success = true} if the items were succesfully produced
 
         Parameters:
-            siteId                  - (string) id of the factory site
-            productionData          - (table) data about the item to produce, 
-                itemAmount          - amount of items to produce
-            recipe                  - (table) crafting recipe
+            serviceData             - (table) data for the service
+                productionSpot      - (table) production spot
+                itemAmount          - (number) amount of items to produce
+                recipe              - (table) crafting recipe  - ToDo keep?
             callback                - (string) name of function to call once the items are made
             callbackData            - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.CraftItem: Invalid siteId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemAmount = serviceData.itemAmount
+    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productionSpot = serviceData.productionSpot
+    if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionSpot") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local recipe = serviceData.recipe
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid recipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
-    -- get the site
-    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
-    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then 
-        corelog.Error("enterprise_factory_site.CraftItem: Failed retrieving factory site "..siteId)
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-
-    -- get available spot
-    local spot = GetAvailableCraftSpot(site)
-    if spot == nil then corelog.Error('enterprise_factory.CraftItem: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- get spotLocation
+    local spotLocation = productionSpot.location
+    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
-    local spotLocation = spot.location
     local craftData = {
-        itemCount = productionData.itemAmount,
+        itemCount = itemAmount,
 
         recipe = recipe,
-        workingLocation = coremove.GetRelativeLocation(site.baseLocation, spotLocation.x, spotLocation.y, spotLocation.z),
+        workingLocation = coremove.CopyLocation(spotLocation),
     --  ToDo: consider if this is still wanted
     --  ingredientsLocation = productionData.ingredientsURL,
     }
@@ -384,9 +379,9 @@ function GetAvailableSmeltSpot(site)
     return nil
 end
 
-function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
+function SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
     --[[
-        This async function should smelt items at the site siteId and pickup the results.
+        This async service should smelt items at the productionSpot and pickup the results.
 
         Return value:
             nil
@@ -395,39 +390,39 @@ function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackDa
                                     - (table) {success = true} if the items were succesfully produced
 
         Parameters:
-            siteId                  - (string) id of the factory site
-            productionData          - (table) data about the item to produce
-                itemAmount          - amount of items to produce
-            recipe                  - (table) smelting recipe
+            serviceData             - (table) data for the service
+                productionSpot      - (table) production spot
+                itemAmount          - (number) amount of items to produce
+                recipe              - (table) smelting recipe  - ToDo keep?
             callback                - (string) name of function to call once the items are made
             callbackData            - (table) data to supply to callback function
     ]]
 
     -- check input
-    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup: Invalid siteId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemAmount = serviceData.itemAmount
+    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productionSpot = serviceData.productionSpot
+    if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid productionSpot") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local recipe = serviceData.recipe
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid recipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
 
-    -- get the site
-    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
-    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then 
-        corelog.Error("enterprise_factory_site.SmeltItemAndPickup: Failed retrieving factory site "..siteId)
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
-
-    -- get available spot
-    local spot = GetAvailableSmeltSpot(site)
-    if spot == nil then corelog.Error("enterprise_factory.SmeltItemAndPickup: No spot available in site ".. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- get spotLocation
+    local spotLocation = productionSpot.location
+    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
-    local spotLocation = spot.location
     local smeltData = {
         recipe = recipe,
-        itemCount = productionData.itemAmount,
+        itemCount = itemAmount,
 
-        workingLocation = coremove.GetRelativeLocation(site.baseLocation, spotLocation.x, spotLocation.y, spotLocation.z),
+        workingLocation = coremove.CopyLocation(spotLocation),
 
         -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         fuelItemName = "minecraft:birch_planks",
-        fuelItemCount = productionData.itemAmount
+        fuelItemCount = itemAmount
     }
     local metaData = role_alchemist.SmeltAndPickup_MetaData(smeltData)
 

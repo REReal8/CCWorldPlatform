@@ -443,7 +443,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     -- select a suitable site
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    siteProduceItemData.itemName = itemName -- ToDo: consider removing (not used, except for error message)
+--    siteProduceItemData.itemName = itemName -- ToDo: consider removing (not used, except for error message)
     siteProduceItemData.itemAmount = itemAmount -- ToDo: consider move setting elsewhere
 
     -- retrieve site input & output locator's
@@ -581,11 +581,14 @@ function GetV0SiteDismantleBuildData(serviceData)
 end
 
 function GetV0SiteStartData(serviceData)
+    -- 
+    local baseLocation = serviceData.baseLocation
+
     -- construct start data
     local startData = {
         version = serviceData.siteVersion,
 
-        baseLocation = coremove.CopyLocation(serviceData.baseLocation),
+        baseLocation = coremove.CopyLocation(baseLocation),
 
         inputLocators = {
             enterprise_turtle.GetISHURL_SSrv({ }).url,
@@ -595,7 +598,7 @@ function GetV0SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = { x= 0, y=0, z=0}} -- ToDo: consider renaming to relLocation (relative location)
+            { location = coremove.GetRelativeLocation(baseLocation, 0, 0, 0) },
         },
         smeltingSpots = {},
     }
@@ -652,11 +655,14 @@ function GetV1SiteBuildData(serviceData)
 end
 
 function GetV1SiteStartData(serviceData)
+    -- 
+    local baseLocation = serviceData.baseLocation
+
     -- construct start data
     local startData = {
         version = serviceData.siteVersion,
 
-        baseLocation = coremove.CopyLocation(serviceData.baseLocation),
+        baseLocation = coremove.CopyLocation(baseLocation),
 
         inputLocators = {
             enterprise_turtle.GetISHURL_SSrv({ }).url,
@@ -666,10 +672,10 @@ function GetV1SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = { x= 3, y=3, z=-4}} -- ToDo: consider renaming to relLocation (relative location)
+            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -4) },
         },
         smeltingSpots = {
-            { location = { x= 3, y=3, z=-3}} -- ToDo: consider renaming to relLocation (relative location)
+            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -3) },
         },
     }
 
@@ -737,9 +743,12 @@ function GetV2SiteBuildData(serviceData)
 end
 
 function GetV2SiteStartData(serviceData)
+    -- 
+    local baseLocation = serviceData.baseLocation
+
     -- register input chest
     local inputChestId = enterprise_chests.RegisterChest_SSrv({
-        location        = coremove.GetRelativeLocation(serviceData.baseLocation, 2, 5, 0),
+        location        = coremove.GetRelativeLocation(baseLocation, 2, 5, 0),
         accessDirection = "top",
     }).id
     local inputChestLocator = enterprise_chests.GetChestLocator_SSrv({id = inputChestId}).url
@@ -747,7 +756,7 @@ function GetV2SiteStartData(serviceData)
 
     -- register output chest
     local outputChestId = enterprise_chests.RegisterChest_SSrv({
-        location        = coremove.GetRelativeLocation(serviceData.baseLocation, 4, 5, 0),
+        location        = coremove.GetRelativeLocation(baseLocation, 4, 5, 0),
         accessDirection = "top",
     }).id
     local outputChestLocator = enterprise_chests.GetChestLocator_SSrv({id = outputChestId}).url
@@ -756,7 +765,7 @@ function GetV2SiteStartData(serviceData)
     local startData = {
         version = serviceData.siteVersion,
 
-        baseLocation = serviceData.baseLocation,
+        baseLocation = baseLocation,
 
         inputLocators = {
             inputChestLocator,
@@ -766,10 +775,10 @@ function GetV2SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = { x= 3, y=3, z=-4}} -- ToDo: consider renaming to relLocation (relative location)
+            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -4) },
         },
         smeltingSpots = {
-            { location = { x= 3, y=3, z=-3}} -- ToDo: consider renaming to relLocation (relative location)
+            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -3) },
         },
     }
 
