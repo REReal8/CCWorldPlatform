@@ -238,15 +238,15 @@ function StartNewSite_SSrv(serviceData)
         siteStartData = GetV0SiteStartData(serviceData)
     elseif siteVersion == "v1" then
         siteStartData = GetV1SiteStartData(serviceData)
---    elseif siteVersion == "v2" then -- ToDo: implement
---        siteStartData = GetV2SiteStartDate(serviceData)
+    elseif siteVersion == "v2" then
+        siteStartData = GetV2SiteStartData(serviceData)
     else
         corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
         return {success = false}
     end
 
     -- start new site
-    local newSiteId = enterprise_factory_site.StartNewSite_SSrv(siteStartData)
+    local newSiteId = enterprise_factory_site.StartNewSite(siteStartData)
     if type(newSiteId) ~= "string" then corelog.Error('enterprise_factory.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
 
     -- end
@@ -443,15 +443,18 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     -- select a suitable site
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    siteProduceItemData.itemName = itemName -- ToDo: consider moving elsewhere
-    siteProduceItemData.itemAmount = itemAmount -- ToDo: consider moving elsewhere
+    siteProduceItemData.itemName = itemName -- ToDo: consider removing (not used, except for error message)
+    siteProduceItemData.itemAmount = itemAmount -- ToDo: consider move setting elsewhere
 
-    -- ToDo: retrieve a locator for local input spot
-    -- ToDo: retrieve a locator for local output spot
+    -- retrieve site input & output locator's
+    local siteInputLocator = url.URLClass:new(siteProduceItemData.siteInputLocator)
+    corelog.WriteToLog("   siteInputLocator="..siteInputLocator:getURI())
+    local siteOutputLocator = url.URLClass:new(siteProduceItemData.siteOutputLocator)
+    corelog.WriteToLog("   siteOutputLocator="..siteOutputLocator:getURI())
 
-    -- ToDo: implement retrieving ingredients from ingredientsHostLocator and putting them in local input Spot
+    -- ToDo: implement retrieving ingredients from ingredientsHostLocator and putting them in siteInputLocator
 
-    -- ToDo: implement delivering products from local output spot to productsHostLocator
+    -- ToDo: implement delivering products from siteOutputLocator to productsHostLocator
 
     -- let site produce item
     enterprise_factory_site.ProduceItem_ASrv(siteProduceItemData, callback, callbackData)
@@ -584,11 +587,17 @@ function GetV0SiteStartData(serviceData)
 
         baseLocation = coremove.CopyLocation(serviceData.baseLocation),
 
+        inputLocators = {
+            enterprise_turtle.GetISHURL_SSrv({ }).url,
+        },
+        outputLocators = {
+            enterprise_turtle.GetISHURL_SSrv({ }).url,
+        },
+
         craftingSpots = {
             { location = { x= 0, y=0, z=0}} -- ToDo: consider renaming to relLocation (relative location)
         },
         smeltingSpots = {},
-        -- ToDo add URL's for input and output spots. For now (v0 en v1 of factory site) it is assumed both are the inventory of the current turtle
     }
 
     return startData
@@ -649,13 +658,19 @@ function GetV1SiteStartData(serviceData)
 
         baseLocation = coremove.CopyLocation(serviceData.baseLocation),
 
+        inputLocators = {
+            enterprise_turtle.GetISHURL_SSrv({ }).url,
+        },
+        outputLocators = {
+            enterprise_turtle.GetISHURL_SSrv({ }).url,
+        },
+
         craftingSpots = {
             { location = { x= 3, y=3, z=-4}} -- ToDo: consider renaming to relLocation (relative location)
         },
         smeltingSpots = {
             { location = { x= 3, y=3, z=-3}} -- ToDo: consider renaming to relLocation (relative location)
         },
-        -- ToDo add URL's for input and output spots. For now (v0 en v1 of factory site) it is assumed both are the inventory of the current turtle
     }
 
     return startData
@@ -695,7 +710,7 @@ function GetV2SiteBuildData(serviceData)
 
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, pattern = role_builder.CopyPattern(topLayerL2_pattern)},
+        { startpoint = { x= 0, y= 0, z= 0}, buildFromAbove = true, pattern = role_builder.CopyPattern(topLayerL2_pattern)},
     }
     if not onlyUpgrade then
         table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)})
@@ -708,7 +723,7 @@ function GetV2SiteBuildData(serviceData)
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
-            { x= 3, y= 3, z=  1},
+            { x= 3, y= 3, z= 1},
         }
     }
 
@@ -722,11 +737,33 @@ function GetV2SiteBuildData(serviceData)
 end
 
 function GetV2SiteStartData(serviceData)
+    -- register input chest
+    local inputChestId = enterprise_chests.RegisterChest_SSrv({
+        location        = coremove.GetRelativeLocation(serviceData.baseLocation, 2, 5, 0),
+        accessDirection = "top",
+    }).id
+    local inputChestLocator = enterprise_chests.GetChestLocator_SSrv({id = inputChestId}).url
+    -- ToDo: consider returning chestLocator directly from enterprise_chests.RegisterChest_SSrv
+
+    -- register output chest
+    local outputChestId = enterprise_chests.RegisterChest_SSrv({
+        location        = coremove.GetRelativeLocation(serviceData.baseLocation, 4, 5, 0),
+        accessDirection = "top",
+    }).id
+    local outputChestLocator = enterprise_chests.GetChestLocator_SSrv({id = outputChestId}).url
+
     -- construct start data
     local startData = {
         version = serviceData.siteVersion,
 
         baseLocation = serviceData.baseLocation,
+
+        inputLocators = {
+            inputChestLocator,
+        },
+        outputLocators = {
+            outputChestLocator,
+        },
 
         craftingSpots = {
             { location = { x= 3, y=3, z=-4}} -- ToDo: consider renaming to relLocation (relative location)
@@ -734,7 +771,6 @@ function GetV2SiteStartData(serviceData)
         smeltingSpots = {
             { location = { x= 3, y=3, z=-3}} -- ToDo: consider renaming to relLocation (relative location)
         },
-        -- ToDo add URL's for input and output spots.
     }
 
     return startData

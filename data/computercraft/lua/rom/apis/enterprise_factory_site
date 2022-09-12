@@ -12,7 +12,7 @@ local db = {
 --   | |
 --   |_|
 
-function StartNewSite_SSrv(siteStartData)
+function StartNewSite(siteStartData)
     --[[
         This function should make the site available for production.
 
@@ -23,6 +23,8 @@ function StartNewSite_SSrv(siteStartData)
             siteStartData           - (table) data about the site to start, 
                 version             - (string) version string of the site
                 baseLocation        - (table) world location of the base (lower left corner) of this site
+                inputLocators       - (table) with inputLocator's of this site
+                outputLocators      - (table) with outputLocator's of this site
                 craftingSpots       - (table) craftingSpots of this site
                     location        - (table) location of spot relative to baseLocation
                 smeltingSpots       - (table) craftingSpots of this site
@@ -37,6 +39,9 @@ function StartNewSite_SSrv(siteStartData)
         baseLocation    = siteStartData.baseLocation,
 --        entryLocation   = coremove.GetRelativeLocation(siteData.location, 3, 3, 1),
 
+        inputLocators   = siteStartData.inputLocators,
+        outputLocators  = siteStartData.outputLocators,
+
         craftingSpots   =  siteStartData.craftingSpots,
         smeltingSpots   =  siteStartData.smeltingSpots,
     }
@@ -46,6 +51,7 @@ function StartNewSite_SSrv(siteStartData)
     -- save the new site to our sites
     coredht.SaveData(site, db.dhtRoot, db.dhtSites, site.siteId)
 
+    -- end
     return site.siteId
 end
 
@@ -135,29 +141,53 @@ function GetAvailableSiteData(recipe) -- ToDo: make this a service?
     local availableSitesInfo = {
     }
     for k, site in pairs(sites) do
+        -- check
+        if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid site") return nil end
         local siteId = site.siteId
-        -- check it can craft recipe
-        if craftRecipe ~= nil then
-            local craftSpot = enterprise_factory_site.GetAvailableCraftSpot(siteId)
-            if craftSpot ~= nil then
-                table.insert(availableSitesInfo, {
-                   -- ToDo: consider adding the spot here!
-                    siteId = siteId,
-                    productionMethod = "crafting",
-                    recipe = craftRecipe,
-                })
-            end
-        end
+        if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid siteId") return nil end
 
-        -- check it can smelt recipe
-        if smeltRecipe ~= nil then
-            local smeltSpot = enterprise_factory_site.GetAvailableSmeltSpot(siteId)
-            if smeltSpot ~= nil then
-                table.insert(availableSitesInfo, {
-                    siteId = siteId,
-                    productionMethod = "smelting",
-                    recipe = smeltRecipe,
-                })
+        -- get available inputLocator
+        local inputLocator = GetAvailableLocator(site.inputLocators)
+        if inputLocator == nil then
+            corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available inputLocator in site "..siteId)
+        else
+            -- get available outputLocator
+            local outputLocator = GetAvailableLocator(site.outputLocators)
+            if outputLocator == nil then
+                corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available outputLocator in site "..siteId)
+            else
+                -- check it can craft recipe
+                if craftRecipe ~= nil then
+                    local craftSpot = GetAvailableCraftSpot(site)
+                    if craftSpot ~= nil then
+                        table.insert(availableSitesInfo, {
+                            siteId              = siteId,
+                            siteInputLocator    = inputLocator,
+                            siteOutputLocator   = outputLocator,
+                            -- ToDo: consider adding the spot here!
+                            productionMethod    = "craft",
+                            recipe              = craftRecipe,
+                        })
+                    else
+                        corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available crafting spot in site "..siteId)
+                    end
+                end
+
+                -- check it can smelt recipe
+                if smeltRecipe ~= nil then
+                    local smeltSpot = GetAvailableSmeltSpot(site)
+                    if smeltSpot ~= nil then
+                        table.insert(availableSitesInfo, {
+                            siteId              = siteId,
+                            siteInputLocator    = inputLocator,
+                            siteOutputLocator   = outputLocator,
+                            productionMethod    = "smelt",
+                            recipe              = smeltRecipe,
+                        })
+                    else
+                        corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available smelting spot in site "..siteId)
+                    end
+                end
             end
         end
     end
@@ -213,9 +243,9 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- produce with productionMethod 
-    if productionMethod == "crafting" then
+    if productionMethod == "craft" then
         CraftItem(siteId, serviceData, recipe, callback, callbackData)
-    elseif productionMethod == "smelting" then
+    elseif productionMethod == "smelt" then
         SmeltItemAndPickup(siteId, serviceData, recipe, callback, callbackData)
         -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
     else
@@ -249,27 +279,36 @@ function FindSiteBySiteData(siteData)
     return nil
 end
 
-function GetAvailableCraftSpot(siteId)
-     -- check input
-     if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid siteId") return nil end
+function GetAvailableLocator(locators)
+    -- check input
+    if type(locators) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableLocator: Invalid locators") return nil end
 
-    -- get the site
-    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
-    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then
-        corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Failed retrieving factory site "..siteId)
-        return nil
+    -- find first available locator
+    for i, locator in ipairs(locators) do
+        -- ToDo: consider checking availability
+
+        -- take first
+        return locator
     end
 
-     -- find first available spot
-     -- ToDo consider finding best spot based on some selection criterium
-     for i, spot in ipairs(site.craftingSpots) do
+    -- end
+    return nil
+end
+
+function GetAvailableCraftSpot(site)
+    -- check input
+    if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid site") return nil end
+
+    -- find first available spot
+    for i, spot in ipairs(site.craftingSpots) do
+        -- ToDo: consider checking availability
+
         -- take first
         return spot
-     end
+    end
 
-     -- 
-     corelog.Warning("enterprise_factory_site.GetAvailableCraftSpot: No available crafting spot in site "..siteId)
-     return nil
+    -- end
+    return nil
 end
 
 function CraftItem(siteId, productionData, recipe, callback, callbackData)
@@ -302,7 +341,7 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
     end
 
     -- get available spot
-    local spot = GetAvailableCraftSpot(site.siteId)
+    local spot = GetAvailableCraftSpot(site)
     if spot == nil then corelog.Error('enterprise_factory.CraftItem: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
@@ -329,27 +368,20 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
     return nil
 end
 
-function GetAvailableSmeltSpot(siteId)
-     -- check input
-     if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: Invalid site id ") return nil end
+function GetAvailableSmeltSpot(site)
+    -- check input
+    if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: Invalid site") return nil end
 
-    -- get the site
-    local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
-    if type(site) ~="table" or type(site.siteId) ~= "string" or site.siteId ~= siteId then
-        corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: Failed retrieving factory site "..siteId)
-        return nil
-    end
+    -- find first available spot
+    for i, spot in ipairs(site.smeltingSpots) do
+        -- ToDo: consider checking availability
 
-     -- find first available spot
-     -- ToDo consider finding best spot based on some selection criterium
-     for i, spot in ipairs(site.smeltingSpots) do
         -- take first
         return spot
-     end
+    end
 
-     -- 
-     corelog.Warning("enterprise_factory_site.GetAvailableSmeltSpot: No available smelting spot in site "..siteId)
-     return nil
+    -- end
+    return nil
 end
 
 function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackData)
@@ -372,7 +404,7 @@ function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackDa
     ]]
 
     -- check input
-    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup: Invalid site id ") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup: Invalid siteId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get the site
     local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
@@ -382,8 +414,8 @@ function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackDa
     end
 
     -- get available spot
-    local spot = GetAvailableSmeltSpot(site.siteId)
-    if spot == nil then corelog.Error('enterprise_factory.SmeltItemAndPickup: No spot available in site '.. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local spot = GetAvailableSmeltSpot(site)
+    if spot == nil then corelog.Error("enterprise_factory.SmeltItemAndPickup: No spot available in site ".. site.siteId) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
     local spotLocation = spot.location

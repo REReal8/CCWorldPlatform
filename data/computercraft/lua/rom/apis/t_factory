@@ -1,7 +1,8 @@
 local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
+local baseLocationV2 = baseLocationV1
 
-function T_ProduceItem_service_Craft()
+function T_ProduceItem_Craft()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
@@ -13,7 +14,7 @@ function T_ProduceItem_service_Craft()
     }, callbackFunction, callbackData)
 end
 
-function T_ProduceItem_service_Smelt()
+function T_ProduceItem_Smelt()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
@@ -25,7 +26,7 @@ function T_ProduceItem_service_Smelt()
     }, callbackFunction, callbackData)
 end
 
-function T_BuildAndStartNewV1Site_service()
+function T_BuildAndStartNewV1Site()
     enterprise_factory.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
@@ -34,7 +35,16 @@ function T_BuildAndStartNewV1Site_service()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
-function T_StopAndDismantleV1Site_service()
+function T_BuildAndStartNewV2Site()
+    enterprise_factory.BuildAndStartNewSite_ASrv({
+        baseLocation            = baseLocationV2,
+        siteVersion             = "v2",
+        upgrade                 = true,
+        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+    }, "t_main.Func1_Callback", {"some callback data"})
+end
+
+function T_StopAndDismantleV1Site()
     enterprise_factory.StopAndDismantleSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
@@ -42,7 +52,7 @@ function T_StopAndDismantleV1Site_service()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
-function T_BuildNewV0Site_service()
+function T_BuildNewV0Site()
     enterprise_factory.BuildNewSite_ASrv({
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
@@ -51,7 +61,7 @@ function T_BuildNewV0Site_service()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
-function T_StartNewV0Site_service()
+function T_StartNewV0Site()
     enterprise_factory.StartNewSite_SSrv({
         baseLocation        = baseLocationV0,
         siteVersion         = "v0",
@@ -59,7 +69,7 @@ function T_StartNewV0Site_service()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
-function T_DismantleV0Site_service()
+function T_DismantleV0Site()
     enterprise_factory.DismantleSite_ASrv({
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
@@ -68,7 +78,7 @@ function T_DismantleV0Site_service()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
-function T_StopV0Site_service()
+function T_StopV0Site()
     enterprise_factory.StopSite_ASrv({
         baseLocation    = baseLocationV0,
         siteVersion     = "v0"
