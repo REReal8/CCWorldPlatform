@@ -446,8 +446,6 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     siteProduceItemData.itemName = itemName -- ToDo: consider moving elsewhere
     siteProduceItemData.itemAmount = itemAmount -- ToDo: consider moving elsewhere
 
---    local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
---    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     -- ToDo: retrieve a locator for local input spot
     -- ToDo: retrieve a locator for local output spot
 
