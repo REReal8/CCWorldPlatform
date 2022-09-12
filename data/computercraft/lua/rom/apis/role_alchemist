@@ -71,6 +71,9 @@ function Craft_Task(craftData)
             craftData                   - (table) data about the crafting task
                 recipe                  - (table) crafting recipe
                     yield               - (number) of items produced by recipe
+                    [slot]              - (table) for each slot 
+                        itemName        - (string) name of smelting ingredient to use in specific slot
+                        itemCount       - (number) number it items to put in slot
                 itemCount               - (number) of items to produce
                 workingLocation         - (table) world location to do the crafting
                 ingredientsLocation     - ToDo: consider if we need to keep this in the Task or do this at a higher level
