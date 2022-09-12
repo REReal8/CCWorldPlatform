@@ -73,11 +73,11 @@ function StopSite_ASrv(siteData, callback, callbackData)
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.siteVersion) ~= "string" or type(siteData.baseLocation) ~= "table" then
-        corelog.Error('enterprise_factory.StopSite_ASrv: Invalid siteData input')
+        corelog.Error('enterprise_factory_site.StopSite_ASrv: Invalid siteData input')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     if type(callback) ~= "string" then 
-        corelog.Error('enterprise_factory.StopSite_ASrv: Invalid callback function')
+        corelog.Error('enterprise_factory_site.StopSite_ASrv: Invalid callback function')
         return coreutils.DoCallback(callback, callbackData, {success = false})
     end
     callbackData = callbackData or {}
@@ -96,11 +96,131 @@ function StopSite_ASrv(siteData, callback, callbackData)
     -- ToDo: implement
 
     -- remove site from factory
-    corelog.WriteToLog('  enterprise_factory.StopSite_ASrv: Removing site '..site.siteId)
+    corelog.WriteToLog('  enterprise_factory_site.StopSite_ASrv: Removing site '..site.siteId)
     coredht.SaveData(nil, db.dhtRoot, db.dhtSites, site.siteId)
 
     -- do callback
     coreutils.DoCallback(callback, callbackData, {success = true})
+end
+
+function GetAvailableSiteData(recipe) -- ToDo: make this a service?
+    --[[
+        This public method finds and selects a suitable factory site for producing items from a recipe.
+
+        Return value:
+                                        - (table)
+                siteProduceItemData     - (boolean) (partial) productionData to produce item
+
+        Parameters:
+--?            serviceData                - (table) data for the service
+                recipe                  - (table) item base recipe (including possibly both a crafting as smelting recipe)
+--?                itemName                - (string) name of item to produce
+--?                itemAmount              - (number) amount of items to produce
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.FindAvailableSite: Invalid recipe") return nil end
+
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    if type(sites) ~= "table" then corelog.Warning("enterprise_factory.FindAvailableSite: no sites present") return nil end
+
+    -- []
+    local craftRecipe = recipe.crafting
+    local smeltRecipe = recipe.smelting
+
+    -- find available sites
+    local availableSitesInfo = {
+    }
+    for k, site in pairs(sites) do
+        local siteId = site.siteId
+        -- check it can craft recipe
+        if craftRecipe ~= nil then
+            local craftSpot = enterprise_factory_site.GetAvailableCraftSpot(siteId)
+            if craftSpot ~= nil then
+                table.insert(availableSitesInfo, {
+                   -- ToDo: consider adding the spot here!
+                    siteId = siteId,
+                    productionMethod = "crafting",
+                    recipe = craftRecipe,
+                })
+            end
+        end
+
+        -- check it can smelt recipe
+        if smeltRecipe ~= nil then
+            local smeltSpot = enterprise_factory_site.GetAvailableSmeltSpot(siteId)
+            if smeltSpot ~= nil then
+                table.insert(availableSitesInfo, {
+                    siteId = siteId,
+                    productionMethod = "smelting",
+                    recipe = smeltRecipe,
+                })
+            end
+        end
+    end
+
+    -- select best site
+    for i, siteProduceItemData in ipairs(availableSitesInfo) do
+        -- for now take first
+
+        return siteProduceItemData
+        -- ToDo: consider finding best site based on some selection criterium 
+    end
+
+    corelog.Warning("enterprise_factory.FindAvailableSite: no site available")
+    return nil
+end
+
+function ProduceItem_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async public service produces multiple instances of a specific item in a factory site. It does so by producing 
+        the requested amount of items with the supplied production method (i.e. crafting or smelting). 
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                siteId                  - (string) id of the factory site
+                itemName                - (string) name of item to produce
+                itemAmount              - (number) amount of items to produce
+                productionMethod        = (string) production method to use
+                recipe                  - (table) production recipe  - ToDo keep?
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteId = serviceData.siteId
+    if type(siteId) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid siteId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemName = serviceData.itemName
+    if type(itemName) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemAmount = serviceData.itemAmount
+    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productionMethod = serviceData.productionMethod
+    if type(productionMethod) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productionMethod") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local recipe = serviceData.recipe
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid recipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    if productionMethod == "crafting" then
+        CraftItem(siteId, serviceData, recipe, callback, callbackData)
+    elseif productionMethod == "smelting" then
+        SmeltItemAndPickup(siteId, serviceData, recipe, callback, callbackData)
+        -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
+    else
+        corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Unknown recipe type to produce "..itemAmount.." "..itemName.."'s")
+        return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
 end
 
 --    _                 _    __                  _   _
@@ -130,7 +250,7 @@ end
 
 function GetAvailableCraftSpot(siteId)
      -- check input
-     if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid site id ") return nil end
+     if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid siteId") return nil end
 
     -- get the site
     local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)

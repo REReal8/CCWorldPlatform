@@ -401,9 +401,9 @@ end
 
 function ProduceItem_ASrv(serviceData, callback, callbackData)
     --[[
-        This async public service produces multiple instances of a specific item in a factory site. It does so 
+        This async public service produces multiple instances of a specific item in the factory. It does so 
         by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
-        After that it produces the requested amount of items with the corresponding recipe technique (i.e. crafting or smelting). 
+        After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipe. 
         Finally it delivers the created items to requested ISH.
 
         Return value:
@@ -424,7 +424,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productionData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local itemName = serviceData.itemName
     if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local itemAmount = serviceData.itemAmount
@@ -433,32 +433,30 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productsHostLocator = url.URLClass:new(serviceData.productsHostLocator)
     if type(productsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.ProduceItem_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- select recipe to produce item
-    if type(db.recipes[ itemName ]) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local craftRecipe = db.recipes[ itemName ].crafting
-    local smeltRecipe = db.recipes[ itemName ].smelting
+    local recipe = db.recipes[ itemName ]
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- select a suitable site
-    local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
-    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe)
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    siteProduceItemData.itemName = itemName -- ToDo: consider moving elsewhere
+    siteProduceItemData.itemAmount = itemAmount -- ToDo: consider moving elsewhere
 
-    -- ToDo: implement retrieving ingredients from ingredientsHostLocator
+--    local siteId, recipe = FindAvailableSite(craftRecipe, smeltRecipe)
+--    if type(siteId) ~= "string" or type(recipe) ~="table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- ToDo: retrieve a locator for local input spot
+    -- ToDo: retrieve a locator for local output spot
 
-    -- ToDo: implement delivering products to productsHostLocator
+    -- ToDo: implement retrieving ingredients from ingredientsHostLocator and putting them in local input Spot
+
+    -- ToDo: implement delivering products from local output spot to productsHostLocator
 
     -- let site produce item
-    if recipe == craftRecipe then
-        enterprise_factory_site.CraftItem(siteId, serviceData, recipe, callback, callbackData)
-    elseif recipe == smeltRecipe then
-        enterprise_factory_site.SmeltItemAndPickup(siteId, serviceData, recipe, callback, callbackData)
-        -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
-    else
-        corelog.Error("enterprise_factory.ProduceItem_ASrv: Unknown recipe type to produce "..itemAmount.." "..itemName.."'s")
-        return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    enterprise_factory_site.ProduceItem_ASrv(siteProduceItemData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
@@ -742,52 +740,6 @@ function GetV2SiteStartData(serviceData)
     }
 
     return startData
-end
-
-function FindAvailableSite(craftRecipe, smeltRecipe)
-    -- sites ophalen
-    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
-
-    -- check if we have any site
-    if type(sites) ~= "table" then corelog.Warning('enterprise_factory.FindAvailableSite: no sites present') return nil, nil end
-
-    -- find available sites
-    local availableSitesInfo = {
-    }
-    for k, site in pairs(sites) do
-        local siteId = site.siteId
-        -- check it can craft recipe
-        if craftRecipe ~= nil then
-            local craftSpot = enterprise_factory_site.GetAvailableCraftSpot(siteId)
-            if craftSpot ~= nil then
-                table.insert(availableSitesInfo, {
-                    siteId = siteId,
-                    recipe = craftRecipe
-                })
-            end
-        end
-
-        -- check it can smelt recipe
-        if smeltRecipe ~= nil then
-            local smeltSpot = enterprise_factory_site.GetAvailableSmeltSpot(siteId)
-            if smeltSpot ~= nil then
-                table.insert(availableSitesInfo, {
-                    siteId = siteId,
-                    recipe = smeltRecipe
-                })
-            end
-        end
-    end
-
-    -- select best site
-    for i, siteInfo in ipairs(availableSitesInfo) do
-        -- for now take first
-        return siteInfo.siteId, siteInfo.recipe
-        -- ToDo: consider finding best site based on some selection criterium 
-    end
-
-    corelog.Warning('enterprise_factory.FindAvailableSite: no site available')
-    return nil, nil
 end
 
 --          _     _                                              _                        _                 _      
