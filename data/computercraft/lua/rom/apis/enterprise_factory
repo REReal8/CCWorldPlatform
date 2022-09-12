@@ -444,15 +444,20 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemAmount)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
+    -- determine ingredientsItemsLocator (by updating ingredientsHostLocator with itemsNeeded)
+    local ingredientsItemsLocator = ingredientsHostLocator
+    ingredientsItemsLocator:setQuery(coreutils.DeepCopy(siteProduceItemData.itemsNeeded))
+    corelog.WriteToLog("   ingredientsItemsLocator="..ingredientsItemsLocator:getURI())
+
     -- retrieve site input & output locator's
-    local siteInputLocator = url.URLClass:new(siteProduceItemData.siteInputLocator)
-    corelog.WriteToLog("   siteInputLocator="..siteInputLocator:getURI())
-    local siteOutputLocator = url.URLClass:new(siteProduceItemData.siteOutputLocator)
-    corelog.WriteToLog("   siteOutputLocator="..siteOutputLocator:getURI())
+    local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
+    corelog.WriteToLog("   localInputLocator="..localInputLocator:getURI())
+    local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
+    corelog.WriteToLog("   localOutputLocator="..localOutputLocator:getURI())
 
-    -- ToDo: implement retrieving ingredients from ingredientsHostLocator and putting them in siteInputLocator
+    -- ToDo: implement retrieving ingredients from ingredientsItemsLocator and putting them in localInputLocator
 
-    -- ToDo: implement delivering products from siteOutputLocator to productsHostLocator
+    -- ToDo: implement delivering products from localOutputLocator to productsHostLocator
 
     -- let site produce item
     enterprise_factory_site.ProduceItem_ASrv(siteProduceItemData, callback, callbackData)

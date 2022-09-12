@@ -9,14 +9,14 @@ function Craft_MetaData(craftData)
    ]]
 
     -- check input
-    if type(craftData) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: craftData not a valid") return {success = false} end
-    if type(craftData.recipe) ~= "table" or type(craftData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: recipe not valid") return {success = false} end
-    local itemCount = craftData.itemCount
-    if type(itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: Invalid itemCount") return {success = false} end
-    if type(craftData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: workingLocation not valid") return {success = false} end
+    if type(craftData) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: craftData not a valid") return { } end
+    if type(craftData.recipe) ~= "table" or type(craftData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: recipe not valid") return { } end
+    local produceItemCount = craftData.produceItemCount
+    if type(produceItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: Invalid produceItemCount") return { } end
+    if type(craftData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: workingLocation not valid") return { } end
 
     -- determine needed items
-    local itemList = Craft_ItemsNeeded(craftData.recipe, itemCount)
+    local itemList = Craft_ItemsNeeded(craftData.recipe, produceItemCount)
     local workingLocation = craftData.workingLocation
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
@@ -31,10 +31,10 @@ function Craft_MetaData(craftData)
     }
 end
 
-function Craft_ItemsNeeded(recipe, itemProduceCount)
+function Craft_ItemsNeeded(recipe, produceItemCount)
     -- check input
-    if type(recipe) ~= "table" or type(recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: recipe not valid") return {success = false} end
-    if type(itemProduceCount) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: itemProduceCount not valid") return {success = false} end
+    if type(recipe) ~= "table" or type(recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: recipe not valid") return { } end
+    if type(produceItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: itemProduceCount not valid") return { } end
 
     -- build item list
     local itemList = {}
@@ -52,7 +52,7 @@ function Craft_ItemsNeeded(recipe, itemProduceCount)
 
     -- correct for yield and itemProduceCount
     for itemName, itemCount in pairs(itemList) do
-        itemList[itemName] = itemList[itemName] * itemProduceCount / yield
+        itemList[itemName] = itemList[itemName] * produceItemCount / yield
     end
 
     -- return itemList
@@ -74,7 +74,7 @@ function Craft_Task(craftData)
                     [slot]              - (table) for each slot 
                         itemName        - (string) name of smelting ingredient to use in specific slot
                         itemCount       - (number) number it items to put in slot
-                itemCount               - (number) of items to produce
+                produceItemCount        - (number) of items to produce
                 workingLocation         - (table) world location to do the crafting
                 ingredientsLocation     - ToDo: consider if we need to keep this in the Task or do this at a higher level
     ]]
@@ -85,15 +85,15 @@ function Craft_Task(craftData)
     if type(recipe) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid recipe") return {success = false} end
     local yield = recipe.yield
     if type(yield) ~= "number" then corelog.Error("role_alchemist.Craft_Task: Invalid yield") return {success = false} end
-    local itemCount = craftData.itemCount
-    if type(itemCount) ~= "number" then corelog.Error("role_alchemist.Craft_Task: Invalid itemCount") return {success = false} end
+    local produceItemCount = craftData.produceItemCount
+    if type(produceItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_Task: Invalid produceItemCount") return {success = false} end
     local workingLocation = craftData.workingLocation
     if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid workingLocation") return {success = false} end
     local ingredientsLocation  = craftData.ingredientsLocation
 --    if type(ingredientsLocation) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid ingredientsLocation") return {success = false} end
 
     -- calculate how many times we need to "do" the recipe
-    local times = math.ceil(itemCount / yield)
+    local times = math.ceil(produceItemCount / yield)
 
     -- only if we get an location, not needed when working from inventory
     -- ToDo: consider if we need to keep this at this level
@@ -140,15 +140,15 @@ function Smelt_MetaData(smeltData)
    ]]
 
     -- check input
-    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: craftData not a valid") return {success = false} end
-    if type(smeltData.recipe) ~= "table" or type(smeltData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: recipe not valid") return {success = false} end
-    if type(smeltData.itemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: itemCount not valid") return {success = false} end
-    if type(smeltData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: workingLocation not valid") return {success = false} end
-    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: fuelItemName not valid") return {success = false} end
-    if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: fuelItemCount not valid") return {success = false} end
+    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid craftData") return { } end
+    if type(smeltData.recipe) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid recipe") return { } end
+    if type(smeltData.produceItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid produceItemCount") return { } end
+    if type(smeltData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid workingLocation") return { } end
+    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid fuelItemName") return { } end
+    if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid fuelItemCount") return { } end
  
     -- determine needed items
-    local itemList = Smelt_ItemsNeeded(smeltData)
+    local itemList = Smelt_ItemsNeeded(smeltData.recipe, smeltData.produceItemCount, smeltData.fuelItemName, smeltData.fuelItemCount)
     local workingLocation = smeltData.workingLocation
     local fuelNeeded = 4 + 5 -- task starts at workingLocation, very little (4) movement from there, a few extra to be sure
 
@@ -163,18 +163,22 @@ function Smelt_MetaData(smeltData)
     }
 end
 
-function Smelt_ItemsNeeded(smeltData)
+function Smelt_ItemsNeeded(recipe, produceItemCount, fuelItemName, fuelItemCount)
     -- check input
-    if type(smeltData.recipe) ~= "table" or type(smeltData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: recipe not valid") return {success = false} end
-    if type(smeltData.itemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: itemCount not valid") return {success = false} end
-    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: fuelItemName not valid") return {success = false} end
-    if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: fuelItemCount not valid") return {success = false} end
+    if type(recipe) ~= "table" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: Invalid recipe") return { } end
+    if type(produceItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: Invalid produceItemCount") return { } end
+    if type(fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: Invalid fuelItemName") return { } end
+    if type(fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: Invalid fuelItemCount") return { } end
+
+    -- get yield
+    local yield = recipe.yield
+    if type(yield) ~= "number" then corelog.Error("role_alchemist.Smelt_ItemsNeeded: Invalid yield") return { } end
 
     -- build item list
     local itemList = {
-        [smeltData.recipe.itemName] = smeltData.itemCount / smeltData.recipe.yield,
+        [recipe.itemName] = produceItemCount / recipe.yield,
     }
-    itemList[smeltData.fuelItemName] = (itemList[smeltData.fuelItemName] or 0) + smeltData.fuelItemCount
+    itemList[fuelItemName] = (itemList[fuelItemName] or 0) + fuelItemCount
 
     -- return itemList
 --    corelog.WriteToLog("Smelt_ItemsNeeded: itemList="..textutils.serialise(itemList))
@@ -195,7 +199,7 @@ function Smelt_Task(smeltData)
                 recipe                  - (table) smelting recipe
                     itemName            - (string) name of smelting ingredient to use
                     yield               - (number) of items produced by recipe
-                itemCount               - (number) of items to produce
+                produceItemCount        - (number) of items to produce
                 workingLocation         - (table) world location to do the smelting (in front of the furnance)
                 fuelItemName            - (string) name of fuel item to use
                 fuelItemCount           - (number) of fuel items to use
@@ -208,8 +212,8 @@ function Smelt_Task(smeltData)
     if type(itemName) ~= "string" then corelog.Error("role_alchemist.Smelt_Task: Invalid itemName") return {success = false} end
     local yield = recipe.yield
     if type(yield) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid yield") return {success = false} end
-    local itemCount = smeltData.itemCount
-    if type(itemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid itemCount") return {success = false} end
+    local produceItemCount = smeltData.produceItemCount
+    if type(produceItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid produceItemCount") return {success = false} end
     local workingLocation = smeltData.workingLocation
     if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_Task: Invalid workingLocation") return {success = false} end
     local fuelItemName = smeltData.fuelItemName
@@ -218,7 +222,7 @@ function Smelt_Task(smeltData)
     if type(fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid fuelItemName") return {success = false} end
 
     -- prepare
-    local times = math.ceil(itemCount / yield)
+    local times = math.ceil(produceItemCount / yield)
 
     -- go to the furnace
 --    coremove.GoTo(smeltData.entryLocation) -- ToDo: do differently
