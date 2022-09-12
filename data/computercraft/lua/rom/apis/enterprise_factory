@@ -441,10 +441,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- select a suitable site
-    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe)
+    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemAmount)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
---    siteProduceItemData.itemName = itemName -- ToDo: consider removing (not used, except for error message)
-    siteProduceItemData.itemAmount = itemAmount -- ToDo: consider move setting elsewhere
 
     -- retrieve site input & output locator's
     local siteInputLocator = url.URLClass:new(siteProduceItemData.siteInputLocator)
