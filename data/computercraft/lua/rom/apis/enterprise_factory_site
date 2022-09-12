@@ -212,6 +212,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- produce with productionMethod 
     if productionMethod == "crafting" then
         CraftItem(siteId, serviceData, recipe, callback, callbackData)
     elseif productionMethod == "smelting" then
@@ -284,7 +285,6 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
         Parameters:
             siteId                  - (string) id of the factory site
             productionData          - (table) data about the item to produce, 
-                itemName            - name of items to produce
                 itemAmount          - amount of items to produce
             recipe                  - (table) crafting recipe
             callback                - (string) name of function to call once the items are made
@@ -292,7 +292,7 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
     ]]
 
     -- check input
-    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.CraftItem: Invalid site id ") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.CraftItem: Invalid siteId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get the site
     local site = coredht.GetData(db.dhtRoot, db.dhtSites, siteId)
@@ -308,7 +308,6 @@ function CraftItem(siteId, productionData, recipe, callback, callbackData)
     -- gather assignment data
     local spotLocation = spot.location
     local craftData = {
-        itemName = productionData.itemName,
         itemCount = productionData.itemAmount,
 
         recipe = recipe,
@@ -365,8 +364,7 @@ function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackDa
 
         Parameters:
             siteId                  - (string) id of the factory site
-            productionData          - (table) data about the item to produce, 
-                itemName            - name of items to produce
+            productionData          - (table) data about the item to produce
                 itemAmount          - amount of items to produce
             recipe                  - (table) smelting recipe
             callback                - (string) name of function to call once the items are made
@@ -390,7 +388,6 @@ function SmeltItemAndPickup(siteId, productionData, recipe, callback, callbackDa
     -- gather assignment data
     local spotLocation = spot.location
     local smeltData = {
---        itemName = productionData.itemName,
         recipe = recipe,
         itemCount = productionData.itemAmount,
 
