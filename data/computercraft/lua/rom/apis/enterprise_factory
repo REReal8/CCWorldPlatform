@@ -415,8 +415,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data for the service
-                itemName                - (string) name of item to produce
-                itemAmount              - (number) amount of items to produce
+                productItemName         - (string) name of item to produce
+                productItemCount        - (number) amount of items to produce
                 ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved by the factory
                 productsHostLocator     - (URL) locating where (i.e. at which ISH) the produced items need to be delivered by the factory
             callback                    - (string) name of function to call once service is ready
@@ -425,10 +425,10 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemName = serviceData.itemName
-    if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemAmount = serviceData.itemAmount
-    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid itemAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemName = serviceData.productItemName
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemCount = serviceData.productItemCount
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productsHostLocator = url.URLClass:new(serviceData.productsHostLocator)
@@ -437,12 +437,12 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- select recipe to produce item
-    local recipe = db.recipes[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local recipe = db.recipes[ productItemName ]
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- select a suitable site
-    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemAmount)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..itemAmount.." "..itemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, productItemCount)
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..productItemCount.." "..productItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine ingredientsItemsLocator (by updating ingredientsHostLocator with itemsNeeded)
     local ingredientsItemsLocator = ingredientsHostLocator

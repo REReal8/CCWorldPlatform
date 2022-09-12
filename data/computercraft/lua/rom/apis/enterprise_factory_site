@@ -109,7 +109,7 @@ function StopSite_ASrv(siteData, callback, callbackData)
     coreutils.DoCallback(callback, callbackData, {success = true})
 end
 
-function GetAvailableSiteData(recipe, itemAmount)
+function GetAvailableSiteData(recipe, productItemCount)
     --[[
         This public method finds and selects a suitable factory site for producing items from a recipe.
 
@@ -118,12 +118,12 @@ function GetAvailableSiteData(recipe, itemAmount)
 
         Parameters:
             recipe                      - (table) item base recipe (including possibly both a crafting as smelting recipe)
-            itemAmount                  - (number) amount of items to produce
+            productItemCount            - (number) amount of items to produce
     ]]
 
     -- check input
     if type(recipe) ~= "table" then corelog.Error("enterprise_factory.GetAvailableSiteData: Invalid recipe") return nil end
-    if type(itemAmount) ~= "number" then corelog.Error("enterprise_factory.GetAvailableSiteData: Invalid itemAmount") return nil end
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.GetAvailableSiteData: Invalid productItemCount") return nil end
 
     -- sites ophalen
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
@@ -161,7 +161,7 @@ function GetAvailableSiteData(recipe, itemAmount)
                             localOutputLocator  = outputLocator,
                             productionSpot      = craftSpot,
                             productionMethod    = "craft",
-                            productItemCount    = itemAmount,
+                            productItemCount    = productItemCount,
                             productionRecipe    = craftRecipe,
                         })
                     else
@@ -178,7 +178,7 @@ function GetAvailableSiteData(recipe, itemAmount)
                             localOutputLocator  = outputLocator,
                             productionSpot      = smeltSpot,
                             productionMethod    = "smelt",
-                            productItemCount    = itemAmount,
+                            productItemCount    = productItemCount,
                             productionRecipe    = smeltRecipe,
                         })
                     else
@@ -201,7 +201,6 @@ function GetAvailableSiteData(recipe, itemAmount)
 
     -- enhance with itemsNeeded
     local productionMethod = selectedProduceItemData.productionMethod
-    local productItemCount = selectedProduceItemData.productItemCount
     local productionRecipe = selectedProduceItemData.productionRecipe
     if productionMethod == "craft" then
         selectedProduceItemData.itemsNeeded = role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount)
@@ -209,7 +208,7 @@ function GetAvailableSiteData(recipe, itemAmount)
         -- determine production fuel
         -- ToDo: do this differently
         local fuelItemName  = "minecraft:birch_planks"
-        local fuelItemCount = itemAmount
+        local fuelItemCount = productItemCount
 
         selectedProduceItemData.itemsNeeded = role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount)
     else corelog.Error("enterprise_factory_site.GetAvailableSiteData: Production with method "..productionMethod.." not implemented.") return nil end

@@ -7,8 +7,8 @@ function T_ProduceItem_Craft()
     local callbackData = {"some callback data"}
 
     enterprise_factory.ProduceItem_ASrv({
-        itemName                = "minecraft:birch_planks",
-        itemAmount              = 12,
+        productItemName         = "minecraft:birch_planks",
+        productItemCount        = 12,
         ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ }).url,
         productsHostLocator     = enterprise_turtle.GetISHURL_SSrv({ }).url,
     }, callbackFunction, callbackData)
@@ -19,8 +19,8 @@ function T_ProduceItem_Smelt()
     local callbackData = {"some callback data"}
 
     enterprise_factory.ProduceItem_ASrv({
-        itemName                = "minecraft:charcoal",
-        itemAmount              = 3,
+        productItemName         = "minecraft:charcoal",
+        productItemCount        = 3,
         ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ }).url,
         productsHostLocator     = enterprise_turtle.GetISHURL_SSrv({ }).url,
     }, callbackFunction, callbackData)
