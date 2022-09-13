@@ -131,8 +131,8 @@ function NextProjectStep(internalProjectData, stepResults)
 
     -- save the results for the previous step
     if type(stepResults) ~= "table" then stepResults = {} end -- ToDo: consider checking (or even enforcing?) {success = true}
-    project.outputs[ project.currentStep ] = stepResults
     corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
+    project.outputs[ project.currentStep ] = stepResults
 
     -- was this the last step?
     if #project.projectDef.steps == project.currentStep then EndProject(internalProjectData) return nil end
