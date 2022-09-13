@@ -431,7 +431,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Getting "..sourceItemsLocator:getQueryURI().." from chest "..id.." into a turtle.")
+--    corelog.WriteToLog(">Getting "..sourceItemsLocator:getQueryURI().." from chest "..id.." into a turtle.")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
@@ -512,7 +512,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocator:getURI().." into chest "..projectData.id..".")
+--    corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocator:getURI().." into chest "..projectData.id..".")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 

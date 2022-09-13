@@ -372,9 +372,8 @@ function LogToPlanks(craftingLocation, planks)
             },
             yield = 4
         },
-        itemName = "minecraft:birch_planks",
-        itemCount = planks,
---        ingredientsLocation = "inventory",
+        productItemName = "minecraft:birch_planks",
+        productItemCount= planks,
         workingLocation = craftingLocation,
     })
 end
@@ -400,9 +399,8 @@ function PlanksToStick(craftingLocation, sticks)
             },
             yield = 4
         },
-        itemName = "minecraft:stick",
-        itemCount = sticks,
---        ingredientsLocation = "inventory",
+        productItemName = "minecraft:stick",
+        productItemCount= sticks,
         workingLocation = craftingLocation,
     })
 end
@@ -468,9 +466,8 @@ function PlanksToChests(craftingLocation, chests)
             [16] = {itemName = plankName, itemCount = 1},
             yield = 1
         },
-        itemName = chestName,
-        itemCount = chests,
---        ingredientsLocation = "inventory",
+        productItemName = chestName,
+        productItemCount= chests,
         workingLocation = craftingLocation,
     })
 end
@@ -490,12 +487,12 @@ function LogToCharcoal(factoryLocation, charcoals)
     role_alchemist.Smelt_Task({
         recipe  = {
             itemName = "minecraft:birch_log",
---            itemName = "minecraft:charcoal",
             yield = 1,
         },
-        fuelItemName = "minecraft:birch_planks",
---        ingredientsLocation = "inventory",
-        itemCount = charcoals,
+        fuelItemName    = "minecraft:birch_planks",
+        fuelItemCount   = charcoals,
+        productItemName = "minecraft:charcoal",
+        productItemCount= charcoals,
         workingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -3),
 --        entryLocation   = coremove.GetRelativeLocation(factoryLocation, 3, 3, 1),
     })
@@ -525,9 +522,8 @@ function CharcoalAndStickToTorch(craftingLocation, torches)
             },
             yield = 4
         },
-        itemName = "minecraft:torch",
-        itemCount = torches,
---        ingredientsLocation = "inventory",
+        productItemName = "minecraft:torch",
+        productItemCount= torches,
         workingLocation = craftingLocation,
     })
 end

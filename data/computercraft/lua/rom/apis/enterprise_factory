@@ -117,7 +117,7 @@ function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
 
     -- create project definition
     local buildAndStartNewSiteProjectDef = {
-        steps   = {
+        steps = {
             { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
                 { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
@@ -284,7 +284,7 @@ function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
 
     -- create project definition
     local stopAndDismantleSiteProjectDef = {
-        steps   = {
+        steps = {
             { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
                 { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
@@ -447,20 +447,65 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     -- determine ingredientsItemsLocator (by updating ingredientsHostLocator with itemsNeeded)
     local ingredientsItemsLocator = ingredientsHostLocator
     ingredientsItemsLocator:setQuery(coreutils.DeepCopy(siteProduceItemData.itemsNeeded))
-    corelog.WriteToLog("   ingredientsItemsLocator="..ingredientsItemsLocator:getURI())
+ --   corelog.WriteToLog("   ingredientsItemsLocator="..ingredientsItemsLocator:getURI())
 
     -- retrieve site input & output locator's
     local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
-    corelog.WriteToLog("   localInputLocator="..localInputLocator:getURI())
+--    corelog.WriteToLog("   localInputLocator="..localInputLocator:getURI())
     local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
-    corelog.WriteToLog("   localOutputLocator="..localOutputLocator:getURI())
+--    corelog.WriteToLog("   localOutputLocator="..localOutputLocator:getURI())
 
-    -- ToDo: implement retrieving ingredients from ingredientsItemsLocator and putting them in localInputLocator
+    -- create project service data
+    local projectDef = {
+        steps = {
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localInputLocator" },
+            }},
+            { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "localInputItemsLocator" , valueSource = 1, keyDefSource = "destinationItemsLocator" },
+                { keyDef = "localOutputLocator"     , valueSource = 0, keyDefSource = "localOutputLocator" },
+                { keyDef = "productionMethod"       , valueSource = 0, keyDefSource = "productionMethod" },
+                { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
+                { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
+                { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
+                { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
+            }},
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "productsHostLocator" },
+            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
+        }
+    }
+    local projectData = {
+        ingredientsItemsLocator     = ingredientsItemsLocator,
+        productsHostLocator         = productsHostLocator,
 
-    -- ToDo: implement delivering products from localOutputLocator to productsHostLocator
+        localInputLocator           = localInputLocator,
+        localOutputLocator          = localOutputLocator,
 
-    -- let site produce item
-    enterprise_factory_site.ProduceItem_ASrv(siteProduceItemData, callback, callbackData)
+        productionMethod            = siteProduceItemData.productionMethod,
+        productionSpot              = siteProduceItemData.productionSpot,
+        productItemName             = productItemName,
+        productItemCount            = productItemCount,
+        productionRecipe            = siteProduceItemData.productionRecipe,
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Producing "..productItemCount.." "..productItemName.."'s")
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _
