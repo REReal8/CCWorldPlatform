@@ -716,7 +716,7 @@ function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
     -- put with an assignment
     local taskData = {
         turtleId        = turtleItemsLocator:getPort(),
-        itemQuery       = turtleItemsLocator:getQuery(),
+        itemQuery       = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
         location        = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
     }
