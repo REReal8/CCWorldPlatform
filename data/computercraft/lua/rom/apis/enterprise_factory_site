@@ -129,7 +129,7 @@ function GetAvailableSiteData(recipe, productItemCount)
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
     if type(sites) ~= "table" then corelog.Warning("enterprise_factory.GetAvailableSiteData: no sites present") return nil end
 
-    -- []
+    -- ..
     local craftRecipe = recipe.crafting
     local smeltRecipe = recipe.smelting
 
@@ -154,6 +154,7 @@ function GetAvailableSiteData(recipe, productItemCount)
             else
                 -- check it can craft recipe
                 if craftRecipe ~= nil then
+                    -- ToDo: implement production of more items than fitting a single spot
                     local craftSpot = GetAvailableCraftSpot(site)
                     if craftSpot ~= nil then
                         table.insert(availableSitesInfo, {

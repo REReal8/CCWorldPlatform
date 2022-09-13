@@ -180,6 +180,8 @@ function DeepCopy(orig)
     return copy
 end
 
+-- ToDo: consider adding method to check for nested tables (to be able to catch the annoying errors)
+
 --                         _
 --                        | |
 --     _____   _____ _ __ | |_ ___
