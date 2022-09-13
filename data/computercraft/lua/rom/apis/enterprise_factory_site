@@ -143,12 +143,12 @@ function GetAvailableSiteData(recipe, productItemCount)
         if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid siteId") return nil end
 
         -- get available inputLocator
-        local inputLocator = GetAvailableLocator(site.inputLocators)
+        local inputLocator = url.URLClass:new(GetAvailableLocator(site.inputLocators))
         if inputLocator == nil then
             corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available inputLocator in site "..siteId)
         else
             -- get available outputLocator
-            local outputLocator = GetAvailableLocator(site.outputLocators)
+            local outputLocator = url.URLClass:new(GetAvailableLocator(site.outputLocators))
             if outputLocator == nil then
                 corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available outputLocator in site "..siteId)
             else
@@ -157,8 +157,8 @@ function GetAvailableSiteData(recipe, productItemCount)
                     local craftSpot = GetAvailableCraftSpot(site)
                     if craftSpot ~= nil then
                         table.insert(availableSitesInfo, {
-                            localInputLocator   = coreutils.DeepCopy(inputLocator),
-                            localOutputLocator  = coreutils.DeepCopy(outputLocator),
+                            localInputLocator   = inputLocator:copy(),
+                            localOutputLocator  = outputLocator:copy(),
                             productionSpot      = coreutils.DeepCopy(craftSpot),
                             productionMethod    = "craft",
                             productionRecipe    = coreutils.DeepCopy(craftRecipe),
@@ -173,8 +173,8 @@ function GetAvailableSiteData(recipe, productItemCount)
                     local smeltSpot = GetAvailableSmeltSpot(site)
                     if smeltSpot ~= nil then
                         table.insert(availableSitesInfo, {
-                            localInputLocator   = coreutils.DeepCopy(inputLocator),
-                            localOutputLocator  = coreutils.DeepCopy(outputLocator),
+                            localInputLocator   = inputLocator:copy(),
+                            localOutputLocator  = outputLocator:copy(),
                             productionSpot      = coreutils.DeepCopy(smeltSpot),
                             productionMethod    = "smelt",
                             productionRecipe    = coreutils.DeepCopy(smeltRecipe),

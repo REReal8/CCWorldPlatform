@@ -117,11 +117,13 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             }},
             { stepName = "enterprise_turtle.GetISHURL_SSrv", async = false, stepDataDef = {
             }},
+            { stepName = "enterprise_turtle.GetISHURL_SSrv", async = false, stepDataDef = {
+            }},
             { stepName = "enterprise_factory.ProduceItem_ASrv", async = true, stepDataDef = {
                 { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "planksName" },
                 { keyDef = "productItemCount"           , valueSource = 0, keyDefSource = "planksAmount1" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
-                { keyDef = "productsHostLocator"        , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "productsHostLocator"        , valueSource = 5, keyDefSource = "url" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
@@ -130,9 +132,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             }},
             { stepName = "enterprise_factory.ProduceItem_ASrv", async = true, stepDataDef = {
                 { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "planksName" },
-                { keyDef = "productItemCount"           , valueSource = 6, keyDefSource = "planksToProduceForFuel" },
+                { keyDef = "productItemCount"           , valueSource = 7, keyDefSource = "planksToProduceForFuel" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
-                { keyDef = "productsHostLocator"        , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "productsHostLocator"        , valueSource = 5, keyDefSource = "url" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
@@ -148,7 +150,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "furnaceName" },
                 { keyDef = "productItemCount"           , valueSource = 0, keyDefSource = "furnaceAmount" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 4, keyDefSource = "url" },
-                { keyDef = "productsHostLocator"        , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "productsHostLocator"        , valueSource = 5, keyDefSource = "url" },
             }},
             { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
@@ -196,10 +198,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
                 { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
                 { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
+                { keyDef = "success16"                  , valueSource = 16, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 16, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 17, keyDefSource = "success" },
         }
     }
     local projectServiceData = {

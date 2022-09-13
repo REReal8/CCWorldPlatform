@@ -51,6 +51,12 @@ function URLClass:newFromURI(uri)
     return aNewURL
 end
 
+function URLClass:copy()
+    local uri = self:getURI()
+
+    return URLClass:newFromURI(uri)
+end
+
 function URLClass:getScheme()
     return "ccwprp" -- always the same
 end
