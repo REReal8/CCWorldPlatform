@@ -142,7 +142,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
         -- check
         if type(requestItemName) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
         if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
-        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
+--        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
 
         -- check enough items
         local items = DetermineItemsInventory(chest.list())
@@ -281,7 +281,7 @@ function PutItemsFromTurtleIntoChest_Task(taskData)
         -- check
         if type(requestItemName) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
         if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
-        corelog.WriteToLog("   putting "..requestItemCount.." "..requestItemName.."'s from turtle into chest")
+--        corelog.WriteToLog("   putting "..requestItemCount.." "..requestItemName.."'s from turtle into chest")
 
         -- check enough items
         local turtleInventory = coreinventory.GetInventoryDetail()
