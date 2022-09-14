@@ -240,7 +240,7 @@ function Equip(itemName)
     SelectItem(itemName)
 
     -- did we found one?
-    if GetItemDetail() then
+    if GetItemDetail() then -- ToDo: shouldn't a slot be passed to GetItemDetail() ?
         -- remember this
         db.right    = itemName
 
