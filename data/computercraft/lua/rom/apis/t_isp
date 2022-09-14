@@ -26,29 +26,26 @@ function T_TransferItemsFromTo_Chests()
                 { keyDef = "projectData"            , valueSource = 0, keyDefSource = "projectData1" },
             }},
             { stepName = "enterprise_chests.GetItemLocator_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
+                { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
                 { keyDef = "itemQuery"              , valueSource = 0, keyDefSource = "itemsToTransferQuery" },
             }},
             { stepName = "enterprise_projects.StartProject_ASrv", async = true, stepDataDef = {
                 { keyDef = "projectDef"             , valueSource = 0, keyDefSource = "projectDef2" },
                 { keyDef = "projectData"            , valueSource = 0, keyDefSource = "projectData2" },
             }},
-            { stepName = "enterprise_chests.GetChestLocator_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 3, keyDefSource = "id" },
-            }},
 
             -- TransferItemsFromTo_ASrv
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "url" },
-                { keyDef = "destinationHostLocator" , valueSource = 4, keyDefSource = "url" },
+                { keyDef = "destinationHostLocator" , valueSource = 3, keyDefSource = "chestLocator" },
             }},
 
             -- cleanup
             { stepName = "enterprise_chests.DelistChest_ASrv", async = true, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
+                { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
             }},
             { stepName = "enterprise_chests.DelistChest_ASrv", async = true, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 3, keyDefSource = "id" },
+                { keyDef = "chestLocator"           , valueSource = 3, keyDefSource = "chestLocator" },
             }},
 
             -- wrap-up
@@ -58,13 +55,12 @@ function T_TransferItemsFromTo_Chests()
                 { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
                 { keyDef = "success4"               , valueSource = 4, keyDefSource = "success" },
                 { keyDef = "success5"               , valueSource = 5, keyDefSource = "success" },
-                { keyDef = "success6"               , valueSource = 5, keyDefSource = "success" },
-                { keyDef = "success7"               , valueSource = 5, keyDefSource = "success" },
+                { keyDef = "success6"               , valueSource = 6, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 8, keyDefSource = "success" },
-            { keyDef = "destinationItemsLocator"    , valueSource = 5, keyDefSource = "destinationItemsLocator" },
+            { keyDef = "success"                    , valueSource = 7, keyDefSource = "success" },
+            { keyDef = "destinationItemsLocator"    , valueSource = 4, keyDefSource = "destinationItemsLocator" },
         }
     }
     local projectServiceData = {

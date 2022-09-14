@@ -795,19 +795,16 @@ function GetV2SiteStartData(serviceData)
     local baseLocation = serviceData.baseLocation
 
     -- register input chest
-    local inputChestId = enterprise_chests.RegisterChest_SSrv({
+    local inputChestLocator = enterprise_chests.RegisterChest_SSrv({
         location        = coremove.GetRelativeLocation(baseLocation, 2, 5, 0),
         accessDirection = "top",
-    }).id
-    local inputChestLocator = enterprise_chests.GetChestLocator_SSrv({id = inputChestId}).url
-    -- ToDo: consider returning chestLocator directly from enterprise_chests.RegisterChest_SSrv
+    }).chestLocator
 
     -- register output chest
-    local outputChestId = enterprise_chests.RegisterChest_SSrv({
+    local outputChestLocator = enterprise_chests.RegisterChest_SSrv({
         location        = coremove.GetRelativeLocation(baseLocation, 4, 5, 0),
         accessDirection = "top",
-    }).id
-    local outputChestLocator = enterprise_chests.GetChestLocator_SSrv({id = outputChestId}).url
+    }).chestLocator
 
     -- construct start data
     local startData = {

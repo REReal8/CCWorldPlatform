@@ -101,9 +101,6 @@ function T_BuildRectangularPattern_FromChest()
                 { keyDef = "projectDef"             , valueSource = 0, keyDefSource = "projectDef" },
                 { keyDef = "projectData"            , valueSource = 0, keyDefSource = "projectData" },
             }},
-            { stepName = "enterprise_chests.GetChestLocator_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
-            }},
 
             -- BuildRectangularPattern_ASrv
             { stepName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, stepDataDef = {
@@ -111,12 +108,12 @@ function T_BuildRectangularPattern_FromChest()
                 { keyDef = "buildFromAbove"         , valueSource = 0, keyDefSource = "buildFromAbove" },
                 { keyDef = "pattern"                , valueSource = 0, keyDefSource = "pattern" },
 
-                { keyDef = "materialsHostLocator"   , valueSource = 2, keyDefSource = "url" },
+                { keyDef = "materialsHostLocator"   , valueSource = 1, keyDefSource = "chestLocator" },
             }},
 
             -- cleanup
             { stepName = "enterprise_chests.DelistChest_ASrv", async = true, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
+                { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
             }},
 
             -- wrap-up
@@ -124,11 +121,10 @@ function T_BuildRectangularPattern_FromChest()
                 { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
                 { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
                 { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
-                { keyDef = "success4"               , valueSource = 4, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 5, keyDefSource = "success" },
+            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
         }
     }
     local projectServiceData = {

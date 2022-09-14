@@ -1,3 +1,5 @@
+local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
 local itemQuery = {
     ["minecraft:birch_log"] = 1,
     ["minecraft:torch"]     = 5,
@@ -19,7 +21,7 @@ function T_RegisterAndUpdateChest()
 
     -- create project
     local projectData = {
-        chestLocation        = {x= 16, y= 17, z= 1, dx=0, dy=1},
+        chestLocation        = coremove.GetRelativeLocation(testStartLocation2, 2, 5, 0),
         chestAccessDirection = "back"
     }
     local projectServiceData = {
@@ -39,7 +41,7 @@ function GetRegisterAndUpdateChestProjectDef()
                 { keyDef = "accessDirection"    , valueSource = 0, keyDefSource = "chestAccessDirection" },
             }},
             { stepName = "enterprise_chests.UpdateChestRecord_ASrv", async = true, stepDataDef = {
-                { keyDef = "id"                 , valueSource = 1, keyDefSource = "id" },
+                { keyDef = "chestLocator"       , valueSource = 1, keyDefSource = "chestLocator" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"           , valueSource = 1, keyDefSource = "success" },
@@ -48,23 +50,23 @@ function GetRegisterAndUpdateChestProjectDef()
         },
         returnData = {
             { keyDef = "success"                , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "id"                     , valueSource = 1, keyDefSource = "id" },
+            { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
         }
     }
 end
 
-local chest1Id = nil
+local chestLocator1 = nil
 
 function T_UpdateChestRecord1()
     corelog.WriteToLog("* Test UpdateChestRecord_ASrv 1")
     -- create chest data
-    local chestIdData  = {
-        id = chest1Id
+    local serviceData = {
+        chestLocator = chestLocator1
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(chestIdData)..")")
-    local result = enterprise_chests.UpdateChestRecord_ASrv(chestIdData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(serviceData)..", , )")
+    local result = enterprise_chests.UpdateChestRecord_ASrv(serviceData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
@@ -72,8 +74,7 @@ function T_RegisterChest1()
     corelog.WriteToLog("* Test RegisterChest_SSrv 1:")
     -- create chest data
     local chestData  = {
---        location        = {x= 14, y= 17, z= 1, dx=0, dy=1},
-        location        = {x= 2, y= 5, z= 1, dx=0, dy=1},
+        location        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
         accessDirection = "top"
     }
 
@@ -82,15 +83,15 @@ function T_RegisterChest1()
     local result = enterprise_chests.RegisterChest_SSrv(chestData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
     if result.success then
-        chest1Id = result.id
+        chestLocator1 = result.chestLocator
     end
 end
 
 function T_DelistChest1()
     corelog.WriteToLog("* Test DelistChests 1:")
     -- create chest data 1
-    local chestData1  = {
-        id = chest1Id
+    local chestData1 = {
+        chestLocator = chestLocator1
     }
 
     -- call test method
@@ -101,7 +102,7 @@ end
 function T_GetItemsIntoTurtle1()
     corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
     -- create transferData
-    local sourceItemsLocator = enterprise_chests.GetItemLocator_SSrv({id = chest1Id, itemQuery = multipleStacksItemQuery}).url
+    local sourceItemsLocator = enterprise_chests.GetItemLocator_SSrv({chestLocator = chestLocator1, itemQuery = multipleStacksItemQuery}).url
     local transferData = {
         sourceItemsLocator =  sourceItemsLocator,
     }
@@ -116,7 +117,7 @@ function T_PutItemsFromTurtle1()
     corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
     -- create transferData
     local turtleItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = multipleStacksItemQuery }).url
-    local destinationHostLocator = enterprise_chests.GetChestLocator_SSrv({id = chest1Id}).url
+    local destinationHostLocator = chestLocator1
     local transferData = {
         turtleItemsLocator     = turtleItemsLocator,
         destinationHostLocator = destinationHostLocator,
@@ -131,7 +132,7 @@ end
 function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for chest:")
     -- create transferData
-    local queryItemsLocator = enterprise_chests.GetItemLocator_SSrv({id = chest1Id, itemQuery = itemQuery}).url
+    local queryItemsLocator = enterprise_chests.GetItemLocator_SSrv({chestLocator = chestLocator1, itemQuery = itemQuery}).url
     local queryData = {
         queryItemsLocator = queryItemsLocator,
     }

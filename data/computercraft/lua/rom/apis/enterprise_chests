@@ -12,7 +12,6 @@ local db = {
     Furthermore it provides the following additional services
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
-        GetChestLocator_SSrv    - provide the URL of a chest
         GetItemLocator_SSrv     - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
@@ -35,37 +34,6 @@ local db = {
 --   | |
 --   |_|
 
-function GetChestLocator_SSrv(serviceData)
-    --[[
-        This sync public services provides the URL of a chest in the ISH.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) wether the URL was correctly obtained
-                url                 - (table) URL of the chest in the ISH
-
-        Parameters:
-            serviceData             - (table) data for this service
-                id                  - (string) id of the chest
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetChestLocator_SSrv: Invalid serviceData") return {success = false} end
-    local id = serviceData.id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetChestLocator_SSrv: Invalid id") return {success = false} end
-
-    -- construct URL
-    local chestURL = GetISHURL()
-    chestURL:setPath({id = id})
-
-    -- end
-    local result = {
-        success = true,
-        url = chestURL,
-    }
-    return result
-end
-
 function GetItemLocator_SSrv(serviceData)
         --[[
         This sync public services provides the URL of items in a chest in the ISH.
@@ -73,23 +41,23 @@ function GetItemLocator_SSrv(serviceData)
         Return value:
                                     - (table)
                 success             - (boolean) wether the URL was correctly obtained
-                url                 - (table) URL of the items in a chest in the ISH
+                url                 - (URL) locating the items in a chest
 
         Parameters:
             serviceData             - (table) data for this service
-                id                  - (string) id of the chest
+                chestLocator        - (URL) locating a chest
                 itemQuery           - (table) optional items to locate in chest
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid serviceData") return {success = false} end
-    local id = serviceData.id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid id") return {success = false} end
+    local chestLocator = url.URLClass:new(serviceData.chestLocator)
+    if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid chestLocator") return {success = false} end
     local itemQuery = serviceData.itemQuery
     if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid itemQuery") return {success = false} end
 
     -- construct URL
-    local itemURL = GetChestLocator_SSrv(serviceData).url
+    local itemURL = chestLocator:copy()
     itemURL:setQuery(itemQuery)
 
     -- end
@@ -128,7 +96,7 @@ function IsChestURL_QSrv(queryData)
     end
 end
 
-function RegisterChest_SSrv(chestData) -- ToDo: consider returning chestURL instead of id
+function RegisterChest_SSrv(chestData)
     --[[
         This sync public service registers ("adds") a chest to the enterprise.
 
@@ -137,7 +105,7 @@ function RegisterChest_SSrv(chestData) -- ToDo: consider returning chestURL inst
         Return value:
                                     - (table)
                 success             - (boolean) whether registering the chest was succesfull.
-                id                  - (string) id of the created chest.
+                chestLocator        - (URL) locating the the created chest (in this ISH)
 
         Parameters:
             chestData               - (table) data to the chest
@@ -179,7 +147,7 @@ function RegisterChest_SSrv(chestData) -- ToDo: consider returning chestURL inst
     -- end
     local result = {
         success = true,
-        id = chest.id
+        chestLocator = GetChestLocator(chest.id)
     }
     return result
 end
@@ -202,21 +170,21 @@ function DelistChest_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData         - (table) data about the service
-                id              - (string) id of the chest.
+                chestLocator    - (URL) locating the chest
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local id = serviceData.id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local chestLocator = url.URLClass:new(serviceData.chestLocator)
+    if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid chestLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get the chest
-    local chest = GetChestById(id)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest for id = "..id) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local chest = GetChestByLocator(chestLocator)
+    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- stop doing business for this chest
     -- ToDo: implement
@@ -237,7 +205,7 @@ function UpdateChestRecord_ASrv(serviceData, callback, callbackData)
         This async public service brings the records of a chest up-to-date by fetching parameters and (re)setting the chest records.
 
         Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could              
-        typically be used for development purposes of if for some reason (e.g. after a turtle crash) the chest records could have been corrupted.
+        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the chest records could have been corrupted.
 
         Return value:
             nil 
@@ -248,17 +216,20 @@ function UpdateChestRecord_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData         - (table) data about the service
-                id              - (string) id of the chest.
+                chestLocator    - (URL) locating the chest
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local id = serviceData.id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid id") return {success = false} end
+    local chestLocator = url.URLClass:new(serviceData.chestLocator)
+    if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid chestLocator") return {success = false} end
     if type(callback) ~= "string" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
+
+    -- get chest id
+    local id = GetChestId(chestLocator)
 
     -- create project definition
     local updateChestRecordsProjectDef = {
@@ -334,13 +305,9 @@ function ItemsAvailableVia_SSrv(queryData)
     local itemQueryIsChest = IsChestURL_QSrv({ aURL = queryItemsLocator})
     if not itemQueryIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid itemQueryURL (="..queryItemsLocator:getURI()..").") return {success = false} end
 
-    -- select chest
-    local id = queryItemsLocator:getPath().id
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid path input: "..textutils.serialize(queryItemsLocator:getPath())..".") return {success = false} end
-
     -- get chest
-    local chest = GetChestById(id)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Chest (id="..id..") not found.") return {success = false} end
+    local chest = GetChestByLocator(queryItemsLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Chest "..queryItemsLocator:getURI().." not found.") return {success = false} end
 
     -- query chests inventory
     local query = queryItemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
@@ -351,7 +318,7 @@ function ItemsAvailableVia_SSrv(queryData)
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_SSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..") of chest "..id..".") return {success = false}
+            corelog.WriteToLog("enterprise_chests.ItemsAvailableVia_SSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..") of chest "..chest.id..".") return {success = false}
         end
     end
 
@@ -392,7 +359,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     if not sourceIsChest.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get id
-    local id = sourceItemsLocator:getPath().id
+    local id = GetChestId(sourceItemsLocator)
     if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid path input: "..textutils.serialize(sourceItemsLocator:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
@@ -473,7 +440,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     if not destinationIsChest.success then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destination host (="..destinationHostLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get id
-    local id = destinationHostLocator:getPath().id
+    local id = GetChestId(destinationHostLocator)
     if type(id) ~= "string" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid path input: "..textutils.serialize(destinationHostLocator:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- set (expected) destinationItemsLocator
@@ -536,12 +503,66 @@ function DeleteChests()
     end
 end
 
-function GetChestById(id)
-    -- chests ophalen
-    local chest = coredht.GetData(db.dhtRoot, db.dhtChests, id)
-    if type(chest) ~= "table" then corelog.Warning("enterprise_chests.GetChestById: chest "..id.."not found") end
+function GetChestByLocator(chestLocator)
+    -- chest ophalen
+    local chestId = GetChestId(chestLocator)
+    local chest = GetChestById(chestId)
 
+    -- end
     return chest
+end
+
+function GetChestById(id)
+    -- chest ophalen
+    local chest = coredht.GetData(db.dhtRoot, db.dhtChests, id)
+    if type(chest) ~= "table" then corelog.Warning("enterprise_chests.GetChestById: chest "..id.."not found") return nil end
+
+    -- end
+    return chest
+end
+
+function GetChestId(chestLocator)
+    --[[
+        This private function provides the internal id of a chest.
+
+        Return value:
+            id                      - (string) id of the chest
+
+        Parameters:
+            chestLocator            - (URL) locating a chest
+    --]]
+
+    -- check input
+    if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.GetChestId: Invalid chestLocator") return nil end
+
+    -- get id
+    local chestURL = url.URLClass:new(chestLocator)
+    local id = chestURL:getPath().id
+
+    -- end
+    return id
+end
+
+function GetChestLocator(id)
+    --[[
+        This private function provides the URL of a chest based on the internal id in this ISH.
+
+        Return value:
+            chestLocator            - (URL) locating a chest
+
+        Parameters:
+            id                      - (string) id of the chest
+    --]]
+
+    -- check input
+    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetChestLocator: Invalid id") return nil end
+
+    -- construct URL
+    local chestURL = GetISHURL()
+    chestURL:setPath({id = id})
+
+    -- end
+    return chestURL
 end
 
 function SetChestRecord_SSrv(serviceData)
