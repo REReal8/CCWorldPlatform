@@ -364,8 +364,6 @@ function LogToPlanks(craftingLocation, planks)
 
     -- craft
     role_alchemist.Craft_Task({
---        taskId = "0",
---        alchemieType = "craft",
         recipe = {
             [6] = {
                 itemName = "minecraft:birch_log",
@@ -387,8 +385,6 @@ function PlanksToStick(craftingLocation, sticks)
 
     -- craft
     role_alchemist.Craft_Task({
---        taskId = "0",
---        alchemieType = "craft",
         recipe = {
             [6] = {
                 itemName = "minecraft:birch_planks",
@@ -454,8 +450,6 @@ function PlanksToChests(craftingLocation, chests)
 
     -- create chests
     role_alchemist.Craft_Task({
---        taskId = "0",
---        alchemieType = "craft",
         recipe = {
              [6] = {itemName = plankName, itemCount = 1},
              [7] = {itemName = plankName, itemCount = 1},
@@ -510,8 +504,6 @@ end
 
 function CharcoalAndStickToTorch(craftingLocation, torches)
     role_alchemist.Craft_Task({
---        taskId = "0",
---        alchemieType = "craft",
         recipe = {
             [6] = {
                 itemName = "minecraft:charcoal",
