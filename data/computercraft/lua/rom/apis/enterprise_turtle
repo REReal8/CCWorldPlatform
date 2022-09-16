@@ -50,7 +50,7 @@ function GetTurtleLocator_SSrv(serviceData)
         Return value:
                                     - (table)
                 success             - (boolean) wether the URL was correctly obtained
-                url                 - (table) URL of the turtle
+                turtleLocator       - (URL) locating the turtle
 
         Parameters:
             serviceData             - (table) data for this service
@@ -63,13 +63,13 @@ function GetTurtleLocator_SSrv(serviceData)
     if type(turtleId) ~= "number" then corelog.Error("enterprise_turtle.GetTurtleLocator_SSrv: Invalid turtleId") return {success = false} end
 
     -- construct URL
-    local turtleURL = GetISHURL()
-    turtleURL:setPort(turtleId)
+    local turtleLocator = GetISHURL()
+    turtleLocator:setPort(turtleId)
 
     -- end
     local result = {
         success = true,
-        url = turtleURL,
+        turtleLocator = turtleLocator,
     }
     return result
 end
@@ -97,7 +97,7 @@ function GetItemsLocator_SSrv(serviceData)
     if type(itemsQuery) ~= "table" then corelog.Error("enterprise_turtle.GetItemsLocator_SSrv: Invalid itemsQuery") return {success = false} end
 
     -- construct URL
-    local itemsLocator = GetTurtleLocator_SSrv(serviceData).url
+    local itemsLocator = GetTurtleLocator_SSrv(serviceData).turtleLocator
     itemsLocator:setQuery(itemsQuery)
 
     -- end
@@ -228,9 +228,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     -- do the (virtual) transfer
 
     -- create (partial) output turtleItemsLocator
-    local getURLResult = GetTurtleLocator_SSrv({turtleId = currentTurtleId})
-    if not getURLResult.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Failed creating turtleItemsLocator.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local turtleItemsLocator = getURLResult.url
+    local turtleItemsLocator = GetTurtleLocator_SSrv({turtleId = currentTurtleId}).turtleLocator
     if turtleItemsLocator == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocator created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check if current turtle has the requested items in it's inventory
