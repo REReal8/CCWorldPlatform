@@ -109,7 +109,7 @@ function Craft_Task(craftData)
     coreinventory.GetAllItems("down")
 
     -- set (expected) turtleOutputItemsLocator
-    local turtleOutputItemsLocator = enterprise_turtle.GetItemLocator_SSrv({
+    local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
         turtleId    = os.getComputerID(),
         itemQuery   = { [productItemName] = productItemCount }
     }).url
@@ -280,7 +280,7 @@ function Pickup_Task(pickupData)
     coremove.GoTo(workingLocation)
 
     -- set (expected) turtleOutputItemsLocator
-    local turtleOutputItemsLocator = enterprise_turtle.GetItemLocator_SSrv({
+    local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
         turtleId    = os.getComputerID(),
         itemQuery   = { [productItemName] = productItemCount }
     }).url

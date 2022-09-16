@@ -12,7 +12,7 @@ local db = {
     Furthermore it provides the following additional services
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
-        GetItemLocator_SSrv     - provide the URL of items in a chest
+        GetItemsLocator_SSrv    - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 
@@ -34,7 +34,7 @@ local db = {
 --   | |
 --   |_|
 
-function GetItemLocator_SSrv(serviceData)
+function GetItemsLocator_SSrv(serviceData)
         --[[
         This sync public services provides the URL of items in a chest in the ISH.
 
@@ -50,11 +50,11 @@ function GetItemLocator_SSrv(serviceData)
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid serviceData") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid serviceData") return {success = false} end
     local chestLocator = url.URLClass:new(serviceData.chestLocator)
-    if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid chestLocator") return {success = false} end
+    if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid chestLocator") return {success = false} end
     local itemQuery = serviceData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.GetItemLocator_SSrv: Invalid itemQuery") return {success = false} end
+    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid itemQuery") return {success = false} end
 
     -- construct URL
     local itemURL = chestLocator:copy()
@@ -369,7 +369,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
                 { keyDef = "id"             , valueSource = 0, keyDefSource = "id" },
                 { keyDef = "itemQuery"      , valueSource = 0, keyDefSource = "itemQuery" },
             }},
-            { stepName = "enterprise_turtle.GetItemLocator_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_turtle.GetItemsLocator_SSrv", async = false, stepDataDef = {
                 { keyDef = "turtleId"       , valueSource = 1, keyDefSource = "turtleId" },
                 { keyDef = "itemQuery"      , valueSource = 1, keyDefSource = "itemResultQuery" },
             }},

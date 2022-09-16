@@ -25,7 +25,7 @@ function T_TransferItemsFromTo_Chests()
                 { keyDef = "projectDef"             , valueSource = 0, keyDefSource = "projectDef1" },
                 { keyDef = "projectData"            , valueSource = 0, keyDefSource = "projectData1" },
             }},
-            { stepName = "enterprise_chests.GetItemLocator_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_chests.GetItemsLocator_SSrv", async = false, stepDataDef = {
                 { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
                 { keyDef = "itemQuery"              , valueSource = 0, keyDefSource = "itemsToTransferQuery" },
             }},

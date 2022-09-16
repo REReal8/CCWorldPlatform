@@ -102,7 +102,7 @@ end
 function T_GetItemsIntoTurtle1()
     corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
     -- create transferData
-    local sourceItemsLocator = enterprise_chests.GetItemLocator_SSrv({chestLocator = chestLocator1, itemQuery = multipleStacksItemQuery}).url
+    local sourceItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemQuery = multipleStacksItemQuery}).url
     local transferData = {
         sourceItemsLocator =  sourceItemsLocator,
     }
@@ -116,7 +116,7 @@ end
 function T_PutItemsFromTurtle1()
     corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
     -- create transferData
-    local turtleItemsLocator = enterprise_turtle.GetItemLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = multipleStacksItemQuery }).url
+    local turtleItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = multipleStacksItemQuery }).url
     local destinationHostLocator = chestLocator1
     local transferData = {
         turtleItemsLocator     = turtleItemsLocator,
@@ -132,7 +132,7 @@ end
 function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for chest:")
     -- create transferData
-    local queryItemsLocator = enterprise_chests.GetItemLocator_SSrv({chestLocator = chestLocator1, itemQuery = itemQuery}).url
+    local queryItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemQuery = itemQuery}).url
     local queryData = {
         queryItemsLocator = queryItemsLocator,
     }
