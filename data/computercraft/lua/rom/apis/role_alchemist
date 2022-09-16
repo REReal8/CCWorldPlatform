@@ -18,7 +18,7 @@ function Craft_MetaData(craftData)
     -- determine needed items
     local itemList = Craft_ItemsNeeded(craftData.recipe, productItemCount)
     local workingLocation = craftData.workingLocation
-    local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
+    local fuelNeeded = 0 -- task starts at workingLocation, 0 movement from there
 
     -- return metadata
     return {
@@ -138,7 +138,7 @@ function Smelt_MetaData(smeltData)
     -- determine needed items
     local itemList = Smelt_ItemsNeeded(smeltData.recipe, smeltData.productItemCount, smeltData.fuelItemName, smeltData.fuelItemCount)
     local workingLocation = smeltData.workingLocation
-    local fuelNeeded = 4 + 5 -- task starts at workingLocation, very little (4) movement from there, a few extra to be sure
+    local fuelNeeded = 4 + 5 -- task starts at workingLocation, very little (4) movement from there
 
     -- return metadata
     return {
