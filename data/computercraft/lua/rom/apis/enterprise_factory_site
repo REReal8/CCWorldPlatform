@@ -243,7 +243,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 productionSpot          - (table) location of production spot
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
-                productionRecipe        - (table) production recipe  - ToDo keep?
+                productionRecipe        - (table) production recipe
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]
@@ -403,7 +403,7 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
                 productionSpot          - (table) production spot
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
-                productionRecipe        - (table) crafting recipe  - ToDo keep?
+                productionRecipe        - (table) crafting recipe
             callback                    - (string) name of function to call once the items are made
             callbackData                - (table) data to supply to callback function
     ]]
@@ -481,7 +481,7 @@ function SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
                 productionSpot          - (table) production spot
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
-                productionRecipe        - (table) smelting recipe  - ToDo keep?
+                productionRecipe        - (table) smelting recipe
             callback                    - (string) name of function to call once the items are made
             callbackData                - (table) data to supply to callback function
     ]]
