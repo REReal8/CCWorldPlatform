@@ -263,23 +263,6 @@ function UpdateChestRecord_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function GetISHURL()
-    --[[
-        This sync public ISH function provides the (base) URL of this ISH.
-
-        Return value:
-            ishURL                  - (table) URL of this ISH
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = url.URLClass:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
 function ItemsAvailableVia_SSrv(queryData)
     --[[
         This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
@@ -541,6 +524,23 @@ function GetChestId(chestLocator)
 
     -- end
     return id
+end
+
+function GetISHURL()
+    --[[
+        This private function provides the (base) URL of this ISH.
+
+        Return value:
+            hostURL                 - (URL) locating this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
 end
 
 function GetChestLocator(id)
