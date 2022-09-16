@@ -111,7 +111,7 @@ function Craft_Task(craftData)
     -- set (expected) turtleOutputItemsLocator
     local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
         turtleId    = os.getComputerID(),
-        itemQuery   = { [productItemName] = productItemCount }
+        itemsQuery   = { [productItemName] = productItemCount }
     }).url
 
     -- end
@@ -282,7 +282,7 @@ function Pickup_Task(pickupData)
     -- set (expected) turtleOutputItemsLocator
     local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
         turtleId    = os.getComputerID(),
-        itemQuery   = { [productItemName] = productItemCount }
+        itemsQuery   = { [productItemName] = productItemCount }
     }).url
     -- ToDo: check this is what actually was sucked from furnace
 

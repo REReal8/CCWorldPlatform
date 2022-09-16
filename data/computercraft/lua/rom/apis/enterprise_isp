@@ -4,7 +4,7 @@
     those items.
 
     The ISP provides the following services
-        ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemQueryURL
+        ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsQueryURL
         TransferItemsFromTo_ASrv    - transferring items from a sourceItemsLocator to a destinationHostLocator
         
     The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
@@ -52,7 +52,7 @@ function ItemsAvailableVia_SSrv(queryData)
     if type(queryItemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryItemsLocator") return {success = false} end
 
     -- get ISH
---    corelog.WriteToLog("enterprise_isp: itemQueryURL = "..textutils.serialize(itemQueryURL))
+--    corelog.WriteToLog("enterprise_isp: queryItemsLocator = "..textutils.serialize(queryItemsLocator))
     local host = queryItemsLocator:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)

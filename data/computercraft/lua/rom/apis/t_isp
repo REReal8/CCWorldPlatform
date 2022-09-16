@@ -1,6 +1,6 @@
 local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
 local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
-local itemQuery = {
+local itemsQuery = {
     ["minecraft:birch_log"] = 3,
     ["minecraft:torch"]     = 5,
 }
@@ -27,7 +27,7 @@ function T_TransferItemsFromTo_Chests()
             }},
             { stepName = "enterprise_chests.GetItemsLocator_SSrv", async = false, stepDataDef = {
                 { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
-                { keyDef = "itemQuery"              , valueSource = 0, keyDefSource = "itemsToTransferQuery" },
+                { keyDef = "itemsQuery"              , valueSource = 0, keyDefSource = "itemsToTransferQuery" },
             }},
             { stepName = "enterprise_projects.StartProject_ASrv", async = true, stepDataDef = {
                 { keyDef = "projectDef"             , valueSource = 0, keyDefSource = "projectDef2" },
@@ -74,7 +74,7 @@ function T_TransferItemsFromTo_Chests()
             },
 
             -- query
-            itemsToTransferQuery = itemQuery,
+            itemsToTransferQuery = itemsQuery,
 
             -- chest 2
             projectDef2     = t_chests.GetRegisterAndUpdateChestProjectDef(),

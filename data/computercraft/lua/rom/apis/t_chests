@@ -1,10 +1,10 @@
 local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
 local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
-local itemQuery = {
+local itemsQuery = {
     ["minecraft:birch_log"] = 1,
     ["minecraft:torch"]     = 5,
 }
-local multipleStacksItemQuery = {
+local multipleStacksItemsQuery = {
     ["minecraft:birch_log"] = 80,
     ["minecraft:torch"]     = 1,
 }
@@ -102,7 +102,7 @@ end
 function T_GetItemsIntoTurtle1()
     corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
     -- create transferData
-    local sourceItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemQuery = multipleStacksItemQuery}).url
+    local sourceItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemsQuery = multipleStacksItemsQuery}).url
     local transferData = {
         sourceItemsLocator =  sourceItemsLocator,
     }
@@ -116,7 +116,7 @@ end
 function T_PutItemsFromTurtle1()
     corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
     -- create transferData
-    local turtleItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemQuery = multipleStacksItemQuery }).url
+    local turtleItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = multipleStacksItemsQuery }).url
     local destinationHostLocator = chestLocator1
     local transferData = {
         turtleItemsLocator     = turtleItemsLocator,
@@ -132,7 +132,7 @@ end
 function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for chest:")
     -- create transferData
-    local queryItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemQuery = itemQuery}).url
+    local queryItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemsQuery = itemsQuery}).url
     local queryData = {
         queryItemsLocator = queryItemsLocator,
     }

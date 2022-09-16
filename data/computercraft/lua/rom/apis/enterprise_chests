@@ -46,24 +46,24 @@ function GetItemsLocator_SSrv(serviceData)
         Parameters:
             serviceData             - (table) data for this service
                 chestLocator        - (URL) locating a chest
-                itemQuery           - (table) optional items to locate in chest
+                itemsQuery          - (table) optional items to locate in chest
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid serviceData") return {success = false} end
     local chestLocator = url.URLClass:new(serviceData.chestLocator)
     if type(chestLocator) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid chestLocator") return {success = false} end
-    local itemQuery = serviceData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid itemQuery") return {success = false} end
+    local itemsQuery = serviceData.itemsQuery
+    if type(itemsQuery) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid itemsQuery") return {success = false} end
 
     -- construct URL
-    local itemURL = chestLocator:copy()
-    itemURL:setQuery(itemQuery)
+    local itemsLocator = chestLocator:copy()
+    itemsLocator:setQuery(itemsQuery)
 
     -- end
     local result = {
         success = true,
-        url = itemURL,
+        url = itemsLocator,
     }
     return result
 end
@@ -301,9 +301,9 @@ function ItemsAvailableVia_SSrv(queryData)
     local queryItemsLocator = url.URLClass:new(queryData.queryItemsLocator)
     if type(queryItemsLocator) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid queryItemsLocator") return {success = false} end
 
-    -- check itemQueryURL is for this enterprise
-    local itemQueryIsChest = IsChestURL_QSrv({ aURL = queryItemsLocator})
-    if not itemQueryIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid itemQueryURL (="..queryItemsLocator:getURI()..").") return {success = false} end
+    -- check queryItemsLocator is for this enterprise
+    local itemsLocatorIsChest = IsChestURL_QSrv({ aURL = queryItemsLocator})
+    if not itemsLocatorIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid queryItemsLocator (="..queryItemsLocator:getURI()..").") return {success = false} end
 
     -- get chest
     local chest = GetChestByLocator(queryItemsLocator)
@@ -367,11 +367,11 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
         steps   = {
             { stepName = "enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "id"             , valueSource = 0, keyDefSource = "id" },
-                { keyDef = "itemQuery"      , valueSource = 0, keyDefSource = "itemQuery" },
+                { keyDef = "itemsQuery"      , valueSource = 0, keyDefSource = "itemsQuery" },
             }},
             { stepName = "enterprise_turtle.GetItemsLocator_SSrv", async = false, stepDataDef = {
                 { keyDef = "turtleId"       , valueSource = 1, keyDefSource = "turtleId" },
-                { keyDef = "itemQuery"      , valueSource = 1, keyDefSource = "itemResultQuery" },
+                { keyDef = "itemsQuery"      , valueSource = 1, keyDefSource = "itemResultQuery" },
             }},
             { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
                 { keyDef = "id"             , valueSource = 0, keyDefSource = "id" },
@@ -390,7 +390,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     }
     local projectData = {
         id          = id,
-        itemQuery   = sourceItemsLocator:getQuery()
+        itemsQuery   = sourceItemsLocator:getQuery()
     }
     local projectServiceData = {
         projectDef  = getItemsIntoTurtleProjectDef,
@@ -669,7 +669,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
         Parameters:
             serviceData         - (table) data about the service
                 id              - (string) id of the chest.
-                itemQuery       - (table) with items to be fetched
+                itemsQuery      - (table) with items to be fetched
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
@@ -678,8 +678,8 @@ function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
     if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local id = serviceData.id
     if type(id) ~= "string" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid id") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemQuery = serviceData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid itemQuery") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemsQuery = serviceData.itemsQuery
+    if type(itemsQuery) ~= "table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid itemsQuery") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -691,7 +691,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
     local taskData = {
         location        = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
-        itemQuery       = itemQuery
+        itemsQuery       = itemsQuery
     }
     local metaData = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData)
     coreassignment.AddAssignment(metaData, "role_chests_worker.FetchItemsFromChestIntoTurtle_Task", taskData, callback, callbackData)
@@ -737,7 +737,7 @@ function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
     -- put with an assignment
     local taskData = {
         turtleId        = turtleItemsLocator:getPort(),
-        itemQuery       = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
+        itemsQuery       = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
         location        = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
     }

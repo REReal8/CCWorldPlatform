@@ -113,7 +113,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
             taskData            - (table) data about the task
                 location        - (table) location of the chest
                 accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
-                itemQuery       - (table) which items to be fetched
+                itemsQuery      - (table) which items to be fetched
     --]]
 
     -- check input
@@ -122,8 +122,8 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
     if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
     if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid accessDirection") return {success = false} end
-    local itemQuery = taskData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid itemQuery") return {success = false} end
+    local itemsQuery = taskData.itemsQuery
+    if type(itemsQuery) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid itemsQuery") return {success = false} end
 
     -- move to workingLocation
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -138,7 +138,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
 
     -- loop on requested items
     local itemResultQuery = {}
-    for requestItemName, requestItemCount in pairs(itemQuery) do
+    for requestItemName, requestItemCount in pairs(itemsQuery) do
         -- check
         if type(requestItemName) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
         if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
@@ -210,8 +210,8 @@ function PutItemsFromTurtleIntoChest_MetaData(taskData)
     if type(taskData) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: taskData not valid") return {success = false} end
     local turtleId = taskData.turtleId
     if type(turtleId) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid turtleId") return {success = false} end
-    local itemQuery = taskData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid itemQuery") return {success = false} end
+    local itemsQuery = taskData.itemsQuery
+    if type(itemsQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid itemsQuery") return {success = false} end
     local location = taskData.location
     if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
@@ -245,7 +245,7 @@ function PutItemsFromTurtleIntoChest_Task(taskData)
         Parameters:
             taskData            - (table) data about the task
                 turtleId        - (number) id of the turtle that has the items
-                itemQuery       - (table) which items to be put
+                itemsQuery      - (table) which items to be put
                 location        - (table) location of the chest
                 accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
     --]]
@@ -254,8 +254,8 @@ function PutItemsFromTurtleIntoChest_Task(taskData)
     if type(taskData) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: taskData not valid") return {success = false} end
     local turtleId = taskData.turtleId
     if type(turtleId) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid turtleId") return {success = false} end
-    local itemQuery = taskData.itemQuery
-    if type(itemQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid itemQuery") return {success = false} end
+    local itemsQuery = taskData.itemsQuery
+    if type(itemsQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid itemsQuery") return {success = false} end
     local location = taskData.location
     if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
@@ -277,7 +277,7 @@ function PutItemsFromTurtleIntoChest_Task(taskData)
     if type(chest) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: No chest at "..textutils.serialize(location).." accessible from "..accessDirection..".") return {success = false} end
 
     -- loop on requested items
-    for requestItemName, requestItemCount in pairs(itemQuery) do
+    for requestItemName, requestItemCount in pairs(itemsQuery) do
         -- check
         if type(requestItemName) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: requestItemName of wrong type = "..type(requestItemName)..".") return {success = false} end
         if type(requestItemCount) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: requestItemCount of wrong type = "..type(requestItemCount)..".") return {success = false} end
