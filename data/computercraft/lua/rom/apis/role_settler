@@ -99,8 +99,9 @@ function ChopFirstTree_MetaData(settleData)
         location = coremove.CopyLocation(settleData.startLocation),
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 0,                         --> per definition still no fuel
+        fuelNeeded = 0, --> per definition still no fuel (as the task fuels from first chopped log (already converted to planks))
         itemsNeeded = {
+            ["minecraft:birch_planks"] = 4,
         }
     }
 end
@@ -124,7 +125,7 @@ function ChopFirstTree_Task(settleData)
     corelog.WriteToLog(">Chopping first tree")
 
     -- nu kunnen we bijtanken
-    coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4})
+    coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4}) -- ToDo: consider splitting off/ making/ using some general fueling mechanism
 
     -- rest van de boom omhakken
     coreinventory.Equip("minecraft:diamond_pickaxe")
