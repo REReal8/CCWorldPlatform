@@ -38,7 +38,7 @@ end
 function BuildBlueprint_MetaData(buildData)
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(buildData.blueprintStartpoint), -- copy needed because otherwise reference is used twice
+        location = coremove.CopyLocation(buildData.blueprintStartpoint),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0,
@@ -62,14 +62,18 @@ function BuildBlueprint_MetaData(buildData)
         -- get metadata for layer
         local layerMetaData = BuildRectangularPattern_MetaData(layerBuildData)
 
+        -- determine startLocation (correcting for buildFromAbove)
+        local deltaZ = 1 if not layerBuildData.buildFromAbove then deltaZ = -1 end
+        local startLocation = coremove.GetRelativeLocation(layerBuildData.startpoint, 0, 0, deltaZ)
+
         -- update blueprint metadata
-        metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(layerBuildData.startpoint, lastLocation) + layerMetaData.fuelNeeded
+        metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
         for layerItemName, layerItemCount in pairs(layerMetaData.itemsNeeded) do
             -- increment item counter
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
         end
 
-        lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.pattern.deltaX, layerBuildData.pattern.deltaY, 0)
+        lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.pattern.deltaX, layerBuildData.pattern.deltaY, deltaZ)
     end
 
     -- update metadata with escapeSequence (if present)
@@ -142,12 +146,16 @@ function BuildRectangularPattern_MetaData(buildData)
     local pattern = buildData.pattern
     local itemList = BuildRectangularPattern_ItemsNeeded(pattern)
     local startpoint = buildData.startpoint
-    local fuelNeeded = pattern.deltaX * pattern.deltaY + coreinventory.NeededFuelToFrom(startpoint) + 5 -- some extra to correct for building from above or below
+    local fuelNeeded = (pattern.deltaX * pattern.deltaY - 1)
+
+    -- determine startLocation (correcting for buildFromAbove)
+    local deltaZ = 1 if not buildData.buildFromAbove then deltaZ = -1 end
+    local startLocation = coremove.GetRelativeLocation(startpoint, 0, 0, deltaZ)
 
     -- return metadata
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(startpoint),
+        location = startLocation,
         needTool = true,
         needTurtle = true,
         fuelNeeded = fuelNeeded,
