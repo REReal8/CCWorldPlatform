@@ -41,19 +41,19 @@ function ItemsAvailableVia_SSrv(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                queryItemsLocator   - (URL) stating the items availability that needs to be queried
+                itemsLocator        - (URL) stating the items availability that needs to be queried
                                         (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
     if type(queryData) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
-    local queryItemsLocator = queryData.queryItemsLocator
-    if type(queryItemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryItemsLocator") return {success = false} end
+    local itemsLocator = queryData.itemsLocator
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
     -- get ISH
---    corelog.WriteToLog("enterprise_isp: queryItemsLocator = "..textutils.serialize(queryItemsLocator))
-    local host = queryItemsLocator:getHost()
+--    corelog.WriteToLog("enterprise_isp: itemsLocator = "..textutils.serialize(itemsLocator))
+    local host = itemsLocator:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host") return {success = false} end
 --    corelog.WriteToLog("enterprise_isp: host = "..host)
 

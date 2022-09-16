@@ -166,27 +166,27 @@ function ItemsAvailableVia_SSrv(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                queryItemsLocator   - (URL) stating the items availability that needs to be queried
+                itemsLocator        - (URL) stating the items availability that needs to be queried
                                         (the "base" component of the URL specifies this ISH)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
     if type(queryData) ~= "table" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
-    local queryItemsLocator = url.URLClass:new(queryData.queryItemsLocator)
-    if type(queryItemsLocator) ~= "table" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid queryItemsLocator") return {success = false} end
+    local itemsLocator = url.URLClass:new(queryData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
-    -- check queryItemsLocator is for this enterprise
-    local itemsQueryIsTurtle = IsTurtleURL_QSrv({ aURL = queryItemsLocator})
-    if not itemsQueryIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsQueryURL (="..queryItemsLocator:getURI()..").") return {success = false} end
+    -- check itemsLocator is for this enterprise
+    local itemsQueryIsTurtle = IsTurtleURL_QSrv({ aURL = itemsLocator})
+    if not itemsQueryIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsQueryURL (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- select turtle
     local currentTurtleId = os.getComputerID()
-    local itemsQueryTurtleId = queryItemsLocator:getPort()
+    local itemsQueryTurtleId = itemsLocator:getPort()
     if itemsQueryTurtleId and currentTurtleId ~= itemsQueryTurtleId then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Querying items in one (id="..itemsQueryTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- query turtle for items
-    local query = queryItemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    local query = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(query) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end

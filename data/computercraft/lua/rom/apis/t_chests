@@ -132,9 +132,9 @@ end
 function T_ItemsAvailableVia1()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for chest:")
     -- create transferData
-    local queryItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemsQuery = itemsQuery}).url
+    local itemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemsQuery = itemsQuery}).url
     local queryData = {
-        queryItemsLocator = queryItemsLocator,
+        itemsLocator = itemsLocator,
     }
 
     -- call test method

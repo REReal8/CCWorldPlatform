@@ -291,26 +291,26 @@ function ItemsAvailableVia_SSrv(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                queryItemsLocator   - (URL) stating the items availability that needs to be queried
+                itemsLocator        - (URL) stating the items availability that needs to be queried
                                         (the "base" component of the URL specifies this ISH)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
     if type(queryData) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
-    local queryItemsLocator = url.URLClass:new(queryData.queryItemsLocator)
-    if type(queryItemsLocator) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid queryItemsLocator") return {success = false} end
+    local itemsLocator = url.URLClass:new(queryData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
-    -- check queryItemsLocator is for this enterprise
-    local itemsLocatorIsChest = IsChestURL_QSrv({ aURL = queryItemsLocator})
-    if not itemsLocatorIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid queryItemsLocator (="..queryItemsLocator:getURI()..").") return {success = false} end
+    -- check itemsLocator is for this enterprise
+    local itemsLocatorIsChest = IsChestURL_QSrv({ aURL = itemsLocator})
+    if not itemsLocatorIsChest.success then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- get chest
-    local chest = GetChestByLocator(queryItemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Chest "..queryItemsLocator:getURI().." not found.") return {success = false} end
+    local chest = GetChestByLocator(itemsLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- query chests inventory
-    local query = queryItemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    local query = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = chest.inventory
     for itemName, itemCount in pairs(query) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_chests.ItemsAvailableVia_SSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end

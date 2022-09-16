@@ -24,9 +24,9 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
-    local queryItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).url
+    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).url
     local queryData = {
-        queryItemsLocator = queryItemsLocator,
+        itemsLocator = itemsLocator,
     }
 
     -- call test method
