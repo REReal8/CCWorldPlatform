@@ -29,7 +29,7 @@ function GetHostLocator_SSrv(serviceData)
         This sync public service provides the (base) URL of this ISH.
 
         Return value:
-            ishURL                  - (URL) locating this ISH
+            hostLocator             - (URL) locating this ISH
 
         Parameters:
             serviceData             - (table) empty
@@ -38,7 +38,7 @@ function GetHostLocator_SSrv(serviceData)
     -- end
     local result = {
         success = true,
-        url = GetISHURL(),
+        hostLocator = GetISHURL(),
     }
     return result
 end

@@ -639,10 +639,10 @@ function GetV0SiteStartData(serviceData)
         baseLocation = coremove.CopyLocation(baseLocation),
 
         inputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).url,
+            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
         },
         outputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).url,
+            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
         },
 
         craftingSpots = {
@@ -713,10 +713,10 @@ function GetV1SiteStartData(serviceData)
         baseLocation = coremove.CopyLocation(baseLocation),
 
         inputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).url,
+            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
         },
         outputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).url,
+            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
         },
 
         craftingSpots = {
