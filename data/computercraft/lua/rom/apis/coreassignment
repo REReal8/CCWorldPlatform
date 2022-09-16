@@ -257,7 +257,8 @@ function MetaDataConditionsMet(metaData)
     -- check startTime
     local now            = coreutils.UniversalTime()
     if metaData.startTime > now then
-        return false, "assignment in the future (="..metaData.startTime..") (now ="..now..")"
+--        return false, "assignment in the future (="..metaData.startTime..") (now ="..now..")"
+        return false, "assignment in the future (="..metaData.startTime..")"
     end
 
     -- check optional turtle conditions
