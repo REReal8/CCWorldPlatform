@@ -11,7 +11,8 @@ function T_Craft_Task()
         workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -4),
     }
 
-    role_alchemist.Craft_Task(craftData)
+    local result = role_alchemist.Craft_Task(craftData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
 function T_Smelt_Task()
@@ -20,14 +21,14 @@ function T_Smelt_Task()
             itemName    = "minecraft:birch_log",
             yield       = 1
         },
-        productItemName = "minecraft:charcoal",
         productItemCount= 3,
         workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -3),
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = 3,
     }
 
-    role_alchemist.Smelt_Task(smeltData)
+    local result = role_alchemist.Smelt_Task(smeltData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
 function T_Pickup_Task()
@@ -37,5 +38,6 @@ function T_Pickup_Task()
         workingLocation = coremove.GetRelativeLocation(baseLocationV1, 3, 3, -3),
     }
 
-    role_alchemist.Pickup_Task(pickupData)
+    local result = role_alchemist.Pickup_Task(pickupData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
 end

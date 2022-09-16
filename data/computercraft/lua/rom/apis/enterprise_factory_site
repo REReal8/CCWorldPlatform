@@ -270,42 +270,81 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
 
-    -- determine production service
-    local productionServiceName = nil
-    if productionMethod == "craft" then
-        productionServiceName = "enterprise_factory_site.CraftItem_ASrv"
-    elseif productionMethod == "smelt" then
-        productionServiceName = "enterprise_factory_site.SmeltItemAndPickup_ASrv"
-        -- ToDo: consider splitting smelting from pickup in a later version. Possibly by using URL's referencing the pickup location (and time?)
-    else corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- determine production steps
+    local projectSteps = {
+        { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+            { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "localInputItemsLocator" },
+            { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleInputLocator" },
+        }},
+    }
 
-    -- create project service data
-    local projectDef = {
-        steps = {
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "localInputItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleInputLocator" },
-            }},
-            { stepName = productionServiceName, async = true, stepDataDef = {
+    -- add production steps
+    local extraStep = 0
+    local areAllTrueStep = nil
+    if productionMethod == "craft" then
+        -- add crafting step
+        table.insert(projectSteps,
+            { stepName = "enterprise_factory_site.CraftItem_ASrv", async = true, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", valueSource = 1, keyDefSource = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
                 { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
                 { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
                 { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
-            }},
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "turtleOutputItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localOutputLocator" },
-            }},
-            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
-            }},
-        },
+            }}
+        )
+
+        -- are all true step
+        areAllTrueStep = { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+            { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+            { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success3"                   , valueSource = 3, keyDefSource = "success" },
+        }}
+    elseif productionMethod == "smelt" then
+        -- add smelting step
+        table.insert(projectSteps,
+            { stepName = "enterprise_factory_site.SmeltItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "turtleInputItemsLocator", valueSource = 1, keyDefSource = "destinationItemsLocator" },
+                { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
+                { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
+                { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
+            }}
+        )
+
+        -- add pickup step
+        table.insert(projectSteps,
+            { stepName = "enterprise_factory_site.Pickup_ASrv", async = true, stepDataDef = {
+                { keyDef = "pickUpTime"             , valueSource = 2, keyDefSource = "smeltReadyTime" },
+                { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
+                { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
+                { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
+            }}
+        )
+
+        -- are all true step
+        areAllTrueStep = { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+            { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+            { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success3"                   , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success4"                   , valueSource = 4, keyDefSource = "success" },
+        }}
+        extraStep = 1
+    else corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- add remaining steps
+    table.insert(projectSteps,
+        { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+            { keyDef = "sourceItemsLocator"     , valueSource = 2 + extraStep, keyDefSource = "turtleOutputItemsLocator" },
+            { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localOutputLocator" },
+        }}
+    )
+    table.insert(projectSteps, areAllTrueStep)
+
+    -- create project service data
+    local projectDef = {
+        steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
-            { keyDef = "localOutputItemsLocator"    , valueSource = 3, keyDefSource = "destinationItemsLocator" },
+            { keyDef = "success"                    , valueSource = 4 + extraStep, keyDefSource = "success" },
+            { keyDef = "localOutputItemsLocator"    , valueSource = 3 + extraStep, keyDefSource = "destinationItemsLocator" },
         }
     }
     local projectData = {
@@ -463,9 +502,9 @@ function GetAvailableSmeltSpot(site)
     return nil
 end
 
-function SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
+function SmeltItem_ASrv(serviceData, callback, callbackData)
     --[[
-        This async service should smelt items at the productionSpot and pickup the results.
+        This async service should smelt items at the productionSpot.
 
         Return value:
             nil
@@ -473,13 +512,12 @@ function SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
-                turtleOutputItemsLocator- (URL) locating the items that where produced (in a turtle)
+                smeltReadyTime          - (number) the time when the smelting is supposed to be ready
 
         Parameters:
             serviceData                 - (table) data for the service
                 turtleInputItemsLocator - (URL) locating the production ingredients in the turtle that should do the crafting
                 productionSpot          - (table) production spot
-                productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
                 productionRecipe        - (table) smelting recipe
             callback                    - (string) name of function to call once the items are made
@@ -487,27 +525,24 @@ function SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local turtleInputItemsLocator = url.URLClass:new(serviceData.turtleInputItemsLocator)
-    if type(turtleInputItemsLocator) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid turtleInputItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(turtleInputItemsLocator) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid turtleInputItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionSpot = serviceData.productionSpot
-    if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid productionSpot") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid productItemName") return {success = false} end
+    if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionSpot") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemCount = serviceData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionRecipe = serviceData.productionRecipe
-    if type(productionRecipe) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid productionRecipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItemAndPickup_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(productionRecipe) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionRecipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get spotLocation
     local spotLocation = productionSpot.location
-    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
     local smeltData = {
-        productItemName = productItemName,
         productItemCount= productItemCount,
         recipe          = productionRecipe,
 
@@ -517,13 +552,70 @@ function SmeltItemAndPickup_ASrv(serviceData, callback, callbackData)
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = productItemCount,
     }
-    local metaData = role_alchemist.SmeltAndPickup_MetaData(smeltData)
+    local metaData = role_alchemist.Smelt_MetaData(smeltData)
     metaData.needTurtleId = turtleInputItemsLocator:getPort()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
     -- add assignment
     corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
-    coreassignment.AddAssignment(metaData, "role_alchemist.SmeltAndPickup_Task", smeltData, callback, callbackData)
+    coreassignment.AddAssignment(metaData, "role_alchemist.Smelt_Task", smeltData, callback, callbackData)
+
+    -- end
+    return nil
+end
+
+function Pickup_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async service should pickup the results from a previous smelt step.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                turtleOutputItemsLocator- (URL) locating the items that where pickedup (in a turtle)
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                pickUpTime              - (number) the time after which the pickup should be done
+                productionSpot          - (table) production spot
+                productItemName         - (string) name of item to produce
+                productItemCount        - (number) amount of items to produce
+            callback                    - (string) name of function to call once the items are made
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local pickUpTime = serviceData.pickUpTime
+    if type(pickUpTime) ~= "number" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid pickUpTime (type="..type(pickUpTime)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productionSpot = serviceData.productionSpot
+    if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid productionSpot") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemName = serviceData.productItemName
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid productItemName") return {success = false} end
+    local productItemCount = serviceData.productItemCount
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- get spotLocation
+    local spotLocation = productionSpot.location
+    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- gather assignment data
+    local pickupData = {
+        productItemName = productItemName,
+        productItemCount= productItemCount,
+
+        workingLocation = coremove.CopyLocation(spotLocation),
+    }
+    local metaData = role_alchemist.Pickup_MetaData(pickupData)
+    metaData.startTime = pickUpTime
+
+    -- add assignment
+    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
+    coreassignment.AddAssignment(metaData, "role_alchemist.Pickup_Task", pickupData, callback, callbackData)
 
     -- end
     return nil

@@ -138,7 +138,7 @@ function Smelt_MetaData(smeltData)
     -- determine needed items
     local itemList = Smelt_ItemsNeeded(smeltData.recipe, smeltData.productItemCount, smeltData.fuelItemName, smeltData.fuelItemCount)
     local workingLocation = smeltData.workingLocation
-    local fuelNeeded = 4 + 5 -- task starts at workingLocation, very little (4) movement from there
+    local fuelNeeded = 4 -- task starts at workingLocation, very little (4) movement from there
 
     -- return metadata
     return {
@@ -180,7 +180,7 @@ function Smelt_Task(smeltData)
         Return value:
             task result                 - (table)      
                 success                 - (boolean) whether the smelting was succesfull
-                smeltingTime            - (number) the time it will take to complete the smelting (in seconds)
+                smeltReadyTime          - (number) the time when the smelting is expexted to be ready
 
         Parameters:
             smeltData                   - (table) data about the smelting task
@@ -232,9 +232,39 @@ function Smelt_Task(smeltData)
 
     -- determine expected completion time
     local smeltingTime = 10 * times -- one smelting operation is sayed to take 10 seconds
+    local now = coreutils.UniversalTime()
+    local smeltReadyTime = now + smeltingTime/50
 
     -- end
-    return {success = true, smeltingTime = smeltingTime}
+    return {success = true, smeltReadyTime = smeltReadyTime}
+end
+
+function Pickup_MetaData(pickupData)
+    --[[
+       This function returns the metadata for the Pickup_Task supplied with argument pickupData.
+   ]]
+
+    -- check input
+    if type(pickupData) ~= "table" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid pickupData") return {success = false} end
+    local productItemName = pickupData.productItemName
+    if type(productItemName) ~= "string" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid productItemName") return {success = false} end
+    local productItemCount = pickupData.productItemCount
+    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid productItemCount") return {success = false} end
+    local workingLocation = pickupData.workingLocation
+    if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid workingLocation") return {success = false} end
+
+    -- determine needed fuel
+    local fuelNeeded = 4 -- task starts at workingLocation, very little (4) movement from there
+
+    -- return metadata
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(workingLocation),
+        needTool = false,
+        needTurtle = true,
+        fuelNeeded = fuelNeeded,
+        itemsNeeded = {}
+    }
 end
 
 function Pickup_Task(pickupData)
@@ -263,7 +293,6 @@ function Pickup_Task(pickupData)
     if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid workingLocation") return {success = false} end
 
     -- go to the furnace
---    coremove.GoTo(requestDetails.entryLocation) -- ToDo: do differently
     coremove.GoTo(workingLocation)
 
     -- remove remaining fuel from furnace
@@ -293,60 +322,6 @@ function Pickup_Task(pickupData)
     }
     return result
 end
-
-function SmeltAndPickup_MetaData(smeltData)
-    --[[
-       This function returns the metadata for the SmeltAndPickup_Task supplied with argument smeltData.
-    ]]
-
-    -- metadata Smelt
-    local metaData = Smelt_MetaData(smeltData)
-
-    -- adjust for pickup
-    metaData.fuelNeeded = metaData.fuelNeeded + 4 -- pickup uses 4 fuel
-
-    -- end
-    return metaData
-end
-
-function SmeltAndPickup_Task(smeltData)
-    --[[
-        This Task function smelts items, waits for them to be completed and picks them up. The ingredients for smelting 
-            should be present in the turtle executing this task.
-
-        Return value:
-                                        - (table)
-                success                 - (boolean) whether the task executed succesfull
-                turtleOutputItemsLocator- (URL) locating the items that where produced (in a turtle)
-
-        Parameters:
-            smeltData                   - (table) data about the smelting task
-                recipe                  - (table) smelting recipe
-                    itemName            - (string) name of item to produce
-                    yield               - (number) of items produced by recipe
-                productItemName         - (string) name of item to produce
-                productItemCount        - (number) of items to produce
-                workingLocation         - (table) world location to do the smelting (in front of the furnance)
-                fuelItemName            - (string) name of fuel item to use
-                fuelItemCount           - (number) of fuel items to use
-    ]]
-
-    -- check input
-    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.SmeltAndPickup_Task: Invalid smeltData") return {success = false} end
-
-    -- smelt
-    local smeltResult = Smelt_Task(smeltData)
-    if type(smeltResult) ~= "table" or smeltResult.success ~= true then corelog.Error("role_alchemist.SmeltAndPickup_Task: smelting not succesfull") return {success = false} end
-
-    -- wait
-    local smeltingTime = smeltResult.smeltingTime
-    if type(smeltingTime) ~= "number" then corelog.Error("role_alchemist.SmeltAndPickup_Task: smelting did not return time needed to smelt") return {success = false} end
-    os.sleep(smeltingTime)
-
-    -- pickup
-    return Pickup_Task(smeltData)
-end
-
 
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
