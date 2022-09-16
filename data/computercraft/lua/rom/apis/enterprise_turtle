@@ -98,7 +98,7 @@ function GetItemsLocator_SSrv(serviceData)
         Return value:
                                     - (table)
                 success             - (boolean) wether the URL was correctly obtained
-                url                 - (table) URL of the items in the inventory of a turtle
+                itemsLocator        - (URL) locating the items in the inventory of a turtle
 
         Parameters:
             serviceData             - (table) data for this service
@@ -120,7 +120,7 @@ function GetItemsLocator_SSrv(serviceData)
     -- end
     local result = {
         success = true,
-        url = itemsLocator,
+        itemsLocator = itemsLocator,
     }
     return result
 end

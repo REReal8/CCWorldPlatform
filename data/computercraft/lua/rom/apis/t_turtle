@@ -9,7 +9,7 @@ local callbackData = {"some callback data"}
 function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
-    local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).url
+    local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
     local destinationHostLocator = enterprise_turtle.GetISHURL_SSrv({ }).url
     local transferData = {
         sourceItemsLocator =  sourceItemsLocator,
@@ -24,7 +24,7 @@ end
 function T_ItemsAvailableVia_Turtle()
     corelog.WriteToLog("* Test ItemsAvailableVia_SSrv for turtles:")
     -- create transferData
-    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).url
+    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
     local queryData = {
         itemsLocator = itemsLocator,
     }

@@ -41,7 +41,7 @@ function GetItemsLocator_SSrv(serviceData)
         Return value:
                                     - (table)
                 success             - (boolean) wether the URL was correctly obtained
-                url                 - (URL) locating the items in a chest
+                itemsLocator        - (URL) locating the items in a chest
 
         Parameters:
             serviceData             - (table) data for this service
@@ -63,7 +63,7 @@ function GetItemsLocator_SSrv(serviceData)
     -- end
     local result = {
         success = true,
-        url = itemsLocator,
+        itemsLocator = itemsLocator,
     }
     return result
 end
@@ -385,7 +385,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
         },
         returnData  = {
             { keyDef = "success"            , valueSource = 4, keyDefSource = "success" },
-            { keyDef = "turtleItemsLocator" , valueSource = 2, keyDefSource = "url" },
+            { keyDef = "turtleItemsLocator" , valueSource = 2, keyDefSource = "itemsLocator" },
         }
     }
     local projectData = {

@@ -27,7 +27,7 @@ function T_TransferItemsFromTo_Chests()
             }},
             { stepName = "enterprise_chests.GetItemsLocator_SSrv", async = false, stepDataDef = {
                 { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
-                { keyDef = "itemsQuery"              , valueSource = 0, keyDefSource = "itemsToTransferQuery" },
+                { keyDef = "itemsQuery"             , valueSource = 0, keyDefSource = "itemsToTransferQuery" },
             }},
             { stepName = "enterprise_projects.StartProject_ASrv", async = true, stepDataDef = {
                 { keyDef = "projectDef"             , valueSource = 0, keyDefSource = "projectDef2" },
@@ -36,7 +36,7 @@ function T_TransferItemsFromTo_Chests()
 
             -- TransferItemsFromTo_ASrv
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "url" },
+                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "itemsLocator" },
                 { keyDef = "destinationHostLocator" , valueSource = 3, keyDefSource = "chestLocator" },
             }},
 
