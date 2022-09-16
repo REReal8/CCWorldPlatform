@@ -10,6 +10,7 @@ local db = {
     This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
+        GetHostLocator_SSrv     - provide host URL of this ISH 
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         GetItemsLocator_SSrv    - provide the URL of items in a chest
@@ -33,6 +34,25 @@ local db = {
 --   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --   | |
 --   |_|
+
+function GetHostLocator_SSrv(serviceData)
+    --[[
+        This sync public service provides the (base) URL of this ISH.
+
+        Return value:
+            url                     - (URL) locating this ISH
+
+        Parameters:
+            serviceData             - (table) empty
+    --]]
+
+    -- end
+    local result = {
+        success = true,
+        url = GetISHURL(),
+    }
+    return result
+end
 
 function GetItemsLocator_SSrv(serviceData)
         --[[

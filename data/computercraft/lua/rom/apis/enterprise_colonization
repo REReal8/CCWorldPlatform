@@ -47,8 +47,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         factoryLocation             = coremove.CopyLocation(factoryLocation),
     }
     local settleData = {
-        materialsHostLocator        = enterprise_turtle.GetISHURL_SSrv({ }).url,
---        productsHostLocator         = enterprise_turtle.GetISHURL_SSrv({ }).url,
+        materialsHostLocator        = enterprise_turtle.GetHostLocator_SSrv({ }).url,
 
         primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
@@ -115,9 +114,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_turtle.GetISHURL_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_turtle.GetHostLocator_SSrv", async = false, stepDataDef = {
             }},
-            { stepName = "enterprise_turtle.GetISHURL_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_turtle.GetHostLocator_SSrv", async = false, stepDataDef = {
             }},
             { stepName = "enterprise_factory.ProduceItem_ASrv", async = true, stepDataDef = {
                 { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "planksName" },

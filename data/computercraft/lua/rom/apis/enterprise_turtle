@@ -9,7 +9,7 @@ local db = {
     This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        GetISHURL_SSrv         - provide host URL of this ISH 
+        GetHostLocator_SSrv    - provide host URL of this ISH 
         IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
@@ -24,12 +24,12 @@ local db = {
 --   | |
 --   |_|
 
-function GetISHURL_SSrv(serviceData)
+function GetHostLocator_SSrv(serviceData)
     --[[
         This sync public service provides the (base) URL of this ISH.
 
         Return value:
-            ishURL                  - (table) URL of this ISH
+            ishURL                  - (URL) locating this ISH
 
         Parameters:
             serviceData             - (table) empty

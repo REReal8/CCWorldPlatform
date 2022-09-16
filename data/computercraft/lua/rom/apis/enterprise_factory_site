@@ -268,7 +268,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- determine turtleInputLocator
-    local turtleInputLocator = enterprise_turtle.GetISHURL_SSrv({ }).url
+    local turtleInputLocator = enterprise_turtle.GetHostLocator_SSrv({ }).url
 
     -- determine production service
     local productionServiceName = nil

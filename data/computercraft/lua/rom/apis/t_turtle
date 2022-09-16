@@ -10,7 +10,7 @@ function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
     local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
-    local destinationHostLocator = enterprise_turtle.GetISHURL_SSrv({ }).url
+    local destinationHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).url
     local transferData = {
         sourceItemsLocator =  sourceItemsLocator,
         destinationHostLocator = destinationHostLocator,

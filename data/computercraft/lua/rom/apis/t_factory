@@ -9,8 +9,8 @@ function T_ProduceItem_Craft()
     enterprise_factory.ProduceItem_ASrv({
         productItemName         = "minecraft:birch_planks",
         productItemCount        = 12,
-        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ }).url,
-        productsHostLocator     = enterprise_turtle.GetISHURL_SSrv({ }).url,
+        ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).url,
+        productsHostLocator     = enterprise_turtle.GetHostLocator_SSrv({ }).url,
     }, callbackFunction, callbackData)
 end
 
@@ -21,8 +21,8 @@ function T_ProduceItem_Smelt()
     enterprise_factory.ProduceItem_ASrv({
         productItemName         = "minecraft:charcoal",
         productItemCount        = 3,
-        ingredientsHostLocator  = enterprise_turtle.GetISHURL_SSrv({ }).url,
-        productsHostLocator     = enterprise_turtle.GetISHURL_SSrv({ }).url,
+        ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).url,
+        productsHostLocator     = enterprise_turtle.GetHostLocator_SSrv({ }).url,
     }, callbackFunction, callbackData)
 end
 
@@ -31,7 +31,7 @@ function T_BuildAndStartNewV1Site()
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         upgrade                 = false,
-        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).url
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -40,7 +40,7 @@ function T_BuildAndStartNewV2Site()
         baseLocation            = baseLocationV2,
         siteVersion             = "v2",
         upgrade                 = true,
-        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).url
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -48,7 +48,7 @@ function T_StopAndDismantleV1Site()
     enterprise_factory.StopAndDismantleSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
-        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).url
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -57,7 +57,7 @@ function T_BuildNewV0Site()
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
         upgrade                 = false,
-        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).url
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -74,7 +74,7 @@ function T_DismantleV0Site()
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
         siteStopped             = true,
-        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).url
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 

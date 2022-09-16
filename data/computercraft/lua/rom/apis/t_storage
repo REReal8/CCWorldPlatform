@@ -5,7 +5,7 @@ function T_buildAndStartNewSite()
         siloType                = "basic",
         topChests               = 2,
         layers                  = 2,
-        materialsHostLocator    = enterprise_turtle.GetISHURL_SSrv({ }).url,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).url,
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
