@@ -227,10 +227,6 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
 
     -- do the (virtual) transfer
 
-    -- create (partial) output turtleItemsLocator
-    local turtleItemsLocator = GetTurtleLocator_SSrv({turtleId = currentTurtleId}).turtleLocator
-    if turtleItemsLocator == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocator created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
     -- check if current turtle has the requested items in it's inventory
     -- ToDo: consider also checking if items are available (i.e. not reserved)
     local sourceQuery = sourceItemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
@@ -244,6 +240,10 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
             corelog.WriteToLog("enterprise_turtle.GetItemsIntoTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
         end
     end
+
+    -- create output turtleItemsLocator
+    local turtleItemsLocator = GetTurtleLocator_SSrv({turtleId = currentTurtleId}).turtleLocator
+    if turtleItemsLocator == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocator created.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     turtleItemsLocator:setQuery(sourceQuery)
 
     -- end
