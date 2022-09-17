@@ -65,13 +65,15 @@ local db = {
 }
 
 --[[
-    The factory is an enterprise that offers services to produce items based on recipes. 
+    The Factory is an enterprise that offers services to produce items based on recipes.
+
+    The Factory is a Producer enterprise, hence it provides the mandatory services and functions for a Producer (like e.g. ProduceItem_ASrv).
 
     There are (currently) two recipe types for producing items.
         The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
         The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
 
-    The factory is comprised out of one or more factory sites. It uses the production services of the factory sites to produce the items.
+    The Factory is comprised out of one or more factory sites. It uses the production services of the factory sites to produce the items.
 --]]
 
 --                _     _ _         __                  _   _
@@ -399,10 +401,10 @@ end
 
 function ProduceItem_ASrv(serviceData, callback, callbackData)
     --[[
-        This async public service produces multiple instances of a specific item in the factory. It does so 
+        This async public Producer service produces multiple instances of a specific item in the factory. It does so 
         by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
         After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipe. 
-        Finally it delivers the created items to requested ISH.
+        Finally it delivers the created items to the requested destination.
 
         Return value:
             nil
@@ -415,8 +417,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
             serviceData                 - (table) data for the service
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
-                ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved
-                destinationHostLocator  - (URL) locating where (i.e. at which ISH) the produced items need to be delivered to
+                ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
+                destinationHostLocator  - (URL) locating where the produced items need to be delivered to
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]
