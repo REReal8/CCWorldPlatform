@@ -102,7 +102,7 @@ function IsChestURL_QSrv(queryData)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid v") return {success = false} end
+    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid queryData") return {success = false} end
     local aURL = url.URLClass:new(queryData.aURL)
     if type(aURL) ~= "table" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid aURL") return {success = false} end
 
