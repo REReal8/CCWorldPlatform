@@ -1,0 +1,176 @@
+--local db = {
+--    dhtRoot     = "enterprise_factory",
+--    dhtSites    = "sites",
+--}
+
+--[[
+    The Shop is an enterprise that offers services for ordering items.
+
+    The Shop provides the following services
+        OrderItems_ASrv             - procure items and having them delivered at a destinationHostLocator
+        <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
+
+    The Shop implements it's services by using services of both ?the/ a Storage as well as of Producer enterprises. 
+
+    For an enterprise to be a Producer it needs to implement the following services:
+        ProduceItem_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
+        CanProducte_QSrv            - whether the Producer can produce a specific item
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function OrderItems_ASrv(serviceData, callback, callbackData)
+    --[[
+        With this async public service items can be ordered at the Shop. This services tries to procure each of the ordered items.
+        The Shop ensures the items are delivered to the requested destination.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                orderItems              - (table) with one or more ordered items (formatted as an array of [itemName] = itemCount key-value pairs) 
+                destinationHostLocator  - (URL) locating where the ordered items need to be delivered to
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local orderItems = serviceData.orderItems
+    if type(orderItems) ~= "table" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid orderItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- determine projectSteps and projectData
+    local projectSteps = {}
+    local areAllTrueStepDataDef = {}
+    local projectData = {}
+
+    -- add project step for each of the ordered items 
+    local iStep = 0
+    -- ToDo: do this in parallel by extending enterprise_projects to handle parallel project steps.
+    for itemName, itemCount in pairs(orderItems) do
+        -- step index
+        iStep = iStep + 1
+        local iStepStr = tostring(iStep)
+
+        -- add crafting step
+        local procureItemName = "procureItemName"..iStepStr
+        local procureItemCount = "procureItemCount"..iStepStr
+        table.insert(projectSteps,
+            { stepName = "enterprise_shop.ProcureItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "procureItemName"        , valueSource = 0, keyDefSource = procureItemName },
+                { keyDef = "procureItemCount"       , valueSource = 0, keyDefSource = procureItemCount },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+            }}
+        )
+
+        -- add step data
+        projectData[procureItemName] = itemName
+        projectData[procureItemCount] = itemCount
+
+        -- add success check
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , valueSource = iStep, keyDefSource = "success" })
+    end
+
+    -- set destinationHostLocator
+    projectData.destinationHostLocator = destinationHostLocator
+    -- ToDo: consider first locally gathering the ordered items and sending them in one go to the destinationHostLocator if all off them are obtained.
+
+    -- add check for all a success
+    iStep = iStep + 1
+    table.insert(projectSteps,
+        { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = areAllTrueStepDataDef}
+    )
+
+    -- create project service data
+    local projectDef = {
+        steps = projectSteps,
+        returnData  = {
+            { keyDef = "success"    , valueSource = iStep, keyDefSource = "success" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Handling order of items = "..textutils.serialise(orderItems).."")
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function ProcureItem_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async private service procures items ordered at the Shop. The services first tries to obtain the item from ?the/ a Storage. 
+        If the items are not available in the Storage it will attempt to have them produced by one or more Producers. The service 
+        ensures the items are delivered to the requested destination.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                procureItemName         - (string) name of item to procure
+                procureItemCount        - (number) amount of items to procure
+                destinationHostLocator  - (URL) locating where the procured items need to be delivered to
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local procureItemName = serviceData.procureItemName
+    if type(procureItemName) ~= "string" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid procureItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local procureItemCount = serviceData.procureItemCount
+    if type(procureItemCount) ~= "number" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid procureItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- Attempt to procure item from Storage
+    -- ToDo: implement
+
+    -- Find a Producer that can produce item
+    local producer = nil
+    if enterprise_factory.CanProduce_QSrv({ productItemName = procureItemName }).success then
+        producer = enterprise_factory
+    else -- ToDo: add other Producer's (the Forest could/ should be one!)
+        corelog.Error("enterprise_factory.ProcureItem_ASrv: No producer can produce "..procureItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- Have Producer produce the item
+    local produceData = {
+        productItemName         = procureItemName,
+        productItemCount        = procureItemCount,
+        ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: loop back to Shop itself! (either from Storage or Producer again)
+        destinationHostLocator  = destinationHostLocator:copy(),
+    }
+    producer.ProduceItem_ASrv(produceData, callback, callbackData)
+end

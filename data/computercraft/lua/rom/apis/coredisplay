@@ -359,6 +359,7 @@ function ExecuteEnterpriseTest(t)
 			{key = "s", desc = "storage", 			func = ExecuteEnterpriseTest, param = {file = t_storage, filename = "t_storage"}},
 			{key = "f", desc = "factory", 			func = ExecuteEnterpriseTest, param = {file = t_factory, filename = "t_factory"}},
 			{key = "w", desc = "foresting", 		func = ExecuteEnterpriseTest, param = {file = t_foresting, filename = "t_foresting"}},
+			{key = "o", desc = "shop", 				func = ExecuteEnterpriseTest, param = {file = t_shop, filename = "t_shop"}},
 			{key = "n", desc = "colonization", 		func = ExecuteEnterpriseTest, param = {file = t_colonization, filename = "t_colonization"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}

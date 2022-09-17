@@ -1,0 +1,12 @@
+function T_OrderItems()
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+
+    enterprise_shop.OrderItems_ASrv({
+        orderItems = {
+            ["minecraft:birch_planks"]  = 12,
+            ["minecraft:charcoal"]      = 3, -- ToDo: consider swapping to use parallel when waiting for pickup
+        },
+        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+    }, callbackFunction, callbackData)
+end

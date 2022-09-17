@@ -51,7 +51,9 @@
         "t_turtle",
         "role_settler",
         "t_storage",
-        "t_alchemist"
+        "t_alchemist",
+        "enterprise_shop",
+        "t_shop"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
