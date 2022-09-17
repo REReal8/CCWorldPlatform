@@ -113,7 +113,7 @@ function ChopFirstTree_Task(settleData)
         Return value:
             task result                 - (table)      
                 success                 - (boolean) whether the task was succesfull
-                planksToProduceForFuel  - (number) of planks to create for refuel
+                orderForFuel            - (table) items to order for refuel
 
         Parameters:
             settleData                  - (table) data about the task
@@ -134,10 +134,10 @@ function ChopFirstTree_Task(settleData)
 
     -- rest van de planken als brandstof gebruiken, kisten maken we laten (waarschijnlijk beter om eerst fakkeltje te maken trouwens, wellicht later)
     local logs      = coreinventory.CountItem("minecraft:birch_log")
-    local planksToProduceForFuel = (logs - 2)*4
+    local orderForFuel = { ["minecraft:birch_planks"] = (logs - 2)*4 }
 
     -- end
-    return {success = true, planksToProduceForFuel = planksToProduceForFuel}
+    return {success = true, orderForFuel = orderForFuel}
 end
 
 function Refuel_MetaData(settleData)
