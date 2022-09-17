@@ -11,6 +11,8 @@
     to be an ISH it needs to implement the following services:
 
         ItemsAvailableVia_SSrv      - providing if a set of items are available at the ISH.
+        - ToDo consider moving this to a new type, e.g. an ItemStorage as likely not all hosts need it. Only the once that store items.
+
         GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
         PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
 
