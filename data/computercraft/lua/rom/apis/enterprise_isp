@@ -125,7 +125,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     elseif destinationHost == "chests" then
         destinationEnterprise = "enterprise_chests"
     else
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") coreutils.DoCallback(callback, callbackData, {success = false})
+        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- create project definition
