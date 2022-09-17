@@ -1,13 +1,13 @@
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
-    items to be handled acros (possibly) multiple enterprises the ISP can be seen as a single(ton) entry point (or hub or router) for handling 
+    items to be handled acros (possibly) multiple enterprises the ISP can be seen as a single(ton) point (or hub or router) for handling 
     those items.
 
     The ISP provides the following services
         ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsQueryURL
         TransferItemsFromTo_ASrv    - transferring items from a sourceItemsLocator to a destinationHostLocator
         
-    The ISP implements it's services by using services of Item Service Hosts (ISH's). Typically an ISH is another enterprise. For an enterprise
+    The ISP implements it's services by using services of Item Service Hosts (ISH's) enterprises. For an enterprise
     to be an ISH it needs to implement the following services:
 
         ItemsAvailableVia_SSrv      - providing if a set of items are available at the ISH.
