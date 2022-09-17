@@ -155,7 +155,20 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- Attempt to procure item from Storage
-    -- ToDo: implement
+    local storageHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    -- ToDo: consider setting this to enterprise_storage (once it supports enterprise_turtle as the initial storage, as it's needed for settler). 
+    --      For now only it's hardcoded and only the turtle is supported as a storage.
+    local storageItemsLocator = storageHostLocator:copy()
+    local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? get it directly passed in to service instead of individual fields?
+    storageItemsLocator:setQuery(procureItemsQuery)
+    if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = storageItemsLocator} ).success then
+        local transferData = {
+            sourceItemsLocator      = storageItemsLocator,
+            destinationHostLocator  = destinationHostLocator,
+        }
+        corelog.WriteToLog(">Procuring "..textutils.serialise(procureItemsQuery).." from Storage")
+        return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+    end
 
     -- Find a Producer that can produce item
     local producer = nil
