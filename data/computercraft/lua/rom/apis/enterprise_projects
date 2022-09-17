@@ -6,7 +6,8 @@ local db = {
     The projects enterprise offers services to group together multiple enterprise services based on a predefined project definition.
 
     Currently the project definition can contain a sequence of project steps (each being a service of an enterprise) that need to be executed in sequence.
-    ToDo: extend to be able to handle parallel project steps.
+
+    ToDo: extend to be able to handle parallel project steps (see also ToDo to test in t_shop.T_OrderItems())
 
     For another description of this enterprise and it's usage see https://github.com/REReal8/CCWorldPlatform/wiki/enterprise_projects 
 --]]
