@@ -10,7 +10,7 @@ function T_ProduceItem_Craft()
         productItemName         = "minecraft:birch_planks",
         productItemCount        = 12,
         ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        productsHostLocator     = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
 end
 
@@ -22,7 +22,7 @@ function T_ProduceItem_Smelt()
         productItemName         = "minecraft:charcoal",
         productItemCount        = 3,
         ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        productsHostLocator     = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
 end
 

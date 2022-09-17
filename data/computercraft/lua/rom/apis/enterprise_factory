@@ -415,8 +415,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
             serviceData                 - (table) data for the service
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
-                ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved by the factory
-                productsHostLocator     - (URL) locating where (i.e. at which ISH) the produced items need to be delivered by the factory
+                ingredientsHostLocator  - (URL) locating where (i.e. at which ISH) the production ingredients can be retrieved
+                destinationHostLocator  - (URL) locating where (i.e. at which ISH) the produced items need to be delivered to
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]
@@ -429,8 +429,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local productsHostLocator = url.URLClass:new(serviceData.productsHostLocator)
-    if type(productsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -471,7 +471,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
             }},
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "productsHostLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
@@ -485,7 +485,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     }
     local projectData = {
         ingredientsItemsLocator     = ingredientsItemsLocator,
-        productsHostLocator         = productsHostLocator,
+        destinationHostLocator      = destinationHostLocator,
 
         localInputLocator           = localInputLocator,
         localOutputLocator          = localOutputLocator,
