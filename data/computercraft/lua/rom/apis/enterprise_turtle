@@ -149,7 +149,7 @@ function ItemsAvailableVia_SSrv(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                itemsLocator        - (URL) stating the items availability that needs to be queried
+                itemsLocator        - (URL) locating the items that need to be queried for availability
                                         (the "base" component of the URL specifies this ISH)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
@@ -195,11 +195,11 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
         Async service return value (to callback):
                                     - (table)
                 success             - (boolean) whether the items were succesfully transferred to a turtle
-                turtleItemsLocator  - (URL) stating a specific turtle and the items it has gotton in it's inventory
+                turtleItemsLocator  - (URL) locating a specific turtle and the items it has gotton in it's inventory
 
         Parameters:
             transferData            - (table) data about the transfer
-                sourceItemsLocator  - (URL) stating where the items that need transfer can be located
+                sourceItemsLocator  - (URL) locating the items that need transfer
                                         (the "query" component of the URL specifies the items to be transferred)
                                         (the "host" component of the URL should specify this host (i.e. a turtle) where the items are located)
             callback                - (string) name of function to call once service is ready
