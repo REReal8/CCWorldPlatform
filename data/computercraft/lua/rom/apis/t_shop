@@ -2,11 +2,12 @@ function T_OrderItems()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
-    enterprise_shop.OrderItems_ASrv({
+    local result = enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:birch_planks"]  = 12,
             ["minecraft:charcoal"]      = 3, -- ToDo: test if planks get produced once charcoal is being smelted (as soon as projects support parallel steps)
         },
         destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
 end
