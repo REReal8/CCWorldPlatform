@@ -8,6 +8,3 @@ function T_CreateNewWorld()
     corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
     enterprise_colonization.CreateNewWorld_ASrv(serviceData, callbackFunction, callbackData)
 end
-
-
-
