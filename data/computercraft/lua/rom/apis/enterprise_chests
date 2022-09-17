@@ -596,7 +596,7 @@ function SetChestRecord_SSrv(serviceData)
         Parameters:
             serviceData         - (table) data for this service
                 id              - (string) id of the chest.
-                slots           - (string) slots inventory of the chest.
+                slots           - (table) slots inventory of the chest.
     ]]
 
     -- check input
