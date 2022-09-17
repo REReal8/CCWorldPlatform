@@ -66,14 +66,12 @@ local db = {
 
 --[[
     The factory is an enterprise that offers services to produce items based on recipes. 
-    
-    There are (currently) two techniques for producing items.
-        The crafting technique uses a crafting table to produce an output item from of a set of input items (inrgedients).
-        The smelting technique uses a furnace to produce an output item out out of an input item (ingredient).
 
-    The factory is comprised of one or more factory sites. A site is comprised out of one or more crafting and/ or smelting spots. Furthermore a site should specify
-    one or more item input and one or more item output "spots". Technically the later are (should be) URL's locating the input and output of items. The most simple 
-    version of these input/ output "spots" are the inventory of a turtle.
+    There are (currently) two recipe types for producing items.
+        The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
+        The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
+
+    The factory is comprised out of one or more factory sites. It uses the production services of the factory sites to produce the items.
 --]]
 
 --                _     _ _         __                  _   _
