@@ -114,6 +114,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         sourceEnterprise = "enterprise_turtle"
     elseif sourceHost == "chests" then
         sourceEnterprise = "enterprise_chests"
+    elseif sourceHost == "shop" then
+        sourceEnterprise = "enterprise_shop"
     else
         corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..sourceHost .." source ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
@@ -126,6 +128,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         destinationEnterprise = "enterprise_turtle"
     elseif destinationHost == "chests" then
         destinationEnterprise = "enterprise_chests"
+    elseif destinationHost == "shop" then
+        destinationEnterprise = "enterprise_shop"
     else
         corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end

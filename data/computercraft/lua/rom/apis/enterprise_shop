@@ -1,7 +1,8 @@
---local db = {
+local db = {
 --    dhtRoot     = "enterprise_factory",
 --    dhtSites    = "sites",
---}
+    hostName    = "shop",
+}
 
 --[[
     The Shop is an enterprise that offers services for ordering items.
@@ -15,6 +16,15 @@
     For an enterprise to be a Producer it needs to implement the following services:
         ProduceItem_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
         CanProducte_QSrv            - whether the Producer can produce a specific item
+
+    The Shop is also an ISH, hence it implements the services:
+        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
+        PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
+    This allows for the Shop to be passed as ingredientsHostLocator to a Producer. The effect of that is that the Producer can request 
+    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from the storage. 
+    If that fails it tries to procure the ingredients again with another call to a Producer. This recursive order call will result in a successfull 
+    items order if the (sub, and sub-sub, etc) ingredients are present in the storage and/ or can be produced by the Producers. If no items
+    are in the Storage this implies that an items order can be successfull as long as all the ingredients can be produced by a Producer.
 --]]
 
 --                _     _ _         __                  _   _
@@ -37,6 +47,9 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
+                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                            the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                 - (table) data for the service
@@ -47,17 +60,18 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local orderItems = serviceData.orderItems
-    if type(orderItems) ~= "table" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid orderItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(orderItems) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid orderItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.OrderItems_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- determine projectSteps and projectData
     local projectSteps = {}
     local areAllTrueStepDataDef = {}
+    local addItemLocatorsStepDataDef = {}
     local projectData = {}
 
     -- add project step for each of the ordered items 
@@ -83,7 +97,10 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
         projectData[procureItemName] = itemName
         projectData[procureItemCount] = itemCount
 
-        -- add success check
+        -- add combine stepDataDef
+        table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , valueSource = iStep, keyDefSource = "destinationItemsLocator" })
+
+        -- add success stepDataDef
         table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , valueSource = iStep, keyDefSource = "success" })
     end
 
@@ -91,17 +108,26 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     projectData.destinationHostLocator = destinationHostLocator
     -- ToDo: consider first locally gathering the ordered items and sending them in one go to the destinationHostLocator if all off them are obtained.
 
+    -- add combining URL's
+    iStep = iStep + 1
+    table.insert(projectSteps,
+        { stepName = "enterprise_isp.AddItemsLocators_SSrv", async = false, stepDataDef = addItemLocatorsStepDataDef}
+    )
+    local iAddItemsLocatorStep = iStep
+
     -- add check for all a success
     iStep = iStep + 1
     table.insert(projectSteps,
         { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = areAllTrueStepDataDef}
     )
+    local iAreAllTrueStep = iStep
 
     -- create project service data
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"    , valueSource = iStep, keyDefSource = "success" },
+            { keyDef = "success"                , valueSource = iAreAllTrueStep, keyDefSource = "success" },
+            { keyDef = "destinationItemsLocator", valueSource = iAddItemsLocatorStep, keyDefSource = "itemsLocator" },
         }
     }
     local projectServiceData = {
@@ -112,6 +138,107 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     -- start project
     corelog.WriteToLog(">Handling order of items = "..textutils.serialise(orderItems).."")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
+    --[[
+        This async public ISH service ensures items are gathered in the ISH and transferred to the inventory of a turtle.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                    - (table)
+                success             - (boolean) whether the items were succesfully transferred to a turtle
+                turtleItemsLocator  - (URL) locating a specific turtle and the items it has gotton in it's inventory
+
+        Parameters:
+            transferData            - (table) data about the transfer
+                sourceItemsLocator  - (URL) locating the items that need transfer
+                                        (the "query" component of the URL specifies the items to be transferred)
+                                        (the "host" component of the URL should specify this host (i.e. a chest) where the items are located)                                        
+            callback                - (string) name of function to call once service is ready
+            callbackData            - (table) data to supply to callback function                                                
+    --]]
+
+    -- check input
+    if type(transferData) ~= "table" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceItemsLocator = url.URLClass:new(transferData.sourceItemsLocator)
+    if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid sourceItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- check source is for this enterprise
+    local sourceIsShop = IsShopURL_QSrv({ aURL = sourceItemsLocator})
+    if not sourceIsShop.success then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- get transferItems
+    local transferItems = coreutils.DeepCopy(sourceItemsLocator:getQuery())
+
+    -- implement by ordering from ourself (i.e. the Shop):
+    -- create project definition
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
+                { keyDef = "orderItems"             , valueSource = 0, keyDefSource = "orderItems" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 1, keyDefSource = "success" },
+            { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "destinationItemsLocator" },
+        }
+    }
+    local projectData = {
+        orderItems              = transferItems,
+        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Ordering "..sourceItemsLocator:getQueryURI().." from shop into a turtle.")
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
+    --[[
+        This async public ISH service ensures items are transferred from the inventory of a turtle towards the ISH.
+
+        An ISH should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+
+        Return value:
+            nil 
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the items were succesfully transferred to the ISH.
+                destinationItemsLocator - (URL) locating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, 
+                                            the "path" should be a specific chest, and the "query" should be equal to the "query" component of the turtleSourceURL)
+
+        Parameters:
+            transferData                - (table) data about the transfer
+                turtleItemsLocator      - (URL) locating a specific turtle and the items in it's inventory that need to be put
+                destinationHostLocator  - (URL) locating where the items need to be transferred to (i.e. a chest in this host)
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function                                                
+    --]]
+
+    -- check input
+    if type(transferData) ~= "table" then corelog.Error("enterprise_shop.PutItemsFromTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleItemsLocator = url.URLClass:new(transferData.turtleItemsLocator)
+    if type(turtleItemsLocator) ~= "table" then corelog.Error("enterprise_shop.PutItemsFromTurtle_ASrv: Invalid turtleItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(transferData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_shop.PutItemsFromTurtle_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_shop.PutItemsFromTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- not (yet) implemented
+    -- ToDo: implement if we decide we can "sell"/store/ dump to the Shop as well.
+    corelog.Error("enterprise_shop.PutItemsFromTurtle_ASrv: Not (yet) implemented!") return coreutils.DoCallback(callback, callbackData, {success = false})
 end
 
 --    _                 _    __                  _   _
@@ -133,6 +260,9 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
+                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                            the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                 - (table) data for the service
@@ -144,29 +274,29 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local procureItemName = serviceData.procureItemName
-    if type(procureItemName) ~= "string" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid procureItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(procureItemName) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local procureItemCount = serviceData.procureItemCount
-    if type(procureItemCount) ~= "number" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid procureItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(procureItemCount) ~= "number" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProcureItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- Attempt to procure item from Storage
-    local storageHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
-    -- ToDo: consider setting this to enterprise_storage (once it supports enterprise_turtle as the initial storage, as it's needed for settler). 
+    -- ToDo: consider getting this from enterprise_storage (once it supports enterprise_turtle as the initial storage, as it's needed for settler). 
     --      For now only it's hardcoded and only the turtle is supported as a storage.
+    local storageHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
     local storageItemsLocator = storageHostLocator:copy()
-    local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? get it directly passed in to service instead of individual fields?
+    local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
     storageItemsLocator:setQuery(procureItemsQuery)
     if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = storageItemsLocator} ).success then
         local transferData = {
             sourceItemsLocator      = storageItemsLocator,
             destinationHostLocator  = destinationHostLocator,
         }
-        corelog.WriteToLog(">Procuring "..textutils.serialise(procureItemsQuery).." from Storage")
+        corelog.WriteToLog(">Procuring from Storage: "..textutils.serialise(procureItemsQuery).."")
         return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
 
@@ -175,15 +305,59 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     if enterprise_factory.CanProduce_QSrv({ productItemName = procureItemName }).success then
         producer = enterprise_factory
     else -- ToDo: add other Producer's (the Forest could/ should be one!)
-        corelog.Error("enterprise_factory.ProcureItem_ASrv: No producer can produce "..procureItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false})
+        corelog.Error("enterprise_shop.ProcureItem_ASrv: No producer can produce "..procureItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- Have Producer produce the item
     local produceData = {
         productItemName         = procureItemName,
         productItemCount        = procureItemCount,
-        ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: loop back to Shop itself! (either from Storage or Producer again)
+        ingredientsHostLocator  = GetISHURL(),
         destinationHostLocator  = destinationHostLocator:copy(),
     }
     producer.ProduceItem_ASrv(produceData, callback, callbackData)
+end
+
+function GetISHURL()
+    --[[
+        This private function provides the (base) URL of this ISH.
+
+        Return value:
+            hostURL                 - (URL) locating this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
+end
+
+function IsShopURL_QSrv(queryData)
+    --[[
+        This sync public service answers the question if a URL is that of the Shop.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) wether the answer to the question is true
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                - (table) a URL that needs to be queried
+    --]]
+
+    -- check input
+    if type(queryData) ~= "table" or type(queryData.aURL) ~= "table" then corelog.Error("enterprise_shop.IsShopURL_QSrv: Invalid queryData input.") return {success = false} end
+
+    -- check if of Shop
+    local aURL = url.URLClass:new(queryData.aURL)
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_shop.IsShopURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
+    end
 end
