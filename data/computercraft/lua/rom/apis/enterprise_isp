@@ -43,7 +43,7 @@ function ItemsAvailableVia_SSrv(queryData)
 
         Parameters:
             queryData               - (table) data about the query
-                itemsLocator        - (URL) stating the items availability that needs to be queried
+                itemsLocator        - (URL) locating items which availability is queried
                                         (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
@@ -165,6 +165,68 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
 
     -- end
     return nil
+end
+
+function AddItemsLocators_SSrv(serviceData)
+    --[[
+        This sync public service adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether all the queried items are available via the URL
+                itemsLocator        - (URL) locating all items
+
+        Parameters:
+            queryData               - (table) data about the query
+                itemsLocator1       - (URL) a itemsLocator locating items
+                                        (the "base" component of the URL specifies the ISH to query)
+                                        (the "query" component of the URL specifies the items to query for)
+                [itemsLocator2]     - (URL) another itemsLocator locating items
+                [itemsLocatorN]     - (URL) and the final itemsLocator locating items
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.AddItemsLocators_SSrv: Invalid queryData") return {success = false} end
+
+--    local itemsLocator = queryData.itemsLocator
+--    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.AddItemsLocators_SSrv: Invalid itemsLocator") return {success = false} end
+
+    -- use remaining input
+    local allTrue = true
+    local resultItemsLocator = nil
+    for fieldKey, fieldvalue in pairs(serviceData) do
+        -- check if it's a URL
+        if type(fieldvalue) == "table" then
+            -- wrap into URL
+            local fieldItemsLocator = url.URLClass:new(fieldvalue)
+
+            -- check if first
+            if resultItemsLocator == nil then
+                -- copy first
+                resultItemsLocator = fieldItemsLocator:copy()
+            else
+                -- check if same host/ base as resultItemsLocator so far
+                if not fieldItemsLocator:sameBase(resultItemsLocator) then 
+                    corelog.Error("enterprise_isp.AddItemsLocators_SSrv: Adding itemsLocator's (resultItemsLocator="..resultItemsLocator:getURI()..", fieldItemsLocator="..fieldItemsLocator:getURI()..") with different base not supported")
+                    return {success = false}
+                end
+
+                -- add query component's
+                local resultItemQuery = resultItemsLocator:getQuery()
+                for itemName, itemCount in pairs(fieldItemsLocator:getQuery()) do
+                    resultItemQuery[itemName] = (resultItemQuery[itemName] or 0) + itemCount
+                end
+            end
+        end
+    end
+    if resultItemsLocator == nil then corelog.Error("enterprise_isp.AddItemsLocators_SSrv: Couldn't construct combined itemsLocator") return {success = false} end
+
+    -- end
+    local result = {
+        success = allTrue,
+        itemsLocator = resultItemsLocator
+    } 
+    return result
 end
 
 --    _                 _    __                  _   _
