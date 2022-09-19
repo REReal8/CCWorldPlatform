@@ -1,11 +1,35 @@
-function T_OrderItems()
+function T_OrderMultipleItems()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
     enterprise_shop.OrderItems_ASrv({
         orderItems = {
---            ["minecraft:birch_planks"]  = 12,
-            ["minecraft:charcoal"]      = 3, -- ToDo: test if planks get produced once charcoal is being smelted (as soon as projects support parallel steps)
+            ["minecraft:furnace"]   = 1,
+            ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
+        },
+        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+    }, callbackFunction, callbackData)
+end
+
+function T_OrderCharcoal()
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+
+    enterprise_shop.OrderItems_ASrv({
+        orderItems = {
+            ["minecraft:charcoal"]  = 3,
+        },
+        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+    }, callbackFunction, callbackData)
+end
+
+function T_OrderTorch()
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+
+    enterprise_shop.OrderItems_ASrv({
+        orderItems = {
+            ["minecraft:torch"]  = 4,
         },
         destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
