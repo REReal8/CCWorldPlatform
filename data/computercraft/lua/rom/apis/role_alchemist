@@ -52,7 +52,7 @@ function Craft_ItemsNeeded(recipe, productItemCount)
 
     -- correct for yield and itemProduceCount
     for itemName, itemCount in pairs(itemList) do
-        itemList[itemName] = itemList[itemName] * productItemCount / yield
+        itemList[itemName] = math.ceil(itemList[itemName] * productItemCount / yield)
     end
 
     -- return itemList
@@ -164,7 +164,7 @@ function Smelt_ItemsNeeded(recipe, productItemCount, fuelItemName, fuelItemCount
 
     -- build item list
     local itemList = {
-        [recipe.itemName] = productItemCount / recipe.yield,
+        [recipe.itemName] = math.ceil(productItemCount / recipe.yield),
     }
     itemList[fuelItemName] = (itemList[fuelItemName] or 0) + fuelItemCount
 
