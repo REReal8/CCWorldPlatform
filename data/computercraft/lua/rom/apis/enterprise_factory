@@ -505,6 +505,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
                 { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
             }},
+            -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
                 { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
