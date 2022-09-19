@@ -5,6 +5,7 @@ local port2 = 5
 local path = {site = 3, inputChest = 7}
 local path2 = {site = 3, inputChest = 4}
 local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
+local query2 = {["minecraft:torch"] = 5, ["minecraft:charcoal"] = 7}
 
 local hostURI = "storage"
 local portURI = ":1"
@@ -172,4 +173,17 @@ function T_SameURLComponents()
         _path = path2,
     })
     assert(not aURL:samePath(aDifferentURL), "base should not be the same")
+
+    -- same query
+    aURL = url.URLClass:new({
+        _query = query,
+    })
+    aSameURL = url.URLClass:new({
+        _query = query,
+    })
+    assert(aURL:sameQuery(aSameURL), "query should be the same")
+    aDifferentURL = url.URLClass:new({
+        _query = query2,
+    })
+    assert(not aURL:sameQuery(aDifferentURL), "query should not be the same")
 end

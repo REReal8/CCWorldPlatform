@@ -270,6 +270,10 @@ function URLClass:sameBase(url)
     return self:sameAuthority(url) and self:samePath(url)
 end
 
+function URLClass:sameQuery(url)
+    return self:getQueryURI() == url:getQueryURI()
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
