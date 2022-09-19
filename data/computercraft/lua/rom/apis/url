@@ -51,12 +51,6 @@ function URLClass:newFromURI(uri)
     return aNewURL
 end
 
-function URLClass:copy()
-    local uri = self:getURI()
-
-    return URLClass:newFromURI(uri)
-end
-
 function URLClass:getScheme()
     return "ccwprp" -- always the same
 end
@@ -252,6 +246,28 @@ function URLClass:setURI(fullURI)
 --        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL) -- should be empty!
 
     self:setQueryURI(queryURI)
+end
+
+function URLClass:copy()
+    local uri = self:getURI()
+
+    return URLClass:newFromURI(uri)
+end
+
+function URLClass:sameHost(url)
+    return self:getHostURI() == url:getHostURI()
+end
+
+function URLClass:sameAuthority(url)
+    return self:getAuthorityURI() == url:getAuthorityURI()
+end
+
+function URLClass:samePath(url)
+    return self:getPathURI() == url:getPathURI()
+end
+
+function URLClass:sameBase(url)
+    return self:sameAuthority(url) and self:samePath(url)
 end
 
 --    _                 _    __                  _   _

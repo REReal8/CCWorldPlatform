@@ -1,6 +1,9 @@
 local host = "storage"
+local host2 = "turtle"
 local port = 1
+local port2 = 5
 local path = {site = 3, inputChest = 7}
+local path2 = {site = 3, inputChest = 4}
 local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
 
 local hostURI = "storage"
@@ -105,4 +108,68 @@ function T_URLs()
     local newURI4=uriSetterURL:getSchemeURI()..hostURI..portURI..pathURI
     local fromURI_URL4 = url.URLClass:newFromURI(newURI4)
     corelog.WriteToLog(" fromURI_URL4:getURI() = "..fromURI_URL4:getURI())
+end
+
+function T_SameURLComponents()
+    corelog.WriteToLog("* URL same components tests")
+    -- same Host
+    local aURL = url.URLClass:new({
+        _host = host,
+    })
+    local aSameURL = url.URLClass:new({
+        _host = host,
+    })
+    assert(aURL:sameHost(aSameURL), "hosts should be the same")
+    local aDifferentURL = url.URLClass:new({
+        _host = host2,
+    })
+    assert(not aURL:sameHost(aDifferentURL), "hosts should not be the same")
+
+    -- same Authority
+    aURL = url.URLClass:new({
+        _host = host2,
+        _port = port,
+    })
+    aSameURL = url.URLClass:new({
+        _host = host2,
+        _port = port,
+    })
+    assert(aURL:sameAuthority(aSameURL), "authority should be the same")
+    aDifferentURL = url.URLClass:new({
+        _host = host2,
+        _port = port2,
+    })
+    assert(not aURL:sameAuthority(aDifferentURL), "authority should not be the same")
+
+    -- same path
+    aURL = url.URLClass:new({
+        _path = path,
+    })
+    aSameURL = url.URLClass:new({
+        _path = path,
+    })
+    assert(aURL:samePath(aSameURL), "path should be the same")
+    aDifferentURL = url.URLClass:new({
+        _path = path2,
+    })
+    assert(not aURL:samePath(aDifferentURL), "path should not be the same")
+
+    -- same base
+    aURL = url.URLClass:new({
+        _host = host2,
+        _port = port,
+        _path = path,
+    })
+    aSameURL = url.URLClass:new({
+        _host = host2,
+        _port = port,
+        _path = path,
+    })
+    assert(aURL:samePath(aSameURL), "base should be the same")
+    aDifferentURL = url.URLClass:new({
+        _host = host2,
+        _port = port,
+        _path = path2,
+    })
+    assert(not aURL:samePath(aDifferentURL), "base should not be the same")
 end
