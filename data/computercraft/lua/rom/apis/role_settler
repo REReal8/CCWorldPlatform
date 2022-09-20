@@ -237,7 +237,6 @@ function RemainingSettle_MetaData(settleData)
         itemsNeeded = {
             ["minecraft:crafting_table"] = 1,
             ["minecraft:birch_sapling"] = 1,
-            ["minecraft:birch_log"] = 2
         }
     }
 end
@@ -247,10 +246,6 @@ function RemainingSettle_Task(settleData)
     local startLocation = settleData.startLocation
     local factoryLocation = settleData.factoryLocation
     local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
-
-    -- craft torches
-    corelog.WriteToLog (">Making first torches")
-    LogToTorches(factoryLocation, craftingLocation, 4)
 
     -- expand forest to max size
     local treesNeeded = 6
