@@ -246,6 +246,8 @@ function RemainingSettle_Task(settleData)
     local startLocation = settleData.startLocation
     local factoryLocation = settleData.factoryLocation
     local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
+    local chestsNeeded = settleData.chestsNeeded
+    local torchesNeeded = settleData.torchesNeeded
 
     -- expand forest to max size
     local treesNeeded = 6
@@ -259,8 +261,8 @@ function RemainingSettle_Task(settleData)
     end
 
     -- gather enough resources to craft all remaining items (chests, torches, ...)
-    local chestsNeeded = 24
-    local torchesNeeded = 6
+--    local chestsNeeded = 24
+--    local torchesNeeded = 6
     local logsNeeded = chestsNeeded * 2 + math.ceil(torchesNeeded / 2)
     corelog.WriteToLog(">Gathering enough logs(=" .. logsNeeded .. ") for making " .. chestsNeeded .. " chests and " .. torchesNeeded .. " torches")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
@@ -269,15 +271,15 @@ function RemainingSettle_Task(settleData)
     end
 
     -- create chests
-    corelog.WriteToLog(">Creating chests and torches")
-    LogToChests(craftingLocation, chestsNeeded)
+--    corelog.WriteToLog(">Creating chests and torches")
+--    LogToChests(craftingLocation, chestsNeeded)
 
     -- create torches
-    LogToTorches(factoryLocation, craftingLocation, torchesNeeded)
+--    LogToTorches(factoryLocation, craftingLocation, torchesNeeded)
 
     -- redo first tree according to pattern
-    corelog.WriteToLog(">Finishing Forest")
-    BuildForestTreePattern( 0, 0, 0)
+--    corelog.WriteToLog(">Finishing Forest")
+--    BuildForestTreePattern( 0, 0, 0)
 
     -- end
     return {success = true}
