@@ -492,7 +492,7 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
     -- add assignment
-    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
+--    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
     coreassignment.AddAssignment(metaData, "role_alchemist.Craft_Task", craftData, callback, callbackData)
 
     -- end
@@ -570,7 +570,7 @@ function SmeltItem_ASrv(serviceData, callback, callbackData)
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
     -- add assignment
-    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
+--    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
     coreassignment.AddAssignment(metaData, "role_alchemist.Smelt_Task", smeltData, callback, callbackData)
 
     -- end
