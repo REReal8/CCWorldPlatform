@@ -95,7 +95,7 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Building blueprint at "..textutils.serialise(blueprintStartpoint))
+--    corelog.WriteToLog(">Building blueprint at "..textutils.serialise(blueprintStartpoint))
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
