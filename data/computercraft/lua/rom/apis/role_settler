@@ -11,10 +11,10 @@ local db = {
 --   | |
 --   |_|
 
-function PlantFirstSapling_MetaData(settleData)
+function PlantFirstSapling_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = false,
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition the settler starts without fuel
@@ -24,7 +24,7 @@ function PlantFirstSapling_MetaData(settleData)
     }
 end
 
-function PlantFirstSapling_Task(settleData)
+function PlantFirstSapling_Task(taskData)
      --[[
         This Task function does the first settling step: it plants the first sappling.
 
@@ -33,15 +33,15 @@ function PlantFirstSapling_Task(settleData)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:
-            settleData                  - (table) data about the task
+            taskData                    - (table) data about the task
                 startLocation           - (table) locaton where first steps are to be taken
     ]]
 
     -- check input
-    if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
+    if type(taskData) ~= "table" or type(taskData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: taskData not valid") return {success = false} end
 
     -- coordinaten stelsel goed zetten
-    local startLocation = settleData.startLocation
+    local startLocation = taskData.startLocation
     coremove.SetLocation(startLocation)
 
     -- plant the sappling
@@ -53,10 +53,10 @@ function PlantFirstSapling_Task(settleData)
     return {success = true}
 end
 
-function WaitFirstTree_MetaData(settleData)
+function WaitFirstTree_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition still no fuel
@@ -65,7 +65,7 @@ function WaitFirstTree_MetaData(settleData)
     }
 end
 
-function WaitFirstTree_Task(settleData)
+function WaitFirstTree_Task(taskData)
     --[[
         This Task function waits for the first tree to complete and chops one block in front.
 
@@ -74,7 +74,7 @@ function WaitFirstTree_Task(settleData)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:
-            settleData                  - (table) data about the task
+            taskData                    - (table) data about the task
                 startLocation           - (table) locaton where first steps are to be taken
     ]]
     -- equip pickage
@@ -90,10 +90,10 @@ function WaitFirstTree_Task(settleData)
     return {success = true}
 end
 
-function ChopFirstTree_MetaData(settleData)
+function ChopFirstTree_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0, --> per definition still no fuel (as the task fuels from first chopped log (already converted to planks))
@@ -103,7 +103,7 @@ function ChopFirstTree_MetaData(settleData)
     }
 end
 
-function ChopFirstTree_Task(settleData)
+function ChopFirstTree_Task(taskData)
     --[[
         This Task function chops (the remainder of) the first tree.
 
@@ -113,12 +113,12 @@ function ChopFirstTree_Task(settleData)
                 orderForFuel            - (table) items to order for refuel
 
         Parameters:
-            settleData                  - (table) data about the task
+            taskData                    - (table) data about the task
                 startLocation           - (table) locaton where first steps are to be taken
     ]]
     -- check input
-    if type(settleData) ~= "table" or type(settleData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: settleData not valid") return {success = false} end
-    local startLocation = settleData.startLocation
+    if type(taskData) ~= "table" or type(taskData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: taskData not valid") return {success = false} end
+    local startLocation = taskData.startLocation
     corelog.WriteToLog(">Chopping first tree")
 
     -- nu kunnen we bijtanken
@@ -137,10 +137,10 @@ function ChopFirstTree_Task(settleData)
     return {success = true, orderForFuel = orderForFuel}
 end
 
-function Refuel_MetaData(settleData)
+function Refuel_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = false,
         needTurtle = true,
         fuelNeeded = 0,
@@ -149,7 +149,7 @@ function Refuel_MetaData(settleData)
     }
 end
 
-function Refuel_Task(settleData)
+function Refuel_Task(taskData)
     --[[
         This Task function uses planks and sticks to fuel the turtle.
 
@@ -158,7 +158,7 @@ function Refuel_Task(settleData)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:
-            settleData                  - (table) data about the task
+            taskData                    - (table) data about the task
                 startLocation           - (table) locaton where first steps are to be taken
     ]]
 
@@ -179,10 +179,10 @@ function Refuel_Task(settleData)
     return {success = true}
 end
 
-function CollectCobbleStone_MetaData(settleData)
+function CollectCobbleStone_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
@@ -191,9 +191,9 @@ function CollectCobbleStone_MetaData(settleData)
     }
 end
 
-function CollectCobbleStone_Task(settleData)
+function CollectCobbleStone_Task(taskData)
     -- check input
-    local startLocation = settleData.startLocation
+    local startLocation = taskData.startLocation
 
     -- get into digging position
     corelog.WriteToLog (">Collecting cobblestone")
@@ -224,10 +224,10 @@ function CollectCobbleStone_Task(settleData)
     return {success = true}
 end
 
-function ExtendForest_MetaData(settleData)
+function ExtendForest_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
@@ -237,11 +237,11 @@ function ExtendForest_MetaData(settleData)
     }
 end
 
-function ExtendForest_Task(settleData)
+function ExtendForest_Task(taskData)
     -- check input
-    local startLocation = settleData.startLocation
-    local factoryLocation = settleData.factoryLocation
-    local treesNeeded = settleData.treesNeeded
+    local startLocation = taskData.startLocation
+    local factoryLocation = taskData.factoryLocation
+    local treesNeeded = taskData.treesNeeded
     local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
 
     -- expand forest to max size
@@ -249,7 +249,12 @@ function ExtendForest_Task(settleData)
     local nTrees = 1 -- note: already created in PlantFirstSapling_Task
     while nTrees < treesNeeded do
         -- Harvest Forest
-        HarvestForest(craftingLocation, startLocation, nTrees)
+        local harvestForestData = {
+            startLocation       = startLocation,
+            craftingLocation    = craftingLocation,
+            nTrees              = nTrees,
+        }
+        HarvestForest_Task(harvestForestData)
 
         -- craft torches
         LogToTorches(factoryLocation, craftingLocation, 4) -- ToDo: consider if we want to get all needed first, or get them tree by tree
@@ -276,10 +281,10 @@ function ExtendForest_Task(settleData)
     return {success = true}
 end
 
-function CollectLogs_MetaData(settleData)
+function CollectLogs_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(settleData.startLocation),
+        location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
@@ -289,12 +294,12 @@ function CollectLogs_MetaData(settleData)
     }
 end
 
-function CollectLogs_Task(settleData)
+function CollectLogs_Task(taskData)
     -- check input
-    local startLocation = settleData.startLocation
-    local factoryLocation = settleData.factoryLocation
-    local nTrees = settleData.nTrees
-    local logsNeeded = settleData.logsNeeded
+    local startLocation = taskData.startLocation
+    local factoryLocation = taskData.factoryLocation
+    local nTrees = taskData.nTrees
+    local logsNeeded = taskData.logsNeeded
 
     local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
 
@@ -302,21 +307,37 @@ function CollectLogs_Task(settleData)
     corelog.WriteToLog(">Collecting " .. logsNeeded .. " logs")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
-        HarvestForest(craftingLocation, startLocation, nTrees)
+        local harvestForestData = {
+            startLocation       = startLocation,
+            craftingLocation    = craftingLocation,
+            nTrees              = nTrees,
+        }
+        HarvestForest_Task(harvestForestData)
     end
 
     -- end
     return {success = true}
 end
 
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+function HarvestForest_MetaData(taskData)
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = coremove.CopyLocation(taskData.startLocation),
+        needTool = true,
+        needTurtle = true,
+        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        itemsNeeded = {
+            ["minecraft:crafting_table"] = 1,
+        }
+    }
+end
 
-function HarvestForest(craftingLocation, startLocation, nTrees)
+function HarvestForest_Task(taskData)
+    -- check input
+    local startLocation = taskData.startLocation
+    local craftingLocation = taskData.craftingLocation
+    local nTrees = taskData.nTrees
+
     corelog.WriteToLog(" Harvesting Forest")
 
     -- go to first tree position
@@ -335,6 +356,13 @@ function HarvestForest(craftingLocation, startLocation, nTrees)
     -- refuel
     Refuel(craftingLocation)
 end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function WaitForTree()
     local has_block, data = turtle.inspect()
