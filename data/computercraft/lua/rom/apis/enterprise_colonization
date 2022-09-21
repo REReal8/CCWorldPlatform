@@ -43,13 +43,19 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         startLocation               = coremove.CopyLocation(startLocation),
     }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
-    local chestsNeeded = 24
-    local torchesNeeded = 6
-    local remainingSettleTaskData = {
+    local treesNeeded = 6
+    local extendForestTaskData = {
         startLocation               = coremove.CopyLocation(startLocation),
         factoryLocation             = coremove.CopyLocation(factoryLocation),
-        chestsNeeded                = chestsNeeded,
-        torchesNeeded               = torchesNeeded,
+        treesNeeded                 = treesNeeded,
+    }
+    local chestsNeeded = 24
+    local torchesNeeded = 6
+    local logsNeeded                = chestsNeeded * 2 + math.ceil(torchesNeeded / 2)
+    local collectLogsTaskData = {
+        startLocation               = coremove.CopyLocation(startLocation),
+        factoryLocation             = coremove.CopyLocation(factoryLocation),
+        logsNeeded                  = logsNeeded,
     }
     local settleData = {
         materialsHostLocator        = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
@@ -86,9 +92,13 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
 
         orderTorches                = { ["minecraft:torch"] = 4 },
 
-        remainingSettleTaskData     = remainingSettleTaskData,
-        remainingSettleMetaData     = role_settler.RemainingSettle_MetaData(remainingSettleTaskData),
-        remainingSettle_Task        = "role_settler.RemainingSettle_Task",
+        extendForest_Task           = "role_settler.ExtendForest_Task",
+        extendForestTaskData        = extendForestTaskData,
+        extendForestMetaData        = role_settler.ExtendForest_MetaData(extendForestTaskData),
+
+        collectLogs_Task            = "role_settler.CollectLogs_Task",
+        collectLogsTaskData         = collectLogsTaskData,
+        collectLogsMetaData         = role_settler.CollectLogs_MetaData(collectLogsTaskData),
 
         orderChests                 = { ["minecraft:chest"] = chestsNeeded },
 
@@ -173,10 +183,16 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "orderTorches" },
                 { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
             }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = { -- ToDo: split up further
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "remainingSettle_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "remainingSettleMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "remainingSettleTaskData" },
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "extendForest_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "extendForestMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "extendForestTaskData" },
+            }},
+            -- Collect enough logs to craft all remaining items (chests, torches, ...)
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "collectLogs_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "collectLogsMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "collectLogsTaskData" },
             }},
             { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
                 { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "orderChests" },
@@ -229,10 +245,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success17"                  , valueSource = 17, keyDefSource = "success" },
                 { keyDef = "success18"                  , valueSource = 18, keyDefSource = "success" },
                 { keyDef = "success19"                  , valueSource = 19, keyDefSource = "success" },
+                { keyDef = "success20"                  , valueSource = 20, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 20, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 21, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
