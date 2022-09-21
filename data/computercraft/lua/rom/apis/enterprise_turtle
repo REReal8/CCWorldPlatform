@@ -177,7 +177,7 @@ function ItemsAvailableVia_SSrv(queryData)
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_turtle.ItemsAvailableVia_SSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return {success = false}
+--            corelog.WriteToLog("enterprise_turtle.ItemsAvailableVia_SSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return {success = false}
         end
     end
 
