@@ -198,7 +198,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Building pattern at "..textutils.serialise(startpoint))
+--    corelog.WriteToLog(">Building pattern at "..textutils.serialise(startpoint))
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
