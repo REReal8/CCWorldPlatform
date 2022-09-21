@@ -140,7 +140,7 @@ function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Building and starting factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
+--    corelog.WriteToLog(">Building and starting factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 

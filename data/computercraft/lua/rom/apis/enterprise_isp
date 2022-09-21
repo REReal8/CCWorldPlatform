@@ -164,7 +164,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Transferring items from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..".")
+--    corelog.WriteToLog(">Transferring items from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..".")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 
     -- end
