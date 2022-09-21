@@ -396,7 +396,7 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
     if type(taskData) ~= "table" then corelog.Error("enterprise_turtle.DoAssignment_ASrv: Invalid taskData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- add assignment
-    corelog.WriteToLog(">Doing Assignment "..taskFunctionName..".")
+--    corelog.WriteToLog(">Doing Assignment "..taskFunctionName..".")
     coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
 end
 
