@@ -1,6 +1,5 @@
 local db = {
     forestLocation      = {x= 0, y= 0, z= 1, dx=0, dy=1},
-    nTrees = 1,
 }
 
 --                _     _ _         __                  _   _
@@ -49,7 +48,6 @@ function PlantFirstSapling_Task(settleData)
     corelog.WriteToLog(">Planting first sapling")
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
-    db.nTrees = 1
 
     -- end
     return {success = true}
@@ -248,12 +246,33 @@ function ExtendForest_Task(settleData)
 
     -- expand forest to max size
     corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees")
-    while db.nTrees < treesNeeded do
+    local nTrees = 1 -- note: already created in PlantFirstSapling_Task
+    while nTrees < treesNeeded do
         -- Harvest Forest
-        HarvestForest(craftingLocation, startLocation)
+        HarvestForest(craftingLocation, startLocation, nTrees)
+
+        -- craft torches
+        LogToTorches(factoryLocation, craftingLocation, 4) -- ToDo: consider if we want to get all needed first, or get them tree by tree
 
         -- try extend forest
-        TryExtendForest(factoryLocation, craftingLocation, treesNeeded)
+        while nTrees < treesNeeded do
+            -- check input (sapling + 2x torch)
+            local birchSaplings  = coreinventory.CountItem("minecraft:birch_sapling")
+            local torches  = coreinventory.CountItem("minecraft:torch")
+
+            -- stop if we don't meet the needs
+            if birchSaplings < 1 or torches < 2 then
+                break
+            end
+
+            -- new tree
+            corelog.WriteToLog("  >Extending forest from " .. nTrees .. " to " .. treesNeeded .. " trees")
+            BuildForestTreePattern(0, 6 * nTrees, 0)
+            nTrees = nTrees + 1
+        end
+
+        -- try extend forest
+--        TryExtendForest(factoryLocation, craftingLocation, treesNeeded)
     end
 
     -- end
@@ -277,6 +296,7 @@ function CollectLogs_Task(settleData)
     -- check input
     local startLocation = settleData.startLocation
     local factoryLocation = settleData.factoryLocation
+    local nTrees = settleData.nTrees
     local logsNeeded = settleData.logsNeeded
 
     local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
@@ -285,7 +305,7 @@ function CollectLogs_Task(settleData)
     corelog.WriteToLog(">Collecting " .. logsNeeded .. " logs")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
-        HarvestForest(craftingLocation, startLocation)
+        HarvestForest(craftingLocation, startLocation, nTrees)
     end
 
     -- end
@@ -299,7 +319,7 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function HarvestForest(craftingLocation, startLocation)
+function HarvestForest(craftingLocation, startLocation, nTrees)
     corelog.WriteToLog(" Harvesting Forest")
 
     -- go to first tree position
@@ -310,7 +330,7 @@ function HarvestForest(craftingLocation, startLocation)
 
     -- harvest forest
     role_forester.Rondje({
-        depth = db.nTrees,
+        depth = nTrees,
         width = 2,
         dontCleanup = true,
     })
@@ -489,6 +509,7 @@ end
 --
 --
 
+--[[
 function TryExtendForest(factoryLocation, craftingLocation, nTrees)
     corelog.WriteToLog(" Try extending forest from " .. db.nTrees .. " to " .. nTrees .. " trees")
 
@@ -512,6 +533,7 @@ function TryExtendForest(factoryLocation, craftingLocation, nTrees)
 
     return true
 end
+]]
 
 function BuildForestTreePattern(x, y, z)
     local point = coremove.GetRelativeLocation(db.forestLocation, x, y, z)

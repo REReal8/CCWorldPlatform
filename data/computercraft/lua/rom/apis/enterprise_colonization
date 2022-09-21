@@ -55,6 +55,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     local collectLogsTaskData = {
         startLocation               = coremove.CopyLocation(startLocation),
         factoryLocation             = coremove.CopyLocation(factoryLocation),
+        nTrees                      = treesNeeded, -- note: it is assumed the needed trees are already there
         logsNeeded                  = logsNeeded,
     }
     local settleData = {
