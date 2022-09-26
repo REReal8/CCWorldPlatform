@@ -181,11 +181,11 @@ function BuildNewSite_ASrv(serviceData, callback, callbackData)
     -- get site build data
     local siteBuildData = nil
     if siteVersion == "v0" then
-        siteBuildData = GetV0SiteBuildData(serviceData)
+        siteBuildData = enterprise_factory_site.GetV0SiteBuildData(serviceData)
     elseif siteVersion == "v1" then
-        siteBuildData = GetV1SiteBuildData(serviceData)
+        siteBuildData = enterprise_factory_site.GetV1SiteBuildData(serviceData)
     elseif siteVersion == "v2" then
-        siteBuildData = GetV2SiteBuildData(serviceData)
+        siteBuildData = enterprise_factory_site.GetV2SiteBuildData(serviceData)
     else
         corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
@@ -235,11 +235,11 @@ function StartNewSite_SSrv(serviceData)
     -- get site start data
     local siteStartData = nil
     if siteVersion == "v0" then
-        siteStartData = GetV0SiteStartData(serviceData)
+        siteStartData = enterprise_factory_site.GetV0SiteStartData(serviceData)
     elseif siteVersion == "v1" then
-        siteStartData = GetV1SiteStartData(serviceData)
+        siteStartData = enterprise_factory_site.GetV1SiteStartData(serviceData)
     elseif siteVersion == "v2" then
-        siteStartData = GetV2SiteStartData(serviceData)
+        siteStartData = enterprise_factory_site.GetV2SiteStartData(serviceData)
     else
         corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
         return {success = false}
@@ -348,12 +348,12 @@ function DismantleSite_ASrv(serviceData, callback, callbackData)
     -- get site dismantal data
     local siteDismantleBuildData = nil
     if siteVersion == "v0" then
-        siteDismantleBuildData = GetV0SiteDismantleBuildData(serviceData)
+        siteDismantleBuildData = enterprise_factory_site.GetV0SiteDismantleBuildData(serviceData)
 -- ToDo implement for v1 and v2
 --    elseif siteVersion == "v1" then
---        siteDismantleBuildData = GetV1SiteDismantleBuildData(serviceData)
+--        siteDismantleBuildData = enterprise_factory_site.GetV1SiteDismantleBuildData(serviceData)
 --    elseif siteVersion == "v2" then
---        siteDismantleBuildData = GetV2SiteDismantleBuildData(serviceData)
+--        siteDismantleBuildData = enterprise_factory_site.GetV2SiteDismantleBuildData(serviceData)
     else
         corelog.Error("enterprise_factory.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteVersion)
         return coreutils.DoCallback(callback, callbackData, {success = false})
@@ -591,275 +591,6 @@ function DeleteSite(siteId)
 
     -- end
     return {success = true}
-end
-
---[[
-    A v0 site is comprised of 
-    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary storage for items not needed
-    - no smelting spot 
---]]
-
-local shaftLayer_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-    },
-    clearRemainingSpace = true,
-}
-
-local shaftLayerRestore_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:dirt"},
-    },
-    clearRemainingSpace = false,
-}
-
-function GetV0SiteBuildData(serviceData)
-    -- construct layer list
-    local layerList = {
-        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
-    }
-
-    -- construct blueprint
-    local blueprint = {
-        layerList = layerList,
-        escapeSequence = {
-        }
-    }
-
-    -- construct build data
-    local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
-        blueprint = blueprint
-    }
-
-    return siteBuildData
-end
-
-function GetV0SiteDismantleBuildData(serviceData)
-    -- construct layer list
-    local layerList = {
-        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayerRestore_pattern)},
-    }
-
-    -- construct blueprint
-    local blueprint = {
-        layerList = layerList,
-        escapeSequence = {
-        }
-    }
-
-    -- construct build data
-    local siteDismantleBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
-        blueprint = blueprint
-    }
-
-    return siteDismantleBuildData
-end
-
-function GetV0SiteStartData(serviceData)
-    -- 
-    local baseLocation = serviceData.baseLocation
-
-    -- construct start data
-    local startData = {
-        version = serviceData.siteVersion,
-
-        baseLocation = coremove.CopyLocation(baseLocation),
-
-        inputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        },
-        outputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        },
-
-        craftingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 0, 0, 0) },
-        },
-        smeltingSpots = {},
-    }
-
-    return startData
-end
-
---[[
-    A v1 site is comprised of 
-    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary storage for items not needed.
-    - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below. 
---]]
-
-local aboveOrBelowFurnanceLayerL1_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {},
-    clearRemainingSpace = true
-}
-
-local furnanceLayerL1_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {
-        { x = 0, y = 1, block = "minecraft:furnace"},
-    },
-    clearRemainingSpace = true
-}
-
-function GetV1SiteBuildData(serviceData)
-    -- construct layer list
-    local layerList = {
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
-        { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = role_builder.CopyPattern(aboveOrBelowFurnanceLayerL1_pattern)},
-        { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = role_builder.CopyPattern(furnanceLayerL1_pattern)},
-        { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
-    }
-
-    -- construct blueprint
-    local blueprint = {
-        layerList = layerList,
-        escapeSequence = {
-            { x= 3, y= 3, z=  1},
-        }
-    }
-
-    -- construct build data
-    local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
-        blueprint = blueprint
-    }
-
-    return siteBuildData
-end
-
-function GetV1SiteStartData(serviceData)
-    -- 
-    local baseLocation = serviceData.baseLocation
-
-    -- construct start data
-    local startData = {
-        version = serviceData.siteVersion,
-
-        baseLocation = coremove.CopyLocation(baseLocation),
-
-        inputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        },
-        outputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        },
-
-        craftingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -4) },
-        },
-        smeltingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -3) },
-        },
-    }
-
-    return startData
-end
-
---[[
-    A v2 site is comprised of 
-    - one crafting spot. Below the crafting spot should is a chest as a temporary storage for items not needed.
-    - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
-
-    - ToDo and some additional chests of which we need to define what their exact purpose is.
---]]
-
-local storageChestL2_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = false
-}
-
-local topLayerL2_pattern = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3, block = "minecraft:torch"},
-        { x = 2, y = 5, block = "minecraft:chest"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 4, y = 5, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true
-}
-
-function GetV2SiteBuildData(serviceData)
-    local onlyUpgrade = serviceData.upgrade
-
-    -- construct layer list
-    local layerList = {
-        { startpoint = { x= 0, y= 0, z= 0}, buildFromAbove = true, pattern = role_builder.CopyPattern(topLayerL2_pattern)},
-    }
-    if not onlyUpgrade then
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = role_builder.CopyPattern(aboveOrBelowFurnanceLayerL1_pattern)})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = role_builder.CopyPattern(furnanceLayerL1_pattern)})
-    end
-    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(storageChestL2_pattern)})
-
-    -- construct blueprint
-    local blueprint = {
-        layerList = layerList,
-        escapeSequence = {
-            { x= 3, y= 3, z= 1},
-        }
-    }
-
-    -- construct build data
-    local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
-        blueprint = blueprint
-    }
-
-    return siteBuildData
-end
-
-function GetV2SiteStartData(serviceData)
-    -- 
-    local baseLocation = serviceData.baseLocation
-
-    -- register input chest
-    local inputChestLocator = enterprise_chests.RegisterChest_SSrv({
-        location        = coremove.GetRelativeLocation(baseLocation, 2, 5, 0),
-        accessDirection = "top",
-    }).chestLocator
-
-    -- register output chest
-    local outputChestLocator = enterprise_chests.RegisterChest_SSrv({
-        location        = coremove.GetRelativeLocation(baseLocation, 4, 5, 0),
-        accessDirection = "top",
-    }).chestLocator
-
-    -- construct start data
-    local startData = {
-        version = serviceData.siteVersion,
-
-        baseLocation = baseLocation,
-
-        inputLocators = {
-            inputChestLocator,
-        },
-        outputLocators = {
-            outputChestLocator,
-        },
-
-        craftingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -4) },
-        },
-        smeltingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -3) },
-        },
-    }
-
-    return startData
 end
 
 --          _     _                                              _                        _                 _      
