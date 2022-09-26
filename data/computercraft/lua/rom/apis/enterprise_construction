@@ -56,18 +56,16 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     local taskFunctionName = "role_builder.BuildBlueprint_Task"
     if next(materialsNeeded) == nil then
         -- directly add assignment
-        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
+--        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
         return coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
     end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
     local materialsItemsLocator = materialsHostLocator
     materialsItemsLocator:setQuery(materialsNeeded)
---    corelog.WriteToLog("   materialsItemsLocator="..materialsItemsLocator:getURI())
 
     -- set local output location
     local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
---    corelog.WriteToLog("   materialsLocalHostLocator="..materialsLocalHostLocator:getURI())
 
     -- create project service data
     local buildBlueprintProjectDef = {
@@ -165,14 +163,13 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     local taskFunctionName = "role_builder.BuildRectangularPattern_Task"
     if next(materialsNeeded) == nil then
         -- directly add assignment
-        corelog.WriteToLog(">Building (zero materials) pattern at "..textutils.serialise(startpoint))
+--        corelog.WriteToLog(">Building (zero materials) pattern at "..textutils.serialise(startpoint))
         return coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
     end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
     local materialsItemsLocator = materialsHostLocator
     materialsItemsLocator:setQuery(materialsNeeded)
---    corelog.WriteToLog("   materialsItemsLocator="..materialsItemsLocator:getURI())
 
     -- set local output location
     -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle 
@@ -180,7 +177,6 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value 
     --          of that service should specify which turtle has the items in it's inventory.
     local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
---    corelog.WriteToLog("   materialsLocalHostLocator="..materialsLocalHostLocator:getURI())
 
     -- create project service data
     local buildRectangularPatternProjectDef = {
