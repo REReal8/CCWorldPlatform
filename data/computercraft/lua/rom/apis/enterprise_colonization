@@ -166,11 +166,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_colonization.ExtendForest_ASrv", async = true, stepDataDef = {
-                { keyDef = "startLocation"          , valueSource = 0, keyDefSource = "startLocation" },
-                { keyDef = "factoryLocation"        , valueSource = 0, keyDefSource = "factoryLocation" },
-                { keyDef = "forestLocation"         , valueSource = 0, keyDefSource = "forestLocation" },
-                { keyDef = "treesNeeded"            , valueSource = 0, keyDefSource = "treesNeeded" },
-                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                { keyDef = "startLocation"              , valueSource = 0, keyDefSource = "startLocation" },
+                { keyDef = "factoryLocation"            , valueSource = 0, keyDefSource = "factoryLocation" },
+                { keyDef = "forestLocation"             , valueSource = 0, keyDefSource = "forestLocation" },
+                { keyDef = "treesNeeded"                , valueSource = 0, keyDefSource = "treesNeeded" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             -- Collect enough logs to craft all remaining items (chests, torches, ...)
             -- ToDo: consider changing this to get it from forest service ProduceItem_ASrv
