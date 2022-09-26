@@ -58,7 +58,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         logsNeeded                  = logsNeeded,
     }
     local settleData = {
-        materialsHostLocator        = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        materialsHostLocator        = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator,
 
         primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
@@ -83,8 +83,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
 
-        orderFurnace                = { ["minecraft:furnace"] = 1 },
-
         cleanupTask                 = "Cleanup",
 
         factoryLocation             = coremove.CopyLocation(factoryLocation),
@@ -95,10 +93,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         collectLogs_Task            = "role_settler.CollectLogs_Task",
         collectLogsTaskData         = collectLogsTaskData,
         collectLogsMetaData         = role_settler.CollectLogs_MetaData(collectLogsTaskData),
-
-        orderChests                 = { ["minecraft:chest"] = chestsNeeded },
-
-        orderRemainingTorches       = { ["minecraft:torch"] = torchesNeeded },
 
         forestLocation              = coremove.CopyLocation(forestLocation),
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_forest.tree_pattern), -- ToDo: use a new pattern including chests
@@ -160,19 +154,15 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "collectCobbleStoneMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "orderFurnace" },
-                { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
-            }},
-            { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
-                { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
-                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
-            }},
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion1" },
                 { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            }},
+            { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
+                { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_colonization.ExtendForest_ASrv", async = true, stepDataDef = {
@@ -183,18 +173,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             -- Collect enough logs to craft all remaining items (chests, torches, ...)
+            -- ToDo: consider changing this to get it from forest service ProduceItem_ASrv
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "collectLogs_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "collectLogsMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "collectLogsTaskData" },
-            }},
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "orderChests" },
-                { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
-            }},
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "orderRemainingTorches" },
-                { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
             }},
             -- Finish Forest ("redo base/ first tree according to pattern")
             -- ToDo: consider changing this to a forest service that upgrades the forest to next level (v1 or v2 (incl chests))
@@ -236,13 +219,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
                 { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
                 { keyDef = "success16"                  , valueSource = 16, keyDefSource = "success" },
-                { keyDef = "success17"                  , valueSource = 17, keyDefSource = "success" },
-                { keyDef = "success18"                  , valueSource = 18, keyDefSource = "success" },
-                { keyDef = "success19"                  , valueSource = 19, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 20, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 17, keyDefSource = "success" },
         }
     }
     local projectServiceData = {

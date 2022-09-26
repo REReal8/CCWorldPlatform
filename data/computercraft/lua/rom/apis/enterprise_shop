@@ -241,6 +241,25 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     corelog.Error("enterprise_shop.PutItemsFromTurtle_ASrv: Not (yet) implemented!") return coreutils.DoCallback(callback, callbackData, {success = false})
 end
 
+function GetHostLocator_SSrv(serviceData)
+    --[[
+        This sync public service provides the (base) URL of this ISH.
+
+        Return value:
+            hostLocator             - (URL) locating this ISH
+
+        Parameters:
+            serviceData             - (table) empty
+    --]]
+
+    -- end
+    local result = {
+        success = true,
+        hostLocator = GetISHURL(),
+    }
+    return result
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
