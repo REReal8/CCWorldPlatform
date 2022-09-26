@@ -80,8 +80,7 @@ end
 
 function T_StopV0Site()
     enterprise_factory.StopSite_ASrv({
-        baseLocation    = baseLocationV0,
-        siteVersion     = "v0"
+        baseLocation    = baseLocationV0
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 

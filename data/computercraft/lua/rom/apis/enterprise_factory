@@ -111,27 +111,45 @@ function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
     local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local siteVersion = serviceData.siteVersion
+    local upgrade = serviceData.upgrade or false
     if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- determine projectSteps
+    local projectSteps = { }
+    local iStep = 0
+    table.insert(projectSteps,
+        { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = {
+            { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+            { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
+            { keyDef = "upgrade"                , valueSource = 0, keyDefSource = "upgrade" },
+            { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+        }}
+    )
+    iStep = iStep + 1
+    if upgrade then
+        table.insert(projectSteps,
+            { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
+            }}
+        )
+        iStep = iStep + 1
+    end
+    table.insert(projectSteps,
+        { stepName = "enterprise_factory.StartNewSite_SSrv", async = false, stepDataDef = {
+            { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+            { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
+            { keyDef = "siteAlreadyBuild"       , valueSource = iStep, keyDefSource = "success" }
+        }}
+    )
+    iStep = iStep + 1
+
     -- create project definition
     local buildAndStartNewSiteProjectDef = {
-        steps = {
-            { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
-                { keyDef = "upgrade"                , valueSource = 0, keyDefSource = "upgrade" },
-                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
-            }},
-            { stepName = "enterprise_factory.StartNewSite_SSrv", async = false, stepDataDef = {
-                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
-                { keyDef = "siteAlreadyBuild"       , valueSource = 1, keyDefSource = "success" }
-            }},
-        },
+        steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                    , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success"                , valueSource = iStep, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -287,7 +305,6 @@ function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
         steps = {
             { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
             }},
             { stepName = "enterprise_factory.DismantleSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
@@ -381,7 +398,6 @@ function StopSite_ASrv(serviceData, callback, callbackData)
         Parameters:
             serviceData         - (table) data about this service
                 baseLocation    - (table) world location of the base (lower left corner) of the site
-                siteVersion     - (string) version string of the site
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     ]]
@@ -390,9 +406,7 @@ function StopSite_ASrv(serviceData, callback, callbackData)
     if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local baseLocation = serviceData.baseLocation
     if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = serviceData.siteVersion
-    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.StopSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- pass on the request to site file

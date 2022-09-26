@@ -188,7 +188,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "pattern"                    , valueSource = 0, keyDefSource = "forestV2BasePattern" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = { -- ToDo handle stopping & restarting in case of upgrade
+            { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion2" },
                 { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeToV2" },
