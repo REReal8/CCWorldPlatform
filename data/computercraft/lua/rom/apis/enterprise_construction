@@ -45,11 +45,24 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- construct assignment metadata
-    local metaData = role_builder.BuildBlueprint_MetaData(buildData)
+    local taskData = {
+        blueprintStartpoint     = blueprintStartpoint,
+        blueprint               = blueprint,
+    }
+    local metaData = role_builder.BuildBlueprint_MetaData(taskData)
+
+    -- check if materials needed
+    local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
+    local taskFunctionName = "role_builder.BuildBlueprint_Task"
+    if next(materialsNeeded) == nil then
+        -- directly add assignment
+        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
+        return coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
+    end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
     local materialsItemsLocator = materialsHostLocator
-    materialsItemsLocator:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
+    materialsItemsLocator:setQuery(materialsNeeded)
 --    corelog.WriteToLog("   materialsItemsLocator="..materialsItemsLocator:getURI())
 
     -- set local output location
@@ -82,12 +95,9 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
         materialsItemsLocator       = materialsItemsLocator,
         materialsLocalHostLocator   = materialsLocalHostLocator,
 
-        taskFunctionName            = "role_builder.BuildBlueprint_Task",
+        taskFunctionName            = taskFunctionName,
         metaData                    = metaData,
-        taskData = {
-            blueprintStartpoint     = blueprintStartpoint,
-            blueprint               = blueprint,
-        }
+        taskData                    = taskData,
     }
     local projectServiceData = {
         projectDef  = buildBlueprintProjectDef,
@@ -142,11 +152,26 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- get assignment metadata
-    local metaData = role_builder.BuildRectangularPattern_MetaData(buildData)
+    local taskData = {
+        startpoint              = startpoint,
+        buildFromAbove          = buildFromAbove,
+        replacePresentObjects   = replacePresentObjects,
+        pattern                 = pattern,
+    }
+    local metaData = role_builder.BuildRectangularPattern_MetaData(taskData)
+
+    -- check if materials needed
+    local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
+    local taskFunctionName = "role_builder.BuildRectangularPattern_Task"
+    if next(materialsNeeded) == nil then
+        -- directly add assignment
+        corelog.WriteToLog(">Building (zero materials) pattern at "..textutils.serialise(startpoint))
+        return coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
+    end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
     local materialsItemsLocator = materialsHostLocator
-    materialsItemsLocator:setQuery(coreutils.DeepCopy(metaData.itemsNeeded))
+    materialsItemsLocator:setQuery(materialsNeeded)
 --    corelog.WriteToLog("   materialsItemsLocator="..materialsItemsLocator:getURI())
 
     -- set local output location
@@ -183,14 +208,9 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
         materialsItemsLocator       = materialsItemsLocator,
         materialsLocalHostLocator   = materialsLocalHostLocator,
 
-        taskFunctionName            = "role_builder.BuildRectangularPattern_Task",
+        taskFunctionName            = taskFunctionName,
         metaData                    = metaData,
-        taskData = {
-            startpoint              = startpoint,
-            buildFromAbove          = buildFromAbove,
-            replacePresentObjects   = replacePresentObjects,
-            pattern                 = pattern,
-        }
+        taskData                    = taskData,
     }
     local projectServiceData = {
         projectDef  = buildRectangularPatternProjectDef,

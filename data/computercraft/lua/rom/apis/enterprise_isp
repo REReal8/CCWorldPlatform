@@ -134,6 +134,16 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
+    -- check there are actual items to transfer
+    local transferItems = sourceItemsLocator:getQuery()
+    if next(transferItems) == nil then
+        corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..").")
+        return coreutils.DoCallback(callback, callbackData, {
+            success                 = true,
+            destinationItemsLocator = destinationHostLocator:copy()
+        })
+    end
+
     -- create project definition
     local transferItemsProjectDef = {
         steps   = {
