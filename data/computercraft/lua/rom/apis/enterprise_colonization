@@ -47,8 +47,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         startLocation               = coremove.CopyLocation(startLocation),
     }
     local initialRefuelItems        = { ["minecraft:birch_planks"] = 4 }
-    local initialRefuelTaskData = {
-        fuelItems                   = coreutils.DeepCopy(initialRefuelItems),
+    local dummyTaskData =  {
     }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
@@ -78,15 +77,12 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
 
         initialRefuelItems          = coreutils.DeepCopy(initialRefuelItems),
 
-        refuel_Task                 = "role_settler.Refuel_Task",
-        initialRefuelTaskData       = initialRefuelTaskData,
-        initialRefuelMetaData       = role_settler.Refuel_MetaData(initialRefuelTaskData),
-
         chopFirstTreeMetaData       = role_settler.ChopFirstTree_MetaData(primaryTaskData),
         chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
 
-        oldRefuelMetaData           = role_settler.OldRefuel_MetaData(primaryTaskData),
-        oldRefuel_Task              = "role_settler.OldRefuel_Task",
+        dummyTaskData               = dummyTaskData,
+        reportStatusMetaData        = role_settler.ReportStatus_MetaData(dummyTaskData),
+        reportStatus_Task           = "role_settler.ReportStatus_Task",
 
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
@@ -137,30 +133,21 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_turtle.GetHostLocator_SSrv", async = false, stepDataDef = {
-            }},
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "initialRefuelItems" },
-                { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
-            }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "initialRefuelMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "initialRefuelTaskData" },
+            { stepName = "enterprise_colonization.Refuel_ASrv", async = true, stepDataDef = {
+                { keyDef = "fuelItems"                  , valueSource = 0, keyDefSource = "initialRefuelItems" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "chopFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 7, keyDefSource = "orderForFuel" },
-                { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
+            { stepName = "enterprise_colonization.Refuel_ASrv", async = true, stepDataDef = {
+                { keyDef = "fuelItems"                  , valueSource = 5, keyDefSource = "orderForFuel" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "oldRefuel_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "oldRefuelMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "reportStatus_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "reportStatusMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "dummyTaskData" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
@@ -231,12 +218,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
                 { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
                 { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
-                { keyDef = "success16"                  , valueSource = 16, keyDefSource = "success" },
-                { keyDef = "success17"                  , valueSource = 17, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 18, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 16, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -497,4 +482,72 @@ function BuildForestTree_ASrv(serviceData, callback, callbackData)
     }
     corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint))
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
+end
+
+function Refuel_ASrv(serviceData, callback, callbackData) -- ToDo: consider moving this service to a different enterprise
+    --[[
+        This private async service refuels the current turtle.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+
+        Parameters:
+            serviceData                 - (table) data about this service
+                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local fuelItems = serviceData.fuelItems
+    if type(fuelItems) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid fuelItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- create project service data
+    local currentTurtleId = os.getComputerID()
+    local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = currentTurtleId}).turtleLocator
+    local refuelTaskData = {
+        fuelItems   = coreutils.DeepCopy(fuelItems),
+    }
+    local buildBlueprintProjectDef = {
+        steps   = {
+            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
+                { keyDef = "orderItems"             , valueSource = 0, keyDefSource = "fuelItems" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
+            }},
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "refuel_Task" },
+                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "refuelMetaData" },
+                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "refuelTaskData" },
+            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+        }
+    }
+    local projectData = {
+        fuelItems                   = coreutils.DeepCopy(fuelItems),
+        turtleToRefuelLocator       = turtleToRefuelLocator,
+
+        refuel_Task                 = "role_settler.Refuel_Task",
+        refuelMetaData              = role_settler.Refuel_MetaData(refuelTaskData),
+        refuelTaskData              = refuelTaskData,
+    }
+    local projectServiceData = {
+        projectDef  = buildBlueprintProjectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end

@@ -172,10 +172,10 @@ function Refuel_Task(taskData)
     return {success = true}
 end
 
-function OldRefuel_MetaData(taskData)
+function ReportStatus_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.startLocation),
+        location = nil,
         needTool = false,
         needTurtle = true,
         fuelNeeded = 0,
@@ -184,9 +184,9 @@ function OldRefuel_MetaData(taskData)
     }
 end
 
-function OldRefuel_Task(taskData)
+function ReportStatus_Task(taskData)
     --[[
-        This Task function uses planks and sticks to fuel the turtle.
+        This Task function reports the status of the turtle settling.
 
         Return value:
             task result                 - (table)      
@@ -194,18 +194,7 @@ function OldRefuel_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
-                startLocation           - (table) locaton where first steps are to be taken
     ]]
-
-    --
-    corelog.WriteToLog(">Refueling (2)")
-    local planks    = coreinventory.CountItem("minecraft:birch_planks")
-    local sticks    = coreinventory.CountItem("minecraft:stick")
-
-    -- burn the planks and the sticks
-    coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planks}) -- last plank might be used als furnace fuel
-    coreinventory.Refuel({itemName = "minecraft:stick",         itemCount = sticks - 2}) -- crafting torch and furnace fuel
-    -- ToDo: consider removing refuel with sticks
 
     -- we are ready to do more stuff!
     corelog.WriteToLog("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
