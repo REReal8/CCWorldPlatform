@@ -64,7 +64,8 @@ function StartProject_ASrv(serviceData, callback, callbackData)
     }
 
     -- save
-    corelog.WriteToProjectsLog("Add new: "..textutils.serialize(project), project.projectId)
+--    corelog.WriteToProjectsLog("Add new: "..textutils.serialize(project), project.projectId)
+    corelog.WriteToProjectsLog("Add new", project.projectId)
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 
     -- let's start
@@ -133,7 +134,8 @@ function NextProjectStep(internalProjectData, stepResults)
 
     -- save the results for the previous step
     if type(stepResults) ~= "table" then stepResults = {} end -- ToDo: consider checking (or even enforcing?) {success = true}
-    corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
+--    corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
+    corelog.WriteToProjectsLog("Save results step "..project.currentStep, project.projectId)
     project.outputs[ project.currentStep ] = stepResults
 
     -- was this the last step?
