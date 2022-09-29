@@ -77,8 +77,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         chopFirstTreeMetaData       = role_settler.ChopFirstTree_MetaData(primaryTaskData),
         chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
 
-        refuelMetaData              = role_settler.Refuel_MetaData(primaryTaskData),
-        refuel_Task                 = "role_settler.Refuel_Task",
+        oldRefuelMetaData           = role_settler.OldRefuel_MetaData(primaryTaskData),
+        oldRefuel_Task              = "role_settler.OldRefuel_Task",
 
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
@@ -145,8 +145,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "refuelMetaData" },
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "oldRefuel_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "oldRefuelMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {

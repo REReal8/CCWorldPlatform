@@ -133,7 +133,7 @@ function ChopFirstTree_Task(taskData)
     return {success = true, orderForFuel = orderForFuel}
 end
 
-function Refuel_MetaData(taskData)
+function OldRefuel_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(taskData.startLocation),
@@ -145,7 +145,7 @@ function Refuel_MetaData(taskData)
     }
 end
 
-function Refuel_Task(taskData)
+function OldRefuel_Task(taskData)
     --[[
         This Task function uses planks and sticks to fuel the turtle.
 
@@ -164,8 +164,9 @@ function Refuel_Task(taskData)
     local sticks    = coreinventory.CountItem("minecraft:stick")
 
     -- burn the planks and the sticks
-    coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planks}) -- last plank might be used als funace fuel
+    coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planks}) -- last plank might be used als furnace fuel
     coreinventory.Refuel({itemName = "minecraft:stick",         itemCount = sticks - 2}) -- crafting torch and furnace fuel
+    -- ToDo: consider removing refuel with sticks
 
     -- we are ready to do more stuff!
     corelog.WriteToLog("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
