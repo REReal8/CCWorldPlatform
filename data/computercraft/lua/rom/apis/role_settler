@@ -81,6 +81,7 @@ function WaitFirstTree_Task(taskData)
     WaitForTree()
 
     -- blok voor ons omhakken
+    corelog.WriteToLog(">Chopping one block of first tree")
     turtle.dig()
 
     return {success = true}
@@ -93,9 +94,7 @@ function ChopFirstTree_MetaData(taskData)
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0, --> per definition still no fuel (as the task fuels from first chopped log (already converted to planks))
-        itemsNeeded = {
-            ["minecraft:birch_planks"] = 4,
-        }
+        itemsNeeded = {},
     }
 end
 
@@ -110,27 +109,67 @@ function ChopFirstTree_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
-                startLocation           - (table) locaton where first steps are to be taken
     ]]
     -- check input
-    if type(taskData) ~= "table" or type(taskData.startLocation) ~= "table" then corelog.Error("role_settler.PrimarySettle_Task: taskData not valid") return {success = false} end
-    local startLocation = taskData.startLocation
-    corelog.WriteToLog(">Chopping first tree")
-
-    -- nu kunnen we bijtanken
-    coreinventory.Refuel({itemName="minecraft:birch_planks", itemCount=4}) -- ToDo: consider splitting off/ making/ using some general fueling mechanism
+    if type(taskData) ~= "table" then corelog.Error("role_settler.ChopFirstTree_Task: Invalid taskData") return {success = false} end
 
     -- rest van de boom omhakken
+    corelog.WriteToLog(">Chopping rest of first tree")
     coreinventory.Equip("minecraft:diamond_pickaxe")
     coremove.Up(1)
     role_forester.KapBoom()
 
     -- rest van de planken als brandstof gebruiken, kisten maken we laten (waarschijnlijk beter om eerst fakkeltje te maken trouwens, wellicht later)
-    local logs      = coreinventory.CountItem("minecraft:birch_log")
+    local logs = coreinventory.CountItem("minecraft:birch_log")
     local orderForFuel = { ["minecraft:birch_planks"] = (logs - 2)*4 }
 
     -- end
     return {success = true, orderForFuel = orderForFuel}
+end
+
+function Refuel_MetaData(taskData)
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.Refuel_MetaData: Invalid taskData") return {success = false} end
+    local fuelItems = taskData.fuelItems
+    if type(fuelItems) ~= "table" then corelog.Error("role_settler.Refuel_MetaData: Invalid fuelItems") return {success = false} end
+
+    return {
+        startTime = coreutils.UniversalTime(),
+        location = nil,
+        needTool = false,
+        needTurtle = true,
+        fuelNeeded = 0,
+        itemsNeeded = coreutils.DeepCopy(fuelItems),
+    }
+end
+
+function Refuel_Task(taskData)
+    --[[
+        This Task function refuel the (current) turtle.
+
+        Return value:
+            task result                 - (table)      
+                success                 - (boolean) whether the task was succesfull
+
+        Parameters:
+            taskData                    - (table) data about the task
+                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
+    ]]
+
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.Refuel_Task: Invalid taskData") return {success = false} end
+    local fuelItems = taskData.fuelItems
+    if type(fuelItems) ~= "table" then corelog.Error("role_settler.Refuel_Task: Invalid taskData") return {success = false} end
+
+    -- fuel from all fuelItems
+    for itemName, itemCount in pairs(fuelItems) do
+        corelog.WriteToLog(">Refueling from "..itemCount.." "..itemName.."'s")
+        local refuelResult = coreinventory.Refuel({itemName = itemName,  itemCount = itemCount})
+        if refuelResult == false then corelog.Warning("role_settler.Refuel_Task: Failed refueling from "..itemCount.." "..itemName.."'s") return {success = false} end
+    end
+
+    -- end
+    return {success = true}
 end
 
 function OldRefuel_MetaData(taskData)

@@ -46,6 +46,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     local primaryTaskData =  {
         startLocation               = coremove.CopyLocation(startLocation),
     }
+    local initialRefuelItems        = { ["minecraft:birch_planks"] = 4 }
+    local initialRefuelTaskData = {
+        fuelItems                   = coreutils.DeepCopy(initialRefuelItems),
+    }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
     local chestsNeeded = 24
@@ -72,7 +76,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         waitFirstTreeMetaData       = role_settler.WaitFirstTree_MetaData(primaryTaskData),
         waitFirstTree_Task          = "role_settler.WaitFirstTree_Task",
 
-        orderPlanks                 = { ["minecraft:birch_planks"] = 4 },
+        initialRefuelItems          = coreutils.DeepCopy(initialRefuelItems),
+
+        refuel_Task                 = "role_settler.Refuel_Task",
+        initialRefuelTaskData       = initialRefuelTaskData,
+        initialRefuelMetaData       = role_settler.Refuel_MetaData(initialRefuelTaskData),
 
         chopFirstTreeMetaData       = role_settler.ChopFirstTree_MetaData(primaryTaskData),
         chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
@@ -132,8 +140,13 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_turtle.GetHostLocator_SSrv", async = false, stepDataDef = {
             }},
             { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "orderPlanks" },
+                { keyDef = "orderItems"                 , valueSource = 0, keyDefSource = "initialRefuelItems" },
                 { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
+            }},
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "initialRefuelMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "initialRefuelTaskData" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
@@ -141,7 +154,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"                 , valueSource = 6, keyDefSource = "orderForFuel" },
+                { keyDef = "orderItems"                 , valueSource = 7, keyDefSource = "orderForFuel" },
                 { keyDef = "destinationHostLocator"     , valueSource = 4, keyDefSource = "hostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
@@ -219,10 +232,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
                 { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
                 { keyDef = "success16"                  , valueSource = 16, keyDefSource = "success" },
+                { keyDef = "success17"                  , valueSource = 17, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 17, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 18, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
