@@ -212,9 +212,11 @@ function BuildNewSite_ASrv(serviceData, callback, callbackData)
 
     -- let construction enterprise build the site    
     if upgrade then
-        corelog.WriteToLog("  >Upgrading factory site at "..textutils.serialise(baseLocation).." to version "..siteVersion)
+--        corelog.WriteToLog("  >Upgrading factory site at "..textutils.serialise(baseLocation).." to version "..siteVersion)
+        corelog.WriteToLog("  >Upgrading factory site to version "..siteVersion)
     else
-        corelog.WriteToLog("  >Building factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
+--        corelog.WriteToLog("  >Building factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
+        corelog.WriteToLog("  >Building factory site version "..siteVersion)
     end
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback, callbackData)
 end
