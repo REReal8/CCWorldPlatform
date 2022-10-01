@@ -1,6 +1,4 @@
 local db = {
---    dhtRoot     = "enterprise_factory",
---    dhtSites    = "sites",
     hostName    = "shop",
 }
 
