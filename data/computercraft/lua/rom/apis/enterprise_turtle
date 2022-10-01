@@ -6,10 +6,10 @@ local db = {
 --[[
     The Turtle enterprise provides services related to turtles.
 
-    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        GetHostLocator_SSrv    - provide host URL of this ISH 
+        GetHostLocator_SSrv    - provide host URL of this enterprise 
         IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
@@ -26,10 +26,10 @@ local db = {
 
 function GetHostLocator_SSrv(serviceData)
     --[[
-        This sync public service provides the (base) URL of this ISH.
+        This sync public service provides the (base) URL of this enterprise.
 
         Return value:
-            hostLocator             - (URL) locating this ISH
+            hostLocator             - (URL) locating this enterprise
 
         Parameters:
             serviceData             - (table) empty
@@ -45,11 +45,11 @@ end
 
 function GetTurtleLocator_SSrv(serviceData)
         --[[
-        This sync public services provides the URL of a turtle in the ISH.
+        This sync public services provides the URL of a turtle in the enterprise.
 
         Return value:
                                     - (table)
-                success             - (boolean) wether the URL was correctly obtained
+                success             - (boolean) whether the service executed successfully
                 turtleLocator       - (URL) locating the turtle
 
         Parameters:
@@ -76,11 +76,11 @@ end
 
 function GetItemsLocator_SSrv(serviceData)
     --[[
-        This sync public services provides the URL of the items in a turtle in the ISH.
+        This sync public services provides the URL of the items in a turtle in the enterprise.
 
         Return value:
                                     - (table)
-                success             - (boolean) wether the URL was correctly obtained
+                success             - (boolean) whether the service executed successfully
                 itemsLocator        - (URL) locating the items in the inventory of a turtle
 
         Parameters:
@@ -114,7 +114,7 @@ function IsTurtleURL_QSrv(queryData)
         
         Return value:
                                     - (table)
-                success             - (boolean) wether the answer to the question is true
+                success             - (boolean) whether the service executed successfully
 
         Parameters:
             queryData               - (table) data about the query
@@ -140,17 +140,17 @@ end
 
 function ItemsAvailableVia_SSrv(queryData)
     --[[
-        This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
+        This sync public service queries a Supplier for the availability of items. The Supplier and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
         Return value:
                                     - (table)
-                success             - (boolean) whether all the queried items are available via this ISH.
+                success             - (boolean) whether the service executed successfully
 
         Parameters:
             queryData               - (table) data about the query
                 itemsLocator        - (URL) locating the items that need to be queried for availability
-                                        (the "base" component of the URL specifies this ISH)
+                                        (the "base" component of the URL specifies this Supplier)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
@@ -188,14 +188,14 @@ end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     --[[
-        This async public ISH service ensures items are gathered in the ISH and transferred to the inventory of a turtle.
+        This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
 
         Return value:
             nil 
 
         Async service return value (to callback):
                                     - (table)
-                success             - (boolean) whether the items were succesfully transferred to a turtle
+                success             - (boolean) whether the service executed successfully
                 turtleItemsLocator  - (URL) locating a specific turtle and the items it has gotton in it's inventory
 
         Parameters:
@@ -257,19 +257,19 @@ end
 
 function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     --[[
-        This async public ISH service ensures items are transferred from the inventory of a turtle towards the ISH.
+        This async public service ensures items are transferred from the inventory of a turtle towards the Storage.
 
-        An ISH should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+        A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
             nil 
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the items were succesfully transferred to the ISH.
-                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
                                             (upon service succes the "host" component of this URL should be equal to destinationHostLocator, 
-                                            the "port" should be a specific turtle, and the "query" should be equal to the "query" component of the turtleSourceURL)
+                                            the "port" should be a specific turtle, and the "query" should be equal to the "query" component of the turtleItemsLocator)
 
         Parameters:
             transferData                - (table) data about the transfer
@@ -338,7 +338,7 @@ function GetTaskMetaData_SSrv(serviceData) -- ToDo: consider removing if this se
 
         Return value:
                                         - (table)
-            success                     - (boolean) whether service was executed successfully.
+            success                     - (boolean) whether the service executed successfully
             metaData                    - (table) with metadata on the Task
 
         Parameters:

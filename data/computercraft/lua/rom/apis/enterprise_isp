@@ -1,23 +1,23 @@
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
-    items to be handled acros (possibly) multiple enterprises the ISP can be seen as a single(ton) point (or hub or router) for handling 
+    items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling 
     those items.
 
     The ISP provides the following services
-        ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsQueryURL
-        TransferItemsFromTo_ASrv    - transferring items from a sourceItemsLocator to a destinationHostLocator
+        ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsLocator
+        TransferItemsFromTo_ASrv    - transferring items from a Supplier to a Storage
         
-    The ISP implements it's services by using services of Item Service Hosts (ISH's) enterprises. For an enterprise
-    to be an ISH it needs to implement the following services:
+    The ISP implements it's services by using services of Suppliers and Storages.
 
-        ItemsAvailableVia_SSrv      - providing if a set of items are available at the ISH.
-        - ToDo consider moving this to a new type, e.g. an ItemStorage as likely not all hosts need it. Only the once that store items.
+    For an enterprise to be a Supplier it needs to implement the following services:
+        ItemsAvailableVia_SSrv      - providing if a set of items are available at the Supplier.
+        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
 
-        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the ISH and transferred to the inventory of a turtle.
-        PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the ISH.
+    For an enterprise to be a Storage it needs to implement the following services:
+        PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the Storage.
 
-    Furthermore it needs to implement the following additional functions
-        GetHostLocator_SSrv         - provide the URL of the ISH
+    Furthermore most Suppliers and Storages implement the additional function
+        GetHostLocator_SSrv         - provide the URL of the host
 --]]
 
 --                _     _ _         __                  _   _
@@ -31,20 +31,20 @@
 
 function ItemsAvailableVia_SSrv(queryData)
     --[[
-        This sync public service queries an ISH for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
+        This sync public service queries a Supplier for the availability of items. The Supplier and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
-        This service is implemented using the following underlying ISH services
+        This service is implemented using the following underlying Supplier services
             ItemsAvailableVia_SSrv
 
         Return value:
                                     - (table)
-                success             - (boolean) whether all the queried items are available via the URL
+                success             - (boolean) whether the service executed successfully
 
         Parameters:
             queryData               - (table) data about the query
                 itemsLocator        - (URL) locating items which availability is queried
-                                        (the "base" component of the URL specifies the ISH to query)
+                                        (the "base" component of the URL specifies the Supplier to query)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
@@ -53,27 +53,27 @@ function ItemsAvailableVia_SSrv(queryData)
     local itemsLocator = queryData.itemsLocator
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
-    -- get ISH
+    -- get Supplier
 --    corelog.WriteToLog("enterprise_isp: itemsLocator = "..textutils.serialize(itemsLocator))
-    local host = itemsLocator:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid host") return {success = false} end
---    corelog.WriteToLog("enterprise_isp: host = "..host)
+    local supplierName = itemsLocator:getHost()
+    if type(supplierName) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid supplierName") return {success = false} end
+--    corelog.WriteToLog("enterprise_isp: supplierName = "..supplierName)
 
     -- relay to ISH service
-    if host == "turtle" then
+    if supplierName == "turtle" then
         return enterprise_turtle.ItemsAvailableVia_SSrv(queryData)
-    elseif host == "chests" then
+    elseif supplierName == "chests" then
         return enterprise_chests.ItemsAvailableVia_SSrv(queryData)
     else
-        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Not implemented for "..host .." ISH.") return {success = false}
+        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Not implemented for "..supplierName .." Supplier.") return {success = false}
     end
 end
 
 function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --[[
-        This async public service relays the transfer of items from an item source to a destination host.
+        This async public service relays the transfer of items from a Supplier to a Storage.
 
-        This service is implemented using the following underlying ISH services
+        This service is implemented using the following underlying Supplier and Storage services
             GetItemsIntoTurtle_ASrv
             PutItemsFromTurtle_ASrv
 
@@ -82,8 +82,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the service was executed succesfully
-                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
                                             (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
                                             the "query" should be equal to the "query" component of the sourceItemsLocator)
 
@@ -92,7 +92,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
                 sourceItemsLocator      - (URL) locating the items that need transfer
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL specifies the host where the items are located)
-                destinationHostLocator  - (URL) locating where (i.e. to which ISH) the items need to be transferred to
+                destinationHostLocator  - (URL) locating the Storage that needs to be transferred to
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function            
     --]]
@@ -187,7 +187,7 @@ function AddItemsLocators_SSrv(serviceData)
         
         Return value:
                                     - (table)
-                success             - (boolean) whether all the queried items are available via the URL
+                success             - (boolean) whether the service executed successfully
                 itemsLocator        - (URL) locating all items
 
         Parameters:

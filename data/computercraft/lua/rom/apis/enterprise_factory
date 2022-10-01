@@ -67,7 +67,7 @@ local db = {
 --[[
     The Factory is an enterprise that offers services to produce items based on recipes.
 
-    The Factory is a Producer enterprise, hence it provides the mandatory services and functions for a Producer (like e.g. ProduceItem_ASrv).
+    The Factory is a Producer, hence it provides the mandatory services and functions for a Producer (like e.g. ProduceItem_ASrv).
 
     There are (currently) two recipe types for producing items.
         The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
@@ -84,6 +84,120 @@ local db = {
 --   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --   | |
 --   |_|
+
+function ProduceItem_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async public Producer service produces multiple instances of a specific item in the factory. It does so 
+        by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
+        After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipe. 
+        Finally it delivers the created items to the requested destination.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                            the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                productItemName         - (string) name of item to produce
+                productItemCount        - (number) amount of items to produce
+                ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
+                destinationHostLocator  - (URL) locating where the produced items need to be delivered to
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemName = serviceData.productItemName
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemCount = serviceData.productItemCount
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- select recipe to produce item
+    local recipe = db.recipes[ productItemName ]
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- select a suitable site
+    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, productItemCount)
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..productItemCount.." "..productItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- determine ingredientsItemsLocator (by updating ingredientsHostLocator with itemsNeeded)
+    local ingredientsItemsLocator = ingredientsHostLocator
+    ingredientsItemsLocator:setQuery(coreutils.DeepCopy(siteProduceItemData.itemsNeeded))
+ --   corelog.WriteToLog("   ingredientsItemsLocator="..ingredientsItemsLocator:getURI())
+
+    -- retrieve site input & output locator's
+    local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
+--    corelog.WriteToLog("   localInputLocator="..localInputLocator:getURI())
+    local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
+--    corelog.WriteToLog("   localOutputLocator="..localOutputLocator:getURI())
+
+    -- create project service data
+    local projectDef = {
+        steps = {
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localInputLocator" },
+            }},
+            { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
+                { keyDef = "localInputItemsLocator" , valueSource = 1, keyDefSource = "destinationItemsLocator" },
+                { keyDef = "localOutputLocator"     , valueSource = 0, keyDefSource = "localOutputLocator" },
+                { keyDef = "productionMethod"       , valueSource = 0, keyDefSource = "productionMethod" },
+                { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
+                { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
+                { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
+                { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
+            }},
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+            }},
+            -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
+            { keyDef = "destinationItemsLocator"    , valueSource = 3, keyDefSource = "destinationItemsLocator" },
+        }
+    }
+    local projectData = {
+        ingredientsItemsLocator     = ingredientsItemsLocator,
+        destinationHostLocator      = destinationHostLocator,
+
+        localInputLocator           = localInputLocator,
+        localOutputLocator          = localOutputLocator,
+
+        productionMethod            = siteProduceItemData.productionMethod,
+        productionSpot              = siteProduceItemData.productionSpot,
+        productItemName             = productItemName,
+        productItemCount            = productItemCount,
+        productionRecipe            = siteProduceItemData.productionRecipe,
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Producing "..productItemCount.." "..productItemName.."'s")
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
 
 function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
     --[[
@@ -213,10 +327,10 @@ function BuildNewSite_ASrv(serviceData, callback, callbackData)
     -- let construction enterprise build the site    
     if upgrade then
 --        corelog.WriteToLog("  >Upgrading factory site at "..textutils.serialise(baseLocation).." to version "..siteVersion)
-        corelog.WriteToLog("  >Upgrading factory site to version "..siteVersion)
+        corelog.WriteToLog(">Upgrading factory site to version "..siteVersion)
     else
 --        corelog.WriteToLog("  >Building factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
-        corelog.WriteToLog("  >Building factory site version "..siteVersion)
+        corelog.WriteToLog(">Building factory site version "..siteVersion)
     end
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback, callbackData)
 end
@@ -325,7 +439,7 @@ function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Stopping and dismantling factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
+    corelog.WriteToLog(">Stopping and dismantling factory site version "..siteVersion)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
@@ -440,120 +554,6 @@ function CanProduce_QSrv(serviceData)
     else
         return {success = false}
     end
-end
-
-function ProduceItem_ASrv(serviceData, callback, callbackData)
-    --[[
-        This async public Producer service produces multiple instances of a specific item in the factory. It does so 
-        by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
-        After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipe. 
-        Finally it delivers the created items to the requested destination.
-
-        Return value:
-            nil
-
-        Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed correctly
-                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
-                                            the "query" should be equal to orderItems)
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                productItemName         - (string) name of item to produce
-                productItemCount        - (number) amount of items to produce
-                ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
-                destinationHostLocator  - (URL) locating where the produced items need to be delivered to
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local productItemCount = serviceData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
-    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
-
-    -- select recipe to produce item
-    local recipe = db.recipes[ productItemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- select a suitable site
-    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, productItemCount)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..productItemCount.." "..productItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- determine ingredientsItemsLocator (by updating ingredientsHostLocator with itemsNeeded)
-    local ingredientsItemsLocator = ingredientsHostLocator
-    ingredientsItemsLocator:setQuery(coreutils.DeepCopy(siteProduceItemData.itemsNeeded))
- --   corelog.WriteToLog("   ingredientsItemsLocator="..ingredientsItemsLocator:getURI())
-
-    -- retrieve site input & output locator's
-    local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
---    corelog.WriteToLog("   localInputLocator="..localInputLocator:getURI())
-    local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
---    corelog.WriteToLog("   localOutputLocator="..localOutputLocator:getURI())
-
-    -- create project service data
-    local projectDef = {
-        steps = {
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localInputLocator" },
-            }},
-            { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "localInputItemsLocator" , valueSource = 1, keyDefSource = "destinationItemsLocator" },
-                { keyDef = "localOutputLocator"     , valueSource = 0, keyDefSource = "localOutputLocator" },
-                { keyDef = "productionMethod"       , valueSource = 0, keyDefSource = "productionMethod" },
-                { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
-                { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
-                { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
-                { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
-            }},
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
-            }},
-            -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
-            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
-            { keyDef = "destinationItemsLocator"    , valueSource = 3, keyDefSource = "destinationItemsLocator" },
-        }
-    }
-    local projectData = {
-        ingredientsItemsLocator     = ingredientsItemsLocator,
-        destinationHostLocator      = destinationHostLocator,
-
-        localInputLocator           = localInputLocator,
-        localOutputLocator          = localOutputLocator,
-
-        productionMethod            = siteProduceItemData.productionMethod,
-        productionSpot              = siteProduceItemData.productionSpot,
-        productItemName             = productItemName,
-        productItemCount            = productItemCount,
-        productionRecipe            = siteProduceItemData.productionRecipe,
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-    }
-
-    -- start project
-    corelog.WriteToLog(">Producing "..productItemCount.." "..productItemName.."'s")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

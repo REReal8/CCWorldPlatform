@@ -7,10 +7,10 @@ local db = {
 --[[
     The chests enterprise provides services to perform operation on chests.
 
-    This enterprise is an Item Service Host (ISH), hence it provides the mandatory services and functions for an ISH (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. ItemsAvailableVia_SSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        GetHostLocator_SSrv     - provide host URL of this ISH 
+        GetHostLocator_SSrv     - provide host URL of the enterprise 
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         GetItemsLocator_SSrv    - provide the URL of items in a chest
@@ -22,8 +22,8 @@ local db = {
     
     The following enterprise design decisions are made
         - Registered chests should never be accessed directly but only via the services of this enterprise.
-        - Every chest get's a id upon registration. 
-        - To operate on a chest this id should be supplied to each of the services.
+        - Every chest get's a chestLocator upon registration. 
+        - To operate on a chest this chestLocator should be supplied to each of the public services.
 --]]
 
 --                _     _ _         __                  _   _
@@ -37,10 +37,10 @@ local db = {
 
 function GetHostLocator_SSrv(serviceData)
     --[[
-        This sync public service provides the (base) URL of this ISH.
+        This sync public service provides the (base) URL of this enterprise.
 
         Return value:
-            hostLocator             - (URL) locating this ISH
+            hostLocator             - (URL) locating this enterprise
 
         Parameters:
             serviceData             - (table) empty
@@ -56,11 +56,11 @@ end
 
 function GetItemsLocator_SSrv(serviceData)
         --[[
-        This sync public services provides the URL of items in a chest in the ISH.
+        This sync public services provides the URL of items in a chest in the enterprise.
 
         Return value:
                                     - (table)
-                success             - (boolean) wether the URL was correctly obtained
+                success             - (boolean) whether the service executed successfully
                 itemsLocator        - (URL) locating the items in a chest
 
         Parameters:
@@ -94,7 +94,7 @@ function IsChestURL_QSrv(queryData)
         
         Return value:
                                     - (table)
-                success             - (boolean) wether the answer to the question is true
+                success             - (boolean) whether the service executed successfully
 
         Parameters:
             queryData               - (table) data about the query
@@ -124,8 +124,8 @@ function RegisterChest_SSrv(chestData)
 
         Return value:
                                     - (table)
-                success             - (boolean) whether registering the chest was succesfull.
-                chestLocator        - (URL) locating the the created chest (in this ISH)
+                success             - (boolean) whether the service executed successfully
+                chestLocator        - (URL) locating the the created chest (in this enterprise)
 
         Parameters:
             chestData               - (table) data to the chest
@@ -186,7 +186,7 @@ function DelistChest_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                 - (table)
-                success         - (boolean) when the chest was succesfully delisted
+                success         - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData         - (table) data about the service
@@ -232,7 +232,7 @@ function UpdateChestRecord_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                 - (table)
-                success         - (boolean) if the chest record is succesfully updated
+                success         - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData         - (table) data about the service
@@ -285,17 +285,17 @@ end
 
 function ItemsAvailableVia_SSrv(queryData)
     --[[
-        This sync public ISH service queries this enterprise for the availability of items. The ISH and query are specified by the "base" (i.e. "ccwprp://host:port/path")
+        This sync public service queries a Supplier for the availability of items. The Supplier and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
         Return value:
                                     - (table)
-                success             - (boolean) whether all the queried items are available via this ISH.
+                success             - (boolean) whether the service executed successfully
 
         Parameters:
             queryData               - (table) data about the query
                 itemsLocator        - (URL) locating the items that need to be queried for availability
-                                        (the "base" component of the URL specifies this ISH)
+                                        (the "base" component of the URL specifies this Supplier)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
@@ -331,14 +331,14 @@ end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     --[[
-        This async public ISH service ensures items are gathered in the ISH and transferred to the inventory of a turtle.
+        This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
 
         Return value:
             nil 
 
         Async service return value (to callback):
                                     - (table)
-                success             - (boolean) whether the items were succesfully transferred to a turtle
+                success             - (boolean) whether the service executed successfully
                 turtleItemsLocator  - (URL) locating a specific turtle and the items it has gotton in it's inventory
 
         Parameters:
@@ -407,19 +407,19 @@ end
 
 function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     --[[
-        This async public ISH service ensures items are transferred from the inventory of a turtle towards the ISH.
+        This async public service ensures items are transferred from the inventory of a turtle towards the Storage.
 
-        An ISH should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+        A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
             nil 
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the items were succesfully transferred to the ISH.
-                destinationItemsLocator - (URL) stating the final ISH and the items that where transferred to it
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
                                             (upon service succes the "host" component of this URL should be equal to destinationHostLocator, 
-                                            the "path" should be a specific chest, and the "query" should be equal to the "query" component of the turtleSourceURL)
+                                            the "path" should be a specific chest, and the "query" should be equal to the "query" component of the turtleItemsLocator)
 
         Parameters:
             transferData                - (table) data about the transfer
@@ -591,7 +591,7 @@ function SetChestRecord_SSrv(serviceData)
         
         Return value:
                                 - (table)
-                success         - (boolean) whether the records were succesfully set
+                success         - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData         - (table) data for this service
@@ -643,7 +643,7 @@ function FetchChestSlotsInventory_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                 - (table)
-                success         - (boolean) when the inventory was succesfully retrieved
+                success         - (boolean) whether the service executed successfully
                 slots           - (table) the slots inventory of a chest
 
         Parameters:
@@ -682,7 +682,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                 - (table)
-                success         - (boolean) whether the items were succesfully fetched
+                success         - (boolean) whether the service executed successfully
                 slots           - (table) the slots inventory of the chest (after the items have been removed)
                 turtleURL       - (table) a URL stating the turtle and the items it has gotton in it's inventory
 
@@ -726,7 +726,7 @@ function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                     - (table)
-                success             - (boolean) whether the items were succesfully put
+                success             - (boolean) whether the service executed successfully
                 slots               - (table) the slots inventory of the chest (after the items have been put)
 
         Parameters:
