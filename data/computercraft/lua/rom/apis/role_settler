@@ -127,52 +127,6 @@ function ChopFirstTree_Task(taskData)
     return {success = true, orderForFuel = orderForFuel}
 end
 
-function Refuel_MetaData(taskData)
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_settler.Refuel_MetaData: Invalid taskData") return {success = false} end
-    local fuelItems = taskData.fuelItems
-    if type(fuelItems) ~= "table" then corelog.Error("role_settler.Refuel_MetaData: Invalid fuelItems") return {success = false} end
-
-    return {
-        startTime = coreutils.UniversalTime(),
-        location = nil,
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = 0,
-        itemsNeeded = coreutils.DeepCopy(fuelItems),
-    }
-end
-
-function Refuel_Task(taskData)
-    --[[
-        This Task function refuel the (current) turtle.
-
-        Return value:
-            task result                 - (table)      
-                success                 - (boolean) whether the task was succesfull
-
-        Parameters:
-            taskData                    - (table) data about the task
-                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
-    ]]
-
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_settler.Refuel_Task: Invalid taskData") return {success = false} end
-    local fuelItems = taskData.fuelItems
-    if type(fuelItems) ~= "table" then corelog.Error("role_settler.Refuel_Task: Invalid taskData") return {success = false} end
-
-    -- fuel from all fuelItems
-    for itemName, itemCount in pairs(fuelItems) do
-        local refuelResult = coreinventory.Refuel({itemName = itemName,  itemCount = itemCount})
-        if refuelResult == false then corelog.Warning("role_settler.Refuel_Task: Failed refueling from "..itemCount.." "..itemName.."'s") return {success = false} end
-
-        corelog.WriteToLog(">Refueled with "..itemCount.." "..itemName.."'s to "..turtle.getFuelLevel())
-    end
-
-    -- end
-    return {success = true}
-end
-
 function ReportStatus_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
