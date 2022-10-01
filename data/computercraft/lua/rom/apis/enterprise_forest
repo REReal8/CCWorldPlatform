@@ -1,3 +1,7 @@
+
+-- ToDo: consider splitting into to enterprise_wood and site_forest
+
+
 function NewForest()
     -- we zijn nieuw, we maken ons eigen ID aan
     local enterpriseId = coreutils.NewId()

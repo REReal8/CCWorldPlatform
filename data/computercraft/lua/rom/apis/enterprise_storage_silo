@@ -3,6 +3,8 @@ local db = {
     dhtSites    = "sites",
 }
 
+-- ToDo: consider renaming to site_silo
+
 function StoreItems(site, itemList)
     -- just loop all top chests, ignore the itemList (for now)
     for i, topChest in ipairs(site.topChests) do

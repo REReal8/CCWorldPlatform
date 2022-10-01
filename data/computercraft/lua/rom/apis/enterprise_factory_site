@@ -16,6 +16,8 @@ local db = {
     also be a full fledged local storage site.
 --]]
 
+-- ToDo: consider renaming to site_factory
+
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
