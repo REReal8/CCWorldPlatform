@@ -3,7 +3,7 @@ local db = {
     dhtSites    = "sites",
 }
 
--- ToDo: consider renaming to site_silo
+-- ToDo: consider renaming to enterprise_silo
 
 function StoreItems(site, itemList)
     -- just loop all top chests, ignore the itemList (for now)
