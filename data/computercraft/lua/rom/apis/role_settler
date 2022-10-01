@@ -71,7 +71,7 @@ function WaitFirstTree_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
-                startLocation           - (table) locaton where first steps are to be taken
+                startLocation           - (table) location where first steps are to be taken
     ]]
     -- equip pickage
     coreinventory.Equip("minecraft:diamond_pickaxe")
@@ -163,9 +163,10 @@ function Refuel_Task(taskData)
 
     -- fuel from all fuelItems
     for itemName, itemCount in pairs(fuelItems) do
-        corelog.WriteToLog(">Refueling from "..itemCount.." "..itemName.."'s")
         local refuelResult = coreinventory.Refuel({itemName = itemName,  itemCount = itemCount})
         if refuelResult == false then corelog.Warning("role_settler.Refuel_Task: Failed refueling from "..itemCount.." "..itemName.."'s") return {success = false} end
+
+        corelog.WriteToLog(">Refueled with "..itemCount.." "..itemName.."'s to "..turtle.getFuelLevel())
     end
 
     -- end
@@ -269,15 +270,13 @@ function CollectLogs_Task(taskData)
     local nTrees = taskData.nTrees
     local logsNeeded = taskData.logsNeeded
 
-    local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
-
     -- gather logs
     corelog.WriteToLog(">Collecting " .. logsNeeded .. " logs")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
         local harvestForestData = {
-            startLocation       = startLocation,
-            craftingLocation    = craftingLocation,
+            firstTreeLocation   = startLocation,
+            factoryLocation     = factoryLocation,
             nTrees              = nTrees,
         }
         HarvestForest_Task(harvestForestData)
@@ -307,15 +306,13 @@ function CollectSaplings_Task(taskData)
     local nTrees = taskData.nTrees
     local saplingsNeeded = taskData.saplingsNeeded
 
-    local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
-
     -- gather saplings
     corelog.WriteToLog(">Collecting " .. saplingsNeeded .. " saplings")
     while coreinventory.CountItem("minecraft:birch_sapling") < saplingsNeeded do
         -- Harvest Forest
         local harvestForestData = {
-            startLocation       = startLocation,
-            craftingLocation    = craftingLocation,
+            firstTreeLocation   = startLocation,
+            factoryLocation     = factoryLocation,
             nTrees              = nTrees,
         }
         HarvestForest_Task(harvestForestData)
@@ -328,7 +325,7 @@ end
 function HarvestForest_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.startLocation),
+        location = coremove.CopyLocation(taskData.firstTreeLocation),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
@@ -339,15 +336,29 @@ function HarvestForest_MetaData(taskData)
 end
 
 function HarvestForest_Task(taskData)
+    --[[
+        This Task function harvests a forest.
+
+        Return value:
+            task result                 - (table)      
+                success                 - (boolean) whether the task was succesfull
+
+        Parameters:
+            taskData                    - (table) data about the task
+                firstTreeLocation       - (table) location of first tree of the forest
+                factoryLocation         - (table) location of factory
+                nTrees                  - (number) the number of trees in (the y direction of) the forest 
+    ]]
+
     -- check input
-    local startLocation = taskData.startLocation
-    local craftingLocation = taskData.craftingLocation
+    local firstTreeLocation = taskData.firstTreeLocation
+    local factoryLocation = taskData.factoryLocation
     local nTrees = taskData.nTrees
 
     corelog.WriteToLog(" Harvesting Forest")
 
     -- go to first tree position
-    coremove.GoTo(startLocation)
+    coremove.GoTo(firstTreeLocation)
 
     -- wait for tree
     WaitForTree()
@@ -360,7 +371,10 @@ function HarvestForest_Task(taskData)
     })
 
     -- refuel
-    Refuel(craftingLocation)
+    Refuel(factoryLocation)
+
+    -- end
+    return {success = true}
 end
 
 --    _                 _    __                  _   _
@@ -382,11 +396,10 @@ function WaitForTree()
     end
 end
 
-function Refuel(craftingLocation)
+function Refuel(factoryLocation)
     local fuelLevel     = turtle.getFuelLevel()
     local minFuel       = 500
     local refuelLevel   = 1000
-
 
     -- do we need to refuel?
     if fuelLevel < minFuel then
@@ -395,6 +408,9 @@ function Refuel(craftingLocation)
         local logs        = coreinventory.CountItem("minecraft:birch_log")
         local logsNeeded  = math.ceil((refuelLevel - fuelLevel ) / 60)    -- 1 log --> 4 planks, 4 planks have a burn value of 60 (15 each)
         local logsToBurn  = math.min(logs, logsNeeded)
+
+        -- determine crafting location
+        local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
 
         -- logs to planks
         LogToPlanks(craftingLocation, logsToBurn * 4)

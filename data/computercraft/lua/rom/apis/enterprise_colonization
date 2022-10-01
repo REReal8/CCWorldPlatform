@@ -486,7 +486,7 @@ end
 
 function Refuel_ASrv(serviceData, callback, callbackData) -- ToDo: consider moving this service to a different enterprise
     --[[
-        This private async service refuels the current turtle.
+        This private async service refuels the current turtle from fuelItems.
 
         Return value:
             nil
