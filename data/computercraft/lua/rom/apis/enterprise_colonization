@@ -29,7 +29,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                 - (table)
-                success         - (boolean) whether the service executed correctly
+                success         - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData         - (table) data about the service
@@ -249,7 +249,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the service executed correctly
+                success                 - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                 - (table) data about the service
@@ -345,7 +345,7 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the service executed correctly
+                success                 - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                 - (table) data about the service
@@ -453,7 +453,7 @@ function BuildForestTree_ASrv(serviceData, callback, callbackData)
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the service executed correctly
+                success                 - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                 - (table) data about this service
@@ -493,7 +493,7 @@ function Refuel_ASrv(serviceData, callback, callbackData) -- ToDo: consider movi
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the service executed correctly
+                success                 - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                 - (table) data about this service
