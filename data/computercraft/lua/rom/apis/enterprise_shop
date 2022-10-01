@@ -11,7 +11,7 @@ local db = {
         OrderItems_ASrv             - procure items and having them delivered at a destinationHostLocator
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
-    The Shop implements it's services by using services of both ?the/ a Storage as well as of Producer enterprises. 
+    The Shop implements it's services by using services of Suppliers as well as of Producer enterprises. 
 
     For an enterprise to be a Producer it needs to implement the following services:
         ProduceItem_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
