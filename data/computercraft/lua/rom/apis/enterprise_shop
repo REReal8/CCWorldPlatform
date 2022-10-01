@@ -15,7 +15,7 @@ local db = {
 
     For an enterprise to be a Producer it needs to implement the following services:
         ProduceItem_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
-        CanProducte_QSrv            - whether the Producer can produce a specific item
+        CanProduce_QSrv             - whether the Producer can produce a specific item
 
     The Shop is also a Supplier, hence it implements the services:
         ItemsAvailableVia_SSrv      - providing if a set of items are available at the Supplier. ToDo: this is currently not yet implemented
