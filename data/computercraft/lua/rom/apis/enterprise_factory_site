@@ -38,8 +38,8 @@ function StartNewSite(siteStartData)
             siteStartData           - (table) data about the site to start, 
                 version             - (string) version string of the site
                 baseLocation        - (table) world location of the base (lower left corner) of this site
-                inputLocators       - (table) with inputLocator's of this site
-                outputLocators      - (table) with outputLocator's of this site
+                inputLocators       - (URL) with inputLocator's of this site
+                outputLocators      - (URL) with outputLocator's of this site
                 craftingSpots       - (table) craftingSpots of this site
                     location        - (table) location of spot
                 smeltingSpots       - (table) craftingSpots of this site
