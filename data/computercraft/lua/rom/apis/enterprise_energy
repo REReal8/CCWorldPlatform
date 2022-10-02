@@ -30,6 +30,7 @@ function Refuel_ASrv(serviceData, callback, callbackData)
             serviceData                 - (table) data about this service
                 turtleId                - (number) id of the turtle to fuel
                 fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
+                ingredientsHostLocator  - (URL) locating where the fuel ingredients can be retrieved
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     --]]
@@ -40,19 +41,23 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     if type(turtleId) ~= "number" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid turtleId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local fuelItems = serviceData.fuelItems
     if type(fuelItems) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid fuelItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.FuelTurtleToLevelIfNeeded_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- create project service data
     local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = turtleId}).turtleLocator
+    local ingredientsItemsLocator = ingredientsHostLocator:copy()
+    ingredientsItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
     local refuelTaskData = {
         turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
     }
     local buildBlueprintProjectDef = {
         steps   = {
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"             , valueSource = 0, keyDefSource = "fuelItems" },
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
                 { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
@@ -71,6 +76,8 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     }
     local projectData = {
         fuelItems                   = coreutils.DeepCopy(fuelItems),
+
+        ingredientsItemsLocator     = ingredientsItemsLocator,
         turtleToRefuelLocator       = turtleToRefuelLocator,
 
         refuel_Task                 = "role_fuel_worker.Refuel_Task",
