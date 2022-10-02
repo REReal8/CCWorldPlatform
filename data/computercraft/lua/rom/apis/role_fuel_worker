@@ -10,6 +10,8 @@
 function Refuel_MetaData(taskData)
     -- check input
     if type(taskData) ~= "table" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid taskData") return {success = false} end
+    local turtleId = taskData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid turtleId") return {success = false} end
     local fuelItems = taskData.fuelItems
     if type(fuelItems) ~= "table" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid fuelItems") return {success = false} end
 
@@ -19,13 +21,14 @@ function Refuel_MetaData(taskData)
         needTool = false,
         needTurtle = true,
         fuelNeeded = 0,
+        needTurtleId = turtleId,
         itemsNeeded = coreutils.DeepCopy(fuelItems),
     }
 end
 
 function Refuel_Task(taskData)
     --[[
-        This Task function refuel the current turtle.
+        This Task function (re)fuels a (the current) turtle.
 
         Return value:
             task result                 - (table)      
@@ -33,13 +36,20 @@ function Refuel_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
+                turtleId                - (number) id of the turtle to (re)fuel
                 fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
     ]]
 
     -- check input
     if type(taskData) ~= "table" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid taskData") return {success = false} end
+    local turtleId = taskData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid turtleId") return {success = false} end
     local fuelItems = taskData.fuelItems
-    if type(fuelItems) ~= "table" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid taskData") return {success = false} end
+    if type(fuelItems) ~= "table" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid fuelItems") return {success = false} end
+
+    -- check correct turtle
+    local currentTurtleId = os.getComputerID()
+    if currentTurtleId ~= turtleId then corelog.Error("role_fuel_worker.Refuel_Task: Current turtle(id="..currentTurtleId..") not equal to targeted turtle(id="..turtleId..")") return {success = false} end
 
     -- fuel from all fuelItems
     for itemName, itemCount in pairs(fuelItems) do

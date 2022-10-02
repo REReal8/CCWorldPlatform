@@ -27,6 +27,7 @@ function PlantFirstSapling_Task(taskData)
         Return value:
             task result                 - (table)      
                 success                 - (boolean) whether the task was succesfull
+                turtleId                - (number) id of turtle that planted the sappling
 
         Parameters:
             taskData                    - (table) data about the task
@@ -46,7 +47,8 @@ function PlantFirstSapling_Task(taskData)
     turtle.place()
 
     -- end
-    return {success = true}
+    local currentTurtleId = os.getComputerID()
+    return {success = true, turtleId = currentTurtleId}
 end
 
 function WaitFirstTree_MetaData(taskData)

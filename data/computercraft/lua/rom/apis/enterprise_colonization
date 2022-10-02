@@ -134,6 +134,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_energy.Refuel_ASrv", async = true, stepDataDef = {
+                { keyDef = "turtleId"                   , valueSource = 1, keyDefSource = "turtleId" },
                 { keyDef = "fuelItems"                  , valueSource = 0, keyDefSource = "initialRefuelItems" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
@@ -142,6 +143,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_energy.Refuel_ASrv", async = true, stepDataDef = {
+                { keyDef = "turtleId"                   , valueSource = 1, keyDefSource = "turtleId" },
                 { keyDef = "fuelItems"                  , valueSource = 5, keyDefSource = "orderForFuel" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {

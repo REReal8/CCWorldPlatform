@@ -1,5 +1,5 @@
 local db = {
-    hostName    = "energy",
+    hostName                = "energy",
 }
 
 --[[
@@ -17,7 +17,7 @@ local db = {
 
 function Refuel_ASrv(serviceData, callback, callbackData)
     --[[
-        This public async service refuels the current turtle from fuelItems.
+        This public async service (re)fuels a turtle from fuelItems.
 
         Return value:
             nil
@@ -28,22 +28,25 @@ function Refuel_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data about this service
-                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
+                turtleId                - (number) id of the turtle to fuel
+                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local turtleId = serviceData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid turtleId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local fuelItems = serviceData.fuelItems
     if type(fuelItems) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid fuelItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- create project service data
-    local currentTurtleId = os.getComputerID()
-    local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = currentTurtleId}).turtleLocator
+    local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = turtleId}).turtleLocator
     local refuelTaskData = {
+        turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
     }
     local buildBlueprintProjectDef = {
