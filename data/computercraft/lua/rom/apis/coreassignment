@@ -369,7 +369,7 @@ function DoAssignment(assignment)
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
     local taskResult = coreutils.DoSyncService(assignment.taskFunction, assignment.taskData)
-    corelog.WriteToAssignmentLog("Completed task", assignmentId)
+    corelog.WriteToAssignmentLog("Completed task (result="..textutils.serialize(taskResult)..")", assignmentId)
 
     -- call callBack function
     corelog.WriteToAssignmentLog("Calling callback function", assignmentId)
