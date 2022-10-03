@@ -68,15 +68,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
-    local chestsNeeded = 24
-    local torchesNeeded = 6
-    local logsNeeded                = chestsNeeded * 2 + math.ceil(torchesNeeded / 2)
-    local collectLogsTaskData = {
-        startLocation               = coremove.CopyLocation(startLocation),
-        factoryLocation             = coremove.CopyLocation(factoryLocation),
-        nTrees                      = treesNeeded, -- note: it is assumed the needed trees are already there
-        logsNeeded                  = logsNeeded,
-    }
     local settleData = {
         materialsHostLocator        = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator,
 
@@ -107,16 +98,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
 
-        cleanupTask                 = "Cleanup",
-
         factoryLocation             = coremove.CopyLocation(factoryLocation),
         factoryVersion1             = "v1",
 
         treesNeeded                 = treesNeeded,
-
-        collectLogs_Task            = "role_settler.CollectLogs_Task",
-        collectLogsTaskData         = collectLogsTaskData,
-        collectLogsMetaData         = role_settler.CollectLogs_MetaData(collectLogsTaskData),
 
         forestLocation              = coremove.CopyLocation(forest.location),
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_forest.tree_pattern), -- ToDo: use a new pattern including chests
@@ -188,17 +173,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_colonization.ExtendForest_ASrv", async = true, stepDataDef = {
-                { keyDef = "startLocation"              , valueSource = 0, keyDefSource = "startLocation" },
                 { keyDef = "forestLocation"             , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "treesNeeded"                , valueSource = 0, keyDefSource = "treesNeeded" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
-            }},
-            -- Collect enough logs to craft all remaining items (chests, torches, ...)
-            -- ToDo: consider changing this to get it from forest service ProduceItem_ASrv
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "collectLogs_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "collectLogsMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "collectLogsTaskData" },
             }},
             -- Finish Forest ("redo base/ first tree according to pattern")
             -- ToDo: consider changing this to a forest service that upgrades the forest to next level (v1 or v2 (incl chests))
@@ -237,11 +214,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
                 { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
-                { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 15, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 14, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -273,7 +249,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data about the service
-                startLocation           - (table) location where first steps are taken
                 forestLocation          - (table) base location of factory
                 treesNeeded             - (number) number of trees to extend forest to
                 materialsHostLocator    - (URL) locating the host of the building materials
@@ -283,8 +258,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local startLocation = serviceData.startLocation
-    if type(startLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid startLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local forestLocation = serviceData.forestLocation
     if type(forestLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid forestLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local treesNeeded = serviceData.treesNeeded
@@ -298,7 +271,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
     local projectSteps = { }
     local areAllTrueStepDataDef = {}
     local projectData = {
-        startLocation           = startLocation,
         forestLocation          = forestLocation,
         materialsHostLocator    = materialsHostLocator,
     }
@@ -318,7 +290,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
         local currentNTreesStr = "currentNTreeStep"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_colonization.CollectAndBuildForestTree_ASrv", async = true, stepDataDef = {
-                { keyDef = "startLocation"          , valueSource = 0, keyDefSource = "startLocation" },
                 { keyDef = "forestLocation"         , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "currentNTrees"          , valueSource = 0, keyDefSource = currentNTreesStr },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
@@ -384,7 +355,6 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data about the service
-                startLocation           - (table) location where first steps are taken
                 forestLocation          - (table) base location of factory
                 currentNTrees           - (number) current number of trees in the forest
                 materialsHostLocator    - (URL) locating the host of the building materials
@@ -394,8 +364,6 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local startLocation = serviceData.startLocation
-    if type(startLocation) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid startLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local forestLocation = serviceData.forestLocation
     if type(forestLocation) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid forestLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local currentNTrees = serviceData.currentNTrees
@@ -406,62 +374,20 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- create projectServiceData
-    local collectLogsTaskData = {
-        startLocation           = coremove.CopyLocation(startLocation),
-        nTrees                  = currentNTrees,
-        logsNeeded              = 2,
-    }
-    local collectSaplingsTaskData = {
-        startLocation           = coremove.CopyLocation(startLocation),
-        nTrees                  = currentNTrees,
-        saplingsNeeded          = 1,
-    }
     local treeBaseLocation = coremove.GetRelativeLocation(forestLocation, 0, 6 * currentNTrees, 0)
     local projectData = {
-        collectLogs_Task        = "role_settler.CollectLogs_Task",
-        collectLogsTaskData     = collectLogsTaskData,
-        collectLogsMetaData     = role_settler.CollectLogs_MetaData(collectLogsTaskData),
-
-        collectSaplings_Task    = "role_settler.CollectSaplings_Task",
-        collectSaplingsTaskData = collectSaplingsTaskData,
-        collectSaplingsMetaData = role_settler.CollectSaplings_MetaData(collectSaplingsTaskData),
-
-        orderTorches            = { ["minecraft:torch"] = 2 },
-
         treeBaseLocation        = treeBaseLocation,
         materialsHostLocator    = materialsHostLocator,
     }
     local projectDef = {
         steps = {
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "collectLogs_Task" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "collectLogsMetaData" },
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "collectLogsTaskData" },
-            }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "collectSaplings_Task" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "collectSaplingsMetaData" },
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "collectSaplingsTaskData" },
-            }},
-            { stepName = "enterprise_turtle.GetHostLocator_SSrv", async = false, stepDataDef = {
-            }},
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"             , valueSource = 0, keyDefSource = "orderTorches" },
-                { keyDef = "destinationHostLocator" , valueSource = 3, keyDefSource = "hostLocator" },
-            }},
             { stepName = "enterprise_colonization.BuildForestTree_ASrv", async = true, stepDataDef = {
                 { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = "treeBaseLocation" },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
-                { keyDef = "success4"               , valueSource = 4, keyDefSource = "success" },
-                { keyDef = "success5"               , valueSource = 5, keyDefSource = "success" },
-            }},            },
+        },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 6, keyDefSource = "success" },
+            { keyDef = "success"                    , valueSource = 1, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
