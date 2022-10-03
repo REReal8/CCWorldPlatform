@@ -3,6 +3,7 @@ local db = {
     listRoot                = "assignmentList",
     rejectAllAssignments    = false,
     lastSkipReason          = "",
+    fuelTurtlePriorityKey   = nil,
 }
 
 --[[
@@ -61,13 +62,14 @@ function AddAssignment(metaData, taskFunction, taskData, callbackFunction, callb
     ]]
 
     -- check input
-    metaData.startTime     = metaData.startTime     or coreutils.UniversalTime()        --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
-    metaData.location      = metaData.location      or nil                              --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
-    metaData.needTool      = metaData.needTool      or false                            --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
-    metaData.needTurtle    = metaData.needTurtle    or true
-    metaData.needTurtleId  = metaData.needTurtleId  or nil                              --> nil-waarde voor needTurtleId geeft aan dat turtleId geen rol speelt bij de selectie
-    metaData.fuelNeeded    = metaData.fuelNeeded    or 500                              --> minimum amount of fuel needed to grant assignment
-    metaData.itemsNeeded   = metaData.itemsNeeded   or {}                               --> items needed in inventory to grant assignment
+    metaData.startTime      = metaData.startTime    or coreutils.UniversalTime()    --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
+    metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
+    metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
+    metaData.needTurtle     = metaData.needTurtle   or true
+    metaData.needTurtleId   = metaData.needTurtleId or nil      --> nil-waarde voor needTurtleId geeft aan dat turtleId geen rol speelt bij de selectie
+    metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
+    metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
+    metaData.priorityKey    = metaData.priorityKey  or nil      --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for this turtle, it will only take assignments with that key)
     if type(taskFunction) ~= "string" then corelog.Error("coreassignment.AddAssignment: taskFunction not a string") return end
     -- ToDo: investigate if there is a way to check if the actual function exists and has the proper argument without actually calling it
     if type(taskData) ~= "table" then corelog.Error("coreassignment.AddAssignment: taskData not a table") return end
@@ -91,6 +93,16 @@ function AddAssignment(metaData, taskFunction, taskData, callbackFunction, callb
 
     -- log assignment
     corelog.WriteToAssignmentLog("Add new: "..textutils.serialize(assignment), assignmentId)
+
+    -- inform enterprise_energy of fuelNeeded
+    local fuelNeeded = metaData.fuelNeeded
+--    if fuelNeeded > 0 then
+        -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
+        local serviceData = {
+            fuelNeeded  = fuelNeeded,
+        }
+        enterprise_energy.TakeNoticeOfFuelNeeded_SSrv(serviceData) -- ToDo: consider using an event instead
+--    end
 
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.listRoot, assignmentId)
@@ -133,7 +145,11 @@ function Run()
 
         -- did we get the assignment?
         if nextAssignment then
+            -- do the assignment
             DoAssignment(nextAssignment)
+
+            -- (re)fuel turtle if needed
+            FuelTurtleIfNeeded()
         else os.sleep(0.25)     -- apparently no assignment for me now
         end
     end
@@ -268,10 +284,18 @@ function MetaDataConditionsMet(metaData)
             return false, "mandatory turtle not present"
         end
 
+        -- check fuelTurtlePriorityKey
+        local fuelTurtlePriorityKey = db.fuelTurtlePriorityKey
+        if fuelTurtlePriorityKey then
+            if metaData.priorityKey ~= fuelTurtlePriorityKey then
+                return false, "assignment does not `have`(="..(metaData.priorityKey or "nil")..") mandatory fuelTurtlePriorityKey (="..fuelTurtlePriorityKey..")"
+            end
+        end
+
         -- check needTurtleId
         if metaData.needTurtleId then
             local currentTurtleId = os.getComputerID()
-            if currentTurtleId ~= metaData.needTurtleId then 
+            if currentTurtleId ~= metaData.needTurtleId then
                 return false, "turtle does not have(="..currentTurtleId..") mandatory turtleId (="..metaData.needTurtleId..")"
             end
         end
@@ -396,4 +420,57 @@ function EndAssignment(assignmentId)
     -- easy
     coredht.SaveData(nil, db.dhtRoot, db.listRoot, assignmentId)
     corelog.WriteToAssignmentLog("Ended", assignmentId)
+end
+
+function FuelTurtleIfNeeded()
+    -- check if turtle is already focusing on fueling itself
+    local turtleId = os.getComputerID()
+    if db.fuelTurtlePriorityKey == nil then
+        -- ensure this turtle now only starts taking new assignments with the priority key
+        local priorityKey = coreutils.NewId()
+        db.fuelTurtlePriorityKey = priorityKey
+
+        -- prepare service call
+        -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
+        local fuelLevel = turtle.getFuelLevel()
+        local ingredientsHostLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: get from elsewhere
+        local serviceData = {
+            assignmentsPriorityKey  = priorityKey,
+
+            turtleId                = turtleId,
+            turtleFuelLevel         = fuelLevel,
+            ingredientsHostLocator  = ingredientsHostLocator,
+        }
+        local callback = "coreassignment.Fuel_Callback"
+        local callbackData = {
+            turtleId = turtleId,
+        }
+
+        -- call service
+        enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
+    else
+        corelog.WriteToAssignmentLog("Already focusing on refueling with fuelTurtlePriorityKey="..db.fuelTurtlePriorityKey)
+        -- ToDo: consider remembering and doing another round once above refuel is finished to ensure turtle is updated to latest levels
+    end
+end
+
+function Fuel_Callback(callbackData, serviceResults)
+    -- check input
+    if type(callbackData) ~= "table" then corelog.Error("coreassignment.Fuel_Callback: Invalid callbackData") return {success = false} end
+    local turtleId = callbackData.turtleId
+    if type(turtleId) ~= "number" then corelog.Error("coreassignment.Fuel_Callback: Invalid turtleId") return {success = false} end
+
+    -- check correct turtle
+    local currentTurtleId = os.getComputerID()
+    if currentTurtleId ~= turtleId then corelog.Error("coreassignment.Fuel_Callback: Current turtle(id="..currentTurtleId..") not equal to callback turtle(id="..turtleId..")") return {success = false} end
+
+    -- release priority key condition
+    db.fuelTurtlePriorityKey = nil
+
+    -- end
+    return {success = true}
+end
+
+function TestHelper_SetFuelTurtlePriorityKey(priorityKey)
+    db.fuelTurtlePriorityKey = priorityKey
 end

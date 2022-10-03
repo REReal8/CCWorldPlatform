@@ -30,8 +30,55 @@ function T_MetaDataConditionsMet()
     end
     metaData.startTime = now
 
+    -- test fuelTurtlePriorityKey
+    corelog.WriteToLog("# Test fuelTurtlePriorityKey (not set)")
+    local priorityKey = coreutils.NewId()
+    metaData.priorityKey = priorityKey
+    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    if not conditionsMet then
+        corelog.Error("  condition incorrectly not met: "..skipReason)
+    else
+        corelog.WriteToLog("  condition met")
+    end
+    metaData.priorityKey = nil
+
+    corelog.WriteToLog("# Test fuelTurtlePriorityKey (set, no key)")
+    coreassignment.TestHelper_SetFuelTurtlePriorityKey(priorityKey)
+    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    if not conditionsMet then
+        corelog.WriteToLog("  condition not met: "..skipReason)
+    else
+        corelog.Error("  condition incorrectly met")
+    end
+    coreassignment.TestHelper_SetFuelTurtlePriorityKey(nil)
+
+    corelog.WriteToLog("# Test fuelTurtlePriorityKey (set, same key)")
+    coreassignment.TestHelper_SetFuelTurtlePriorityKey(priorityKey)
+    metaData.priorityKey = priorityKey
+    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    if not conditionsMet then
+        corelog.Error("  condition incorrectly not met: "..skipReason)
+    else
+        corelog.WriteToLog("  condition met")
+    end
+    coreassignment.TestHelper_SetFuelTurtlePriorityKey(nil)
+    metaData.priorityKey = nil
+
+    corelog.WriteToLog("# Test fuelTurtlePriorityKey (set, other key)")
+    coreassignment.TestHelper_SetFuelTurtlePriorityKey(priorityKey)
+    local otherPriorityKey = coreutils.NewId()
+    metaData.priorityKey = otherPriorityKey
+    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    if not conditionsMet then
+        corelog.WriteToLog("  condition not met: "..skipReason)
+    else
+        corelog.Error("  condition incorrectly met")
+    end
+    coreassignment.TestHelper_SetFuelTurtlePriorityKey(nil)
+    metaData.priorityKey = nil
+
     -- test needTurtleId
-    corelog.WriteToLog("# Test needTurtleId (other)")
+    corelog.WriteToLog("# Test needTurtleId (other id)")
     metaData.needTurtleId = currentTurtleId + 1000
     conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
     if not conditionsMet then
@@ -41,10 +88,10 @@ function T_MetaDataConditionsMet()
     end
     metaData.needTurtleId = currentTurtleId
 
-    corelog.WriteToLog("# Test needTurtleId (current)")
+    corelog.WriteToLog("# Test needTurtleId (current id)")
     conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
     if not conditionsMet then
-        corelog.WriteToLog("  condition not met: "..skipReason)
+        corelog.Error("  condition incorrectly not met: "..skipReason)
     else
         corelog.WriteToLog("  condition met")
     end

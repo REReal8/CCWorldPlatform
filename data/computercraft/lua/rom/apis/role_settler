@@ -89,13 +89,15 @@ function WaitFirstTree_Task(taskData)
     return {success = true}
 end
 
+local fuelNeededPerTree = 35 + 1
+
 function ChopFirstTree_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
         location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
-        fuelNeeded = 0, --> per definition still no fuel (as the task fuels from first chopped log (already converted to planks))
+        fuelNeeded = fuelNeededPerTree,
         itemsNeeded = {},
     }
 end
@@ -175,7 +177,12 @@ end
 
 function CollectCobbleStone_Task(taskData)
     -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.CollectCobbleStone_Task: Invalid taskData") return {success = false} end
     local startLocation = taskData.startLocation
+    if type(startLocation) ~= "table" then corelog.Error("role_settler.CollectCobbleStone_Task: Invalid startLocation") return {success = false} end
+
+    -- move to the workingLocation
+    coremove.GoTo(startLocation)
 
     -- get into digging position
     corelog.WriteToLog (">Collecting cobblestone")
@@ -206,13 +213,30 @@ function CollectCobbleStone_Task(taskData)
     return {success = true}
 end
 
+function FuelNeededPerRound(nTrees)
+    local fuelNeededBetweenTrees = 6
+
+    return nTrees*fuelNeededPerTree + 2 * (nTrees - 1) * fuelNeededBetweenTrees
+end
+
 function CollectLogs_MetaData(taskData)
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.CollectLogs_MetaData: Invalid taskData") return {success = false} end
+    local startLocation = taskData.startLocation
+    if type(startLocation) ~= "table" then corelog.Error("role_settler.CollectLogs_MetaData: Invalid startLocation") return {success = false} end
+    local nTrees = taskData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("role_settler.CollectLogs_MetaData: Invalid nTrees") return {success = false} end
+    local logsNeeded = taskData.logsNeeded
+    if type(logsNeeded) ~= "number" then corelog.Error("role_settler.CollectLogs_MetaData: Invalid logsNeeded") return {success = false} end
+
+    local harvestingRoundsNeeded = 2 -- hardcoded for now, ToDo: move the loop to enterprise level, and have a assignment for each round
+
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(startLocation),
+        needTool    = true,
+        needTurtle  = true,
+        fuelNeeded  = harvestingRoundsNeeded*FuelNeededPerRound(nTrees),
         itemsNeeded = {
             ["minecraft:crafting_table"] = 1,
         }
@@ -221,18 +245,20 @@ end
 
 function CollectLogs_Task(taskData)
     -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.CollectLogs_Task: Invalid taskData") return {success = false} end
     local startLocation = taskData.startLocation
-    local factoryLocation = taskData.factoryLocation
+    if type(startLocation) ~= "table" then corelog.Error("role_settler.CollectLogs_Task: Invalid startLocation") return {success = false} end
     local nTrees = taskData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("role_settler.CollectLogs_Task: Invalid nTrees") return {success = false} end
     local logsNeeded = taskData.logsNeeded
+    if type(logsNeeded) ~= "number" then corelog.Error("role_settler.CollectLogs_Task: Invalid logsNeeded") return {success = false} end
 
     -- gather logs
     corelog.WriteToLog(">Collecting " .. logsNeeded .. " logs")
     while coreinventory.CountItem("minecraft:birch_log") < logsNeeded do
         -- Harvest Forest
         local harvestForestData = {
-            firstTreeLocation   = startLocation,
-            factoryLocation     = factoryLocation,
+            firstTreeLocation   = coremove.CopyLocation(startLocation),
             nTrees              = nTrees,
         }
         HarvestForest_Task(harvestForestData)
@@ -243,12 +269,19 @@ function CollectLogs_Task(taskData)
 end
 
 function CollectSaplings_MetaData(taskData)
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.CollectSaplings_MetaData: Invalid taskData") return {success = false} end
+    local startLocation = taskData.startLocation
+    if type(startLocation) ~= "table" then corelog.Error("role_settler.CollectSaplings_MetaData: Invalid startLocation") return {success = false} end
+    local nTrees = taskData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("role_settler.CollectSaplings_MetaData: Invalid nTrees") return {success = false} end
+
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.startLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(startLocation),
+        needTool    = true,
+        needTurtle  = true,
+        fuelNeeded  = 1*FuelNeededPerRound(nTrees), -- 1 rondje zou genoeg moeten zijn
         itemsNeeded = {
             ["minecraft:crafting_table"] = 1,
         }
@@ -257,18 +290,20 @@ end
 
 function CollectSaplings_Task(taskData)
     -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.CollectSaplings_Task: Invalid taskData") return {success = false} end
     local startLocation = taskData.startLocation
-    local factoryLocation = taskData.factoryLocation
+    if type(startLocation) ~= "table" then corelog.Error("role_settler.CollectSaplings_Task: Invalid startLocation") return {success = false} end
     local nTrees = taskData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("role_settler.CollectSaplings_Task: Invalid nTrees") return {success = false} end
     local saplingsNeeded = taskData.saplingsNeeded
+    if type(saplingsNeeded) ~= "number" then corelog.Error("role_settler.CollectSaplings_Task: Invalid saplingsNeeded") return {success = false} end
 
     -- gather saplings
     corelog.WriteToLog(">Collecting " .. saplingsNeeded .. " saplings")
     while coreinventory.CountItem("minecraft:birch_sapling") < saplingsNeeded do
         -- Harvest Forest
         local harvestForestData = {
-            firstTreeLocation   = startLocation,
-            factoryLocation     = factoryLocation,
+            firstTreeLocation   = coremove.CopyLocation(startLocation),
             nTrees              = nTrees,
         }
         HarvestForest_Task(harvestForestData)
@@ -279,15 +314,26 @@ function CollectSaplings_Task(taskData)
 end
 
 function HarvestForest_MetaData(taskData)
+    -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid taskData") return {success = false} end
+    local firstTreeLocation = taskData.firstTreeLocation
+    if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid firstTreeLocation") return {success = false} end
+    local nTrees = taskData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid nTrees") return {success = false} end
+    local priorityKey = taskData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid priorityKey") return {success = false} end
+
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.firstTreeLocation),
-        needTool = true,
-        needTurtle = true,
-        fuelNeeded = 100, -- ToDo: how much is needed for this step?
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(firstTreeLocation),
+        needTool    = true,
+        needTurtle  = true,
+        fuelNeeded  = FuelNeededPerRound(nTrees),
         itemsNeeded = {
             ["minecraft:crafting_table"] = 1,
-        }
+        },
+
+        priorityKey = priorityKey,
     }
 end
 
@@ -302,14 +348,15 @@ function HarvestForest_Task(taskData)
         Parameters:
             taskData                    - (table) data about the task
                 firstTreeLocation       - (table) location of first tree of the forest
-                factoryLocation         - (table) location of factory
                 nTrees                  - (number) the number of trees in (the y direction of) the forest 
     ]]
 
     -- check input
+    if type(taskData) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid taskData") return {success = false} end
     local firstTreeLocation = taskData.firstTreeLocation
-    local factoryLocation = taskData.factoryLocation
+    if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid firstTreeLocation") return {success = false} end
     local nTrees = taskData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("role_settler.HarvestForest_Task: Invalid nTrees") return {success = false} end
 
     corelog.WriteToLog(" Harvesting Forest")
 
@@ -325,9 +372,6 @@ function HarvestForest_Task(taskData)
         width = 2,
         dontCleanup = true,
     })
-
-    -- refuel
-    Refuel(factoryLocation)
 
     -- end
     return {success = true}
@@ -350,54 +394,4 @@ function WaitForTree()
         -- opnieuw kijken
         has_block, data = turtle.inspect()
     end
-end
-
-function Refuel(factoryLocation)
-    local fuelLevel     = turtle.getFuelLevel()
-    local minFuel       = 500
-    local refuelLevel   = 1000
-
-    -- do we need to refuel?
-    if fuelLevel < minFuel then
-        corelog.WriteToLog(" Attempt refueling from " .. fuelLevel .. " to " .. refuelLevel .. ".")
-        -- determine present en wanted, process the lowest value of both values
-        local logs        = coreinventory.CountItem("minecraft:birch_log")
-        local logsNeeded  = math.ceil((refuelLevel - fuelLevel ) / 60)    -- 1 log --> 4 planks, 4 planks have a burn value of 60 (15 each)
-        local logsToBurn  = math.min(logs, logsNeeded)
-
-        -- determine crafting location
-        local craftingLocation = coremove.GetRelativeLocation(factoryLocation, 3, 3, -4)
-
-        -- logs to planks
-        LogToPlanks(craftingLocation, logsToBurn * 4)
-
-        -- burn all the planks just crafted
-        local planksPresent   = coreinventory.CountItem("minecraft:birch_planks")
-        coreinventory.Refuel({itemName = "minecraft:birch_planks",  itemCount = planksPresent})
-
-        corelog.WriteToLog(" refueled to " .. turtle.getFuelLevel())
-    else
-        corelog.WriteToLog(" Already above (=" .. fuelLevel .. ") minumum(=" .. minFuel .. ") fuellevel.")
-    end
-end
-
-function LogToPlanks(craftingLocation, planks)
-    -- check input
-    local logsNeeded = math.ceil(planks / 4)
-    local logs = coreinventory.CountItem("minecraft:birch_log")
-    if logs < logsNeeded then corelog.Warning("Not enough logs(=" .. logsNeeded .. ") present(=" .. logs .. ") for planks(=" .. planks .. ")") return false end
-
-    -- craft
-    role_alchemist.Craft_Task({
-        recipe = {
-            [6] = {
-                itemName = "minecraft:birch_log",
-                itemCount = 1
-            },
-            yield = 4
-        },
-        productItemName = "minecraft:birch_planks",
-        productItemCount= planks,
-        workingLocation = craftingLocation,
-    })
 end

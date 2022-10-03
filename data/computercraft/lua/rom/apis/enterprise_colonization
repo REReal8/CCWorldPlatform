@@ -1,3 +1,8 @@
+local db = {
+    dhtRoot     = "enterprise_colonization",
+    dhtForest   = "forest", -- ToDo: consider allowing multiple (once part of enterprise_woods)
+}
+
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -6,7 +11,6 @@
 --   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --   | |
 --   |_|
-
 
 function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     --[[
@@ -37,12 +41,25 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             callback            - (string) name of function to call once service is ready
             callbackData        - (table) data to supply to callback function
     --]]
+
     -- check input
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: callback not a string") return false end
 
+    -- ensure enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+        coredht.SaveData({
+            location    = {x= 0, y= 0, z= 1, dx=0, dy=1},
+            nTrees      = 0,
+        }, db.dhtRoot, db.dhtForest)
+    end
+
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+
     -- construct arguments
     local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
-    local forestLocation            = {x= 0, y= 0, z= 1, dx=0, dy=1}
     local primaryTaskData =  {
         startLocation               = coremove.CopyLocation(startLocation),
     }
@@ -81,6 +98,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         chopFirstTreeMetaData       = role_settler.ChopFirstTree_MetaData(primaryTaskData),
         chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
 
+        forestFirstTree             = 1,
+
         dummyTaskData               = dummyTaskData,
         reportStatusMetaData        = role_settler.ReportStatus_MetaData(dummyTaskData),
         reportStatus_Task           = "role_settler.ReportStatus_Task",
@@ -99,7 +118,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         collectLogsTaskData         = collectLogsTaskData,
         collectLogsMetaData         = role_settler.CollectLogs_MetaData(collectLogsTaskData),
 
-        forestLocation              = coremove.CopyLocation(forestLocation),
+        forestLocation              = coremove.CopyLocation(forest.location),
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_forest.tree_pattern), -- ToDo: use a new pattern including chests
         forestBuildFromAbove        = true,
         forestReplacePresentObjects = false,
@@ -134,7 +153,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_energy.Refuel_ASrv", async = true, stepDataDef = {
+            { stepName = "enterprise_energy.Refuel_ASrv", async = true, stepDataDef = { -- ToDo: consider removing by tweaking enterprise_energy
                 { keyDef = "turtleId"                   , valueSource = 1, keyDefSource = "turtleId" },
                 { keyDef = "fuelItems"                  , valueSource = 0, keyDefSource = "initialRefuelItems" },
                 { keyDef = "ingredientsHostLocator"     , valueSource = 0, keyDefSource = "ingredientsHostLocator" },
@@ -144,10 +163,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "chopFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_energy.Refuel_ASrv", async = true, stepDataDef = {
-                { keyDef = "turtleId"                   , valueSource = 1, keyDefSource = "turtleId" },
-                { keyDef = "fuelItems"                  , valueSource = 5, keyDefSource = "orderForFuel" },
-                { keyDef = "ingredientsHostLocator"     , valueSource = 0, keyDefSource = "ingredientsHostLocator" },
+            { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "reportStatus_Task" },
@@ -172,7 +189,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             }},
             { stepName = "enterprise_colonization.ExtendForest_ASrv", async = true, stepDataDef = {
                 { keyDef = "startLocation"              , valueSource = 0, keyDefSource = "startLocation" },
-                { keyDef = "factoryLocation"            , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "forestLocation"             , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "treesNeeded"                , valueSource = 0, keyDefSource = "treesNeeded" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
@@ -222,11 +238,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
                 { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
                 { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
-                { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 16, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 15, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -259,7 +274,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
         Parameters:
             serviceData                 - (table) data about the service
                 startLocation           - (table) location where first steps are taken
-                factoryLocation         - (table) location of the factory to use
                 forestLocation          - (table) base location of factory
                 treesNeeded             - (number) number of trees to extend forest to
                 materialsHostLocator    - (URL) locating the host of the building materials
@@ -271,8 +285,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local startLocation = serviceData.startLocation
     if type(startLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid startLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local factoryLocation = serviceData.factoryLocation
-    if type(factoryLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid factoryLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local forestLocation = serviceData.forestLocation
     if type(forestLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid forestLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local treesNeeded = serviceData.treesNeeded
@@ -287,32 +299,50 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
     local areAllTrueStepDataDef = {}
     local projectData = {
         startLocation           = startLocation,
-        factoryLocation         = factoryLocation,
         forestLocation          = forestLocation,
         materialsHostLocator    = materialsHostLocator,
     }
 
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+
     -- add project step for all trees to add 
     local iStep = 0
-    for iTree = 2, treesNeeded do -- note: first already created in PlantFirstSapling_Task
-        -- step index
-        iStep = iStep + 1
-        local iStepStr = tostring(iStep)
+    local forestNTrees = forest.nTrees    -- note: first already created in PlantFirstSapling_Task
+    for iTree = forestNTrees + 1, treesNeeded do
+        -- ToDo: simplify looping (currentNTreesStr and newNTreesStr are related/ almost the same)
 
         -- add collect and build tree step
-        local currentNTrees = "currentNTreeStep"..iStepStr
+        iStep = iStep + 1
+        local iStepStr = tostring(iStep)
+        local currentNTreesStr = "currentNTreeStep"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_colonization.CollectAndBuildForestTree_ASrv", async = true, stepDataDef = {
                 { keyDef = "startLocation"          , valueSource = 0, keyDefSource = "startLocation" },
-                { keyDef = "factoryLocation"        , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "forestLocation"         , valueSource = 0, keyDefSource = "forestLocation" },
-                { keyDef = "currentNTrees"          , valueSource = 0, keyDefSource = currentNTrees },
+                { keyDef = "currentNTrees"          , valueSource = 0, keyDefSource = currentNTreesStr },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }}
         )
 
         -- add step data
-        projectData[currentNTrees] = iTree - 1
+        projectData[currentNTreesStr] = iTree - 1
+
+        -- add success stepDataDef
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+
+        -- update forest info
+        iStep = iStep + 1
+        iStepStr = tostring(iStep)
+        local newNTreesStr = "newNTreeStep"..iStepStr
+        table.insert(projectSteps,
+            { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestNTrees"           , valueSource = 0, keyDefSource = newNTreesStr },
+            }}
+        )
+
+        -- add step data
+        projectData[newNTreesStr] = iTree
 
         -- add success stepDataDef
         table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
@@ -355,7 +385,6 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
         Parameters:
             serviceData                 - (table) data about the service
                 startLocation           - (table) location where first steps are taken
-                factoryLocation         - (table) location of the factory to use
                 forestLocation          - (table) base location of factory
                 currentNTrees           - (number) current number of trees in the forest
                 materialsHostLocator    - (URL) locating the host of the building materials
@@ -364,30 +393,26 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local startLocation = serviceData.startLocation
-    if type(startLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid startLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local factoryLocation = serviceData.factoryLocation
-    if type(factoryLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid factoryLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(startLocation) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid startLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local forestLocation = serviceData.forestLocation
-    if type(forestLocation) ~= "table" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid forestLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(forestLocation) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid forestLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local currentNTrees = serviceData.currentNTrees
-    if type(currentNTrees) ~= "number" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid currentNTrees") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(currentNTrees) ~= "number" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid currentNTrees") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local materialsHostLocator = url.URLClass:new(serviceData.materialsHostLocator)
-    if type(materialsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.BuildForestTree_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(materialsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.CollectAndBuildForestTree_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- create projectServiceData
     local collectLogsTaskData = {
         startLocation           = coremove.CopyLocation(startLocation),
-        factoryLocation         = coremove.CopyLocation(factoryLocation),
         nTrees                  = currentNTrees,
         logsNeeded              = 2,
     }
     local collectSaplingsTaskData = {
         startLocation           = coremove.CopyLocation(startLocation),
-        factoryLocation         = coremove.CopyLocation(factoryLocation),
         nTrees                  = currentNTrees,
         saplingsNeeded          = 1,
     }
@@ -449,6 +474,37 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
+function UpdateForestInfo_SSrv(serviceData)
+    --[[
+        This private sync service updates the forest information.
+
+        Return value:
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                forestNTrees            - (number) number of trees in the forest
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.UpdateForestInfo_SSrv: Invalid serviceData") return {success = false} end
+    local forestNTrees = serviceData.forestNTrees
+    if type(forestNTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForestInfo_SSrv: Invalid forestNTrees") return {success = false} end
+
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+
+    -- set forest information
+    forest.nTrees = forestNTrees
+
+    -- save forest data
+    coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
+
+    -- end
+    return {success = true}
+end
+
 function BuildForestTree_ASrv(serviceData, callback, callbackData)
     --[[
         This private async service extends the forest with 1 tree
@@ -487,4 +543,167 @@ function BuildForestTree_ASrv(serviceData, callback, callbackData)
     }
     corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint))
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
+end
+
+function CanProduce_QSrv(serviceData)
+    --[[
+        This sync public query service answers the question if this Producer can produce specific items.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) wether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                productItemName     - (string) name of item to produce
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.CanProduce_QSrv: Invalid serviceData") return {success = false} end
+    local productItemName = serviceData.productItemName
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.CanProduce_QSrv: Invalid productItemName") return {success = false} end
+
+    -- check for birchlog or sapling
+    if productItemName == "minecraft:birch_log" then
+        return {success = true}
+    elseif productItemName == "minecraft:birch_sapling" then
+        return {success = true}
+    else
+        return {success = false}
+    end
+end
+
+function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch
+    --[[
+        This async public Producer service produces multiple instances of a specific item in the enterprise. It does so 
+        by ...
+
+        Finally it delivers the created items to the requested destination.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed correctly
+                destinationItemsLocator - (URL) locating the final Storage and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                            the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                productItemName         - (string) name of item to produce
+                productItemCount        - (number) amount of items to produce
+                ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
+                destinationHostLocator  - (URL) locating where the produced items need to be delivered to
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                    - (string) name of function to call once service is ready
+            callbackData                - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemName = serviceData.productItemName
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local productItemCount = serviceData.productItemCount
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+
+    -- check for birchlog or sapling
+    local localSupplierLocator = nil
+    if productItemName == "minecraft:birch_log" then
+        -- get localLogsLocator
+        localSupplierLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        -- ToDo: generalise this, e.g. make birch supplier a property of the specific forest (could for example also be a chest)
+    elseif productItemName == "minecraft:birch_sapling" then
+        -- get localLogsLocator
+        localSupplierLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        -- ToDo: generalise this, e.g. make birch supplier a property of the specific forest (could for example also be a chest)
+    else
+        corelog.Error("enterprise_colonization.ProduceItem_ASrv: This is not a producer for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false})
+    end
+
+    -- check items already available in localSupplierLocator
+    local localItemsLocator = localSupplierLocator:copy()
+    local productItemsQuery = { [productItemName] = productItemCount }
+    localItemsLocator:setQuery(productItemsQuery)
+    if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = localItemsLocator} ).success then
+        -- yes: return the items
+        local transferData = {
+            sourceItemsLocator      = localItemsLocator,
+            destinationHostLocator  = destinationHostLocator,
+            assignmentsPriorityKey  = assignmentsPriorityKey,
+        }
+        corelog.WriteToLog(">Procuring from local forest Supplier: "..textutils.serialise(productItemsQuery).."")
+        enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+    else
+        -- construct taskData
+        local harvestForestTaskData = {
+            firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
+            nTrees              = forest.nTrees,
+
+            priorityKey         = assignmentsPriorityKey,
+        }
+
+        -- create project service data
+        local projectDef = {
+            steps = {
+                -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator 
+                --          (or will this be part of harvestForest?)
+                { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                    { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "harvestForest_Task" },
+                    { keyDef = "metaData"               , valueSource = 0, keyDefSource = "harvestForestMetaData" },
+                    { keyDef = "taskData"               , valueSource = 0, keyDefSource = "harvestForestTaskData" },
+                }},
+                -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling 
+                --          (or will this be part of harvestForest?)
+                -- ToDo: consider storing rest/ waste materials (e.g. sticks)
+                { stepName = "enterprise_colonization.ProduceItem_ASrv", async = true, stepDataDef = { -- note: recursive call
+                    { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
+                    { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
+                    { keyDef = "ingredientsHostLocator" , valueSource = 0, keyDefSource = "ingredientsHostLocator" },
+                    { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                    { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                }},
+                { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                    { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                    { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                }},
+            },
+            returnData  = {
+                { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "destinationItemsLocator"    , valueSource = 2, keyDefSource = "destinationItemsLocator" },
+            }
+        }
+        local projectData = {
+            productItemName         = productItemName,
+            productItemCount        = productItemCount, -- ToDo: consider lower count with possible # items already present in localSupplierLocator
+            ingredientsHostLocator  = ingredientsHostLocator:copy(),
+            destinationHostLocator  = destinationHostLocator:copy(),
+
+            harvestForest_Task      = "role_settler.HarvestForest_Task",
+            harvestForestTaskData   = harvestForestTaskData,
+            harvestForestMetaData   = role_settler.HarvestForest_MetaData(harvestForestTaskData),
+
+            assignmentsPriorityKey  = assignmentsPriorityKey,
+        }
+        local projectServiceData = {
+            projectDef  = projectDef,
+            projectData = projectData,
+        }
+
+        -- start project
+        corelog.WriteToLog(">Harvesting from forest: "..textutils.serialise(productItemsQuery).."")
+        enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    end
 end
