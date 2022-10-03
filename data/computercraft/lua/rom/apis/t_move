@@ -42,4 +42,20 @@ function T_Reset()
     })
 end
 
+function T_DeFuel()
+    while turtle.getFuelLevel() > 2*24 do
+        T_GoToLeftHome()
 
+        T_GoHome()
+
+        corelog.WriteToLog(" deFueled to "..turtle.getFuelLevel())
+    end
+
+    while turtle.getFuelLevel() > 2*5 do
+        T_GoStart()
+
+        T_GoHome()
+
+        corelog.WriteToLog(" deFueled to "..turtle.getFuelLevel())
+    end
+end
