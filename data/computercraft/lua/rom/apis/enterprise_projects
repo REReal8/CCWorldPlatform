@@ -160,11 +160,15 @@ function NextProjectStep(internalProjectData, stepResults)
 
         -- get fieldValue
         local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.keyDefSource)
-        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.NextProjectStep: Invalid fieldValue for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
-
-        -- add field 
-        local setSuccess = SetFieldValueFromKeyDef(stepData, fieldDef.keyDef, fieldValue)
-        if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting stepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
+        if type(fieldValue) == "nil" then
+            if fieldDef.keyDef ~= "assignmentsPriorityKey" then
+                corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil")
+            end
+        else
+            -- add field 
+            local setSuccess = SetFieldValueFromKeyDef(stepData, fieldDef.keyDef, fieldValue)
+            if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting stepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
+        end
     end
 
     -- type of step?
@@ -197,7 +201,7 @@ function GetFieldValueFromKeyDef(stepData, keyDef)
         if type(keyName) ~= "string" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(keyName)..") keyName") return nil end
         if type(fieldValue) ~= "table" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Can't index further into fieldValue="..fieldValue.." (type="..type(fieldValue)..")") return nil end
         fieldValue = fieldValue[keyName]
-        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid fieldValue (type="..type(fieldValue)..") for key "..keyName) return nil end
+        if type(fieldValue) == "nil" and keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.GetFieldValueFromKeyDef: FieldValue for key "..keyName.." = nil") return nil end
     end
 
     -- end

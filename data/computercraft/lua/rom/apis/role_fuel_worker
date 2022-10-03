@@ -14,15 +14,19 @@ function Refuel_MetaData(taskData)
     if type(turtleId) ~= "number" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid turtleId") return {success = false} end
     local fuelItems = taskData.fuelItems
     if type(fuelItems) ~= "table" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid fuelItems") return {success = false} end
+    local priorityKey = taskData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid priorityKey") return {success = false} end
 
     return {
-        startTime = coreutils.UniversalTime(),
-        location = nil,
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = 0,
-        needTurtleId = turtleId,
+        startTime   = coreutils.UniversalTime(),
+        location    = nil,
+        needTool    = false,
+        needTurtle  = true,
+        fuelNeeded  = 0,
+        needTurtleId= turtleId,
         itemsNeeded = coreutils.DeepCopy(fuelItems),
+
+        priorityKey = priorityKey,
     }
 end
 

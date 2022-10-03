@@ -93,6 +93,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL specifies the host where the items are located)
                 destinationHostLocator  - (URL) locating the Storage that needs to be transferred to
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function            
     --]]
@@ -103,6 +104,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationHostLocator = url.URLClass:new(transferData.destinationHostLocator)
     if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = transferData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -128,8 +131,6 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         destinationEnterprise = "enterprise_turtle"
     elseif destinationHost == "chests" then
         destinationEnterprise = "enterprise_chests"
-    elseif destinationHost == "shop" then
-        destinationEnterprise = "enterprise_shop"
     else
         corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
@@ -149,10 +150,12 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         steps   = {
             { stepName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "sourceItemsLocator" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
                 { keyDef = "destinationHostLocator"     , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
@@ -167,6 +170,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local projectData = {
         sourceItemsLocator      = sourceItemsLocator,
         destinationHostLocator  = destinationHostLocator,
+
+        assignmentsPriorityKey  = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = transferItemsProjectDef,

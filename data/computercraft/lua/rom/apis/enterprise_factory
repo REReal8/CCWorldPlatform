@@ -98,7 +98,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
-                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
+                destinationItemsLocator - (URL) locating the final Storage and the items that where transferred to it
                                             (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
                                             the "query" should be equal to orderItems)
 
@@ -108,6 +108,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 productItemCount        - (number) amount of items to produce
                 ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
                 destinationHostLocator  - (URL) locating where the produced items need to be delivered to
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]
@@ -122,6 +123,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
     if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -150,6 +153,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
                 { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localInputLocator" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
                 { keyDef = "localInputItemsLocator" , valueSource = 1, keyDefSource = "destinationItemsLocator" },
@@ -159,10 +163,12 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
                 { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
                 { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
                 { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -188,6 +194,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
         productItemName             = productItemName,
         productItemCount            = productItemCount,
         productionRecipe            = siteProduceItemData.productionRecipe,
+
+        assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = projectDef,

@@ -251,6 +251,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
                 productionRecipe        - (table) production recipe
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     ]]
@@ -271,6 +272,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionRecipe = serviceData.productionRecipe
     if type(productionRecipe) ~= "table" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productionRecipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -282,6 +285,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
         { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
             { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "localInputItemsLocator" },
             { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleInputLocator" },
+            { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
         }},
     }
 
@@ -297,6 +301,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
                 { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
                 { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }}
         )
 
@@ -314,6 +319,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
                 { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
                 { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }}
         )
 
@@ -324,6 +330,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
                 { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
                 { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
                 { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }}
         )
 
@@ -342,6 +349,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
         { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
             { keyDef = "sourceItemsLocator"     , valueSource = 2 + extraStep, keyDefSource = "turtleOutputItemsLocator" },
             { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localOutputLocator" },
+            { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
         }}
     )
     table.insert(projectSteps, areAllTrueStep)
@@ -364,6 +372,8 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
         productItemName             = productItemName,
         productItemCount            = productItemCount,
         productionRecipe            = productionRecipe,
+
+        assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = projectDef,
@@ -719,6 +729,7 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
                 productionRecipe        - (table) crafting recipe
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once the items are made
             callbackData                - (table) data to supply to callback function
     ]]
@@ -735,6 +746,8 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionRecipe = serviceData.productionRecipe
     if type(productionRecipe) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionRecipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -749,6 +762,8 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
 
         recipe          = productionRecipe,
         workingLocation = coremove.CopyLocation(spotLocation),
+
+        priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Craft_MetaData(craftData)
     metaData.needTurtleId = turtleInputItemsLocator:getPort()
@@ -796,6 +811,7 @@ function SmeltItem_ASrv(serviceData, callback, callbackData)
                 productionSpot          - (table) production spot
                 productItemCount        - (number) amount of items to produce
                 productionRecipe        - (table) smelting recipe
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once the items are made
             callbackData                - (table) data to supply to callback function
     ]]
@@ -810,6 +826,8 @@ function SmeltItem_ASrv(serviceData, callback, callbackData)
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionRecipe = serviceData.productionRecipe
     if type(productionRecipe) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionRecipe") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -827,6 +845,8 @@ function SmeltItem_ASrv(serviceData, callback, callbackData)
         -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = productItemCount,
+
+        priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Smelt_MetaData(smeltData)
     metaData.needTurtleId = turtleInputItemsLocator:getPort()
@@ -858,6 +878,7 @@ function Pickup_ASrv(serviceData, callback, callbackData)
                 productionSpot          - (table) production spot
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once the items are made
             callbackData                - (table) data to supply to callback function
     ]]
@@ -872,6 +893,8 @@ function Pickup_ASrv(serviceData, callback, callbackData)
     if type(productItemName) ~= "string" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid productItemName") return {success = false} end
     local productItemCount = serviceData.productItemCount
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
@@ -885,6 +908,8 @@ function Pickup_ASrv(serviceData, callback, callbackData)
         productItemCount= productItemCount,
 
         workingLocation = coremove.CopyLocation(spotLocation),
+
+        priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Pickup_MetaData(pickupData)
     metaData.startTime = pickUpTime

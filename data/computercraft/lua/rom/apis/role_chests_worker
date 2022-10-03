@@ -82,6 +82,8 @@ function FetchItemsFromChestIntoTurtle_MetaData(taskData)
     if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
     if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: invalid accessDirection") return {success = false} end
+    local priorityKey = taskData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: Invalid priorityKey") return {success = false} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -89,12 +91,14 @@ function FetchItemsFromChestIntoTurtle_MetaData(taskData)
 
     -- return metadata
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(workingLocation),
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = fuelNeeded,
-        itemsNeeded = {}
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(workingLocation),
+        needTool    = false,
+        needTurtle  = true,
+        fuelNeeded  = fuelNeeded,
+        itemsNeeded = {},
+
+        priorityKey = taskData.priorityKey,
     }
 end
 
@@ -216,6 +220,8 @@ function PutItemsFromTurtleIntoChest_MetaData(taskData)
     if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: location not valid") return {success = false} end
     local accessDirection = taskData.accessDirection
     if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid accessDirection") return {success = false} end
+    local priorityKey = taskData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: Invalid priorityKey") return {success = false} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -223,13 +229,15 @@ function PutItemsFromTurtleIntoChest_MetaData(taskData)
 
     -- return metadata
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(workingLocation),
-        needTool = false,
-        needTurtle = true,
-        needTurtleId = turtleId,
-        fuelNeeded = fuelNeeded,
-        itemsNeeded = {}
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(workingLocation),
+        needTool    = false,
+        needTurtle  = true,
+        needTurtleId= turtleId,
+        fuelNeeded  = fuelNeeded,
+        itemsNeeded = {},
+
+        priorityKey = taskData.priorityKey,
     }
 end
 

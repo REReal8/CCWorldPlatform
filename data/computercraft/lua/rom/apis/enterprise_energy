@@ -31,19 +31,22 @@ function Refuel_ASrv(serviceData, callback, callbackData)
                 turtleId                - (number) id of the turtle to fuel
                 fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
                 ingredientsHostLocator  - (URL) locating where the fuel ingredients can be retrieved
+                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local turtleId = serviceData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid turtleId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid turtleId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local fuelItems = serviceData.fuelItems
-    if type(fuelItems) ~= "table" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid fuelItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(fuelItems) ~= "table" then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid fuelItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
-    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.FuelTurtleToLevelIfNeeded_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.Refuel_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- create project service data
@@ -53,12 +56,15 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     local refuelTaskData = {
         turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
+
+        priorityKey = assignmentsPriorityKey,
     }
     local buildBlueprintProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
                 { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
+                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "refuel_Task" },
@@ -83,6 +89,8 @@ function Refuel_ASrv(serviceData, callback, callbackData)
         refuel_Task                 = "role_fuel_worker.Refuel_Task",
         refuelMetaData              = role_fuel_worker.Refuel_MetaData(refuelTaskData),
         refuelTaskData              = refuelTaskData,
+
+        assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = buildBlueprintProjectDef,

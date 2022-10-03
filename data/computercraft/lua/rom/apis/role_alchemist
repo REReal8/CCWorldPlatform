@@ -14,6 +14,8 @@ function Craft_MetaData(craftData)
     local productItemCount = craftData.productItemCount
     if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: Invalid productItemCount") return { } end
     if type(craftData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: workingLocation not valid") return { } end
+    local priorityKey = craftData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_alchemist.Craft_MetaData: Invalid priorityKey") return {success = false} end
 
     -- determine needed items
     local itemList = Craft_ItemsNeeded(craftData.recipe, productItemCount)
@@ -22,12 +24,14 @@ function Craft_MetaData(craftData)
 
     -- return metadata
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(workingLocation),
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = fuelNeeded,
-        itemsNeeded = itemList
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(workingLocation),
+        needTool    = false,
+        needTurtle  = true,
+        fuelNeeded  = fuelNeeded,
+        itemsNeeded = itemList,
+
+        priorityKey = priorityKey,
     }
 end
 
@@ -134,7 +138,9 @@ function Smelt_MetaData(smeltData)
     if type(smeltData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid workingLocation") return { } end
     if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid fuelItemName") return { } end
     if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid fuelItemCount") return { } end
- 
+    local priorityKey = smeltData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid priorityKey") return {success = false} end
+
     -- determine needed items
     local itemList = Smelt_ItemsNeeded(smeltData.recipe, smeltData.productItemCount, smeltData.fuelItemName, smeltData.fuelItemCount)
     local workingLocation = smeltData.workingLocation
@@ -142,12 +148,14 @@ function Smelt_MetaData(smeltData)
 
     -- return metadata
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(workingLocation),
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = fuelNeeded,
-        itemsNeeded = itemList
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(workingLocation),
+        needTool    = false,
+        needTurtle  = true,
+        fuelNeeded  = fuelNeeded,
+        itemsNeeded = itemList,
+
+        priorityKey = priorityKey,
     }
 end
 
@@ -252,18 +260,22 @@ function Pickup_MetaData(pickupData)
     if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid productItemCount") return {success = false} end
     local workingLocation = pickupData.workingLocation
     if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid workingLocation") return {success = false} end
+    local priorityKey = pickupData.priorityKey
+    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid priorityKey") return {success = false} end
 
     -- determine needed fuel
     local fuelNeeded = 4 -- task starts at workingLocation, very little (4) movement from there
 
     -- return metadata
     return {
-        startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(workingLocation),
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = fuelNeeded,
-        itemsNeeded = {}
+        startTime   = coreutils.UniversalTime(),
+        location    = coremove.CopyLocation(workingLocation),
+        needTool    = false,
+        needTurtle  = true,
+        fuelNeeded  = fuelNeeded,
+        itemsNeeded = {},
+
+        priorityKey = priorityKey,
     }
 end
 
