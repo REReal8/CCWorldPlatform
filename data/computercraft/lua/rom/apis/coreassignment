@@ -96,13 +96,11 @@ function AddAssignment(metaData, taskFunction, taskData, callbackFunction, callb
 
     -- inform enterprise_energy of fuelNeeded
     local fuelNeeded = metaData.fuelNeeded
---    if fuelNeeded > 0 then
-        -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
-        local serviceData = {
-            fuelNeeded  = fuelNeeded,
-        }
-        enterprise_energy.TakeNoticeOfFuelNeeded_SSrv(serviceData) -- ToDo: consider using an event instead
---    end
+    -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
+    local serviceData = {
+        fuelNeeded  = fuelNeeded,
+    }
+    enterprise_energy.TakeNoticeOfFuelNeeded_SSrv(serviceData) -- ToDo: consider using an event instead
 
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.listRoot, assignmentId)
