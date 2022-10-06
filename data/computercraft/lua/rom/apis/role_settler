@@ -131,38 +131,6 @@ function ChopFirstTree_Task(taskData)
     return {success = true, orderForFuel = orderForFuel}
 end
 
-function ReportStatus_MetaData(taskData)
-    return {
-        startTime = coreutils.UniversalTime(),
-        location = nil,
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = 0,
-        itemsNeeded = {
-        }
-    }
-end
-
-function ReportStatus_Task(taskData)
-    --[[
-        This Task function reports the status of the turtle settling.
-
-        Return value:
-            task result                 - (table)      
-                success                 - (boolean) whether the task was succesfull
-
-        Parameters:
-            taskData                    - (table) data about the task
-    ]]
-
-    -- we are ready to do more stuff!
-    corelog.WriteToLog("We have "..coreinventory.CountItem("minecraft:birch_sapling").." birch sapling(s)")
-    corelog.WriteToLog("We have "..turtle.getFuelLevel().." fuel")
-
-    -- end
-    return {success = true}
-end
-
 function CollectCobbleStone_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),

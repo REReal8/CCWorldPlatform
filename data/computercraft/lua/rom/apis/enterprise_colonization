@@ -64,8 +64,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         startLocation               = coremove.CopyLocation(startLocation),
     }
     local initialRefuelItems        = { ["minecraft:birch_planks"] = 4 }
-    local dummyTaskData =  {
-    }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
     local settleData = {
@@ -90,10 +88,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
 
         forestFirstTree             = 1,
-
-        dummyTaskData               = dummyTaskData,
-        reportStatusMetaData        = role_settler.ReportStatus_MetaData(dummyTaskData),
-        reportStatus_Task           = "role_settler.ReportStatus_Task",
 
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
@@ -151,11 +145,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "chopFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
-            }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "reportStatus_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "reportStatusMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "dummyTaskData" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
