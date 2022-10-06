@@ -121,18 +121,22 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     -- create project definition
     local createNewWorldProjectDef = {
         steps   = {
-            -- ToDo: implement forest related steps in/ via enterprise_wood/ forest
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
-            }},
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
                 { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
+            -- ToDo: implement forest related steps in/ via enterprise_wood/ forest
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
+            }},
+            { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
+            }},
+            -- ToDo: consider calling HarvestForest_Task
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "waitFirstTree_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
@@ -147,9 +151,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "chopFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
-            }},
-            { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
-                { keyDef = "forestNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "reportStatus_Task" },
