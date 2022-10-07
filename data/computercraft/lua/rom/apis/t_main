@@ -3,11 +3,13 @@ function T_dummy()
     print("!")
 end
 
-function T_EmptyDHTLists()
-    enterprise_projects.DeleteProjects()
+function T_ResetWorld()
     coreassignment.EndAssignments()
+    enterprise_projects.DeleteProjects()
+    enterprise_energy.ResetParameters()
     enterprise_factory.DeleteSites()
     enterprise_chests.DeleteChests()
+    enterprise_colonization.ResetForest()
 end
 
 function T_enterprise_test()
