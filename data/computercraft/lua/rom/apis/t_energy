@@ -1,0 +1,3 @@
+function T_ResetParameters()
+    enterprise_energy.ResetParameters()
+end

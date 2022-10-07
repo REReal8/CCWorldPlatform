@@ -113,14 +113,9 @@ function TakeNoticeOfFuelNeeded_SSrv(serviceData)
     if coredht.GetData(db.dhtRoot) == nil then
         -- create the entry
         coredht.SaveData({}, db.dhtRoot)
-        coredht.SaveData({
-            highestFuelNeed         = 0,
-            minTurtleFuelLevel      = 0,
-            targetTurtleFuelLevel   = 0,
 
-            fuelItemName            = "minecraft:birch_planks",
-            fuelItemGain            = 15,
-        }, db.dhtRoot, db.dhtParameters)
+        -- reset parameters
+        ResetParameters()
     end
 
     -- get parameters
@@ -129,15 +124,14 @@ function TakeNoticeOfFuelNeeded_SSrv(serviceData)
     -- check fuel needed is the highest so far
     if fuelNeeded > parameters.highestFuelNeed then
         -- determine new levels
-        local bufferForProcuringFuel = 5 -- ToDo: improve value (have it depend on distances between crucial sites on the map)
-        local minFuelLevel = fuelNeeded + bufferForProcuringFuel
-        local targetFuelLevel = 2 * minFuelLevel
+        local minFuelLevel = fuelNeeded + parameters.bufferForProcuringFuel
+        local targetFuelLevel = parameters.targetMultiplier * minFuelLevel
 
         -- set levels
         corelog.WriteToLog(">Updating minTurtleFuelLevel(="..minFuelLevel..") and targetTurtleFuelLevel(id="..targetFuelLevel..") because new(="..fuelNeeded..") highestFuelNeed(="..parameters.highestFuelNeed.. ") level.")
-        parameters.highestFuelNeed      = fuelNeeded
-        parameters.minTurtleFuelLevel   = minFuelLevel
-        parameters.targetTurtleFuelLevel= targetFuelLevel
+        parameters.highestFuelNeed          = fuelNeeded
+        parameters.minTurtleFuelLevel       = minFuelLevel
+        parameters.targetTurtleFuelLevel    = targetFuelLevel
 
         -- save db data
         coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
@@ -241,3 +235,16 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function ResetParameters()
+    coredht.SaveData({
+        highestFuelNeed         = 0,
+        minTurtleFuelLevel      = 0,
+        targetTurtleFuelLevel   = 0,
+        bufferForProcuringFuel  = 5, -- ToDo: consider changing to 4
+        targetMultiplier        = 2, -- consider changing to 1.5 *, as first wood chop requires (35+1+4=40, * 1.5 = 60, and that is the energy we get from first log = 4 planks)
+
+        fuelItemName            = "minecraft:birch_planks",
+        fuelItemGain            = 15,
+    }, db.dhtRoot, db.dhtParameters)
+end
