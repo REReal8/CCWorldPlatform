@@ -123,8 +123,12 @@ function ChopFirstTree_Task(taskData)
     coremove.Up(1)
     role_forester.KapBoom()
 
+    -- rest van de planken als brandstof gebruiken, kisten maken we laten (waarschijnlijk beter om eerst fakkeltje te maken trouwens, wellicht later)
+    local logs = coreinventory.CountItem("minecraft:birch_log")
+    local orderForFuel = { ["minecraft:birch_planks"] = (logs - 2)*4 }
+
     -- end
-    return {success = true }
+    return {success = true, orderForFuel = orderForFuel}
 end
 
 function CollectCobbleStone_MetaData(taskData)
