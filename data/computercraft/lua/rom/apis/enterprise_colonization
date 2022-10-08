@@ -62,7 +62,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     local primaryTaskData =  {
         startLocation               = coremove.CopyLocation(startLocation),
     }
-    local initialRefuelItems        = { ["minecraft:birch_planks"] = 4 }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
     local settleData = {
@@ -81,7 +80,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         waitFirstTree_Task          = "role_settler.WaitFirstTree_Task",
 
         ingredientsHostLocator      = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: somehow pass this to enterprise_energy
-        initialRefuelItems          = coreutils.DeepCopy(initialRefuelItems),
 
         chopFirstTreeMetaData       = role_settler.ChopFirstTree_MetaData(primaryTaskData),
         chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
@@ -134,11 +132,6 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "waitFirstTree_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
-            }},
-            { stepName = "enterprise_energy.Refuel_ASrv", async = true, stepDataDef = { -- ToDo: consider removing by tweaking enterprise_energy
-                { keyDef = "turtleId"                   , valueSource = 2, keyDefSource = "turtleId" },
-                { keyDef = "fuelItems"                  , valueSource = 0, keyDefSource = "initialRefuelItems" },
-                { keyDef = "ingredientsHostLocator"     , valueSource = 0, keyDefSource = "ingredientsHostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
