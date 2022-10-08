@@ -75,9 +75,10 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
             ingredientsHostLocator  = ingredientsHostLocator,
             assignmentsPriorityKey  = assignmentsPriorityKey,
         }
+        corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") from "..turtleFuelLevel.." to "..targetFuelLevel.." fuel *")
         return Refuel_ASrv(refuelServiceData, callback, callbackData)
     else
---        corelog.WriteToLog("    Current fuellevel(="..turtleFuelLevel..") of turtle(id="..turtleId..") already above minimum(="..minFuelLevel.. ") level.")
+--        corelog.WriteToLog("* Current fuellevel(="..turtleFuelLevel..") of turtle(id="..turtleId..") already above minimum(="..minFuelLevel.. ") level. *")
         return coreutils.DoCallback(callback, callbackData, {success = true})
     end
 end
@@ -128,7 +129,7 @@ function TakeNoticeOfFuelNeeded_SSrv(serviceData)
         local targetFuelLevel = parameters.targetMultiplier * minFuelLevel
 
         -- set levels
-        corelog.WriteToLog(">Updating minTurtleFuelLevel(="..minFuelLevel..") and targetTurtleFuelLevel(id="..targetFuelLevel..") because new(="..fuelNeeded..") highestFuelNeed(="..parameters.highestFuelNeed.. ") level.")
+        corelog.WriteToLog("* Updating minTurtleFuelLevel(="..minFuelLevel..") and targetTurtleFuelLevel(id="..targetFuelLevel..") because new(="..fuelNeeded..") highestFuelNeed(="..parameters.highestFuelNeed.. ") level. *")
         parameters.highestFuelNeed          = fuelNeeded
         parameters.minTurtleFuelLevel       = minFuelLevel
         parameters.targetTurtleFuelLevel    = targetFuelLevel
