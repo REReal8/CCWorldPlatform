@@ -915,7 +915,7 @@ function Pickup_ASrv(serviceData, callback, callbackData)
     metaData.startTime = pickUpTime
 
     -- add assignment
-    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
+--    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
     coreassignment.AddAssignment(metaData, "role_alchemist.Pickup_Task", pickupData, callback, callbackData)
 
     -- end
