@@ -160,8 +160,8 @@ function ItemsAvailableVia_SSrv(queryData)
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
     -- check itemsLocator is for this enterprise
-    local itemsQueryIsTurtle = IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not itemsQueryIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsQueryURL (="..itemsLocator:getURI()..").") return {success = false} end
+    local itemsLocatorIsTurtle = IsTurtleURL_QSrv({ aURL = itemsLocator})
+    if not itemsLocatorIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- select turtle
     local currentTurtleId = os.getComputerID()
