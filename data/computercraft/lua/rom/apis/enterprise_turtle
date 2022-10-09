@@ -165,8 +165,8 @@ function ItemsAvailableVia_SSrv(queryData)
 
     -- select turtle
     local currentTurtleId = os.getComputerID()
-    local itemsQueryTurtleId = itemsLocator:getPort()
-    if itemsQueryTurtleId and currentTurtleId ~= itemsQueryTurtleId then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Querying items in one (id="..itemsQueryTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    local itemsLocatorTurtleId = itemsLocator:getPort()
+    if itemsLocatorTurtleId and currentTurtleId ~= itemsLocatorTurtleId then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Querying items in one (id="..itemsLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- query turtle for items
     local query = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
