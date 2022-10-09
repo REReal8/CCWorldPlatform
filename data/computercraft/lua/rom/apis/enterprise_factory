@@ -557,11 +557,13 @@ function CanProduce_QSrv(serviceData)
 
     -- check for recipe to produce productItemName
     local recipe = db.recipes[ productItemName ]
-    if type(recipe) == "table" then
-        return {success = true}
-    else
+    if type(recipe) ~= "table" then
         return {success = false}
     end
+    -- end
+    return {
+        success         = true,
+    }
 end
 
 --    _                 _    __                  _   _
