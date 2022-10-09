@@ -539,13 +539,9 @@ function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to 
     -- check for birchlog or sapling
     local localSupplierLocator = nil
     if productItemName == "minecraft:birch_log" then
-        -- get localLogsLocator
-        localSupplierLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
-        -- ToDo: generalise this, e.g. make birch supplier a property of the specific forest (could for example also be a chest)
+        localSupplierLocator = GetLocalLogsLocator()
     elseif productItemName == "minecraft:birch_sapling" then
-        -- get localLogsLocator
-        localSupplierLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
-        -- ToDo: generalise this, e.g. make birch supplier a property of the specific forest (could for example also be a chest)
+        localSupplierLocator = GetLocalSaplingsLocator()
     else
         corelog.Error("enterprise_colonization.ProduceItem_ASrv: This is not a producer for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false})
     end
@@ -623,4 +619,14 @@ function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to 
         corelog.WriteToLog(">Harvesting from forest: "..textutils.serialise(productItemsQuery).."")
         enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
     end
+end
+
+function GetLocalLogsLocator()
+    -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
+    return enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+end
+
+function GetLocalSaplingsLocator()
+    -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
+    return enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
 end
