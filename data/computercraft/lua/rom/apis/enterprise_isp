@@ -1,12 +1,12 @@
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
-    items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling 
+    items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling
     those items.
 
     The ISP provides the following services
         ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsLocator
         TransferItemsFromTo_ASrv    - transferring items from a Supplier to a Storage
-        
+
     The ISP implements it's services by using services of Suppliers and Storages.
 
     For an enterprise to be a Supplier it needs to implement the following services:
@@ -54,18 +54,13 @@ function ItemsAvailableVia_SSrv(queryData)
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
     -- get Supplier
---    corelog.WriteToLog("enterprise_isp: itemsLocator = "..textutils.serialize(itemsLocator))
     local supplierName = itemsLocator:getHost()
     if type(supplierName) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid supplierName") return {success = false} end
---    corelog.WriteToLog("enterprise_isp: supplierName = "..supplierName)
 
     -- relay to ISH service
-    if supplierName == "turtle" then
-        return enterprise_turtle.ItemsAvailableVia_SSrv(queryData)
-    elseif supplierName == "chests" then
-        return enterprise_chests.ItemsAvailableVia_SSrv(queryData)
-    else
-        corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Not implemented for "..supplierName .." Supplier.") return {success = false}
+        if supplierName == "turtle" then return enterprise_turtle.ItemsAvailableVia_SSrv(queryData)
+    elseif supplierName == "chests" then return enterprise_chests.ItemsAvailableVia_SSrv(queryData)
+    else corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Not implemented for "..supplierName .." Supplier.") return {success = false}
     end
 end
 
@@ -78,7 +73,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
             PutItemsFromTurtle_ASrv
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)
@@ -95,7 +90,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
                 destinationHostLocator  - (URL) locating the Storage that needs to be transferred to
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function            
+            callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
@@ -113,26 +108,19 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local sourceHost = sourceItemsLocator:getHost()
     if type(sourceHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceEnterprise = nil
-    if sourceHost == "turtle" then
-        sourceEnterprise = "enterprise_turtle"
-    elseif sourceHost == "chests" then
-        sourceEnterprise = "enterprise_chests"
-    elseif sourceHost == "shop" then
-        sourceEnterprise = "enterprise_shop"
-    else
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..sourceHost .." source ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
+        if sourceHost == "turtle"   then sourceEnterprise = "enterprise_turtle"
+    elseif sourceHost == "chests"   then sourceEnterprise = "enterprise_chests"
+    elseif sourceHost == "shop"     then sourceEnterprise = "enterprise_shop"
+    else corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..sourceHost .." source ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- determine destination enterprise name
     local destinationHost = destinationHostLocator:getHost()
     if type(destinationHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationEnterprise = nil
-    if destinationHost == "turtle" then
-        destinationEnterprise = "enterprise_turtle"
-    elseif destinationHost == "chests" then
-        destinationEnterprise = "enterprise_chests"
-    else
-        corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
+        if destinationHost == "turtle"  then destinationEnterprise = "enterprise_turtle"
+    elseif destinationHost == "chests"  then destinationEnterprise = "enterprise_chests"
+    else corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- check there are actual items to transfer
@@ -179,7 +167,6 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     }
 
     -- start project
---    corelog.WriteToLog(">Transferring items from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..".")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 
     -- end
@@ -189,14 +176,14 @@ end
 function AddItemsLocators_SSrv(serviceData)
     --[[
         This sync public service adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
                 itemsLocator        - (URL) locating all items
 
         Parameters:
-            queryData               - (table) data about the query
+            serviceData             - (table) data about the query
                 itemsLocator1       - (URL) a itemsLocator locating items
                                         (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
@@ -225,7 +212,7 @@ function AddItemsLocators_SSrv(serviceData)
                 resultItemsLocator = fieldItemsLocator:copy()
             else
                 -- check if same host/ base as resultItemsLocator so far
-                if not fieldItemsLocator:sameBase(resultItemsLocator) then 
+                if not fieldItemsLocator:sameBase(resultItemsLocator) then
                     corelog.Error("enterprise_isp.AddItemsLocators_SSrv: Adding itemsLocator's (resultItemsLocator="..resultItemsLocator:getURI()..", fieldItemsLocator="..fieldItemsLocator:getURI()..") with different base not supported")
                     return {success = false}
                 end
@@ -244,7 +231,7 @@ function AddItemsLocators_SSrv(serviceData)
     local result = {
         success = allTrue,
         itemsLocator = resultItemsLocator
-    } 
+    }
     return result
 end
 
