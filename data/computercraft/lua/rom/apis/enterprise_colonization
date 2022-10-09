@@ -480,12 +480,14 @@ function CanProduce_QSrv(serviceData)
 
     -- check for birchlog or sapling
     if productItemName == "minecraft:birch_log" then
-        return {success = true}
     elseif productItemName == "minecraft:birch_sapling" then
-        return {success = true}
     else
         return {success = false}
     end
+    -- end
+    return {
+        success         = true,
+    }
 end
 
 function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch
