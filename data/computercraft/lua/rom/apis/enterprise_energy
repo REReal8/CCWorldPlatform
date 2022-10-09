@@ -83,9 +83,9 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
     end
 end
 
-function TakeNoticeOfFuelNeeded_SSrv(serviceData)
+function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
     --[[
-        This public sync service takes notice of fuel that is expected to be needed (soon) by a turtle.
+        This public sync service takes notice of fuel that is expected to be needed (soon) by a turtle for an assignment.
 
         The enterprise uses it to possibly update it's parameters. For example it checks if the minimum and target fuel level should be changed to
         accomodate for the possibly needed fuel.
@@ -100,15 +100,16 @@ function TakeNoticeOfFuelNeeded_SSrv(serviceData)
 
         Parameters:
             serviceData                 - (table) data about this service
-                fuelNeeded              - (number) fuel expected to be needed
+                assignmentFuelNeed      - (number) fuel expected to be needed for an assignment
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Invalid serviceData") return {success = false} end
-    local fuelNeeded = serviceData.fuelNeeded
-    if type(fuelNeeded) ~= "number" then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Invalid fuelNeeded") return {success = false} end
+    local assignmentFuelNeed = serviceData.assignmentFuelNeed
+    if type(assignmentFuelNeed) ~= "number" then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Invalid assignmentFuelNeed") return {success = false} end
+    local fuelNeeded = assignmentFuelNeed
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -122,8 +123,8 @@ function TakeNoticeOfFuelNeeded_SSrv(serviceData)
     -- get parameters
     local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
 
-    -- check fuel needed is the highest so far
     if fuelNeeded > parameters.highestFuelNeed then
+    -- check fuel need is the highest so far
         -- determine new levels
         local minFuelLevel = fuelNeeded + parameters.bufferForProcuringFuel
         local targetFuelLevel = parameters.targetMultiplier * minFuelLevel

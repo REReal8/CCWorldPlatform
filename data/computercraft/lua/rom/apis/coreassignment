@@ -99,9 +99,9 @@ function AddAssignment(metaData, taskFunction, taskData, callbackFunction, callb
     local fuelNeeded = metaData.fuelNeeded
     -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
     local serviceData = {
-        fuelNeeded  = fuelNeeded,
+        assignmentFuelNeed  = fuelNeeded,
     }
-    enterprise_energy.TakeNoticeOfFuelNeeded_SSrv(serviceData) -- ToDo: consider using an event instead
+    enterprise_energy.TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
 
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.listRoot, assignmentId)
