@@ -284,7 +284,8 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     local supplierItemsLocator = supplierHostLocator:copy()
     local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
     supplierItemsLocator:setQuery(procureItemsQuery)
-    if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} ).success then
+    local itemsAvailableViaResult = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
+    if itemsAvailableViaResult.success then
         local transferData = {
             sourceItemsLocator      = supplierItemsLocator,
             destinationHostLocator  = destinationHostLocator,
