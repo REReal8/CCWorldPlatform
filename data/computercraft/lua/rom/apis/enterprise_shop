@@ -280,9 +280,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- Attempt to procure item from a Supplier
-    -- ToDo: consider getting this from enterprise_storage (once it supports enterprise_turtle as the initial Supplier, as it's needed for settler). 
-    --      For now only it's hardcoded and only the turtle is supported as a Supplier.
-    local supplierHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    local supplierHostLocator = GetSupplierHostLocator()
     local supplierItemsLocator = supplierHostLocator:copy()
     local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
     supplierItemsLocator:setQuery(procureItemsQuery)
@@ -315,6 +313,14 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
     producer.ProduceItem_ASrv(produceData, callback, callbackData)
+end
+
+function GetSupplierHostLocator()
+    -- ToDo: consider getting this from enterprise_storage (once it supports enterprise_turtle as the initial Supplier, as it's needed for settler). 
+    --      For now only it's hardcoded and only the turtle is supported as a Supplier.
+    local supplierHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+
+    return supplierHostLocator
 end
 
 function GetISHURL()
