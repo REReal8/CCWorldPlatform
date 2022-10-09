@@ -62,16 +62,13 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
         local targetFuelLevel = parameters.targetTurtleFuelLevel
         local targetFuelNeeded = targetFuelLevel - turtleFuelLevel
 
-        -- determine fuelItemsNeeded
-        local fuelItemGain = parameters.fuelItemGain
-        local fuelItemNeeded = math.ceil(targetFuelNeeded / fuelItemGain)
-        local fuelItemName = parameters.fuelItemName
-        local fuelItemsNeeded = { [fuelItemName] = fuelItemNeeded }
+        -- determine fuelItemsNeed
+        local fuelItemsNeed = FuelItemsForFuel(targetFuelNeeded)
 
         -- (re)fuel turtle
         local refuelServiceData = {
             turtleId                = turtleId,
-            fuelItems               = coreutils.DeepCopy(fuelItemsNeeded),
+            fuelItems               = fuelItemsNeed,
             ingredientsHostLocator  = ingredientsHostLocator,
             assignmentsPriorityKey  = assignmentsPriorityKey,
         }
@@ -251,4 +248,18 @@ function ResetParameters()
         fuelItemName            = "minecraft:birch_planks",
         fuelItemGain            = 15,
     }, db.dhtRoot, db.dhtParameters)
+end
+function FuelItemsForFuel(fuel)
+    -- get parameters
+    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+
+    -- determine fuelItems
+    local fuelItemGain = parameters.fuelItemGain
+    local fuelItemCount = math.ceil(fuel / fuelItemGain)
+    local fuelItemName = parameters.fuelItemName
+    local fuelItems = { [fuelItemName] = fuelItemCount }
+
+    -- end
+--    corelog.WriteToLog("   fuelItems="..textutils.serialise(fuelItems)..")")
+    return fuelItems
 end
