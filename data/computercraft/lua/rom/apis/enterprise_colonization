@@ -466,7 +466,7 @@ function CanProduce_QSrv(serviceData)
         
         Return value:
                                     - (table)
-                success             - (boolean) wether the answer to the question is true
+                success             - (boolean) whether the answer to the question is true
 
         Parameters:
             serviceData             - (table) data to the query
