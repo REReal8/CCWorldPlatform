@@ -267,7 +267,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     local productionSpot = serviceData.productionSpot
     if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productionSpot") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productItemName") return {success = false} end
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemCount = serviceData.productItemCount
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productionRecipe = serviceData.productionRecipe
