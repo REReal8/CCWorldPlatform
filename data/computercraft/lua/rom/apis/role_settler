@@ -178,9 +178,11 @@ function CollectCobbleStone_Task(taskData)
 end
 
 function FuelNeededPerRound(nTrees)
-    local fuelNeededBetweenTrees = 6
+    local fuelNeededBetweenTrees = 6 -- to move from one to the next tree
+    local fuelNeededPerColumn = (nTrees - 1) * fuelNeededBetweenTrees
+    local fuelNeededBetweenRows = math.floor(nTrees/ 6) * fuelNeededBetweenTrees
 
-    return nTrees*fuelNeededPerTree + 2 * (nTrees - 1) * fuelNeededBetweenTrees
+    return nTrees*fuelNeededPerTree + 2 * fuelNeededPerColumn + 2 * fuelNeededBetweenRows -- ToDo: make more accurate once we have a better forest implementation
 end
 
 function HarvestForest_MetaData(taskData)
