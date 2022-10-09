@@ -125,7 +125,7 @@ function RegisterChest_SSrv(chestData)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                chestLocator        - (URL) locating the the created chest (in this enterprise)
+                chestLocator        - (URL) locating the created chest (in this enterprise)
 
         Parameters:
             chestData               - (table) data to the chest
