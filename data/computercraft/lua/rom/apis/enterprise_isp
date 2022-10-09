@@ -183,7 +183,7 @@ function AddItemsLocators_SSrv(serviceData)
                 itemsLocator        - (URL) locating all items
 
         Parameters:
-            queryData               - (table) data about the query
+            serviceData             - (table) data about the query
                 itemsLocator1       - (URL) a itemsLocator locating items
                                         (the "base" component of the URL specifies the ISH to query)
                                         (the "query" component of the URL specifies the items to query for)
