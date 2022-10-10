@@ -104,24 +104,15 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- determine source enterprise name
-    local sourceHost = sourceItemsLocator:getHost()
-    if type(sourceHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: sourceHost of wrong type = "..type(sourceHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local sourceEnterprise = nil
-        if sourceHost == "turtle"   then sourceEnterprise = "enterprise_turtle"
-    elseif sourceHost == "chests"   then sourceEnterprise = "enterprise_chests"
-    elseif sourceHost == "shop"     then sourceEnterprise = "enterprise_shop"
-    else corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..sourceHost .." source ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    -- get Supplier
+    local serviceResults = GetSupplierName_SSrv( { supplierLocator = sourceItemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining supplierName for "..sourceItemsLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local supplierName = serviceResults.enterpriseName
 
-    -- determine destination enterprise name
-    local destinationHost = destinationHostLocator:getHost()
-    if type(destinationHost) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: destinationHost of wrong type = "..type(destinationHost)..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationEnterprise = nil
-        if destinationHost == "turtle"  then destinationEnterprise = "enterprise_turtle"
-    elseif destinationHost == "chests"  then destinationEnterprise = "enterprise_chests"
-    else corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Not implemented for "..destinationHost .." destination ISH.") return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    -- get Storage
+    serviceResults = GetStorageName_SSrv( { storageLocator = destinationHostLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationHostLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageName = serviceResults.enterpriseName
 
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
@@ -136,11 +127,11 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     -- create project definition
     local transferItemsProjectDef = {
         steps   = {
-            { stepName = sourceEnterprise..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
+            { stepName = supplierName..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "sourceItemsLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
-            { stepName = destinationEnterprise..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
+            { stepName = storageName..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
                 { keyDef = "destinationHostLocator"     , valueSource = 0, keyDefSource = "destinationHostLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
@@ -241,3 +232,74 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function GetSupplierName_SSrv(serviceData)
+    --[[
+        This sync private service provides the (enterprise) name of a Supplier.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                enterpriseName      - (string) with (enterprise) name of the Supplier
+
+        Parameters:
+            serviceData             - (table) data about this service
+                supplierLocator     - (URL) locating the Supplier
+                                        (the "base" component of the URL should specify a Supplier enterprise)
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetSupplierName_SSrv: Invalid serviceData") return {success = false} end
+    local supplierLocator = url.URLClass:new(serviceData.supplierLocator)
+    if type(supplierLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid supplierLocator") return {success = false} end
+
+    -- determine enterpriseName
+    local host = supplierLocator:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetSupplierName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
+    local enterpriseName = nil
+        if host == "turtle" then enterpriseName = "enterprise_turtle"
+    elseif host == "chests" then enterpriseName = "enterprise_chests"
+    elseif host == "shop"   then enterpriseName = "enterprise_shop"
+    else corelog.Error("enterprise_isp.GetSupplierName_SSrv: Not implemented for "..host .." host.") return {success = false} end
+
+    -- end
+    return {
+        success         = true,
+        enterpriseName  = enterpriseName,
+    }
+end
+
+function GetStorageName_SSrv(serviceData)
+    --[[
+        This sync private service provides the (enterprise) name of a Storage.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                enterpriseName      - (string) with (enterprise) name of the Storage
+
+        Parameters:
+            serviceData             - (table) data about this service
+                storageLocator      - (URL) locating the Storage
+                                        (the "base" component of the URL should specify a Storage enterprise)
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetStorageName_SSrv: Invalid serviceData") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid storageLocator") return {success = false} end
+
+    -- determine Storage name
+    local host = storageLocator:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetStorageName_SSrv: storageHost of wrong type = "..type(host)..".") return {success = false} end
+    local enterpriseName = nil
+        if host == "turtle" then enterpriseName = "enterprise_turtle"
+    elseif host == "chests" then enterpriseName = "enterprise_chests"
+    else corelog.Error("enterprise_isp.GetStorageName_SSrv: Not implemented for "..host .." host.") return {success = false} end
+
+    -- end
+    return {
+        success         = true,
+        enterpriseName  = enterpriseName,
+    }
+end
