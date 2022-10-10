@@ -210,9 +210,7 @@ function AddItemsLocators_SSrv(serviceData)
 
                 -- add query component's
                 local resultItemQuery = resultItemsLocator:getQuery()
-                for itemName, itemCount in pairs(fieldItemsLocator:getQuery()) do
-                    resultItemQuery[itemName] = (resultItemQuery[itemName] or 0) + itemCount
-                end
+                AddItemsTo(resultItemQuery, fieldItemsLocator:getQuery())
             end
         end
     end
@@ -224,6 +222,37 @@ function AddItemsLocators_SSrv(serviceData)
         itemsLocator = resultItemsLocator
     }
     return result
+end
+
+function AddItemsTo(items, itemsToAdd)
+    --[[
+        This sync public function adds the items of itemsToAdd to items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the function executed successfully
+
+        Parameters:
+            items               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
+            itemsToAdd          - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to add
+    --]]
+
+    -- check input
+    if type(items) ~= "table" then corelog.Error("enterprise_isp.AddItemsTo: Invalid items") return {success = false} end
+    if type(itemsToAdd) ~= "table" then corelog.Error("enterprise_isp.AddItemsTo: Invalid itemsToAdd") return {success = false} end
+
+    -- add items
+    for itemName, itemCount in pairs(itemsToAdd) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_isp.AddItemsTo: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_isp.AddItemsTo: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- add
+        items[itemName] = (items[itemName] or 0) + itemCount
+    end
+
+    -- end
+    return {success = true}
 end
 
 --    _                 _    __                  _   _
