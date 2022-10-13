@@ -9,20 +9,23 @@ local db = {
         OrderItems_ASrv             - procure items and having them delivered at a destinationHostLocator
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
-    The Shop implements it's services by using services of Suppliers as well as of Producer enterprises. 
+    The Shop implements it's services by using services of Supplier enterprises. 
 
-    For an enterprise to be a Producer it needs to implement the following services:
-        ProvideItemsTo_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
-        CanProduce_QSrv             - whether the Producer can produce a specific item
+    For an enterprise to be a Supplier it needs to implement the following services:
+        ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at a Storage
+        Can_ProvideItems_QSrv       - whether the Supplier can provide a specific item
+        NeedsTo_ProvideItemsTo_SSrv - returning the needs for the Supplier to provide specific items to a Storage
 
-    The Shop is also a Supplier, hence it implements the services:
+    ToDo: to be made obsolete
         ItemsAvailableVia_SSrv      - providing if a set of items are available at the Supplier. ToDo: this is currently not yet implemented
         GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
-    This allows for the Shop to be passed as ingredientsHostLocator to a Producer. The effect of that is that the Producer can request 
+
+    The Shop is also a Supplier, hence it also implements these services.
+
+    This allows for the Shop to be passed as ingredientsHostLocator to a Supplier. The effect of that is that the Supplier can request 
     the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from a Supplier. 
-    If that fails it tries to procure the ingredients again with another call to a Producer. This recursive order call will result in a successfull 
-    items order if the (sub, and sub-sub, etc) ingredients are present in a Supplier and/ or can be produced by a Producer. If no items
-    are in a Supplier this implies that an items order can be successfull as long as all the ingredients can be produced by a Producer.
+    This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided 
+    by a Supplier.
 --]]
 
 --                _     _ _         __                  _   _
@@ -300,9 +303,9 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     local productItemData = {
         productItemName = procureItemName,
     }
-    if enterprise_factory.CanProduce_QSrv(productItemData).success then
+    if enterprise_factory.Can_ProvideItems_QSrv(productItemData).success then
         producer = enterprise_factory
-    elseif enterprise_colonization.CanProduce_QSrv(productItemData).success then -- ToDo: implement and change into enterprise_woods
+    elseif enterprise_colonization.Can_ProvideItems_QSrv(productItemData).success then -- ToDo: implement and change into enterprise_woods
         producer = enterprise_colonization
     else -- ToDo: add other Producer's (the Forest could/ should be one!)
         corelog.Error("enterprise_shop.ProcureItem_ASrv: No producer can produce "..procureItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false})

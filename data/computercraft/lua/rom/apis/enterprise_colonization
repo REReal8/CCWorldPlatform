@@ -461,9 +461,9 @@ function BuildForestTree_ASrv(serviceData, callback, callbackData)
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
 end
 
-function CanProduce_QSrv(serviceData)
+function Can_ProvideItems_QSrv(serviceData)
     --[[
-        This sync public query service answers the question if this Producer can produce specific items.
+        This sync public query service answers the question if this Supplier can provide specific items.
         
         Return value:
                                     - (table)
@@ -471,17 +471,17 @@ function CanProduce_QSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data to the query
-                productItemName     - (string) name of item to produce
+                itemName            - (string) name of item to provide
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.CanProduce_QSrv: Invalid serviceData") return {success = false} end
-    local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.CanProduce_QSrv: Invalid productItemName") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
+    local itemName = serviceData.itemName
+    if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid itemName") return {success = false} end
 
     -- check for birchlog or sapling
-    if productItemName == "minecraft:birch_log" then
-    elseif productItemName == "minecraft:birch_sapling" then
+    if itemName == "minecraft:birch_log" then
+    elseif itemName == "minecraft:birch_sapling" then
     else
         return {success = false}
     end
