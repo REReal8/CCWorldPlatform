@@ -461,87 +461,6 @@ function BuildForestTree_ASrv(serviceData, callback, callbackData)
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
 end
 
-function Can_ProvideItems_QSrv(serviceData)
-    --[[
-        This sync public query service answers the question if this Supplier can provide specific items.
-        
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the answer to the question is true
-
-        Parameters:
-            serviceData             - (table) data to the query
-                itemName            - (string) name of item to provide
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
-    local itemName = serviceData.itemName
-    if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid itemName") return {success = false} end
-
-    -- check for birchlog or sapling
-    if itemName == "minecraft:birch_log" then
-    elseif itemName == "minecraft:birch_sapling" then
-    else
-        return {success = false}
-    end
-
-    -- end
-    return {
-        success         = true,
-    }
-end
-    -- end
-    return {
-        success         = true,
-    }
-end
-
-function GetISHURL()
-    --[[
-        This private function provides the (base) URL of this ISH.
-
-        Return value:
-            hostURL                 - (URL) locating this ISH
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = url.URLClass:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
-function IsColonizationURL_QSrv(queryData)
-    --[[
-        This sync public service answers the question if a URL is that of a Colonization.
-        
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                - (table) a URL that needs to be queried
-    --]]
-
-    -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid queryData") return {success = false} end
-    local aURL = url.URLClass:new(queryData.aURL)
-    if type(aURL) ~= "table" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid aURL") return {success = false} end
-
-    -- check if of this Supplier
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
-end
-
 function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch
     --[[
         This async public Producer service produces multiple instances of a specific item in the enterprise. It does so 
@@ -670,6 +589,82 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
         -- start project
         corelog.WriteToLog(">Harvesting from forest: "..textutils.serialise(productItemsQuery).."")
         enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    end
+end
+
+function Can_ProvideItems_QSrv(serviceData)
+    --[[
+        This sync public query service answers the question if this Supplier can provide specific items.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemName            - (string) name of item to provide
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
+    local itemName = serviceData.itemName
+    if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid itemName") return {success = false} end
+
+    -- check for birchlog or sapling
+    if itemName == "minecraft:birch_log" then
+    elseif itemName == "minecraft:birch_sapling" then
+    else
+        return {success = false}
+    end
+
+    -- end
+    return {
+        success         = true,
+    }
+end
+
+function GetISHURL()
+    --[[
+        This private function provides the (base) URL of this ISH.
+
+        Return value:
+            hostURL                 - (URL) locating this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
+end
+
+function IsColonizationURL_QSrv(queryData)
+    --[[
+        This sync public service answers the question if a URL is that of a Colonization.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                - (table) a URL that needs to be queried
+    --]]
+
+    -- check input
+    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid queryData") return {success = false} end
+    local aURL = url.URLClass:new(queryData.aURL)
+    if type(aURL) ~= "table" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid aURL") return {success = false} end
+
+    -- check if of this Supplier
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
     end
 end
 
