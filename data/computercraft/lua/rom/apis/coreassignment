@@ -432,13 +432,13 @@ function FuelTurtleIfNeeded()
         -- prepare service call
         -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
         local fuelLevel = turtle.getFuelLevel()
-        local ingredientsHostLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: get from elsewhere
+        local ingredientsSupplierLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: get from elsewhere
         local serviceData = {
-            assignmentsPriorityKey  = priorityKey,
+            assignmentsPriorityKey      = priorityKey,
 
-            turtleId                = turtleId,
-            turtleFuelLevel         = fuelLevel,
-            ingredientsHostLocator  = ingredientsHostLocator,
+            turtleId                    = turtleId,
+            turtleFuelLevel             = fuelLevel,
+            ingredientsSupplierLocator  = ingredientsSupplierLocator,
         }
         local callback = "coreassignment.Fuel_Callback"
         local callbackData = {

@@ -7,10 +7,10 @@ function T_ProvideItemsTo_Craft()
     local callbackData = {"some callback data"}
 
     enterprise_factory.ProvideItemsTo_ASrv({
-        productItemName         = "minecraft:birch_planks",
-        productItemCount        = 12,
-        ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        storageLocator          = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        productItemName             = "minecraft:birch_planks",
+        productItemCount            = 12,
+        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        storageLocator              = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
 end
 
@@ -19,10 +19,10 @@ function T_ProvideItemsTo_Smelt()
     local callbackData = {"some callback data"}
 
     enterprise_factory.ProvideItemsTo_ASrv({
-        productItemName         = "minecraft:charcoal",
-        productItemCount        = 3,
-        ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        storageLocator          = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        productItemName             = "minecraft:charcoal",
+        productItemCount            = 3,
+        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        storageLocator              = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
 end
 

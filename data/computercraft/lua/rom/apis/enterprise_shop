@@ -22,7 +22,7 @@ local db = {
 
     The Shop is also a Supplier, hence it also implements these services.
 
-    This allows for the Shop to be passed as ingredientsHostLocator to a Supplier. The effect of that is that the Supplier can request 
+    This allows for the Shop to be passed as ingredientsSupplierLocator to a Supplier. The effect of that is that the Supplier can request 
     the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from a Supplier. 
     This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided 
     by a Supplier.
@@ -313,11 +313,11 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
 
     -- Have Producer produce the item
     local produceData = {
-        productItemName         = procureItemName,
-        productItemCount        = procureItemCount,
-        ingredientsHostLocator  = GetISHURL(),
-        storageLocator          = destinationHostLocator:copy(),
-        assignmentsPriorityKey  = assignmentsPriorityKey,
+        productItemName             = procureItemName,
+        productItemCount            = procureItemCount,
+        ingredientsSupplierLocator  = GetISHURL(),
+        storageLocator              = destinationHostLocator:copy(),
+        assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     producer.ProvideItemsTo_ASrv(produceData, callback, callbackData)
 end
