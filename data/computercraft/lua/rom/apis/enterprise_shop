@@ -317,6 +317,52 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     serviceResults = enterprise_isp.ProvideItemsTo_ASrv(itemServiceData)
     if not serviceResults.success then corelog.Error("enterprise_shop.ProcureItem_ASrv: Failed obtaining needs for "..procureItemCount.." "..procureItemName.."'s") return {success = false} end
 end
+
+function GetBestSupplierLocator(item)
+    --[[
+        This sync private function provides the best Supplier that can provide a specific item.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                supplierLocator     - (URL) locating the best Supplier of the items
+
+        Parameters:
+            serviceData             - (table) data about this service
+                item                - (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+    --]]
+
+    -- check input
+    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid item (type="..type(item)..")") return nil end
+
+    -- find best Supplier
+    local supplierLocator = nil
+
+    -- check if (main) Supplier has items
+    -- ToDo: further treat both Supplier and Producer's the same (as Supplier's))
+    local supplierHostLocator = GetSupplierHostLocator()
+    local supplierItemsLocator = supplierHostLocator:copy()
+    supplierItemsLocator:setQuery(item)
+    local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
+    if serviceResults.success then
+        supplierLocator = supplierHostLocator
+    else
+        -- check if a Producer can produce item
+        local itemName = next(item, nil)
+        local itemCount = item[itemName]
+        if type(itemName) ~= "string" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid itemName (type="..type(itemName)..")") return nil end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid itemCount (type="..type(itemCount)..")") return nil end
+        local productItemData = {
+            productItemName = itemName,
+            productItemCount= itemCount,
+        }
+            if enterprise_factory.Can_ProvideItems_QSrv(productItemData).success      then supplierLocator = enterprise_factory.GetISHURL()
+        elseif enterprise_colonization.Can_ProvideItems_QSrv(productItemData).success then supplierLocator = enterprise_colonization.GetISHURL() -- ToDo: implement and change into enterprise_woods
+        else corelog.Warning("enterprise_shop.GetBestSupplierLocator: No Supplier can provide item "..textutils.serialise(item)) end
+    end
+
+    -- end
+    return supplierLocator
 end
 
 function GetSupplierHostLocator()
