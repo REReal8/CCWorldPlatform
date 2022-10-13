@@ -353,9 +353,11 @@ function GetSupplierName_SSrv(serviceData)
     local host = supplierLocator:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_isp.GetSupplierName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
     local enterpriseName = nil
-        if host == "turtle" then enterpriseName = "enterprise_turtle"
-    elseif host == "chests" then enterpriseName = "enterprise_chests"
-    elseif host == "shop"   then enterpriseName = "enterprise_shop"
+        if host == "chests"         then enterpriseName = "enterprise_chests"
+    elseif host == "colonization"   then enterpriseName = "enterprise_colonization"
+    elseif host == "factory"        then enterpriseName = "enterprise_factory"
+    elseif host == "shop"           then enterpriseName = "enterprise_shop"
+    elseif host == "turtle"         then enterpriseName = "enterprise_turtle"
     else corelog.Error("enterprise_isp.GetSupplierName_SSrv: Not implemented for "..host .." host.") return {success = false} end
 
     -- end
@@ -389,8 +391,8 @@ function GetStorageName_SSrv(serviceData)
     local host = storageLocator:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_isp.GetStorageName_SSrv: storageHost of wrong type = "..type(host)..".") return {success = false} end
     local enterpriseName = nil
-        if host == "turtle" then enterpriseName = "enterprise_turtle"
-    elseif host == "chests" then enterpriseName = "enterprise_chests"
+        if host == "chests" then enterpriseName = "enterprise_chests"
+    elseif host == "turtle" then enterpriseName = "enterprise_turtle"
     else corelog.Error("enterprise_isp.GetStorageName_SSrv: Not implemented for "..host .." host.") return {success = false} end
 
     -- end
