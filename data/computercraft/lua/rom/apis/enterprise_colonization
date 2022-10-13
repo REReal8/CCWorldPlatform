@@ -466,7 +466,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
         This async public Producer service produces multiple instances of a specific item in the enterprise. It does so 
         by ...
 
-        Finally it delivers the created items to the requested destination.
+        Finally it delivers the created items to the requested Storage.
 
         Return value:
             nil
@@ -480,8 +480,9 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
 
         Parameters:
             serviceData                     - (table) data for the service
-                productItemName             - (string) name of item to produce
-                productItemCount            - (number) amount of items to produce
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
                 storageLocator              - (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
@@ -491,10 +492,8 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local productItemCount = serviceData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemsLocator = serviceData.itemsLocator
+    if type(itemsLocator) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local storageLocator = url.URLClass:new(serviceData.storageLocator)
     if type(storageLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
@@ -507,88 +506,98 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
     -- get forest
     local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
 
-    -- check for birchlog or sapling
-    local localSupplierLocator = nil
-    if productItemName == "minecraft:birch_log" then
-        localSupplierLocator = GetLocalLogsLocator()
-    elseif productItemName == "minecraft:birch_sapling" then
-        localSupplierLocator = GetLocalSaplingsLocator()
-    else
-        corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: This is not a producer for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsColonizationURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
-    -- check items already available in localSupplierLocator
-    local localItemsLocator = localSupplierLocator:copy()
-    local productItemsQuery = { [productItemName] = productItemCount }
-    localItemsLocator:setQuery(productItemsQuery)
-    if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = localItemsLocator} ).success then
-        -- yes: return the items
-        local transferData = {
-            sourceItemsLocator          = localItemsLocator,
-            destinationStorageLocator   = storageLocator,
-            assignmentsPriorityKey      = assignmentsPriorityKey,
-        }
-        corelog.WriteToLog(">Procuring from local forest Supplier: "..textutils.serialise(productItemsQuery).."")
-        enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
-    else
-        -- construct taskData
-        local harvestForestTaskData = {
-            firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
-            nTrees              = forest.nTrees,
+    -- loop on items
+    local provideItems = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-            priorityKey         = assignmentsPriorityKey,
-        }
+        -- check for birchlog or sapling
+        local localSupplierLocator = nil
+        if itemName == "minecraft:birch_log" then
+            localSupplierLocator = GetLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            localSupplierLocator = GetLocalSaplingsLocator()
+        else
+            corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
+        end
 
-        -- create project service data
-        local projectDef = {
-            steps = {
-                -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator 
-                --          (or will this be part of harvestForest?)
-                { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                    { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "harvestForest_Task" },
-                    { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
-                    { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
-                }},
-                -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling 
-                --          (or will this be part of harvestForest?)
-                -- ToDo: consider storing rest/ waste materials (e.g. sticks)
-                { stepName = "enterprise_colonization.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
-                    { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "productItemName" },
-                    { keyDef = "productItemCount"           , valueSource = 0, keyDefSource = "productItemCount" },
-                    { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
-                    { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
-                    { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
-                }},
-                { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                    { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-                    { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
-                }},
-            },
-            returnData  = {
-                { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
-                { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
+        -- check items already available in localSupplierLocator
+        local localItemsLocator = localSupplierLocator:copy()
+        local productItemsQuery = { [itemName] = itemCount }
+        localItemsLocator:setQuery(productItemsQuery)
+        if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = localItemsLocator} ).success then
+            -- yes: return the items
+            local transferData = {
+                sourceItemsLocator          = localItemsLocator,
+                destinationStorageLocator   = storageLocator,
+                assignmentsPriorityKey      = assignmentsPriorityKey,
             }
-        }
-        local projectData = {
-            productItemName             = productItemName,
-            productItemCount            = productItemCount, -- ToDo: consider lower count with possible # items already present in localSupplierLocator
-            ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
-            storageLocator              = storageLocator:copy(),
+            corelog.WriteToLog(">Procuring from local forest Supplier: "..textutils.serialise(productItemsQuery).."")
+            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+        else
+            -- construct taskData
+            local harvestForestTaskData = {
+                firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
+                nTrees              = forest.nTrees,
 
-            harvestForest_Task          = "role_settler.HarvestForest_Task",
-            harvestForestTaskData       = harvestForestTaskData,
-            harvestForestMetaData       = role_settler.HarvestForest_MetaData(harvestForestTaskData),
+                priorityKey         = assignmentsPriorityKey,
+            }
 
-            assignmentsPriorityKey      = assignmentsPriorityKey,
-        }
-        local projectServiceData = {
-            projectDef  = projectDef,
-            projectData = projectData,
-        }
+            -- create project service data
+            local projectDef = {
+                steps = {
+                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator 
+                    --          (or will this be part of harvestForest?)
+                    { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                        { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "harvestForest_Task" },
+                        { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
+                        { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
+                    }},
+                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling 
+                    --          (or will this be part of harvestForest?)
+                    -- ToDo: consider storing rest/ waste materials (e.g. sticks)
+                    { stepName = "enterprise_colonization.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
+                        { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "itemsLocator" },
+                        { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
+                        { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                        { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    }},
+                    { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                        { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                        { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                    }},
+                },
+                returnData  = {
+                    { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+                    { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
+                }
+            }
+            local projectData = {
+                itemsLocator                = itemsLocator, -- ToDo: consider lower count with possible # items already present in localSupplierLocator
+                ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
+                storageLocator              = storageLocator:copy(),
 
-        -- start project
-        corelog.WriteToLog(">Harvesting from forest: "..textutils.serialise(productItemsQuery).."")
-        enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+                harvestForest_Task          = "role_settler.HarvestForest_Task",
+                harvestForestTaskData       = harvestForestTaskData,
+                harvestForestMetaData       = role_settler.HarvestForest_MetaData(harvestForestTaskData),
+
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+            local projectServiceData = {
+                projectDef  = projectDef,
+                projectData = projectData,
+            }
+
+            -- start project
+            corelog.WriteToLog(">Harvesting from forest: "..textutils.serialise(productItemsQuery).."")
+            enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+        end
     end
 end
 

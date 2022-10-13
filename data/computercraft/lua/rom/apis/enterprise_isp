@@ -131,6 +131,52 @@ function GetStorageLocation_SSrv(serviceData)
     return serviceResults
 end
 
+function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async public Supplier service provides multiple instances of a specific to the requested Storage.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                     - (table) data for the service
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                        - (string) name of function to call once service is ready
+            callbackData                    - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemsLocator = serviceData.itemsLocator
+    if type(itemsLocator) ~= "string" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- get Supplier
+    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return {success = false} end
+    local supplierName = serviceResults.enterpriseName
+
+    -- call method on Supplier
+    local serviceName = supplierName..".ProvideItemsTo_ASrv"
+    serviceResults = coreutils.DoSyncService(serviceName, serviceData)
+
+    -- end
+    return serviceResults
+end
+
 function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --[[
         This async public service relays the transfer of items from a Supplier to a Storage.
@@ -177,8 +223,8 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     local supplierName = serviceResults.enterpriseName
 
     -- get Storage
-    serviceResults = GetStorageName_SSrv( { storageLocator = destinationHostLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationHostLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    serviceResults = GetStorageName_SSrv( { storageLocator = destinationStorageLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationStorageLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local storageName = serviceResults.enterpriseName
 
     -- check there are actual items to transfer

@@ -285,8 +285,8 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     -- Attempt to procure item from a Supplier
     local supplierHostLocator = GetSupplierHostLocator()
     local supplierItemsLocator = supplierHostLocator:copy()
-    local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
-    supplierItemsLocator:setQuery(procureItemsQuery)
+    local item = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
+    supplierItemsLocator:setQuery(item)
     local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
     if serviceResults.success then
         local transferData = {
@@ -294,32 +294,29 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
             destinationStorageLocator   = destinationHostLocator,
             assignmentsPriorityKey      = assignmentsPriorityKey,
         }
-        corelog.WriteToLog(">Procuring from Supplier: "..textutils.serialise(procureItemsQuery).."")
+        corelog.WriteToLog(">Procuring from Supplier: "..textutils.serialise(item).."")
         return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
+    -- ToDo: implement ProvideItemsTo_ASrv for above enterprise_turtle to be able to replace TransferItemsFromTo_ASrv call
 
-    -- Find a Producer that can produce item
-    local producer = nil
-    local productItemData = {
-        productItemName = procureItemName,
-    }
-    if enterprise_factory.Can_ProvideItems_QSrv(productItemData).success then
-        producer = enterprise_factory
-    elseif enterprise_colonization.Can_ProvideItems_QSrv(productItemData).success then -- ToDo: implement and change into enterprise_woods
-        producer = enterprise_colonization
-    else -- ToDo: add other Producer's (the Forest could/ should be one!)
-        corelog.Error("enterprise_shop.ProcureItem_ASrv: No producer can produce "..procureItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false})
-    end
+    -- get best supplierLocator
+    local supplierLocator = GetBestSupplierLocator(item)
+    if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..procureItemCount.." "..procureItemName.."'s") return {success = false} end
 
-    -- Have Producer produce the item
-    local produceData = {
-        productItemName             = procureItemName,
-        productItemCount            = procureItemCount,
+    -- determine itemLocator
+    local itemLocator = supplierLocator:copy()
+    itemLocator:setQuery(item)
+
+    -- Have Supplier produce the item
+    local itemServiceData = {
+        itemsLocator                = itemLocator,
         ingredientsSupplierLocator  = GetISHURL(),
         storageLocator              = destinationHostLocator:copy(),
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
-    producer.ProvideItemsTo_ASrv(produceData, callback, callbackData)
+    serviceResults = enterprise_isp.ProvideItemsTo_ASrv(itemServiceData)
+    if not serviceResults.success then corelog.Error("enterprise_shop.ProcureItem_ASrv: Failed obtaining needs for "..procureItemCount.." "..procureItemName.."'s") return {success = false} end
+end
 end
 
 function GetSupplierHostLocator()
