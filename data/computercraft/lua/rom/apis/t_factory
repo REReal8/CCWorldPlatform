@@ -2,11 +2,11 @@ local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV2 = baseLocationV1
 
-function T_ProduceItem_Craft()
+function T_ProvideItemsTo_Craft()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
-    enterprise_factory.ProduceItem_ASrv({
+    enterprise_factory.ProvideItemsTo_ASrv({
         productItemName         = "minecraft:birch_planks",
         productItemCount        = 12,
         ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
@@ -14,11 +14,11 @@ function T_ProduceItem_Craft()
     }, callbackFunction, callbackData)
 end
 
-function T_ProduceItem_Smelt()
+function T_ProvideItemsTo_Smelt()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
-    enterprise_factory.ProduceItem_ASrv({
+    enterprise_factory.ProvideItemsTo_ASrv({
         productItemName         = "minecraft:charcoal",
         productItemCount        = 3,
         ingredientsHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,

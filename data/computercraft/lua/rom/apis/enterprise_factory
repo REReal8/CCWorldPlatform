@@ -68,7 +68,7 @@ local db = {
 --[[
     The Factory is an enterprise that offers services to produce items based on recipes.
 
-    The Factory is a Producer, hence it provides the mandatory services and functions for a Producer (like e.g. ProduceItem_ASrv).
+    The Factory is a Producer, hence it provides the mandatory services and functions for a Producer (like e.g. ProvideItemsTo_ASrv).
 
     There are (currently) two recipe types for producing items.
         The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
@@ -86,7 +86,7 @@ local db = {
 --   | |
 --   |_|
 
-function ProduceItem_ASrv(serviceData, callback, callbackData)
+function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     --[[
         This async public Producer service produces multiple instances of a specific item in the factory. It does so 
         by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
@@ -115,27 +115,27 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemCount = serviceData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
-    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
-    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- select recipe to produce item
     local recipe = db.recipes[ productItemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No recipe for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No recipe for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- select a suitable site
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, productItemCount)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProduceItem_ASrv: No site available to produce "..productItemCount.." "..productItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No site available to produce "..productItemCount.." "..productItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine ingredientsItemsLocator (by updating ingredientsHostLocator with itemsNeeded)
     local ingredientsItemsLocator = ingredientsHostLocator

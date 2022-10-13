@@ -12,7 +12,7 @@ local db = {
     The Shop implements it's services by using services of Suppliers as well as of Producer enterprises. 
 
     For an enterprise to be a Producer it needs to implement the following services:
-        ProduceItem_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
+        ProvideItemsTo_ASrv            - producing multiple instances of a specific item and having them delivered at a certain destination
         CanProduce_QSrv             - whether the Producer can produce a specific item
 
     The Shop is also a Supplier, hence it implements the services:
@@ -316,7 +316,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
         destinationHostLocator  = destinationHostLocator:copy(),
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
-    producer.ProduceItem_ASrv(produceData, callback, callbackData)
+    producer.ProvideItemsTo_ASrv(produceData, callback, callbackData)
 end
 
 function GetSupplierHostLocator()

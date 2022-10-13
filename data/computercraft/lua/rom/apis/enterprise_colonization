@@ -542,7 +542,7 @@ function IsColonizationURL_QSrv(queryData)
     end
 end
 
-function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch
+function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch
     --[[
         This async public Producer service produces multiple instances of a specific item in the enterprise. It does so 
         by ...
@@ -571,18 +571,18 @@ function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to 
     ]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemName = serviceData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemCount = serviceData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
-    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
-    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.ProduceItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
     -- get forest
@@ -595,7 +595,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to 
     elseif productItemName == "minecraft:birch_sapling" then
         localSupplierLocator = GetLocalSaplingsLocator()
     else
-        corelog.Error("enterprise_colonization.ProduceItem_ASrv: This is not a producer for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false})
+        corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: This is not a producer for item "..productItemName) return coreutils.DoCallback(callback, callbackData, {success = false})
     end
 
     -- check items already available in localSupplierLocator
@@ -633,7 +633,7 @@ function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to 
                 -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling 
                 --          (or will this be part of harvestForest?)
                 -- ToDo: consider storing rest/ waste materials (e.g. sticks)
-                { stepName = "enterprise_colonization.ProduceItem_ASrv", async = true, stepDataDef = { -- note: recursive call
+                { stepName = "enterprise_colonization.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
                     { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
                     { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
                     { keyDef = "ingredientsHostLocator" , valueSource = 0, keyDefSource = "ingredientsHostLocator" },
