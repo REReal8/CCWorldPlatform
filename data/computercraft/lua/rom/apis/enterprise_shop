@@ -177,8 +177,8 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- check source is for this enterprise
-    local sourceIsShop = IsShopURL_QSrv({ aURL = sourceItemsLocator})
-    if not sourceIsShop.success then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local serviceResults = IsShopURL_QSrv({ aURL = sourceItemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get transferItems
     local transferItems = coreutils.DeepCopy(sourceItemsLocator:getQuery())
@@ -284,8 +284,8 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     local supplierItemsLocator = supplierHostLocator:copy()
     local procureItemsQuery = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
     supplierItemsLocator:setQuery(procureItemsQuery)
-    local itemsAvailableViaResult = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
-    if itemsAvailableViaResult.success then
+    local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
+    if serviceResults.success then
         local transferData = {
             sourceItemsLocator      = supplierItemsLocator,
             destinationHostLocator  = destinationHostLocator,

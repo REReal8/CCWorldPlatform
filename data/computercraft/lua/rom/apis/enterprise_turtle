@@ -160,8 +160,8 @@ function ItemsAvailableVia_SSrv(queryData)
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
     -- check itemsLocator is for this enterprise
-    local itemsLocatorIsTurtle = IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not itemsLocatorIsTurtle.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    local serviceResults = IsTurtleURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.ItemsAvailableVia_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- select turtle
     local currentTurtleId = os.getComputerID()
@@ -218,8 +218,8 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- check source is for this enterprise
-    local sourceIsTurtle = IsTurtleURL_QSrv({ aURL = sourceItemsLocator})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtle source URL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local serviceResults = IsTurtleURL_QSrv({ aURL = sourceItemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtle source URL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check turtle id's
     local currentTurtleId = os.getComputerID()
@@ -295,12 +295,12 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- check source is a turtle
-    local sourceIsTurtle = IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
-    if not sourceIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local serviceResults = IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check destination is for this enterprise (i.e. a turtle)
-    local destinationIsTurtle = IsTurtleURL_QSrv({ aURL = destinationHostLocator})
-    if not destinationIsTurtle.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationHostLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    serviceResults = IsTurtleURL_QSrv({ aURL = destinationHostLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationHostLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check turtle id's
     local sourceTurtleId = turtleItemsLocator:getPort()
