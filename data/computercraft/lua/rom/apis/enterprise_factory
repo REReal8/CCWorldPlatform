@@ -1,6 +1,7 @@
 local db = {
     dhtRoot     = "enterprise_factory",
     dhtSites    = "sites",
+    hostName    = "factory",
 
     -- turtle slots
     -- [ 1] [ 2] [ 3] [ 4]
