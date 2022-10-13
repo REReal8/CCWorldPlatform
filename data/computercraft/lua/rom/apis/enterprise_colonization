@@ -484,6 +484,12 @@ function CanProduce_QSrv(serviceData)
     else
         return {success = false}
     end
+
+    -- end
+    return {
+        success         = true,
+    }
+end
     -- end
     return {
         success         = true,

@@ -150,7 +150,7 @@ function ItemsAvailableVia_SSrv(queryData)
         Parameters:
             queryData               - (table) data about the query
                 itemsLocator        - (URL) locating the items that need to be queried for availability
-                                        (the "base" component of the URL specifies this Supplier)
+                                        (the "base" component of the URL specifies the Supplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
     --]]
 
@@ -183,7 +183,10 @@ function ItemsAvailableVia_SSrv(queryData)
     end
 
     -- end
-    return {success = true}
+    return {
+        success     = true,
+    }
+end
 end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)

@@ -560,6 +560,7 @@ function CanProduce_QSrv(serviceData)
     if type(recipe) ~= "table" then
         return {success = false}
     end
+
     -- end
     return {
         success         = true,
