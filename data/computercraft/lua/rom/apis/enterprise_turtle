@@ -187,6 +187,48 @@ function ItemsAvailableVia_SSrv(queryData)
         success     = true,
     }
 end
+function GetItemsLocations_SSrv(serviceData)
+    --[[
+        This sync public service provides the current world locations of different items in a Storage.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                locations           - (table) with locations of the different items
+
+        Parameters:
+            serviceData             - (table) data about this service
+                itemsLocator        - (URL) locating the items for which to get the location
+                                        (the "base" component of the URL specifies the Storage that provides the items)
+                                        (the "query" component of the URL specifies the items)
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Invalid itemsLocator") return {success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsTurtleURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- get turtle
+    local currentTurtleId = os.getComputerID()
+    local itemsLocatorTurtleId = itemsLocator:getPort()
+    if itemsLocatorTurtleId and currentTurtleId ~= itemsLocatorTurtleId then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Getting items location in one (id="..itemsLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+
+    -- ToDo: consider if we want/ need to check if items are actually available in the turtle
+
+    -- get location
+    local location = coremove.GetLocation()
+
+    -- end
+    return {
+        success     = true,
+        locations   = { coremove.CopyLocation(location) },
+    }
+end
+
 end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
