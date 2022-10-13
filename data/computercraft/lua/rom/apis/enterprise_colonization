@@ -1,6 +1,7 @@
 local db = {
     dhtRoot     = "enterprise_colonization",
     dhtForest   = "forest", -- ToDo: consider allowing multiple (once part of enterprise_woods)
+    hostName    = "colonization",
 }
 
 --                _     _ _         __                  _   _
@@ -494,6 +495,51 @@ end
     return {
         success         = true,
     }
+end
+
+function GetISHURL()
+    --[[
+        This private function provides the (base) URL of this ISH.
+
+        Return value:
+            hostURL                 - (URL) locating this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
+end
+
+function IsColonizationURL_QSrv(queryData)
+    --[[
+        This sync public service answers the question if a URL is that of a Colonization.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                - (table) a URL that needs to be queried
+    --]]
+
+    -- check input
+    if type(queryData) ~= "table" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid queryData") return {success = false} end
+    local aURL = url.URLClass:new(queryData.aURL)
+    if type(aURL) ~= "table" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid aURL") return {success = false} end
+
+    -- check if of this Supplier
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsColonizationURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
+    end
 end
 
 function ProduceItem_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch

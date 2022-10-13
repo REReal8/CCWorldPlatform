@@ -574,6 +574,51 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
+function GetISHURL()
+    --[[
+        This private function provides the (base) URL of this ISH.
+
+        Return value:
+            hostURL                 - (URL) locating this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
+end
+
+function IsFactoryURL_QSrv(queryData)
+    --[[
+        This sync public service answers the question if a URL is that of a Factory.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                - (table) a URL that needs to be queried
+    --]]
+
+    -- check input
+    if type(queryData) ~= "table" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid queryData") return {success = false} end
+    local aURL = url.URLClass:new(queryData.aURL)
+    if type(aURL) ~= "table" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid aURL") return {success = false} end
+
+    -- check if of this Supplier
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
+    end
+end
+
 function DeleteSites()
     --[[
         This function deletes all sites from the factory. Currently this is intended for debugging purposes only.
@@ -586,7 +631,7 @@ function DeleteSites()
     --]]
 
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
-    if not sites or type(sites) ~= "table" then corelog.Warning("coreassignment.DeleteSites: not a lits of sites") return nil end
+    if not sites or type(sites) ~= "table" then corelog.Warning("enterprise_factory.DeleteSites: not a lits of sites") return nil end
 
     -- remove all assignments
     for siteId, site in pairs(sites) do
