@@ -208,19 +208,10 @@ function GetItemsLocations_SSrv(serviceData)
     local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Invalid itemsLocator") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
-    local serviceResults = IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
-
-    -- get turtle
-    local currentTurtleId = os.getComputerID()
-    local itemsLocatorTurtleId = itemsLocator:getPort()
-    if itemsLocatorTurtleId and currentTurtleId ~= itemsLocatorTurtleId then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Getting items location in one (id="..itemsLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
-
-    -- ToDo: consider if we want/ need to check if items are actually available in the turtle
-
     -- get location
-    local location = coremove.GetLocation()
+    local serviceResults = GetStorageLocation_SSrv({ storageLocator = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: failed obtaining location for Storage "..itemsLocator:getURI()..".") return {success = false} end
+    local location = itemsLocator:getURI().location
 
     -- end
     return {
@@ -229,6 +220,43 @@ function GetItemsLocations_SSrv(serviceData)
     }
 end
 
+function GetStorageLocation_SSrv(serviceData)
+    --[[
+        This sync public service provides the world location of a Storage.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                location            - (table) location of the Storage
+
+        Parameters:
+            serviceData             - (table) data about this service
+                storageLocator      - (URL) locating the Storage for which to get the location
+                                        (the "base" component of the URL should specify this Storage enterprise)
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.GetStorageLocation_SSrv: Invalid serviceData") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_turtle.GetStorageLocation_SSrv: Invalid storageLocator") return {success = false} end
+
+    -- check storageLocator is for this enterprise
+    local serviceResults = IsTurtleURL_QSrv({ aURL = storageLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.GetStorageLocation_SSrv: Invalid storageLocator (="..storageLocator:getURI()..").") return {success = false} end
+
+    -- get turtle
+    local currentTurtleId = os.getComputerID()
+    local storageLocatorTurtleId = storageLocator:getPort()
+    if storageLocatorTurtleId and currentTurtleId ~= storageLocatorTurtleId then corelog.Error("enterprise_turtle.GetStorageLocation_SSrv: Getting Storage location in one (id="..storageLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+
+    -- get location
+    local location = coremove.GetLocation()
+
+    -- end
+    return {
+        success     = true,
+        location    = coremove.CopyLocation(location),
+    }
 end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)

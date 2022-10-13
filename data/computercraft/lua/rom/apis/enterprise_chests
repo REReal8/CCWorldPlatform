@@ -351,18 +351,10 @@ function GetItemsLocations_SSrv(serviceData)
     local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid itemsLocator") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
-    local serviceResults = IsChestURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
-
-    -- get chest
-    local chest = GetChestByLocator(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
-
-    -- ToDo: consider if we want/ need to check if items are actually available in the chest
-
     -- get location
-    local location = chest.location
+    local serviceResults = GetStorageLocation_SSrv({ storageLocator = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: failed obtaining location for Storage "..itemsLocator:getURI()..".") return {success = false} end
+    local location = itemsLocator:getURI().location
 
     -- end
     return {
@@ -371,6 +363,42 @@ function GetItemsLocations_SSrv(serviceData)
     }
 end
 
+function GetStorageLocation_SSrv(serviceData)
+    --[[
+        This sync public service provides the world location of a Storage.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                location            - (table) location of the Storage
+
+        Parameters:
+            serviceData             - (table) data about this service
+                storageLocator      - (URL) locating the Storage for which to get the location
+                                        (the "base" component of the URL should specify this Storage enterprise)
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Invalid serviceData") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Invalid storageLocator") return {success = false} end
+
+    -- check storageLocator is for this enterprise
+    local serviceResults = IsChestURL_QSrv({ aURL = storageLocator})
+    if not serviceResults.success then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Invalid storageLocator (="..storageLocator:getURI()..").") return {success = false} end
+
+    -- get chest
+    local chest = GetChestByLocator(storageLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Chest "..storageLocator:getURI().." not found.") return {success = false} end
+
+    -- get location
+    local location = chest.location
+
+    -- end
+    return {
+        success     = true,
+        location    = coremove.CopyLocation(location),
+    }
 end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)

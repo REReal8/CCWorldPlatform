@@ -98,6 +98,39 @@ function GetItemsLocations_SSrv(serviceData)
     return serviceResults
 end
 
+function GetStorageLocation_SSrv(serviceData)
+    --[[
+        This sync public service provides the world location of a Storage.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                location            - (table) location of the Storage
+
+        Parameters:
+            serviceData             - (table) data about this service
+                storageLocator      - (URL) locating the Storage for which to get the location
+                                        (the "base" component of the URL should specify a Storage enterprise)
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: Invalid serviceData") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: Invalid storageLocator") return {success = false} end
+
+    -- get Storage
+    local serviceResults = GetStorageName_SSrv( { storageLocator = storageLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: failed obtaining storageName for "..storageLocator:getURI()..".") return {success = false} end
+    local storageName = serviceResults.enterpriseName
+
+    -- call method on Storage
+    local serviceName = storageName..".GetStorageLocation_SSrv"
+    serviceResults = coreutils.DoSyncService(serviceName, serviceData)
+
+    -- end
+    return serviceResults
+end
+
 function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --[[
         This async public service relays the transfer of items from a Supplier to a Storage.
