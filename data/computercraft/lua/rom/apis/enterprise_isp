@@ -5,7 +5,7 @@
 
     The ISP provides the following services
         ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsLocator
-        TransferItemsFromTo_ASrv    - transferring items from a Supplier to a Storage
+        TransferItemsFromTo_ASrv    - transferring items from one Storage to another
 
     The ISP implements it's services by using services of Suppliers and Storages.
 
@@ -143,29 +143,29 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
             nil
 
         Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
-                                            the "query" should be equal to the "query" component of the sourceItemsLocator)
+                                            - (table)
+                success                     - (boolean) whether the service executed successfully
+                destinationItemsLocator     - (URL) stating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                the "query" should be equal to the "query" component of the sourceItemsLocator)
 
         Parameters:
-            transferData                - (table) data about the transfer
-                sourceItemsLocator      - (URL) locating the items that need transfer
-                                            (the "query" component of the URL specifies the items to be transferred)
-                                            (the "host" component of the URL specifies the host where the items are located)
-                destinationHostLocator  - (URL) locating the Storage that needs to be transferred to
-                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
+            transferData                    - (table) data about the transfer
+                sourceItemsLocator          - (URL) locating the items that need transfer
+                                                (the "query" component of the URL specifies the items to be transferred)
+                                                (the "host" component of the URL specifies the Storage where the items are located)
+                destinationStorageLocator   - (URL) locating the Storage that needs to be transferred to
+                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                        - (string) name of function to call once service is ready
+            callbackData                    - (table) data to supply to callback function
     --]]
 
     -- check input
     if type(transferData) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceItemsLocator = url.URLClass:new(transferData.sourceItemsLocator)
     if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocator = url.URLClass:new(transferData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local destinationStorageLocator = url.URLClass:new(transferData.destinationStorageLocator)
+    if type(destinationStorageLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationStorageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = transferData.assignmentsPriorityKey
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -184,10 +184,10 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
     if next(transferItems) == nil then
-        corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationHostLocator:getURI()..").")
+        corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationStorageLocator:getURI()..").")
         return coreutils.DoCallback(callback, callbackData, {
             success                 = true,
-            destinationItemsLocator = destinationHostLocator:copy()
+            destinationItemsLocator = destinationStorageLocator:copy()
         })
     end
 
@@ -200,7 +200,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
             }},
             { stepName = storageName..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
-                { keyDef = "destinationHostLocator"     , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                { keyDef = "destinationHostLocator"     , valueSource = 0, keyDefSource = "destinationStorageLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -214,10 +214,10 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         }
     }
     local projectData = {
-        sourceItemsLocator      = sourceItemsLocator,
-        destinationHostLocator  = destinationHostLocator,
+        sourceItemsLocator          = sourceItemsLocator,
+        destinationStorageLocator   = destinationStorageLocator,
 
-        assignmentsPriorityKey  = assignmentsPriorityKey,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     local projectServiceData = {
         projectDef  = transferItemsProjectDef,

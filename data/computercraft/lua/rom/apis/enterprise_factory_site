@@ -283,9 +283,9 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     -- determine production steps
     local projectSteps = {
         { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-            { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "localInputItemsLocator" },
-            { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleInputLocator" },
-            { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+            { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "localInputItemsLocator" },
+            { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "turtleInputLocator" },
+            { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
         }},
     }
 
@@ -347,9 +347,9 @@ function ProduceItem_ASrv(serviceData, callback, callbackData)
     -- add remaining steps
     table.insert(projectSteps,
         { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-            { keyDef = "sourceItemsLocator"     , valueSource = 2 + extraStep, keyDefSource = "turtleOutputItemsLocator" },
-            { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localOutputLocator" },
-            { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+            { keyDef = "sourceItemsLocator"         , valueSource = 2 + extraStep, keyDefSource = "turtleOutputItemsLocator" },
+            { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "localOutputLocator" },
+            { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
         }}
     )
     table.insert(projectSteps, areAllTrueStep)

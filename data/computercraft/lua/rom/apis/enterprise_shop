@@ -290,9 +290,9 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
     if serviceResults.success then
         local transferData = {
-            sourceItemsLocator      = supplierItemsLocator,
-            destinationHostLocator  = destinationHostLocator,
-            assignmentsPriorityKey  = assignmentsPriorityKey,
+            sourceItemsLocator          = supplierItemsLocator,
+            destinationStorageLocator   = destinationHostLocator,
+            assignmentsPriorityKey      = assignmentsPriorityKey,
         }
         corelog.WriteToLog(">Procuring from Supplier: "..textutils.serialise(procureItemsQuery).."")
         return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)

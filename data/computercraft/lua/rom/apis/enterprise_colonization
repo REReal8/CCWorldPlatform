@@ -524,9 +524,9 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
     if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = localItemsLocator} ).success then
         -- yes: return the items
         local transferData = {
-            sourceItemsLocator      = localItemsLocator,
-            destinationHostLocator  = storageLocator,
-            assignmentsPriorityKey  = assignmentsPriorityKey,
+            sourceItemsLocator          = localItemsLocator,
+            destinationStorageLocator   = storageLocator,
+            assignmentsPriorityKey      = assignmentsPriorityKey,
         }
         corelog.WriteToLog(">Procuring from local forest Supplier: "..textutils.serialise(productItemsQuery).."")
         enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)

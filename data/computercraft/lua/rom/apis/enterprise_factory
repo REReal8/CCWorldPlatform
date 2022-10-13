@@ -151,25 +151,25 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     -- create project service data
     local projectDef = {
         steps = {
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "localInputLocator" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = { -- ToDo: change to a call to ProvideItemsTo_ASrv (on the shop!)
+                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
+                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "localInputLocator" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "localInputItemsLocator" , valueSource = 1, keyDefSource = "destinationItemsLocator" },
-                { keyDef = "localOutputLocator"     , valueSource = 0, keyDefSource = "localOutputLocator" },
-                { keyDef = "productionMethod"       , valueSource = 0, keyDefSource = "productionMethod" },
-                { keyDef = "productionSpot"         , valueSource = 0, keyDefSource = "productionSpot" },
-                { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
-                { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
-                { keyDef = "productionRecipe"       , valueSource = 0, keyDefSource = "productionRecipe" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "localInputItemsLocator"     , valueSource = 1, keyDefSource = "destinationItemsLocator" },
+                { keyDef = "localOutputLocator"         , valueSource = 0, keyDefSource = "localOutputLocator" },
+                { keyDef = "productionMethod"           , valueSource = 0, keyDefSource = "productionMethod" },
+                { keyDef = "productionSpot"             , valueSource = 0, keyDefSource = "productionSpot" },
+                { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "productItemName" },
+                { keyDef = "productItemCount"           , valueSource = 0, keyDefSource = "productItemCount" },
+                { keyDef = "productionRecipe"           , valueSource = 0, keyDefSource = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "storageLocator" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "sourceItemsLocator"         , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
+                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "storageLocator" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {

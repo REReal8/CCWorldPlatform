@@ -71,22 +71,22 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     local buildBlueprintProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "materialsItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "taskFunctionName" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "metaData.needTurtleId"  , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "taskFunctionName" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
+                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
         }
     }
     local projectData = {
@@ -182,22 +182,22 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     local buildRectangularPatternProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "materialsItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "taskFunctionName" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "metaData.needTurtleId"  , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "taskFunctionName" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
+                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
         }
     }
     local projectData = {

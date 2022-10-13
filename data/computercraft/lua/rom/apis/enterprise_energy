@@ -191,18 +191,18 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     local buildBlueprintProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"     , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
+                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"       , valueSource = 0, keyDefSource = "refuel_Task" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "refuelMetaData" },
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "refuelTaskData" },
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "refuelMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "refuelTaskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
