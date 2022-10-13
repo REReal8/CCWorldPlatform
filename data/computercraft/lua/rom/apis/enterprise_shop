@@ -316,7 +316,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
         productItemName         = procureItemName,
         productItemCount        = procureItemCount,
         ingredientsHostLocator  = GetISHURL(),
-        destinationHostLocator  = destinationHostLocator:copy(),
+        storageLocator          = destinationHostLocator:copy(),
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
     producer.ProvideItemsTo_ASrv(produceData, callback, callbackData)

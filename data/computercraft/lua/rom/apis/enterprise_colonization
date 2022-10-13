@@ -482,8 +482,8 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
             serviceData                 - (table) data for the service
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
+                storageLocator          - (URL) locating the Storage where the items need to be provided to
                 ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
-                destinationHostLocator  - (URL) locating where the produced items need to be delivered to
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
@@ -495,10 +495,10 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
     if type(productItemName) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemCount = serviceData.productItemCount
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -525,7 +525,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
         -- yes: return the items
         local transferData = {
             sourceItemsLocator      = localItemsLocator,
-            destinationHostLocator  = destinationHostLocator,
+            destinationHostLocator  = storageLocator,
             assignmentsPriorityKey  = assignmentsPriorityKey,
         }
         corelog.WriteToLog(">Procuring from local forest Supplier: "..textutils.serialise(productItemsQuery).."")
@@ -556,7 +556,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
                     { keyDef = "productItemName"        , valueSource = 0, keyDefSource = "productItemName" },
                     { keyDef = "productItemCount"       , valueSource = 0, keyDefSource = "productItemCount" },
                     { keyDef = "ingredientsHostLocator" , valueSource = 0, keyDefSource = "ingredientsHostLocator" },
-                    { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                    { keyDef = "storageLocator"         , valueSource = 0, keyDefSource = "storageLocator" },
                     { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
                 }},
                 { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -573,7 +573,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
             productItemName         = productItemName,
             productItemCount        = productItemCount, -- ToDo: consider lower count with possible # items already present in localSupplierLocator
             ingredientsHostLocator  = ingredientsHostLocator:copy(),
-            destinationHostLocator  = destinationHostLocator:copy(),
+            storageLocator          = storageLocator:copy(),
 
             harvestForest_Task      = "role_settler.HarvestForest_Task",
             harvestForestTaskData   = harvestForestTaskData,

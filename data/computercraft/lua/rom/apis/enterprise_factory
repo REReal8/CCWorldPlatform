@@ -107,8 +107,8 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
             serviceData                 - (table) data for the service
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) amount of items to produce
+                storageLocator          - (URL) locating the Storage where the items need to be provided to
                 ingredientsHostLocator  - (URL) locating where the production ingredients can be retrieved
-                destinationHostLocator  - (URL) locating where the produced items need to be delivered to
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
@@ -120,10 +120,10 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     if type(productItemName) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid productItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local productItemCount = serviceData.productItemCount
     if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid productItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsHostLocator = url.URLClass:new(serviceData.ingredientsHostLocator)
     if type(ingredientsHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid ingredientsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -168,7 +168,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
             }},
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"     , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "storageLocator" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
@@ -185,7 +185,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     }
     local projectData = {
         ingredientsItemsLocator     = ingredientsItemsLocator,
-        destinationHostLocator      = destinationHostLocator,
+        storageLocator              = storageLocator,
 
         localInputLocator           = localInputLocator,
         localOutputLocator          = localOutputLocator,
@@ -206,6 +206,36 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     -- start project
     corelog.WriteToLog(">Producing "..productItemCount.." "..productItemName.."'s")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function Can_ProvideItems_QSrv(serviceData)
+    --[[
+        This sync public query service answers the question if this Supplier can provide specific items.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemName            - (string) name of item to provide
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
+    local itemName = serviceData.itemName
+    if type(itemName) ~= "string" then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid itemName") return {success = false} end
+
+    -- check for recipe to produce itemName
+    local recipe = db.recipes[ itemName ]
+    if type(recipe) ~= "table" then
+        return {success = false}
+    end
+
+    -- end
+    return {
+        success         = true,
+    }
 end
 
 
