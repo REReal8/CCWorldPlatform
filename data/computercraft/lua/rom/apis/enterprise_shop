@@ -314,7 +314,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
         storageLocator              = destinationHostLocator:copy(),
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
-    enterprise_isp.ProvideItemsTo_ASrv(itemServiceData, callback, callbackData)
+    return enterprise_isp.ProvideItemsTo_ASrv(itemServiceData, callback, callbackData)
 end
 
 function GetBestSupplierLocator(item)
