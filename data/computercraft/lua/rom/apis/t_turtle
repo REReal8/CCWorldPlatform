@@ -12,7 +12,7 @@ function T_TransferItemsFromTo_Turtles()
     local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
     local destinationStorageLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
     local transferData = {
-        sourceItemsLocator          =  sourceItemsLocator,
+        sourceItemsLocator          = sourceItemsLocator,
         destinationStorageLocator   = destinationStorageLocator,
     }
 
