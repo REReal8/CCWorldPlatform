@@ -72,6 +72,9 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- set ingredientsSupplierLocator to this enterprise
+    local ingredientsSupplierLocator = GetISHURL()
+
     -- determine projectSteps and projectData
     local projectSteps = {}
     local areAllTrueStepDataDef = {}
@@ -87,12 +90,10 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
         local iStepStr = tostring(iStep)
 
         -- add crafting step
-        local procureItemName = "procureItemName"..iStepStr
-        local procureItemCount = "procureItemCount"..iStepStr
+        local procureItem = "procureItem"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_shop.ProcureItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "procureItemName"            , valueSource = 0, keyDefSource = procureItemName },
-                { keyDef = "procureItemCount"           , valueSource = 0, keyDefSource = procureItemCount },
+                { keyDef = "item"                       , valueSource = 0, keyDefSource = procureItem },
                 { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
                 { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
@@ -100,8 +101,8 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
         )
 
         -- add step data
-        projectData[procureItemName] = itemName
-        projectData[procureItemCount] = itemCount
+        local item = { [itemName] = itemCount }
+        projectData[procureItem] = item
 
         -- add combine stepDataDef
         table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , valueSource = iStep, keyDefSource = "destinationItemsLocator" })
@@ -113,7 +114,7 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     -- set remaining projectData
     projectData.storageLocator = storageLocator
     -- ToDo: consider first locally gathering the ordered items and sending them in one go to the storageLocator if all off them are obtained.
-    projectData.ingredientsSupplierLocator = GetISHURL()
+    projectData.ingredientsSupplierLocator = ingredientsSupplierLocator
     projectData.assignmentsPriorityKey = assignmentsPriorityKey
 
     -- add combining URL's
@@ -339,8 +340,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                     - (table) data for the service
-                procureItemName             - (string) name of item to procure
-                procureItemCount            - (number) amount of items to procure
+                item                        - (table) with one item (formatted as [itemName] = itemCount key-value pair) to procure
                 storageLocator              - (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
@@ -350,10 +350,8 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local procureItemName = serviceData.procureItemName
-    if type(procureItemName) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local procureItemCount = serviceData.procureItemCount
-    if type(procureItemCount) ~= "number" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local item = serviceData.item
+    if type(item) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid item") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local storageLocator = url.URLClass:new(serviceData.storageLocator)
     if type(storageLocator) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
@@ -366,7 +364,6 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     -- Attempt to procure item from a Supplier
     local supplierHostLocator = GetSupplierHostLocator()
     local supplierItemsLocator = supplierHostLocator:copy()
-    local item = { [procureItemName] = procureItemCount } -- ToDo: ? should we get it directly passed into this service instead of individual fields?
     supplierItemsLocator:setQuery(item)
     local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
     if serviceResults.success then
@@ -382,7 +379,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
 
     -- get best supplierLocator
     local supplierLocator = GetBestSupplierLocator(item)
-    if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..procureItemCount.." "..procureItemName.."'s") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..textutils.serialise(item)) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine itemLocator
     local itemLocator = supplierLocator:copy()
