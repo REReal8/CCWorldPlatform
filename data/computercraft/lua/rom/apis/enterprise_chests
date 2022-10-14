@@ -330,6 +330,70 @@ function ItemsAvailableVia_SSrv(queryData)
         success     = true,
     }
 end
+
+function NeedsTo_ProvideItemsTo_SSrv(serviceData)
+    --[[
+        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+        
+        Return value:
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                fuelNeed                    - (number) amount of fuel needed to provide items
+                ingredientsNeed             - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                     - (table) data to the query
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
+
+                ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid storageLocator") return {success = false} end
+
+    -- get chest location
+    local serviceResults = GetItemsLocations_SSrv({ itemsLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location of chest "..type(itemsLocator)..".") return {success = false} end
+    local k, chestLocation = next(serviceResults.locations, nil)
+
+    -- loop on items
+    local fuelNeed = 0
+    local supplyItems = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(supplyItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- fuelNeed from chest to storageLocator
+        serviceData = {
+            storageLocator  = storageLocator,
+        }
+        serviceResults =  enterprise_isp.GetStorageLocation_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..type(storageLocator)..".") return {success = false} end
+        -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
+        local fromChestToStorageFuelNeed = coreinventory.NeededFuelToFrom(serviceResults.location, chestLocation)
+
+        -- add fuelNeed
+        corelog.WriteToLog("C  fromChestToStorageFuelNeed="..fromChestToStorageFuelNeed)
+        fuelNeed = fuelNeed + fromChestToStorageFuelNeed
+    end
+
+    -- end
+    local ingredientsNeed = {}
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+        ingredientsNeed = ingredientsNeed,
+    }
+end
+
 function GetItemsLocations_SSrv(serviceData)
     --[[
         This sync public service provides the current world locations of different items in a Storage.

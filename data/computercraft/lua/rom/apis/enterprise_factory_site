@@ -227,6 +227,65 @@ function GetAvailableSiteData(recipe, productItemCount)
     return selectedProduceItemData
 end
 
+function NeedsTo_ProvideItemsTo_SSrv(serviceData)
+    --[[
+        This sync public service returns the needs for the site to produce specific items to a Storage.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed correctly
+                fuelNeed            - (number) amount of fuel needed to supply items
+
+        Parameters:
+            serviceData             - (table) data to the query
+                localInputItemsLocator  - (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
+                localOutputLocator      - (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
+                productionMethod        - (string) production method to use
+                productionSpot          - (table) location of production spot
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid serviceData") return {success = false} end
+    local localInputItemsLocator = url.URLClass:new(serviceData.localInputItemsLocator)
+    if type(localInputItemsLocator) ~= "table" then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid localInputItemsLocator") return {success = false} end
+    local localOutputLocator = url.URLClass:new(serviceData.localOutputLocator)
+    if type(localOutputLocator) ~= "table" then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid localOutputLocator") return {success = false} end
+    local productionMethod = serviceData.productionMethod
+    if type(productionMethod) ~= "string" then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid productionMethod") return {success = false} end
+    local productionSpot = serviceData.productionSpot
+    if type(productionSpot) ~= "table" then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid productionSpot") return {success = false} end
+
+    -- get productionLocation
+    local productionLocation = productionSpot.location
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid productionLocation") return {success = false} end
+
+    -- fuelNeed from localInputItemsLocator to productionLocation
+    local serviceResults = enterprise_isp.GetItemsLocations_SSrv({ itemsLocator = localInputItemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
+    local toProductionlocationFuelNeed = 0
+    for i, location in ipairs(serviceResults.locations) do
+        toProductionlocationFuelNeed = toProductionlocationFuelNeed + coreinventory.NeededFuelToFrom(productionLocation, location)
+    end
+
+    -- fuelNeed for production
+    local productionFuelNeed = 0
+    if productionMethod == "craft" then productionFuelNeed = 0 -- craft
+    elseif productionMethod == "smelt" then productionFuelNeed = 4 + 4 -- smelt + pickup
+    else corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
+
+    -- fuelNeed from productionLocation to localOutputLocator
+    serviceResults =  enterprise_isp.GetStorageLocation_SSrv({ storageLocator = localOutputLocator })
+    if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..localOutputLocator:getURI()..".") return {success = false} end
+    local fromProductionLocationFuelNeed = coreinventory.NeededFuelToFrom(serviceResults.location, productionLocation)
+
+    -- end
+    local fuelNeed = toProductionlocationFuelNeed + productionFuelNeed + fromProductionLocationFuelNeed
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+    }
+end
+
 function ProduceItem_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing 

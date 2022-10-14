@@ -246,25 +246,101 @@ function Can_ProvideItems_QSrv(serviceData)
     }
 end
 
+function NeedsTo_ProvideItemsTo_SSrv(serviceData)
+    --[[
+        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+        
+        Return value:
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                fuelNeed                    - (number) amount of fuel needed to provide items
+                ingredientsNeed             - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                     - (table) data to the query
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
+
+                ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid storageLocator") return {success = false} end
+    local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
+    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid ingredientsSupplierLocator") return{success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- loop on items
+    local fuelNeed = 0
+    local ingredientsNeed = {}
+    local supplyItems = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(supplyItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- check for recipe to provide itemName
+        local recipe = db.recipes[ itemName ]
+        if type(recipe) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
+
+        -- select a suitable site
+        local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
+        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
+
+        -- add ingredientsNeed
+        local itemIngredientsNeed = siteProduceItemData.itemsNeeded
+        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
+
+        -- fuelNeed ingredients
+        local ingredientsItemsLocator = ingredientsSupplierLocator:copy()
+        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
+        local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
+        serviceData = {
+            itemsLocator                = ingredientsItemsLocator,
+            storageLocator              = localInputLocator,
+            ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
+        }
+        serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
+        local ingredientsSupplyFuelNeed = serviceResults.fuelNeed
 
         -- fuelNeed production
-        local siteProductionFuelNeed = enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(siteProduceItemData)
+        local localInputItemsLocator = localInputLocator:copy()
+        localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
+        serviceData = {
+            localInputItemsLocator  = localInputItemsLocator,
+            localOutputLocator      = siteProduceItemData.localOutputLocator:copy(),
+            productionMethod        = siteProduceItemData.productionMethod,
+            productionSpot          = coreutils.DeepCopy(siteProduceItemData.productionSpot),
+        }
+        serviceResults = enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
+        local siteProductionFuelNeed = serviceResults.fuelNeed
 
         -- fuelNeed output transfer
         local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
         local localOutputItemsLocator = localOutputLocator:copy()
         local items = { [itemName] = itemCount }
         localOutputItemsLocator:setQuery(items)
-        transferData = {
+        serviceData = {
             sourceItemsLocator          = localOutputItemsLocator,
             destinationStorageLocator   = storageLocator,
         }
-        transferNeeds = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
-        if not transferNeeds.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-        local productsSupplyFuelNeed = transferNeeds.fuelNeed
+        serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        local productsSupplyFuelNeed = serviceResults.fuelNeed
 
         -- add fuelNeed
-        corelog.WriteToLog("F  ingredientsSupplyFuelNeed="..ingredientsSupplyFuelNeed..", productionFuelNeed="..siteProductionFuelNeed..", productsSupplyFuelNeed="..productsSupplyFuelNeed)
+        corelog.WriteToLog("F  ingredientsSupplyFuelNeed="..ingredientsSupplyFuelNeed..", siteProductionFuelNeed="..siteProductionFuelNeed..", productsSupplyFuelNeed="..productsSupplyFuelNeed)
         fuelNeed = fuelNeed + ingredientsSupplyFuelNeed + siteProductionFuelNeed + productsSupplyFuelNeed
     end
 

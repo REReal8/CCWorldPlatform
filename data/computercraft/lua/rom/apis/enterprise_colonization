@@ -632,6 +632,94 @@ function Can_ProvideItems_QSrv(serviceData)
     }
 end
 
+function NeedsTo_ProvideItemsTo_SSrv(serviceData)
+    --[[
+        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+        
+        Return value:
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                fuelNeed                    - (number) amount of fuel needed to provide items
+                ingredientsNeed             - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                     - (table) data to the query
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
+
+                ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator") return {success = false} end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid storageLocator") return {success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsColonizationURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local nTrees = forest.nTrees
+
+    -- loop on items
+    local fuelNeed = 0
+    local ingredientsNeed = {} -- ToDo ? should we add saplings for a harvest round here?
+    local supplyItems = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(supplyItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- check for birchlog or sapling
+        local itemPerRound = 1
+        local localSupplierLocator = nil
+        if itemName == "minecraft:birch_log" then
+            itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
+            localSupplierLocator = GetLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
+            -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
+            localSupplierLocator = GetLocalSaplingsLocator()
+        else
+            return corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") {success = false}
+        end
+
+        -- fuelNeed per round
+        local fuelPerRound = role_settler.FuelNeededPerRound(nTrees)
+        local nRounds = math.ceil(itemCount / itemPerRound)
+        local roundsFuelNeed = nRounds * fuelPerRound
+
+        -- fuelNeed transfer
+        local localSupplierItemsLocator = localSupplierLocator:copy()
+        local items = { [itemName] = itemCount }
+        localSupplierItemsLocator:setQuery(items)
+        local transferData = {
+            sourceItemsLocator          = localSupplierItemsLocator,
+            destinationStorageLocator   = storageLocator,
+        }
+        serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
+        if not serviceResults.success then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        local transferFuelNeed = serviceResults.fuelNeed
+
+        -- add fuelNeed
+        corelog.WriteToLog("C  roundsFuelNeed="..roundsFuelNeed.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), transferFuelNeed="..transferFuelNeed)
+        fuelNeed = fuelNeed + roundsFuelNeed + transferFuelNeed
+    end
+
+    -- end
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+        ingredientsNeed = ingredientsNeed,
+    }
+end
+
 function GetISHURL()
     --[[
         This private function provides the (base) URL of this ISH.
