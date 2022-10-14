@@ -463,10 +463,7 @@ end
 
 function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move to enterprise_forest_birch
     --[[
-        This async public Producer service produces multiple instances of a specific item in the enterprise. It does so 
-        by ...
-
-        Finally it delivers the created items to the requested Storage.
+        This async public Supplier service provides specific items to a Storage.
 
         Return value:
             nil

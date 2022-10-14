@@ -88,10 +88,11 @@ local db = {
 
 function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     --[[
-        This async public Producer service produces multiple instances of a specific item in the factory. It does so 
-        by first determining a recipe that can produce the item. Subsequently it retrieves the needed production ingredients. 
-        After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipe. 
-        Finally it delivers the created items to the requested destination.
+        This async public Supplier service provides specific items to a Storage.
+
+        It does so by first determining recipes that can produce the items. Subsequently it retrieves the needed production ingredients. 
+        After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipes. 
+        Finally it delivers the created items to the requested Storage.
 
         Return value:
             nil
