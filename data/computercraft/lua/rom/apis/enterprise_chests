@@ -582,7 +582,7 @@ function DeleteChests()
     if not chests or type(chests) ~= "table" then corelog.Warning("coreassignment.DeleteChests: chests not valid") return nil end
 
     -- remove all
-    corelog.Warning("All chests are being deleted!")
+--    corelog.Warning("All chests are being deleted!")
     for id, chest in pairs(chests) do
         -- remove
         corelog.Warning("  deleting chest "..id)
