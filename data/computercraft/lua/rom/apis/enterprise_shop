@@ -6,7 +6,7 @@ local db = {
     The Shop is an enterprise that offers services for ordering items.
 
     The Shop provides the following services
-        OrderItems_ASrv             - procure items and having them delivered at a destinationHostLocator
+        OrderItems_ASrv             - procure items and having them delivered at a Storage
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
     The Shop implements it's services by using services of Supplier enterprises. 
@@ -54,8 +54,8 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data for the service
-                orderItems              - (table) with one or more ordered items (formatted as an array of [itemName] = itemCount key-value pairs) 
-                destinationHostLocator  - (URL) locating where the ordered items need to be delivered to
+                orderItems              - (table) with one or more ordered items (formatted as an array of [itemName] = itemCount key-value pairs)
+                storageLocator          - (URL) locating the Storage where the items need to be provided to
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
@@ -65,8 +65,8 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     if type(serviceData) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local orderItems = serviceData.orderItems
     if type(orderItems) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid orderItems") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -93,7 +93,7 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_shop.ProcureItem_ASrv", async = true, stepDataDef = {
                 { keyDef = "procureItemName"        , valueSource = 0, keyDefSource = procureItemName },
                 { keyDef = "procureItemCount"       , valueSource = 0, keyDefSource = procureItemCount },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                { keyDef = "storageLocator"         , valueSource = 0, keyDefSource = "storageLocator" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }}
         )
@@ -112,9 +112,9 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     -- set assignmentsPriorityKey
     projectData.assignmentsPriorityKey = assignmentsPriorityKey
 
-    -- set destinationHostLocator
-    projectData.destinationHostLocator = destinationHostLocator
-    -- ToDo: consider first locally gathering the ordered items and sending them in one go to the destinationHostLocator if all off them are obtained.
+    -- set storageLocator
+    projectData.storageLocator = storageLocator
+    -- ToDo: consider first locally gathering the ordered items and sending them in one go to the storageLocator if all off them are obtained.
 
     -- add combining URL's
     iStep = iStep + 1
@@ -192,7 +192,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
         steps   = {
             { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
                 { keyDef = "orderItems"             , valueSource = 0, keyDefSource = "orderItems" },
-                { keyDef = "destinationHostLocator" , valueSource = 0, keyDefSource = "destinationHostLocator" },
+                { keyDef = "storageLocator"         , valueSource = 0, keyDefSource = "storageLocator" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
         },
@@ -203,7 +203,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     }
     local projectData = {
         orderItems              = transferItems,
-        destinationHostLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        storageLocator          = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
 
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
@@ -341,7 +341,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
             serviceData                 - (table) data for the service
                 procureItemName         - (string) name of item to procure
                 procureItemCount        - (number) amount of items to procure
-                destinationHostLocator  - (URL) locating where the procured items need to be delivered to
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
             callbackData                - (table) data to supply to callback function
@@ -353,8 +353,8 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     if type(procureItemName) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemName") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local procureItemCount = serviceData.procureItemCount
     if type(procureItemCount) ~= "number" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationHostLocator = url.URLClass:new(serviceData.destinationHostLocator)
-    if type(destinationHostLocator) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid destinationHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -369,7 +369,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     if serviceResults.success then
         local transferData = {
             sourceItemsLocator          = supplierItemsLocator,
-            destinationStorageLocator   = destinationHostLocator,
+            destinationStorageLocator   = storageLocator:copy(),
             assignmentsPriorityKey      = assignmentsPriorityKey,
         }
         corelog.WriteToLog(">Procuring from Supplier: "..textutils.serialise(item).."")
@@ -389,7 +389,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     local itemServiceData = {
         itemsLocator                = itemLocator,
         ingredientsSupplierLocator  = GetISHURL(),
-        storageLocator              = destinationHostLocator:copy(),
+        storageLocator              = storageLocator:copy(),
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     return enterprise_isp.ProvideItemsTo_ASrv(itemServiceData, callback, callbackData)
