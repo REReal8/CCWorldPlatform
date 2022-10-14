@@ -211,7 +211,7 @@ function GetItemsLocations_SSrv(serviceData)
     -- get location
     local serviceResults = GetStorageLocation_SSrv({ storageLocator = itemsLocator})
     if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: failed obtaining location for Storage "..itemsLocator:getURI()..".") return {success = false} end
-    local location = itemsLocator:getURI().location
+    local location = serviceResults.location
 
     -- end
     return {
