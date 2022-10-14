@@ -91,10 +91,11 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
         local procureItemCount = "procureItemCount"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_shop.ProcureItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "procureItemName"        , valueSource = 0, keyDefSource = procureItemName },
-                { keyDef = "procureItemCount"       , valueSource = 0, keyDefSource = procureItemCount },
-                { keyDef = "storageLocator"         , valueSource = 0, keyDefSource = "storageLocator" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "procureItemName"            , valueSource = 0, keyDefSource = procureItemName },
+                { keyDef = "procureItemCount"           , valueSource = 0, keyDefSource = procureItemCount },
+                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
+                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }}
         )
 
@@ -109,12 +110,11 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
         table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , valueSource = iStep, keyDefSource = "success" })
     end
 
-    -- set assignmentsPriorityKey
-    projectData.assignmentsPriorityKey = assignmentsPriorityKey
-
-    -- set storageLocator
+    -- set remaining projectData
     projectData.storageLocator = storageLocator
     -- ToDo: consider first locally gathering the ordered items and sending them in one go to the storageLocator if all off them are obtained.
+    projectData.ingredientsSupplierLocator = GetISHURL()
+    projectData.assignmentsPriorityKey = assignmentsPriorityKey
 
     -- add combining URL's
     iStep = iStep + 1
@@ -331,20 +331,21 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
             nil
 
         Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
-                                            the "query" should be equal to orderItems)
+                                            - (table)
+                success                     - (boolean) whether the service executed successfully
+                destinationItemsLocator     - (URL) stating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                the "query" should be equal to orderItems)
 
         Parameters:
-            serviceData                 - (table) data for the service
-                procureItemName         - (string) name of item to procure
-                procureItemCount        - (number) amount of items to procure
+            serviceData                     - (table) data for the service
+                procureItemName             - (string) name of item to procure
+                procureItemCount            - (number) amount of items to procure
                 storageLocator              - (URL) locating the Storage where the items need to be provided to
-                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
+                ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                        - (string) name of function to call once service is ready
+            callbackData                    - (table) data to supply to callback function
     ]]
 
     -- check input
@@ -355,6 +356,8 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     if type(procureItemCount) ~= "number" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid procureItemCount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local storageLocator = url.URLClass:new(serviceData.storageLocator)
     if type(storageLocator) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
+    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid ingredientsSupplierLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -388,7 +391,7 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     -- Have Supplier produce the item
     local itemServiceData = {
         itemsLocator                = itemLocator,
-        ingredientsSupplierLocator  = GetISHURL(),
+        ingredientsSupplierLocator  = ingredientsSupplierLocator,
         storageLocator              = storageLocator:copy(),
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
