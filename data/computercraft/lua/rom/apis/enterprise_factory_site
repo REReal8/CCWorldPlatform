@@ -751,9 +751,9 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- get spotLocation
-    local spotLocation = productionSpot.location
-    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- get productionLocation
+    local productionLocation = productionSpot.location
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
     local craftData = {
@@ -761,7 +761,7 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
         productItemCount= productItemCount,
 
         recipe          = productionRecipe,
-        workingLocation = coremove.CopyLocation(spotLocation),
+        workingLocation = coremove.CopyLocation(productionLocation),
 
         priorityKey     = assignmentsPriorityKey,
     }
@@ -831,16 +831,16 @@ function SmeltItem_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- get spotLocation
-    local spotLocation = productionSpot.location
-    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- get productionLocation
+    local productionLocation = productionSpot.location
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
     local smeltData = {
         productItemCount= productItemCount,
         recipe          = productionRecipe,
 
-        workingLocation = coremove.CopyLocation(spotLocation),
+        workingLocation = coremove.CopyLocation(productionLocation),
 
         -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         fuelItemName    = "minecraft:birch_planks",
@@ -898,16 +898,16 @@ function Pickup_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- get spotLocation
-    local spotLocation = productionSpot.location
-    if type(spotLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid spotLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- get productionLocation
+    local productionLocation = productionSpot.location
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- gather assignment data
     local pickupData = {
         productItemName = productItemName,
         productItemCount= productItemCount,
 
-        workingLocation = coremove.CopyLocation(spotLocation),
+        workingLocation = coremove.CopyLocation(productionLocation),
 
         priorityKey     = assignmentsPriorityKey,
     }
