@@ -353,8 +353,8 @@ function GetBestSupplierLocator(item)
         if type(itemName) ~= "string" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid itemName (type="..type(itemName)..")") return nil end
         if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid itemCount (type="..type(itemCount)..")") return nil end
         local productItemData = {
-            productItemName = itemName,
-            productItemCount= itemCount,
+            itemName    = itemName,
+            itemCount   = itemCount,
         }
             if enterprise_factory.Can_ProvideItems_QSrv(productItemData).success      then supplierLocator = enterprise_factory.GetISHURL()
         elseif enterprise_colonization.Can_ProvideItems_QSrv(productItemData).success then supplierLocator = enterprise_colonization.GetISHURL() -- ToDo: implement and change into enterprise_woods
