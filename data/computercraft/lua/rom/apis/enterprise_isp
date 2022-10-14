@@ -66,7 +66,7 @@ end
 
 function NeedsTo_TransferItems_SSrv(transferData)
     --[[
-        This sync public service returns the (fuel) needs for the transfer of items from a Supplier to a Storage.
+        This sync public service returns the (fuel) needs for the transfer of items from one Storage to another.
 
         This service is implemented using the following underlying Storage services
             GetItemsLocations_SSrv
