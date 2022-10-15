@@ -432,7 +432,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         local fromChestToStorageFuelNeed = coreinventory.NeededFuelToFrom(serviceResults.location, chestLocation)
 
         -- add fuelNeed
-        corelog.WriteToLog("C  fromChestToStorageFuelNeed="..fromChestToStorageFuelNeed)
+--        corelog.WriteToLog("C  fromChestToStorageFuelNeed="..fromChestToStorageFuelNeed)
         fuelNeed = fuelNeed + fromChestToStorageFuelNeed
     end
 

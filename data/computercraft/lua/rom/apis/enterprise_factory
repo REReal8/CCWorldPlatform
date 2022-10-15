@@ -344,7 +344,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         local productsSupplyFuelNeed = serviceResults.fuelNeed
 
         -- add fuelNeed
-        corelog.WriteToLog("F  ingredientsSupplyFuelNeed="..ingredientsSupplyFuelNeed..", siteProductionFuelNeed="..siteProductionFuelNeed..", productsSupplyFuelNeed="..productsSupplyFuelNeed)
+--        corelog.WriteToLog("F  ingredientsSupplyFuelNeed="..ingredientsSupplyFuelNeed..", siteProductionFuelNeed="..siteProductionFuelNeed..", productsSupplyFuelNeed="..productsSupplyFuelNeed)
         fuelNeed = fuelNeed + ingredientsSupplyFuelNeed + siteProductionFuelNeed + productsSupplyFuelNeed
     end
 

@@ -704,7 +704,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         local transferFuelNeed = serviceResults.fuelNeed
 
         -- add fuelNeed
-        corelog.WriteToLog("C  roundsFuelNeed="..roundsFuelNeed.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), transferFuelNeed="..transferFuelNeed)
+--        corelog.WriteToLog("C  roundsFuelNeed="..roundsFuelNeed.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), transferFuelNeed="..transferFuelNeed)
         fuelNeed = fuelNeed + roundsFuelNeed + transferFuelNeed
     end
 

@@ -198,7 +198,7 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = turtleId}).turtleLocator
     local fuelItemsLocator = ingredientsSupplierLocator:copy()
     fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
-    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
+--    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
     local refuelTaskData = {
         turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
@@ -315,7 +315,7 @@ function FuelNeedTo_ProduceFuel(fuelToProduce)
 
     -- end
     local fuelNeed = fuelNeedTo_ProduceFuel + fuelNeedTo_Travel
-    corelog.WriteToLog("E  fuelNeed="..fuelNeed.." (produce="..fuelNeedTo_ProduceFuel..", travel="..fuelNeedTo_Travel..")")
+--    corelog.WriteToLog("E  fuelNeed="..fuelNeed.." (produce="..fuelNeedTo_ProduceFuel..", travel="..fuelNeedTo_Travel..")")
     return fuelNeed
 end
 

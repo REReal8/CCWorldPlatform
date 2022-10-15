@@ -271,7 +271,6 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         -- determine itemLocator
         local itemLocator = supplierLocator:copy()
         itemLocator:setQuery(item)
---        corelog.WriteToLog("    itemLocator = "..itemLocator:getURI())
 
         -- get provide needs
         local itemServiceData = {
@@ -286,7 +285,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         local fuelNeedProvide = serviceResults.fuelNeed
 
         -- add fuelNeed
-        corelog.WriteToLog("S  fuelNeedProvide="..fuelNeedProvide.." for "..itemCount.." "..itemName.."'s")
+--        corelog.WriteToLog("S  fuelNeedProvide="..fuelNeedProvide.." for "..itemCount.." "..itemName.."'s")
         fuelNeed = fuelNeed + fuelNeedProvide
 
         -- add ingredientsNeed
