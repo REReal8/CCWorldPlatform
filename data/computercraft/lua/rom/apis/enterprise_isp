@@ -204,7 +204,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
                 destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
