@@ -196,11 +196,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
-                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 14, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 13, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
