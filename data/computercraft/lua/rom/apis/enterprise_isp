@@ -98,7 +98,7 @@ function ItemsAvailableVia_SSrv(serviceData)
 
     -- get Supplier
     local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return {success = false} end
     local supplierName = serviceResults.enterpriseName
 
     -- call method on Supplier
