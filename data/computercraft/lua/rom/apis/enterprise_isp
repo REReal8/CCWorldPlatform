@@ -72,12 +72,12 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     return coreutils.DoASyncService(serviceName, serviceData, callback, callbackData)
 end
 
-function ItemsAvailableVia_SSrv(queryData)
+function ItemsAvailableVia_SSrv(serviceData)
     --[[
         This sync public service queries a Supplier for the availability of items. The Supplier and query are specified by the "base" (i.e. "ccwprp://host:port/path")
         and "query" component (i.e. `?itemName=itemCount`) of an URL.
 
-        This service is implemented using the following underlying Supplier services
+        This service is implemented using the following underlying Supplier service
             ItemsAvailableVia_SSrv
 
         Return value:
@@ -92,19 +92,21 @@ function ItemsAvailableVia_SSrv(queryData)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid queryData") return {success = false} end
-    local itemsLocator = queryData.itemsLocator
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
     if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
 
     -- get Supplier
-    local supplierName = itemsLocator:getHost()
-    if type(supplierName) ~= "string" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid supplierName") return {success = false} end
+    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local supplierName = serviceResults.enterpriseName
 
-    -- relay to ISH service
-        if supplierName == "turtle" then return enterprise_turtle.ItemsAvailableVia_SSrv(queryData)
-    elseif supplierName == "chests" then return enterprise_chests.ItemsAvailableVia_SSrv(queryData)
-    else corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Not implemented for "..supplierName .." Supplier.") return {success = false}
-    end
+    -- call method on Supplier
+    local serviceName = supplierName..".ItemsAvailableVia_SSrv"
+    serviceResults = coreutils.DoSyncService(serviceName, serviceData)
+
+    -- end
+    return serviceResults
 end
 
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
