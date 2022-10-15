@@ -138,55 +138,6 @@ function IsTurtleURL_QSrv(queryData)
     end
 end
 
-function Can_ProvideItems_QSrv(serviceData)
-    --[[
-        This sync public query service answers the question whether the Supplier can provide specific items.
-        
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the answer to the question is true
-
-        Parameters:
-            serviceData             - (table) data to the query
-                itemsLocator        - (URL) locating the items that need to be queried for providability
-                                        (the "base" component of the URL specifies the Supplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)            
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
-
-    -- check itemsLocator is for this enterprise
-    local serviceResults = IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
-
-    -- select turtle
-    local currentTurtleId = os.getComputerID()
-    local itemsLocatorTurtleId = itemsLocator:getPort()
-    if itemsLocatorTurtleId and currentTurtleId ~= itemsLocatorTurtleId then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Querying items in one (id="..itemsLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
-
-    -- query turtle for items
-    local items = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
-    local inventory = coreinventory.GetInventoryDetail()
-    for itemName, itemCount in pairs(items) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
-
-        local inventoryCount = inventory.items[itemName]
-        if inventoryCount == nil or inventoryCount < itemCount then
---            corelog.WriteToLog("enterprise_turtle.Can_ProvideItems_QSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") 
-            return {success = false}
-        end
-    end
-
-    -- end
-    return {
-        success = true,
-    }
-end
-
 function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     --[[
         This async public Supplier service provides specific items to a Storage.
@@ -236,6 +187,55 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     }
 --    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Turtle")
     return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+end
+
+function Can_ProvideItems_QSrv(serviceData)
+    --[[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        - (URL) locating the items that need to be queried for providability
+                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "query" component of the URL specifies the items to query for)            
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsTurtleURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- select turtle
+    local currentTurtleId = os.getComputerID()
+    local itemsLocatorTurtleId = itemsLocator:getPort()
+    if itemsLocatorTurtleId and currentTurtleId ~= itemsLocatorTurtleId then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Querying items in one (id="..itemsLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+
+    -- query turtle for items
+    local items = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
+    local inventory = coreinventory.GetInventoryDetail()
+    for itemName, itemCount in pairs(items) do
+        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
+
+        local inventoryCount = inventory.items[itemName]
+        if inventoryCount == nil or inventoryCount < itemCount then
+--            corelog.WriteToLog("enterprise_turtle.Can_ProvideItems_QSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") 
+            return {success = false}
+        end
+    end
+
+    -- end
+    return {
+        success = true,
+    }
 end
 
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
