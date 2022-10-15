@@ -331,6 +331,57 @@ function ItemsAvailableVia_SSrv(queryData)
     }
 end
 
+function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async public Supplier service provides specific items to a Storage.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                     - (table) data for the service
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                        - (string) name of function to call once service is ready
+            callbackData                    - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsChestURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- transfer using TransferItemsFromTo_ASrv
+    local transferData = {
+        sourceItemsLocator          = itemsLocator,
+        destinationStorageLocator   = storageLocator,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }
+    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Chest")
+    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+end
+
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.

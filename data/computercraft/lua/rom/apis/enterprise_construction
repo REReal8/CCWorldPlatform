@@ -70,9 +70,10 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     -- create project service data
     local buildBlueprintProjectDef = {
         steps   = {
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "materialsItemsLocator" },
-                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+            { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "taskFunctionName" },
@@ -90,8 +91,9 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
         }
     }
     local projectData = {
-        materialsItemsLocator       = materialsItemsLocator,
-        materialsLocalHostLocator   = materialsLocalHostLocator,
+        materialsItemsLocator       = materialsItemsLocator:copy(),
+        materialsLocalHostLocator   = materialsLocalHostLocator:copy(),
+        ingredientsSupplierLocator  = materialsHostLocator:copy(),
 
         taskFunctionName            = taskFunctionName,
         metaData                    = metaData,
@@ -181,9 +183,10 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     -- create project service data
     local buildRectangularPatternProjectDef = {
         steps   = {
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "materialsItemsLocator" },
-                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+            { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
+                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "taskFunctionName" },
@@ -201,8 +204,9 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
         }
     }
     local projectData = {
-        materialsItemsLocator       = materialsItemsLocator,
-        materialsLocalHostLocator   = materialsLocalHostLocator,
+        materialsItemsLocator       = materialsItemsLocator:copy(),
+        materialsLocalHostLocator   = materialsLocalHostLocator:copy(),
+        ingredientsSupplierLocator  = materialsHostLocator:copy(),
 
         taskFunctionName            = taskFunctionName,
         metaData                    = metaData,

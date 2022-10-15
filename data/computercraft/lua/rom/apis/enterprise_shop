@@ -74,6 +74,61 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
 
     -- set ingredientsSupplierLocator to this enterprise
     local ingredientsSupplierLocator = GetISHURL()
+    local itemsLocator = GetISHURL()
+    itemsLocator:setQuery(orderItems)
+
+    -- call ProvideItemsTo_ASrv
+    serviceData = {
+        itemsLocator                = itemsLocator,
+        storageLocator              = storageLocator,
+        ingredientsSupplierLocator  = ingredientsSupplierLocator,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }
+    return ProvideItemsTo_ASrv(serviceData, callback, callbackData)
+end
+
+function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
+    --[[
+        This async public Supplier service provides specific items to a Storage.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                     - (table) data for the service
+                itemsLocator                - (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              - (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                        - (string) name of function to call once service is ready
+            callbackData                    - (table) data to supply to callback function
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local storageLocator = url.URLClass:new(serviceData.storageLocator)
+    if type(storageLocator) ~= "table" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
+    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid ingredientsSupplierLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid callback (type="..type(callback)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    callbackData = callbackData or {}
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsShopURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- determine projectSteps and projectData
     local projectSteps = {}
@@ -83,6 +138,7 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
 
     -- add project step for each of the ordered items 
     local iStep = 0
+    local orderItems = itemsLocator:getQuery()
     -- ToDo: do this in parallel by extending enterprise_projects to handle parallel project steps.
     for itemName, itemCount in pairs(orderItems) do
         -- step index
@@ -146,75 +202,6 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
 
     -- start project
     corelog.WriteToLog(">Providing "..itemsLocator:getURI().."")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-end
-
-function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
-    --[[
-        This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
-
-        Return value:
-            nil 
-
-        Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                turtleItemsLocator      - (URL) locating a specific turtle and the items it has gotton in it's inventory
-
-        Parameters:
-            transferData                - (table) data about the transfer
-                sourceItemsLocator      - (URL) locating the items that need transfer
-                                            (the "query" component of the URL specifies the items to be transferred)
-                                            (the "host" component of the URL should specify this host (i.e. a chest) where the items are located)                                        
-                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function                                                
-    --]]
-
-    -- check input
-    if type(transferData) ~= "table" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local sourceItemsLocator = url.URLClass:new(transferData.sourceItemsLocator)
-    if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid sourceItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local assignmentsPriorityKey = transferData.assignmentsPriorityKey
-    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
-
-    -- check source is for this enterprise
-    local serviceResults = IsShopURL_QSrv({ aURL = sourceItemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_shop.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- get transferItems
-    local transferItems = coreutils.DeepCopy(sourceItemsLocator:getQuery())
-
-    -- implement by ordering from ourself (i.e. the Shop):
-    -- create project definition
-    local projectDef = {
-        steps   = {
-            { stepName = "enterprise_shop.OrderItems_ASrv", async = true, stepDataDef = {
-                { keyDef = "orderItems"             , valueSource = 0, keyDefSource = "orderItems" },
-                { keyDef = "storageLocator"         , valueSource = 0, keyDefSource = "storageLocator" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"                    , valueSource = 1, keyDefSource = "success" },
-            { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "destinationItemsLocator" },
-        }
-    }
-    local projectData = {
-        orderItems              = transferItems,
-        storageLocator          = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-
-        assignmentsPriorityKey  = assignmentsPriorityKey,
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-    }
-
-    -- start project
---    corelog.WriteToLog(">Ordering "..sourceItemsLocator:getQueryURI().." from shop into a turtle.")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
@@ -360,24 +347,6 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
     if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     if type(callback) ~= "string" then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
-
-    -- Attempt to procure item from a Supplier
-    local supplierHostLocator = GetSupplierHostLocator()
-    local supplierItemsLocator = supplierHostLocator:copy()
-    supplierItemsLocator:setQuery(item)
-    local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
-    if serviceResults.success then
-        local transferData = {
-            sourceItemsLocator          = supplierItemsLocator,
-            destinationStorageLocator   = storageLocator:copy(),
-            assignmentsPriorityKey      = assignmentsPriorityKey,
-        }
-        local itemName  = next(item)
-        local itemCount  = item[itemName]
-        corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from global Storage")
-        return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
-    end
-    -- ToDo: implement ProvideItemsTo_ASrv for above enterprise_turtle to be able to replace TransferItemsFromTo_ASrv call
 
     -- get best supplierLocator
     local supplierLocator = GetBestSupplierLocator(item)

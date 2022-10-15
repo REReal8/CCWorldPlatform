@@ -159,9 +159,10 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
         -- create project service data
         local projectDef = {
             steps = {
-                { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = { -- ToDo: change to a call to ProvideItemsTo_ASrv (on the shop!)
-                    { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
-                    { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "localInputLocator" },
+                { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
+                    { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
+                    { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "localInputLocator" },
+                    { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
                     { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
                 }},
                 { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
@@ -192,6 +193,8 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
             }
         }
         local projectData = {
+            ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
+
             ingredientsItemsLocator     = ingredientsItemsLocator,
             storageLocator              = storageLocator,
 

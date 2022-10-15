@@ -276,9 +276,9 @@ end
 
 function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     --[[
-        This async public service relays the transfer of items from a Supplier to a Storage.
+        This async public service relays the transfer of items from one Storage to another.
 
-        This service is implemented using the following underlying Supplier and Storage services
+        This service is implemented using the following underlying Storage services
             GetItemsIntoTurtle_ASrv
             PutItemsFromTurtle_ASrv
 
@@ -289,7 +289,7 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
                                             - (table)
                 success                     - (boolean) whether the service executed successfully
                 destinationItemsLocator     - (URL) stating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to destinationHostLocator, and
+                                                (upon service succes the "host" component of this URL should be equal to destinationStorageLocator, and
                                                 the "query" should be equal to the "query" component of the sourceItemsLocator)
 
         Parameters:
@@ -315,14 +315,14 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     callbackData = callbackData or {}
 
     -- get Supplier
-    local serviceResults = GetSupplierName_SSrv( { supplierLocator = sourceItemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining supplierName for "..sourceItemsLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local supplierName = serviceResults.enterpriseName
+    local serviceResults = GetStorageName_SSrv( { storageLocator = sourceItemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..sourceItemsLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local sourceStorageName = serviceResults.enterpriseName
 
     -- get Storage
     serviceResults = GetStorageName_SSrv( { storageLocator = destinationStorageLocator })
     if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationStorageLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local storageName = serviceResults.enterpriseName
+    local destinationStorageName = serviceResults.enterpriseName
 
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
@@ -337,11 +337,11 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     -- create project definition
     local transferItemsProjectDef = {
         steps   = {
-            { stepName = supplierName..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
+            { stepName = sourceStorageName..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "sourceItemsLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
-            { stepName = storageName..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
+            { stepName = destinationStorageName..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
                 { keyDef = "destinationHostLocator"     , valueSource = 0, keyDefSource = "destinationStorageLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
