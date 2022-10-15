@@ -295,7 +295,9 @@ function Refuel(fuel)
 end
 
 function NeededFuelToFrom(endLocation, startLocation)
-    startLocation = startLocation or {x=0, y= 0, z= 0, dx=0, dy=1}
+    -- check input
+    if type(endLocation) ~= "table" then corelog.Error("coreinventory.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return nil end
+    if type(startLocation) ~= "table" then corelog.Error("coreinventory.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return nil end
 
     return math.abs(endLocation.x - startLocation.x) + math.abs(endLocation.y - startLocation.y) + math.abs(endLocation.z - startLocation.z)
 end
