@@ -201,7 +201,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     }
 
     -- start project
-    corelog.WriteToLog(">Providing "..itemsLocator:getURI().."")
+--    corelog.WriteToLog(">Providing "..itemsLocator:getURI().."")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 

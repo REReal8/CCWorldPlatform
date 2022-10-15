@@ -215,7 +215,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
         }
 
         -- start project
-        corelog.WriteToLog(">Producing "..itemCount.." "..itemName.."'s in Factory")
+--        corelog.WriteToLog(">Producing "..itemCount.." "..itemName.."'s in Factory")
         enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
     end
 end

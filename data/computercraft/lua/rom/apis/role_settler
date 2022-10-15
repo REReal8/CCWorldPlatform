@@ -230,7 +230,7 @@ function HarvestForest_Task(taskData)
     local nTrees = taskData.nTrees
     if type(nTrees) ~= "number" then corelog.Error("role_settler.HarvestForest_Task: Invalid nTrees") return {success = false} end
 
-    corelog.WriteToLog(" Harvesting Forest")
+--    corelog.WriteToLog(" Harvesting Forest")
 
     -- go to first tree position
     coremove.GoTo(firstTreeLocation)

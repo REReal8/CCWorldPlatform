@@ -122,7 +122,7 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
     -- determine if new highestFuelNeed_Assignment
     local fuelNeedIncreased = false
     if assignmentFuelNeed > parameters.highestFuelNeed_Assignment then
-        corelog.WriteToLog("* Updating highestFuelNeed_Assignment from "..parameters.highestFuelNeed_Assignment.." to "..assignmentFuelNeed.." *")
+--        corelog.WriteToLog("* Updating highestFuelNeed_Assignment from "..parameters.highestFuelNeed_Assignment.." to "..assignmentFuelNeed.." *")
         parameters.highestFuelNeed_Assignment = assignmentFuelNeed
         fuelNeedIncreased = true
     end
@@ -131,7 +131,7 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
     local fuelNeed_ProduceFuel = FuelNeedTo_ProduceFuel(parameters.highestFuelNeed_Assignment)
     if not fuelNeed_ProduceFuel then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Failed obtaining fuelNeed_ProduceFuel") return {success = false} end
     if fuelNeed_ProduceFuel > parameters.highestFuelNeed_ProduceFuel then
-        corelog.WriteToLog("* Updating highestFuelNeed_ProduceFuel from "..parameters.highestFuelNeed_ProduceFuel.." to "..fuelNeed_ProduceFuel.." *")
+--        corelog.WriteToLog("* Updating highestFuelNeed_ProduceFuel from "..parameters.highestFuelNeed_ProduceFuel.." to "..fuelNeed_ProduceFuel.." *")
         parameters.highestFuelNeed_ProduceFuel = fuelNeed_ProduceFuel
         fuelNeedIncreased = true
     end
@@ -144,7 +144,7 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
         parameters.minFuelLevel        = minFuelLevel
 
         local targetFuelLevel          = parameters.targetMultiplier * minFuelLevel
-        corelog.WriteToLog("* Updating targetFuelLevel from "..parameters.targetFuelLevel.." to "..targetFuelLevel.." *")
+--        corelog.WriteToLog("* Updating targetFuelLevel from "..parameters.targetFuelLevel.." to "..targetFuelLevel.." *")
         parameters.targetFuelLevel     = targetFuelLevel
 
         -- set levels

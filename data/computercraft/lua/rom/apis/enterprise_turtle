@@ -235,7 +235,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
         destinationStorageLocator   = storageLocator,
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
-    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Turtle")
+--    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Turtle")
     return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
 end
 
