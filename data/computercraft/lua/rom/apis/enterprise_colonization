@@ -599,7 +599,7 @@ end
 
 function Can_ProvideItems_QSrv(serviceData)
     --[[
-        This sync public query service answers the question if this Supplier can provide specific items.
+        This sync public query service answers the question whether the Supplier can provide specific items.
         
         Return value:
                                     - (table)
@@ -607,24 +607,37 @@ function Can_ProvideItems_QSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data to the query
-                itemName            - (string) name of item to provide
+                itemsLocator        - (URL) locating the items that need to be queried for providability
+                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "query" component of the URL specifies the items to query for)            
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
-    local itemName = serviceData.itemName
-    if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid itemName") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
 
-    -- check for birchlog or sapling
-    if itemName == "minecraft:birch_log" then
-    elseif itemName == "minecraft:birch_sapling" then
-    else
-        return {success = false}
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsColonizationURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- loop on items
+    local items = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(items) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_colonization.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+
+        -- check for birchlog or sapling
+        if itemName == "minecraft:birch_log" then
+        elseif itemName == "minecraft:birch_sapling" then
+        else
+            return {success = false}
+        end
     end
 
     -- end
     return {
-        success         = true,
+        success = true,
     }
 end
 

@@ -13,7 +13,7 @@ local db = {
 
     For an enterprise to be a Supplier it needs to implement the following services:
         ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at a Storage
-        Can_ProvideItems_QSrv       - whether the Supplier can provide a specific item
+        Can_ProvideItems_QSrv       - whether the Supplier can provide specific items
         NeedsTo_ProvideItemsTo_SSrv - returning the needs for the Supplier to provide specific items to a Storage
 
     ToDo: to be made obsolete
@@ -205,6 +205,51 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
+function Can_ProvideItems_QSrv(serviceData)
+    --[[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        - (URL) locating the items that need to be queried for providability
+                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "query" component of the URL specifies the items to query for)            
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsShopURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- loop on items
+    local items = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(items) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
+        local item = { [itemName] = itemCount }
+
+        -- check for a Supplier to provide item
+        local supplierLocator = GetBestSupplierLocator(item)
+        if supplierLocator == nil then
+            return {success = false}
+        end
+    end
+
+    -- end
+    return {
+        success = true,
+    }
+end
+
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
@@ -367,7 +412,7 @@ end
 
 function GetBestSupplierLocator(item)
     --[[
-        This sync private function provides the best Supplier that can provide a specific item.
+        This sync private function provides the "best" (first) Supplier that can provide a specific item.
 
         Return value:
                                     - (table)
@@ -382,42 +427,36 @@ function GetBestSupplierLocator(item)
     -- check input
     if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid item (type="..type(item)..")") return nil end
 
-    -- find best Supplier
-    local supplierLocator = nil
-
     -- check if (main) Supplier has items
-    -- ToDo: further treat both Supplier and Producer's the same (as Supplier's))
-    local supplierHostLocator = GetSupplierHostLocator()
+    local supplierHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator -- ToDo: implement Can_ProvideItems_QSrv for this Supplier 
     local supplierItemsLocator = supplierHostLocator:copy()
     supplierItemsLocator:setQuery(item)
     local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
     if serviceResults.success then
-        supplierLocator = supplierHostLocator
-    else
-        -- check if a Producer can produce item
-        local itemName = next(item, nil)
-        local itemCount = item[itemName]
-        if type(itemName) ~= "string" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid itemName (type="..type(itemName)..")") return nil end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid itemCount (type="..type(itemCount)..")") return nil end
-        local productItemData = {
-            itemName    = itemName,
-            itemCount   = itemCount,
-        }
-            if enterprise_factory.Can_ProvideItems_QSrv(productItemData).success      then supplierLocator = enterprise_factory.GetISHURL()
-        elseif enterprise_colonization.Can_ProvideItems_QSrv(productItemData).success then supplierLocator = enterprise_colonization.GetISHURL() -- ToDo: implement and change into enterprise_woods
-        else corelog.Warning("enterprise_shop.GetBestSupplierLocator: No Supplier can provide item "..textutils.serialise(item)) end
+        return supplierHostLocator
+    end
+
+    -- get Suppliers
+    -- ToDo: consider registering these at the Shop
+    local suppliers = {
+        enterprise_factory.GetISHURL(),
+        enterprise_colonization.GetISHURL(),
+    }
+
+    -- loop on registered Suppliers and return first
+    -- ToDo: consider selecting best Supplier based on some criterium (e.g. fuelNeed)
+    for i, supplierLocator in ipairs(suppliers) do
+        -- determine itemLocator
+        local itemsLocator = supplierLocator:copy()
+        itemsLocator:setQuery(item)
+
+        -- check Supplier can provide items
+        if enterprise_isp.Can_ProvideItems_QSrv({itemsLocator = itemsLocator }).success then return supplierLocator end
     end
 
     -- end
-    return supplierLocator
-end
-
-function GetSupplierHostLocator()
-    -- ToDo: consider getting this from enterprise_storage (once it supports enterprise_turtle as the initial Supplier, as it's needed for settler). 
-    --      For now only it's hardcoded and only the turtle is supported as a Supplier.
-    local supplierHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
-
-    return supplierHostLocator
+    corelog.Warning("enterprise_shop.GetBestSupplierLocator: No Supplier can provide "..textutils.serialise(item))
+    return nil
 end
 
 function GetISHURL()

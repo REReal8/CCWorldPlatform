@@ -109,6 +109,39 @@ function ItemsAvailableVia_SSrv(serviceData)
     return serviceResults
 end
 
+function Can_ProvideItems_QSrv(serviceData)
+    --[[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+        
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        - (URL) locating the items that need to be queried for providability
+                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "query" component of the URL specifies the items to query for)            
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
+
+    -- get Supplier
+    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return {success = false} end
+    local supplierName = serviceResults.enterpriseName
+
+    -- call method on Supplier
+    local serviceName = supplierName..".Can_ProvideItems_QSrv"
+    serviceResults = coreutils.DoSyncService(serviceName, serviceData)
+
+    -- end
+    return serviceResults
+end
+
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
