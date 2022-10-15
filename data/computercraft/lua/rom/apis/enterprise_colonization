@@ -535,7 +535,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
                 destinationStorageLocator   = storageLocator,
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }
-            corelog.WriteToLog(">Procuring from local forest Supplier: "..textutils.serialise(productItemsQuery).."")
+            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
             enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         else
             -- construct taskData
@@ -592,7 +592,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
             }
 
             -- start project
-            corelog.WriteToLog(">Harvesting from forest: "..textutils.serialise(productItemsQuery).."")
+            corelog.WriteToLog(">Harvesting "..itemCount.." "..itemName.."'s from Forest")
             enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
         end
     end

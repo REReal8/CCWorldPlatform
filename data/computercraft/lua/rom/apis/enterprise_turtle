@@ -238,7 +238,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         local fromTurtleToStorageFuelNeed = coreinventory.NeededFuelToFrom(serviceResults.location, turtleLocation)
 
         -- add fuelNeed
-        corelog.WriteToLog("C  fromTurtleToStorageFuelNeed="..fromTurtleToStorageFuelNeed)
+        corelog.WriteToLog("T  fromTurtleToStorageFuelNeed="..fromTurtleToStorageFuelNeed)
         fuelNeed = fuelNeed + fromTurtleToStorageFuelNeed
     end
 

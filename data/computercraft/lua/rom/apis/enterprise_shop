@@ -145,7 +145,7 @@ function OrderItems_ASrv(serviceData, callback, callbackData)
     }
 
     -- start project
---    corelog.WriteToLog(">Handling order of items = "..textutils.serialise(orderItems).."")
+    corelog.WriteToLog(">Providing "..itemsLocator:getURI().."")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
@@ -372,7 +372,9 @@ function ProcureItem_ASrv(serviceData, callback, callbackData)
             destinationStorageLocator   = storageLocator:copy(),
             assignmentsPriorityKey      = assignmentsPriorityKey,
         }
-        corelog.WriteToLog(">Procuring from Supplier: "..textutils.serialise(item).."")
+        local itemName  = next(item)
+        local itemCount  = item[itemName]
+        corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from global Storage")
         return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     end
     -- ToDo: implement ProvideItemsTo_ASrv for above enterprise_turtle to be able to replace TransferItemsFromTo_ASrv call
