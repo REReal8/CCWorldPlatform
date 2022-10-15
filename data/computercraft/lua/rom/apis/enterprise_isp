@@ -9,6 +9,8 @@
         NeedsTo_ProvideItemsTo_SSrv - return the needs for the Supplier to provide specific items to a Storage.
 
     For an enterprise to be a Storage it needs to implement the following services:
+        GetItemsLocations_SSrv      - provides the current world locations of different items in a Storage.
+        GetStorageLocation_SSrv     - provides the world location of a Storage.
         GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
         PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the Storage.
 
@@ -18,9 +20,10 @@
     The ISP offers generic Supplier and Storage services by relaying them to the underlying Supplier or Storage based on the "base" component of URL's. The interface
     of the corresponding ISP services is the same. Hence, one could see the ISP as a Supplier and Storage itself.
 
-    The ISP provides the following additional services
-        TransferItemsFromTo_ASrv    - transferring items from one Storage to another
-        ToDo: extend with new services provided
+    The ISP provides the following additional public services
+        TransferItemsFromTo_ASrv    - transferring items from one Storage to another.
+        NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one Storage to another.
+        AddItemsLocators_SSrv       - adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
 --]]
 
 --                _     _ _         __                  _   _
