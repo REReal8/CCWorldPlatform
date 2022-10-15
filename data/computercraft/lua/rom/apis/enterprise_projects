@@ -177,7 +177,7 @@ function NextProjectStep(internalProjectData, stepResults)
         corelog.WriteToProjectsLog("Start step "..project.currentStep.." async", project.projectId)
 
         -- do async function call
-        local callback          = "'enterprise_projects.NextProjectStep'"
+        local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
         coreutils.DoASyncService(serviceName, stepData, callback, callbackData)
     else

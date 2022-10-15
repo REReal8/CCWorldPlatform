@@ -155,7 +155,7 @@ function DoASyncService(service, serviceData, callback, callbackData)
     -- ToDo: implement
 
 	-- prepare async service call
-	local f, err = loadstring(service.."("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
+	local f, err = loadstring(service.."("..textutils.serialize(serviceData)..", '"..callback.."', "..textutils.serialize(callbackData)..")")
 	if not f then corelog.Error("coreutils.DoASyncService(): loadstring did not supply a function, error given: "..err) return nil end
 
 	-- execute the service
