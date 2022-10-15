@@ -264,7 +264,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
     local toProductionlocationFuelNeed = 0
     for i, location in ipairs(serviceResults.locations) do
-        toProductionlocationFuelNeed = toProductionlocationFuelNeed + coreinventory.NeededFuelToFrom(productionLocation, location)
+        toProductionlocationFuelNeed = toProductionlocationFuelNeed + role_fuel_worker.NeededFuelToFrom(productionLocation, location)
     end
 
     -- fuelNeed for production
@@ -276,7 +276,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     -- fuelNeed from productionLocation to localOutputLocator
     serviceResults =  enterprise_isp.GetStorageLocation_SSrv({ storageLocator = localOutputLocator })
     if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..localOutputLocator:getURI()..".") return {success = false} end
-    local fromProductionLocationFuelNeed = coreinventory.NeededFuelToFrom(serviceResults.location, productionLocation)
+    local fromProductionLocationFuelNeed = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionLocation)
 
     -- end
     local fuelNeed = toProductionlocationFuelNeed + productionFuelNeed + fromProductionLocationFuelNeed

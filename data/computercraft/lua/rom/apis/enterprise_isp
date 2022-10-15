@@ -116,7 +116,7 @@ function NeedsTo_TransferItems_SSrv(transferData)
     local fuelNeed = 0
     for i, itemlocation in ipairs(itemsLocations) do
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        fuelNeed = fuelNeed + coreinventory.NeededFuelToFrom(storageLocation, itemlocation)
+        fuelNeed = fuelNeed + role_fuel_worker.NeededFuelToFrom(storageLocation, itemlocation)
     end
 
     -- end

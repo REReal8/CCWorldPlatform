@@ -311,7 +311,7 @@ function MetaDataConditionsMet(metaData)
         -- check enough fuel for assignment 
         local fuelNeeded = metaData.fuelNeeded
         if metaData.location then -- optionally include traveling to assignment location from current location
-            fuelNeeded = fuelNeeded + coreinventory.NeededFuelToFrom(metaData.location, coremove.GetLocation())
+            fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaData.location, coremove.GetLocation())
         end
         if fuelNeeded > 0 then
             local fuelLevel = turtle.getFuelLevel()

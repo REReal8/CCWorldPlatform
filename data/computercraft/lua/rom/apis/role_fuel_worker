@@ -67,6 +67,14 @@ function Refuel_Task(taskData)
     return {success = true}
 end
 
+function NeededFuelToFrom(endLocation, startLocation)
+    -- check input
+    if type(endLocation) ~= "table" then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return nil end
+    if type(startLocation) ~= "table" then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return nil end
+
+    return math.abs(endLocation.x - startLocation.x) + math.abs(endLocation.y - startLocation.y) + math.abs(endLocation.z - startLocation.z)
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___

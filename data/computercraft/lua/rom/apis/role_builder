@@ -67,7 +67,7 @@ function BuildBlueprint_MetaData(buildData)
         local startLocation = coremove.GetRelativeLocation(layerBuildData.startpoint, 0, 0, deltaZ)
 
         -- update blueprint metadata
-        metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
+        metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
         for layerItemName, layerItemCount in pairs(layerMetaData.itemsNeeded) do
             -- increment item counter
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
@@ -78,7 +78,7 @@ function BuildBlueprint_MetaData(buildData)
 
     -- update metadata with escapeSequence (if present)
     for i, escapeLocation in ipairs(buildData.blueprint.escapeSequence) do
-        metaData.fuelNeeded = metaData.fuelNeeded + coreinventory.NeededFuelToFrom(escapeLocation, lastLocation)
+        metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(escapeLocation, lastLocation)
 
         lastLocation = escapeLocation
     end
