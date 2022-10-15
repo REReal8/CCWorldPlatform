@@ -525,9 +525,9 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
 
         -- check items already available in localStorageLocator
         local localItemsLocator = localStorageLocator:copy()
-        local productItemsQuery = { [itemName] = itemCount }
-        localItemsLocator:setQuery(productItemsQuery)
-        if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = localItemsLocator} ).success then
+        local item = { [itemName] = itemCount }
+        localItemsLocator:setQuery(item)
+        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
             -- yes: return the items
             local transferData = {
                 sourceItemsLocator          = localItemsLocator,

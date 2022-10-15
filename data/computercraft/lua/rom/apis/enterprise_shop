@@ -16,10 +16,6 @@ local db = {
         Can_ProvideItems_QSrv       - whether the Supplier can provide specific items
         NeedsTo_ProvideItemsTo_SSrv - returning the needs for the Supplier to provide specific items to a Storage
 
-    ToDo: to be made obsolete
-        ItemsAvailableVia_SSrv      - providing if a set of items are available at the Supplier. ToDo: this is currently not yet implemented
-        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
-
     The Shop is also a Supplier, hence it also implements these services.
 
     This allows for the Shop to be passed as ingredientsSupplierLocator to a Supplier. The effect of that is that the Supplier can request 
@@ -427,18 +423,10 @@ function GetBestSupplierLocator(item)
     -- check input
     if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid item (type="..type(item)..")") return nil end
 
-    -- check if (main) Supplier has items
-    local supplierHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator -- ToDo: implement Can_ProvideItems_QSrv for this Supplier 
-    local supplierItemsLocator = supplierHostLocator:copy()
-    supplierItemsLocator:setQuery(item)
-    local serviceResults = enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = supplierItemsLocator} )
-    if serviceResults.success then
-        return supplierHostLocator
-    end
-
     -- get Suppliers
     -- ToDo: consider registering these at the Shop
     local suppliers = {
+        enterprise_turtle.GetISHURL(),
         enterprise_factory.GetISHURL(),
         enterprise_colonization.GetISHURL(),
     }

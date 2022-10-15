@@ -3,21 +3,24 @@
     items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling
     those items.
 
-    The ISP provides the following services
-        ItemsAvailableVia_SSrv      - providing if a set of items are available at an itemsLocator
-        TransferItemsFromTo_ASrv    - transferring items from one Storage to another
-
-    The ISP implements it's services by using services of Suppliers and Storages.
-
     For an enterprise to be a Supplier it needs to implement the following services:
-        ItemsAvailableVia_SSrv      - providing if a set of items are available at the Supplier.
-        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
+        ProvideItemsTo_ASrv         - providing multiple instances of a specific item to a Storage destination.
+        Can_ProvideItems_QSrv       - answers the question whether the Supplier can provide specific items.
+        NeedsTo_ProvideItemsTo_SSrv - return the needs for the Supplier to provide specific items to a Storage.
 
     For an enterprise to be a Storage it needs to implement the following services:
+        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
         PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the Storage.
 
     Furthermore most Suppliers and Storages implement the additional function
         GetHostLocator_SSrv         - provide the URL of the host
+
+    The ISP offers generic Supplier and Storage services by relaying them to the underlying Supplier or Storage based on the "base" component of URL's. The interface
+    of the corresponding ISP services is the same. Hence, one could see the ISP as a Supplier and Storage itself.
+
+    The ISP provides the following additional services
+        TransferItemsFromTo_ASrv    - transferring items from one Storage to another
+        ToDo: extend with new services provided
 --]]
 
 --                _     _ _         __                  _   _
@@ -70,43 +73,6 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     -- call method on Supplier
     local serviceName = supplierName..".ProvideItemsTo_ASrv"
     return coreutils.DoASyncService(serviceName, serviceData, callback, callbackData)
-end
-
-function ItemsAvailableVia_SSrv(serviceData)
-    --[[
-        This sync public service queries a Supplier for the availability of items. The Supplier and query are specified by the "base" (i.e. "ccwprp://host:port/path")
-        and "query" component (i.e. `?itemName=itemCount`) of an URL.
-
-        This service is implemented using the following underlying Supplier service
-            ItemsAvailableVia_SSrv
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                itemsLocator        - (URL) locating items which availability is queried
-                                        (the "base" component of the URL specifies the Supplier to query)
-                                        (the "query" component of the URL specifies the items to query for)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: Invalid itemsLocator") return {success = false} end
-
-    -- get Supplier
-    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.ItemsAvailableVia_SSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return {success = false} end
-    local supplierName = serviceResults.enterpriseName
-
-    -- call method on Supplier
-    local serviceName = supplierName..".ItemsAvailableVia_SSrv"
-    serviceResults = coreutils.DoSyncService(serviceName, serviceData)
-
-    -- end
-    return serviceResults
 end
 
 function Can_ProvideItems_QSrv(serviceData)
