@@ -515,17 +515,17 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
         if type(itemCount) ~= "number" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
         -- check for birchlog or sapling
-        local localSupplierLocator = nil
+        local localStorageLocator = nil
         if itemName == "minecraft:birch_log" then
-            localSupplierLocator = GetLocalLogsLocator()
+            localStorageLocator = GetLocalLogsLocator()
         elseif itemName == "minecraft:birch_sapling" then
-            localSupplierLocator = GetLocalSaplingsLocator()
+            localStorageLocator = GetLocalSaplingsLocator()
         else
             corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
         end
 
-        -- check items already available in localSupplierLocator
-        local localItemsLocator = localSupplierLocator:copy()
+        -- check items already available in localStorageLocator
+        local localItemsLocator = localStorageLocator:copy()
         local productItemsQuery = { [itemName] = itemCount }
         localItemsLocator:setQuery(productItemsQuery)
         if enterprise_isp.ItemsAvailableVia_SSrv( { itemsLocator = localItemsLocator} ).success then
