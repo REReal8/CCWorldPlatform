@@ -50,20 +50,29 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- ensure enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+
+        -- reset parameters
+        ResetParameters()
+    end
+
     -- get parameters
     local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
 
     -- ToDo: (somehow) detect if already a request was made to fuel this turtle (i.e. to provent floading of fuel attempts)
 
     -- is fueling necessary?
-    local minFuelLevel = parameters.minTurtleFuelLevel
+    local minFuelLevel = parameters.minFuelLevel
     if turtleFuelLevel < minFuelLevel then
-        -- determine targetFuelNeeded
-        local targetFuelLevel = parameters.targetTurtleFuelLevel
-        local targetFuelNeeded = targetFuelLevel - turtleFuelLevel
+        -- determine targetFuelNeed
+        local targetFuelLevel = parameters.targetFuelLevel
+        local targetFuelNeed = targetFuelLevel - turtleFuelLevel
 
         -- determine fuelItemsNeed
-        local fuelItemsNeed = FuelItemsForFuel(targetFuelNeeded)
+        local fuelItemsNeed = FuelItemsForFuel(targetFuelNeed)
 
         -- (re)fuel turtle
         local refuelServiceData = {
@@ -106,33 +115,40 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
     if type(serviceData) ~= "table" then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Invalid serviceData") return {success = false} end
     local assignmentFuelNeed = serviceData.assignmentFuelNeed
     if type(assignmentFuelNeed) ~= "number" then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Invalid assignmentFuelNeed") return {success = false} end
-    local fuelNeeded = assignmentFuelNeed
-
-    -- ensure enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
-
-        -- reset parameters
-        ResetParameters()
-    end
 
     -- get parameters
     local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
 
-    if fuelNeeded > parameters.highestFuelNeed then
+    -- determine if new highestFuelNeed_Assignment
+    local fuelNeedIncreased = false
+    if assignmentFuelNeed > parameters.highestFuelNeed_Assignment then
+        corelog.WriteToLog("* Updating highestFuelNeed_Assignment from "..parameters.highestFuelNeed_Assignment.." to "..assignmentFuelNeed.." *")
+        parameters.highestFuelNeed_Assignment = assignmentFuelNeed
+        fuelNeedIncreased = true
+    end
+
+    -- determine if new highestFuelNeed_ProduceFuel
+    local fuelNeed_ProduceFuel = FuelNeedTo_ProduceFuel(parameters.highestFuelNeed_Assignment)
+    if not fuelNeed_ProduceFuel then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Failed obtaining fuelNeed_ProduceFuel") return {success = false} end
+    if fuelNeed_ProduceFuel > parameters.highestFuelNeed_ProduceFuel then
+        corelog.WriteToLog("* Updating highestFuelNeed_ProduceFuel from "..parameters.highestFuelNeed_ProduceFuel.." to "..fuelNeed_ProduceFuel.." *")
+        parameters.highestFuelNeed_ProduceFuel = fuelNeed_ProduceFuel
+        fuelNeedIncreased = true
+    end
+
     -- check fuel need is the highest so far
+    if fuelNeedIncreased then
         -- determine new levels
-        local minFuelLevel = fuelNeeded + parameters.bufferForProcuringFuel
-        local targetFuelLevel = parameters.targetMultiplier * minFuelLevel
+        local minFuelLevel             = parameters.highestFuelNeed_Assignment + parameters.highestFuelNeed_ProduceFuel
+        corelog.WriteToLog("* Updating minFuelLevel from "..parameters.minFuelLevel.." to "..minFuelLevel.." *")
+        parameters.minFuelLevel        = minFuelLevel
+
+        local targetFuelLevel          = parameters.targetMultiplier * minFuelLevel
+        corelog.WriteToLog("* Updating targetFuelLevel from "..parameters.targetFuelLevel.." to "..targetFuelLevel.." *")
+        parameters.targetFuelLevel     = targetFuelLevel
 
         -- set levels
-        corelog.WriteToLog("* Updating minTurtleFuelLevel(="..minFuelLevel..") and targetTurtleFuelLevel(id="..targetFuelLevel..") because new(="..fuelNeeded..") highestFuelNeed(="..parameters.highestFuelNeed.. ") level. *")
-        parameters.highestFuelNeed          = fuelNeeded
-        parameters.minTurtleFuelLevel       = minFuelLevel
-        parameters.targetTurtleFuelLevel    = targetFuelLevel
-        parameters.bufferForProcuringFuel   = 24 + 6 -- ToDo: improve value (have it depend on distances between crucial sites on the map)
-        parameters.targetMultiplier         = 2 -- from now on more
+        parameters.targetMultiplier    = 2 -- note: this statment should be after first wood chop => hence we can increase this value now (for ever)
 
         -- save db data
         coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
@@ -152,17 +168,17 @@ function Refuel_ASrv(serviceData, callback, callbackData)
             nil
 
         Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
+                                            - (table)
+                success                     - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                 - (table) data about this service
-                turtleId                - (number) id of the turtle to fuel
-                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
-                ingredientsHostLocator  - (URL) locating where the fuel ingredients can be retrieved
-                assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
+            serviceData                     - (table) data about this service
+                turtleId                    - (number) id of the turtle to fuel
+                fuelItems                   - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
+                ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
+                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
+            callback                        - (string) name of function to call once service is ready
+            callbackData                    - (table) data to supply to callback function
     --]]
 
     -- check input
@@ -180,8 +196,9 @@ function Refuel_ASrv(serviceData, callback, callbackData)
 
     -- create project service data
     local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = turtleId}).turtleLocator
-    local ingredientsItemsLocator = ingredientsSupplierLocator:copy()
-    ingredientsItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
+    local fuelItemsLocator = ingredientsSupplierLocator:copy()
+    fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
+    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
     local refuelTaskData = {
         turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
@@ -190,9 +207,10 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     }
     local buildBlueprintProjectDef = {
         steps   = {
-            { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
-                { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
+            { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
+                { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "fuelItemsLocator" },
+                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
+                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
@@ -212,8 +230,9 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     local projectData = {
         fuelItems                   = coreutils.DeepCopy(fuelItems),
 
-        ingredientsItemsLocator     = ingredientsItemsLocator,
+        fuelItemsLocator            = fuelItemsLocator,
         turtleToRefuelLocator       = turtleToRefuelLocator,
+        ingredientsSupplierLocator  = ingredientsSupplierLocator,
 
         refuel_Task                 = "role_fuel_worker.Refuel_Task",
         refuelMetaData              = role_fuel_worker.Refuel_MetaData(refuelTaskData),
@@ -238,17 +257,74 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function ResetParameters()
+--    corelog.WriteToLog("enterprise_energy: resetting parameters")
     coredht.SaveData({
-        highestFuelNeed         = 0,
-        minTurtleFuelLevel      = 0,
-        targetTurtleFuelLevel   = 0,
-        bufferForProcuringFuel  = 4,
-        targetMultiplier        = 1.5, -- 1.5 *, as first wood chop requires (35+1+4=40, * 1.5 = 60, and that is the energy we get from first log = 4 planks)
+        highestFuelNeed_Assignment  = 0,
+        highestFuelNeed_ProduceFuel = 4,
 
-        fuelItemName            = "minecraft:birch_planks",
-        fuelItemGain            = 15,
+        minFuelLevel                = 0,
+
+        targetMultiplier            = 1, -- initial value as first wood chop requires (35+1=36 => minFuelLevel = 36+36, and that is the energy we get from first log = 4 planks)
+        targetFuelLevel             = 0,
+
+        fuelItemName                = "minecraft:birch_planks",
+        fuelItemGain                = 15,
     }, db.dhtRoot, db.dhtParameters)
 end
+
+function FuelNeedTo_ProduceFuel(fuelToProduce)
+    --[[
+        This private sync function determines the minimum fuel needed to produce a certain amount of fuel (with the current default fuel item).
+
+        Return value:
+            fuelNeed                - (number) the amount of fuel needed to procure the fuel
+
+        Parameters:
+            fuelToProduce           - (number) fuel to produce
+    --]]
+
+    -- check input
+    if type(fuelToProduce) ~= "number" then corelog.Error("enterprise_energy.FuelNeedTo_ProduceFuel: Invalid fuelToProduce") return 99999 end
+
+    -- check there is fuelToProduce
+    if fuelToProduce == 0 then
+--        corelog.Warning("enterprise_energy.FuelNeedTo_ProduceFuel: fuelToProduce == 0") 
+        return 0
+    end
+
+    -- determine fuelItemsLocator
+    local fuelItemsNeed = FuelItemsForFuel(fuelToProduce)
+    local ingredientsSupplierLocator = GetIngredientsSupplierLocator()
+    local fuelItemsLocator = ingredientsSupplierLocator:copy()
+    fuelItemsLocator:setQuery(fuelItemsNeed)
+
+    -- determine fuelNeed to produce fuel
+    local storageLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator -- ToDo: consider fuel Storage at some fuel site
+    local fuelSupplyServiceData = {
+        itemsLocator                = fuelItemsLocator,
+        storageLocator              = storageLocator,
+        ingredientsSupplierLocator  = ingredientsSupplierLocator,
+    }
+    local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(fuelSupplyServiceData)
+    if not serviceResults.success then corelog.Error("enterprise_energy.FuelNeedTo_ProduceFuel: Failed obtaining needs for "..fuelItemsLocator:getURI()) return nil end
+    local fuelNeedTo_ProduceFuel = serviceResults.fuelNeed
+
+    -- estimate of fuelNeed to move turtle from forest to factory
+    local fuelNeedTo_Travel = 0 -- 2*12 -- ToDo: improve (calculate distance between forest and factory)
+    -- ToDo: consider changing to travelling to fuel Storage
+
+    -- end
+    local fuelNeed = fuelNeedTo_ProduceFuel + fuelNeedTo_Travel
+    corelog.WriteToLog("E  fuelNeed="..fuelNeed.." (produce="..fuelNeedTo_ProduceFuel..", travel="..fuelNeedTo_Travel..")")
+    return fuelNeed
+end
+
+function GetIngredientsSupplierLocator()
+     local supplierHostLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: remove hardcoding enterprise_shop
+
+    return supplierHostLocator
+end
+
 function FuelItemsForFuel(fuel)
     -- get parameters
     local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
