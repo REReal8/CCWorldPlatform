@@ -205,25 +205,6 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function GetHostLocator_SSrv(serviceData)
-    --[[
-        This sync public service provides the (base) URL of this ISH.
-
-        Return value:
-            hostLocator             - (URL) locating this ISH
-
-        Parameters:
-            serviceData             - (table) empty
-    --]]
-
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetISHURL(),
-    }
-    return result
-end
-
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
@@ -299,6 +280,25 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         fuelNeed        = fuelNeed,
         ingredientsNeed = ingredientsNeed, -- ToDo: consider allowing for non empty list to further generalise Shop into a container of Suppliers
     }
+end
+
+function GetHostLocator_SSrv(serviceData)
+    --[[
+        This sync public service provides the (base) URL of this ISH.
+
+        Return value:
+            hostLocator             - (URL) locating this ISH
+
+        Parameters:
+            serviceData             - (table) empty
+    --]]
+
+    -- end
+    local result = {
+        success = true,
+        hostLocator = GetISHURL(),
+    }
+    return result
 end
 
 --    _                 _    __                  _   _
