@@ -489,8 +489,8 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemsLocator = serviceData.itemsLocator
-    if type(itemsLocator) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
+    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local storageLocator = url.URLClass:new(serviceData.storageLocator)
     if type(storageLocator) ~= "table" then corelog.Error("enterprise_colonization.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
