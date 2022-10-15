@@ -4,7 +4,7 @@ function T_dummy()
 end
 
 function T_ResetWorld()
-    coreassignment.EndAssignments()
+    coreassignment.Reset()
     enterprise_projects.DeleteProjects()
     enterprise_energy.ResetParameters()
     enterprise_factory.DeleteSites()
