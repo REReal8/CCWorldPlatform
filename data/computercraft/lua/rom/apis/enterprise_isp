@@ -81,7 +81,7 @@ end
 function Can_ProvideItems_QSrv(serviceData)
     --[[
         This sync public query service answers the question whether the Supplier can provide specific items.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the answer to the question is true
@@ -90,7 +90,7 @@ function Can_ProvideItems_QSrv(serviceData)
             serviceData             - (table) data to the query
                 itemsLocator        - (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)            
+                                        (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
@@ -114,7 +114,7 @@ end
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
-        
+
         Return value:
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
@@ -189,12 +189,12 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
-    -- get Supplier
+    -- get source Storage
     local serviceResults = GetStorageName_SSrv( { storageLocator = sourceItemsLocator })
     if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..sourceItemsLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local sourceStorageName = serviceResults.enterpriseName
 
-    -- get Storage
+    -- get target Storage
     serviceResults = GetStorageName_SSrv( { storageLocator = destinationStorageLocator })
     if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationStorageLocator:getURI()..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local destinationStorageName = serviceResults.enterpriseName
