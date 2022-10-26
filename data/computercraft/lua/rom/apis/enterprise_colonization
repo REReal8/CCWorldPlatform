@@ -71,6 +71,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
 
+        initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(primaryTaskData),
+        initialiseCoordinates_Task  = "role_settler.InitialiseCoordinates_Task",
+
         plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(primaryTaskData),
         plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
 
@@ -113,6 +116,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     -- create project definition
     local createNewWorldProjectDef = {
         steps   = {
+            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "initialiseCoordinates_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "initialiseCoordinatesMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
+            }},
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "startLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
@@ -196,10 +204,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
+                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 13, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 14, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
