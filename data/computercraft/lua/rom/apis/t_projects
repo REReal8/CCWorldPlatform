@@ -76,7 +76,7 @@ function T_StartProject()
 --            { keyDef = "testBArg5"      , valueSource = 5, keyDefSource = "input" },
         }
     }
-    local projectData = { 
+    local projectData = {
         testArgSource = testArgValue,
         testTableSource = {
             key1 = 11,

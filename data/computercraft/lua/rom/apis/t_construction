@@ -90,7 +90,7 @@ function T_BuildRectangularPattern_FromTurtle()
 end
 
 function T_BuildRectangularPattern_FromChest()
-    -- test service 
+    -- test service
     corelog.WriteToLog("# Test BuildRectangularPattern_ASrv (from chest)")
 
     -- create project definition
@@ -132,7 +132,7 @@ function T_BuildRectangularPattern_FromChest()
         projectData = {
             -- chest
             projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
-            projectData = { 
+            projectData = {
                 chestLocation        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
                 chestAccessDirection = "top",
             },

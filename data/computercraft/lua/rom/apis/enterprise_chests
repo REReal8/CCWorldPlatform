@@ -10,7 +10,7 @@ local db = {
     This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        GetHostLocator_SSrv     - provide host URL of the enterprise 
+        GetHostLocator_SSrv     - provide host URL of the enterprise
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         GetItemsLocator_SSrv    - provide the URL of items in a chest
@@ -18,11 +18,11 @@ local db = {
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 
     The enterprise does not provide services to build/ dismantle chests. This is to be done by other (enterprise) code. In a sense the enterprise_chests is not the
-    "owner" of the chests, it just provides services to operate on them. 
-    
+    "owner" of the chests, it just provides services to operate on them.
+
     The following enterprise design decisions are made
         - Registered chests should never be accessed directly but only via the services of this enterprise.
-        - Every chest get's a chestLocator upon registration. 
+        - Every chest get's a chestLocator upon registration.
         - To operate on a chest this chestLocator should be supplied to each of the public services.
 --]]
 
@@ -91,7 +91,7 @@ end
 function IsChestURL_QSrv(queryData)
     --[[
         This sync public service answers the question if a URL is that of a chest.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
@@ -177,12 +177,12 @@ function DelistChest_ASrv(serviceData, callback, callbackData)
         This async public service delists ("removes") a chest from the enterprise. Delisting implies
             - the chest is immediatly no longer available for new business (e.g. adding/ removing items)
             - wait for all active work on chest to be ended
-            - remove the chest from the enterprise 
+            - remove the chest from the enterprise
 
         Note that the chest (and it's possibly remaining items) are not removed from the world.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                 - (table)
@@ -224,11 +224,11 @@ function UpdateChestRecord_ASrv(serviceData, callback, callbackData)
     --[[
         This async public service brings the records of a chest up-to-date by fetching parameters and (re)setting the chest records.
 
-        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could              
+        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
         typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the chest records could have been corrupted.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                 - (table)
@@ -337,7 +337,7 @@ end
 function Can_ProvideItems_QSrv(serviceData)
     --[[
         This sync public query service answers the question whether the Supplier can provide specific items.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the answer to the question is true
@@ -346,7 +346,7 @@ function Can_ProvideItems_QSrv(serviceData)
             serviceData             - (table) data to the query
                 itemsLocator        - (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)            
+                                        (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
@@ -385,7 +385,7 @@ end
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.
-        
+
         Return value:
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
@@ -521,7 +521,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
         This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)
@@ -535,7 +535,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
                                             (the "host" component of the URL should specify this host (i.e. a chest) where the items are located)
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function                                                
+            callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
@@ -605,13 +605,13 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
         A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, 
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator,
                                             the "path" should be a specific chest, and the "query" should be equal to the "query" component of the turtleItemsLocator)
 
         Parameters:
@@ -620,7 +620,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
                 destinationHostLocator  - (URL) stating where the items need to be transferred to (i.e. a chest in this host)
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function                                                
+            callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
@@ -786,8 +786,8 @@ end
 
 function SetChestRecord_SSrv(serviceData)
     --[[
-        This sync private service sets a chest record based on (already obtained) parameters (like e.g. the slots inventory). 
-        
+        This sync private service sets a chest record based on (already obtained) parameters (like e.g. the slots inventory).
+
         Return value:
                                 - (table)
                 success         - (boolean) whether the service executed successfully
@@ -835,10 +835,10 @@ end
 
 function FetchChestSlotsInventory_ASrv(serviceData, callback, callbackData)
     --[[
-        This async private service fetches the slots inventory from a chest. 
-        
+        This async private service fetches the slots inventory from a chest.
+
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                 - (table)
@@ -875,9 +875,9 @@ end
 function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
     --[[
         This async private service fetches items from a chest into the inventory of a turtle.
-        
+
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)
@@ -924,9 +924,9 @@ end
 function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
     --[[
         This async private service puts items from a the inventory of a turtle into a chest.
-        
+
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)

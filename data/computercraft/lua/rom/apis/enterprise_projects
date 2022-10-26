@@ -9,7 +9,7 @@ local db = {
 
     ToDo: extend to be able to handle parallel project steps (see also ToDo to test in t_shop.T_OrderItems())
 
-    For another description of this enterprise and it's usage see https://github.com/REReal8/CCWorldPlatform/wiki/enterprise_projects 
+    For another description of this enterprise and it's usage see https://github.com/REReal8/CCWorldPlatform/wiki/enterprise_projects
 --]]
 
 --                _     _ _         __                  _   _
@@ -26,7 +26,7 @@ function StartProject_ASrv(serviceData, callback, callbackData)
         This async public service starts a project.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                 - (table)
@@ -74,8 +74,8 @@ end
 
 function AreAllTrue_QSrv(serviceData)
     --[[
-        This sync public query service returns if all supplied boolean arguments are true. 
-        
+        This sync public query service returns if all supplied boolean arguments are true.
+
         It can typically be used as the last step of a sequence of steps in a project description to combine the success results of all steps into one.
 
         Return value:
@@ -165,7 +165,7 @@ function NextProjectStep(internalProjectData, stepResults)
                 corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil")
             end
         else
-            -- add field 
+            -- add field
             local setSuccess = SetFieldValueFromKeyDef(stepData, fieldDef.keyDef, fieldValue)
             if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting stepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
         end
@@ -212,7 +212,7 @@ function SetFieldValueFromKeyDef(stepData, keyDef, fieldValue)
     --[[
         The intend of this method is to assign fieldValue to stepData indexed by the (keyName) compoments in keyDef, i.e.
 
-        with 
+        with
             keyDef = "keyName1.keyName2 ... .keyNameN"
         do
             stepData.keyName1.keyName2 ... .keyNameN = fieldValue

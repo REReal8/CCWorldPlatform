@@ -20,7 +20,7 @@ function TestPureLogicService_SSrv(serviceData)
     corelog.WriteToLog(">calling enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
 
     -- determine result to return
-    local serviceResult = { 
+    local serviceResult = {
         success = true,
         input = testArg,
     }

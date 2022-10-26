@@ -8,14 +8,3 @@ function T_buildAndStartNewSite()
         materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, "t_main.Func1_Callback", {"some callback data"})
 end
-
-
-
-
-
-
-
-
-
-
-

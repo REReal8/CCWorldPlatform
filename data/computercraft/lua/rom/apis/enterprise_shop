@@ -9,7 +9,7 @@ local db = {
         OrderItems_ASrv             - procure items and having them delivered at a Storage
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
-    The Shop implements it's services by using services of Supplier enterprises. 
+    The Shop implements it's services by using services of Supplier enterprises.
 
     For an enterprise to be a Supplier it needs to implement the following services:
         ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at a Storage
@@ -18,9 +18,9 @@ local db = {
 
     The Shop is also a Supplier, hence it also implements these services.
 
-    This allows for the Shop to be passed as ingredientsSupplierLocator to a Supplier. The effect of that is that the Supplier can request 
-    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from a Supplier. 
-    This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided 
+    This allows for the Shop to be passed as ingredientsSupplierLocator to a Supplier. The effect of that is that the Supplier can request
+    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from a Supplier.
+    This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided
     by a Supplier.
 --]]
 
@@ -132,7 +132,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     local addItemLocatorsStepDataDef = {}
     local projectData = {}
 
-    -- add project step for each of the ordered items 
+    -- add project step for each of the ordered items
     local iStep = 0
     local orderItems = itemsLocator:getQuery()
     -- ToDo: do this in parallel by extending enterprise_projects to handle parallel project steps.
@@ -204,7 +204,7 @@ end
 function Can_ProvideItems_QSrv(serviceData)
     --[[
         This sync public query service answers the question whether the Supplier can provide specific items.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the answer to the question is true
@@ -213,7 +213,7 @@ function Can_ProvideItems_QSrv(serviceData)
             serviceData             - (table) data to the query
                 itemsLocator        - (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)            
+                                        (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
@@ -249,7 +249,7 @@ end
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
-        
+
         Return value:
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
@@ -351,8 +351,8 @@ end
 
 function ProcureItem_ASrv(serviceData, callback, callbackData)
     --[[
-        This async private service procures items ordered at the Shop. The services first tries to obtain the item from a Supplier. 
-        If the items are not available from a Supplier it will attempt to have them produced by a Producer. The service 
+        This async private service procures items ordered at the Shop. The services first tries to obtain the item from a Supplier.
+        If the items are not available from a Supplier it will attempt to have them produced by a Producer. The service
         ensures the items are delivered to the requested destination.
 
         Return value:
@@ -467,7 +467,7 @@ end
 function IsShopURL_QSrv(queryData)
     --[[
         This sync public service answers the question if a URL is that of the Shop.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully

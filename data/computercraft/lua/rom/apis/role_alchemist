@@ -77,7 +77,7 @@ function Craft_Task(craftData)
             craftData                   - (table) data about the crafting task
                 recipe                  - (table) crafting recipe
                     yield               - (number) of items produced by recipe
-                    [slot]              - (table) for each slot 
+                    [slot]              - (table) for each slot
                         itemName        - (string) name of smelting ingredient to use in specific slot
                         itemCount       - (number) number it items to put in slot
                 productItemName         - (string) name of item to produce
@@ -186,7 +186,7 @@ function Smelt_Task(smeltData)
         This Task function smelts items. The ingredients for smelting should be present in the turtle executing this task.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the smelting was succesfull
                 smeltReadyTime          - (number) the time when the smelting is expexted to be ready
 
@@ -314,7 +314,7 @@ function Pickup_Task(pickupData)
     coremove.Down()
     coremove.Forward()
 
-    -- suck the results from furnace 
+    -- suck the results from furnace
     turtle.suckUp()
 
     -- move back to workingLocation
@@ -354,7 +354,7 @@ function PrepareCraftingArea(recipe, times)
         Parameters:
             recipe                      - (table) crafting recipe
                 yield                   - (number) of items produced by recipe
-                key, value              - (table) multiple key-value-pairs of slot, ingredient information 
+                key, value              - (table) multiple key-value-pairs of slot, ingredient information
                     key = [slot]        - (number) of slot in turtle
                     value               - (table) information of ingredient to place in slot
                         itemName        - (string) name of ingredient item in slot

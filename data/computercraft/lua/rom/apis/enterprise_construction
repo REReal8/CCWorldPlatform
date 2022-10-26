@@ -16,7 +16,7 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
         This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table) {success = true} if the pattern was succesfully build
@@ -114,7 +114,7 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
         This async public service builds a rectangular pattern in the x,y plane as a single assignment/ task.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table) {success = true} if the pattern was succesfully build
@@ -174,9 +174,9 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     materialsItemsLocator:setQuery(materialsNeeded)
 
     -- set local output location
-    -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle 
-    --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of) 
-    --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value 
+    -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle
+    --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of)
+    --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
     local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
 

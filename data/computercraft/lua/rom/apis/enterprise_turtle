@@ -2,14 +2,13 @@ local db = {
     hostName    = "turtle",
 }
 
-
 --[[
     The Turtle enterprise provides services related to turtles.
 
     This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        GetHostLocator_SSrv    - provide host URL of this enterprise 
+        GetHostLocator_SSrv    - provide host URL of this enterprise
         IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
@@ -111,7 +110,7 @@ end
 function IsTurtleURL_QSrv(queryData)
     --[[
         This sync public service answers the question if a URL is that of a turtle.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
@@ -192,7 +191,7 @@ end
 function Can_ProvideItems_QSrv(serviceData)
     --[[
         This sync public query service answers the question whether the Supplier can provide specific items.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the answer to the question is true
@@ -201,7 +200,7 @@ function Can_ProvideItems_QSrv(serviceData)
             serviceData             - (table) data to the query
                 itemsLocator        - (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)            
+                                        (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
@@ -227,7 +226,7 @@ function Can_ProvideItems_QSrv(serviceData)
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
---            corelog.WriteToLog("enterprise_turtle.Can_ProvideItems_QSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") 
+--            corelog.WriteToLog("enterprise_turtle.Can_ProvideItems_QSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").")
             return {success = false}
         end
     end
@@ -241,7 +240,7 @@ end
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
-        
+
         Return value:
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
@@ -378,7 +377,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
         This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)
@@ -392,7 +391,7 @@ function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
                                             (the "host" component of the URL should specify this host (i.e. a turtle) where the items are located)
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function                                                
+            callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
@@ -452,13 +451,13 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
         A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
-            nil 
+            nil
 
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator, 
+                                            (upon service succes the "host" component of this URL should be equal to destinationHostLocator,
                                             the "port" should be a specific turtle, and the "query" should be equal to the "query" component of the turtleItemsLocator)
 
         Parameters:
@@ -467,7 +466,7 @@ function PutItemsFromTurtle_ASrv(transferData, callback, callbackData)
                 destinationHostLocator  - (URL) stating where the items need to be transferred to (i.e. a turtle in this host)
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
             callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function                                                
+            callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
@@ -560,7 +559,7 @@ end
 
 function DoAssignment_ASrv(serviceData, callback, callbackData)
     --[[
-        This async public service executes a Task with an assignment. 
+        This async public service executes a Task with an assignment.
 
         A task function takes one parameter
             taskData                - (table) data to supply to task function to be able to perform the task

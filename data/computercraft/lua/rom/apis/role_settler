@@ -25,7 +25,7 @@ function InitialiseCoordinates_Task(taskData)
         This Task function does the first settling step: initialise starting world coordinates.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:
@@ -62,7 +62,7 @@ function PlantFirstSapling_Task(taskData)
         This Task function plants the first sappling.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
                 turtleId                - (number) id of turtle that planted the sappling
 
@@ -100,7 +100,7 @@ function WaitFirstTree_Task(taskData)
         This Task function waits for the first tree to complete and chops one block in front.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:
@@ -139,7 +139,7 @@ function ChopFirstTree_Task(taskData)
         This Task function chops (the remainder of) the first tree.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
                 orderForFuel            - (table) items to order for refuel
 
@@ -246,13 +246,13 @@ function HarvestForest_Task(taskData)
         This Task function harvests a forest.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:
             taskData                    - (table) data about the task
                 firstTreeLocation       - (table) location of first tree of the forest
-                nTrees                  - (number) the number of trees in (the y direction of) the forest 
+                nTrees                  - (number) the number of trees in (the y direction of) the forest
     ]]
 
     -- check input

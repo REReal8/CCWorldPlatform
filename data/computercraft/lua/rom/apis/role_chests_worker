@@ -169,7 +169,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
 
                 -- requested item in slot?
                 if chestItem and chestItem.name == requestItemName then
-                    -- move items to 
+                    -- move items to
                     local countToMove = math.min(remainingItemsToMove, chestItem.count)
 --                    corelog.WriteToLog("   moving "..countToMove.." "..chestItem.name.." from slot "..iSlot.." to slot "..firstSlot)
                     chest.pushItems(chestName, iSlot, countToMove, firstSlot)
@@ -307,7 +307,7 @@ function PutItemsFromTurtleIntoChest_Task(taskData)
                 -- select turtle slot
                 turtle.select(slot)
 
-                -- move items to 
+                -- move items to
                 local countToDrop = math.min(remainingItemsToDrop, turtleItem.itemCount)
 --                corelog.WriteToLog("   dropping "..countToDrop.." "..turtleItem.itemName.." from turtle slot "..slot.." to chest")
                 local itemsDropped = Drop(chestName, countToDrop)
@@ -347,11 +347,11 @@ function GetWorkingLocation(location, accessDirection)
 
     -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
     local workingDirection = coremove.CopyLocation(location)
-    if accessDirection == "bottom" then 
+    if accessDirection == "bottom" then
         workingDirection = coremove.GetRelativeLocationDown(workingDirection)
-    elseif accessDirection == "top" then 
+    elseif accessDirection == "top" then
         workingDirection = coremove.GetRelativeLocationUp(workingDirection)
-    elseif accessDirection == "left" then 
+    elseif accessDirection == "left" then
         workingDirection = coremove.GetRelativeLocationRight(workingDirection)
         workingDirection = coremove.GetRelativeLocationFront(workingDirection, - 1) -- back
     elseif accessDirection == "right" then

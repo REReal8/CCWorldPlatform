@@ -35,7 +35,7 @@ function Refuel_Task(taskData)
         This Task function (re)fuels a (the current) turtle.
 
         Return value:
-            task result                 - (table)      
+            task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
 
         Parameters:

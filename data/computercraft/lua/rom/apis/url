@@ -4,7 +4,7 @@
 
     See https://github.com/REReal8/CCWorldPlatform/wiki/Uniform-Resource-Locators for more on URLs
 
-    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html . 
+    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
 
 URLClass = {
@@ -30,7 +30,7 @@ function URLClass:new(o)
         Parameters:
                                 - (table) table with
                 host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "storage")
-                port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")  
+                port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
                 path                - [optional] (table) of key-value pairs with path segments
                                         (e.g. {x=12, y=12, z= 1} indicating a location in the "world" host)
                 query               - [optional] (table) of key-value pairs with (item) query segments
@@ -171,7 +171,7 @@ function URLClass:getQueryURI()
     local delimiter = "?"
     for key, value in pairs(self:getQuery()) do
         queryURI = queryURI..delimiter..key.."="..value
-        delimiter = "&" 
+        delimiter = "&"
     end
     return queryURI
 end

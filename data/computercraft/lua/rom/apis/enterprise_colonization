@@ -16,7 +16,7 @@ local db = {
 function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     --[[
         This public async service creates a new CCWorldPlatform world.
-            It bootstraps the world logic by building an initiating several enterprise (sites). 
+            It bootstraps the world logic by building an initiating several enterprise (sites).
 
             The turtle should already have (either equiped or in it's inventory)
                 one modem
@@ -26,7 +26,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
 
             The function also defines the coordinate system by assuming the turtle starts at the location {x= 3, y= 2, z= 1, dx=0, dy=1}. This
-            allows for the initial forest that is build to fit in the 6x6 grid that is used in patterns with the lower left coordinate of the base 
+            allows for the initial forest that is build to fit in the 6x6 grid that is used in patterns with the lower left coordinate of the base
             of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
 
         Return value:
@@ -276,7 +276,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
     -- get forest
     local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
 
-    -- add project step for all trees to add 
+    -- add project step for all trees to add
     local iStep = 0
     local forestNTrees = forest.nTrees    -- note: first already created in PlantFirstSapling_Task
     for iTree = forestNTrees + 1, treesNeeded do
@@ -557,14 +557,14 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
             -- create project service data
             local projectDef = {
                 steps = {
-                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator 
+                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
                     --          (or will this be part of harvestForest?)
                     { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
                         { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "harvestForest_Task" },
                         { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
                         { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
                     }},
-                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling 
+                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
                     --          (or will this be part of harvestForest?)
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
                     { stepName = "enterprise_colonization.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
@@ -609,7 +609,7 @@ end
 function Can_ProvideItems_QSrv(serviceData)
     --[[
         This sync public query service answers the question whether the Supplier can provide specific items.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the answer to the question is true
@@ -618,7 +618,7 @@ function Can_ProvideItems_QSrv(serviceData)
             serviceData             - (table) data to the query
                 itemsLocator        - (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)            
+                                        (the "query" component of the URL specifies the items to query for)
     --]]
 
     -- check input
@@ -653,7 +653,7 @@ end
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.
-        
+
         Return value:
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
@@ -758,7 +758,7 @@ end
 function IsColonizationURL_QSrv(queryData)
     --[[
         This sync public service answers the question if a URL is that of a Colonization.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully

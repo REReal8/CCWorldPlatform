@@ -7,7 +7,6 @@
 --   | |
 --   |_|
 
-
 function CopyPattern(pattern)
 	return {
 		deltaX              = pattern.deltaX,
@@ -197,8 +196,8 @@ function BuildRectangularPattern_Task(buildData)
                     objectList          - (table) array of objects to build
                     clearRemainingSpace - (boolean) whether spce not in the objectlist should be cleared
 
-            with for each object in objectList: 
-            { 
+            with for each object in objectList:
+            {
                 x                       - (table) x coordinate within the pattern
                 y                       - (table) y coordinate within the pattern
                 block                   - (string) minecraft blocktype to build (e.g. "minecraft:torch")
@@ -275,7 +274,7 @@ function BuildRectangularPattern_Task(buildData)
                         else
                             has_block, block_data = turtle.inspectUp()
                         end
-                    end 
+                    end
 
                     -- check placing object
                     if buildData.replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= object.block then

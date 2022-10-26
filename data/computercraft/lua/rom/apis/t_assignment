@@ -172,7 +172,7 @@ function T_BestCandidate()
     local currentTurtleId = os.getComputerID()
     candidateData2.metaData.needTurtleId = currentTurtleId
     local bestCandidate = coreassignment.BestCandidate(candidateData1, candidateData2)
-    if bestCandidate ~= candidateData2 then 
+    if bestCandidate ~= candidateData2 then
         corelog.Error("t_assignment.T_BestCandidate: candidate with needTurtleId not returned as best candidate")
     else
         corelog.WriteToLog("  needTurtleId is preferred")

@@ -95,11 +95,11 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
 
         The enterprise uses it to possibly update it's parameters. For example it checks if the minimum and target fuel level should be changed to
         accomodate for the possibly needed fuel.
-                
+
             Note: that (? I think) it is best this service is still a sync service although the steps triggered by it might be async.
             The reason to do this is that I think it's best coreassignment (which calls this service) should continue irrespective
             of if the levels need to be changed.
-        
+
         Return value:
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
@@ -288,7 +288,7 @@ function FuelNeedTo_ProduceFuel(fuelToProduce)
 
     -- check there is fuelToProduce
     if fuelToProduce == 0 then
---        corelog.Warning("enterprise_energy.FuelNeedTo_ProduceFuel: fuelToProduce == 0") 
+--        corelog.Warning("enterprise_energy.FuelNeedTo_ProduceFuel: fuelToProduce == 0")
         return 0
     end
 
