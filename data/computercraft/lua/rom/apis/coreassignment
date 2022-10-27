@@ -10,7 +10,7 @@ local db = {
 --[[
     coreassignment offers functionalitt to handle assignments to be executed by turtles.
 
-    An assignment revolves around a Task. A Task is a sequence of things that needs to be done (i.e. moving, rotating, placing etc) without interruption 
+    An assignment revolves around a Task. A Task is a sequence of things that needs to be done (i.e. moving, rotating, placing etc) without interruption
     in the physical minecraft world. A Task typically takes some time to execute.
 
     Two functions are involved with each assignment:
@@ -49,7 +49,7 @@ end
 function AddAssignment(metaData, taskFunction, taskData, callbackFunction, callbackData)
     --[[
         This public function adds a new assignment to the assignmentList.
-        
+
         Return value:
                                     - (table)
                 success             - (boolean) whether adding the assignment was a success
@@ -273,7 +273,7 @@ function BestCandidate(candidateData1, candidateData2)
     -- check age
     -- ToDo implement
 
-    -- nothing else distinquishes the candidates => take first 
+    -- nothing else distinquishes the candidates => take first
     return candidateData1
 end
 
@@ -287,7 +287,7 @@ function MetaDataConditionsMet(metaData)
 
     -- check optional turtle conditions
     if metaData.needTurtle then
-        -- check mandatory turtle 
+        -- check mandatory turtle
         if not turtle then
             return false, "mandatory turtle not present"
         end
@@ -308,7 +308,7 @@ function MetaDataConditionsMet(metaData)
             end
         end
 
-        -- check enough fuel for assignment 
+        -- check enough fuel for assignment
         local fuelNeeded = metaData.fuelNeeded
         if metaData.location then -- optionally include traveling to assignment location from current location
             fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaData.location, coremove.GetLocation())
