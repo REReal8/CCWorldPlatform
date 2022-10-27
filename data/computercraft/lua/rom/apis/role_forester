@@ -7,8 +7,8 @@ local db = {
 -- functions
 function Rondje(funcData)
     -- debug
-    corelog.WriteToLog("Forester.Rondje()")
-    corelog.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
+    corelog.WriteToLog(">Forester.Rondje()")
+--    corelog.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
 
     local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
 
