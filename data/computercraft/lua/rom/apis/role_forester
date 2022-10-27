@@ -38,6 +38,9 @@ function Rondje(funcData)
     -- banen langs lopen
     local aantalBanen = math.floor(width / 2)
     for i=1, aantalBanen do
+        -- determine last baan
+        local lastBaan = (i == aantalBanen)
+
         -- move to "top right" baan
         Vooruit(6 * (depth - 2))
 
@@ -49,8 +52,8 @@ function Rondje(funcData)
         coremove.Left()
         Vooruit(6 * (depth - 2))
 
-        -- move and turn to start ("bottom right") next baan
-        if i ~= aantalBanen then -- not if last baan
+        -- (optionally) move and turn to start ("bottom right") next baan
+        if not lastBaan then
             coremove.Right()
             Vooruit(6)
             coremove.Right()
