@@ -340,9 +340,9 @@ function MetaDataConditionsMet(metaData)
             fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaData.location, coremove.GetLocation())
         end
         if fuelNeeded > 0 then
-            local fuelLevel = turtle.getFuelLevel()
-            if fuelLevel < fuelNeeded then
-                return false, "not enough(="..fuelNeeded..") fuel present(="..fuelLevel..")"
+            local turtleFuelLevel = turtle.getFuelLevel()
+            if turtleFuelLevel < fuelNeeded then
+                return false, "not enough(="..fuelNeeded..") fuel present(="..turtleFuelLevel..")"
             end
         end
 
