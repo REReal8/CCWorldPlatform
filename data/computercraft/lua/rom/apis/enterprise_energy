@@ -107,8 +107,6 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
         Parameters:
             serviceData                 - (table) data about this service
                 assignmentFuelNeed      - (number) fuel expected to be needed for an assignment
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
     --]]
 
     -- check input
