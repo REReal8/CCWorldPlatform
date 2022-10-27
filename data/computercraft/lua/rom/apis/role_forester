@@ -36,7 +36,8 @@ function Rondje(funcData)
     if depth > 1 then Vooruit(6) end
 
     -- banen langs lopen
-    local aantalBanen = math.floor(width / 2)
+    local aantalBanen = math.ceil(width / 2)
+    local lastBaanHalf = (width % 2 == 1)
     for i=1, aantalBanen do
         -- determine last baan
         local lastBaan = (i == aantalBanen)
@@ -46,7 +47,9 @@ function Rondje(funcData)
 
         -- move to "top left" baan
         coremove.Left()
-        Vooruit(6)
+        if not lastBaan or not lastBaanHalf then
+            Vooruit(6)
+        end
 
         -- move to "bottom left" baan
         coremove.Left()
@@ -61,7 +64,6 @@ function Rondje(funcData)
     end
 
     -- terug naar huis, kan wat speciale dingen met zich mee brengen
-    if aantalBanen == 0 then coremove.Right(2)  end
     if depth    > 1 then Vooruit(6)         end
 
     -- over de volledige breedte terug naar
