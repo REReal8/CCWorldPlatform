@@ -2,7 +2,7 @@ local db = {
     dhtRoot                 = "coreassignment",
     listRoot                = "assignmentList",
     rejectAllAssignments    = false,
-    lastSkipReason          = "",
+    skipReasons             = {},
     fuelTurtlePriorityKey   = nil,
     fuelTurtleCallsSkippedBecausePriorityKey = 0,
 }
@@ -164,7 +164,7 @@ function Reset()
 
     -- reset (local) db
     db.rejectAllAssignments    = false
-    db.lastSkipReason          = ""
+    db.skipReasons             = {}
     db.fuelTurtlePriorityKey   = nil
     db.fuelTurtleCallsSkippedBecausePriorityKey = 0
 end
@@ -223,11 +223,12 @@ function FindBestAssignment()
                 })
             else
                 -- debug message
-                if skipReason and skipReason ~= db.lastSkipReason then
+                if skipReason and not KnownSkipReason(skipReason) then
                     -- Report reason for skipping for debugging purposes
                     corelog.WriteToAssignmentLog("Skipped because "..skipReason, assignmentId)
 
-                    db.lastSkipReason = skipReason -- remember such that the log isn't floaded with similar messages
+                    -- remember such that the log isn't floaded with similar messages
+                    RememberSkipReason(skipReason)
                 end
             end
         end
@@ -241,11 +242,36 @@ function FindBestAssignment()
 
     -- end
     if bestCandidateData then
+        -- we found a new candidate, forget the reasons we skipped until now
+        ForgetSkipReasons()
+
+        -- return best candidate
         return bestCandidateData.id
     else
         -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
         return nil
     end
+end
+
+function ForgetSkipReasons()
+--    db.lastSkipReason = nil
+    db.skipReasons = {}
+end
+
+function RememberSkipReason(skipReason)
+--    db.lastSkipReason = skipReason
+    table.insert(db.skipReasons, skipReason)
+end
+
+function KnownSkipReason(skipReason)
+--    return skipReason == db.lastSkipReason
+    -- chheck skipReason is known
+    for i, prevSkipReason in ipairs(db.skipReasons) do
+        if skipReason == prevSkipReason then return true end
+    end
+
+    -- end
+    return false
 end
 
 function BestCandidate(candidateData1, candidateData2)
