@@ -48,10 +48,9 @@ function Rondje(funcData)
         -- move to "bottom left" baan
         coremove.Left()
         Vooruit(6 * (depth - 2))
-        -- laatste bocht niet maken
-        if i ~= aantalBanen then
-            -- move to start ("bottom right") next baan
 
+        -- move and turn to start ("bottom right") next baan
+        if i ~= aantalBanen then -- not if last baan
             coremove.Right()
             Vooruit(6)
             coremove.Right()
