@@ -130,18 +130,18 @@ function Run()
         FuelTurtleIfNeeded()
 
         -- look for best next assignment
-        local assignmentApplication = FindBestAssignment()
+        local assignmentIdApplication = FindBestAssignment()
 
         -- did we find one?
-        if assignmentApplication then
+        if assignmentIdApplication then
             -- apply
-            ApplyToAssignment(assignmentApplication)
+            ApplyToAssignment(assignmentIdApplication)
 
             -- wait, maybe more turtles have applied
             os.sleep(1.25)
 
             -- check who gets the assignment
-            nextAssignment = AssignmentSelectionProcedure(assignmentApplication)
+            nextAssignment = AssignmentSelectionProcedure(assignmentIdApplication)
         end
 
         -- did we get the assignment?
