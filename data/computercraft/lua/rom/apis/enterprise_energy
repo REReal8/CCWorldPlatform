@@ -136,22 +136,8 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
 
     -- check fuel need is the highest so far
     if fuelNeedIncreased then
-        -- determine new levels
-        local minFuelLevel             = parameters.highestFuelNeed_Assignment + parameters.highestFuelNeed_ProduceFuel
-        corelog.WriteToLog("* Updating minFuelLevel from "..parameters.minFuelLevel.." to "..minFuelLevel.." *")
-        parameters.minFuelLevel        = minFuelLevel
-
-        local targetFuelLevel          = parameters.targetMultiplier * minFuelLevel
---        corelog.WriteToLog("* Updating targetFuelLevel from "..parameters.targetFuelLevel.." to "..targetFuelLevel.." *")
-        parameters.targetFuelLevel     = targetFuelLevel
-
-        -- set levels
-        parameters.targetMultiplier    = 2 -- note: this statment should be after first wood chop => hence we can increase this value now (for ever)
-
-        -- save db data
-        coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
-
-        -- ToDo: implement actions to handle changed levels (e.g. ensuring more fuel is available)
+        -- update levels
+        UpdateFuelLevels()
     end
 
     -- end
@@ -268,6 +254,29 @@ function ResetParameters()
         fuelItemName                = "minecraft:birch_planks",
         fuelItemGain                = 15,
     }, db.dhtRoot, db.dhtParameters)
+end
+
+function UpdateFuelLevels()
+    -- get parameters
+    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+
+    -- update minFuelLevel
+    local minFuelLevel             = parameters.highestFuelNeed_Assignment + parameters.highestFuelNeed_ProduceFuel
+    corelog.WriteToLog("* Updating minFuelLevel from "..parameters.minFuelLevel.." to "..minFuelLevel.." *")
+    parameters.minFuelLevel        = minFuelLevel
+
+    -- update targetFuelLevel
+    local targetFuelLevel          = parameters.targetMultiplier * minFuelLevel
+--        corelog.WriteToLog("* Updating targetFuelLevel from "..parameters.targetFuelLevel.." to "..targetFuelLevel.." *")
+    parameters.targetFuelLevel     = targetFuelLevel
+
+    -- update targetMultiplier
+    parameters.targetMultiplier    = 2 -- note: this statment should be after first wood chop => hence we can increase this value now (for ever)
+
+    -- save parameters
+    coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
+
+    -- ToDo: implement actions to handle changed levels (e.g. ensuring more fuel is available)
 end
 
 function FuelNeedTo_ProduceFuel(fuelToProduce)
