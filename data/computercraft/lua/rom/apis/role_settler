@@ -121,7 +121,9 @@ function WaitFirstTree_Task(taskData)
     return {success = true}
 end
 
-local fuelNeededPerTree = 35 + 1
+function FuelNeededPerTree()
+    return 35 + 1
+end
 
 function ChopFirstTree_MetaData(taskData)
     return {
@@ -129,7 +131,7 @@ function ChopFirstTree_MetaData(taskData)
         location = coremove.CopyLocation(taskData.startLocation),
         needTool = true,
         needTurtle = true,
-        fuelNeeded = fuelNeededPerTree,
+        fuelNeeded = FuelNeededPerTree() + 1,
         itemsNeeded = {},
     }
 end
@@ -214,7 +216,7 @@ function FuelNeededPerRound(nTrees)
     local fuelNeededPerColumn = (nTrees - 1) * fuelNeededBetweenTrees
     local fuelNeededBetweenRows = math.floor(nTrees/ 6) * fuelNeededBetweenTrees
 
-    return nTrees*fuelNeededPerTree + 2 * fuelNeededPerColumn + 2 * fuelNeededBetweenRows -- ToDo: make more accurate once we have a better forest implementation
+    return nTrees*FuelNeededPerTree() + 2 * fuelNeededPerColumn + 2 * fuelNeededBetweenRows -- ToDo: make more accurate once we have a better forest implementation
 end
 
 function HarvestForest_MetaData(taskData)
