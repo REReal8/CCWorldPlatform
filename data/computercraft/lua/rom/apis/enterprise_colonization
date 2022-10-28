@@ -550,6 +550,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
             local harvestForestTaskData = {
                 firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
                 nTrees              = forest.nTrees,
+                waitForFirstTree    = true,
 
                 priorityKey         = assignmentsPriorityKey,
             }

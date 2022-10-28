@@ -255,6 +255,7 @@ function HarvestForest_Task(taskData)
             taskData                    - (table) data about the task
                 firstTreeLocation       - (table) location of first tree of the forest
                 nTrees                  - (number) the number of trees in (the y direction of) the forest
+                waitForFirstTree        - (boolean) if harvesting should wait for the first tree
     ]]
 
     -- check input
@@ -263,6 +264,8 @@ function HarvestForest_Task(taskData)
     if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid firstTreeLocation") return {success = false} end
     local nTrees = taskData.nTrees
     if type(nTrees) ~= "number" then corelog.Error("role_settler.HarvestForest_Task: Invalid nTrees") return {success = false} end
+    local waitForFirstTree = taskData.waitForFirstTree
+    if type(waitForFirstTree) ~= "boolean" then corelog.Error("role_settler.HarvestForest_Task: Invalid waitForFirstTree") return {success = false} end
 
 --    corelog.WriteToLog(" Harvesting Forest")
 
@@ -270,7 +273,9 @@ function HarvestForest_Task(taskData)
     coremove.GoTo(firstTreeLocation)
 
     -- wait for tree
-    WaitForTree()
+    if waitForFirstTree then
+        WaitForTree()
+    end
 
     -- harvest forest
     role_forester.Rondje({
