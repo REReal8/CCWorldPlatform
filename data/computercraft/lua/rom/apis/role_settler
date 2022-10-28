@@ -275,7 +275,7 @@ function HarvestForest_Task(taskData)
     -- harvest forest
     role_forester.Rondje({
         depth = nTrees,
-        width = 2,
+        width = 1,
         dontCleanup = true,
     })
 
