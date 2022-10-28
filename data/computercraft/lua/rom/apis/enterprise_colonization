@@ -551,6 +551,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
                 firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
                 nTrees              = forest.nTrees,
                 waitForFirstTree    = true,
+--                waitForFirstTree    = (assignmentsPriorityKey ~= nil), -- energy efficient mode if assignmentsPriorityKey is set -- ToDo: consider change
 
                 priorityKey         = assignmentsPriorityKey,
             }
