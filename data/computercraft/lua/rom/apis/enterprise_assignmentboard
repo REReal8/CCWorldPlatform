@@ -20,7 +20,10 @@ local db = {
 
 function DoAssignment_ASrv(serviceData, callback, callbackData)
     --[[
-        This async public service ensures a Task is executed.
+        This async public service posts an Assignment for execution via the enterprise.
+
+        The Assignment is not necessarily directly executed. It is added to the list of assignments in the
+        enterprise and serviced via it's services for eventual execution.
 
         A task function takes one parameter
             taskData                - (table) data to supply to task function to be able to perform the task
@@ -89,45 +92,7 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
     coredht.SaveData(assignment, db.dhtRoot, db.dhtList, assignmentId)
 end
 
--- enterprise_assignmentboard.Dummy_Callback
-function Dummy_Callback(emptyTable)
-    corelog.WriteToAssignmentLog("Dummy_Callback called")
-    -- do nothing
-end
-
-function Reset()
-    -- end assignments
-    EndAssignments()
-
-    -- reset (local) db
-    db.skipReasons  = {}
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function EndAssignments()
-    local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
-    if not assignmentList or type(assignmentList) ~= "table" then corelog.Warning("enterprise_assignmentboard.EndAssignments: not a (valid) assignmentList") return nil end
-
-    -- remove all assignments
-    corelog.WriteToAssignmentLog("All Assignments are being ended!")
-    for assignmentId, assignmentData in pairs(assignmentList) do
-        -- check status and startTime
-        EndAssignment(assignmentId)
-    end
-end
-
-function DHTReadySetup()
-    -- bestaat de entry al in de dht?
-    if not coredht.GetData(db.dhtRoot)              then coredht.SaveData({}, db.dhtRoot ) end
-    if not coredht.GetData(db.dhtRoot, db.dhtList) then coredht.SaveData({}, db.dhtRoot, db.dhtList ) end
-end
-
+-- ToDo: rename
 function FindBestAssignment(assignmentFilter, turtleResume)
     -- zoeken naar een assignment om op in te schrijven
     local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
@@ -183,6 +148,111 @@ function FindBestAssignment(assignmentFilter, turtleResume)
         -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
         return nil
     end
+end
+
+function ApplyToAssignment(assignmentId)
+--    corelog.WriteToAssignmentLog("Running ApplyToAssignment", assignmentId)
+
+    -- alleen solliciteren indien de assignment open is
+    if coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "status") == "open" then
+        -- wie zijn we?
+        local me = os.getComputerID()
+
+        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
+        coredht.SaveData({
+            time            = coreutils.UniversalTime(),
+            dice            = math.random(),
+            applicant       = me,
+        }, db.dhtRoot, db.dhtList, assignmentId, "applications", me)
+    end
+end
+
+function AssignmentSelectionProcedure(assignmentId)
+--    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure", assignmentId)
+
+    -- data van de assignment ophalen
+    local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
+
+    -- see if this assignment is still open
+    if assignment.status == "open" then
+        --
+        local applications = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "applications")
+
+        -- see who got the highest dice
+        local highestDiceTurtle = nil
+        local highestDiceValue = 0
+        for turtleId, applicationData in pairs(applications) do
+            if applicationData.dice >= highestDiceValue then
+                highestDiceValue = applicationData.dice
+                highestDiceTurtle = applicationData.applicant
+            end
+        end
+
+        -- check if I got the highest dice
+        if highestDiceTurtle == os.getComputerID() then
+            return assignment
+        end
+    end
+
+    -- apparently it's not for me
+    return nil
+end
+
+function TakeAssignment(assignmentId)
+    -- data van de assignment ophalen
+    local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
+
+    -- see if this assignment is still open
+    if assignment.status == "open" then
+        -- mark as staffed
+        coredht.SaveData("staffed", db.dhtRoot, db.dhtList, assignmentId, "status")
+
+        corelog.WriteToAssignmentLog("Taken", assignmentId)
+    end
+end
+
+function EndAssignment(assignmentId)
+    -- easy
+    coredht.SaveData(nil, db.dhtRoot, db.dhtList, assignmentId)
+    corelog.WriteToAssignmentLog("Ended", assignmentId)
+end
+
+function Dummy_Callback(emptyTable)
+    corelog.WriteToAssignmentLog("Dummy_Callback called")
+    -- do nothing
+end
+
+function Reset()
+    -- end assignments
+    EndAssignments()
+
+    -- reset (local) db
+    db.skipReasons  = {}
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function EndAssignments()
+    local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
+    if not assignmentList or type(assignmentList) ~= "table" then corelog.Warning("enterprise_assignmentboard.EndAssignments: not a (valid) assignmentList") return nil end
+
+    -- remove all assignments
+    corelog.WriteToAssignmentLog("All Assignments are being ended!")
+    for assignmentId, assignmentData in pairs(assignmentList) do
+        -- check status and startTime
+        EndAssignment(assignmentId)
+    end
+end
+
+function DHTReadySetup()
+    -- bestaat de entry al in de dht?
+    if not coredht.GetData(db.dhtRoot)              then coredht.SaveData({}, db.dhtRoot ) end
+    if not coredht.GetData(db.dhtRoot, db.dhtList) then coredht.SaveData({}, db.dhtRoot, db.dhtList ) end
 end
 
 function ForgetSkipReasons()
@@ -299,71 +369,4 @@ function MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     end
 
     return true, ""
-end
-
-function ApplyToAssignment(assignmentId)
---    corelog.WriteToAssignmentLog("Running ApplyToAssignment", assignmentId)
-
-    -- alleen solliciteren indien de assignment open is
-    if coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "status") == "open" then
-        -- wie zijn we?
-        local me = os.getComputerID()
-
-        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
-        coredht.SaveData({
-            time            = coreutils.UniversalTime(),
-            dice            = math.random(),
-            applicant       = me,
-        }, db.dhtRoot, db.dhtList, assignmentId, "applications", me)
-    end
-end
-
-function AssignmentSelectionProcedure(assignmentId)
---    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure", assignmentId)
-
-    -- data van de assignment ophalen
-    local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
-
-    -- see if this assignment is still open
-    if assignment.status == "open" then
-        --
-        local applications = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "applications")
-
-        -- see who got the highest dice
-        local highestDiceTurtle = nil
-        local highestDiceValue = 0
-        for turtleId, applicationData in pairs(applications) do
-            if applicationData.dice >= highestDiceValue then
-                highestDiceValue = applicationData.dice
-                highestDiceTurtle = applicationData.applicant
-            end
-        end
-
-        -- check if I got the highest dice
-        if highestDiceTurtle == os.getComputerID() then
-            return assignment
-        end
-    end
-
-    -- apparently it's not for me
-    return nil
-end
-
-function TakeAssignment(assignmentId)
-    -- data van de assignment ophalen
-    local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
-
-    -- see if this assignment is still open
-    if assignment.status == "open" then
-        -- mark as staffed
-        coredht.SaveData("staffed", db.dhtRoot, db.dhtList, assignmentId, "status")
-
-        corelog.WriteToAssignmentLog("Taken", assignmentId)
-    end
-end
-
-function EndAssignment(assignmentId)
-    -- easy
-    coredht.SaveData(nil, db.dhtRoot, db.dhtList, assignmentId)
-    corelog.WriteToAssignmentLog("Ended", assignmentId)
 end
