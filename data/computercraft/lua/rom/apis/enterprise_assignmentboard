@@ -184,7 +184,7 @@ function FindBestAssignment_SSrv(serviceData)
     end
 end
 
-function ApplyToAssignment(assignmentId)
+function ApplyToAssignment(assignmentId) -- ToDo: make this a proper sync service
 --    corelog.WriteToAssignmentLog("Running ApplyToAssignment", assignmentId)
 
     -- alleen solliciteren indien de assignment open is
@@ -201,7 +201,7 @@ function ApplyToAssignment(assignmentId)
     end
 end
 
-function AssignmentSelectionProcedure(assignmentId)
+function AssignmentSelectionProcedure(assignmentId) -- ToDo: make this a proper sync service
 --    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure", assignmentId)
 
     -- data van de assignment ophalen
@@ -232,7 +232,7 @@ function AssignmentSelectionProcedure(assignmentId)
     return nil
 end
 
-function TakeAssignment(assignmentId)
+function TakeAssignment(assignmentId) -- ToDo: make this a proper sync service
     -- data van de assignment ophalen
     local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
 
@@ -245,7 +245,7 @@ function TakeAssignment(assignmentId)
     end
 end
 
-function EndAssignment(assignmentId)
+function EndAssignment(assignmentId) -- ToDo: make this a proper sync service
     -- easy
     coredht.SaveData(nil, db.dhtRoot, db.dhtList, assignmentId)
     corelog.WriteToAssignmentLog("Ended", assignmentId)
