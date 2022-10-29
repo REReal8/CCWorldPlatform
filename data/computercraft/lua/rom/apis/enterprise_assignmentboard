@@ -6,7 +6,17 @@ local db = {
 }
 
 --[[
-    The AssignmentBoard is an enterprise that offers services for advertising assignments (for computers and turtles).
+    The AssignmentBoard is an enterprise that offers services for the handling of Assignments.
+
+    Assignments allow for a sequence of things to be done (e.g. moving, rotating, placing etc) without interruption
+    by a turtle in the physical minecraft world.
+
+    The enterprise maintains a list of assignments that were posted to it. It offers services for finding, applying to,
+    selecting, taking and ending (removing) these assignments.
+
+    It does so by providing the following public services
+        DoAssignment_ASrv       - to post an Assignment for execution via the enterprise
+        FindBestAssignment_SSrv - finds the best available Assignment
 --]]
 
 --                _     _ _         __                  _   _
@@ -92,8 +102,28 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
     coredht.SaveData(assignment, db.dhtRoot, db.dhtList, assignmentId)
 end
 
--- ToDo: rename
-function FindBestAssignment(assignmentFilter, turtleResume)
+function FindBestAssignment_SSrv(serviceData)
+    --[[
+        This sync public service finds the best available Assignment for a turtle based on an assignmentFilter and turtleResume.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                assignmentId        - (number) id of found assignment (==nil if no assignment was found)
+
+        Parameters:
+            serviceData             - (table) data for this service
+                assignmentFilter    - (table) filter to apply in finding an Assignment
+                turtleResume        - (table) turtle "resume" to consider in finding an Assignment
+    ]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.FindBestAssignment_SSrv: Invalid serviceData") return {success = false} end
+    local assignmentFilter = serviceData.assignmentFilter
+    if type(assignmentFilter) ~= "table" then corelog.Error("enterprise_chests.FindBestAssignment_SSrv: Invalid assignmentFilter") return {success = false} end
+    local turtleResume = serviceData.turtleResume
+    if type(turtleResume) ~= "table" then corelog.Error("enterprise_chests.FindBestAssignment_SSrv: Invalid turtleResume") return {success = false} end
+
     -- zoeken naar een assignment om op in te schrijven
     local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
 
@@ -103,7 +133,7 @@ function FindBestAssignment(assignmentFilter, turtleResume)
     -- check for assignments
     if next(assignmentList) == nil then
 --        corelog.WriteToAssignmentLog("There are no assignments")
-        return nil
+        return { success = true }
     end
 
     -- select assignments satisfying meta conditions
@@ -143,10 +173,14 @@ function FindBestAssignment(assignmentFilter, turtleResume)
         ForgetSkipReasons()
 
         -- return best candidate
-        return bestCandidateData.id
+        local result = {
+            success         = true,
+            assignmentId    = bestCandidateData.id
+        }
+        return result
     else
         -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
-        return nil
+        return { success = true }
     end
 end
 

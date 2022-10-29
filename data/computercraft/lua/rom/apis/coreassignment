@@ -77,7 +77,9 @@ function Run()
                 inventoryItems  = coreinventory.GetInventoryDetail().items,
             }
         end
-        local assignmentIdApplication = enterprise_assignmentboard.FindBestAssignment(assignmentFilter, turtleResume)
+        local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = turtleResume })
+        if not serviceResults.success then corelog.Error("enterprise_chests.Run: FindBestAssignment_SSrv failed.") end
+        local assignmentIdApplication = serviceResults.assignmentId
 
         -- did we find one?
         if assignmentIdApplication then
