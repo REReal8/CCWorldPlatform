@@ -5,6 +5,7 @@ end
 
 function T_ResetWorld()
     coreassignment.Reset()
+    enterprise_assignmentboard.Reset()
     enterprise_projects.DeleteProjects()
     enterprise_energy.ResetParameters()
     enterprise_factory.DeleteSites()

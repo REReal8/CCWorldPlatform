@@ -56,7 +56,8 @@
         "t_shop",
         "role_fuel_worker",
         "enterprise_energy",
-        "t_energy"
+        "t_energy",
+        "enterprise_assignmentboard"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

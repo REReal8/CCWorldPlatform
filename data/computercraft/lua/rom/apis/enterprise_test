@@ -49,13 +49,17 @@ function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callback)
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskFunction = "enterprise_test.Func1_Task"
     local taskData = {
         arg1 = testArg
     }
 
-    -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskData, callback, callbackData)
+    -- do assignment
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "enterprise_test.Func1_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end
 
 function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(serviceData, callback, callbackData)
@@ -76,13 +80,17 @@ function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(serviceData, call
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskFunction = "enterprise_test.Func1_Task"
     local taskData = {
         arg1 = testArg
     }
 
-    -- add assignment
-    coreassignment.AddAssignment(metaData, taskFunction, taskData, callback, callbackData)
+    -- do assignment
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "enterprise_test.Func1_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end
 
 --    _                 _    __                  _   _

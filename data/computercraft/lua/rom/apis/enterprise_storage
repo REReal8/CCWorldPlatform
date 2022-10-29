@@ -141,7 +141,7 @@ function ItemPresent(argumentTable) -- itemName
     return result
 end
 
--- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 2}, "coreassignment.Dummy_Callback", {})))
+-- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 2}, "enterprise_assignmentboard.Dummy_Callback", {})))
 function RetrieveItems(argumentTable) -- sitesIndex, itemList, callback, callbackArgs
 --[[
     This public function is retrieving items from the storage. When the requested items are not

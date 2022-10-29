@@ -55,9 +55,14 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
     local taskFunctionName = "role_builder.BuildBlueprint_Task"
     if next(materialsNeeded) == nil then
-        -- directly add assignment
+        -- directly do assignment
 --        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
-        return coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
+        local assignmentServiceData = {
+            metaData    = metaData,
+            task        = taskFunctionName,
+            taskData    = taskData,
+        }
+        return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
     end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
@@ -75,8 +80,8 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
                 { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
                 { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
             }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "taskFunctionName" },
+            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "task"                       , valueSource = 0, keyDefSource = "taskFunctionName" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
                 { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
@@ -164,9 +169,14 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
     local taskFunctionName = "role_builder.BuildRectangularPattern_Task"
     if next(materialsNeeded) == nil then
-        -- directly add assignment
+        -- directly do assignment
 --        corelog.WriteToLog(">Building (zero materials) pattern at "..textutils.serialise(startpoint))
-        return coreassignment.AddAssignment(metaData, taskFunctionName, taskData, callback, callbackData)
+        local assignmentServiceData = {
+            metaData    = metaData,
+            task        = taskFunctionName,
+            taskData    = taskData,
+        }
+        return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
     end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
@@ -188,8 +198,8 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
                 { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
                 { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
             }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "taskFunctionName" },
+            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "task"                       , valueSource = 0, keyDefSource = "taskFunctionName" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
                 { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },

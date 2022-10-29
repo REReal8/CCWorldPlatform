@@ -868,8 +868,12 @@ function FetchChestSlotsInventory_ASrv(serviceData, callback, callbackData)
         location = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
     }
-    local metaData = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData)
-    coreassignment.AddAssignment(metaData, "role_chests_worker.FetchChestSlotsInventory_Task", taskData, callback, callbackData)
+    local assignmentServiceData = {
+        metaData    = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
+        task        = "role_chests_worker.FetchChestSlotsInventory_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end
 
 function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
@@ -917,8 +921,12 @@ function FetchItemsFromChestIntoTurtle_ASrv(serviceData, callback, callbackData)
 
         priorityKey     = assignmentsPriorityKey,
     }
-    local metaData = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData)
-    coreassignment.AddAssignment(metaData, "role_chests_worker.FetchItemsFromChestIntoTurtle_Task", taskData, callback, callbackData)
+    local assignmentServiceData = {
+        metaData    = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
+        task        = "role_chests_worker.FetchItemsFromChestIntoTurtle_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end
 
 function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
@@ -970,6 +978,10 @@ function PutItemsFromTurtleIntoChest_ASrv(serviceData, callback, callbackData)
 
         priorityKey     = assignmentsPriorityKey,
     }
-    local metaData = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData)
-    coreassignment.AddAssignment(metaData, "role_chests_worker.PutItemsFromTurtleIntoChest_Task", taskData, callback, callbackData)
+    local assignmentServiceData = {
+        metaData    = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
+        task        = "role_chests_worker.PutItemsFromTurtleIntoChest_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end

@@ -1,28 +1,32 @@
 function End(assignmentId)
-    coreassignment.EndAssignment(assignmentId)
+    enterprise_assignmentboard.EndAssignment(assignmentId)
 end
 
 function T_EndAssignments()
-    coreassignment.EndAssignments()
+    enterprise_assignmentboard.EndAssignments()
 end
 
 function T_MetaDataConditionsMet()
     local now = coreutils.UniversalTime()
-    local currentTurtleId = os.getComputerID()
+    local computerId = os.getComputerID()
     local metaData = {
         startTime = now,
-        needTurtle = true,
-        needTurtleId = currentTurtleId,
-        needTool = true,
+        needTurtle = false,
+        needTurtleId = computerId,
+        needTool = false,
         fuelNeeded = 0,
         itemsNeeded = {},
         location = nil,
     }
+    local assignmentFilter = {
+        priorityKeyNeeded   = nil,
+    }
+    local turtleResume = nil
 
     -- test startTime
     corelog.WriteToLog("# Test startTime condition")
     metaData.startTime = now + 1000
-    local conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    local conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else
@@ -34,7 +38,7 @@ function T_MetaDataConditionsMet()
     corelog.WriteToLog("# Test fuelTurtlePriorityKey (not set)")
     local priorityKey = coreutils.NewId()
     metaData.priorityKey = priorityKey
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.Error("  condition incorrectly not met: "..skipReason)
     else
@@ -43,53 +47,61 @@ function T_MetaDataConditionsMet()
     metaData.priorityKey = nil
 
     corelog.WriteToLog("# Test fuelTurtlePriorityKey (set, no key)")
-    coreassignment.TestHelper_SetFuelTurtlePriorityKey(priorityKey)
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    assignmentFilter.priorityKeyNeeded = priorityKey
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else
         corelog.Error("  condition incorrectly met")
     end
-    coreassignment.TestHelper_SetFuelTurtlePriorityKey(nil)
 
     corelog.WriteToLog("# Test fuelTurtlePriorityKey (set, same key)")
-    coreassignment.TestHelper_SetFuelTurtlePriorityKey(priorityKey)
     metaData.priorityKey = priorityKey
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.Error("  condition incorrectly not met: "..skipReason)
     else
         corelog.WriteToLog("  condition met")
     end
-    coreassignment.TestHelper_SetFuelTurtlePriorityKey(nil)
     metaData.priorityKey = nil
 
     corelog.WriteToLog("# Test fuelTurtlePriorityKey (set, other key)")
-    coreassignment.TestHelper_SetFuelTurtlePriorityKey(priorityKey)
     local otherPriorityKey = coreutils.NewId()
     metaData.priorityKey = otherPriorityKey
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else
         corelog.Error("  condition incorrectly met")
     end
-    coreassignment.TestHelper_SetFuelTurtlePriorityKey(nil)
     metaData.priorityKey = nil
+    assignmentFilter.priorityKeyNeeded = nil
+
+    -- test needTurtle
+    corelog.WriteToLog("# Test needTurtle")
+    metaData.needTurtle = true
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.WriteToLog("  condition not met: "..skipReason)
+    else
+        corelog.Error("  condition incorrectly met")
+    end
+    turtleResume = { }
 
     -- test needTurtleId
     corelog.WriteToLog("# Test needTurtleId (other id)")
-    metaData.needTurtleId = currentTurtleId + 1000
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    turtleResume.turtleId = computerId
+    metaData.needTurtleId = computerId + 1000
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else
         corelog.Error("  condition incorrectly met")
     end
-    metaData.needTurtleId = currentTurtleId
+    metaData.needTurtleId = computerId
 
     corelog.WriteToLog("# Test needTurtleId (current id)")
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.Error("  condition incorrectly not met: "..skipReason)
     else
@@ -98,34 +110,97 @@ function T_MetaDataConditionsMet()
     metaData.needTurtleId = nil
 
     -- test fuelNeeded
-    corelog.WriteToLog("# Test fuelNeeded")
+    -- ToDo: consider also testing with turtleResume.location
+    corelog.WriteToLog("# Test fuelNeeded (not enough)")
+    turtleResume.fuelLevel = 100
     metaData.fuelNeeded = 10000
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else
         corelog.Error("  condition incorrectly met")
     end
-    metaData.fuelNeeded = 5
 
-    -- test itemsNeeded
-    corelog.WriteToLog("# Test itemsNeeded")
-    local itemsNeeded = {
-        ["minecraft:torch"] = 1,
-        ["minecraft:chest"] = 1000,
-    }
-    metaData.itemsNeeded = itemsNeeded
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    corelog.WriteToLog("# Test fuelNeeded (enough)")
+    metaData.fuelNeeded = turtleResume.fuelLevel - 10
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.Error("  condition incorrectly not met: "..skipReason)
+    else
+        corelog.WriteToLog("  condition met")
+    end
+
+    -- test need pickaxe
+    corelog.WriteToLog("# Test need pickaxe (not needed)")
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.Error("  condition incorrectly not met: "..skipReason)
+    else
+        corelog.WriteToLog("  condition met")
+    end
+
+    corelog.WriteToLog("# Test need pickaxe (not present)")
+    turtleResume.axePresent = false
+    metaData.needTool = true
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else
         corelog.Error("  condition incorrectly met")
+    end
+
+    corelog.WriteToLog("# Test need pickaxe (present)")
+    turtleResume.axePresent = true
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.Error("  condition incorrectly not met: "..skipReason)
+    else
+        corelog.WriteToLog("  condition met")
+    end
+    metaData.needTool = false
+
+    -- test itemsNeeded
+    corelog.WriteToLog("# Test itemsNeeded (empty inventory)")
+    turtleResume.inventoryItems = {}
+    local itemsNeeded = {
+        ["minecraft:torch"] = 10,
+        ["minecraft:chest"] = 1,
+    }
+    metaData.itemsNeeded = itemsNeeded
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.WriteToLog("  condition not met: "..skipReason)
+    else
+        corelog.Error("  condition incorrectly met")
+    end
+
+    corelog.WriteToLog("# Test itemsNeeded (some in inventory)")
+    turtleResume.inventoryItems = {
+        ["minecraft:torch"] = 20,
+    }
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.WriteToLog("  condition not met: "..skipReason)
+    else
+        corelog.Error("  condition incorrectly met")
+    end
+
+    corelog.WriteToLog("# Test itemsNeeded (all in inventory)")
+    turtleResume.inventoryItems = {
+        ["minecraft:torch"] = 20,
+        ["minecraft:chest"] = 2,
+    }
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    if not conditionsMet then
+        corelog.Error("  condition incorrectly not met: "..skipReason)
+    else
+        corelog.WriteToLog("  condition met")
     end
     metaData.itemsNeeded = {}
 
     -- test other conditions
     corelog.WriteToLog("# Test Other conditions")
-    conditionsMet, skipReason = coreassignment.MetaDataConditionsMet(metaData)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     if not conditionsMet then
         corelog.WriteToLog("  condition not met: "..skipReason)
     else

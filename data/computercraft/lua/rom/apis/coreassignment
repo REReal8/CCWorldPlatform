@@ -1,8 +1,5 @@
 local db = {
-    dhtRoot                 = "coreassignment",
-    listRoot                = "assignmentList",
     rejectAllAssignments    = false,
-    skipReasons             = {},
     fuelTurtlePriorityKey   = nil,
     fuelTurtleCallsSkippedBecausePriorityKey = 0,
 }
@@ -43,74 +40,7 @@ end
 
 function Setup()
     -- pas als de dht klaar is...
-    coredht.DHTReadyFunction(DHTReadySetup)
-end
-
-function AddAssignment(metaData, taskFunction, taskData, callbackFunction, callbackData)
-    --[[
-        This public function adds a new assignment to the assignmentList.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether adding the assignment was a success
-
-        Parameters:
-            metaData                - (table) with meta data about the assignment that is used in the assignment selection proces (e.g. the fuel needs of the task)
-            taskFunction            - (string) name of task function to execute
-            taskData                - (table) data to supply to task function
-            callback                - (string) name of function to call once task has been executed
-            callbackData            - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    metaData.startTime      = metaData.startTime    or coreutils.UniversalTime()    --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
-    metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
-    metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
-    metaData.needTurtle     = metaData.needTurtle   or true
-    metaData.needTurtleId   = metaData.needTurtleId or nil      --> nil-waarde voor needTurtleId geeft aan dat turtleId geen rol speelt bij de selectie
-    metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
-    metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
-    metaData.priorityKey    = metaData.priorityKey  or nil      --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for this turtle, it will only take assignments with that key)
-    if type(taskFunction) ~= "string" then corelog.Error("coreassignment.AddAssignment: taskFunction not a string") return end
-    -- ToDo: investigate if there is a way to check if the actual function exists and has the proper argument without actually calling it
-    if type(taskData) ~= "table" then corelog.Error("coreassignment.AddAssignment: taskData not a table") return end
-    if type(callbackFunction) ~= "string" then corelog.Error("coreassignment.AddAssignment: callbackFunction not a string") return end
-    -- ToDo: investigate if there is a way to check if the actual function exists and has the proper arguments without actually calling it
-    if type(callbackData) ~= "table" then corelog.Error("coreassignment.AddAssignment: callbackData not a table") return end
-
-    -- create assignment
-    local assignmentId  = coreutils.NewId()
-    local assignment = {
-        assignmentId            = assignmentId,
-        status                  = "open",
-        applications            = {},
-
-        metaData                = metaData,
-        taskFunction            = taskFunction,
-        taskData                = taskData,
-        callbackFunction        = callbackFunction,
-        callbackData            = callbackData,
-    }
-
-    -- log assignment
-    corelog.WriteToAssignmentLog("Add new: "..textutils.serialize(assignment), assignmentId)
-
-    -- inform enterprise_energy of fuelNeeded
-    local fuelNeeded = metaData.fuelNeeded
-    -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
-    local serviceData = {
-        assignmentFuelNeed  = fuelNeeded,
-    }
-    enterprise_energy.TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
-
-    -- store assignment
-    coredht.SaveData(assignment, db.dhtRoot, db.listRoot, assignmentId)
-end
-
--- coreassignment.Dummy_Callback
-function Dummy_Callback(emptyTable)
-    corelog.WriteToAssignmentLog("Dummy_Callback called")
-    -- do nothing
+    coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup)
 end
 
 function Run()
@@ -121,6 +51,9 @@ function Run()
         os.sleep(0.25)
     end
 
+    -- some variables
+    local computerId = os.getComputerID()
+
     -- infinite loop
     while core.IsSystemRunning() and not db.rejectAllAssignments do
         -- turtle currently does not have an assignment (it is unemployed)
@@ -129,19 +62,33 @@ function Run()
         -- (re)fuel turtle if needed
         FuelTurtleIfNeeded()
 
+        -- ToDo: consider if an assignment board should determine what is best...
         -- look for best next assignment
-        local assignmentIdApplication = FindBestAssignment()
+        local assignmentFilter = {
+            priorityKeyNeeded   = db.fuelTurtlePriorityKey,
+        }
+        local turtleResume = nil
+        if turtle then
+            turtleResume = {
+                turtleId        = computerId,
+                location        = coremove.GetLocation(),
+                fuelLevel       = turtle.getFuelLevel(),
+                axePresent      = coreinventory.Equip("minecraft:diamond_pickaxe"), -- ToDo: consider only checking not actually equiping
+                inventoryItems  = coreinventory.GetInventoryDetail().items,
+            }
+        end
+        local assignmentIdApplication = enterprise_assignmentboard.FindBestAssignment(assignmentFilter, turtleResume)
 
         -- did we find one?
         if assignmentIdApplication then
             -- apply
-            ApplyToAssignment(assignmentIdApplication)
+            enterprise_assignmentboard.ApplyToAssignment(assignmentIdApplication)
 
             -- wait, maybe more turtles have applied
             os.sleep(1.25)
 
             -- check who gets the assignment
-            nextAssignment = AssignmentSelectionProcedure(assignmentIdApplication)
+            nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(assignmentIdApplication)
         end
 
         -- did we get the assignment?
@@ -159,13 +106,9 @@ function RejectAllAssignments()
 end
 
 function Reset()
-    -- end assignments
-    EndAssignments()
-
     -- reset (local) db
-    db.rejectAllAssignments    = false
-    db.skipReasons             = {}
-    db.fuelTurtlePriorityKey   = nil
+    db.rejectAllAssignments                     = false
+    db.fuelTurtlePriorityKey                    = nil
     db.fuelTurtleCallsSkippedBecausePriorityKey = 0
 end
 
@@ -176,254 +119,10 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function EndAssignments()
-    local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
-    if not assignmentList or type(assignmentList) ~= "table" then corelog.Warning("coreassignment.EndAssignments: not a (valid) assignmentList") return nil end
-
-    -- remove all assignments
-    corelog.WriteToAssignmentLog("All Assignments are being ended!")
-    for assignmentId, assignmentData in pairs(assignmentList) do
-        -- check status and startTime
-        EndAssignment(assignmentId)
-    end
-end
-
-function DHTReadySetup()
-    -- bestaat de entry al in de dht?
-    if not coredht.GetData(db.dhtRoot)              then coredht.SaveData({}, db.dhtRoot ) end
-    if not coredht.GetData(db.dhtRoot, db.listRoot) then coredht.SaveData({}, db.dhtRoot, db.listRoot ) end
-end
-
-function FindBestAssignment()
---    corelog.WriteToAssignmentLog("Running FindBestVacancy")
-
-    -- zoeken naar een assignment om op in te schrijven
-    local assignmentList = coredht.GetData(db.dhtRoot, db.listRoot)
-
-    -- check assignmentList
-    if not assignmentList or type(assignmentList) ~= "table" then corelog.Error("coreassignment.FindBestAssignment: invalid assignmentList") return nil end
-
-    -- check for assignments
-    if next(assignmentList) == nil then
---        corelog.WriteToAssignmentLog("There are no assignments")
-        return nil
-    end
-
-    -- select assignments satisfying meta conditions
-    local candidateList = {}
-    for assignmentId, assignmentData in pairs(assignmentList) do
-        -- check assignment open
-        if assignmentData.status == "open" then
-            -- check metaconditions
-            local conditionsMet, skipReason = MetaDataConditionsMet(assignmentData.metaData)
-            if conditionsMet then
-                table.insert(candidateList, {
-                    id = assignmentId,
-                    metaData = assignmentData.metaData,
-                })
-            else
-                -- debug message
-                if skipReason and not KnownSkipReason(skipReason) then
-                    -- Report reason for skipping for debugging purposes
-                    corelog.WriteToAssignmentLog("Skipped because "..skipReason, assignmentId)
-
-                    -- remember such that the log isn't floaded with similar messages
-                    RememberSkipReason(skipReason)
-                end
-            end
-        end
-    end
-
-    -- select best assignment
-    local bestCandidateData = nil
-    for i, candidateData in ipairs(candidateList) do
-        bestCandidateData = BestCandidate(bestCandidateData, candidateData)
-    end
-
-    -- end
-    if bestCandidateData then
-        -- we found a new candidate, forget the reasons we skipped until now
-        ForgetSkipReasons()
-
-        -- return best candidate
-        return bestCandidateData.id
-    else
-        -- corelog.WriteToAssignmentLog("No assignment satisfying conditions")
-        return nil
-    end
-end
-
-function ForgetSkipReasons()
---    db.lastSkipReason = nil
-    db.skipReasons = {}
-end
-
-function RememberSkipReason(skipReason)
---    db.lastSkipReason = skipReason
-    table.insert(db.skipReasons, skipReason)
-end
-
-function KnownSkipReason(skipReason)
---    return skipReason == db.lastSkipReason
-    -- chheck skipReason is known
-    for i, prevSkipReason in ipairs(db.skipReasons) do
-        if skipReason == prevSkipReason then return true end
-    end
-
-    -- end
-    return false
-end
-
-function BestCandidate(candidateData1, candidateData2)
-    -- check for data
-    if not candidateData1 then
-        return candidateData2
-    end
-    if not candidateData2 then
-        return candidateData1
-    end
-
-    -- check needTurtleId
-    local needTurtleId1 = candidateData1.metaData.needTurtleId
-    local needTurtleId2 = candidateData2.metaData.needTurtleId
-    if needTurtleId1 and not needTurtleId2 then
-        return candidateData1
-    elseif needTurtleId2 and not needTurtleId1 then
-        return candidateData2
-    else -- both are equal w.r.t. this condition
-    end
-
-    -- check fuelNeeded
-    -- ToDo implement
-
-    -- check age
-    -- ToDo implement
-
-    -- nothing else distinquishes the candidates => take first
-    return candidateData1
-end
-
-function MetaDataConditionsMet(metaData)
-    -- check startTime
-    local now            = coreutils.UniversalTime()
-    if metaData.startTime > now then
---        return false, "assignment in the future (="..metaData.startTime..") (now ="..now..")"
-        return false, "assignment in the future (="..metaData.startTime..")"
-    end
-
-    -- check optional turtle conditions
-    if metaData.needTurtle then
-        -- check mandatory turtle
-        if not turtle then
-            return false, "mandatory turtle not present"
-        end
-
-        -- check fuelTurtlePriorityKey
-        local fuelTurtlePriorityKey = db.fuelTurtlePriorityKey
-        if fuelTurtlePriorityKey then
-            if metaData.priorityKey ~= fuelTurtlePriorityKey then
-                return false, "assignment does not `have`(="..(metaData.priorityKey or "nil")..") mandatory fuelTurtlePriorityKey (="..fuelTurtlePriorityKey..")"
-            end
-        end
-
-        -- check needTurtleId
-        if metaData.needTurtleId then
-            local currentTurtleId = os.getComputerID()
-            if currentTurtleId ~= metaData.needTurtleId then
-                return false, "turtle does not have(="..currentTurtleId..") mandatory turtleId (="..metaData.needTurtleId..")"
-            end
-        end
-
-        -- check enough fuel for assignment
-        local fuelNeeded = metaData.fuelNeeded
-        if metaData.location then -- optionally include traveling to assignment location from current location
-            fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaData.location, coremove.GetLocation())
-        end
-        if fuelNeeded > 0 then
-            -- check fuel available
-            local turtleFuelLevel = turtle.getFuelLevel()
-            if turtleFuelLevel < fuelNeeded then
-                return false, "not enough(="..fuelNeeded..") fuel present(="..turtleFuelLevel..")"
-            end
-        end
-
-        -- check need pickaxe
-        if metaData.needTool then
-            -- check mandatory pickaxe
-            local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
-            if not axePresent then
-                return false, "mandatory pickaxe not present"
-            end
-        end
-
-        -- check items in inventory
-        -- ToDo: implement more efficient by using coreinventory.GetInventoryDetail
-        for itemName, itemCount in pairs(metaData.itemsNeeded) do
-            -- get items in inventory
-            local items = coreinventory.CountItem(itemName)
-
-            -- enough?
-            if items < itemCount then
-                return false, "not enough(="..itemCount..") "..itemName.." in inventory (="..items..")"
-            end
-        end
-    end
-
-    return true, ""
-end
-
-function ApplyToAssignment(assignmentId)
---    corelog.WriteToAssignmentLog("Running ApplyToAssignment", assignmentId)
-
-    -- alleen solliciteren indien de assignment open is
-    if coredht.GetData(db.dhtRoot, db.listRoot, assignmentId, "status") == "open" then
-        -- wie zijn we?
-        local me = os.getComputerID()
-
-        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
-        coredht.SaveData({
-            time            = coreutils.UniversalTime(),
-            dice            = math.random(),
-            applicant       = me,
-        }, db.dhtRoot, db.listRoot, assignmentId, "applications", me)
-    end
-end
-
-function AssignmentSelectionProcedure(assignmentId)
---    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure", assignmentId)
-
-    -- data van de assignment ophalen
-    local assignment = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId)
-
-    -- see if this assignment is still open
-    if assignment.status == "open" then
-        --
-        local applications = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId, "applications")
-
-        -- see who got the highest dice
-        local highestDiceTurtle = nil
-        local highestDiceValue = 0
-        for turtleId, applicationData in pairs(applications) do
-            if applicationData.dice >= highestDiceValue then
-                highestDiceValue = applicationData.dice
-                highestDiceTurtle = applicationData.applicant
-            end
-        end
-
-        -- check if I got the highest dice
-        if highestDiceTurtle == os.getComputerID() then
-            return assignment
-        end
-    end
-
-    -- apparently it's not for me
-    return nil
-end
-
 function DoAssignment(assignment)
     -- we have taken this assignment!
     local assignmentId = assignment.assignmentId
-    TakeAssignment(assignmentId)
+    enterprise_assignmentboard.TakeAssignment(assignmentId)
 
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
@@ -436,26 +135,7 @@ function DoAssignment(assignment)
     coreutils.DoCallback(assignment.callbackFunction, assignment.callbackData, taskResult)
 
     -- we have done all for this assignment that we needed to do
-    EndAssignment(assignmentId)
-end
-
-function TakeAssignment(assignmentId)
-    -- data van de assignment ophalen
-    local assignment = coredht.GetData(db.dhtRoot, db.listRoot, assignmentId)
-
-    -- see if this assignment is still open
-    if assignment.status == "open" then
-        -- mark as staffed
-        coredht.SaveData("staffed", db.dhtRoot, db.listRoot, assignmentId, "status")
-
-        corelog.WriteToAssignmentLog("Taken", assignmentId)
-    end
-end
-
-function EndAssignment(assignmentId)
-    -- easy
-    coredht.SaveData(nil, db.dhtRoot, db.listRoot, assignmentId)
-    corelog.WriteToAssignmentLog("Ended", assignmentId)
+    enterprise_assignmentboard.EndAssignment(assignmentId)
 end
 
 function FuelTurtleIfNeeded()
@@ -516,8 +196,4 @@ function Fuel_Callback(callbackData, serviceResults)
 
     -- end
     return {success = true}
-end
-
-function TestHelper_SetFuelTurtlePriorityKey(priorityKey)
-    db.fuelTurtlePriorityKey = priorityKey
 end

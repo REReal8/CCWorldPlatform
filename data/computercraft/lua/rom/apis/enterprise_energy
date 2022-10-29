@@ -197,8 +197,8 @@ function Refuel_ASrv(serviceData, callback, callbackData)
                 { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
-            { stepName = "enterprise_turtle.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "taskFunctionName"           , valueSource = 0, keyDefSource = "refuel_Task" },
+            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "task"                       , valueSource = 0, keyDefSource = "refuel_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "refuelMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "refuelTaskData" },
             }},

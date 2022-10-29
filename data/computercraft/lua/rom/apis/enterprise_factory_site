@@ -828,9 +828,14 @@ function CraftItem_ASrv(serviceData, callback, callbackData)
     metaData.needTurtleId = turtleInputItemsLocator:getPort()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
-    -- add assignment
+    -- do assignment
 --    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
-    coreassignment.AddAssignment(metaData, "role_alchemist.Craft_Task", craftData, callback, callbackData)
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "role_alchemist.Craft_Task",
+        taskData    = craftData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 
     -- end
     return nil
@@ -911,9 +916,14 @@ function SmeltItem_ASrv(serviceData, callback, callbackData)
     metaData.needTurtleId = turtleInputItemsLocator:getPort()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
-    -- add assignment
+    -- do assignment
 --    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
-    coreassignment.AddAssignment(metaData, "role_alchemist.Smelt_Task", smeltData, callback, callbackData)
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "role_alchemist.Smelt_Task",
+        taskData    = smeltData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 
     -- end
     return nil
@@ -973,9 +983,14 @@ function Pickup_ASrv(serviceData, callback, callbackData)
     local metaData = role_alchemist.Pickup_MetaData(pickupData)
     metaData.startTime = pickUpTime
 
-    -- add assignment
+    -- do assignment
 --    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
-    coreassignment.AddAssignment(metaData, "role_alchemist.Pickup_Task", pickupData, callback, callbackData)
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "role_alchemist.Pickup_Task",
+        taskData    = pickupData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 
     -- end
     return nil
