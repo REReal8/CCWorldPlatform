@@ -40,7 +40,7 @@ end
 
 function Setup()
     -- pas als de dht klaar is...
-    coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup)
+    coredht.DHTReadyFunction(enterprise_assignmentboard.DHTReadySetup) -- ToDo: consider doing this in enterprise_assignmentboard itself
 end
 
 function Run()
