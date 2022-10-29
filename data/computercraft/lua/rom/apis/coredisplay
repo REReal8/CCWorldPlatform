@@ -215,7 +215,6 @@ function ExecuteTest(t)
 			{key = "g", desc = "general", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
 			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
 			{key = "u", desc = "url", 				func = ExecuteTest, param = {file = t_url, filename = "t_url"}},
-			{key = "a", desc = "assignment", 		func = ExecuteTest, param = {file = t_assignment, filename = "t_assignment"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 
@@ -351,6 +350,7 @@ function ExecuteEnterpriseTest(t)
 
 		-- test options
 		local options	= {
+			{key = "a", desc = "assignmentboard",	func = ExecuteEnterpriseTest, param = {file = t_assignmentboard, filename = "t_assignmentboard"}},
 			{key = "p", desc = "projects", 			func = ExecuteEnterpriseTest, param = {file = t_projects, filename = "t_projects"}},
 			{key = "e", desc = "energy", 			func = ExecuteEnterpriseTest, param = {file = t_energy, filename = "t_energy"}},
 			{key = "t", desc = "turtle", 			func = ExecuteEnterpriseTest, param = {file = t_turtle, filename = "t_turtle"}},
