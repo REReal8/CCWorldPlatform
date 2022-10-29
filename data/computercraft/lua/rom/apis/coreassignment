@@ -5,7 +5,7 @@ local db = {
 }
 
 --[[
-    coreassignment offers functionalitt to handle assignments to be executed by turtles.
+    coreassignment offers functionality to have computers or turtles execute assignments advertised by enterprise_assignmentboard.
 
     An assignment revolves around a Task. A Task is a sequence of things that needs to be done (i.e. moving, rotating, placing etc) without interruption
     in the physical minecraft world. A Task typically takes some time to execute.
