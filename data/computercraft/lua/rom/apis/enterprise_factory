@@ -328,7 +328,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         }
         serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
-        local ingredientsSupplyFuelNeed = serviceResults.fuelNeed
+        local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
 
         -- fuelNeed production
         local localInputItemsLocator = localInputLocator:copy()
@@ -341,7 +341,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         }
         serviceResults = enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
-        local siteProductionFuelNeed = serviceResults.fuelNeed
+        local fuelNeed_SiteProduction = serviceResults.fuelNeed
 
         -- fuelNeed output transfer
         local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
@@ -354,11 +354,11 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         }
         serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-        local productsSupplyFuelNeed = serviceResults.fuelNeed
+        local fuelNeed_ProductsSupply = serviceResults.fuelNeed
 
         -- add fuelNeed
---        corelog.WriteToLog("F  ingredientsSupplyFuelNeed="..ingredientsSupplyFuelNeed..", siteProductionFuelNeed="..siteProductionFuelNeed..", productsSupplyFuelNeed="..productsSupplyFuelNeed)
-        fuelNeed = fuelNeed + ingredientsSupplyFuelNeed + siteProductionFuelNeed + productsSupplyFuelNeed
+--        corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)
+        fuelNeed = fuelNeed + fuelNeed_IngredientsSupply + fuelNeed_SiteProduction + fuelNeed_ProductsSupply
     end
 
     -- end

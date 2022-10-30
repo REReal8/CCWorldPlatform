@@ -262,24 +262,24 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     -- fuelNeed from localInputItemsLocator to productionLocation
     local serviceResults = enterprise_isp.GetItemsLocations_SSrv({ itemsLocator = localInputItemsLocator })
     if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
-    local toProductionlocationFuelNeed = 0
+    local fuelNeed_ToProductionlocation = 0
     for i, location in ipairs(serviceResults.locations) do
-        toProductionlocationFuelNeed = toProductionlocationFuelNeed + role_fuel_worker.NeededFuelToFrom(productionLocation, location)
+        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionLocation, location)
     end
 
     -- fuelNeed for production
-    local productionFuelNeed = 0
-    if productionMethod == "craft" then productionFuelNeed = 0 -- craft
-    elseif productionMethod == "smelt" then productionFuelNeed = 4 + 4 -- smelt + pickup
+    local fuelNeed_Production = 0
+    if productionMethod == "craft" then fuelNeed_Production = 0 -- craft
+    elseif productionMethod == "smelt" then fuelNeed_Production = 4 + 4 -- smelt + pickup
     else corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
 
     -- fuelNeed from productionLocation to localOutputLocator
     serviceResults =  enterprise_isp.GetStorageLocation_SSrv({ storageLocator = localOutputLocator })
     if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..localOutputLocator:getURI()..".") return {success = false} end
-    local fromProductionLocationFuelNeed = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionLocation)
+    local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionLocation)
 
     -- end
-    local fuelNeed = toProductionlocationFuelNeed + productionFuelNeed + fromProductionLocationFuelNeed
+    local fuelNeed = fuelNeed_ToProductionlocation + fuelNeed_Production + fuelNeed_FromProductionLocation
     return {
         success         = true,
         fuelNeed        = fuelNeed,

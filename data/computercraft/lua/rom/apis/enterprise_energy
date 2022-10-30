@@ -67,12 +67,12 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
     -- is fueling necessary?
     local minFuelLevel = parameters.minFuelLevel
     if turtleFuelLevel < minFuelLevel then
-        -- determine targetFuelNeed
+        -- determine fuelNeed_Target
         local targetFuelLevel = parameters.targetFuelLevel
-        local targetFuelNeed = targetFuelLevel - turtleFuelLevel
+        local fuelNeed_Target = targetFuelLevel - turtleFuelLevel
 
         -- determine fuelItemsNeed
-        local fuelItemsNeed = FuelItemsForFuel(targetFuelNeed)
+        local fuelItemsNeed = FuelItemsForFuel(fuelNeed_Target)
 
         -- (re)fuel turtle
         local refuelServiceData = {
@@ -314,15 +314,15 @@ function FuelNeedTo_ProduceFuel(fuelToProduce)
     }
     local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(fuelSupplyServiceData)
     if not serviceResults.success then corelog.Error("enterprise_energy.FuelNeedTo_ProduceFuel: Failed obtaining needs for "..fuelItemsLocator:getURI()) return nil end
-    local fuelNeedTo_ProduceFuel = serviceResults.fuelNeed
+    local fuelNeed_ToProduceFuel = serviceResults.fuelNeed
 
     -- estimate of fuelNeed to move turtle from forest to factory
-    local fuelNeedTo_Travel = 0 -- 2*12 -- ToDo: improve (calculate distance between forest and factory)
+    local fuelNeed_ToTravel = 0 -- 2*12 -- ToDo: improve (calculate distance between forest and factory)
     -- ToDo: consider changing to travelling to fuel Storage
 
     -- end
-    local fuelNeed = fuelNeedTo_ProduceFuel + fuelNeedTo_Travel
---    corelog.WriteToLog("E  fuelNeed="..fuelNeed.." (produce="..fuelNeedTo_ProduceFuel..", travel="..fuelNeedTo_Travel..")")
+    local fuelNeed = fuelNeed_ToProduceFuel + fuelNeed_ToTravel
+--    corelog.WriteToLog("E  fuelNeed="..fuelNeed.." (produce="..fuelNeed_ToProduceFuel..", travel="..fuelNeed_ToTravel..")")
     return fuelNeed
 end
 

@@ -304,11 +304,11 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get fuelNeed to provide
-        local fuelNeedProvide = serviceResults.fuelNeed
+        local fuelNeed_Provide = serviceResults.fuelNeed
 
         -- add fuelNeed
---        corelog.WriteToLog("S  fuelNeedProvide="..fuelNeedProvide.." for "..itemCount.." "..itemName.."'s")
-        fuelNeed = fuelNeed + fuelNeedProvide
+--        corelog.WriteToLog("S  fuelNeed_Provide="..fuelNeed_Provide.." for "..itemCount.." "..itemName.."'s")
+        fuelNeed = fuelNeed + fuelNeed_Provide
 
         -- add ingredientsNeed
         local itemIngredientsNeed = serviceResults.ingredientsNeed

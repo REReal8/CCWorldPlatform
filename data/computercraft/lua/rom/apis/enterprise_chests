@@ -429,11 +429,11 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         serviceResults =  enterprise_isp.GetStorageLocation_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..type(storageLocator)..".") return {success = false} end
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fromChestToStorageFuelNeed = role_fuel_worker.NeededFuelToFrom(serviceResults.location, chestLocation)
+        local fuelNeed_FromChestToStorage = role_fuel_worker.NeededFuelToFrom(serviceResults.location, chestLocation)
 
         -- add fuelNeed
---        corelog.WriteToLog("C  fromChestToStorageFuelNeed="..fromChestToStorageFuelNeed)
-        fuelNeed = fuelNeed + fromChestToStorageFuelNeed
+--        corelog.WriteToLog("C  fuelNeed_FromChestToStorage="..fuelNeed_FromChestToStorage)
+        fuelNeed = fuelNeed + fuelNeed_FromChestToStorage
     end
 
     -- end

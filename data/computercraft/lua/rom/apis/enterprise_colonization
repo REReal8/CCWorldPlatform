@@ -713,7 +713,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         -- fuelNeed per round
         local fuelPerRound = role_settler.FuelNeededPerRound(nTrees)
         local nRounds = math.ceil(itemCount / itemPerRound)
-        local roundsFuelNeed = nRounds * fuelPerRound
+        local fuelNeed_Rounds = nRounds * fuelPerRound
 
         -- fuelNeed transfer
         local localSupplierItemsLocator = localSupplierLocator:copy()
@@ -725,11 +725,11 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         }
         serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
         if not serviceResults.success then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-        local transferFuelNeed = serviceResults.fuelNeed
+        local fuelNeed_Transfer = serviceResults.fuelNeed
 
         -- add fuelNeed
---        corelog.WriteToLog("C  roundsFuelNeed="..roundsFuelNeed.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), transferFuelNeed="..transferFuelNeed)
-        fuelNeed = fuelNeed + roundsFuelNeed + transferFuelNeed
+--        corelog.WriteToLog("C  fuelNeed_Rounds="..fuelNeed_Rounds.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), fuelNeed_Transfer="..fuelNeed_Transfer)
+        fuelNeed = fuelNeed + fuelNeed_Rounds + fuelNeed_Transfer
     end
 
     -- end
