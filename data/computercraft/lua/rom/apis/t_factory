@@ -30,6 +30,23 @@ function T_ProvideItemsTo_Smelt()
     }, callbackFunction, callbackData)
 end
 
+function T_FuelNeed_Production_Att()
+    --
+    local items = { ["minecraft:birch_planks"] = 4 }
+
+    -- prepare test
+    local location = coremove.GetLocation()
+    StartNewV0Site(location)
+
+    -- check
+    local fuelNeed_Expected = 0
+    local fuelNeed = enterprise_factory.FuelNeed_Production_Att(items)
+    assert(fuelNeed == fuelNeed_Expected, "enterprise_factory.FuelNeed_Production_Att does not return(="..fuelNeed..") expected(="..fuelNeed_Expected..") fuelNeed for "..textutils.serialize(items))
+
+    -- cleanup test
+    DismantleV0Site(location)
+end
+
 function T_BuildAndStartNewV1Site()
     enterprise_factory.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV1,
@@ -66,16 +83,24 @@ function T_BuildNewV0Site()
 end
 
 function T_StartNewV0Site()
+    StartNewV0Site(baseLocationV0)
+end
+
+function StartNewV0Site(baseLocation)
     enterprise_factory.StartNewSite_SSrv({
-        baseLocation        = baseLocationV0,
+        baseLocation        = baseLocation,
         siteVersion         = "v0",
         siteAlreadyBuild    = true
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
 function T_DismantleV0Site()
+    DismantleV0Site(baseLocationV0)
+end
+
+function DismantleV0Site(baseLocation)
     enterprise_factory.DismantleSite_ASrv({
-        baseLocation            = baseLocationV0,
+        baseLocation            = baseLocation,
         siteVersion             = "v0",
         siteStopped             = true,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator

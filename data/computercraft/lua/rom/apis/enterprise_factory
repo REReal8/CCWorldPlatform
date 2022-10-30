@@ -263,6 +263,34 @@ function Can_ProvideItems_QSrv(serviceData)
     }
 end
 
+function FuelNeed_Production_Att(items)
+    --[[
+        Factory attribute for the current fuelNeed for producing items. (i.e. it returns the fuelNeed for producing the items
+        assuming the ingredients are available in a turtle and the results are to be delivered to the turtle)
+
+        Parameters:
+            items   - (table) items to produce
+    --]]
+
+    -- create locators
+    local itemsLocator = enterprise_factory.GetHostLocator_SSrv({ }).hostLocator
+    itemsLocator:setQuery(items)
+    local turtleLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+
+    -- determine fuelNeed
+    local serviceData = {
+        itemsLocator                = itemsLocator,
+        storageLocator              = turtleLocator:copy(),
+        ingredientsSupplierLocator  = turtleLocator:copy(),
+    }
+    local serviceResults = NeedsTo_ProvideItemsTo_SSrv(serviceData)
+    if not serviceResults.success then corelog.Error("enterprise_factory.FuelNeed_Production_Att: failed obtaining fuel need for production.") return 999999 end
+    local fuelNeed = serviceResults.fuelNeed
+
+    -- end
+    return fuelNeed
+end
+
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.

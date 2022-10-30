@@ -652,6 +652,40 @@ function Can_ProvideItems_QSrv(serviceData)
     }
 end
 
+function FuelNeed_Harvest_Att()
+    --[[
+        Forest attribute with the current fuelNeed to do one harvesting round.
+    --]]
+
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local nTrees = forest.nTrees
+
+    -- determine fuelNeed
+    local fuelNeed = role_settler.FuelNeededPerRound(nTrees)
+
+    -- end
+    return fuelNeed
+end
+
+function FuelNeedExtraTree_Att()
+    --[[
+        Forest attribute with the fuelNeed for harvesting one extra tree.
+        (i.e. it return the difference between the current FuelNeed_Harvest_Att and the FuelNeed_Harvest_Att if there would be 1 extra tree)
+    --]]
+
+    -- get forest
+    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local nTrees = forest.nTrees
+
+    -- determine fuelNeed
+    local fuelNeed_Current = role_settler.FuelNeededPerRound(nTrees)
+    local fuelNeed_OneTreeExtra = role_settler.FuelNeededPerRound(nTrees + 1)
+
+    -- end
+    return fuelNeed_OneTreeExtra - fuelNeed_Current
+end
+
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.
