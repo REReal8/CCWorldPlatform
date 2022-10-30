@@ -130,7 +130,7 @@ function GetAvailableSiteData(recipe, productItemCount)
 
     -- check input
     if type(recipe) ~= "table" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid recipe") return nil end
-    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory.GetAvailableSiteData: Invalid productItemCount") return nil end
+    if type(productItemCount) ~= "number" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid productItemCount") return nil end
 
     -- sites ophalen
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
