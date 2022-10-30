@@ -179,6 +179,24 @@ function FuelNeed_Refuel_Att()
     return fuelNeed
 end
 
+function RefuelAmount_Att()
+    --[[
+        enterprise_energy attribute with the current refuel amount.
+    --]]
+
+    -- get parameters
+    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    local enterpriseLevel = parameters.enterpriseLevel
+    if enterpriseLevel == 0 then
+        return 60 -- 1 log = 4 planks = 60 fuel
+    elseif enterpriseLevel == 1 then
+        return 300 -- 1 tree = min 5 logs = 20 planks = 300 fuel
+    else
+        corelog.Warning("enterprise_energy.RefuelAmount_Att: not (yet) implemented for enterpriseLevel="..enterpriseLevel)
+        return 999999
+    end
+end
+
 function Refuel_ASrv(serviceData, callback, callbackData)
     --[[
         This public async service (re)fuels a turtle from fuelItems.

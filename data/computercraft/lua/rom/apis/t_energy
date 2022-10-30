@@ -19,3 +19,14 @@ function T_FuelNeed_Refuel_Att()
     enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = originalNTrees })
     t_factory.StopV0Site(location)
 end
+
+function T_RefuelAmount_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test RefuelAmount_Att")
+
+    -- test
+    local refuelAmount = enterprise_energy.RefuelAmount_Att()
+    corelog.WriteToLog("   "..refuelAmount.." refuelAmount")
+
+    -- cleanup test
+end
