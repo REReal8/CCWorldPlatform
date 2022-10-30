@@ -31,10 +31,9 @@ function T_ProvideItemsTo_Smelt()
 end
 
 function T_FuelNeed_Production_Att()
-    --
-    local items = { ["minecraft:birch_planks"] = 4 }
-
     -- prepare test
+    corelog.WriteToLog("# Test FuelNeed_Production_Att")
+    local items = { ["minecraft:birch_planks"] = 4 }
     local location = coremove.GetLocation()
     StartNewV0Site(location)
 
