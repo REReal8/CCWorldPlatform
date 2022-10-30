@@ -94,7 +94,7 @@ function SaveData(data, ...)
     })
 
     -- save the node in the data
-    return SaveDataToDB(data, unpack(arg))
+    return SaveDataToDB(data, table.unpack(arg))
 end
 
 --    _                 _    __                  _   _
@@ -109,7 +109,6 @@ end
 -- actually saves the data to the db
 function SaveDataToDB(data, ...)
     local ldb = db
-    local i, node
     local listOfNodes = {}
 
     -- make a list of the nodes so we know which is the last one
@@ -230,5 +229,5 @@ function DoEventSaveData(subject, envelope)
     end
 
 	-- just save the data like a normal request from this computer
-	SaveDataToDB(envelope.message.data, unpack(envelope.message.arg))
+	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
 end
