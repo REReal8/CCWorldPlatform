@@ -382,6 +382,26 @@ function CopyLocation(location)
 	}
 end
 
+function MinLocation(a, b)
+	return {
+		x	= math.min(a.x, b.x),
+		y 	= math.min(a.y, b.y),
+		z 	= math.min(a.z, b.z),
+		dx  = math.min(a.dx, b.dx),
+		dy  = math.min(a.dy, b.dy),
+	}
+end
+
+function MaxLocation(a, b)
+	return {
+		x	= math.max(a.x, b.x),
+		y 	= math.max(a.y, b.y),
+		z 	= math.max(a.z, b.z),
+		dx  = math.max(a.dx, b.dx),
+		dy  = math.max(a.dy, b.dy),
+	}
+end
+
 function IsSameLocation(a, b)	return a.x  == b.x  and a.y  == b.y  and a.z == b.z	end
 function IsSameDirection(a, b)	return a.dx == b.dx and a.dy == b.dy			    end
 
