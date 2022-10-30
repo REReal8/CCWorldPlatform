@@ -1,7 +1,5 @@
 local db = {
     rejectAllAssignments    = false,
-    fuelTurtlePriorityKey   = nil,
-    fuelTurtleCallsSkippedBecausePriorityKey = 0,
 }
 
 --[[
@@ -56,42 +54,10 @@ function Run()
 
     -- infinite loop
     while core.IsSystemRunning() and not db.rejectAllAssignments do
-        -- turtle currently does not have an assignment (it is unemployed)
-        local nextAssignment = nil
-
-        -- (re)fuel turtle if needed
-        FuelTurtleIfNeeded()
-
-        -- ToDo: consider if an assignment board should determine what is best...
-        -- look for best next assignment
-        local assignmentFilter = {
-            priorityKeyNeeded   = db.fuelTurtlePriorityKey,
-        }
-        local turtleResume = nil
-        if turtle then
-            turtleResume = {
-                turtleId        = computerId,
-                location        = coremove.GetLocation(),
-                fuelLevel       = turtle.getFuelLevel(),
-                axePresent      = coreinventory.Equip("minecraft:diamond_pickaxe"), -- ToDo: consider only checking not actually equiping
-                inventoryItems  = coreinventory.GetInventoryDetail().items,
-            }
-        end
-        local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = turtleResume })
-        if not serviceResults.success then corelog.Error("enterprise_chests.Run: FindBestAssignment_SSrv failed.") end
-        local assignmentIdApplication = serviceResults.assignmentId
-
-        -- did we find one?
-        if assignmentIdApplication then
-            -- apply
-            enterprise_assignmentboard.ApplyToAssignment(assignmentIdApplication)
-
-            -- wait, maybe more turtles have applied
-            os.sleep(1.25)
-
-            -- check who gets the assignment
-            nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(assignmentIdApplication)
-        end
+        -- get assignment for turtle
+        local serviceResults =  enterprise_turtle.GetAssignmentForTurtle_SSrv({ turtleId = computerId })
+        if not serviceResults.success then corelog.Error("coreassignment.Run: failure in getting new assignment") end
+        local nextAssignment = serviceResults.assignment
 
         -- did we get the assignment?
         if nextAssignment then
@@ -110,8 +76,6 @@ end
 function Reset()
     -- reset (local) db
     db.rejectAllAssignments                     = false
-    db.fuelTurtlePriorityKey                    = nil
-    db.fuelTurtleCallsSkippedBecausePriorityKey = 0
 end
 
 --    _                 _    __                  _   _
@@ -138,64 +102,4 @@ function DoAssignment(assignment)
 
     -- we have done all for this assignment that we needed to do
     enterprise_assignmentboard.EndAssignment(assignmentId)
-end
-
-function FuelTurtleIfNeeded()
-    -- check if turtle is already focusing on fueling itself
-    local turtleId = os.getComputerID()
-    if db.fuelTurtlePriorityKey == nil then
-        -- ensure this turtle now only starts taking new assignments with the priority key
-        local priorityKey = coreutils.NewId()
-        db.fuelTurtlePriorityKey = priorityKey
-
-        -- prepare service call
-        -- ToDo: it seems not right to call an enterprise from core code. Consider doing this differently (maybe make part of coreassignment into an enterprise?)
-        local fuelLevel = turtle.getFuelLevel()
-        local ingredientsSupplierLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: get from elsewhere
-        local serviceData = {
-            assignmentsPriorityKey      = priorityKey,
-
-            turtleId                    = turtleId,
-            turtleFuelLevel             = fuelLevel,
-            ingredientsSupplierLocator  = ingredientsSupplierLocator,
-        }
-        local callback = "coreassignment.Fuel_Callback"
-        local callbackData = {
-            turtleId = turtleId,
-        }
-
-        -- call service
-        enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
-    else
-        -- remember skipping to ensure we can do another round once above FuelTurtleToLevelIfNeeded_ASrv is finished to ensure turtle is updated to latest levels
-        db.fuelTurtleCallsSkippedBecausePriorityKey = db.fuelTurtleCallsSkippedBecausePriorityKey + 1
-        corelog.WriteToAssignmentLog("Already (n="..db.fuelTurtleCallsSkippedBecausePriorityKey..") focusing on refueling with fuelTurtlePriorityKey="..db.fuelTurtlePriorityKey)
---        corelog.WriteToLog("* Already (n="..db.fuelTurtleCallsSkippedBecausePriorityKey..") focusing on refueling with fuelTurtlePriorityKey="..db.fuelTurtlePriorityKey.." *")
-    end
-end
-
-function Fuel_Callback(callbackData, serviceResults)
-    -- check input
-    if type(callbackData) ~= "table" then corelog.Error("coreassignment.Fuel_Callback: Invalid callbackData") return {success = false} end
-    local turtleId = callbackData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("coreassignment.Fuel_Callback: Invalid turtleId") return {success = false} end
-
-    -- check correct turtle
-    local currentTurtleId = os.getComputerID()
-    if currentTurtleId ~= turtleId then corelog.Error("coreassignment.Fuel_Callback: Current turtle(id="..currentTurtleId..") not equal to callback turtle(id="..turtleId..")") return {success = false} end
-
-    -- release priority key condition
-    db.fuelTurtlePriorityKey = nil
-
-    -- check for skipping calls
-    if db.fuelTurtleCallsSkippedBecausePriorityKey > 0 then
-        -- do another round to be sure turtle has current fuelLevel
-        corelog.WriteToAssignmentLog("FuelTurtleIfNeeded after skipping "..db.fuelTurtleCallsSkippedBecausePriorityKey.." times because it was already being refueled.")
---        corelog.WriteToLog("* FuelTurtleIfNeeded after skipping "..db.fuelTurtleCallsSkippedBecausePriorityKey.." times because it was already being refueled. *")
-        db.fuelTurtleCallsSkippedBecausePriorityKey = 0
-        FuelTurtleIfNeeded()
-    end
-
-    -- end
-    return {success = true}
 end
