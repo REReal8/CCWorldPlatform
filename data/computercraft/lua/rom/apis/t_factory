@@ -39,12 +39,11 @@ function T_FuelNeed_Production_Att()
     StartNewV0Site(location)
 
     -- check
-    local fuelNeed_Expected = 0
     local fuelNeed = enterprise_factory.FuelNeed_Production_Att(items)
-    assert(fuelNeed == fuelNeed_Expected, "enterprise_factory.FuelNeed_Production_Att does not return(="..fuelNeed..") expected(="..fuelNeed_Expected..") fuelNeed for "..textutils.serialize(items))
+    corelog.WriteToLog("   "..fuelNeed.." fuelNeed for "..textutils.serialize(items))
 
     -- cleanup test
-    DismantleV0Site(location)
+    StopV0Site(location)
 end
 
 function T_BuildAndStartNewV1Site()
@@ -108,8 +107,12 @@ function DismantleV0Site(baseLocation)
 end
 
 function T_StopV0Site()
+    StopV0Site(baseLocationV0)
+end
+
+function StopV0Site(baseLocation)
     enterprise_factory.StopSite_ASrv({
-        baseLocation    = baseLocationV0
+        baseLocation    = baseLocation
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
