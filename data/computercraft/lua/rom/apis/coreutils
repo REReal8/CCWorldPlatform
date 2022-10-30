@@ -271,6 +271,39 @@ function CheckInput(description, ...)
     return true, table.unpack(returns)
 end
 
+-- function GetItemsIntoTurtle_ASrv(...)
+--     -- check input
+--     local success, sourceItemsLocator, assignmentsPriorityKey, callback, callbackData = CheckInput([[
+--         This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
+
+--         Return value:
+--             nil
+
+--         Async service return value (to callback):
+--                                         - (table)
+--                 success                 - (boolean) whether the service executed successfully
+--                 turtleItemsLocator      - (URL) locating a specific turtle and the items it has gotton in it's inventory
+
+--         Parameters:
+--             transferData                - (table) data about the transfer
+--                 sourceItemsLocator      + (URL) locating the items that need transfer
+--                                             (the "query" component of the URL specifies the items to be transferred)
+--                                             (the "host" component of the URL should specify this host (i.e. a chest) where the items are located)
+--                 assignmentsPriorityKey  + (string) priorityKey that should be set for all assignments triggered by this service
+--             callback                    + (string) name of function to call once service is ready
+--             callbackData                + (table, {}) data to supply to callback function
+--     ]], table.unpack(arg))
+--     if not success then coreutils.Error("oops") return end
+
+--     print("success = ", success)
+--     print("sourceItemsLocator = ",     sourceItemsLocator)
+--     print("assignmentsPriorityKey = ", assignmentsPriorityKey)
+--     print("callback = ",               callback)
+--     print("callbackData = ",           callbackData)
+-- end
+
+
+
 -- ToDo: consider adding method to check for nested tables (to be able to catch the annoying errors)
 
 --                         _
