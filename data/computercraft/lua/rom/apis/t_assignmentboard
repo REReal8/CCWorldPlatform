@@ -254,3 +254,17 @@ function T_BestCandidate()
     end
     candidateData2.metaData.needTurtleId = nil
 end
+
+function T_GetStatistics_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test GetStatistics_Att")
+
+    -- test
+    local statistics = enterprise_assignmentboard.GetStatistics_Att()
+    local maxFuelNeed_Assignment = statistics.maxFuelNeed_Assignment
+    local maxFuelNeed_Travel = statistics.maxFuelNeed_Travel
+    corelog.WriteToLog("   "..maxFuelNeed_Assignment.." maxFuelNeed_Assignment")
+    corelog.WriteToLog("   "..maxFuelNeed_Travel.." maxFuelNeed_Travel")
+
+    -- cleanup test
+end
