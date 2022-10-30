@@ -56,7 +56,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     end
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
 
     -- construct arguments
     local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
@@ -220,6 +220,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
+function GetForest()
+    return coredht.GetData(db.dhtRoot, db.dhtForest)
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -274,7 +278,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
     }
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
 
     -- add project step for all trees to add
     local iStep = 0
@@ -417,7 +421,7 @@ function UpdateForestInfo_SSrv(serviceData)
     if type(forestNTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForestInfo_SSrv: Invalid forestNTrees") return {success = false} end
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
 
     -- set forest information
     forest.nTrees = forestNTrees
@@ -509,7 +513,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
     callbackData = callbackData or {}
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsColonizationURL_QSrv({ aURL = itemsLocator})
@@ -658,7 +662,7 @@ function FuelNeed_Harvest_Att()
     --]]
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
     local nTrees = forest.nTrees
 
     -- determine fuelNeed
@@ -675,7 +679,7 @@ function FuelNeedExtraTree_Att()
     --]]
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
     local nTrees = forest.nTrees
 
     -- determine fuelNeed
@@ -718,7 +722,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     if not serviceResults.success then corelog.Error("enterprise_colonization.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- get forest
-    local forest = coredht.GetData(db.dhtRoot, db.dhtForest)
+    local forest = GetForest()
     local nTrees = forest.nTrees
 
     -- loop on items

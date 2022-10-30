@@ -19,7 +19,7 @@ end
 function T_FuelNeed_Harvest_Att()
     -- prepare test
     corelog.WriteToLog("# Test FuelNeed_Harvest_Att")
-    local forest = coredht.GetData(dhtRoot, dhtForest)
+    local forest = enterprise_colonization.GetForest()
     local originalNTrees = forest.nTrees
     enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = 1 })
 
@@ -34,7 +34,7 @@ end
 function T_FuelNeedExtraTree_Att()
     -- prepare test
     corelog.WriteToLog("# Test FuelNeedExtraTree_Att")
-    local forest = coredht.GetData(dhtRoot, dhtForest)
+    local forest = enterprise_colonization.GetForest()
     local originalNTrees = forest.nTrees
     enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = 1 })
 
