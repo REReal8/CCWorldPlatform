@@ -203,7 +203,7 @@ function GetAvailableSiteData(recipe, productItemCount)
         break
         -- ToDo: consider finding best site based on some selection criterium
     end
-    if selectedProduceItemData == nil then corelog.Warning("enterprise_factory.GetAvailableSiteData: no site available") return nil end
+    if selectedProduceItemData == nil then corelog.Warning("enterprise_factory_site.GetAvailableSiteData: no site available") return nil end
 
     -- mark productionSpot as unavailable
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
