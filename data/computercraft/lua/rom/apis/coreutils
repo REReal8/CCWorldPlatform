@@ -180,6 +180,97 @@ function DeepCopy(orig)
     return copy
 end
 
+function CheckInput(description, ...)
+    -- controle of description wel een string is
+    if type(description) ~= "string" then print("coreutils.CheckInput: description is not a string") return false end
+
+    -- dit hebben we nodig om de tekst te lezen
+    local parameterStart    = nil
+    local indentSize        = 0
+    local lastIndent        = 0
+    local lastArgument      = 0
+    local indenting         = {}
+    local returns           = {}
+
+    -- regel voor regels langs lopen
+    for stringPart in description:gmatch("[^\r\n]+") do
+
+        -- hebben we al het woord 'parameter' gevonden?
+        if parameterStart then
+
+            -- zoeken of de parameter regel matched
+            local start, parameter, needed, typeType = string.match(stringPart, "(%s+)(%w+)%s*([%+%-])%s*%(([^%)]+)%)")
+
+            -- might be a dummy line
+            if start then
+
+                -- default opgegeven?
+                local defaultPresent = false
+                local theType, theDefault = string.match(typeType, "^%s*([^,]+)%s*,%s*([^,]+)%s*$")
+                if theType and theDefault then
+
+                    -- default verwerken
+                    typeType        = theType
+                    defaultPresent  = true
+
+                    -- default instellen
+                    local theDefaultFunction = load("return " .. theDefault)
+                    if theDefaultFunction then theDefault = theDefaultFunction() end
+                end
+
+                -- indent al bekend?
+                if indentSize == 0 then indentSize = string.len(start) - parameterStart end
+
+                -- huidige indenting berekenen
+                local indent = math.floor((string.len(start) - parameterStart) / indentSize)
+
+                -- controle
+                if indent < 1 or indent > lastIndent + 1 then print("coreutils.CheckInput: indent error (indent = ", indent, ", lastIndent = ", lastIndent) return false end
+
+                -- argument opzoeken
+                local argument
+                if indent == 1 then
+
+                    -- komt blijkbaar uit de lijst met argumenten
+                    lastArgument = lastArgument + 1
+                    argument = arg[ lastArgument ]
+                else
+
+                    -- komt blijkbaar uit een van de andere argumenten
+                    if type(indenting[ indent - 1 ]) == "table" then argument = indenting[ indent - 1 ][ parameter ]
+                                                                else print("coreutils.CheckInput: indent parent not a table") return false
+                    end
+                end
+
+                -- wellicht default toepassen
+                if argument == nil and defaultPresent and theDefault ~= nil then argument = theDefault end
+
+                -- voldoet het argument aan het opgegeven type?
+                if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then print("coreutils.CheckInput: argument '", parameter , "' not a ", typeType) return false end
+
+                -- URL omvormen
+                if typeType == "URL" then argument = url.URLClass:new(argument) end
+
+                -- is deze gewenst om terug te geven?
+                if needed == '+' then table.insert(returns, argument) end
+
+                -- laatste van deze indent onthouden
+                indenting[ indent ] = argument
+                lastIndent          = indent
+            end
+
+        -- hmm, het woord 'parameter' nog niet eens gevonden
+        else
+            -- zoeken naar waar de parameters beginnen
+            local start = string.find(stringPart, "[Pp]arameters")
+            if start then parameterStart = start - 1 end
+        end
+    end
+
+    -- done
+    return true, table.unpack(returns)
+end
+
 -- ToDo: consider adding method to check for nested tables (to be able to catch the annoying errors)
 
 --                         _
