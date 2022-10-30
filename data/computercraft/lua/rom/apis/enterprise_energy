@@ -144,6 +144,41 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
     return {success = true}
 end
 
+function FuelNeed_Refuel_Att()
+    --[[
+        enterprise_energy attribute with the current fuelNeed for refueling.
+    --]]
+
+    -- get parameters
+    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+
+    -- determine fuelNeed by forest
+    local forest = enterprise_colonization.GetForest()
+    local forestLocation = forest.location
+--    corelog.WriteToLog("    forestLocation="..textutils.serialise(forestLocation))
+    local fuelNeed_Harvest = enterprise_colonization.FuelNeed_Harvest_Att()
+    local fuelNeed_ExtraTree = enterprise_colonization.FuelNeedExtraTree_Att()
+
+    -- determine fuelNeed by factory
+    local items = FuelItemsForFuel(1)
+    local factoryLocation = enterprise_factory.SiteLocation_Att(items)
+--    corelog.WriteToLog("    factoryLocation="..textutils.serialise(factoryLocation))
+    local fuelNeed_Production = enterprise_factory.FuelNeed_Production_Att(items)
+
+    -- determine fuelNeed for traveling
+    local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
+--    corelog.WriteToLog("    fuelNeed_ForestFactoryTravel="..fuelNeed_ForestFactoryTravel)
+
+    -- determine fuelNeed
+    local fuelNeed = fuelNeed_Harvest + fuelNeed_Production + fuelNeed_ForestFactoryTravel
+    if parameters.enterpriseLevel > 0 then
+        fuelNeed = fuelNeed + fuelNeed_ExtraTree
+    end
+
+    -- end
+    return fuelNeed
+end
+
 function Refuel_ASrv(serviceData, callback, callbackData)
     --[[
         This public async service (re)fuels a turtle from fuelItems.
@@ -243,6 +278,8 @@ end
 function ResetParameters()
 --    corelog.WriteToLog("enterprise_energy: resetting parameters")
     coredht.SaveData({
+        enterpriseLevel             = 0,
+
         highestFuelNeed_Assignment  = 0,
         highestFuelNeed_ProduceFuel = 4,
 
@@ -272,6 +309,7 @@ function UpdateFuelLevels()
 
     -- update targetMultiplier
     parameters.targetMultiplier    = 2 -- note: this statment should be after first wood chop => hence we can increase this value now (for ever)
+    parameters.enterpriseLevel     = 1
 
     -- save parameters
     coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)

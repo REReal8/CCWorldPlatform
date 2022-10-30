@@ -291,6 +291,27 @@ function FuelNeed_Production_Att(items)
     return fuelNeed
 end
 
+function SiteLocation_Att(items)
+    --[[
+        Factory attribute for the location of the current available site for producing items.
+
+        Parameters:
+            items   - (table) items to produce
+    --]]
+
+    -- check for recipe to provide items
+    local itemName, itemCount = next(items, nil)
+    local recipe = db.recipes[ itemName ]
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: Provider does not provide "..itemName.."'s") return {x=9999, y=9999, z= 99, dx=0, dy=1} end
+
+    -- select a suitable site
+    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {x=9999, y=9999, z= 99, dx=0, dy=1} end
+    local location = siteProduceItemData.productionSpot.location
+
+    return location
+end
+
 function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     --[[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.
