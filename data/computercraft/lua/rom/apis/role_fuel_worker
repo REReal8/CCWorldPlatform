@@ -72,7 +72,7 @@ function NeededFuelToFrom(endLocation, startLocation)
     if type(endLocation) ~= "table" then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return nil end
     if type(startLocation) ~= "table" then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return nil end
 
-    return math.abs(endLocation.x - startLocation.x) + math.abs(endLocation.y - startLocation.y) + math.abs(endLocation.z - startLocation.z)
+    return coremove.BlockDistance(startLocation, endLocation)
 end
 
 --    _                 _    __                  _   _
