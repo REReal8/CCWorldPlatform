@@ -34,3 +34,24 @@ function T_Can_ProvideItems()
     local result = enterprise_isp.Can_ProvideItems_QSrv(queryData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
+
+function T_GetFuelLevels_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test GetFuelLevels_Att")
+    local forest = enterprise_colonization.GetForest()
+    local originalNTrees = forest.nTrees
+    enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = 1 })
+    local location = coremove.GetLocation()
+    t_factory.StartNewV0Site(location)
+
+    -- test
+    local fuelLevels = enterprise_turtle.GetFuelLevels_Att()
+    local fuelLevel_Priority = fuelLevels.fuelLevel_Priority
+    local fuelLevel_Assignment = fuelLevels.fuelLevel_Assignment
+    corelog.WriteToLog("   "..fuelLevel_Priority.." fuelLevel_Priority")
+    corelog.WriteToLog("   "..fuelLevel_Assignment.." fuelLevel_Assignment")
+
+    -- cleanup test
+    enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = originalNTrees })
+    t_factory.StopV0Site(location)
+end

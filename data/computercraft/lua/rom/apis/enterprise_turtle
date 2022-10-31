@@ -649,6 +649,25 @@ function FuelTurtleIfNeeded()
     end
 end
 
+function GetFuelLevels_Att()
+    -- determine fuelLevel_Priority
+    local fuelNeed_Refuel = enterprise_energy.FuelNeed_Refuel_Att()
+    local assignmentStatistics = enterprise_assignmentboard.GetStatistics_Att()
+    local maxFuelNeed_Travel = assignmentStatistics.maxFuelNeed_Travel
+    local fuelLevel_Priority = fuelNeed_Refuel + maxFuelNeed_Travel
+
+    -- determine fuelLevel_Assignment
+    local maxFuelNeed_Assignment = assignmentStatistics.maxFuelNeed_Assignment
+    local fuelLevel_Assignment = fuelLevel_Priority + maxFuelNeed_Assignment
+
+    -- end
+    local fuelLevels = {
+        fuelLevel_Priority      = fuelLevel_Priority,
+        fuelLevel_Assignment    = fuelLevel_Assignment,
+    }
+    return fuelLevels
+end
+
 function Fuel_Callback(callbackData, serviceResults)
     -- check input
     if type(callbackData) ~= "table" then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid callbackData") return {success = false} end
