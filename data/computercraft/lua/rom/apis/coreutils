@@ -198,6 +198,7 @@ function CheckInput(description, ...)
     local returns           = {}
 
     -- regel voor regels langs lopen
+    local result = true
     for stringPart in description:gmatch("[^\r\n]+") do
 
         -- hebben we al het woord 'parameter' gevonden?
@@ -251,7 +252,7 @@ function CheckInput(description, ...)
                 if argument == nil and defaultPresent and theDefault ~= nil then argument = theDefault end
 
                 -- voldoet het argument aan het opgegeven type?
-                if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) return false end
+                if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
 
                 -- URL omvormen
                 if typeType == "URL" then argument = url.URLClass:new(argument) end
@@ -273,7 +274,7 @@ function CheckInput(description, ...)
     end
 
     -- done
-    return true, table.unpack(returns)
+    return result, table.unpack(returns)
 end
 
 -- function GetItemsIntoTurtle_ASrv(...)
