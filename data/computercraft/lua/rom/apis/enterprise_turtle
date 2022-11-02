@@ -45,13 +45,10 @@ function GetAssignmentForTurtle_SSrv(serviceData)
     local turtleId = serviceData.turtleId
     if type(turtleId) ~= "number" then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: Invalid turtleId") return {success = false} end
 
-    -- turtle currently does not have an assignment (it is unemployed)
-    local nextAssignment = nil
-
     -- (re)fuel turtle if needed
     FuelTurtleIfNeeded()
+    local fuelLevel = turtle.getFuelLevel()
 
-    -- ToDo: consider if an assignment board should determine what is best...
     -- look for best next assignment
     local assignmentFilter = {
         priorityKeyNeeded   = db.fuelTurtlePriorityKey,
@@ -61,16 +58,18 @@ function GetAssignmentForTurtle_SSrv(serviceData)
         turtleResume = {
             turtleId        = turtleId,
             location        = coremove.GetLocation(),
-            fuelLevel       = turtle.getFuelLevel(),
+            fuelLevel       = fuelLevel,
             axePresent      = coreinventory.Equip("minecraft:diamond_pickaxe"), -- ToDo: consider only checking not actually equiping
             inventoryItems  = coreinventory.GetInventoryDetail().items,
         }
     end
     local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = turtleResume })
+    -- ToDo: consider if an assignment board should determine what is best...
     if not serviceResults.success then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: FindBestAssignment_SSrv failed.") end
     local assignmentIdApplication = serviceResults.assignmentId
 
     -- did we find one?
+    local nextAssignment = nil
     if assignmentIdApplication then
         -- apply
         enterprise_assignmentboard.ApplyToAssignment(assignmentIdApplication)
