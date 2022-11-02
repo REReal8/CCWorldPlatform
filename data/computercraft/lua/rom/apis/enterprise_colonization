@@ -137,7 +137,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
-            { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
                 { keyDef = "forestNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
@@ -308,7 +308,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
         iStepStr = tostring(iStep)
         local newNTreesStr = "newNTreeStep"..iStepStr
         table.insert(projectSteps,
-            { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
                 { keyDef = "forestNTrees"           , valueSource = 0, keyDefSource = newNTreesStr },
             }}
         )
@@ -401,7 +401,7 @@ function CollectAndBuildForestTree_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function UpdateForestInfo_SSrv(serviceData)
+function UpdateForest_SSrv(serviceData)
     --[[
         This private sync service updates the forest information.
 
@@ -415,9 +415,9 @@ function UpdateForestInfo_SSrv(serviceData)
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.UpdateForestInfo_SSrv: Invalid serviceData") return {success = false} end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid serviceData") return {success = false} end
     local forestNTrees = serviceData.forestNTrees
-    if type(forestNTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForestInfo_SSrv: Invalid forestNTrees") return {success = false} end
+    if type(forestNTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid forestNTrees") return {success = false} end
 
     -- get forest
     local forest = GetForest()
