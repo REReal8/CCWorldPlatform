@@ -263,6 +263,23 @@ function Can_ProvideItems_QSrv(serviceData)
     }
 end
 
+function NumberOfSites_Att()
+    --[[
+        Factory attribute: number of factory sites administered by the enterprise.
+    --]]
+
+    -- get sites
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- loop on sites
+    local count = 0
+    for k, site in pairs(sites) do
+        count = count + 1
+    end
+
+    return count
+end
+
 function FuelNeed_Production_Att(items)
     --[[
         Factory attribute for the current fuelNeed for producing items. (i.e. it returns the fuelNeed for producing the items
@@ -271,6 +288,12 @@ function FuelNeed_Production_Att(items)
         Parameters:
             items   - (table) items to produce
     --]]
+
+    -- check input
+    if type(items) ~= "table" then corelog.Error("enterprise_factory.FuelNeed_Production_Att: Invalid items") return 9999 end
+
+    -- check there are sites
+    if NumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.FuelNeed_Production_Att: Not sites administered by Factory") return 0 end
 
     -- create locators
     local itemsLocator = enterprise_factory.GetHostLocator_SSrv({ }).hostLocator
@@ -284,7 +307,7 @@ function FuelNeed_Production_Att(items)
         ingredientsSupplierLocator  = turtleLocator:copy(),
     }
     local serviceResults = NeedsTo_ProvideItemsTo_SSrv(serviceData)
-    if not serviceResults.success then corelog.Error("enterprise_factory.FuelNeed_Production_Att: failed obtaining fuel need for production.") return 999999 end
+    if not serviceResults.success then corelog.Error("enterprise_factory.FuelNeed_Production_Att: failed obtaining fuel need for production.") return 9999 end
     local fuelNeed = serviceResults.fuelNeed
 
     -- end
@@ -299,14 +322,20 @@ function SiteLocation_Att(items)
             items   - (table) items to produce
     --]]
 
+    -- check input
+    if type(items) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: Invalid items") return {x=9999, y=9999, z= 9999, dx=0, dy=1}  end
+
+    -- check there are sites
+    if NumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.SiteLocation_Att: Not sites administered by Factory") return {x=0, y=0, z= 0, dx=0, dy=1}  end
+
     -- check for recipe to provide items
     local itemName, itemCount = next(items, nil)
     local recipe = db.recipes[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: Provider does not provide "..itemName.."'s") return {x=9999, y=9999, z= 99, dx=0, dy=1} end
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: Provider does not provide "..itemName.."'s") return {x=9999, y=9999, z= 9999, dx=0, dy=1} end
 
     -- select a suitable site
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {x=9999, y=9999, z= 99, dx=0, dy=1} end
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {x=9999, y=9999, z= 9999, dx=0, dy=1} end
     local location = siteProduceItemData.productionSpot.location
 
     return location

@@ -152,27 +152,33 @@ function FuelNeed_Refuel_Att()
     -- get parameters
     local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
 
-    -- determine fuelNeed by forest
+    -- determine fuelNeed
+    local fuelNeed = 0
+
+    -- determine fuelNeed by current forest
     local forest = enterprise_colonization.GetForest()
     local forestLocation = forest.location
---    corelog.WriteToLog("    forestLocation="..textutils.serialise(forestLocation))
     local fuelNeed_Harvest = enterprise_colonization.FuelNeed_Harvest_Att()
-    local fuelNeed_ExtraTree = enterprise_colonization.FuelNeedExtraTree_Att()
+    fuelNeed = fuelNeed + fuelNeed_Harvest
 
-    -- determine fuelNeed by factory
-    local items = FuelItemsForFuel(1)
-    local factoryLocation = enterprise_factory.SiteLocation_Att(items)
---    corelog.WriteToLog("    factoryLocation="..textutils.serialise(factoryLocation))
-    local fuelNeed_Production = enterprise_factory.FuelNeed_Production_Att(items)
-
-    -- determine fuelNeed for traveling
-    local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
---    corelog.WriteToLog("    fuelNeed_ForestFactoryTravel="..fuelNeed_ForestFactoryTravel)
-
-    -- determine fuelNeed
-    local fuelNeed = fuelNeed_Harvest + fuelNeed_Production + fuelNeed_ForestFactoryTravel
+    -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
     if parameters.enterpriseLevel > 0 then
+        local fuelNeed_ExtraTree = enterprise_colonization.FuelNeedExtraTree_Att()
         fuelNeed = fuelNeed + fuelNeed_ExtraTree
+    end
+
+    -- check there is (already) a factory
+    local aFactoryExists = enterprise_factory.NumberOfSites_Att() > 0
+    if aFactoryExists then
+        -- determine fuelNeed by factory
+        local items = FuelItemsForFuel(1)
+        local fuelNeed_Production = enterprise_factory.FuelNeed_Production_Att(items)
+        fuelNeed = fuelNeed + fuelNeed_Production
+
+        -- determine fuelNeed for traveling
+        local factoryLocation = enterprise_factory.SiteLocation_Att(items)
+        local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
+        fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
     end
 
     -- end
