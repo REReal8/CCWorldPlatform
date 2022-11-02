@@ -16,9 +16,9 @@ local db = {
 --   | |
 --   |_|
 
-function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
+function ProvideFuelTo_ASrv(serviceData, callback, callbackData)
     --[[
-        This public async service ensures a turtle gets fuelled (if needed) to satisfy to current minimum fuel level.
+        This public async service provides fuel to a turtle.
 
         Return value:
             nil
@@ -30,7 +30,7 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
         Parameters:
             serviceData                     - (table) data about this service
                 turtleId                    - (number) id of the turtle
-                turtleFuelLevel             - (number) (current) fuel level of turtle
+                fuelAmount                  - (number) fuel amount to provide to turtle
                 ingredientsSupplierLocator  - (URL) locating where the fuel ingredients can be retrieved
                 assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
             callback                        - (string) name of function to call once service is ready
@@ -38,18 +38,19 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
     --]]
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local turtleId = serviceData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid turtleId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local turtleFuelLevel = serviceData.turtleFuelLevel
-    if type(turtleFuelLevel) ~= "number" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid turtleFuelLevel") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(turtleId) ~= "number" then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid turtleId") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    local fuelAmount = serviceData.fuelAmount
+    if type(fuelAmount) ~= "number" then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid fuelAmount") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
-    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid ingredientsSupplierLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid ingredientsSupplierLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
-    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_energy.FuelTurtleToLevelIfNeeded_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(callback) ~= "string" then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- ToDo: remove?
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
         -- create the entry
@@ -59,34 +60,18 @@ function FuelTurtleToLevelIfNeeded_ASrv(serviceData, callback, callbackData)
         ResetParameters()
     end
 
-    -- get parameters
-    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    -- determine fuelItemsNeed
+    local fuelItemsNeed = FuelItemsForFuel(fuelAmount)
 
-    -- ToDo: (somehow) detect if already a request was made to fuel this turtle (i.e. to provent floading of fuel attempts)
-
-    -- is fueling necessary?
-    local minFuelLevel = parameters.minFuelLevel
-    if turtleFuelLevel < minFuelLevel then
-        -- determine fuelNeed_Target
-        local targetFuelLevel = parameters.targetFuelLevel
-        local fuelNeed_Target = targetFuelLevel - turtleFuelLevel
-
-        -- determine fuelItemsNeed
-        local fuelItemsNeed = FuelItemsForFuel(fuelNeed_Target)
-
-        -- (re)fuel turtle
-        local refuelServiceData = {
-            turtleId                    = turtleId,
-            fuelItems                   = fuelItemsNeed,
-            ingredientsSupplierLocator  = ingredientsSupplierLocator,
-            assignmentsPriorityKey      = assignmentsPriorityKey,
-        }
-        corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") from "..turtleFuelLevel.." to "..targetFuelLevel.." fuel *")
-        return Refuel_ASrv(refuelServiceData, callback, callbackData)
-    else
---        corelog.WriteToLog("* Current fuellevel(="..turtleFuelLevel..") of turtle(id="..turtleId..") already above minimum(="..minFuelLevel.. ") level. *")
-        return coreutils.DoCallback(callback, callbackData, {success = true})
-    end
+    -- (re)fuel turtle
+    local refuelServiceData = {
+        turtleId                    = turtleId,
+        fuelItems                   = fuelItemsNeed,
+        ingredientsSupplierLocator  = ingredientsSupplierLocator,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }
+    corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") with "..fuelAmount.." fuel *")
+    Refuel_ASrv(refuelServiceData, callback, callbackData)
 end
 
 function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)

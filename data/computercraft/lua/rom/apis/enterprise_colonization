@@ -63,6 +63,12 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
     local primaryTaskData =  {
         startLocation               = coremove.CopyLocation(startLocation),
     }
+    local harvestFirstTreeTaskData = {
+        forestLevel         = forest.forestLevel, -- should be 0 ...
+        firstTreeLocation   = coremove.CopyLocation(startLocation),
+        nTrees              = forest.nTrees, -- should be 1 .,,
+        waitForFirstTree    = false, -- first log should already be chopped
+    }
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
     local settleData = {
@@ -80,13 +86,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         factoryVersion0             = "v0",
         upgradeFalse                = false,
 
-        waitFirstTreeMetaData       = role_settler.WaitFirstTree_MetaData(primaryTaskData),
-        waitFirstTree_Task          = "role_settler.WaitFirstTree_Task",
-
         ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: somehow pass this to enterprise_energy
 
-        chopFirstTreeMetaData       = role_settler.ChopFirstTree_MetaData(primaryTaskData),
-        chopFirstTree_Task          = "role_settler.ChopFirstTree_Task",
+        harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
+        harvestFirstTreeMetaData    = role_settler.HarvestForest_MetaData(harvestFirstTreeTaskData),
+        harvestFirstTree_Task       = "role_settler.HarvestForest_Task",
 
         forestFirstTree             = 1,
 
@@ -136,16 +140,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
             { stepName = "enterprise_colonization.UpdateForestInfo_SSrv", async = false, stepDataDef = {
                 { keyDef = "forestNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
-            -- ToDo: consider calling HarvestForest_Task
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "waitFirstTree_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "waitFirstTreeMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
-            }},
-            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "chopFirstTree_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "chopFirstTreeMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
+                { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestFirstTree_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeTaskData" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
@@ -204,11 +202,10 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
-                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 14, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 13, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -233,6 +230,8 @@ end
 
 function ResetForest()
     coredht.SaveData({
+        forestLevel = 0,
+
         location    = {x= 0, y= 0, z= 1, dx=0, dy=1},
         nTrees      = 0,
     }, db.dhtRoot, db.dhtForest)
@@ -552,6 +551,7 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData) -- ToDo: move 
         else
             -- construct taskData
             local harvestForestTaskData = {
+                forestLevel         = forest.forestLevel,
                 firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
                 nTrees              = forest.nTrees,
                 waitForFirstTree    = true,

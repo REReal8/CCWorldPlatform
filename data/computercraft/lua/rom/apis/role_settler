@@ -107,16 +107,9 @@ function WaitFirstTree_Task(taskData)
             taskData                    - (table) data about the task
                 startLocation           - (table) location where first steps are to be taken
     ]]
-    -- equip pickage
-    coreinventory.Equip("minecraft:diamond_pickaxe")
 
-    -- wait for a tree
-    corelog.WriteToLog(">Waiting for first tree")
-    WaitForTree()
-
-    -- blok voor ons omhakken
-    corelog.WriteToLog(">Chopping one block of first tree")
-    turtle.dig()
+    -- wait and chop first log
+    WaitAndChopFirstLog()
 
     return {success = true}
 end
@@ -222,6 +215,8 @@ end
 function HarvestForest_MetaData(taskData)
     -- check input
     if type(taskData) ~= "table" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid taskData") return {success = false} end
+    local forestLevel = taskData.forestLevel
+    if type(forestLevel) ~= "number" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid forestLevel") return {success = false} end
     local firstTreeLocation = taskData.firstTreeLocation
     if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid firstTreeLocation") return {success = false} end
     local nTrees = taskData.nTrees
@@ -229,12 +224,20 @@ function HarvestForest_MetaData(taskData)
     local priorityKey = taskData.priorityKey
     if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid priorityKey") return {success = false} end
 
+    -- determine fuelNeed
+    local fuelNeed = 0
+    local fuelLevel = turtle.getFuelLevel()
+    if forestLevel > 0 or fuelLevel >= FuelNeededPerTree() then
+        fuelNeed = FuelNeededPerRound(nTrees)
+    end
+
+    -- end
     return {
         startTime   = coreutils.UniversalTime(),
         location    = coremove.CopyLocation(firstTreeLocation),
         needTool    = true,
         needTurtle  = true,
-        fuelNeeded  = FuelNeededPerRound(nTrees),
+        fuelNeeded  = fuelNeed,
         itemsNeeded = {
             ["minecraft:crafting_table"] = 1,
         },
@@ -253,6 +256,7 @@ function HarvestForest_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
+                forestLevel             - (number) forest level
                 firstTreeLocation       - (table) location of first tree of the forest
                 nTrees                  - (number) the number of trees in (the y direction of) the forest
                 waitForFirstTree        - (boolean) if harvesting should wait for the first tree
@@ -260,6 +264,8 @@ function HarvestForest_Task(taskData)
 
     -- check input
     if type(taskData) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid taskData") return {success = false} end
+    local forestLevel = taskData.forestLevel
+    if type(forestLevel) ~= "number" then corelog.Error("role_settler.HarvestForest_Task: Invalid forestLevel") return {success = false} end
     local firstTreeLocation = taskData.firstTreeLocation
     if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid firstTreeLocation") return {success = false} end
     local nTrees = taskData.nTrees
@@ -272,17 +278,25 @@ function HarvestForest_Task(taskData)
     -- go to first tree position
     coremove.GoTo(firstTreeLocation)
 
-    -- wait for tree
-    if waitForFirstTree then
-        WaitForTree()
-    end
+    -- check for L0 case with very little fuel
+    local fuelLevel = turtle.getFuelLevel()
+    if forestLevel == 0 and fuelLevel < FuelNeededPerTree() then
+        corelog.WriteToLog("H  fuelLevel="..fuelLevel)
+        -- wait and chop first log
+        WaitAndChopFirstLog()
+    else
+        -- optionally wait for tree
+        if waitForFirstTree then
+            WaitForTree()
+        end
 
-    -- harvest forest
-    role_forester.Rondje({
-        depth = nTrees,
-        width = 1,
-        dontCleanup = true,
-    })
+        -- harvest forest
+        role_forester.Rondje({
+            depth = nTrees,
+            width = 1,
+            dontCleanup = true,
+        })
+    end
 
     -- end
     return {success = true}
@@ -294,6 +308,19 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function WaitAndChopFirstLog()
+    -- equip pickage
+    coreinventory.Equip("minecraft:diamond_pickaxe")
+
+    -- wait for a tree
+    corelog.WriteToLog(">Waiting for first tree")
+    WaitForTree()
+
+    -- blok voor ons omhakken
+    corelog.WriteToLog(">Chopping one block of first tree")
+    turtle.dig()
+end
 
 function WaitForTree()
     local has_block, data = turtle.inspect()
