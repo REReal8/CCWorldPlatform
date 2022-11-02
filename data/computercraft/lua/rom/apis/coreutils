@@ -182,10 +182,12 @@ end
 
 function CheckInput(description, ...)
     -- for debugging
-    corelog.WriteToLog("coreutils.CheckInput: debug.getinfo(2).source = "..debug.getinfo(2).source)
+    local callingFunctionInfo = debug.getinfo(2)
+--    corelog.WriteToLog("coreutils.CheckInput: callingFunctionInfo.source = "..callingFunctionInfo.source)
+    local callingFunctionStr = (callingFunctionInfo.source or "?").."."..(callingFunctionInfo.name or "?")
 
     -- controle of description wel een string is
-    if type(description) ~= "string" then corelog.Error("CheckInput:"..debug.getinfo(2).name..": description is not a string") return false end
+    if type(description) ~= "string" then corelog.Error("CheckInput:"..callingFunctionStr..": description is not a string") return false end
 
     -- dit hebben we nodig om de tekst te lezen
     local parameterStart    = nil
@@ -228,7 +230,7 @@ function CheckInput(description, ...)
                 local indent = math.floor((string.len(start) - parameterStart) / indentSize)
 
                 -- controle
-                if indent < 1 or indent > lastIndent + 1 then corelog.Error("CheckInput:"..debug.getinfo(2).name..": indent error (indent = "..indent..", lastIndent = "..lastIndent..")") return false end
+                if indent < 1 or indent > lastIndent + 1 then corelog.Error("CheckInput:"..callingFunctionStr..": indent error (indent = "..indent..", lastIndent = "..lastIndent..")") return false end
 
                 -- argument opzoeken
                 local argument
@@ -241,7 +243,7 @@ function CheckInput(description, ...)
 
                     -- komt blijkbaar uit een van de andere argumenten
                     if type(indenting[ indent - 1 ]) == "table" then argument = indenting[ indent - 1 ][ parameter ]
-                                                                else corelog.Error("CheckInput:"..debug.getinfo(2).name..": indent parent not a table") return false
+                                                                else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false
                     end
                 end
 
@@ -249,7 +251,7 @@ function CheckInput(description, ...)
                 if argument == nil and defaultPresent and theDefault ~= nil then argument = theDefault end
 
                 -- voldoet het argument aan het opgegeven type?
-                if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error("CheckInput:"..debug.getinfo(2).name..": argument '"..parameter.."' not a "..typeType) return false end
+                if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) return false end
 
                 -- URL omvormen
                 if typeType == "URL" then argument = url.URLClass:new(argument) end
