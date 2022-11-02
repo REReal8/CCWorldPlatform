@@ -100,7 +100,7 @@ function TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
     if type(assignmentFuelNeed) ~= "number" then corelog.Error("enterprise_energy.TakeNoticeOfFuelNeeded_SSrv: Invalid assignmentFuelNeed") return {success = false} end
 
     -- get parameters
-    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    local parameters = GetParameters()
 
     -- determine if new highestFuelNeed_Assignment
     local fuelNeedIncreased = false
@@ -135,7 +135,7 @@ function FuelNeed_Refuel_Att()
     --]]
 
     -- get parameters
-    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    local parameters = GetParameters()
 
     -- determine fuelNeed
     local fuelNeed = 0
@@ -176,7 +176,7 @@ function RefuelAmount_Att()
     --]]
 
     -- get parameters
-    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    local parameters = GetParameters()
     local enterpriseLevel = parameters.enterpriseLevel
     if enterpriseLevel == 0 then
         return 60 -- 1 log = 4 planks = 60 fuel
@@ -277,6 +277,10 @@ function Refuel_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
+function GetParameters()
+    return coredht.GetData(db.dhtRoot, db.dhtParameters)
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -304,7 +308,7 @@ end
 
 function UpdateFuelLevels()
     -- get parameters
-    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    local parameters = GetParameters()
 
     -- update minFuelLevel
     local minFuelLevel             = parameters.highestFuelNeed_Assignment + parameters.highestFuelNeed_ProduceFuel
@@ -381,7 +385,7 @@ end
 
 function FuelItemsForFuel(fuel)
     -- get parameters
-    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    local parameters = GetParameters()
 
     -- determine fuelItems
     local fuelItemGain = parameters.fuelItemGain
