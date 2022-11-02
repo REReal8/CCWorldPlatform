@@ -88,7 +88,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(primaryTaskData),
         plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
 
-        forestLevel0                = 0,
+        forestL0                    = 0,
         forestFirstTree             = 1,
 
         harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
@@ -139,7 +139,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
-                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestLevel0" },
+                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
