@@ -88,6 +88,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(primaryTaskData),
         plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
 
+        forestLevel0                = 0,
         forestFirstTree             = 1,
 
         harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
@@ -138,6 +139,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestLevel0" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
@@ -268,10 +270,14 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
     if type(callback) ~= "string" then corelog.Error("enterprise_colonization.ExtendForest_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
     callbackData = callbackData or {}
 
+    -- get forest
+    local forest = GetForest()
+
     -- determine projectSteps and projectData
     local projectSteps = { }
     local areAllTrueStepDataDef = {}
     local projectData = {
+        forestLevel             = forest.forestLevel,
         forestLocation          = forestLocation,
         materialsHostLocator    = materialsHostLocator,
     }
@@ -306,6 +312,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
         local newNTreesStr = "newNTreeStep"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "forestLevel" },
                 { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = newNTreesStr },
             }}
         )
@@ -408,11 +415,14 @@ function UpdateForest_SSrv(serviceData)
 
         Parameters:
             serviceData                 - (table) data about the service
+                forestLevel             - (number) with forest level
                 nTrees                  - (number) number of trees in the forest
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid serviceData") return {success = false} end
+    local forestLevel = serviceData.forestLevel
+    if type(forestLevel) ~= "number" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid forestLevel") return {success = false} end
     local nTrees = serviceData.nTrees
     if type(nTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid nTrees") return {success = false} end
 
@@ -420,6 +430,7 @@ function UpdateForest_SSrv(serviceData)
     local forest = GetForest()
 
     -- set forest information
+    forest.forestLevel = forestLevel
     forest.nTrees = nTrees
 
     -- save forest data
