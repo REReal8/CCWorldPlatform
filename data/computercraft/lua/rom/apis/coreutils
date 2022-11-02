@@ -182,7 +182,7 @@ end
 
 function CheckInput(description, ...)
     -- for debugging
-    coreutils.WriteToLog("coreutils.ChechInput: debug.getinfo(2).name = ", debug.getinfo(2).source)
+    corelog.WriteToLog("coreutils.CheckInput: debug.getinfo(2).source = ", debug.getinfo(2).source)
 
     -- controle of description wel een string is
     if type(description) ~= "string" then corelog.Error("CheckInput:", debug.getinfo(2).name, ": description is not a string") return false end
