@@ -138,7 +138,7 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
             }},
             { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
-                { keyDef = "forestNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
+                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestFirstTree_Task" },
@@ -309,7 +309,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
         local newNTreesStr = "newNTreeStep"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
-                { keyDef = "forestNTrees"           , valueSource = 0, keyDefSource = newNTreesStr },
+                { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = newNTreesStr },
             }}
         )
 
@@ -411,19 +411,19 @@ function UpdateForest_SSrv(serviceData)
 
         Parameters:
             serviceData                 - (table) data about the service
-                forestNTrees            - (number) number of trees in the forest
+                nTrees                  - (number) number of trees in the forest
     --]]
 
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid serviceData") return {success = false} end
-    local forestNTrees = serviceData.forestNTrees
-    if type(forestNTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid forestNTrees") return {success = false} end
+    local nTrees = serviceData.nTrees
+    if type(nTrees) ~= "number" then corelog.Error("enterprise_colonization.UpdateForest_SSrv: Invalid nTrees") return {success = false} end
 
     -- get forest
     local forest = GetForest()
 
     -- set forest information
-    forest.nTrees = forestNTrees
+    forest.nTrees = nTrees
 
     -- save forest data
     coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
