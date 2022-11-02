@@ -113,22 +113,40 @@ function CoreUtilsProtocolName() -- ToDo: is this used? If not consider removing
 	return db.protocol
 end
 
-function DoCallback(callback, callbackData, result)
-    -- check input
-    if type(callback) ~= "string" then corelog.Error("coreutils.DoCallback: Invalid callback function") return nil end
-    if type(callbackData) ~= "table" then corelog.Error("coreutils.DoCallback: Invalid callbackData") return nil end
-    if type(result) ~= "table" then corelog.Error("coreutils.DoCallback: Invalid calback result") return nil end
+function DoCallback(...)
+    -- get & check input from description
+    local checkSuccess, callback, callbackData, resultData = coreutils.CheckInput([[
+        This function executes a callback function with two arguments.
+
+        Return value:
+            nil
+
+        Parameters:
+            callback                    + (string) name of callback function to execute
+            callbackData                + (table) with first argument to supply to callback function
+            resultData                  + (table) with second argument to supply to callback function, typically the return data of the task function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("coreutils.DoCallback: Invalid input") return nil end
 
     -- call callBack function
-    local stringToLoad = callback.."("..textutils.serialize(callbackData)..","..textutils.serialize(result).. ")"
+    local stringToLoad = callback.."("..textutils.serialize(callbackData)..","..textutils.serialize(resultData).. ")"
     local f, err = loadstring(stringToLoad)
     if f then f() else corelog.Error("coreutils.DoCallback: loadstring("..stringToLoad..") did not supply a function, error given: "..err) end
 end
 
-function DoSyncService(service, serviceData)
-	-- check input
-	if type(service) ~= "string" then corelog.Error("coreutils.DoSyncService: Invalid service function") return nil end
-	if type(serviceData) ~= "table" then corelog.Error("coreutils.DoSyncService: Invalid serviceData") return nil end
+function DoSyncService(...)
+    -- get & check input from description
+    local checkSuccess, service, serviceData = coreutils.CheckInput([[
+        This function executes a sync service function.
+
+        Return value:
+            results                     - (?) service function return value
+
+        Parameters:
+            service                     + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("coreutils.DoSyncService: Invalid input") return nil end
 
     -- check service actually exists
     -- ToDo: implement
@@ -144,12 +162,25 @@ function DoSyncService(service, serviceData)
 	return results
 end
 
-function DoASyncService(service, serviceData, callback, callbackData)
-	-- check input
-	if type(service) ~= "string" then corelog.Error("coreutils.DoASyncService: Invalid service function") return nil end
-	if type(serviceData) ~= "table" then corelog.Error("coreutils.DoASyncService: Invalid serviceData") return nil end
-	if type(callback) ~= "string" then corelog.Error("coreutils.DoASyncService: Invalid callback function") return nil end
-	if type(callbackData) ~= "table" then corelog.Error("coreutils.DoASyncService: Invalid callbackData") return nil end
+function DoASyncService(...)
+    -- get & check input from description
+    local checkSuccess, service, serviceData, callback, callbackData = coreutils.CheckInput([[
+        This function executes an async service function.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+            callbackData                - (table) with callbackData below
+            results                     - (?) service function return value
+
+        Parameters:
+            service                     + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+            callback                    + (string) name of callback function to execute
+            callbackData                + (table) with first argument to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("coreutils.DoASyncService: Invalid input") return nil end
 
     -- check service actually exists
     -- ToDo: implement
