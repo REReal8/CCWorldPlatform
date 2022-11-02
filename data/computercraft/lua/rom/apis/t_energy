@@ -6,8 +6,9 @@ function T_FuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("# Test FuelNeed_Refuel_Att")
     local forest = enterprise_colonization.GetForest()
+    local originalForestLevel = forest.forestLevel
     local originalNTrees = forest.nTrees
-    enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = 1 })
+    enterprise_colonization.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
 
@@ -16,17 +17,36 @@ function T_FuelNeed_Refuel_Att()
     corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
 
     -- cleanup test
-    enterprise_colonization.UpdateForestInfo_SSrv({ forestNTrees = originalNTrees })
+    enterprise_colonization.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
     t_factory.StopV0Site(location)
 end
 
-function T_RefuelAmount_Att()
+function T_RefuelAmount_AttL0()
     -- prepare test
     corelog.WriteToLog("# Test RefuelAmount_Att")
+    local energy = enterprise_energy.GetParameters()
+    local originalLevel = energy.enterpriseLevel
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = 0 })
 
     -- test
     local refuelAmount = enterprise_energy.RefuelAmount_Att()
     corelog.WriteToLog("   "..refuelAmount.." refuelAmount")
 
     -- cleanup test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel })
+end
+
+function T_RefuelAmount_AttL1()
+    -- prepare test
+    corelog.WriteToLog("# Test RefuelAmount_Att")
+    local energy = enterprise_energy.GetParameters()
+    local originalLevel = energy.enterpriseLevel
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = 1 })
+
+    -- test
+    local refuelAmount = enterprise_energy.RefuelAmount_Att()
+    corelog.WriteToLog("   "..refuelAmount.." refuelAmount")
+
+    -- cleanup test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel })
 end

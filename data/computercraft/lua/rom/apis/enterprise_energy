@@ -306,6 +306,37 @@ function ResetParameters()
     }, db.dhtRoot, db.dhtParameters)
 end
 
+function UpdateEnterprise_SSrv(serviceData)
+    --[[
+        This private sync service updates the enterprise information.
+
+        Return value:
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                enterpriseLevel         - (number) with enterprise level
+    --]]
+
+    -- check input
+    if type(serviceData) ~= "table" then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid serviceData") return {success = false} end
+    local enterpriseLevel = serviceData.enterpriseLevel
+    if type(enterpriseLevel) ~= "number" then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid enterpriseLevel") return {success = false} end
+
+    -- get parameters
+    local parameters = GetParameters()
+
+    -- set enteprise information
+    parameters.enterpriseLevel = enterpriseLevel
+
+    -- save parameters
+    coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
+
+    -- end
+    return {success = true}
+end
+
 function UpdateFuelLevels()
     -- get parameters
     local parameters = GetParameters()
@@ -322,7 +353,6 @@ function UpdateFuelLevels()
 
     -- update targetMultiplier
     parameters.targetMultiplier    = 2 -- note: this statment should be after first wood chop => hence we can increase this value now (for ever)
-    parameters.enterpriseLevel     = 1
 
     -- save parameters
     coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
