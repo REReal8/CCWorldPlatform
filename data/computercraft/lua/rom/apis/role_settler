@@ -281,7 +281,6 @@ function HarvestForest_Task(taskData)
     -- check for L0 case with very little fuel
     local fuelLevel = turtle.getFuelLevel()
     if forestLevel == 0 and fuelLevel < FuelNeededPerTree() then
-        corelog.WriteToLog("H  fuelLevel="..fuelLevel)
         -- wait and chop first log
         WaitAndChopFirstLog()
     else

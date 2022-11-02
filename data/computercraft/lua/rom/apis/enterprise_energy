@@ -334,6 +334,7 @@ function UpdateEnterprise_SSrv(serviceData)
     coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
 
     -- end
+    corelog.WriteToLog(">Updated enterprise_energy (level="..enterpriseLevel..")")
     return {success = true}
 end
 

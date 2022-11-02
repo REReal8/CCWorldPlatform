@@ -134,13 +134,6 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
         coredht.SaveData(statistics, db.dhtRoot, db.dhtStatistics)
     end
 
-    -- ToDo: make below obsolete by different implementation of energy management
-    -- inform enterprise_energy of fuelNeeded
-    serviceData = {
-        assignmentFuelNeed  = fuelNeed,
-    }
-    enterprise_energy.TakeNoticeOfAssignmentFuelNeeded_SSrv(serviceData)
-
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.dhtList, assignmentId)
 end

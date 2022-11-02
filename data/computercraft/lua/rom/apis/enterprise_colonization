@@ -95,6 +95,8 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         harvestFirstTreeMetaData    = role_settler.HarvestForest_MetaData(harvestFirstTreeTaskData),
         harvestFirstTree_Task       = "role_settler.HarvestForest_Task",
 
+        energyL1                    = 1,
+
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
 
@@ -146,6 +148,9 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestFirstTree_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeTaskData" },
+            }},
+            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL1" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
@@ -204,10 +209,11 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
                 { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
+                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 13, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 14, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -437,6 +443,7 @@ function UpdateForest_SSrv(serviceData)
     coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
 
     -- end
+    corelog.WriteToLog(">Updated forest (level="..forestLevel..", nTrees="..nTrees..")")
     return {success = true}
 end
 
