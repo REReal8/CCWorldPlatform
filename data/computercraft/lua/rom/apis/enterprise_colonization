@@ -80,19 +80,19 @@ function CreateNewWorld_ASrv(serviceData, callback, callbackData)
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(primaryTaskData),
         initialiseCoordinates_Task  = "role_settler.InitialiseCoordinates_Task",
 
-        plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(primaryTaskData),
-        plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
+        ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: somehow pass this to enterprise_energy
 
         factoryVersion0             = "v0",
         upgradeFalse                = false,
 
-        ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: somehow pass this to enterprise_energy
+        plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(primaryTaskData),
+        plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
+
+        forestFirstTree             = 1,
 
         harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
         harvestFirstTreeMetaData    = role_settler.HarvestForest_MetaData(harvestFirstTreeTaskData),
         harvestFirstTree_Task       = "role_settler.HarvestForest_Task",
-
-        forestFirstTree             = 1,
 
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
@@ -250,7 +250,7 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                 - (table) data about the service
-                forestLocation          - (table) base location of factory
+                forestLocation          - (table) base location of forest
                 treesNeeded             - (number) number of trees to extend forest to
                 materialsHostLocator    - (URL) locating the host of the building materials
             callback                    - (string) name of function to call once service is ready
@@ -275,9 +275,6 @@ function ExtendForest_ASrv(serviceData, callback, callbackData)
         forestLocation          = forestLocation,
         materialsHostLocator    = materialsHostLocator,
     }
-
-    -- get forest
-    local forest = GetForest()
 
     -- add project step for all trees to add
     local iStep = 0
