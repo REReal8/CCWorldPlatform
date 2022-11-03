@@ -86,8 +86,9 @@ local db = {
 --   | |
 --   |_|
 
-function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
-    --[[
+function ProvideItemsTo_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
         This async public Supplier service provides specific items to a Storage.
 
         It does so by first determining recipes that can produce the items. Subsequently it retrieves the needed production ingredients.
@@ -106,32 +107,20 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData                     - (table) data for the service
-                itemsLocator                - (URL) locating the items to provide
+                itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              - (URL) locating the Storage where the items need to be provided to
-                ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
-                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                        - (string) name of function to call once service is ready
-            callbackData                    - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local storageLocator = url.URLClass:new(serviceData.storageLocator)
-    if type(storageLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid storageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
-    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid ingredientsSupplierLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local assignmentsPriorityKey = serviceData.assignmentsPriorityKey
-    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                        + (string) name of function to call once service is ready
+            callbackData                    + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    if not serviceResults.success then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- loop on items
     local provideItems = itemsLocator:getQuery()
@@ -220,8 +209,9 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     end
 end
 
-function Can_ProvideItems_QSrv(serviceData)
-    --[[
+function Can_ProvideItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator = coreutils.CheckInput([[
         This sync public query service answers the question whether the Supplier can provide specific items.
 
         Return value:
@@ -230,15 +220,11 @@ function Can_ProvideItems_QSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data to the query
-                itemsLocator        - (URL) locating the items that need to be queried for providability
+                itemsLocator        + (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
@@ -280,17 +266,16 @@ function NumberOfSites_Att()
     return count
 end
 
-function FuelNeed_Production_Att(items)
-    --[[
+function FuelNeed_Production_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = coreutils.CheckInput([[
         Factory attribute for the current fuelNeed for producing items. (i.e. it returns the fuelNeed for producing the items
         assuming the ingredients are available in a turtle and the results are to be delivered to the turtle)
 
         Parameters:
-            items   - (table) items to produce
-    --]]
-
-    -- check input
-    if type(items) ~= "table" then corelog.Error("enterprise_factory.FuelNeed_Production_Att: Invalid items") return 9999 end
+            items   + (table) items to produce
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.FuelNeed_Production_Att: Invalid input") return 9999 end
 
     -- check there are sites
     if NumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.FuelNeed_Production_Att: Not sites administered by Factory") return 0 end
@@ -314,16 +299,15 @@ function FuelNeed_Production_Att(items)
     return fuelNeed
 end
 
-function SiteLocation_Att(items)
-    --[[
+function SiteLocation_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = coreutils.CheckInput([[
         Factory attribute for the location of the current available site for producing items.
 
         Parameters:
-            items   - (table) items to produce
-    --]]
-
-    -- check input
-    if type(items) ~= "table" then corelog.Error("enterprise_factory.SiteLocation_Att: Invalid items") return {x=9999, y=9999, z= 9999, dx=0, dy=1}  end
+            items   + (table) items to produce
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.SiteLocation_Att: Invalid input") return {x=9999, y=9999, z= 9999, dx=0, dy=1} end
 
     -- check there are sites
     if NumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.SiteLocation_Att: Not sites administered by Factory") return {x=0, y=0, z= 0, dx=0, dy=1}  end
@@ -341,8 +325,9 @@ function SiteLocation_Att(items)
     return location
 end
 
-function NeedsTo_ProvideItemsTo_SSrv(serviceData)
-    --[[
+function NeedsTo_ProvideItemsTo_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator = coreutils.CheckInput([[
         This sync public service returns the needs for the Supplier to provide specific items to a Storage.
 
         Return value:
@@ -353,22 +338,14 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
 
         Parameters:
             serviceData                     - (table) data to the query
-                itemsLocator                - (URL) locating the items to provide
+                itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              - (URL) locating the Storage where the items need to be provided to
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
 
-                ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator") return {success = false} end
-    local storageLocator = url.URLClass:new(serviceData.storageLocator)
-    if type(storageLocator) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid storageLocator") return {success = false} end
-    local ingredientsSupplierLocator = url.URLClass:new(serviceData.ingredientsSupplierLocator)
-    if type(ingredientsSupplierLocator) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid ingredientsSupplierLocator") return{success = false} end
+                ingredientsSupplierLocator  + (URL) locating where ingredients can be retrieved
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
@@ -399,7 +376,7 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
         local ingredientsItemsLocator = ingredientsSupplierLocator:copy()
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
         local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
-        serviceData = {
+        local serviceData = {
             itemsLocator                = ingredientsItemsLocator,
             storageLocator              = localInputLocator,
             ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
@@ -447,8 +424,9 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     }
 end
 
-function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
-    --[[
+function BuildAndStartNewSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, upgrade, callback, callbackData = coreutils.CheckInput([[
         This async public service builds a new factory site and ensures it's ready for use.
 
         Return value:
@@ -459,24 +437,15 @@ function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
                 success                 - (boolean) whether the site was succesfully build and is ready for use.
 
         Parameters:
-            serviceData                 - (table) data about this site
+            serviceData                 + (table) data about this site
                 baseLocation            - (table) world location of the base (lower left corner) of this site
                 siteVersion             - (string) version string of the site
-                upgrade                 - (boolean) if site should (only) be updated from a previous version
+                upgrade                 + (boolean, false) if site should (only) be updated from a previous version
                 materialsHostLocator    - (URL) locating the host of the building materials
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = serviceData.baseLocation
-    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = serviceData.siteVersion
-    local upgrade = serviceData.upgrade or false
-    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildAndStartNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine projectSteps
     local projectSteps = { }
@@ -524,8 +493,9 @@ function BuildAndStartNewSite_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function BuildNewSite_ASrv(serviceData, callback, callbackData)
-    --[[
+function BuildNewSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, baseLocation, siteVersion, upgrade, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This async public service builds a new factory site.
 
         Return value:
@@ -536,27 +506,15 @@ function BuildNewSite_ASrv(serviceData, callback, callbackData)
                 success         - (boolean) whether the site was succesfully build
 
         Parameters:
-            serviceData                 - (table) data about this service
-                baseLocation            - (table) world location of the base (lower left corner) of this site
-                siteVersion             - (string) version string of the site
-                upgrade                 - (boolean) if site should (only) be updated from a previous version
-                materialsHostLocator    - (URL) locating the host of the building materials
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = serviceData.baseLocation
-    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = serviceData.siteVersion
-    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local upgrade = serviceData.upgrade or false
-    if type(serviceData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsHostLocator = url.URLClass:new(serviceData.materialsHostLocator)
-    if type(upgrade) ~= "boolean" then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid upgrade") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.BuildNewSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+            serviceData                 + (table) data about this service
+                baseLocation            + (table) world location of the base (lower left corner) of this site
+                siteVersion             + (string) version string of the site
+                upgrade                 + (boolean, false) if site should (only) be updated from a previous version
+                materialsHostLocator    + (URL) locating the host of the building materials
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get site build data
     local siteBuildData = nil
@@ -583,8 +541,9 @@ function BuildNewSite_ASrv(serviceData, callback, callbackData)
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback, callbackData)
 end
 
-function StartNewSite_SSrv(serviceData)
-    --[[
+function StartNewSite_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, siteVersion, siteAlreadyBuild = coreutils.CheckInput([[
         This sync public service ensures a new site is ready for use.
 
         Return value:
@@ -592,20 +551,13 @@ function StartNewSite_SSrv(serviceData)
                 success             - (boolean) whether the site is ready for business
 
         Parameters:
-            serviceData             - (table) data about this service
+            serviceData             + (table) data about this service
                 baseLocation        - (table) world location of the base (lower left corner) of this site
-                siteVersion         - (string) version string of the site
-                siteAlreadyBuild    - (boolean) confirmation that the site was already physically build
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid serviceData") return {success = false} end
-    local baseLocation = serviceData.baseLocation
-    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid baseLocation") return {success = false} end
-    local siteVersion = serviceData.siteVersion
-    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid siteVersion") return {success = false} end
-    if type(serviceData.siteAlreadyBuild) ~= "boolean" then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Invalid siteAlreadyBuild") return {success = false} end
-    if not serviceData.siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
+                siteVersion         + (string) version string of the site
+                siteAlreadyBuild    + (boolean) confirmation that the site was already physically build
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid input") return {success = false} end
+    if not siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -635,8 +587,9 @@ function StartNewSite_SSrv(serviceData)
     return {success = true}
 end
 
-function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
-    --[[
+function StopAndDismantleSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, siteVersion, callback, callbackData = coreutils.CheckInput([[
         This async public service stops and dismantles a site.
 
         Return value:
@@ -647,22 +600,14 @@ function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
                 success         - (boolean) whether the site was succesfully stopped and dismantled.
 
         Parameters:
-            serviceData                 - (table) data about this service
+            serviceData                 + (table) data about this service
                 baseLocation            - (table) world location of the base (lower left corner) of this site
-                siteVersion             - (string) version string of the site
+                siteVersion             + (string) version string of the site
                 materialsHostLocator    - (URL) locating the host of the building materials
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = serviceData.baseLocation
-    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = serviceData.siteVersion
-    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local stopAndDismantleSiteProjectDef = {
@@ -691,8 +636,9 @@ function StopAndDismantleSite_ASrv(serviceData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function DismantleSite_ASrv(serviceData, callback, callbackData)
-    --[[
+function DismantleSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, siteVersion, siteStopped, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This async public service dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
         Possibly part of the world is restored to a neutral (e.g. flat) state.
 
@@ -704,27 +650,18 @@ function DismantleSite_ASrv(serviceData, callback, callbackData)
                 success                 - (boolean) whether the site was succesfully dismantled
 
         Parameters:
-            serviceData                 - (table) data about this service
+            serviceData                 + (table) data about this service
                 baseLocation            - (table) world location of the base (lower left corner) of the site
-                siteVersion             - (string) version string of the site
-                siteStopped             - (boolean) confirmation that the site was already stopped
-                materialsHostLocator    - (URL) locating the host of the building materials
-            callback                    - (string) name of function to call once service is ready
-            callbackData                - (table) data to supply to callback function
-    ]]
+                siteVersion             + (string) version string of the site
+                siteStopped             + (boolean) confirmation that the site was already stopped
+                materialsHostLocator    + (URL) locating the host of the building materials
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = serviceData.baseLocation
-    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local siteVersion = serviceData.siteVersion
-    if type(siteVersion) ~= "string" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid siteVersion") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(serviceData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsHostLocator = url.URLClass:new(serviceData.materialsHostLocator)
-    if type(callback) ~= "string" then corelog.Error('enterprise_factory.DismantleSite_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
-    if type(serviceData.siteStopped) ~= "boolean" then corelog.Warning("enterprise_factory.DismantleSite_ASrv: siteStopped not valid") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if not serviceData.siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get site dismantal data
     local siteDismantleBuildData = nil
@@ -745,8 +682,9 @@ function DismantleSite_ASrv(serviceData, callback, callbackData)
     enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback, callbackData)
 end
 
-function StopSite_ASrv(serviceData, callback, callbackData)
-    --[[
+function StopSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, callback, callbackData = coreutils.CheckInput([[
         This async public service stops a factory site. Stopping implies
           - the site is immediatly no longer available for new business
           - wait for all active work (production) on site to be ended
@@ -760,18 +698,12 @@ function StopSite_ASrv(serviceData, callback, callbackData)
                 success         - (boolean) when the site was succesfully stopped
 
         Parameters:
-            serviceData         - (table) data about this service
+            serviceData         + (table) data about this service
                 baseLocation    - (table) world location of the base (lower left corner) of the site
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local baseLocation = serviceData.baseLocation
-    if type(baseLocation) ~= "table" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid baseLocation") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+            callback            + (string) name of function to call once service is ready
+            callbackData        + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- pass on the request to site file
     enterprise_factory_site.StopSite_ASrv(serviceData, callback, callbackData)
