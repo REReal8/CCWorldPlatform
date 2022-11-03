@@ -446,7 +446,7 @@ end
 
 function GetItemsIntoTurtle_ASrv(transferData, callback, callbackData)
     --[[
-        This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
+        This async public service ensures items are gathered in the Storage pplier and transferred to the inventory of a turtle.
 
         Return value:
             nil

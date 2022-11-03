@@ -311,7 +311,7 @@ end
 -- function GetItemsIntoTurtle_ASrv(...)
 --     -- check input
 --     local success, sourceItemsLocator, assignmentsPriorityKey, callback, callbackData = CheckInput([[
---         This async public service ensures items are gathered in the Supplier and transferred to the inventory of a turtle.
+--         This async public service ensures items are gathered in the Storage and transferred to the inventory of a turtle.
 
 --         Return value:
 --             nil

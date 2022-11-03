@@ -11,8 +11,8 @@
     For an enterprise to be a Storage it needs to implement the following services:
         GetItemsLocations_SSrv      - provides the current world locations of different items in a Storage.
         GetStorageLocation_SSrv     - provides the world location of a Storage.
-        GetItemsIntoTurtle_ASrv     - ensuring a set of items are gathered in the Supplier and transferred to the inventory of a turtle.
-        PutItemsFromTurtle_ASrv     - ensuring a set of items are transferred from the inventory of a turtle to the Storage.
+        GetItemsIntoTurtle_ASrv     - ensuring items are gathered in the Storage and transferred to the inventory of a turtle.
+        PutItemsFromTurtle_ASrv     - ensuring items are transferred from the inventory of a turtle to the Storage.
 
     Furthermore most Suppliers and Storages implement the additional function
         GetHostLocator_SSrv         - provide the URL of the host
