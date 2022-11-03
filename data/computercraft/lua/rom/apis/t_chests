@@ -61,7 +61,7 @@ function T_UpdateChestRecord1()
     corelog.WriteToLog("* Test UpdateChestRecord_ASrv 1")
     -- create chest data
     local serviceData = {
-        chestLocator = chestLocator1
+        chestLocator = chestLocator1,
     }
 
     -- call test method
