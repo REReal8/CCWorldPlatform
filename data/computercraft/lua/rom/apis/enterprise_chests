@@ -498,15 +498,15 @@ function GetItemsIntoTurtle_ASrv(...)
     local serviceResults = IsChestURL_QSrv({ aURL = sourceItemsLocator})
     if not serviceResults.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- get id
-    local id = GetChestId(sourceItemsLocator)
-    if type(id) ~= "string" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid path input: "..textutils.serialize(sourceItemsLocator:getPath())..".") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- get chest
+    local chest = GetChestByLocator(sourceItemsLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Chest "..sourceItemsLocator:getURI().." not found.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local getItemsIntoTurtleProjectDef = {
         steps   = {
-            { stepName = "enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 0, keyDefSource = "id" },
+            { stepName = "mobj_chest.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
+                { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
                 { keyDef = "itemsQuery"             , valueSource = 0, keyDefSource = "itemsQuery" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
@@ -515,7 +515,7 @@ function GetItemsIntoTurtle_ASrv(...)
                 { keyDef = "itemsQuery"             , valueSource = 1, keyDefSource = "itemResultQuery" },
             }},
             { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 0, keyDefSource = "id" },
+                { keyDef = "id"                     , valueSource = 0, keyDefSource = "chest.id" }, -- ToDo consider changing servive signature
                 { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -530,7 +530,7 @@ function GetItemsIntoTurtle_ASrv(...)
         }
     }
     local projectData = {
-        id                      = id,
+        chest                   = mobj_chest.CopyChest(chest),
         itemsQuery              = sourceItemsLocator:getQuery(),
 
         assignmentsPriorityKey  = assignmentsPriorityKey,
@@ -833,50 +833,6 @@ function FetchChestSlotsInventory_ASrv(...)
     local assignmentServiceData = {
         metaData    = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
         task        = "role_chests_worker.FetchChestSlotsInventory_Task",
-        taskData    = taskData,
-    }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
-end
-
-function FetchItemsFromChestIntoTurtle_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, id, itemsQuery, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
-        This async private service fetches items from a chest into the inventory of a turtle.
-
-        Return value:
-            nil
-
-        Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                slots                   - (table) the slots inventory of the chest (after the items have been removed)
-                turtleURL               - (table) a URL stating the turtle and the items it has gotton in it's inventory
-
-        Parameters:
-            serviceData                 - (table) data about the service
-                id                      + (string) id of the chest.
-                itemsQuery              + (table) with items to be fetched
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table, {}) data to supply to callback function
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- get the chest
-    local chest = GetChestById(id)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.FetchItemsFromChestIntoTurtle_ASrv: Failed retrieving chest for id = "..id) return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- fetch with an assignment
-    local taskData = {
-        location        = coremove.CopyLocation(chest.location),
-        accessDirection = chest.accessDirection,
-        itemsQuery      = itemsQuery,
-
-        priorityKey     = assignmentsPriorityKey,
-    }
-    local assignmentServiceData = {
-        metaData    = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
-        task        = "role_chests_worker.FetchItemsFromChestIntoTurtle_Task",
         taskData    = taskData,
     }
     enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)

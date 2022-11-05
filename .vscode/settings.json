@@ -57,7 +57,8 @@
         "role_fuel_worker",
         "enterprise_energy",
         "t_energy",
-        "enterprise_assignmentboard"
+        "enterprise_assignmentboard",
+        "mobj_chest"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

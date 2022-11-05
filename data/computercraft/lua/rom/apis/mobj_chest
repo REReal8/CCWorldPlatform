@@ -1,0 +1,93 @@
+
+--[[
+    The chest mobj represents a chest in the minecraft world and provides services to operate on that chest.
+
+??    This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+
+    The following design decisions are made
+        - Chests should never be accessed directly but only via the services of this mobj.
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function FetchItemsFromChestIntoTurtle_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, chest, itemsQuery, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
+        This async private service fetches items from a chest into the inventory of a turtle.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                slots                   - (table) the slots inventory of the chest (after the items have been removed)
+                turtleURL               - (table) a URL stating the turtle and the items it has gotton in it's inventory
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                chest                   + (table) with the the chest.
+                itemsQuery              + (table) with items to be fetched
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- fetch with an assignment
+    local taskData = {
+        location        = coremove.CopyLocation(chest.location),
+        accessDirection = chest.accessDirection,
+        itemsQuery      = itemsQuery,
+
+        priorityKey     = assignmentsPriorityKey,
+    }
+    local assignmentServiceData = {
+        metaData    = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
+        task        = "role_chests_worker.FetchItemsFromChestIntoTurtle_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+end
+
+function CopyChest(...)
+    -- get & check input from description
+    local checkSuccess, id, location, accessDirection, inventory = coreutils.CheckInput([[
+        This async private function copies a chest mobj.
+
+        Return value:
+            chest                       - (table) copy of the chest
+
+        Parameters:
+            chest                       - (table) chest to copy
+                id                      + (string) id of the chest
+                location                + (table) location to the chest
+                accessDirection         + (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+                inventory               + (table) the inventory of the chest
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest.CopyChest: Invalid input") return nil end
+
+	return {
+        id              = id,
+
+        location        = coremove.CopyLocation(location),
+        accessDirection = accessDirection,
+
+        inventory       = coreinventory.CopyInventory(inventory)
+	}
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
