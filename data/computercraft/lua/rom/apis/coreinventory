@@ -163,6 +163,82 @@ function GetInventoryDetail()
     return inventory
 end
 
+function CopyInventory(...)
+    -- get & check input from description
+    local checkSuccess, items, slots = coreutils.CheckInput([[
+        This async private function copies an inventory.
+
+        Return value:
+            inventoryCopy               - (table) copy of the inventory
+
+        Parameters:
+            inventory                   - (table) inventory to copy
+                items                   + (table) items inventory
+                slots                   + (table) slots inventory
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest.CopyInventory: Invalid input") return nil end
+
+    -- construct copy
+    local copy = {
+        items   = CopyItems(items),
+        slots   = CopySlots(slots),
+    }
+
+    -- end
+    return copy
+end
+
+function CopyItems(...)
+    -- get & check input from description
+    local checkSuccess, items = coreutils.CheckInput([[
+        This async private function copies items (inventory).
+
+        Return value:
+            itemsCopy                   - (table) copy of the items
+
+        Parameters:
+            items                       + (table) items to copy
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest.CopyItems: Invalid input") return nil end
+
+    -- construct copy
+    local copy = {}
+    for itemName, itemCount in pairs(items) do
+        -- add to items
+        copy[ itemName ] = itemCount
+    end
+
+    -- end
+    return copy
+end
+
+function CopySlots(...)
+    -- get & check input from description
+    local checkSuccess, slots = coreutils.CheckInput([[
+        This async private function copies slots (inventory).
+
+        Return value:
+            slotsCopy                   - (table) copy of the slots
+
+        Parameters:
+            slots                       + (table) slots to copy
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest.CopySlots: Invalid input") return nil end
+
+    -- construct copy
+    local copy = {}
+    for iSlot, slot in ipairs(slots) do
+        -- add to slots, name and count
+        copy[ iSlot ]             = {
+            itemName    = slot.itemName,
+            itemCount   = slot.itemCount,
+        }
+    end
+
+    -- end
+    return copy
+end
+
 function DropAllItems(direction)
     -- check the direction, lowercase only
     direction = direction or "down"
