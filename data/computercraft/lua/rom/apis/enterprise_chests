@@ -135,7 +135,6 @@ function RegisterChest_SSrv(...)
         accessDirection = accessDirection,
 
         inventory = { -- assumed to be empty
-            slots   = {},
             items   = {},
         },
     }
@@ -793,7 +792,6 @@ function DetermineInventory(...)
 
     -- construct inventory
     local inventory = {
-        slots   = slots, -- ToDo: consider deep copy
         items   = role_chests_worker.DetermineItemsInventory(slots),
     }
 
