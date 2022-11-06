@@ -163,6 +163,23 @@ function GetInventoryDetail()
     return inventory
 end
 
+function DetermineItemsInventory(slots)
+    -- construct item inventory
+    local items = {}
+
+    -- loop on slots
+    for slot, item in pairs(slots) do
+        -- right item?
+        if type(item) == "table" then
+            -- add to items
+            items[ item.name ]  = (items[ item.name ] or 0) + item.count
+        end
+    end
+
+    -- end
+    return items
+end
+
 function CopyInventory(...)
     -- get & check input from description
     local checkSuccess, items, slots = coreutils.CheckInput([[

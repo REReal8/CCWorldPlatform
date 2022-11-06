@@ -149,7 +149,7 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
 --        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
 
         -- check enough items
-        local items = DetermineItemsInventory(chest.list())
+        local items = coreinventory.DetermineItemsInventory(chest.list())
         if not items[requestItemName] or items[requestItemName] < requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in chest.") return {success = false} end
 
         -- empty first slot
@@ -456,21 +456,4 @@ function Drop(chestName, itemCount)
 
     -- end
     return itemCount
-end
-
-function DetermineItemsInventory(slots)
-    -- construct item inventory
-    local items = {}
-
-    -- loop on slots
-    for slot, item in pairs(slots) do
-        -- right item?
-        if type(item) == "table" then
-            -- add to items
-            items[ item.name ]  = (items[ item.name ] or 0) + item.count
-        end
-    end
-
-    -- end
-    return items
 end
