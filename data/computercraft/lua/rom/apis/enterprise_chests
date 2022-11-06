@@ -134,9 +134,7 @@ function RegisterChest_SSrv(...)
         location        = coremove.CopyLocation(location),
         accessDirection = accessDirection,
 
-        inventory = { -- assumed to be empty
-            items   = {},
-        },
+        itemsInventory  = { }, -- assumed to be empty
     }
 
     -- ensure enterprise has a key in the dht
@@ -329,14 +327,13 @@ function Can_ProvideItems_QSrv(...)
 
     -- query chests inventory
     local items = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
-    local inventory = chest.inventory
+    local itemsInventory = chest.itemsInventory
     for itemName, itemCount in pairs(items) do
         if type(itemName) ~= "string" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
         if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
 
-        local inventoryCount = inventory.items[itemName]
+        local inventoryCount = itemsInventory[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
---            corelog.WriteToLog("enterprise_chests.Can_ProvideItems_QSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..") of chest "..chest.id..".") return {success = false}
             return {success = false}
         end
     end
@@ -765,10 +762,10 @@ function SetChestRecord_SSrv(...)
     if type(chest) ~="table" then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Failed retrieving chest for id = "..id) return {success = false} end
 
     -- determine items inventory
-    local inventory = DetermineInventory(slots)
+    local itemsInventory = role_chests_worker.DetermineItemsInventory(slots)
 
     -- set record
-    chest.inventory = inventory
+    chest.itemsInventory = itemsInventory
 
     -- save record
     coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.id)
@@ -777,24 +774,3 @@ function SetChestRecord_SSrv(...)
     return {success = true}
 end
 
-function DetermineInventory(...)
-    -- get & check input from description
-    local checkSuccess, slots = coreutils.CheckInput([[
-        This sync private function determines and returns the inventory of a chest.
-
-        Return value:
-            inventory           - (table) the inventory of the chest
-
-        Parameters:
-            slots               + (table) slots inventory of the chest.
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.DetermineInventory: Invalid input") return nil end
-
-    -- construct inventory
-    local inventory = {
-        items   = role_chests_worker.DetermineItemsInventory(slots),
-    }
-
-    -- end
-    return inventory
-end

@@ -137,7 +137,7 @@ end
 
 function CopyChest(...)
     -- get & check input from description
-    local checkSuccess, id, location, accessDirection, inventory = coreutils.CheckInput([[
+    local checkSuccess, id, location, accessDirection, itemsInventory = coreutils.CheckInput([[
         This async private function copies a chest mobj.
 
         Return value:
@@ -148,7 +148,7 @@ function CopyChest(...)
                 id                      + (string) id of the chest
                 location                + (table) location to the chest
                 accessDirection         + (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-                inventory               + (table) the inventory of the chest
+                itemsInventory          + (table) the (items) inventory of the chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("mobj_chest.CopyChest: Invalid input") return nil end
 
@@ -158,7 +158,7 @@ function CopyChest(...)
         location        = coremove.CopyLocation(location),
         accessDirection = accessDirection,
 
-        inventory       = coreinventory.CopyInventory(inventory)
+        itemsInventory  = coreinventory.CopyItems(itemsInventory)
 	}
 end
 
