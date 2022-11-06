@@ -236,6 +236,10 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
+function SaveForest(forest)
+    coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
+end
+
 function ResetForest()
     coredht.SaveData({
         forestLevel = 0,
@@ -440,7 +444,7 @@ function UpdateForest_SSrv(serviceData)
     forest.nTrees = nTrees
 
     -- save forest data
-    coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
+    SaveForest(forest)
 
     -- end
     corelog.WriteToLog(">Updated forest (level="..forestLevel..", nTrees="..nTrees..")")
