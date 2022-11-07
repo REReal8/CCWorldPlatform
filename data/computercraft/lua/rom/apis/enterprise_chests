@@ -229,12 +229,11 @@ function UpdateChestRecord_ASrv(...)
     -- create project definition
     local updateChestRecordsProjectDef = {
         steps   = {
-            { stepName = "mobj_chest.FetchChestSlotsInventory_ASrv", async = true, stepDataDef = {
+            { stepName = "mobj_chest.UpdateChestInventory_ASrv", async = true, stepDataDef = {
                 { keyDef = "chest"      , valueSource = 0, keyDefSource = "chest" },
             }},
-            { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"         , valueSource = 0, keyDefSource = "chest.id" },
-                { keyDef = "slots"      , valueSource = 1, keyDefSource = "slots" },
+            { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
+                { keyDef = "chest"      , valueSource = 1, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"   , valueSource = 1, keyDefSource = "success" },
@@ -507,23 +506,17 @@ function GetItemsIntoTurtle_ASrv(...)
                 { keyDef = "itemsQuery"             , valueSource = 0, keyDefSource = "itemsQuery" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
-            { stepName = "enterprise_turtle.GetItemsLocator_SSrv", async = false, stepDataDef = {
-                { keyDef = "turtleId"               , valueSource = 1, keyDefSource = "turtleId" },
-                { keyDef = "itemsQuery"             , valueSource = 1, keyDefSource = "itemResultQuery" },
-            }},
-            { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 0, keyDefSource = "chest.id" }, -- ToDo consider changing service signature
-                { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
+            { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
+                { keyDef = "chest"                  , valueSource = 1, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
                 { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
-            { keyDef = "turtleItemsLocator"         , valueSource = 2, keyDefSource = "itemsLocator" },
+            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
         }
     }
     local projectData = {
@@ -772,39 +765,6 @@ function GetChestLocator(...)
 
     -- end
     return chestURL
-end
-
-function SetChestRecord_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, id, slots = coreutils.CheckInput([[
-        This sync private service sets a chest record based on (already obtained) data (like e.g. the slots inventory).
-
-        Return value:
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData         - (table) data for this service
-                id              + (string) id of the chest.
-                slots           + (table) slots inventory of the chest.
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Invalid input") return {success = false} end
-
-    -- get the chest
-    local chest = GetChestById(id)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Failed retrieving chest for id = "..id) return {success = false} end
-
-    -- determine items inventory
-    local itemsInventory = coreinventory.DetermineItemsList(slots)
-
-    -- set record
-    chest.itemsInventory = itemsInventory
-
-    -- save record
-    SaveChest(chest)
-
-    -- end
-    return {success = true}
 end
 
 function SaveChest_SSrv(...)
