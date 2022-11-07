@@ -133,9 +133,13 @@ function NextProjectStep(internalProjectData, stepResults)
     local project   = coredht.GetData(db.dhtRoot, projectId)
     if type(project) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid/ no project retrieved from "..projectId) TerminateProject(internalProjectData) return nil end
 
-    -- save the results for the previous step
+    -- check results of the previous step
     local previousStep = project.currentStep
-    if type(stepResults) ~= "table" then stepResults = {} end -- ToDo: consider checking (or even enforcing?) {success = true}
+    if type(stepResults) ~= "table" then corelog.Warning("enterprise_projects.NextProjectStep: no stepResults from step "..previousStep.."") stepResults = {} end
+    if previousStep > 0 and not stepResults.success then corelog.Warning("enterprise_projects.NextProjectStep: step "..previousStep.." did not return success!") end
+    -- ToDo: consider TerminateProject in both of above cases
+
+    -- save the results of the previous step
 --    corelog.WriteToProjectsLog("Save results step "..previousStep..": "..textutils.serialize(stepResults), projectId)
     corelog.WriteToProjectsLog("Save results step "..previousStep, projectId)
     project.outputs[ previousStep ] = stepResults
