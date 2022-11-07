@@ -7,17 +7,17 @@ local db = {
 --[[
     The chests enterprise provides services to perform operation on chests.
 
-    This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
-
-    Furthermore it provides the following additional services
-        GetHostLocator_SSrv     - provide host URL of the enterprise
+    It provides the following specific enterprise services
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
+        UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
+        GetHostLocator_SSrv     - provide host URL of the enterprise
         GetItemsLocator_SSrv    - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
-        UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 
-    The enterprise does not provide services to build/ dismantle chests. This is to be done by other (enterprise) code. In a sense the enterprise_chests is not the
+    Furthermorem, the enterprise functions as both a Supplier and a Storage for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+
+    The enterprise does not provide services to build/ dismantle chests. This should be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them.
 
     The following enterprise design decisions are made
@@ -175,6 +175,79 @@ function UpdateChestRecord_ASrv(...)
     -- start project
     corelog.WriteToLog(">Updating records for chest "..chest.id..".")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function GetHostLocator_SSrv(...)
+    --[[
+        This sync public service provides the (base) URL of this enterprise.
+
+        Return value:
+            hostLocator             - (URL) locating this enterprise
+
+        Parameters:
+            serviceData             - (table) empty
+    --]]
+
+    -- end
+    local result = {
+        success = true,
+        hostLocator = GetISHURL(),
+    }
+    return result
+end
+
+function GetItemsLocator_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, chestLocator, itemsQuery = coreutils.CheckInput([[
+        This sync public services provides the URL of items in a chest in the enterprise.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                itemsLocator        - (URL) locating the items in a chest
+
+        Parameters:
+            serviceData             - (table) data for this service
+                chestLocator        + (URL) locating a chest
+                itemsQuery          + (table) optional items to locate in chest
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid input") return {success = false} end
+
+    -- construct URL
+    local itemsLocator = chestLocator:copy()
+    itemsLocator:setQuery(itemsQuery)
+
+    -- end
+    local result = {
+        success = true,
+        itemsLocator = itemsLocator,
+    }
+    return result
+end
+
+function IsChestURL_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, aURL = coreutils.CheckInput([[
+        This sync public service answers the question if a URL is that of a chest.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                + (URL) that needs to be queried
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid input") return {success = false} end
+
+    -- check if of this ISH
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
+    end
 end
 
 function ProvideItemsTo_ASrv(...)
@@ -518,79 +591,6 @@ function PutItemsFromTurtle_ASrv(...)
     -- start project
 --    corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocator:getURI().." into chest "..projectData.id..".")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-end
-
-function GetHostLocator_SSrv(...)
-    --[[
-        This sync public service provides the (base) URL of this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            serviceData             - (table) empty
-    --]]
-
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetISHURL(),
-    }
-    return result
-end
-
-function GetItemsLocator_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, chestLocator, itemsQuery = coreutils.CheckInput([[
-        This sync public services provides the URL of items in a chest in the enterprise.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                itemsLocator        - (URL) locating the items in a chest
-
-        Parameters:
-            serviceData             - (table) data for this service
-                chestLocator        + (URL) locating a chest
-                itemsQuery          + (table) optional items to locate in chest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid input") return {success = false} end
-
-    -- construct URL
-    local itemsLocator = chestLocator:copy()
-    itemsLocator:setQuery(itemsQuery)
-
-    -- end
-    local result = {
-        success = true,
-        itemsLocator = itemsLocator,
-    }
-    return result
-end
-
-function IsChestURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = coreutils.CheckInput([[
-        This sync public service answers the question if a URL is that of a chest.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (URL) that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of this ISH
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
 end
 
 --    _                 _    __                  _   _
