@@ -281,10 +281,12 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get chest location
-    local serviceResults = GetItemsLocations_SSrv({ itemsLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location of chest "..type(itemsLocator)..".") return {success = false} end
-    local k, chestLocation = next(serviceResults.locations, nil)
+    -- get chest
+    local chest = GetChest(itemsLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..storageLocator:getURI().." not found.") return {success = false} end
+
+    -- get location
+    local chestLocation = chest.location
 
     -- loop on items
     local fuelNeed = 0
@@ -298,7 +300,7 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
         local serviceData = {
             storageLocator  = storageLocator,
         }
-        serviceResults =  enterprise_isp.GetStorageLocation_SSrv(serviceData)
+        local serviceResults =  enterprise_isp.GetStorageLocation_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..type(storageLocator)..".") return {success = false} end
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
         local fuelNeed_FromChestToStorage = role_fuel_worker.NeededFuelToFrom(serviceResults.location, chestLocation)
@@ -335,10 +337,12 @@ function GetItemsLocations_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
+    -- get chest
+    local chest = GetChest(itemsLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
+
     -- get location
-    local serviceResults = GetStorageLocation_SSrv({ storageLocator = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: failed obtaining location for Storage "..itemsLocator:getURI()..".") return {success = false} end
-    local location = serviceResults.location
+    local location = chest.location
 
     -- end
     return {
