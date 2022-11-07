@@ -64,13 +64,6 @@ function RegisterChest_SSrv(...)
         itemsInventory  = { }, -- assumed to be empty
     }
 
-    -- ensure enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then -- ToDo: consider putting elsewhere
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
-        coredht.SaveData({}, db.dhtRoot, db.dhtChests)
-    end
-
     -- save the chest
     corelog.WriteToLog(">Registering chest "..chest.id..".")
     SaveChest(chest)
@@ -663,6 +656,13 @@ function SaveChest(...)
             chest               + (table) the chest object
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.SaveChest: Invalid input") return nil end
+
+    -- ensure enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then -- ToDo: consider putting elsewhere
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+        coredht.SaveData({}, db.dhtRoot, db.dhtChests)
+    end
 
     -- save record
     coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.id)
