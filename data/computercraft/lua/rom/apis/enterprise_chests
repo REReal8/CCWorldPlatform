@@ -589,9 +589,8 @@ function PutItemsFromTurtle_ASrv(...)
                 { keyDef = "turtleItemsLocator"     , valueSource = 0, keyDefSource = "turtleItemsLocator" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
-            { stepName = "enterprise_chests.SetChestRecord_SSrv", async = false, stepDataDef = {
-                { keyDef = "id"                     , valueSource = 0, keyDefSource = "chest.id" },  -- ToDo consider changing service signature
-                { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
+            { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
+                { keyDef = "chest"                  , valueSource = 1, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
@@ -808,3 +807,24 @@ function SetChestRecord_SSrv(...)
     return {success = true}
 end
 
+function SaveChest_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, chest = coreutils.CheckInput([[
+        This sync private service saves a chest record.
+
+        Return value:
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData         - (table) data for this service
+                chest           + (table) the chest
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.SaveChest_SSrv: Invalid input") return {success = false} end
+
+    -- save record
+    SaveChest(chest)
+
+    -- end
+    return {success = true}
+end

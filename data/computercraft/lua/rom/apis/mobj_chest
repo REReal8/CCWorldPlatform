@@ -93,7 +93,7 @@ end
 
 function PutItemsFromTurtleIntoChest_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleItemsLocator, chest, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, chest, turtleItemsLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
         This async private service puts items from a the inventory of a turtle into a chest.
 
         Return value:
@@ -102,12 +102,12 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
-                slots                   - (table) the slots inventory of the chest (after the items have been put)
+                chest                   - (table) the chest (after the items have been put)
 
         Parameters:
             serviceData                 - (table) data about the service
-                turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 chest                   + (table) the chest
+                turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
@@ -118,7 +118,7 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
     if not serviceResults.success then corelog.Error("mobj_chest.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- put with an assignment
+    -- create project definition
     local taskData = {
         turtleId        = turtleItemsLocator:getPort(),
         itemsQuery      = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
@@ -127,12 +127,41 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
 
         priorityKey     = assignmentsPriorityKey,
     }
-    local assignmentServiceData = {
-        metaData    = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
-        task        = "role_chests_worker.PutItemsFromTurtleIntoChest_Task",
-        taskData    = taskData,
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "task"                   , valueSource = 0, keyDefSource = "task" },
+                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
+                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+            }},
+            { stepName = "mobj_chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
+                { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
+            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
+            { keyDef = "chest.itemsInventory"       , valueSource = 2, keyDefSource = "items" },
+        }
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    local projectData = {
+        chest                   = mobj_chest.CopyChest(chest),
+
+        task                    = "role_chests_worker.PutItemsFromTurtleIntoChest_Task",
+        metaData                = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
+        taskData                = taskData,
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
 function CopyChest(...)
@@ -169,3 +198,28 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
+function DetermineItemsList_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, slots = coreutils.CheckInput([[
+        This sync private service determined an items list from a slots inventory.
+
+        Return value:
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+                items           - (table) items list of a chest
+
+        Parameters:
+            serviceData         - (table) data for this service
+                slots           + (table) slots inventory of a chest
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.DetermineItemsList_SSrv: Invalid input") return {success = false} end
+
+    -- determine items inventory
+    local items = coreinventory.DetermineItemsList(slots)
+
+    -- end
+    return {
+        success = true,
+        items   = items,
+    }
+end
