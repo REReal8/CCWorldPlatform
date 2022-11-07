@@ -163,8 +163,8 @@ function GetInventoryDetail()
     return inventory
 end
 
-function DetermineItemsInventory(slots)
-    -- construct item inventory
+function DetermineItemsList(slots)
+    -- construct items list
     local items = {}
 
     -- loop on slots

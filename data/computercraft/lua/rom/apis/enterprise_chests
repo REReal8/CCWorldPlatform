@@ -796,7 +796,7 @@ function SetChestRecord_SSrv(...)
     if type(chest) ~="table" then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Failed retrieving chest for id = "..id) return {success = false} end
 
     -- determine items inventory
-    local itemsInventory = coreinventory.DetermineItemsInventory(slots)
+    local itemsInventory = coreinventory.DetermineItemsList(slots)
 
     -- set record
     chest.itemsInventory = itemsInventory
