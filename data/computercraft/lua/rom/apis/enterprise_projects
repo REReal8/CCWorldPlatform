@@ -129,26 +129,29 @@ end
 
 function NextProjectStep(internalProjectData, stepResults)
     -- get the project information
-    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
-    if type(project) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid/ no project retrieved from "..internalProjectData.projectId) TerminateProject(internalProjectData) return nil end
+    local projectId = internalProjectData.projectId
+    local project   = coredht.GetData(db.dhtRoot, projectId)
+    if type(project) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid/ no project retrieved from "..projectId) TerminateProject(internalProjectData) return nil end
 
     -- save the results for the previous step
+    local previousStep = project.currentStep
     if type(stepResults) ~= "table" then stepResults = {} end -- ToDo: consider checking (or even enforcing?) {success = true}
---    corelog.WriteToProjectsLog("Save results step "..project.currentStep..": "..textutils.serialize(stepResults), project.projectId)
-    corelog.WriteToProjectsLog("Save results step "..project.currentStep, project.projectId)
-    project.outputs[ project.currentStep ] = stepResults
+--    corelog.WriteToProjectsLog("Save results step "..previousStep..": "..textutils.serialize(stepResults), projectId)
+    corelog.WriteToProjectsLog("Save results step "..previousStep, projectId)
+    project.outputs[ previousStep ] = stepResults
 
     -- was this the last step?
-    if #project.projectDef.steps == project.currentStep then EndProject(internalProjectData) return nil end
+    if #project.projectDef.steps == previousStep then EndProject(internalProjectData) return nil end
 
     -- next step
-    project.currentStep = project.currentStep + 1
+    project.currentStep = previousStep + 1
+    local currentStep = project.currentStep
 
     -- save to dht
-    coredht.SaveData(project, db.dhtRoot, internalProjectData.projectId)
+    coredht.SaveData(project, db.dhtRoot, projectId)
 
     -- get new step
-    local step = project.projectDef.steps[ project.currentStep ]
+    local step = project.projectDef.steps[ currentStep ]
 
     -- prepare stepData
     local stepData = {}
@@ -174,14 +177,14 @@ function NextProjectStep(internalProjectData, stepResults)
     -- type of step?
     local serviceName = step.stepName -- note: possibly later also none service steps, for now it always is a service
     if step.async == true then
-        corelog.WriteToProjectsLog("Start step "..project.currentStep.." async", project.projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." async", projectId)
 
         -- do async function call
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
         coreutils.DoASyncService(serviceName, stepData, callback, callbackData)
     else
-        corelog.WriteToProjectsLog("Start step "..project.currentStep.." sync", project.projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." sync", projectId)
 
         -- do sync function call, keep the results
         local results = coreutils.DoSyncService(serviceName, stepData)
