@@ -82,7 +82,7 @@ end
 
 function FetchItemsFromChestIntoTurtle_ASrv(...)
     -- get & check input from description
-    local checkSuccess, chest, itemsQuery, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, chest, items, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
         This async private service fetches items from a chest into the inventory of a turtle.
 
         Return value:
@@ -97,7 +97,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 chest                   + (table) the chest
-                itemsQuery              + (table) items to be fetched
+                items                   + (table) items to be fetched
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
@@ -108,7 +108,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
     local taskData = {
         location        = coremove.CopyLocation(chest.location),
         accessDirection = chest.accessDirection,
-        itemsQuery      = itemsQuery,
+        itemsQuery      = items,
 
         priorityKey     = assignmentsPriorityKey,
     }

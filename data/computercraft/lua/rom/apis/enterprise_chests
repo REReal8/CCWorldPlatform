@@ -411,7 +411,7 @@ function GetItemsIntoTurtle_ASrv(...)
         steps   = {
             { stepName = "mobj_chest.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
-                { keyDef = "itemsQuery"             , valueSource = 0, keyDefSource = "itemsQuery" },
+                { keyDef = "items"                  , valueSource = 0, keyDefSource = "items" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
@@ -429,7 +429,7 @@ function GetItemsIntoTurtle_ASrv(...)
     }
     local projectData = {
         chest                   = mobj_chest.CopyChest(chest),
-        itemsQuery              = sourceItemsLocator:getQuery(),
+        items                   = sourceItemsLocator:getQuery(),
 
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
