@@ -789,7 +789,7 @@ function SetChestRecord_SSrv(...)
                 id              + (string) id of the chest.
                 slots           + (table) slots inventory of the chest.
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("enterprise_chests.SetChestRecord_SSrv: Invalid input") return {success = false} end
 
     -- get the chest
     local chest = GetChestById(id)
