@@ -35,79 +35,6 @@ local db = {
 --   | |
 --   |_|
 
-function GetHostLocator_SSrv(...)
-    --[[
-        This sync public service provides the (base) URL of this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            serviceData             - (table) empty
-    --]]
-
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetISHURL(),
-    }
-    return result
-end
-
-function GetItemsLocator_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, chestLocator, itemsQuery = coreutils.CheckInput([[
-        This sync public services provides the URL of items in a chest in the enterprise.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                itemsLocator        - (URL) locating the items in a chest
-
-        Parameters:
-            serviceData             - (table) data for this service
-                chestLocator        + (URL) locating a chest
-                itemsQuery          + (table) optional items to locate in chest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid input") return {success = false} end
-
-    -- construct URL
-    local itemsLocator = chestLocator:copy()
-    itemsLocator:setQuery(itemsQuery)
-
-    -- end
-    local result = {
-        success = true,
-        itemsLocator = itemsLocator,
-    }
-    return result
-end
-
-function IsChestURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = coreutils.CheckInput([[
-        This sync public service answers the question if a URL is that of a chest.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (URL) that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of this ISH
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
-end
-
 function RegisterChest_SSrv(...)
     -- get & check input from description
     local checkSuccess, location, accessDirection = coreutils.CheckInput([[
@@ -316,10 +243,6 @@ function Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
-    local serviceResults = IsChestURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
-
     -- get chest
     local chest = GetChest(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
@@ -448,10 +371,6 @@ function GetStorageLocation_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Invalid input") return {success = false} end
 
-    -- check storageLocator is for this enterprise
-    local serviceResults = IsChestURL_QSrv({ aURL = storageLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Invalid storageLocator (="..storageLocator:getURI()..").") return {success = false} end
-
     -- get chest
     local chest = GetChest(storageLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Chest "..storageLocator:getURI().." not found.") return {success = false} end
@@ -489,10 +408,6 @@ function GetItemsIntoTurtle_ASrv(...)
             callbackData                + (table, {}) data to supply to callback function
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- check source is for this enterprise
-    local serviceResults = IsChestURL_QSrv({ aURL = sourceItemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid sourceURL (="..sourceItemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get chest
     local chest = GetChest(sourceItemsLocator)
@@ -562,10 +477,6 @@ function PutItemsFromTurtle_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- check destination is for this enterprise (i.e. a chest)
-    local serviceResults = IsChestURL_QSrv({ aURL = destinationHostLocator}) -- ToDo: consider moving into GetChest
-    if not serviceResults.success then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid destination host (="..destinationHostLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
     -- get chest
     local chest = GetChest(destinationHostLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Chest "..destinationHostLocator:getURI().." not found.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -612,25 +523,85 @@ function PutItemsFromTurtle_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
+function GetHostLocator_SSrv(...)
+    --[[
+        This sync public service provides the (base) URL of this enterprise.
+
+        Return value:
+            hostLocator             - (URL) locating this enterprise
+
+        Parameters:
+            serviceData             - (table) empty
+    --]]
+
+    -- end
+    local result = {
+        success = true,
+        hostLocator = GetISHURL(),
+    }
+    return result
+end
+
+function GetItemsLocator_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, chestLocator, itemsQuery = coreutils.CheckInput([[
+        This sync public services provides the URL of items in a chest in the enterprise.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                itemsLocator        - (URL) locating the items in a chest
+
+        Parameters:
+            serviceData             - (table) data for this service
+                chestLocator        + (URL) locating a chest
+                itemsQuery          + (table) optional items to locate in chest
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid input") return {success = false} end
+
+    -- construct URL
+    local itemsLocator = chestLocator:copy()
+    itemsLocator:setQuery(itemsQuery)
+
+    -- end
+    local result = {
+        success = true,
+        itemsLocator = itemsLocator,
+    }
+    return result
+end
+
+function IsChestURL_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, aURL = coreutils.CheckInput([[
+        This sync public service answers the question if a URL is that of a chest.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                + (URL) that needs to be queried
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid input") return {success = false} end
+
+    -- check if of this ISH
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
+    end
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function DeleteChests()
-    local chests = coredht.GetData(db.dhtRoot, db.dhtChests)
-    if not chests or type(chests) ~= "table" then corelog.Warning("coreassignment.DeleteChests: chests not valid") return nil end
-
-    -- remove all
---    corelog.Warning("All chests are being deleted!")
-    for id, chest in pairs(chests) do
-        -- remove
-        corelog.Warning("  removing chest "..id)
-        RemoveChest(chest)
-    end
-end
 
 function GetChest(...)
     -- get & check input from description
@@ -644,6 +615,10 @@ function GetChest(...)
             chestLocator        + (URL) locating the chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetChest: Invalid input") return nil end
+
+    -- check chestLocator is for this enterprise
+    local serviceResults = IsChestURL_QSrv({ aURL = chestLocator})
+    if not serviceResults.success then corelog.Error("enterprise_chests.GetChest: Invalid chestLocator (="..chestLocator:getURI()..").") return nil end
 
     -- chest ophalen
     local chestId = GetChestId(chestLocator)
@@ -691,6 +666,19 @@ function SaveChest(...)
 
     -- save record
     coredht.SaveData(chest, db.dhtRoot, db.dhtChests, chest.id)
+end
+
+function DeleteChests()
+    local chests = coredht.GetData(db.dhtRoot, db.dhtChests)
+    if not chests or type(chests) ~= "table" then corelog.Warning("coreassignment.DeleteChests: chests not valid") return nil end
+
+    -- remove all
+--    corelog.Warning("All chests are being deleted!")
+    for id, chest in pairs(chests) do
+        -- remove
+        corelog.Warning("  removing chest "..id)
+        RemoveChest(chest)
+    end
 end
 
 function RemoveChest(...)
