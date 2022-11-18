@@ -65,6 +65,8 @@ local db = {
     }
 }
 
+-- ToDo: consider renaming to enterprise_factories
+
 --[[
     The Factory is an enterprise that offers services to produce items based on recipes.
 

@@ -3,6 +3,8 @@ local db = {
     dhtSites    = "sites",
 }
 
+-- ToDo: consider renaming and refactoring to mobj_factory
+
 --[[
     A factory site is a site (?sub enterprise) that offers production services to a factory.
 
