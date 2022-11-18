@@ -11,11 +11,23 @@
 --   | |
 --   |_|
 
-function TestPureLogicService_SSrv(serviceData)
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid serviceData") return {success = false} end
-    local testArg = serviceData.testArg
-    if type(testArg) == "nil" then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid testArg (nil)") return {success = false} end
+function TestPureLogicService_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, testArg = coreutils.CheckInput([[
+        This public async service executes an assignment with a callback function (and no callback data)
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData         + (table) data about the service
+                testArg         + (number) as a test argument
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid input") return {success = false} end
 
     corelog.WriteToLog(">calling enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
 
@@ -31,13 +43,25 @@ function TestPureLogicService_SSrv(serviceData)
     return serviceResult
 end
 
-function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callback)
-      -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid serviceData") return {success = false} end
-    local testArg = serviceData.testArg
-    if type(testArg) == "nil" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid testArg (nil)") return {success = false} end
+function TestServiceWithAssignmentAndCallback_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, testArg, callback = coreutils.CheckInput([[
+        This public async service executes an assignment with a callback function (and no callback data).
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData         + (table) data about the service
+                testArg         + (number) as a test argument
+            callback            + (string) name of function to call once service is ready
+    --]], table.unpack(arg))
     local callbackData = {}
-    if type(callback) ~= "string" then corelog.Error('enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callback..")")
 
@@ -62,13 +86,25 @@ function TestServiceWithAssignmentAndCallback_ASrv(serviceData, callback)
     enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end
 
-function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(serviceData, callback, callbackData)
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid serviceData") return {success = false} end
-    local testArg = serviceData.testArg
-    if type(testArg) == "nil" then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid testArg (nil)") return {success = false} end
-    if type(callback) ~= "string" then corelog.Error('enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid callback function') return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, testArg, callback, callbackData = coreutils.CheckInput([[
+        This public async service executes an assignment with a callback function and callback data.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData         + (table) data about the service
+                testArg         + (number) as a test argument
+            callback            + (string) name of function to call once service is ready
+            callbackData        + (table) data to supply to callback function
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_colonization.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
 

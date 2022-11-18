@@ -27,11 +27,11 @@ function T_CombineStepResults()
         }
     }
     local projectData = {
-        testData1 = "some testData1",
-        testData2 = "some testData2",
-        testData3 = "some testData3",
+        testData1 = 10,
+        testData2 = 20,
+        testData3 = 30,
         falseServiceResult = {success = false},
-        testData4 = "some testData4",
+        testData4 = 40,
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = { "rootCallBackData" }
