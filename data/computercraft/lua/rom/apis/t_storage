@@ -1,4 +1,14 @@
 function T_buildAndStartNewSite()
+    -- prepare test
+    corelog.WriteToLog("# Test BuildAndStartNewSite_ASrv")
+    local forest = enterprise_colonization.GetForest()
+    local originalForestLevel = forest.forestLevel
+    local originalNTrees = forest.nTrees
+    enterprise_colonization.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    local location = coremove.GetLocation()
+    t_factory.StartNewV0Site(location)
+
+    -- test
     enterprise_storage.BuildAndStartNewSite_ASrv({
         location                = {x=12, y=12, z= 1, dx=0, dy=1},
         type                    = "silo",
@@ -6,5 +16,14 @@ function T_buildAndStartNewSite()
         topChests               = 2,
         layers                  = 2,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, "t_storage.Cleanup_Callback", { originalForestLevel = originalForestLevel, originalNTrees = originalNTrees, location = location })
+
+end
+
+function Cleanup_Callback(callbackData, taskResult)
+    corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
+
+    -- cleanup test
+    enterprise_colonization.UpdateForest_SSrv({ forestLevel = callbackData.originalForestLevel, nTrees = callbackData.originalNTrees })
+    t_factory.StopV0Site(callbackData.location)
 end
