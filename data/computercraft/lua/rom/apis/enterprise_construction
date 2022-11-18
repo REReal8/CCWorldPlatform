@@ -11,8 +11,9 @@
 --   | |
 --   |_|
 
-function BuildBlueprint_ASrv(buildData, callback, callbackData)
-    --[[
+function BuildBlueprint_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, blueprintStartpoint, blueprint, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
@@ -23,26 +24,15 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
 
         Parameters:
             buildData                   - (table) data about what to build
-                blueprintStartpoint     - (table) top lower left coordinate to start building the blueprint
-                blueprint               - (table) blueprint to build
+                blueprintStartpoint     + (table) top lower left coordinate to start building the blueprint
+                blueprint               + (table) blueprint to build
                     layerList           - (table) layer to build
                     escapeSequence      - (table) escapeSequence of blueprint
-                materialsHostLocator    - (URL) locating where (i.e. at which ISH) the building materials can be retrieved
-            callback                    - (string) name of function to call once the pattern is build
-            callbackData                - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local blueprintStartpoint = buildData.blueprintStartpoint
-    if type(blueprintStartpoint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprintStartpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local blueprint = buildData.blueprint
-    if type(blueprint) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid blueprint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(blueprint.layerList) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid layerList") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsHostLocator = url.URLClass:new(buildData.materialsHostLocator)
-    if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: callback not a string") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+                materialsHostLocator    + (URL) locating where (i.e. at which ISH) the building materials can be retrieved
+            callback                    + (string) name of function to call once the pattern is build
+            callbackData                + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- construct assignment metadata
     local taskData = {
@@ -114,8 +104,9 @@ function BuildBlueprint_ASrv(buildData, callback, callbackData)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
-    --[[
+function BuildRectangularPattern_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, pattern, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This async public service builds a rectangular pattern in the x,y plane as a single assignment/ task.
 
         Return value:
@@ -126,35 +117,19 @@ function BuildRectangularPattern_ASrv(buildData, callback, callbackData)
 
         Parameters:
             buildData                   - (table) data about what to build
-                startpoint              - (table) lower left coordinate to start building the pattern
-                buildFromAbove          - (boolean) whether build should be done from above (true) or below (false)
-                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = false)
-                pattern                 - (table) pattern to build
+                startpoint              + (table) lower left coordinate to start building the pattern
+                buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
+                replacePresentObjects   + (boolean) whether objects should be replaced if it is already present in the minecraft world (default = false)
+                pattern                 + (table) pattern to build
                     deltaX              - (number) x size of pattern
                     deltaY              - (number) size of pattern
                     objectList          - (table) array of objects to build, with for each object
-                        x               - (number) x coordinate within the pattern
-                        y               - (number) y coordinate within the pattern
-                        block           - (string) minecraft blocktype to build (e.g. "minecraft:torch")
                     clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
-                materialsHostLocator    - (URL) locating where (i.e. at which ISH) the building materials can be retrieved
-            callback                    - (string) name of function to call once the pattern is build
-            callbackData                - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(buildData) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local startpoint = buildData.startpoint
-    if type(startpoint) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid startpoint") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local buildFromAbove = buildData.buildFromAbove
-    if type(buildFromAbove) ~= "boolean" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid buildFromAbove") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local replacePresentObjects = buildData.replacePresentObjects
-    local pattern = buildData.pattern
-    if type(pattern) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid pattern") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(buildData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsHostLocator = url.URLClass:new(buildData.materialsHostLocator)
-    if type(callback) ~= "string" then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+                materialsHostLocator    + (URL) locating where (i.e. at which ISH) the building materials can be retrieved
+            callback                    + (string) name of function to call once the pattern is build
+            callbackData                + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get assignment metadata
     local taskData = {

@@ -85,33 +85,31 @@ function BuildBlueprint_MetaData(buildData)
     return metaData
 end
 
-function BuildBlueprint_Task(buildData)
-    --[[
+function BuildBlueprint_Task(...)
+    -- get & check input from description
+    local checkSuccess, blueprintStartpoint, layerList, escapeSequence = coreutils.CheckInput([[
         This Task builds a blueprint.
 
         Return value:
-                                - (table) {success = true} if the blueprint was succesfully build
+                                        - (table) {success = true} if the blueprint was succesfully build
 
         Parameters:
-            buildData           - (table) data about the pattern
-                blueprintStartpoint     - (table) top lower left coordinate to start building the blueprint
+            buildData                   - (table) data about the pattern
+                blueprintStartpoint     + (table) top lower left coordinate to start building the blueprint
                 blueprint               - (table) blueprint to build
-                    layerList           - (table) layer to build
-                    escapeSequence      - (table) escapeSequence of blueprint
-    ]]
-
-    -- check input
-    if type(buildData.blueprint) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: blueprint not a table") return {success = false} end
-    if type(buildData.blueprint.escapeSequence) ~= "table" then corelog.Error("role_builder.BuildBlueprint_Task: escape sequence not a table") return {success = false} end
+                    layerList           + (table) layer to build
+                    escapeSequence      + (table) escapeSequence of blueprint
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_builder.BuildBlueprint_Task: Invalid input") return {success = false} end
 
     -- loop on layers
-    for i, buildLayer in ipairs(buildData.blueprint.layerList) do
+    for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
         local layerBuildData = {
             startpoint              = coremove.GetRelativeLocation(buildLayer.startpoint,
-                                                                   buildData.blueprintStartpoint.x,
-                                                                   buildData.blueprintStartpoint.y,
-                                                                   buildData.blueprintStartpoint.z),
+                                                                   blueprintStartpoint.x,
+                                                                   blueprintStartpoint.y,
+                                                                   blueprintStartpoint.z),
             buildFromAbove          = buildLayer.buildFromAbove,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             pattern                 = buildLayer.pattern,
@@ -120,14 +118,14 @@ function BuildBlueprint_Task(buildData)
         -- build layer using internal task
         local result = BuildRectangularPattern_Task(layerBuildData)
         if result.success ~= true then
-            corelog.Error("role_builder.BuildBlueprint_Task(): Failed building layer " ..i..". Remaining layers skipped.")
+            corelog.Error("role_builder.BuildBlueprint_Task: Failed building layer " ..i..". Remaining layers skipped.")
             return {success = false}
         end
     end
 
     -- perform escape sequence
-    for i, escapeLocation in ipairs(buildData.blueprint.escapeSequence) do
-        coremove.GoTo(coremove.GetRelativeLocation(buildData.blueprintStartpoint,
+    for i, escapeLocation in ipairs(escapeSequence) do
+        coremove.GoTo(coremove.GetRelativeLocation(blueprintStartpoint,
                                                    escapeLocation.x,
                                                    escapeLocation.y,
                                                    escapeLocation.z))
@@ -178,8 +176,9 @@ function BuildRectangularPattern_ItemsNeeded(pattern)
     return itemList
 end
 
-function BuildRectangularPattern_Task(buildData)
-     --[[
+function BuildRectangularPattern_Task(...)
+    -- get & check input from description
+    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, pattern = coreutils.CheckInput([[
         This Task builds a rectangular pattern in the x,y plane.
 
         Return value:
@@ -187,36 +186,23 @@ function BuildRectangularPattern_Task(buildData)
 
         Parameters:
             buildData                   - (table) data about the pattern
-                startpoint              - (table) lower left coordinate to start building the pattern
-                buildFromAbove          - (boolean) whether build should be done from above (true) or below (false)
-                replacePresentObjects   - (boolean) whether objects should be replaced if it is already present in the minecraft world (default = false)
-                pattern                 - (table) pattern to build
+                startpoint              + (table) lower left coordinate to start building the pattern
+                buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
+                replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world
+                pattern                 + (table) pattern to build
                     deltaX              - (number) x size of pattern
                     deltaY              - (number) y size of pattern
                     objectList          - (table) array of objects to build
                     clearRemainingSpace - (boolean) whether spce not in the objectlist should be cleared
-
-            with for each object in objectList:
-            {
-                x                       - (table) x coordinate within the pattern
-                y                       - (table) y coordinate within the pattern
-                block                   - (string) minecraft blocktype to build (e.g. "minecraft:torch")
-            }
-    ]]
-
-    -- check input
-    if type(buildData) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: buildData not a table") return {success = false} end
-    if type(buildData.pattern) ~= "table" then corelog.Error("role_builder.BuildRectangularPattern_Task: pattern not a table") return {success = false} end
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_builder.BuildRectangularPattern_Task: Invalid input") return {success = false} end
 
     -- check mandatory pickage!
     local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
-    if not axePresent then
-        corelog.Error("role_builder.BuildRectangularPattern_Task(): No pickaxe present, we are on strike!")
-        return {success = false}
-    end
+    if not axePresent then corelog.Error("role_builder.BuildRectangularPattern_Task: No pickaxe present, we are on strike!") return {success = false} end
 
     -- check if inventory has what we need
-    local itemList = BuildRectangularPattern_ItemsNeeded(buildData.pattern)
+    local itemList = BuildRectangularPattern_ItemsNeeded(pattern)
     for itemName, itemCount in pairs(itemList) do
         -- get items in inventory
         local inventoryItemCount = coreinventory.CountItem(itemName)
@@ -229,47 +215,56 @@ function BuildRectangularPattern_Task(buildData)
 
     -- orientatie
     local deltaZ    = 1
-    if buildData.buildFromAbove  then deltaZ    =  1
-                            else deltaZ    = -1
+    if buildFromAbove   then deltaZ    =  1
+                        else deltaZ    = -1
     end
 
     -- go to starting location
-    coremove.GoTo(coremove.GetRelativeLocation(buildData.startpoint, 0, 0, deltaZ), false)
+    coremove.GoTo(coremove.GetRelativeLocation(startpoint, 0, 0, deltaZ), false)
 
     -- walk along x
-    for x=0, buildData.pattern.deltaX - 1 do
+    for x=0, pattern.deltaX - 1 do
         -- walk along y
-        for iY=0, buildData.pattern.deltaY - 1 do
+        for iY=0, pattern.deltaY - 1 do
             -- determine y value such that path is back and forth in y
             local y = iY
             if x % 2 == 1 then
-                y = buildData.pattern.deltaY - 1 - iY
+                y = pattern.deltaY - 1 - iY
             end
 
             -- ga naar de locatie
-            coremove.MoveTo(coremove.GetRelativeLocation(buildData.startpoint, x, y, deltaZ), true)
+            coremove.MoveTo(coremove.GetRelativeLocation(startpoint, x, y, deltaZ), true)
 
             -- moeten we hier wat plaatsen?
             local placingBlock  = false
-            for i, object in ipairs(buildData.pattern.objectList) do
+            for i, object in ipairs(pattern.objectList) do
+                -- get & check object from description
+                local checkObjSuccess, obj_x, obj_y, obj_dx, obj_dy, obj_block = coreutils.CheckInput([[
+                    Parameters:
+                        object              - (table) object to place
+                            x               + (number) x coordinate within the pattern
+                            y               + (number) y coordinate within the pattern
+                            dx              + (number, 0) (optional) dx within pattern
+                            dy              + (number, 0) (optional) dy within pattern
+                            block           + (string) minecraft blocktype to build (e.g. "minecraft:torch")
+                ]], object)
+                if not checkObjSuccess then corelog.Error("role_builder.BuildRectangularPattern_Task: Invalid object in objectList") return {success = false} end
 
                 -- juiste coordinaat?
-                if object.x == x and object.y == y then
-
+                if obj_x == x and obj_y == y then
                     -- onthouden voor zo
                     placingBlock = true
 
                     -- moeten we in een specifieke richting draaien?
-                    if object.dx ~= nil and object.dy ~= nil then
-
+                    if obj_dx ~= 0 or obj_dy ~= 0 then
                         -- turn in the right direction
-                        coremove.TurnTo({dx = object.dx, dy = object.dy})
+                        coremove.TurnTo({dx = obj_dx, dy = obj_dy})
                     end
 
                     -- check if block already present
                     local has_block, block_data
-                    if not buildData.replacePresentObjects then
-                        if buildData.buildFromAbove then
+                    if not replacePresentObjects then
+                        if buildFromAbove then
                             has_block, block_data = turtle.inspectDown()
                         else
                             has_block, block_data = turtle.inspectUp()
@@ -277,15 +272,15 @@ function BuildRectangularPattern_Task(buildData)
                     end
 
                     -- check placing object
-                    if buildData.replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= object.block then
+                    if replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= obj_block then
                         -- block nu plaatsen
-                        if coreinventory.SelectItem(object.block) then
-                            if buildData.buildFromAbove  then turtle.digDown()   turtle.placeDown()
-                                                    else turtle.digUp()     turtle.placeUp()
+                        if coreinventory.SelectItem(obj_block) then
+                            if buildFromAbove   then turtle.digDown()   turtle.placeDown()
+                                                else turtle.digUp()     turtle.placeUp()
                             end
                         else
                             -- mandatory item not in inventory, error message and ignore
-                            corelog.WriteToLog("Oops, BuildRectangularPattern_Task() item not in inventory: " .. object.block)
+                            corelog.WriteToLog("Oops, BuildRectangularPattern_Task item not in inventory: "..obj_block)
                         end
                     end
 
@@ -295,10 +290,10 @@ function BuildRectangularPattern_Task(buildData)
             end
 
             -- nee? Dan iets weghalen?
-            if not placingBlock and buildData.pattern.clearRemainingSpace then
+            if not placingBlock and pattern.clearRemainingSpace then
 
                 -- vak schoon maken
-                if buildData.buildFromAbove  then turtle.digDown()
+                if buildFromAbove  then turtle.digDown()
                                         else turtle.digUp()
                 end
             end
