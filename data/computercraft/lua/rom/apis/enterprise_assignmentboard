@@ -29,8 +29,9 @@ local db = {
 --   | |
 --   |_|
 
-function DoAssignment_ASrv(serviceData, callback, callbackData)
-    --[[
+function DoAssignment_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, metaData, task, taskData, callback, callbackData = coreutils.CheckInput([[
         This async public service posts an Assignment for execution via the enterprise.
 
         The Assignment is not necessarily directly executed. It is added to the list of assignments in the
@@ -46,17 +47,15 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData             - (table) data for this service
-                metaData            - (table) with metadata on the Task (used in the the assignment selection proces (e.g. the fuel needs of the task))
-                task                - (string) name of the the Task function to execute
-                taskData            - (table) data to supply to Task function to be able to perform the task
-            callback                - (string) name of function to call once service (assignment) is ready
-            callbackData            - (table) data to supply to callback function
-    ]]
+                metaData            + (table) with metadata on the Task (used in the the assignment selection proces (e.g. the fuel needs of the task))
+                task                + (string) name of the the Task function to execute
+                taskData            + (table) data to supply to Task function to be able to perform the task
+            callback                + (string) name of function to call once service (assignment) is ready
+            callbackData            + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local metaData = serviceData.metaData
-    if type(metaData) ~= "table" then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid metaData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- set metaData defaults  ToDo: consider doing with CheckInput
     metaData.startTime      = metaData.startTime    or coreutils.UniversalTime()    --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
     metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
     metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
@@ -65,14 +64,6 @@ function DoAssignment_ASrv(serviceData, callback, callbackData)
     metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
     metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
     metaData.priorityKey    = metaData.priorityKey  or nil      --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a turtle, it will only take assignments with that key)
-    local task = serviceData.task
-    if type(task) ~= "string" then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid task") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    -- ToDo: investigate if there is a way to check if the actual function exists and has the proper argument without actually calling it
-    local taskData = serviceData.taskData
-    if type(taskData) ~= "table" then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid taskData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid callback") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    -- ToDo: investigate if there is a way to check if the actual function exists and has the proper arguments without actually calling it
-    if type(callbackData) ~= "table" then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid callbackData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create assignment
     local assignmentId  = coreutils.NewId()
@@ -142,8 +133,9 @@ function GetStatistics_Att()
     return coredht.GetData(db.dhtRoot, db.dhtStatistics)
 end
 
-function FindBestAssignment_SSrv(serviceData)
-    --[[
+function FindBestAssignment_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, assignmentFilter, turtleResume = coreutils.CheckInput([[
         This sync public service finds the best available Assignment for a turtle based on an assignmentFilter and turtleResume.
 
         Return value:
@@ -153,22 +145,16 @@ function FindBestAssignment_SSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data for this service
-                assignmentFilter    - (table) filter to apply in finding an Assignment
-                turtleResume        - (table) turtle "resume" to consider in finding an Assignment
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_chests.FindBestAssignment_SSrv: Invalid serviceData") return {success = false} end
-    local assignmentFilter = serviceData.assignmentFilter
-    if type(assignmentFilter) ~= "table" then corelog.Error("enterprise_chests.FindBestAssignment_SSrv: Invalid assignmentFilter") return {success = false} end
-    local turtleResume = serviceData.turtleResume
-    if type(turtleResume) ~= "table" then corelog.Error("enterprise_chests.FindBestAssignment_SSrv: Invalid turtleResume") return {success = false} end
+                assignmentFilter    + (table) filter to apply in finding an Assignment
+                turtleResume        + (table) turtle "resume" to consider in finding an Assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.FindBestAssignment_SSrv: Invalid input") return {success = false} end
 
     -- zoeken naar een assignment om op in te schrijven
     local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
 
     -- check assignmentList
-    if not assignmentList or type(assignmentList) ~= "table" then corelog.Error("enterprise_assignmentboard.FindBestAssignment: invalid assignmentList") return nil end
+    if not assignmentList or type(assignmentList) ~= "table" then corelog.Error("enterprise_assignmentboard.FindBestAssignment: Invalid assignmentList") return {success = false} end
 
     -- check for assignments
     if next(assignmentList) == nil then
