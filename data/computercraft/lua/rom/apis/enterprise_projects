@@ -21,8 +21,9 @@ local db = {
 --   | |
 --   |_|
 
-function StartProject_ASrv(serviceData, callback, callbackData)
-    --[[
+function StartProject_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, projectDef, projectData, callback, callbackData = coreutils.CheckInput([[
         This async public service starts a project.
 
         Return value:
@@ -35,21 +36,15 @@ function StartProject_ASrv(serviceData, callback, callbackData)
 
         Parameters:
             serviceData         - (table) data for this service
-                projectDef      - (table) definition of the project
-                projectData     - (table) input data to the project
-            callback            - (string) name of function to call once service is ready
-            callbackData        - (table) data to supply to callback function
-    ]]
+                projectDef      + (table) definition of the project
+                projectData     + (table) input data to the project
+            callback            + (string) name of function to call once service is ready
+            callbackData        + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local projectDef = serviceData.projectDef
-    if type(projectDef) ~= "table" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid projectDef") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- set metaData defaults  ToDo: consider doing with CheckInput
     if type(projectDef.returnData) ~= "table" then projectDef.returnData = {} end
-    local projectData = serviceData.projectData
-    if type(projectData) ~= "table" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid projectData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
 
     -- data of the project
     local project   = {
