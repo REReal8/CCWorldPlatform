@@ -35,8 +35,9 @@
 --   | |
 --   |_|
 
-function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
-    --[[
+function ProvideItemsTo_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemsLocator, callback, callbackData = coreutils.CheckInput([[
         This async public Supplier service provides multiple instances of a specific to the requested Storage.
 
         Return value:
@@ -50,23 +51,17 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
                                                 the "query" should be equal to orderItems)
 
         Parameters:
-            serviceData                     - (table) data for the service
-                itemsLocator                - (URL) locating the items to provide
+            serviceData                     + (table) data for the service
+                itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 storageLocator              - (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
-                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                        - (string) name of function to call once service is ready
-            callbackData                    - (table) data to supply to callback function
-    ]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid serviceData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid itemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid callback function") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+                assignmentsPriorityKey      - (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                        + (string) name of function to call once service is ready
+            callbackData                    + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get Supplier
     local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
@@ -78,8 +73,9 @@ function ProvideItemsTo_ASrv(serviceData, callback, callbackData)
     return coreutils.DoASyncService(serviceName, serviceData, callback, callbackData)
 end
 
-function Can_ProvideItems_QSrv(serviceData)
-    --[[
+function Can_ProvideItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemsLocator = coreutils.CheckInput([[
         This sync public query service answers the question whether the Supplier can provide specific items.
 
         Return value:
@@ -87,16 +83,12 @@ function Can_ProvideItems_QSrv(serviceData)
                 success             - (boolean) whether the answer to the question is true
 
         Parameters:
-            serviceData             - (table) data to the query
-                itemsLocator        - (URL) locating the items that need to be queried for providability
+            serviceData             + (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the Supplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid itemsLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- get Supplier
     local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
@@ -111,8 +103,9 @@ function Can_ProvideItems_QSrv(serviceData)
     return serviceResults
 end
 
-function NeedsTo_ProvideItemsTo_SSrv(serviceData)
-    --[[
+function NeedsTo_ProvideItemsTo_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemsLocator = coreutils.CheckInput([[
         This sync public service returns the needs for a Supplier to provide specific items to a Storage.
 
         Return value:
@@ -122,19 +115,15 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
                 ingredientsNeed             - (table) ingredients needed to provide items
 
         Parameters:
-            serviceData                     - (table) data to the query
-                itemsLocator                - (URL) locating the items to provide
+            serviceData                     + (table) data to the query
+                itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 storageLocator              - (URL) locating the Storage where the items need to be delivered to
 
                 ingredientsSupplierLocator  - (URL) optionally locating another Supplier where needed ingredient items for the Supplier could be retrieved
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- get Supplier
     local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
@@ -149,8 +138,9 @@ function NeedsTo_ProvideItemsTo_SSrv(serviceData)
     return serviceResults
 end
 
-function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
-    --[[
+function TransferItemsFromTo_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, sourceItemsLocator, destinationStorageLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
         This async public service relays the transfer of items from one Storage to another.
 
         This service is implemented using the following underlying Storage services
@@ -169,25 +159,15 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
 
         Parameters:
             transferData                    - (table) data about the transfer
-                sourceItemsLocator          - (URL) locating the items that need transfer
+                sourceItemsLocator          + (URL) locating the items that need transfer
                                                 (the "query" component of the URL specifies the items to be transferred)
                                                 (the "host" component of the URL specifies the Storage where the items are located)
-                destinationStorageLocator   - (URL) locating the Storage that needs to be transferred to
-                assignmentsPriorityKey      - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                        - (string) name of function to call once service is ready
-            callbackData                    - (table) data to supply to callback function
-    --]]
-
-    -- check input
-    if type(transferData) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid transferData") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local sourceItemsLocator = url.URLClass:new(transferData.sourceItemsLocator)
-    if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid sourceItemsLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local destinationStorageLocator = url.URLClass:new(transferData.destinationStorageLocator)
-    if type(destinationStorageLocator) ~= "table" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid destinationStorageLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local assignmentsPriorityKey = transferData.assignmentsPriorityKey
-    if assignmentsPriorityKey and type(assignmentsPriorityKey) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid assignmentsPriorityKey") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    if type(callback) ~= "string" then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid callback function.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    callbackData = callbackData or {}
+                destinationStorageLocator   + (URL) locating the Storage that needs to be transferred to
+                assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                        + (string) name of function to call once service is ready
+            callbackData                    + (table) data to supply to callback function
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get source Storage
     local serviceResults = GetStorageName_SSrv( { storageLocator = sourceItemsLocator })
@@ -249,8 +229,9 @@ function TransferItemsFromTo_ASrv(transferData, callback, callbackData)
     return nil
 end
 
-function NeedsTo_TransferItems_SSrv(transferData)
-    --[[
+function NeedsTo_TransferItems_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, sourceItemsLocator, destinationStorageLocator = coreutils.CheckInput([[
         This sync public service returns the (fuel) needs for the transfer of items from one Storage to another.
 
         This service is implemented using the following underlying Storage services
@@ -264,18 +245,12 @@ function NeedsTo_TransferItems_SSrv(transferData)
 
         Parameters:
             transferData                    - (table) data about the transfer
-                sourceItemsLocator          - (URL) locating the items that need transfer
+                sourceItemsLocator          + (URL) locating the items that need transfer
                                                 (the "query" component of the URL specifies the items to be transferred)
                                                 (the "host" component of the URL specifies the Storage where the items are located)
-                destinationStorageLocator   - (URL) locating the Storage that needs to be transferred to
-    --]]
-
-    -- check input
-    if type(transferData) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid transferData") return {success = false} end
-    local sourceItemsLocator = url.URLClass:new(transferData.sourceItemsLocator)
-    if type(sourceItemsLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid sourceItemsLocator") return {success = false} end
-    local destinationStorageLocator = url.URLClass:new(transferData.destinationStorageLocator)
-    if type(destinationStorageLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid destinationStorageLocator") return {success = false} end
+                destinationStorageLocator   + (URL) locating the Storage that needs to be transferred to
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid input") return {success = false} end
 
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
@@ -311,8 +286,9 @@ function NeedsTo_TransferItems_SSrv(transferData)
     }
 end
 
-function GetItemsLocations_SSrv(serviceData)
-    --[[
+function GetItemsLocations_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemsLocator = coreutils.CheckInput([[
         This sync public service provides the current world locations of different items in a Storage.
 
         Return value:
@@ -321,16 +297,12 @@ function GetItemsLocations_SSrv(serviceData)
                 locations           - (table) with locations of the different items
 
         Parameters:
-            serviceData             - (table) data about this service
-                itemsLocator        - (URL) locating the items for which to get the location
+            serviceData             + (table) data about this service
+                itemsLocator        + (URL) locating the items for which to get the location
                                         (the "base" component of the URL specifies the Storage that provides the items)
                                         (the "query" component of the URL specifies the items)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid serviceData") return {success = false} end
-    local itemsLocator = url.URLClass:new(serviceData.itemsLocator)
-    if type(itemsLocator) ~= "table" then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid itemsLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
     -- get Storage
     local serviceResults = GetStorageName_SSrv( { storageLocator = itemsLocator })
@@ -345,8 +317,9 @@ function GetItemsLocations_SSrv(serviceData)
     return serviceResults
 end
 
-function GetStorageLocation_SSrv(serviceData)
-    --[[
+function GetStorageLocation_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, storageLocator = coreutils.CheckInput([[
         This sync public service provides the world location of a Storage.
 
         Return value:
@@ -355,15 +328,11 @@ function GetStorageLocation_SSrv(serviceData)
                 location            - (table) location of the Storage
 
         Parameters:
-            serviceData             - (table) data about this service
-                storageLocator      - (URL) locating the Storage for which to get the location
+            serviceData             + (table) data about this service
+                storageLocator      + (URL) locating the Storage for which to get the location
                                         (the "base" component of the URL should specify a Storage enterprise)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: Invalid serviceData") return {success = false} end
-    local storageLocator = url.URLClass:new(serviceData.storageLocator)
-    if type(storageLocator) ~= "table" then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: Invalid storageLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: Invalid input") return {success = false} end
 
     -- get Storage
     local serviceResults = GetStorageName_SSrv( { storageLocator = storageLocator })
@@ -443,8 +412,8 @@ function AddItemsTo(items, itemsToAdd)
         This sync public function adds the items of itemsToAdd to items.
 
         Return value:
-                                    - (table)
-                success             - (boolean) whether the function executed successfully
+                                - (table)
+                success         - (boolean) whether the function executed successfully
 
         Parameters:
             items               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
@@ -476,8 +445,9 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function GetSupplierName_SSrv(serviceData)
-    --[[
+function GetSupplierName_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, supplierLocator = coreutils.CheckInput([[
         This sync private service provides the (enterprise) name of a Supplier.
 
         Return value:
@@ -487,14 +457,10 @@ function GetSupplierName_SSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data about this service
-                supplierLocator     - (URL) locating the Supplier
+                supplierLocator     + (URL) locating the Supplier
                                         (the "base" component of the URL should specify a Supplier enterprise)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetSupplierName_SSrv: Invalid serviceData") return {success = false} end
-    local supplierLocator = url.URLClass:new(serviceData.supplierLocator)
-    if type(supplierLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid supplierLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.GetSupplierName_SSrv: Invalid input") return {success = false} end
 
     -- determine enterpriseName
     local host = supplierLocator:getHost()
@@ -514,8 +480,9 @@ function GetSupplierName_SSrv(serviceData)
     }
 end
 
-function GetStorageName_SSrv(serviceData)
-    --[[
+function GetStorageName_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, storageLocator = coreutils.CheckInput([[
         This sync private service provides the (enterprise) name of a Storage.
 
         Return value:
@@ -525,14 +492,10 @@ function GetStorageName_SSrv(serviceData)
 
         Parameters:
             serviceData             - (table) data about this service
-                storageLocator      - (URL) locating the Storage
+                storageLocator      + (URL) locating the Storage
                                         (the "base" component of the URL should specify a Storage enterprise)
-    --]]
-
-    -- check input
-    if type(serviceData) ~= "table" then corelog.Error("enterprise_isp.GetStorageName_SSrv: Invalid serviceData") return {success = false} end
-    local storageLocator = url.URLClass:new(serviceData.storageLocator)
-    if type(storageLocator) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid storageLocator") return {success = false} end
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.GetStorageName_SSrv: Invalid input") return {success = false} end
 
     -- determine Storage name
     local host = storageLocator:getHost()
