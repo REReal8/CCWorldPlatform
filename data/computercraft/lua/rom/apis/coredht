@@ -97,6 +97,92 @@ function SaveData(data, ...)
     return SaveDataToDB(data, table.unpack(arg))
 end
 
+function GetResource(...)
+    -- get & check input from description
+    local checkSuccess, resourceLocator = coreutils.CheckInput([[
+        This function retrieves a Resource from the dht using a URL.
+
+        Return value:
+            resource                - (table) Resource obtained from the dht
+
+        Parameters:
+            resourceLocator         + (URL) locator of the Resource
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("coredht.GetResource: Invalid input") return nil end
+
+    -- get url components
+    local hostURI = resourceLocator:getHostURI()
+    local portURI = resourceLocator:getPortURI()
+    local pathURI = resourceLocator:getPathURI()
+
+    -- get resource using url components
+    local resource = nil
+    if portURI == "" then
+        resource = coredht.GetData(hostURI, pathURI)
+    else
+        resource = coredht.GetData(hostURI, portURI, pathURI)
+    end
+
+    -- end
+    return resource
+end
+
+function SaveResource(...)
+    -- get & check input from description
+    local checkSuccess, resource, resourceLocator = coreutils.CheckInput([[
+        This function saves a Resource to the dht using a URL.
+
+        Return value:
+            resource                - (table) Resource saved to the dht
+
+        Parameters:
+            resource                + (table) the Resource
+            resourceLocator         + (URL) locator of the Resource
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("coredht.SaveResource: Invalid input") return nil end
+
+    -- get url components
+    local hostURI = resourceLocator:getHostURI()
+    local portURI = resourceLocator:getPortURI()
+    local pathURI = resourceLocator:getPathURI()
+
+    -- save resource using url components
+    if portURI == "" then
+        resource = coredht.SaveData(resource, hostURI, pathURI)
+    else
+        resource = coredht.SaveData(resource, hostURI, portURI, pathURI)
+    end
+
+    -- end
+    return resource
+end
+
+function RemoveResource(...)
+    -- get & check input from description
+    local checkSuccess, resourceLocator = coreutils.CheckInput([[
+        This function removes a Resource from the dht using a URL.
+
+        Return value:
+            nil
+
+        Parameters:
+            resourceLocator         + (URL) locator of the Resource
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("coredht.RemoveResource: Invalid input") return nil end
+
+    -- get url components
+    local hostURI = resourceLocator:getHostURI()
+    local portURI = resourceLocator:getPortURI()
+    local pathURI = resourceLocator:getPathURI()
+
+    -- remove resource using url components
+    if portURI == "" then
+        coredht.SaveData(nil, hostURI, pathURI)
+    else
+        coredht.SaveData(nil, hostURI, portURI, pathURI)
+    end
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___

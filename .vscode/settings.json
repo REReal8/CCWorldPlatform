@@ -58,7 +58,8 @@
         "enterprise_energy",
         "t_energy",
         "enterprise_assignmentboard",
-        "mobj_chest"
+        "mobj_chest",
+        "t_coredht"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
