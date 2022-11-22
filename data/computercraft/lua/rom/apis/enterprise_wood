@@ -9,7 +9,7 @@ function NewForest()
     -- aanmaken in het dht
     coredht.SaveData({
         enterpriseId    = enterpriseId,
-        enterpriseName  = "enterprise_forest",
+        enterpriseName  = "enterprise_wood",
         lastHarvest     = 0,
         inbox           = {},
         taskList        = {},

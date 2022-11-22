@@ -105,7 +105,7 @@ function CreateNewWorld_ASrv(...)
         treesNeeded                 = treesNeeded,
 
         forestLocation              = coremove.CopyLocation(forest.location),
-        forestV2BasePattern         = role_builder.CopyPattern(enterprise_forest.tree_pattern), -- ToDo: use a new pattern including chests
+        forestV2BasePattern         = role_builder.CopyPattern(enterprise_wood.tree_pattern), -- ToDo: use a new pattern including chests
         forestBuildFromAbove        = true,
         forestReplacePresentObjects = false,
 
@@ -453,14 +453,14 @@ function BuildForestTree_ASrv(...)
         startpoint = coremove.CopyLocation(treeBaseLocation),
         buildFromAbove = true,
         replacePresentObjects = false,
-        pattern = enterprise_forest.tree_pattern,
+        pattern = enterprise_wood.tree_pattern,
         materialsHostLocator = materialsHostLocator,
     }
     corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint))
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
 end
 
-function ProvideItemsTo_ASrv(...) -- ToDo: move to enterprise_forest_birch
+function ProvideItemsTo_ASrv(...) -- ToDo: move to enterprise_wood_birch
     -- get & check input from description
     local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
         This async public Supplier service provides specific items to a Storage.
