@@ -1,0 +1,680 @@
+local db = {
+    dhtRoot     = "enterprise_woods",
+    dhtForest   = "forests", -- ToDo: consider allowing multiple
+    hostName    = "woods",
+}
+
+function BuildAndStartNewSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, forestLevel, nTrees, callback, callbackData = coreutils.CheckInput([[
+        This async public service builds a new forest site and ensures it's ready for use.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the site was succesfully build and is ready for use.
+
+        Parameters:
+            serviceData                 - (table) data about this site
+                baseLocation            + (table) world location of the base (lower left corner) of this site
+                forestLevel             + (number) level of the site
+                nTrees                  + (number) number of initial trees
+                materialsHostLocator    - (URL) locating the host of the building materials
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table, {}) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.BuildAndStartNewSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- create projectDef and projectData
+    local firstTreeLocation         = coremove.GetRelativeLocation(baseLocation, 3, 2, 0)
+    local plantFirstSaplingTaskData =  {
+        startLocation               = coremove.CopyLocation(firstTreeLocation),
+    }
+    local harvestFirstTreeTaskData = {
+        forestLevel                 = forestLevel, -- should be 0 ...
+        firstTreeLocation           = coremove.CopyLocation(firstTreeLocation),
+        nTrees                      = nTrees, -- should be 1 .,,
+        waitForFirstTree            = false, -- first log should already be chopped
+    }
+    local projectData = {
+        plantFirstSaplingTaskData   = plantFirstSaplingTaskData,
+        plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(plantFirstSaplingTaskData),
+        plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
+
+        forestL0                    = forestLevel,
+        forestFirstTree             = nTrees,
+
+        harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
+        harvestFirstTreeMetaData    = role_settler.HarvestForest_MetaData(harvestFirstTreeTaskData),
+        harvestFirstTree_Task       = "role_settler.HarvestForest_Task",
+    }
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "task"                       , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingTaskData" },
+            }},
+            { stepName = "enterprise_woods.UpdateForest_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
+                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
+            }},
+            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestFirstTree_Task" },
+                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeMetaData" },
+                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeTaskData" },
+            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"                   , valueSource = 3, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                        , valueSource = 4, keyDefSource = "success" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function GetForest()
+    -- ensure enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+
+        -- reset forest
+        enterprise_woods.ResetForest()
+    end
+
+    return coredht.GetData(db.dhtRoot, db.dhtForest)
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function ExtendForest_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, forestLocation, treesNeeded, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+        This private async service extends the forest from 1 tree to a number of trees.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                forestLocation          + (table) base location of forest
+                treesNeeded             + (number) number of trees to extend forest to
+                materialsHostLocator    + (URL) locating the host of the building materials
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table) data to supply to callback function
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.ExtendForest_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- get forest
+    local forest = GetForest()
+
+    -- determine projectSteps and projectData
+    local projectSteps = { }
+    local areAllTrueStepDataDef = {}
+    local projectData = {
+        forestLevel             = forest.forestLevel,
+        forestLocation          = forestLocation,
+        materialsHostLocator    = materialsHostLocator,
+    }
+
+    -- add project step for all trees to add
+    local iStep = 0
+    local forestNTrees = forest.nTrees    -- note: first already created in PlantFirstSapling_Task
+    for iTree = forestNTrees + 1, treesNeeded do
+        -- ToDo: simplify looping (currentNTreesStr and newNTreesStr are related/ almost the same)
+
+        -- add collect and build tree step
+        iStep = iStep + 1
+        local iStepStr = tostring(iStep)
+        local currentNTreesStr = "currentNTreeStep"..iStepStr
+        table.insert(projectSteps,
+            { stepName = "enterprise_woods.CollectAndBuildForestTree_ASrv", async = true, stepDataDef = {
+                { keyDef = "forestLocation"         , valueSource = 0, keyDefSource = "forestLocation" },
+                { keyDef = "currentNTrees"          , valueSource = 0, keyDefSource = currentNTreesStr },
+                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            }}
+        )
+
+        -- add step data
+        projectData[currentNTreesStr] = iTree - 1
+
+        -- add success stepDataDef
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+
+        -- update forest info
+        iStep = iStep + 1
+        iStepStr = tostring(iStep)
+        local newNTreesStr = "newNTreeStep"..iStepStr
+        table.insert(projectSteps,
+            { stepName = "enterprise_woods.UpdateForest_SSrv", async = false, stepDataDef = {
+                { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "forestLevel" },
+                { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = newNTreesStr },
+            }}
+        )
+
+        -- add step data
+        projectData[newNTreesStr] = iTree
+
+        -- add success stepDataDef
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+    end
+    -- add check for all a success
+    iStep = iStep + 1
+    table.insert(projectSteps,
+        { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = areAllTrueStepDataDef}
+    )
+    local iAreAllTrueStep = iStep
+
+    -- create project service data
+    local projectDef = {
+        steps = projectSteps,
+        returnData  = {
+            { keyDef = "success"    , valueSource = iAreAllTrueStep, keyDefSource = "success" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees")
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function CollectAndBuildForestTree_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, forestLocation, currentNTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+        This private async service first collects the resources and than extends the forest with 1 tree.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                forestLocation          + (table) base location of factory
+                currentNTrees           + (number) current number of trees in the forest
+                materialsHostLocator    + (URL) locating the host of the building materials
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table) data to supply to callback function
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.CollectAndBuildForestTree_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- create projectServiceData
+    local treeBaseLocation = coremove.GetRelativeLocation(forestLocation, 0, 6 * currentNTrees, 0)
+    local projectData = {
+        treeBaseLocation        = treeBaseLocation,
+        materialsHostLocator    = materialsHostLocator,
+    }
+    local projectDef = {
+        steps = {
+            { stepName = "enterprise_woods.BuildForestTree_ASrv", async = true, stepDataDef = {
+                { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = "treeBaseLocation" },
+                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , valueSource = 1, keyDefSource = "success" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog("  >Extending forest with one tree to "..(currentNTrees + 1).." trees")
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+end
+
+function UpdateForest_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, forestLevel, nTrees = coreutils.CheckInput([[
+        This private sync service updates the forest information.
+
+        Return value:
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                forestLevel             + (number) with forest level
+                nTrees                  + (number) number of trees in the forest
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.UpdateForest_SSrv: Invalid input") return {success = false} end
+
+    -- get forest
+    local forest = GetForest()
+
+    -- set forest information
+    forest.forestLevel = forestLevel
+    forest.nTrees = nTrees
+
+    -- save forest data
+    SaveForest(forest)
+
+    -- end
+    corelog.WriteToLog(">Updated forest (level="..forestLevel..", nTrees="..nTrees..")")
+    return {success = true}
+end
+
+function BuildForestTree_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, treeBaseLocation, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+        This private async service extends the forest with 1 tree
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about this service
+                treeBaseLocation        + (table) location of the base (lower left corner) of a forest tree (pattern)
+                materialsHostLocator    + (URL) locating the host of the building materials
+            callback                    + (string) name of function to call once service is ready
+            callbackData                + (table) data to supply to callback function
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.BuildForestTree_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- let construction enterprise build the tree
+    local buildData = {
+        startpoint = coremove.CopyLocation(treeBaseLocation),
+        buildFromAbove = true,
+        replacePresentObjects = false,
+        pattern = enterprise_woods.tree_pattern,
+        materialsHostLocator = materialsHostLocator,
+    }
+    corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint))
+    enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
+end
+
+function ProvideItemsTo_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
+        This async public Supplier service provides specific items to a Storage.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                                                the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                     - (table) data for the service
+                itemsLocator                + (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                        + (string) name of function to call once service is ready
+            callbackData                    + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- get forest
+    local forest = GetForest()
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsForestURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- loop on items
+    local provideItems = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+        -- check for birchlog or sapling
+        local localStorageLocator = nil
+        if itemName == "minecraft:birch_log" then
+            localStorageLocator = GetLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            localStorageLocator = GetLocalSaplingsLocator()
+        else
+            corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
+        end
+
+        -- check items already available in localStorageLocator
+        local localItemsLocator = localStorageLocator:copy()
+        local item = { [itemName] = itemCount }
+        localItemsLocator:setQuery(item)
+        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
+            -- yes: return the items
+            local transferData = {
+                sourceItemsLocator          = localItemsLocator,
+                destinationStorageLocator   = storageLocator,
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+--            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
+            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+        else
+            -- construct taskData
+            local harvestForestTaskData = {
+                forestLevel         = forest.forestLevel,
+                firstTreeLocation   = coremove.GetRelativeLocation(forest.location, 3, 2, 0),
+                nTrees              = forest.nTrees,
+                waitForFirstTree    = true,
+--                waitForFirstTree    = (assignmentsPriorityKey ~= nil), -- energy efficient mode if assignmentsPriorityKey is set -- ToDo: consider change
+
+                priorityKey         = assignmentsPriorityKey,
+            }
+
+            -- create project service data
+            local projectDef = {
+                steps = {
+                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
+                    --          (or will this be part of harvestForest?)
+                    { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                        { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestForest_Task" },
+                        { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
+                        { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
+                    }},
+                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
+                    --          (or will this be part of harvestForest?)
+                    -- ToDo: consider storing rest/ waste materials (e.g. sticks)
+                    { stepName = "enterprise_woods.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
+                        { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "itemsLocator" },
+                        { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
+                        { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                        { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    }},
+                    { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                        { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                        { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                    }},
+                },
+                returnData  = {
+                    { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+                    { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
+                }
+            }
+            local projectData = {
+                itemsLocator                = itemsLocator, -- ToDo: consider lower count with possible # items already present in localSupplierLocator
+                ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
+                storageLocator              = storageLocator:copy(),
+
+                harvestForest_Task          = "role_settler.HarvestForest_Task",
+                harvestForestTaskData       = harvestForestTaskData,
+                harvestForestMetaData       = role_settler.HarvestForest_MetaData(harvestForestTaskData),
+
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+            local projectServiceData = {
+                projectDef  = projectDef,
+                projectData = projectData,
+            }
+
+            -- start project
+--            corelog.WriteToLog(">Harvesting "..itemCount.." "..itemName.."'s from Forest")
+            enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+        end
+    end
+end
+
+function Can_ProvideItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator = coreutils.CheckInput([[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be queried for providability
+                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "query" component of the URL specifies the items to query for)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsForestURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- loop on items
+    local items = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(items) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+
+        -- check for birchlog or sapling
+        if itemName == "minecraft:birch_log" then
+        elseif itemName == "minecraft:birch_sapling" then
+        else
+            return {success = false}
+        end
+    end
+
+    -- end
+    return {
+        success = true,
+    }
+end
+
+function FuelNeed_Harvest_Att()
+    --[[
+        Forest attribute with the current fuelNeed to do one harvesting round.
+    --]]
+
+    -- get forest
+    local forest = GetForest()
+    local nTrees = forest.nTrees
+
+    -- determine fuelNeed
+    local fuelNeed = role_settler.FuelNeededPerRound(nTrees)
+
+    -- end
+    return fuelNeed
+end
+
+function FuelNeedExtraTree_Att()
+    --[[
+        Forest attribute with the fuelNeed for harvesting one extra tree.
+        (i.e. it return the difference between the current FuelNeed_Harvest_Att and the FuelNeed_Harvest_Att if there would be 1 extra tree)
+    --]]
+
+    -- get forest
+    local forest = GetForest()
+    local nTrees = forest.nTrees
+
+    -- determine fuelNeed
+    local fuelNeed_Current = role_settler.FuelNeededPerRound(nTrees)
+    local fuelNeed_OneTreeExtra = role_settler.FuelNeededPerRound(nTrees + 1)
+
+    -- end
+    return fuelNeed_OneTreeExtra - fuelNeed_Current
+end
+
+function NeedsTo_ProvideItemsTo_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, storageLocator = coreutils.CheckInput([[
+        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+
+        Return value:
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                fuelNeed                    - (number) amount of fuel needed to provide items
+                ingredientsNeed             - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                     - (table) data to the query
+                itemsLocator                + (URL) locating the items to provide
+                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "query" component of the URL specifies the items)
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = IsForestURL_QSrv({ aURL = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+
+    -- get forest
+    local forest = GetForest()
+    local nTrees = forest.nTrees
+
+    -- loop on items
+    local fuelNeed = 0
+    local ingredientsNeed = {} -- ToDo ? should we add saplings for a harvest round here?
+    local supplyItems = itemsLocator:getQuery()
+    for itemName, itemCount in pairs(supplyItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- check for birchlog or sapling
+        local itemPerRound = 1
+        local localSupplierLocator = nil
+        if itemName == "minecraft:birch_log" then
+            itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
+            localSupplierLocator = GetLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
+            -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
+            localSupplierLocator = GetLocalSaplingsLocator()
+        else
+            return corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") {success = false}
+        end
+
+        -- fuelNeed per round
+        local fuelPerRound = role_settler.FuelNeededPerRound(nTrees)
+        local nRounds = math.ceil(itemCount / itemPerRound)
+        local fuelNeed_Rounds = nRounds * fuelPerRound
+
+        -- fuelNeed transfer
+        local localSupplierItemsLocator = localSupplierLocator:copy()
+        local items = { [itemName] = itemCount }
+        localSupplierItemsLocator:setQuery(items)
+        local transferData = {
+            sourceItemsLocator          = localSupplierItemsLocator,
+            destinationStorageLocator   = storageLocator,
+        }
+        serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
+        if not serviceResults.success then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        local fuelNeed_Transfer = serviceResults.fuelNeed
+
+        -- add fuelNeed
+--        corelog.WriteToLog("C  fuelNeed_Rounds="..fuelNeed_Rounds.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), fuelNeed_Transfer="..fuelNeed_Transfer)
+        fuelNeed = fuelNeed + fuelNeed_Rounds + fuelNeed_Transfer
+    end
+
+    -- end
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+        ingredientsNeed = ingredientsNeed,
+    }
+end
+
+function SaveForest(forest)
+    coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
+end
+
+function ResetForest()
+    coredht.SaveData({
+        forestLevel = 0,
+
+        location    = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        nTrees      = 0,
+    }, db.dhtRoot, db.dhtForest)
+end
+
+function GetISHURL()
+    --[[
+        This private function provides the (base) URL of this ISH.
+
+        Return value:
+            hostURL                 - (URL) locating this ISH
+
+        Parameters:
+            nil
+    --]]
+
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
+end
+
+function IsForestURL_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, aURL = coreutils.CheckInput([[
+        This sync public service answers the question if a URL is that of a Forest.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            queryData               - (table) data about the query
+                aURL                + (URL) that needs to be queried
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_woods.IsForestURL_QSrv: Invalid input") return {success = false} end
+
+    -- check if of this Supplier
+    local host = aURL:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_woods.IsForestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if host == db.hostName then
+        return {success = true}
+    else
+        return {success = false}
+    end
+end
+
+function GetLocalLogsLocator()
+    -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
+    return enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+end
+
+function GetLocalSaplingsLocator()
+    -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
+    return enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+end
+
+tree_pattern = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 3, y = 3, block = "minecraft:birch_sapling"},
+        { x = 3, y = 0, block = "minecraft:torch"},
+        { x = 0, y = 3, block = "minecraft:torch"},
+    },
+    clearRemainingSpace = true,
+}

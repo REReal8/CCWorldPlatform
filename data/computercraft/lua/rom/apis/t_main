@@ -11,7 +11,7 @@ function T_ResetWorld()
     enterprise_factory.DeleteSites()
     enterprise_turtle.Reset()
     enterprise_chests.DeleteChests()
-    enterprise_colonization.ResetForest()
+    enterprise_woods.ResetForest()
 end
 
 function T_enterprise_test()

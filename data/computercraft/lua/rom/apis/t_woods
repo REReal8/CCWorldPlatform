@@ -1,0 +1,38 @@
+local dhtRoot     = "enterprise_colonization"
+local dhtForest   = "forest"
+
+function T_ResetForest()
+    enterprise_woods.ResetForest()
+end
+
+function T_FuelNeed_Harvest_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test FuelNeed_Harvest_Att")
+    local forest = enterprise_woods.GetForest()
+    local originalForestLevel = forest.forestLevel
+    local originalNTrees = forest.nTrees
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+
+    -- test
+    local fuelNeed = enterprise_woods.FuelNeed_Harvest_Att()
+    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
+
+    -- cleanup test
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
+end
+
+function T_FuelNeedExtraTree_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test FuelNeedExtraTree_Att")
+    local forest = enterprise_woods.GetForest()
+    local originalForestLevel = forest.forestLevel
+    local originalNTrees = forest.nTrees
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+
+    -- test
+    local fuelNeed = enterprise_woods.FuelNeedExtraTree_Att()
+    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
+
+    -- cleanup test
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
+end

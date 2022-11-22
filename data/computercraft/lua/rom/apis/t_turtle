@@ -38,10 +38,10 @@ end
 function T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
-    local forest = enterprise_colonization.GetForest()
+    local forest = enterprise_woods.GetForest()
     local originalForestLevel = forest.forestLevel
     local originalNTrees = forest.nTrees
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
 
@@ -53,6 +53,6 @@ function T_GetFuelLevels_Att()
     corelog.WriteToLog("   "..fuelLevel_Assignment.." fuelLevel_Assignment")
 
     -- cleanup test
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
     t_factory.StopV0Site(location)
 end

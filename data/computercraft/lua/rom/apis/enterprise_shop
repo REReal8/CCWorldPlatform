@@ -384,7 +384,7 @@ function GetBestSupplierLocator(item)
     local suppliers = {
         enterprise_turtle.GetISHURL(),
         enterprise_factory.GetISHURL(),
-        enterprise_colonization.GetISHURL(),
+        enterprise_woods.GetISHURL(),
     }
 
     -- loop on registered Suppliers and return first

@@ -75,14 +75,14 @@ function FuelNeed_Refuel_Att()
     local fuelNeed = 0
 
     -- determine fuelNeed by current forest
-    local forest = enterprise_colonization.GetForest()
+    local forest = enterprise_woods.GetForest()
     local forestLocation = forest.location
-    local fuelNeed_Harvest = enterprise_colonization.FuelNeed_Harvest_Att()
+    local fuelNeed_Harvest = enterprise_woods.FuelNeed_Harvest_Att()
     fuelNeed = fuelNeed + fuelNeed_Harvest
 
     -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
     if parameters.enterpriseLevel > 0 then
-        local fuelNeed_ExtraTree = enterprise_colonization.FuelNeedExtraTree_Att()
+        local fuelNeed_ExtraTree = enterprise_woods.FuelNeedExtraTree_Att()
         fuelNeed = fuelNeed + fuelNeed_ExtraTree
     end
 

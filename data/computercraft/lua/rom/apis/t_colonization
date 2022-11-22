@@ -1,6 +1,3 @@
-local dhtRoot     = "enterprise_colonization"
-local dhtForest   = "forest"
-
 function T_CreateNewWorld()
     -- test CreateNewWorld_ASrv
     corelog.WriteToLog("# Test CreateNewWorld_ASrv")
@@ -10,40 +7,4 @@ function T_CreateNewWorld()
 
     corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
     enterprise_colonization.CreateNewWorld_ASrv(serviceData, callbackFunction, callbackData)
-end
-
-function T_ResetForest()
-    enterprise_colonization.ResetForest()
-end
-
-function T_FuelNeed_Harvest_Att()
-    -- prepare test
-    corelog.WriteToLog("# Test FuelNeed_Harvest_Att")
-    local forest = enterprise_colonization.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
-
-    -- test
-    local fuelNeed = enterprise_colonization.FuelNeed_Harvest_Att()
-    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
-
-    -- cleanup test
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
-end
-
-function T_FuelNeedExtraTree_Att()
-    -- prepare test
-    corelog.WriteToLog("# Test FuelNeedExtraTree_Att")
-    local forest = enterprise_colonization.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
-
-    -- test
-    local fuelNeed = enterprise_colonization.FuelNeedExtraTree_Att()
-    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
-
-    -- cleanup test
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
 end

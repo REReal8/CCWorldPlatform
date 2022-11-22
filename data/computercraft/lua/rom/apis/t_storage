@@ -1,10 +1,10 @@
 function T_buildAndStartNewSite()
     -- prepare test
     corelog.WriteToLog("# Test BuildAndStartNewSite_ASrv")
-    local forest = enterprise_colonization.GetForest()
+    local forest = enterprise_woods.GetForest()
     local originalForestLevel = forest.forestLevel
     local originalNTrees = forest.nTrees
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
 
@@ -24,6 +24,6 @@ function Cleanup_Callback(callbackData, taskResult)
     corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     -- cleanup test
-    enterprise_colonization.UpdateForest_SSrv({ forestLevel = callbackData.originalForestLevel, nTrees = callbackData.originalNTrees })
+    enterprise_woods.UpdateForest_SSrv({ forestLevel = callbackData.originalForestLevel, nTrees = callbackData.originalNTrees })
     t_factory.StopV0Site(callbackData.location)
 end
