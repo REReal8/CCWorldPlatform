@@ -55,19 +55,15 @@ function CreateNewWorld_ASrv(...)
     end
 
     -- get forest
-    local forest = GetForest()
+--    local forest = GetForest()
 
     -- construct arguments
     local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
+    local forestLocation            = {x= 0, y= 0, z= 1, dx=0, dy=1}
     local primaryTaskData =  {
         startLocation               = coremove.CopyLocation(startLocation),
     }
-    local harvestFirstTreeTaskData = {
-        forestLevel         = forest.forestLevel, -- should be 0 ...
-        firstTreeLocation   = coremove.CopyLocation(startLocation),
-        nTrees              = forest.nTrees, -- should be 1 .,,
-        waitForFirstTree    = false, -- first log should already be chopped
-    }
+
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
     local settleData = {
@@ -84,15 +80,8 @@ function CreateNewWorld_ASrv(...)
         factoryVersion0             = "v0",
         upgradeFalse                = false,
 
-        plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(primaryTaskData),
-        plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
-
         forestL0                    = 0,
         forestFirstTree             = 1,
-
-        harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
-        harvestFirstTreeMetaData    = role_settler.HarvestForest_MetaData(harvestFirstTreeTaskData),
-        harvestFirstTree_Task       = "role_settler.HarvestForest_Task",
 
         energyL1                    = 1,
 
@@ -104,7 +93,7 @@ function CreateNewWorld_ASrv(...)
 
         treesNeeded                 = treesNeeded,
 
-        forestLocation              = coremove.CopyLocation(forest.location),
+        forestLocation              = coremove.CopyLocation(forestLocation),
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_wood.tree_pattern), -- ToDo: use a new pattern including chests
         forestBuildFromAbove        = true,
         forestReplacePresentObjects = false,
@@ -133,20 +122,11 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            -- ToDo: implement forest related steps in/ via enterprise_wood/ forest
-            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "primaryTaskData" },
-            }},
-            { stepName = "enterprise_colonization.UpdateForest_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_wood.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
-            }},
-            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestFirstTree_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeTaskData" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL1" },
@@ -207,12 +187,10 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "success9"                   , valueSource = 9, keyDefSource = "success" },
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
-                { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
-                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 14, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 12, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
