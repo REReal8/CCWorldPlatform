@@ -40,15 +40,15 @@ function BuildAndStartNewSite_ASrv(...)
     }
     local projectData = {
         plantFirstSaplingTaskData   = plantFirstSaplingTaskData,
-        plantFirstSaplingMetaData   = role_settler.PlantFirstSapling_MetaData(plantFirstSaplingTaskData),
-        plantFirstSapling_Task      = "role_settler.PlantFirstSapling_Task",
+        plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData),
+        plantFirstSapling_Task      = "role_forester.PlantFirstSapling_Task",
 
         forestL0                    = forestLevel,
         forestFirstTree             = nTrees,
 
         harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
-        harvestFirstTreeMetaData    = role_settler.HarvestForest_MetaData(harvestFirstTreeTaskData),
-        harvestFirstTree_Task       = "role_settler.HarvestForest_Task",
+        harvestFirstTreeMetaData    = role_forester.HarvestForest_MetaData(harvestFirstTreeTaskData),
+        harvestFirstTree_Task       = "role_forester.HarvestForest_Task",
     }
     local projectDef = {
         steps   = {
@@ -428,9 +428,9 @@ function ProvideItemsTo_ASrv(...)
                 ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
                 storageLocator              = storageLocator:copy(),
 
-                harvestForest_Task          = "role_settler.HarvestForest_Task",
+                harvestForest_Task          = "role_forester.HarvestForest_Task",
                 harvestForestTaskData       = harvestForestTaskData,
-                harvestForestMetaData       = role_settler.HarvestForest_MetaData(harvestForestTaskData),
+                harvestForestMetaData       = role_forester.HarvestForest_MetaData(harvestForestTaskData),
 
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }
@@ -497,7 +497,7 @@ function FuelNeed_Harvest_Att()
     local nTrees = forest.nTrees
 
     -- determine fuelNeed
-    local fuelNeed = role_settler.FuelNeededPerRound(nTrees)
+    local fuelNeed = role_forester.FuelNeededPerRound(nTrees)
 
     -- end
     return fuelNeed
@@ -514,8 +514,8 @@ function FuelNeedExtraTree_Att()
     local nTrees = forest.nTrees
 
     -- determine fuelNeed
-    local fuelNeed_Current = role_settler.FuelNeededPerRound(nTrees)
-    local fuelNeed_OneTreeExtra = role_settler.FuelNeededPerRound(nTrees + 1)
+    local fuelNeed_Current = role_forester.FuelNeededPerRound(nTrees)
+    local fuelNeed_OneTreeExtra = role_forester.FuelNeededPerRound(nTrees + 1)
 
     -- end
     return fuelNeed_OneTreeExtra - fuelNeed_Current
@@ -574,7 +574,7 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
         end
 
         -- fuelNeed per round
-        local fuelPerRound = role_settler.FuelNeededPerRound(nTrees)
+        local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
         local nRounds = math.ceil(itemCount / itemPerRound)
         local fuelNeed_Rounds = nRounds * fuelPerRound
 
