@@ -648,10 +648,10 @@ end
 function SaveChest(...)
     -- get & check input from description
     local checkSuccess, chest = coreutils.CheckInput([[
-        This private function saves the chest to the dht.
+        This private function saves a chest to the dht.
 
         Return value:
-            nil
+            chestLocator        - (URL) locating the chest
 
         Parameters:
             chest               + (table) the chest object
@@ -663,11 +663,14 @@ function SaveChest(...)
 
     -- save record
     coredht.SaveResource(chest, chestLocator)
+
+    -- end
+    return chestLocator
 end
 
 function DeleteChests()
     local chests = coredht.GetData(db.hostName)
-    if not chests or type(chests) ~= "table" then corelog.Warning("coreassignment.DeleteChests: chests not valid") return nil end
+    if not chests or type(chests) ~= "table" then corelog.Warning("enterprise_chests.DeleteChests: chests not valid") return nil end
 
     -- remove all
 --    corelog.Warning("All chests are being deleted!")
