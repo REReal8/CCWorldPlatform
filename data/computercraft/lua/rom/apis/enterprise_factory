@@ -277,7 +277,7 @@ function FuelNeed_Production_Att(...)
         Parameters:
             items   + (table) items to produce
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.FuelNeed_Production_Att: Invalid input") return 9999 end
+    if not checkSuccess then corelog.Error("enterprise_factory.FuelNeed_Production_Att: Invalid input") return enterprise_energy.LargeFuelAmount_Att() end
 
     -- check there are sites
     if NumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.FuelNeed_Production_Att: Not sites administered by Factory") return 0 end
@@ -294,7 +294,7 @@ function FuelNeed_Production_Att(...)
         ingredientsSupplierLocator  = turtleLocator:copy(),
     }
     local serviceResults = NeedsTo_ProvideItemsTo_SSrv(serviceData)
-    if not serviceResults.success then corelog.Error("enterprise_factory.FuelNeed_Production_Att: failed obtaining fuel need for production.") return 9999 end
+    if not serviceResults.success then corelog.Error("enterprise_factory.FuelNeed_Production_Att: failed obtaining fuel need for production.") return enterprise_energy.LargeFuelAmount_Att() end
     local fuelNeed = serviceResults.fuelNeed
 
     -- end

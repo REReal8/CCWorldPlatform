@@ -118,8 +118,12 @@ function RefuelAmount_Att()
         return 300 -- 1 tree = min 5 logs = 20 planks = 300 fuel
     else
         corelog.Warning("enterprise_energy.RefuelAmount_Att: not (yet) implemented for enterpriseLevel="..enterpriseLevel)
-        return 999999
+        return LargeFuelAmount_Att()
     end
+end
+
+function LargeFuelAmount_Att()
+    return 999999
 end
 
 function Refuel_ASrv(...)
