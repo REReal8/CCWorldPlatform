@@ -23,7 +23,7 @@ end
 
 function T_RefuelAmount_AttL0()
     -- prepare test
-    corelog.WriteToLog("# Test RefuelAmount_Att")
+    corelog.WriteToLog("# Test RefuelAmount_Att (level 0)")
     local energy = enterprise_energy.GetParameters()
     local originalLevel = energy.enterpriseLevel
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = 0 })
@@ -38,7 +38,7 @@ end
 
 function T_RefuelAmount_AttL1()
     -- prepare test
-    corelog.WriteToLog("# Test RefuelAmount_Att")
+    corelog.WriteToLog("# Test RefuelAmount_Att (level 1)")
     local energy = enterprise_energy.GetParameters()
     local originalLevel = energy.enterpriseLevel
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = 1 })
