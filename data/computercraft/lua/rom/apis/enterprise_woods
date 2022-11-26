@@ -4,7 +4,7 @@ local db = {
     hostName    = "woods",
 }
 
-function BuildAndStartNewSite_ASrv(...)
+function AddNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, baseLocation, forestLevel, nTrees, callback, callbackData = coreutils.CheckInput([[
         This async public service builds a new forest site and ensures it's ready for use.
@@ -14,7 +14,7 @@ function BuildAndStartNewSite_ASrv(...)
 
         Async service return value (to callback):
                                         - (table)
-                success                 - (boolean) whether the site was succesfully build and is ready for use.
+                success                 - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                 - (table) data about this site
@@ -86,14 +86,7 @@ function BuildAndStartNewSite_ASrv(...)
 end
 
 function GetForest()
-    -- ensure enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
 
-        -- reset forest
-        enterprise_woods.ResetForest()
-    end
 
     return coredht.GetData(db.dhtRoot, db.dhtForest)
 end
@@ -105,10 +98,10 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function ExtendForest_ASrv(...)
+function ExtendSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, forestLocation, treesNeeded, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
-        This private async service extends the forest from 1 tree to a number of trees.
+        This private async service extends a forest from the current # trees to another number of trees.
 
         Return value:
             nil
@@ -125,7 +118,7 @@ function ExtendForest_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_woods.ExtendForest_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_woods.ExtendSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get forest
     local forest = GetForest()
@@ -605,9 +598,9 @@ end
 
 function SaveForest(forest)
     coredht.SaveData(forest, db.dhtRoot, db.dhtForest)
+function DeleteForests()
 end
 
-function ResetForest()
     coredht.SaveData({
         forestLevel = 0,
 

@@ -50,7 +50,7 @@ function CreateNewWorld_ASrv(...)
         coredht.SaveData({}, db.dhtRoot)
 
         -- reset forest
-        enterprise_woods.ResetForest()
+        enterprise_woods.DeleteForests()
     end
 
     -- construct arguments
@@ -76,6 +76,7 @@ function CreateNewWorld_ASrv(...)
         factoryVersion0             = "v0",
         upgradeFalse                = false,
 
+        forestLocation              = coremove.CopyLocation(forestLocation),
         forestL0                    = 0,
         forestFirstTree             = 1,
 
@@ -89,7 +90,6 @@ function CreateNewWorld_ASrv(...)
 
         treesNeeded                 = treesNeeded,
 
-        forestLocation              = coremove.CopyLocation(forestLocation),
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_woods.tree_pattern), -- ToDo: use a new pattern including chests
         forestBuildFromAbove        = true,
         forestReplacePresentObjects = false,
@@ -118,7 +118,7 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_woods.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+            { stepName = "enterprise_woods.AddNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
@@ -143,8 +143,8 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_woods.ExtendForest_ASrv", async = true, stepDataDef = {
                 { keyDef = "forestLocation"             , valueSource = 0, keyDefSource = "forestLocation" },
+            { stepName = "enterprise_woods.ExtendSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "treesNeeded"                , valueSource = 0, keyDefSource = "treesNeeded" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},

@@ -1,8 +1,8 @@
 local dhtRoot     = "enterprise_colonization"
 local dhtForest   = "forest"
 
-function T_ResetForest()
-    enterprise_woods.ResetForest()
+function T_DeleteForests()
+    enterprise_woods.DeleteForests()
 end
 
 function T_FuelNeed_Harvest_Att()
