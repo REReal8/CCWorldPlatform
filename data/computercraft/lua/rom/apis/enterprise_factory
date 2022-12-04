@@ -794,7 +794,7 @@ function DeleteSites()
     --]]
 
     local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
-    if not sites or type(sites) ~= "table" then corelog.Warning("enterprise_factory.DeleteSites: not a lits of sites") return nil end
+    if not sites or type(sites) ~= "table" then corelog.Warning("enterprise_factory.DeleteSites: not a list of sites") return nil end
 
     -- remove all assignments
     for siteId, site in pairs(sites) do
