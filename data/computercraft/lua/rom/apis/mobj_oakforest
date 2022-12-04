@@ -1,0 +1,156 @@
+
+--[[
+    This file implements mobj_oakforest.
+
+    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
+--]]
+
+OakForestClass = {
+    _id         = "",
+    _level      = 0,
+
+    _location   = nil,
+    _nTrees     = 0,
+}
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function OakForestClass:new(o)
+    --[[
+        Constructs a mobj_oakforest.
+
+        Parameters:
+                                - (table) table with
+                id              - (string) id of the forest
+                level           - (number) level of the forest
+                location        - (table) base location of the forest
+                nTrees          - (string) # trees in the forest
+    --]]
+
+    o = o or {}   -- create object if user does not provide one
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+--[[
+function OakForestClass:newFromURI(uri)
+    local aNewURL = OakForestClass:new()
+
+    aNewURL:setURI(uri)
+
+    return aNewURL
+end
+]]
+
+function OakForestClass:getId()
+    return self._id
+end
+
+function OakForestClass:getLevel()
+    return self._level
+end
+
+function OakForestClass:setLevel(level)
+    -- check input
+    if type(level) ~= "number" then corelog.Error("mobj_oakforest.setLevel: invalid level: "..type(level)) return end
+
+    self._level = level
+end
+
+function OakForestClass:getLocation()
+    return self._location
+end
+
+function OakForestClass:setLocation(location)
+    -- check input
+    if type(location) ~= "table" then corelog.Error("mobj_oakforest.setLocation: invalid location: "..type(location)) return end
+
+    self._location = location
+end
+
+function OakForestClass:getNTrees()
+    return self._nTrees
+end
+
+function OakForestClass:setNTrees(nTrees)
+    -- check input
+    if type(nTrees) ~= "number" then corelog.Error("mobj_oakforest.setNTrees: invalid # trees: "..type(nTrees)) return end
+
+    self._nTrees = nTrees
+end
+
+function OakForestClass:copy()
+    local forestCopy = OakForestClass:new({
+        _id         = self._id,
+        _level      = self._level,
+
+        _location   = coremove.CopyLocation(self._location),
+        _nTrees     = self._nTrees,
+    })
+
+    return forestCopy
+end
+
+function OakForestClass:sameId(forest)
+    return self:getId() == forest:getId()
+end
+
+function OakForestClass:sameLevel(forest)
+    return self:getLevel() == forest:getLevel()
+end
+
+function OakForestClass:sameLocation(forest)
+    local loc1 = self:getLocation()
+    local loc2 = forest:getLocation()
+
+    return coremove.IsSameLocation(loc1, loc2) and coremove.IsSameDirection(loc1, loc2)
+end
+
+function OakForestClass:sameNTrees(forest)
+    return self:getNTrees() == forest:getNTrees()
+end
+
+function OakForestClass:fuelNeed_Harvest_Att()
+    --[[
+        Forest attribute with the current fuelNeed to do one harvesting round.
+    --]]
+
+    -- determine fuelNeed
+    local nTrees = self:getNTrees()
+    local fuelNeed = role_forester.FuelNeededPerRound(nTrees)
+
+    -- end
+    return fuelNeed
+end
+
+function OakForestClass:fuelNeedExtraTree_Att()
+    --[[
+        Forest attribute with the fuelNeed for harvesting one extra tree.
+        (i.e. it return the difference between the current FuelNeed_Harvest_Att and the FuelNeed_Harvest_Att if there would be 1 extra tree)
+    --]]
+
+    -- determine fuelNeed
+    local nTrees = self:getNTrees()
+    local fuelNeed_Current = role_forester.FuelNeededPerRound(nTrees)
+    local fuelNeed_OneTreeExtra = role_forester.FuelNeededPerRound(nTrees + 1)
+
+    -- end
+    return fuelNeed_OneTreeExtra - fuelNeed_Current
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+

@@ -58,6 +58,7 @@ function DefaultMainMenu()
 				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
 				{key = "t", desc = "Execute tests",  			func = ExecuteTest,	    		param = {}},
 				{key = "r", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
+				{key = "o", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
 				{key = "e", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
 				{key = "l", desc = "Load event",				func = LoadEvent,				param = {}},
 				{key = "m", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
@@ -296,6 +297,73 @@ function ExecuteRoleTest(t)
 		})
 	else
 		corelog.WriteToLog("ExecuteRoleTest: should not happen")
+	end
+
+	-- done
+	return true
+end
+
+function ExecuteMObjTest(t)
+	if type(t) == "table" and type(t.func) == "string" and type(t.filename) == "string" then
+		-- execute function
+
+		-- seems our user has made a choice
+		local f, err = loadstring(t.filename.."."..t.func.."()")
+
+		-- valid function?
+		if f then
+			-- executing the code as wordt
+			coretask.AddWork(f)
+			UpdateToDisplay(t.func.." is queued for execution")
+		else
+			UpdateToDisplay(err)
+			return false
+		end
+	elseif type(t) == "table" and type(t.file) == "table" then
+		-- test functions screen
+
+		-- variables
+		local functions	= {}
+		local options	= {}
+
+		-- get all functions in test file / object
+		for key, value in pairs(t.file) do
+			-- add key if the value is a function and name starts with T_
+			if type(value) == "function" and string.find(key, "T_") then table.insert(functions, key) end
+		end
+
+		-- order this shit
+		table.sort(functions)
+
+		-- create the list of options
+		for i, name in ipairs(functions) do options[i] = {key = IndexToKey(i), desc = string.sub(name,3,-1), func = ExecuteMObjTest, param = {func = name, filename = t.filename}} end
+		table.insert(options, {key = "x", desc = "Back to mobj test menu", func = ExecuteMObjTest, param = {}})
+
+		-- this is the next screen
+		NextScreen({
+			clear       = true,
+			intro       = "Choose an mobj test function",
+			option      = options,
+			question    = "Make your choice"
+		})
+	elseif type(t) ~= "table" or type(t.func) ~= "string" then
+		-- test files screen
+
+		-- test options
+		local options	= {
+			{key = "o", desc = "oakforest",			func = ExecuteMObjTest, param = {file = t_mobj_oakforest, filename = "t_mobj_oakforest"}},
+			{key = "x", desc = "Back to main menu", func = function () return true end }
+		}
+
+		-- this is the next screen
+		NextScreen({
+			clear       = true,
+			intro       = "Choose a mobj test type",
+			option      = options,
+			question    = "Make your choice"
+		})
+	else
+		corelog.WriteToLog("ExecuteMObjTest: should not happen")
 	end
 
 	-- done

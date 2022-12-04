@@ -1,0 +1,88 @@
+local level = 0
+local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
+local nTrees = 1
+local level2 = 1
+local location2 = {x= 6, y= 12, z= 1, dx=0, dy=1}
+local nTrees2 = 2
+
+function T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* mobj_oakforest getter tests")
+    local id = coreutils.NewId()
+    local forest = GetForest(id) if not forest then corelog.Error("failed obtaining forest") return end
+
+    -- test
+    assert(forest:getId() == id, "gotten id(="..forest:getId()..") not the same as expected(="..id..")")
+    assert(forest:getLevel() == level, "gotten level(="..forest:getLevel()..") not the same as expected(="..level..")")
+    assert(forest:getLocation() == location, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location)..")")
+    assert(forest:getNTrees() == nTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees..")")
+
+    -- cleanup test
+end
+
+function GetForest(id)
+    -- check input
+    id = id or coreutils.NewId()
+
+    -- create forest object
+    local forest = mobj_oakforest.OakForestClass:new({
+        _id          = id,
+        _forestLevel = level,
+
+        _location    = location,
+        _nTrees      = nTrees,
+    })
+
+    -- end
+    return forest
+end
+
+function T_Setters()
+    -- prepare test
+    corelog.WriteToLog("* mobj_oakforest setter tests")
+    local forest = GetForest() if not forest then corelog.Error("failed obtaining forest") return end
+
+    -- test
+    forest:setLevel(level2)
+    assert(forest:getLevel() == level2, "gotten level(="..forest:getLevel()..") not the same as expected(="..level2..")")
+    forest:setLocation(location2)
+    assert(forest:getLocation() == location2, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location2)..")")
+    forest:setNTrees(nTrees2)
+    assert(forest:getNTrees() == nTrees2, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees2..")")
+
+    -- cleanup test
+end
+
+function T_FuelNeed_Harvest_Att()
+    -- prepare test
+    corelog.WriteToLog("# mobj_oakforest:fuelNeed_Harvest_Att() tests")
+    local forest = GetForest() if not forest then corelog.Error("failed obtaining forest") return end
+
+    -- test
+    local fuelNeed = forest:fuelNeed_Harvest_Att()
+    local expectedFuelNeed = 36
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
+    forest:setNTrees(nTrees2)
+    fuelNeed = forest:fuelNeed_Harvest_Att()
+    expectedFuelNeed = 2*36 + 2 * 6
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
+
+function T_FuelNeedExtraTree_Att()
+    -- prepare test
+    corelog.WriteToLog("# mobj_oakforest:fuelNeedExtraTree_Att() tests")
+    local forest = GetForest() if not forest then corelog.Error("failed obtaining forest") return end
+
+    -- test
+    local fuelNeed = forest:fuelNeedExtraTree_Att()
+    local expectedFuelNeed = 36 + 2*6
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
+    forest:setNTrees(nTrees2)
+    fuelNeed = forest:fuelNeedExtraTree_Att()
+    expectedFuelNeed = 36 + 2*6
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end

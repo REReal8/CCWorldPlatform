@@ -59,7 +59,9 @@
         "t_energy",
         "enterprise_assignmentboard",
         "mobj_chest",
-        "t_coredht"
+        "t_coredht",
+        "mobj_oakforest",
+        "t_mobj_oakforest"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
