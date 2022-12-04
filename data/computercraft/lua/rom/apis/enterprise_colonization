@@ -53,6 +53,11 @@ function CreateNewWorld_ASrv(...)
         enterprise_woods.DeleteForests()
     end
 
+    -- add default suppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_woods
+    enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_turtle.GetISHURL()})
+    enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_factory.GetISHURL()})
+    enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_woods.GetISHURL()})
+
     -- construct arguments
     local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
     local forestLocation            = {x= 0, y= 0, z= 1, dx=0, dy=1}

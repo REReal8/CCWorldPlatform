@@ -1,5 +1,7 @@
 local db = {
-    hostName    = "shop",
+    dhtRoot         = "enterprise_shop",
+    dhtSuppliers    = "suppliers",
+    hostName        = "shop",
 }
 
 --[[
@@ -291,6 +293,86 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
+function RegisterSupplier_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, supplierLocator = coreutils.CheckInput([[
+        This sync public service registers ("adds") a Supplier to the enterprise.
+
+        Note that the Supplier should already be available in the world.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                supplierLocator         + (URL) locating the Supplier
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_shop.RegisterSupplier_SSrv: Invalid input") return {success = false} end
+
+    -- get Suppliers
+    local suppliers = GetSuppliers()
+
+    -- register the supplier
+    corelog.WriteToLog(">Registering supplier "..supplierLocator:getURI().." at the shop.")
+    table.insert(suppliers, supplierLocator)
+
+    -- save Suppliers
+    coredht.SaveData(suppliers, db.dhtRoot, db.dhtSuppliers)
+
+    -- end
+    local result = {
+        success = true,
+    }
+    return result
+end
+
+function DelistSuppliers()
+    -- remove Suppliers
+    coredht.SaveData(nil, db.dhtRoot, db.dhtSuppliers)
+end
+
+function DelistSupplier_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, supplierLocator = coreutils.CheckInput([[
+        This sync public service delists ("removes") a supplier from the enterprise.
+
+        Note that the Supplier is not removed from the world.
+
+        Return value:
+            success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data for the service
+                supplierLocator         + (URL) locating the Supplier
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_shop.DelistChest_ASrv: Invalid input") return {success = false} end
+
+    -- get Suppliers
+    local suppliers = GetSuppliers()
+    local supplierFound = false
+    for i, registeredSupplierLocator in ipairs(suppliers) do
+        registeredSupplierLocator = url.URLClass:new(registeredSupplierLocator)
+        -- check we found it
+        if supplierLocator:getURI() == registeredSupplierLocator:getURI() then
+            -- remove from list
+            corelog.WriteToLog(">Delisting Supplier "..supplierLocator:getURI())
+            supplierFound = true
+            table.remove(suppliers, i)
+
+            -- save Suppliers
+            coredht.SaveData(suppliers, db.dhtRoot, db.dhtSuppliers)
+            break
+        end
+    end
+
+    -- end
+    local result = {
+        success = supplierFound,
+    }
+    return result
+end
+
 function GetHostLocator_SSrv(serviceData)
     --[[
         This sync public service provides the (base) URL of this ISH.
@@ -363,6 +445,13 @@ function ProcureItem_ASrv(...)
     return enterprise_isp.ProvideItemsTo_ASrv(itemServiceData, callback, callbackData)
 end
 
+function GetSuppliers()
+    local suppliers = coredht.GetData(db.dhtRoot, db.dhtSuppliers)
+    if not suppliers then suppliers = {} end
+
+    return suppliers
+end
+
 function GetBestSupplierLocator(item)
     --[[
         This sync private function provides the "best" (first) Supplier that can provide a specific item.
@@ -380,12 +469,7 @@ function GetBestSupplierLocator(item)
     if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid item (type="..type(item)..")") return nil end
 
     -- get Suppliers
-    -- ToDo: consider registering these at the Shop
-    local suppliers = {
-        enterprise_turtle.GetISHURL(),
-        enterprise_factory.GetISHURL(),
-        enterprise_woods.GetISHURL(),
-    }
+    local suppliers = GetSuppliers()
 
     -- loop on registered Suppliers and return first
     -- ToDo: consider selecting best Supplier based on some criterium (e.g. fuelNeed)

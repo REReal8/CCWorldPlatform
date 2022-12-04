@@ -34,3 +34,47 @@ function T_OrderTorch()
         storageLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
     }, callbackFunction, callbackData)
 end
+
+function T_RegisterSupplier()
+    -- prepare test
+    corelog.WriteToLog("# RegisterSupplier tests")
+    local originalNSuppliers = #enterprise_shop.GetSuppliers()
+    local supplierLocator = enterprise_turtle.GetISHURL()
+    corelog.WriteToLog("   supplierLocator="..supplierLocator:getURI())
+
+    -- test
+    local result = enterprise_shop.RegisterSupplier_SSrv({ supplierLocator = supplierLocator})
+    assert(result.success == true, "RegisterSupplier_SSrv services failed")
+    local nSuppliers = #enterprise_shop.GetSuppliers()
+    local expectedNSuppliers = originalNSuppliers + 1
+    assert(nSuppliers == expectedNSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNSuppliers..")")
+
+    -- cleanup test
+end
+
+function T_DelistSupplier()
+    -- prepare test
+    corelog.WriteToLog("# DelistSupplier tests")
+    local originalNSuppliers = #enterprise_shop.GetSuppliers()
+    local supplierLocator = enterprise_turtle.GetISHURL()
+
+    -- test
+    local result = enterprise_shop.DelistSupplier_SSrv({ supplierLocator = supplierLocator})
+    assert(result.success == true, "DelistSupplier_SSrv services failed")
+    local nSuppliers = #enterprise_shop.GetSuppliers()
+    local expectedNSuppliers = originalNSuppliers - 1
+    assert(nSuppliers == expectedNSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNSuppliers..")")
+
+    -- cleanup test
+end
+
+function T_DelistSuppliers()
+    -- prepare test
+    corelog.WriteToLog("# RegisterSupplier tests")
+
+    -- test
+    enterprise_shop.DelistSuppliers()
+    local nSuppliers = #enterprise_shop.GetSuppliers()
+    local expectedNSuppliers = 0
+    assert(nSuppliers == expectedNSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNSuppliers..")")
+end
