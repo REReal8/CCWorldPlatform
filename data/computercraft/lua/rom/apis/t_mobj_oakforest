@@ -62,6 +62,7 @@ function T_FuelNeed_Harvest_Att()
     local fuelNeed = forest:fuelNeed_Harvest_Att()
     local expectedFuelNeed = 36
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
+
     forest:setNTrees(nTrees2)
     fuelNeed = forest:fuelNeed_Harvest_Att()
     expectedFuelNeed = 2*36 + 2 * 6
@@ -79,6 +80,7 @@ function T_FuelNeedExtraTree_Att()
     local fuelNeed = forest:fuelNeedExtraTree_Att()
     local expectedFuelNeed = 36 + 2*6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
+
     forest:setNTrees(nTrees2)
     fuelNeed = forest:fuelNeedExtraTree_Att()
     expectedFuelNeed = 36 + 2*6
