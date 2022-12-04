@@ -280,7 +280,13 @@ function CheckInput(description, ...)
                 end
 
                 -- wellicht default toepassen
-                if argument == nil and defaultPresent and theDefault ~= nil then argument = theDefault end
+                if argument == nil and defaultPresent then
+                    if theDefault ~= nil then
+                        argument = theDefault
+                    else
+                        typeType = "nil"
+                    end
+                end
 
                 -- voldoet het argument aan het opgegeven type?
                 if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
