@@ -474,6 +474,7 @@ function GetBestSupplierLocator(item)
     -- loop on registered Suppliers and return first
     -- ToDo: consider selecting best Supplier based on some criterium (e.g. fuelNeed)
     for i, supplierLocator in ipairs(suppliers) do
+        supplierLocator = url.URLClass:new(supplierLocator)
         -- determine itemLocator
         local itemsLocator = supplierLocator:copy()
         itemsLocator:setQuery(item)
