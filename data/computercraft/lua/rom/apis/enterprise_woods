@@ -680,12 +680,12 @@ function RemoveForest(...)
     coredht.RemoveResource(forestLocator)
 end
 
-function GetISHURL()
+function GetHostLocator_Att()
     --[[
-        This private function provides the (base) URL of this ISH.
+        Attribute locating this host.
 
         Return value:
-            hostURL                 - (URL) locating this ISH
+            hostLocator             - (URL) locating this host
 
         Parameters:
             nil
@@ -736,7 +736,7 @@ function GetForestLocator(...)
     if not checkSuccess then corelog.Error("enterprise_woods.GetForestLocator: Invalid input") return nil end
 
     -- construct URL
-    local forestLocator = GetISHURL()
+    local forestLocator = GetHostLocator_Att()
     forestLocator:setPath({id = id})
 
     -- end

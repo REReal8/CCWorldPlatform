@@ -62,8 +62,8 @@ function OrderItems_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- set ingredientsSupplierLocator to this enterprise
-    local ingredientsSupplierLocator = GetISHURL()
-    local itemsLocator = GetISHURL()
+    local ingredientsSupplierLocator = GetHostLocator_Att()
+    local itemsLocator = GetHostLocator_Att()
     itemsLocator:setQuery(orderItems)
 
     -- call ProvideItemsTo_ASrv
@@ -387,7 +387,7 @@ function GetHostLocator_SSrv(serviceData)
     -- end
     local result = {
         success = true,
-        hostLocator = GetISHURL(),
+        hostLocator = GetHostLocator_Att(),
     }
     return result
 end
@@ -488,12 +488,12 @@ function GetBestSupplierLocator(item)
     return nil
 end
 
-function GetISHURL()
+function GetHostLocator_Att()
     --[[
-        This private function provides the (base) URL of this ISH.
+        Attribute locating this host.
 
         Return value:
-            hostURL                 - (URL) locating this ISH
+            hostLocator             - (URL) locating this host
 
         Parameters:
             nil

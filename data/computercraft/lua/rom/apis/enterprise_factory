@@ -725,7 +725,7 @@ function GetHostLocator_SSrv(serviceData)
     -- end
     local result = {
         success = true,
-        hostLocator = GetISHURL(),
+        hostLocator = GetHostLocator_Att(),
     }
     return result
 end
@@ -737,12 +737,12 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function GetISHURL()
+function GetHostLocator_Att()
     --[[
-        This private function provides the (base) URL of this ISH.
+        Attribute locating this host.
 
         Return value:
-            hostURL                 - (URL) locating this ISH
+            hostLocator             - (URL) locating this host
 
         Parameters:
             nil

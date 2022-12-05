@@ -189,7 +189,7 @@ function GetHostLocator_SSrv(...)
     -- end
     local result = {
         success = true,
-        hostLocator = GetISHURL(),
+        hostLocator = GetHostLocator_Att(),
     }
     return result
 end
@@ -722,12 +722,12 @@ function GetChestId(...)
     return id
 end
 
-function GetISHURL()
+function GetHostLocator_Att()
     --[[
-        This private function provides the (base) URL of this ISH.
+        Attribute locating this host.
 
         Return value:
-            hostURL                 - (URL) locating this ISH
+            hostLocator             - (URL) locating this host
 
         Parameters:
             nil
@@ -753,7 +753,7 @@ function GetChestLocator(...)
     if not checkSuccess then corelog.Error("enterprise_chests.GetChestLocator: Invalid input") return nil end
 
     -- construct URL
-    local chestURL = GetISHURL()
+    local chestURL = GetHostLocator_Att()
     chestURL:setPath({id = id})
 
     -- end

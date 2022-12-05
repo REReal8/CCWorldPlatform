@@ -39,7 +39,7 @@ function T_RegisterSupplier()
     -- prepare test
     corelog.WriteToLog("# RegisterSupplier tests")
     local originalNSuppliers = #enterprise_shop.GetSuppliers()
-    local supplierLocator = enterprise_turtle.GetISHURL()
+    local supplierLocator = enterprise_turtle.GetHostLocator_Att()
     corelog.WriteToLog("   supplierLocator="..supplierLocator:getURI())
 
     -- test
@@ -56,7 +56,7 @@ function T_DelistSupplier()
     -- prepare test
     corelog.WriteToLog("# DelistSupplier tests")
     local originalNSuppliers = #enterprise_shop.GetSuppliers()
-    local supplierLocator = enterprise_turtle.GetISHURL()
+    local supplierLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test
     local result = enterprise_shop.DelistSupplier_SSrv({ supplierLocator = supplierLocator})
