@@ -605,7 +605,7 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
-function NumberOfForests_Att()
+function GetNumberOfForests_Att()
     --[[
         enterprise attribute: number of forests administered by the enterprise.
     --]]

@@ -5,9 +5,9 @@ function T_ResetParameters()
     enterprise_energy.ResetParameters()
 end
 
-function T_FuelNeed_Refuel_Att()
+function T_GetFuelNeed_Refuel_Att()
     -- prepare test
-    corelog.WriteToLog("# FuelNeed_Refuel_Att tests")
+    corelog.WriteToLog("# GetFuelNeed_Refuel_Att tests")
     local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_woods.SaveForest(forest)
 
@@ -20,12 +20,12 @@ function T_FuelNeed_Refuel_Att()
 
     -- test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator })
-    local fuelNeed = enterprise_energy.FuelNeed_Refuel_Att()
+    local fuelNeed = enterprise_energy.GetFuelNeed_Refuel_Att()
     local expectedFuelNeed = 41
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level0.." not the same as expected(="..expectedFuelNeed..")")
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level1, forestLocator = forestLocator })
-    fuelNeed = enterprise_energy.FuelNeed_Refuel_Att()
+    fuelNeed = enterprise_energy.GetFuelNeed_Refuel_Att()
     expectedFuelNeed = 89
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level1.." not the same as expected(="..expectedFuelNeed..")")
 
@@ -37,21 +37,21 @@ function T_FuelNeed_Refuel_Att()
     enterprise_woods.RemoveForest(forestLocator)
 end
 
-function T_RefuelAmount_Att()
+function T_GetRefuelAmount_Att()
     -- prepare test
-    corelog.WriteToLog("# RefuelAmount_Att tests")
+    corelog.WriteToLog("# GetRefuelAmount_Att tests")
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
     local originalForestLocator = energyParameters.forestLocator
 
     -- test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = originalForestLocator })
-    local refuelAmount = enterprise_energy.RefuelAmount_Att()
+    local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
     local expectedRefuelAmount = 60
     assert(refuelAmount == expectedRefuelAmount, "gotten refuelAmount(="..refuelAmount..") for enterpriseLevel "..level0.." not the same as expected(="..expectedRefuelAmount..")")
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level1, forestLocator = originalForestLocator })
-    refuelAmount = enterprise_energy.RefuelAmount_Att()
+    refuelAmount = enterprise_energy.GetRefuelAmount_Att()
     expectedRefuelAmount = 300
     assert(refuelAmount == expectedRefuelAmount, "gotten refuelAmount(="..refuelAmount..") for enterpriseLevel "..level1.." not the same as expected(="..expectedRefuelAmount..")")
 

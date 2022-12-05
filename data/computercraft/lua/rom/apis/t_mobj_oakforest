@@ -53,36 +53,36 @@ function T_Setters()
     -- cleanup test
 end
 
-function T_FuelNeed_Harvest_Att()
+function T_getFuelNeed_Harvest_Att()
     -- prepare test
-    corelog.WriteToLog("# mobj_oakforest:fuelNeed_Harvest_Att() tests")
+    corelog.WriteToLog("# mobj_oakforest:getFuelNeed_Harvest_Att() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
-    local fuelNeed = forest:fuelNeed_Harvest_Att()
+    local fuelNeed = forest:getFuelNeed_Harvest_Att()
     local expectedFuelNeed = 36
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
 
     forest:setNTrees(nTrees2)
-    fuelNeed = forest:fuelNeed_Harvest_Att()
+    fuelNeed = forest:getFuelNeed_Harvest_Att()
     expectedFuelNeed = 2*36 + 2 * 6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
 end
 
-function T_FuelNeedExtraTree_Att()
+function T_getFuelNeedExtraTree_Att()
     -- prepare test
-    corelog.WriteToLog("# mobj_oakforest:fuelNeedExtraTree_Att() tests")
+    corelog.WriteToLog("# mobj_oakforest:getFuelNeedExtraTree_Att() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
-    local fuelNeed = forest:fuelNeedExtraTree_Att()
+    local fuelNeed = forest:getFuelNeedExtraTree_Att()
     local expectedFuelNeed = 36 + 2*6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
 
     forest:setNTrees(nTrees2)
-    fuelNeed = forest:fuelNeedExtraTree_Att()
+    fuelNeed = forest:getFuelNeedExtraTree_Att()
     expectedFuelNeed = 36 + 2*6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
 

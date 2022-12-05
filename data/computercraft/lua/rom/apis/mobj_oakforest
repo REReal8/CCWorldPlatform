@@ -118,7 +118,7 @@ function OakForestClass:sameNTrees(forest)
     return self:getNTrees() == forest:getNTrees()
 end
 
-function OakForestClass:fuelNeed_Harvest_Att()
+function OakForestClass:getFuelNeed_Harvest_Att()
     --[[
         Forest attribute with the current fuelNeed to do one harvesting round.
     --]]
@@ -131,10 +131,10 @@ function OakForestClass:fuelNeed_Harvest_Att()
     return fuelNeed
 end
 
-function OakForestClass:fuelNeedExtraTree_Att()
+function OakForestClass:getFuelNeedExtraTree_Att()
     --[[
         Forest attribute with the fuelNeed for harvesting one extra tree.
-        (i.e. it return the difference between the current FuelNeed_Harvest_Att and the FuelNeed_Harvest_Att if there would be 1 extra tree)
+        (i.e. it return the difference between the current getFuelNeed_Harvest_Att and the getFuelNeed_Harvest_Att if there would be 1 extra tree)
     --]]
 
     -- determine fuelNeed

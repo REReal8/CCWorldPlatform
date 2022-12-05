@@ -572,7 +572,7 @@ function TriggerRefuelIfNeeded(turtleId, fuelLevel)
         db.fuelTurtlePriorityKey = priorityKey
 
         -- prepare service call
-        local refuelAmount = enterprise_energy.RefuelAmount_Att()
+        local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
         local ingredientsSupplierLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: get from somewhere
         local serviceData = {
             turtleId                    = turtleId,
@@ -593,7 +593,7 @@ end
 
 function GetFuelLevels_Att()
     -- determine fuelLevel_Priority
-    local fuelNeed_Refuel = enterprise_energy.FuelNeed_Refuel_Att()
+    local fuelNeed_Refuel = enterprise_energy.GetFuelNeed_Refuel_Att()
     local assignmentStatistics = enterprise_assignmentboard.GetStatistics_Att()
     local maxFuelNeed_Travel = assignmentStatistics.maxFuelNeed_Travel
     local fuelLevel_Priority = fuelNeed_Refuel + maxFuelNeed_Travel

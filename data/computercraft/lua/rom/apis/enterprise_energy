@@ -63,7 +63,7 @@ function ProvideFuelTo_ASrv(...)
     Refuel_ASrv(refuelServiceData, callback, callbackData)
 end
 
-function FuelNeed_Refuel_Att()
+function GetFuelNeed_Refuel_Att()
     --[[
         enterprise_energy attribute with the current fuelNeed for refueling.
     --]]
@@ -82,34 +82,34 @@ function FuelNeed_Refuel_Att()
         -- object ophalen
 --        forest = coredht.GetResource(forestLocator)
         forest = enterprise_woods.GetForest(forestLocator)
-        if type(forest) ~= "table" then corelog.Warning("enterprise_energy.FuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return nil end
+        if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return nil end
     end
 
     -- check there is (already) a forest
     if forest then
         -- determine fuelNeed by forest
-        local fuelNeed_Harvest = forest:fuelNeed_Harvest_Att()
+        local fuelNeed_Harvest = forest:getFuelNeed_Harvest_Att()
         fuelNeed = fuelNeed + fuelNeed_Harvest
 
         -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
         if parameters.enterpriseLevel > 0 then
-            local fuelNeed_ExtraTree = forest:fuelNeedExtraTree_Att()
+            local fuelNeed_ExtraTree = forest:getFuelNeedExtraTree_Att()
             fuelNeed = fuelNeed + fuelNeed_ExtraTree
         end
     end
 
     -- check there is (already) a factory
-    local aFactoryExists = enterprise_factory.NumberOfSites_Att() > 0
+    local aFactoryExists = enterprise_factory.GetNumberOfSites_Att() > 0
     if aFactoryExists then
         -- determine fuelNeed by factory
         local items = FuelItemsForFuel(1)
-        local fuelNeed_Production = enterprise_factory.FuelNeed_Production_Att(items)
+        local fuelNeed_Production = enterprise_factory.GetFuelNeed_Production_Att(items)
         fuelNeed = fuelNeed + fuelNeed_Production
 
         -- determine fuelNeed for traveling
         if forest then
             local forestLocation = forest:getLocation()
-            local factoryLocation = enterprise_factory.SiteLocation_Att(items)
+            local factoryLocation = enterprise_factory.GetSiteLocation_Att(items)
             local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
             fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
         end
@@ -119,7 +119,7 @@ function FuelNeed_Refuel_Att()
     return fuelNeed
 end
 
-function RefuelAmount_Att()
+function GetRefuelAmount_Att()
     --[[
         enterprise_energy attribute with the current refuel amount.
     --]]
@@ -132,12 +132,12 @@ function RefuelAmount_Att()
     elseif enterpriseLevel == 1 then
         return 300 -- 1 tree = min 5 logs = 20 planks = 300 fuel
     else
-        corelog.Warning("enterprise_energy.RefuelAmount_Att: not (yet) implemented for enterpriseLevel="..enterpriseLevel)
-        return LargeFuelAmount_Att()
+        corelog.Warning("enterprise_energy.GetRefuelAmount_Att: not (yet) implemented for enterpriseLevel="..enterpriseLevel)
+        return GetLargeFuelAmount_Att()
     end
 end
 
-function LargeFuelAmount_Att()
+function GetLargeFuelAmount_Att()
     return 999999
 end
 
