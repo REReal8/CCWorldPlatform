@@ -56,7 +56,6 @@ function CreateNewWorld_ASrv(...)
     -- add default suppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_woods
     enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_turtle.GetISHURL()})
     enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_factory.GetISHURL()})
-    enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_woods.GetISHURL()})
 
     -- construct arguments
     local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
@@ -129,8 +128,12 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
+            { stepName = "enterprise_shop.RegisterSupplier_SSrv", async = false, stepDataDef = {
+                { keyDef = "supplierLocator"            , valueSource = 3, keyDefSource = "forestLocator" },
+            }},
             { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL1" },
+                { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
@@ -148,8 +151,8 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-                { keyDef = "forestLocation"             , valueSource = 0, keyDefSource = "forestLocation" },
             { stepName = "enterprise_woods.ExtendSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
                 { keyDef = "treesNeeded"                , valueSource = 0, keyDefSource = "treesNeeded" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
@@ -188,10 +191,11 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "success9"                   , valueSource = 9, keyDefSource = "success" },
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
+                { keyDef = "success12"                  , valueSource = 11, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 12, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 13, keyDefSource = "success" },
         }
     }
     local projectServiceData = {

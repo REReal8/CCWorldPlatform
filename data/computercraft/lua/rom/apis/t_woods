@@ -1,38 +1,35 @@
-local dhtRoot     = "enterprise_colonization"
-local dhtForest   = "forest"
 
 function T_DeleteForests()
+    -- prepare test
+    corelog.WriteToLog("# DeleteForests tests")
+
+    -- test
     enterprise_woods.DeleteForests()
-end
-
-function T_FuelNeed_Harvest_Att()
-    -- prepare test
-    corelog.WriteToLog("# Test FuelNeed_Harvest_Att")
-    local forest = enterprise_woods.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
-
-    -- test
-    local fuelNeed = enterprise_woods.FuelNeed_Harvest_Att()
-    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
+    local nForests = enterprise_woods.NumberOfForests_Att()
+    local expectedNForests = 0
+    assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- cleanup test
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
 end
 
-function T_FuelNeedExtraTree_Att()
+function T_SaveAndRemoveForest()
     -- prepare test
-    corelog.WriteToLog("# Test FuelNeedExtraTree_Att")
-    local forest = enterprise_woods.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local originalNForests = enterprise_woods.NumberOfForests_Att()
 
-    -- test
-    local fuelNeed = enterprise_woods.FuelNeedExtraTree_Att()
-    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
+    -- SaveForest test
+    corelog.WriteToLog("# SaveForest tests")
+    local forestLocator = enterprise_woods.SaveForest(forest)
+    local nForests = enterprise_woods.NumberOfForests_Att()
+    local expectedNForests = originalNForests + 1
+    assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
+
+    -- RemoveForest test
+    corelog.WriteToLog("# RemoveForest tests")
+    enterprise_woods.RemoveForest(forestLocator)
+    nForests = enterprise_woods.NumberOfForests_Att()
+    expectedNForests = originalNForests
+    assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- cleanup test
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
 end

@@ -1,52 +1,60 @@
+local level0 = 0
+local level1 = 1
+
 function T_ResetParameters()
     enterprise_energy.ResetParameters()
 end
 
 function T_FuelNeed_Refuel_Att()
     -- prepare test
-    corelog.WriteToLog("# Test FuelNeed_Refuel_Att")
-    local forest = enterprise_woods.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    corelog.WriteToLog("# FuelNeed_Refuel_Att tests")
+    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forestLocator = enterprise_woods.SaveForest(forest)
+
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
 
+    local energyParameters = enterprise_energy.GetParameters()
+    local originalLevel = energyParameters.enterpriseLevel
+    local originalLocator = energyParameters.forestLocator
+
     -- test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator })
     local fuelNeed = enterprise_energy.FuelNeed_Refuel_Att()
-    corelog.WriteToLog("   "..fuelNeed.." fuelNeed")
+    local expectedFuelNeed = 41
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level0.." not the same as expected(="..expectedFuelNeed..")")
+
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level1, forestLocator = forestLocator })
+    fuelNeed = enterprise_energy.FuelNeed_Refuel_Att()
+    expectedFuelNeed = 89
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level1.." not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
+
     t_factory.StopV0Site(location)
+
+    enterprise_woods.RemoveForest(forestLocator)
 end
 
-function T_RefuelAmount_AttL0()
+function T_RefuelAmount_Att()
     -- prepare test
-    corelog.WriteToLog("# Test RefuelAmount_Att (level 0)")
-    local energy = enterprise_energy.GetParameters()
-    local originalLevel = energy.enterpriseLevel
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = 0 })
+    corelog.WriteToLog("# RefuelAmount_Att tests")
+    local energyParameters = enterprise_energy.GetParameters()
+    local originalLevel = energyParameters.enterpriseLevel
+    local originalForestLocator = energyParameters.forestLocator
 
     -- test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = originalForestLocator })
     local refuelAmount = enterprise_energy.RefuelAmount_Att()
-    corelog.WriteToLog("   "..refuelAmount.." refuelAmount")
+    local expectedRefuelAmount = 60
+    assert(refuelAmount == expectedRefuelAmount, "gotten refuelAmount(="..refuelAmount..") for enterpriseLevel "..level0.." not the same as expected(="..expectedRefuelAmount..")")
+
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level1, forestLocator = originalForestLocator })
+    refuelAmount = enterprise_energy.RefuelAmount_Att()
+    expectedRefuelAmount = 300
+    assert(refuelAmount == expectedRefuelAmount, "gotten refuelAmount(="..refuelAmount..") for enterpriseLevel "..level1.." not the same as expected(="..expectedRefuelAmount..")")
 
     -- cleanup test
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel })
-end
-
-function T_RefuelAmount_AttL1()
-    -- prepare test
-    corelog.WriteToLog("# Test RefuelAmount_Att (level 1)")
-    local energy = enterprise_energy.GetParameters()
-    local originalLevel = energy.enterpriseLevel
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = 1 })
-
-    -- test
-    local refuelAmount = enterprise_energy.RefuelAmount_Att()
-    corelog.WriteToLog("   "..refuelAmount.." refuelAmount")
-
-    -- cleanup test
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel })
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator })
 end

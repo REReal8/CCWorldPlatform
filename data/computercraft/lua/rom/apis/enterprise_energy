@@ -74,16 +74,28 @@ function FuelNeed_Refuel_Att()
     -- determine fuelNeed
     local fuelNeed = 0
 
-    -- determine fuelNeed by current forest
-    local forest = enterprise_woods.GetForest()
-    local forestLocation = forest.location
-    local fuelNeed_Harvest = enterprise_woods.FuelNeed_Harvest_Att()
-    fuelNeed = fuelNeed + fuelNeed_Harvest
+    -- get forest if it (already) exists
+    local forest = nil
+    local forestLocator = parameters.forestLocator
+    if forestLocator then
+--        forest =  mobj_oakforest.OakForestClass:new(enterprise_woods.GetForest(forestLocator)) -- ToDo: get mobj_oakforest directly
+        -- object ophalen
+--        forest = coredht.GetResource(forestLocator)
+        forest = enterprise_woods.GetForest(forestLocator)
+        if type(forest) ~= "table" then corelog.Warning("enterprise_energy.FuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return nil end
+    end
 
-    -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
-    if parameters.enterpriseLevel > 0 then
-        local fuelNeed_ExtraTree = enterprise_woods.FuelNeedExtraTree_Att()
-        fuelNeed = fuelNeed + fuelNeed_ExtraTree
+    -- check there is (already) a forest
+    if forest then
+        -- determine fuelNeed by forest
+        local fuelNeed_Harvest = forest:fuelNeed_Harvest_Att()
+        fuelNeed = fuelNeed + fuelNeed_Harvest
+
+        -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
+        if parameters.enterpriseLevel > 0 then
+            local fuelNeed_ExtraTree = forest:fuelNeedExtraTree_Att()
+            fuelNeed = fuelNeed + fuelNeed_ExtraTree
+        end
     end
 
     -- check there is (already) a factory
@@ -95,9 +107,12 @@ function FuelNeed_Refuel_Att()
         fuelNeed = fuelNeed + fuelNeed_Production
 
         -- determine fuelNeed for traveling
-        local factoryLocation = enterprise_factory.SiteLocation_Att(items)
-        local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
-        fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
+        if forest then
+            local forestLocation = forest:getLocation()
+            local factoryLocation = enterprise_factory.SiteLocation_Att(items)
+            local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
+            fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
+        end
     end
 
     -- end
@@ -220,6 +235,8 @@ function ResetParameters()
     coredht.SaveData({
         enterpriseLevel             = 0,
 
+        forestLocator               = nil,
+
         fuelItemName                = "minecraft:birch_planks",
         fuelItemGain                = 15,
     }, db.dhtRoot, db.dhtParameters)
@@ -227,7 +244,7 @@ end
 
 function UpdateEnterprise_SSrv(...)
     -- get & check input from description
-    local checkSuccess, enterpriseLevel = coreutils.CheckInput([[
+    local checkSuccess, enterpriseLevel, forestLocator = coreutils.CheckInput([[
         This private sync service updates the enterprise information.
 
         Return value:
@@ -237,6 +254,7 @@ function UpdateEnterprise_SSrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 enterpriseLevel         + (number) with enterprise level
+                forestLocator           + (URL, nil) locating the forest intended for raw fuel materials
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid input") return {success = false} end
 
@@ -245,6 +263,7 @@ function UpdateEnterprise_SSrv(...)
 
     -- set enterprise information
     parameters.enterpriseLevel = enterpriseLevel
+    parameters.forestLocator = forestLocator
 
     -- save parameters
     coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
