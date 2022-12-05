@@ -21,7 +21,11 @@ end
 
 function DHTReadySetup()
     -- controleren of dht root bestaat
-    if not coredht.GetData("allItems") then coredht.SaveData({}, "allItems") end
+    if not coredht.GetData("allItems") then ResetAllItems() end
+end
+
+function ResetAllItems()
+    coredht.SaveData({}, "allItems")
 end
 
 function GetEmptySlot(list)

@@ -4,6 +4,7 @@ function T_dummy()
 end
 
 function T_ResetWorld()
+    coreinventory.ResetAllItems()
     coreassignment.Reset()
     enterprise_assignmentboard.Reset()
     enterprise_projects.DeleteProjects()
