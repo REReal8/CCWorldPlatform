@@ -169,7 +169,6 @@ function ExtendSite_ASrv(...)
     local areAllTrueStepDataDef = {}
     local projectData = {
         forestLevel             = forest:getLevel(),
-        forestLocation          = coremove.CopyLocation(forest:getLocation()),
         forestLocator           = forestLocator,
         materialsHostLocator    = materialsHostLocator,
     }
@@ -186,7 +185,7 @@ function ExtendSite_ASrv(...)
         local currentNTreesStr = "currentNTreeStep"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_woods.CollectAndBuildForestTree_ASrv", async = true, stepDataDef = {
-                { keyDef = "forestLocation"         , valueSource = 0, keyDefSource = "forestLocation" },
+                { keyDef = "forestLocator"          , valueSource = 0, keyDefSource = "forestLocator" },
                 { keyDef = "currentNTrees"          , valueSource = 0, keyDefSource = currentNTreesStr },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }}
@@ -242,7 +241,7 @@ end
 
 function CollectAndBuildForestTree_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocation, currentNTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, forestLocator, currentNTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This private async service first collects the resources and than extends the forest with 1 tree.
 
         Return value:
@@ -254,7 +253,7 @@ function CollectAndBuildForestTree_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about the service
-                forestLocation          + (table) base location of factory
+                forestLocator           + (URL) locating the forest
                 currentNTrees           + (number) current number of trees in the forest
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once service is ready
@@ -262,8 +261,12 @@ function CollectAndBuildForestTree_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_woods.CollectAndBuildForestTree_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
+    -- get forest
+    local forest = GetForest(forestLocator)
+    if type(forest) ~="table" then corelog.Error("enterprise_woods.CollectAndBuildForestTree_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
     -- create projectServiceData
-    local treeBaseLocation = coremove.GetRelativeLocation(forestLocation, 0, 6 * currentNTrees, 0)
+    local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * currentNTrees, 0)
     local projectData = {
         treeBaseLocation        = treeBaseLocation,
         materialsHostLocator    = materialsHostLocator,
