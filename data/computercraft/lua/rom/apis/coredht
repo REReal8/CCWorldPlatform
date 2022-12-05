@@ -311,7 +311,7 @@ end
 function DoEventSaveData(subject, envelope)
     -- check for version differences
     if db._version ~= 0 and db._version + 1 ~= envelope.message.version then
-        corelog.WriteToLog("DHT WARNING: Saving data from ", envelope.from, " with version ", envelope.message.version, ". Current version is ", db._version)
+        corelog.WriteToLog("DHT WARNING: Saving data from "..envelope.from.." with version "..envelope.message.version..". Current version is "..db._version)
     end
 
 	-- just save the data like a normal request from this computer
