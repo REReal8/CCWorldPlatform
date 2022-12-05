@@ -34,7 +34,7 @@ function AddNewSite_ASrv(...)
     -- create new forest
     local forest = mobj_oakforest.OakForestClass:new({
         _id          = coreutils.NewId(),
-        _Level       = forestLevel,
+        _level       = forestLevel,
 
         _location    = coremove.CopyLocation(baseLocation),
         _nTrees      = 0,
