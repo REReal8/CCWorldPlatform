@@ -20,6 +20,9 @@ local db = {
 
     The Shop is also a Supplier, hence it also implements these services.
 
+    It also provides the following attributes
+        GetHostLocator_Att          - locating this enterprise
+
     This allows for the Shop to be passed as ingredientsSupplierLocator to a Supplier. The effect of that is that the Supplier can request
     the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from a Supplier.
     This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided
@@ -373,23 +376,21 @@ function DelistSupplier_SSrv(...)
     return result
 end
 
-function GetHostLocator_SSrv(serviceData)
+function GetHostLocator_Att()
     --[[
-        This sync public service provides the (base) URL of this ISH.
+        Attribute locating this enterprise.
 
         Return value:
-            hostLocator             - (URL) locating this ISH
+            hostLocator             - (URL) locating this enterprise
 
         Parameters:
-            serviceData             - (table) empty
+            nil
     --]]
 
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetHostLocator_Att(),
-    }
-    return result
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
 end
 
 --    _                 _    __                  _   _
@@ -486,23 +487,6 @@ function GetBestSupplierLocator(item)
     -- end
     corelog.Warning("enterprise_shop.GetBestSupplierLocator: No Supplier can provide "..textutils.serialise(item))
     return nil
-end
-
-function GetHostLocator_Att()
-    --[[
-        Attribute locating this host.
-
-        Return value:
-            hostLocator             - (URL) locating this host
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = url.URLClass:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
 end
 
 function IsShopURL_QSrv(...)

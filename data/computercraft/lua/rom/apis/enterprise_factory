@@ -76,6 +76,9 @@ local db = {
         The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
         The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
 
+    It also provides the following attributes
+        GetHostLocator_Att     - locating this enterprise
+
     The Factory is comprised out of one or more factory sites. It uses the production services of the factory sites to produce the items.
 --]]
 
@@ -283,9 +286,9 @@ function GetFuelNeed_Production_Att(...)
     if GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.GetFuelNeed_Production_Att: Not sites administered by Factory") return 0 end
 
     -- create locators
-    local itemsLocator = enterprise_factory.GetHostLocator_SSrv({ }).hostLocator
+    local itemsLocator = enterprise_factory.GetHostLocator_Att()
     itemsLocator:setQuery(items)
-    local turtleLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- determine fuelNeed
     local serviceData = {
@@ -711,38 +714,12 @@ function StopSite_ASrv(...)
     enterprise_factory_site.StopSite_ASrv(serviceData, callback, callbackData)
 end
 
-function GetHostLocator_SSrv(serviceData)
+function GetHostLocator_Att()
     --[[
-        This sync public service provides the (base) URL of this enterprise.
+        Attribute locating this enterprise.
 
         Return value:
             hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            serviceData             - (table) empty
-    --]]
-
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetHostLocator_Att(),
-    }
-    return result
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function GetHostLocator_Att()
-    --[[
-        Attribute locating this host.
-
-        Return value:
-            hostLocator             - (URL) locating this host
 
         Parameters:
             nil
@@ -753,6 +730,13 @@ function GetHostLocator_Att()
 
     return hostURL
 end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function IsFactoryURL_QSrv(queryData)
     --[[

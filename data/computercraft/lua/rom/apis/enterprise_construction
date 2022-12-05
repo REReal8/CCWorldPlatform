@@ -60,7 +60,7 @@ function BuildBlueprint_ASrv(...)
     materialsItemsLocator:setQuery(materialsNeeded)
 
     -- set local output location
-    local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- create project service data
     local buildBlueprintProjectDef = {
@@ -163,7 +163,7 @@ function BuildRectangularPattern_ASrv(...)
     --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of)
     --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
-    local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- create project service data
     local buildRectangularPatternProjectDef = {

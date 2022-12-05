@@ -301,7 +301,7 @@ function ProduceItem_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine turtleInputLocator
-    local turtleInputLocator = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    local turtleInputLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- determine production steps
     local projectSteps = {
@@ -492,10 +492,10 @@ function GetV0SiteStartData(serviceData)
         baseLocation = coremove.CopyLocation(baseLocation),
 
         inputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+            enterprise_turtle.GetHostLocator_Att(),
         },
         outputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+            enterprise_turtle.GetHostLocator_Att(),
         },
 
         craftingSpots = {
@@ -566,10 +566,10 @@ function GetV1SiteStartData(serviceData)
         baseLocation = coremove.CopyLocation(baseLocation),
 
         inputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+            enterprise_turtle.GetHostLocator_Att(),
         },
         outputLocators = {
-            enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+            enterprise_turtle.GetHostLocator_Att(),
         },
 
         craftingSpots = {

@@ -67,7 +67,7 @@ function CreateNewWorld_ASrv(...)
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
     local treesNeeded = 6
     local settleData = {
-        materialsHostLocator        = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator,
+        materialsHostLocator        = enterprise_shop.GetHostLocator_Att(),
 
         primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
@@ -75,7 +75,7 @@ function CreateNewWorld_ASrv(...)
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(primaryTaskData),
         initialiseCoordinates_Task  = "role_settler.InitialiseCoordinates_Task",
 
-        ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator, -- ToDo: somehow pass this to enterprise_energy
+        ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_Att(), -- ToDo: somehow pass this to enterprise_energy
 
         factoryVersion0             = "v0",
         upgradeFalse                = false,
@@ -207,19 +207,12 @@ function CreateNewWorld_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
 function GetHostLocator_Att()
     --[[
-        Attribute locating this host.
+        Attribute locating this enterprise.
 
         Return value:
-            hostLocator             - (URL) locating this host
+            hostLocator             - (URL) locating this enterprise
 
         Parameters:
             nil
@@ -230,6 +223,13 @@ function GetHostLocator_Att()
 
     return hostURL
 end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function IsColonizationURL_QSrv(...)
     -- get & check input from description

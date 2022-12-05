@@ -9,11 +9,13 @@ local db = {
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
-        GetHostLocator_SSrv     - provide host URL of the enterprise
         GetItemsLocator_SSrv    - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
 
     Furthermore, the enterprise functions as both a Supplier and a Storage for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+
+    It also provides the following attributes
+        GetHostLocator_Att     - locating this enterprise
 
     The enterprise does not provide services to build/ dismantle chests. This should be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them.
@@ -175,23 +177,21 @@ function UpdateChestRecord_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function GetHostLocator_SSrv(...)
+function GetHostLocator_Att()
     --[[
-        This sync public service provides the (base) URL of this enterprise.
+        Attribute locating this enterprise.
 
         Return value:
             hostLocator             - (URL) locating this enterprise
 
         Parameters:
-            serviceData             - (table) empty
+            nil
     --]]
 
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetHostLocator_Att(),
-    }
-    return result
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
 end
 
 function GetItemsLocator_SSrv(...)
@@ -720,23 +720,6 @@ function GetChestId(...)
 
     -- end
     return id
-end
-
-function GetHostLocator_Att()
-    --[[
-        Attribute locating this host.
-
-        Return value:
-            hostLocator             - (URL) locating this host
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = url.URLClass:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
 end
 
 function GetChestLocator(...)

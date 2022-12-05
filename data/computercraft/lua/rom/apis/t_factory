@@ -5,28 +5,28 @@ local baseLocationV2 = baseLocationV1
 function T_ProvideItemsTo_Craft()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
-    local itemsLocator = enterprise_factory.GetHostLocator_SSrv({ }).hostLocator
+    local itemsLocator = enterprise_factory.GetHostLocator_Att()
     local items = { ["minecraft:birch_planks"] = 12 }
     itemsLocator:setQuery(items)
 
     enterprise_factory.ProvideItemsTo_ASrv({
         itemsLocator                = itemsLocator,
-        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        storageLocator              = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
+        storageLocator              = enterprise_turtle.GetHostLocator_Att(),
     }, callbackFunction, callbackData)
 end
 
 function T_ProvideItemsTo_Smelt()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
-    local itemsLocator = enterprise_factory.GetHostLocator_SSrv({ }).hostLocator
+    local itemsLocator = enterprise_factory.GetHostLocator_Att()
     local items = { ["minecraft:charcoal"] = 3 }
     itemsLocator:setQuery(items)
 
     enterprise_factory.ProvideItemsTo_ASrv({
         itemsLocator                = itemsLocator,
-        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
-        storageLocator              = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
+        storageLocator              = enterprise_turtle.GetHostLocator_Att(),
     }, callbackFunction, callbackData)
 end
 
@@ -50,7 +50,7 @@ function T_BuildAndStartNewV1Site()
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         upgrade                 = false,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -59,7 +59,7 @@ function T_BuildAndStartNewV2Site()
         baseLocation            = baseLocationV2,
         siteVersion             = "v2",
         upgrade                 = true,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -67,7 +67,7 @@ function T_StopAndDismantleV1Site()
     enterprise_factory.StopAndDismantleSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -76,7 +76,7 @@ function T_BuildNewV0Site()
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
         upgrade                 = false,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 
@@ -101,7 +101,7 @@ function DismantleV0Site(baseLocation)
         baseLocation            = baseLocation,
         siteVersion             = "v0",
         siteStopped             = true,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, "t_main.Func1_Callback", {"some callback data"})
 end
 

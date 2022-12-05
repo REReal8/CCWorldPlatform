@@ -11,10 +11,12 @@ local db = {
     This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
-        GetHostLocator_SSrv    - provide host URL of this enterprise
         IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
+
+    It also provides the following attributes
+        GetHostLocator_Att     - locating this enterprise
 --]]
 
 --                _     _ _         __                  _   _
@@ -92,23 +94,21 @@ function Reset()
     db.fuelTurtleCallsSkippedBecausePriorityKey = 0
 end
 
-function GetHostLocator_SSrv(serviceData)
+function GetHostLocator_Att()
     --[[
-        This sync public service provides the (base) URL of this enterprise.
+        Attribute locating this enterprise.
 
         Return value:
             hostLocator             - (URL) locating this enterprise
 
         Parameters:
-            serviceData             - (table) empty
+            nil
     --]]
 
-    -- end
-    local result = {
-        success = true,
-        hostLocator = GetHostLocator_Att(),
-    }
-    return result
+    local hostURL = url.URLClass:new()
+    hostURL:setHost(db.hostName)
+
+    return hostURL
 end
 
 function GetTurtleLocator_SSrv(...)
@@ -543,23 +543,6 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function GetHostLocator_Att()
-    --[[
-        Attribute locating this host.
-
-        Return value:
-            hostLocator             - (URL) locating this host
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = url.URLClass:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
 function TriggerRefuelIfNeeded(turtleId, fuelLevel)
     -- get fuelLevels
     local fuelLevels = GetFuelLevels_Att()
@@ -573,7 +556,7 @@ function TriggerRefuelIfNeeded(turtleId, fuelLevel)
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
-        local ingredientsSupplierLocator = enterprise_shop.GetHostLocator_SSrv({ }).hostLocator -- ToDo: get from somewhere
+        local ingredientsSupplierLocator = enterprise_shop.GetHostLocator_Att()
         local serviceData = {
             turtleId                    = turtleId,
             fuelAmount                  = refuelAmount,

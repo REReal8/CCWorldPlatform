@@ -14,8 +14,8 @@
         GetItemsIntoTurtle_ASrv     - ensuring items are gathered in the Storage and transferred to the inventory of a turtle.
         PutItemsFromTurtle_ASrv     - ensuring items are transferred from the inventory of a turtle to the Storage.
 
-    Furthermore most Suppliers and Storages implement the additional function
-        GetHostLocator_SSrv         - provide the URL of the host
+    Furthermore most Suppliers and Storages should implement the additional attribute
+        GetHostLocator_Att          - locating this enterprise
 
     The ISP offers generic Supplier and Storage services by relaying them to the underlying Supplier or Storage based on the "base" component of URL's. The interface
     of the corresponding ISP services is the same. Hence, one could see the ISP as a Supplier and Storage itself.

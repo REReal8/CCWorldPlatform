@@ -682,10 +682,10 @@ end
 
 function GetHostLocator_Att()
     --[[
-        Attribute locating this host.
+        Attribute locating this enterprise.
 
         Return value:
-            hostLocator             - (URL) locating this host
+            hostLocator             - (URL) locating this enterprise
 
         Parameters:
             nil
@@ -745,12 +745,12 @@ end
 
 function GetLocalLogsLocator()
     -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
-    return enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    return enterprise_turtle.GetHostLocator_Att()
 end
 
 function GetLocalSaplingsLocator()
     -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
-    return enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator
+    return enterprise_turtle.GetHostLocator_Att()
 end
 
 tree_pattern = {

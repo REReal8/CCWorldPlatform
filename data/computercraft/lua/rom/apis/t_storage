@@ -15,7 +15,7 @@ function T_buildAndStartNewSite()
         siloType                = "basic",
         topChests               = 2,
         layers                  = 2,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_SSrv({ }).hostLocator,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }, "t_storage.Cleanup_Callback", { originalForestLevel = originalForestLevel, originalNTrees = originalNTrees, location = location })
 
 end
