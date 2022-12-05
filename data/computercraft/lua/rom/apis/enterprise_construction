@@ -28,7 +28,7 @@ function BuildBlueprint_ASrv(...)
                 blueprint               + (table) blueprint to build
                     layerList           - (table) layer to build
                     escapeSequence      - (table) escapeSequence of blueprint
-                materialsHostLocator    + (URL) locating where (i.e. at which ISH) the building materials can be retrieved
+                materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once the pattern is build
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
@@ -125,7 +125,7 @@ function BuildRectangularPattern_ASrv(...)
                     deltaY              - (number) size of pattern
                     objectList          - (table) array of objects to build, with for each object
                     clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
-                materialsHostLocator    + (URL) locating where (i.e. at which ISH) the building materials can be retrieved
+                materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once the pattern is build
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))

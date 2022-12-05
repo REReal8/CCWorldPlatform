@@ -725,13 +725,13 @@ end
 function GetForestLocator(...)
     -- get & check input from description
     local checkSuccess, id = coreutils.CheckInput([[
-        This private function provides the URL of a forest based on the internal id in this ISH.
+        This private function provides the URL of a forest based on it's (internal) id.
 
         Return value:
             forestLocator           - (URL) locating the forest
 
         Parameters:
-            id                      + (string) the id of the forest
+            id                      + (string) with the id of the forest
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_woods.GetForestLocator: Invalid input") return nil end
 

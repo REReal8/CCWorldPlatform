@@ -132,7 +132,7 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
 
         Parameters:
             siteData                    - (table) data about this silo, like type and layout
-                materialsHostLocator    - (URL) locating where (i.e. at which ISH) the building materials can be retrieved
+                materialsHostLocator    - (URL) locating the host of the building materials
             callback                    - (string) function name to call once the site is build
             callbackData                - (table) function data to supply to callback
     ]]
