@@ -1,12 +1,14 @@
+local scheme = "ccwprp"
 local host = "storage"
 local host2 = "turtle"
 local port = 1
 local port2 = 5
-local path = {site = 3, inputChest = 7}
+local path = {inputChest = 7, site = 3}
 local path2 = {site = 3, inputChest = 4}
 local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
 local query2 = {["minecraft:torch"] = 5, ["minecraft:charcoal"] = 7}
 
+local schemeURI = "ccwprp://"
 local hostURI = "storage"
 local portURI = ":1"
 local pathURI = "/site=3/inputChest=7"
@@ -39,24 +41,67 @@ function T_Getters()
     })
 
     -- test
-    corelog.WriteToLog(" getterURL:getScheme() = "..getterURL:getScheme())
-    corelog.WriteToLog(" getterURL:getSchemeURI() = "..getterURL:getSchemeURI())
+    local testResult = getterURL:getScheme()
+    local expectedResultStr = scheme
+    assert(testResult == expectedResultStr, "getScheme() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
-    corelog.WriteToLog(" getterURL:getHost() = "..getterURL:getHost())
-    corelog.WriteToLog(" getterURL:getHostURI() = "..getterURL:getHostURI())
+    testResult = getterURL:getHost()
+    expectedResultStr = host
+    assert(testResult == expectedResultStr, "getHost() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
-    corelog.WriteToLog(" getterURL:getPort() = "..getterURL:getPort())
-    corelog.WriteToLog(" getterURL:getPortURI() = "..getterURL:getPortURI())
+    testResult = getterURL:getPort()
+    local expectedResultNumber = port
+    assert(testResult == expectedResultNumber, "getPort() return(="..testResult..") different from expected(="..expectedResultNumber..")")
 
-    corelog.WriteToLog(" getterURL:getAuthorityURI() = "..getterURL:getAuthorityURI())
+    testResult = getterURL:getPath()
+    local expectedResultTable = path
+    assert(testResult == expectedResultTable, "getPath() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
 
-    corelog.WriteToLog(" getterURL:getPath() = "..textutils.serialize(getterURL:getPath()))
-    corelog.WriteToLog(" getterURL:getPathURI() = "..getterURL:getPathURI())
+    testResult = getterURL:getQuery()
+    expectedResultTable = query
+    assert(testResult == expectedResultTable, "getQuery() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
 
-    corelog.WriteToLog(" getterURL:getQuery() = "..textutils.serialize(getterURL:getQuery()))
-    corelog.WriteToLog(" getterURL:getQueryURI() = "..getterURL:getQueryURI())
+    -- cleanup test
+end
 
-    corelog.WriteToLog(" getterURL:getURI() = "..getterURL:getURI())
+function T_GettersURI()
+    -- prepare test
+    corelog.WriteToLog("* URL URI getter tests")
+    local getterURL = url.URLClass:new({
+        _host = host,
+        _port = port,
+        _path = path,
+        _query = query,
+    })
+
+    -- test
+    local testResult = getterURL:getSchemeURI()
+    local expectedResultStr = schemeURI
+    assert(testResult == expectedResultStr, "getSchemeURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+
+    testResult = getterURL:getHostURI()
+    expectedResultStr = hostURI
+    assert(testResult == expectedResultStr, "getHostURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+
+    testResult = getterURL:getPortURI()
+    expectedResultStr = portURI
+    assert(testResult == expectedResultStr, "getPortURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+
+    testResult = getterURL:getAuthorityURI()
+    expectedResultStr = hostURI..portURI
+    assert(testResult == expectedResultStr, "getAuthorityURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+
+    testResult = getterURL:getPathURI()
+    expectedResultStr = pathURI
+    assert(testResult == expectedResultStr, "getPathURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+
+    testResult = getterURL:getQueryURI()
+    expectedResultStr = queryURI
+    assert(testResult == expectedResultStr, "getQueryURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+
+    testResult = getterURL:getURI()
+    expectedResultStr = schemeURI..hostURI..portURI..pathURI..queryURI
+    assert(testResult == expectedResultStr, "getURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
     -- cleanup test
 end
@@ -66,18 +111,22 @@ function T_Setters()
     corelog.WriteToLog("* URL setter tests")
     local setterURL = url.URLClass:new()
 
-    -- test setterURL
+    -- test
     setterURL:setHost(host)
-    corelog.WriteToLog(" setterURL:getHost() = "..setterURL:getHost())
-    setterURL:setPort(port)
-    corelog.WriteToLog(" setterURL:getPort() = "..setterURL:getPort())
-    setterURL:setPath(path)
-    corelog.WriteToLog(" setterURL:getPath() = "..textutils.serialize(setterURL:getPath()))
-    setterURL:setQuery(query)
-    corelog.WriteToLog(" setterURL:getQuery() = "..textutils.serialize(setterURL:getQuery()))
-    corelog.WriteToLog(" setterURL:getURI() = "..setterURL:getURI())
+    assert(setterURL:getHost() == host, "setHost() result(="..setterURL:getHost()..") different from expected(="..host..")")
 
-    corelog.WriteToLog(" setterURL = "..textutils.serialize(setterURL))
+    setterURL:setPort(port)
+    assert(setterURL:getPort() == port, "setPort() result(="..setterURL:getPort()..") different from expected(="..port..")")
+
+    setterURL:setPath(path)
+    assert(setterURL:getPath() == path, "setPath() result(="..textutils.serialize(setterURL:getPath())..") different from expected(="..textutils.serialize(path)..")")
+
+    setterURL:setQuery(query)
+    assert(setterURL:getQuery() == query, "setHost() result(="..textutils.serialize(setterURL:getQuery())..") different from expected(="..textutils.serialize(query)..")")
+
+--    corelog.WriteToLog(" setterURL:getURI() = "..setterURL:getURI())
+--    corelog.WriteToLog(" setterURL = "..textutils.serialize(setterURL))
+
     -- cleanup test
 end
 
@@ -85,15 +134,19 @@ function T_SettersFromURI()
     -- prepare test
     corelog.WriteToLog("* URL setter from URI tests")
     local uriSetterURL = url.URLClass:new()
+
+    -- test
     uriSetterURL:setHostURI(hostURI)
-    corelog.WriteToLog(" uriSetterURL:getHost() = "..uriSetterURL:getHost())
+    assert(uriSetterURL:getHostURI() == hostURI, "setHostURI() result(="..uriSetterURL:getHostURI()..") different from expected(="..hostURI..")")
+
     uriSetterURL:setPortURI(portURI)
-    corelog.WriteToLog(" uriSetterURL:getPort() = "..uriSetterURL:getPort())
+    assert(uriSetterURL:getPortURI() == portURI, "setPortURI() result(="..uriSetterURL:getPortURI()..") different from expected(="..portURI..")")
+
     uriSetterURL:setPathURI(pathURI)
-    corelog.WriteToLog(" uriSetterURL:getPath() = "..textutils.serialize(uriSetterURL:getPath()))
+    assert(uriSetterURL:getPathURI() == pathURI, "setPathURI() result(="..uriSetterURL:getPathURI()..") different from expected(="..pathURI..")")
+
     uriSetterURL:setQueryURI(queryURI)
-    corelog.WriteToLog(" uriSetterURL:getQuery() = "..textutils.serialize(uriSetterURL:getQuery()))
-    corelog.WriteToLog(" uriSetterURL:getURI() = "..uriSetterURL:getURI())
+    assert(uriSetterURL:getQueryURI() == queryURI, "setQueryURI() result(="..uriSetterURL:getQueryURI()..") different from expected(="..queryURI..")")
 
     -- cleanup test
 end
