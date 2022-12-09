@@ -13,10 +13,10 @@ local uriWithPort = "ccwprp://resource:23/id=20/subid=77"
 
 function T_All()
     T_SaveResource()
-    T_SaveResourceWithPort()
     T_GetResource()
-    T_GetResourceWithPort()
     T_RemoveResource()
+    T_SaveResourceWithPort()
+    T_GetResourceWithPort()
     T_RemoveResourceWithPort()
 end
 

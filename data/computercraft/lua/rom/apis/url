@@ -150,12 +150,25 @@ function URLClass:setPathURI(pURI)
 end
 
 local pathSegmentsPattern = "%/([%w%=%:]+)"
-function URLClass:pathSegments()
+function URLClass:pathSegments_iter()
     --[[
         Factory for iterator over path segments
     --]]
 
     return self:getPath():gmatch(pathSegmentsPattern)
+end
+
+function URLClass:pathSegments()
+    --[[
+        Table with path segments
+    --]]
+
+    local segments = {}
+    for pathSegment in self:pathSegments_iter() do
+        table.insert(segments, pathSegment)
+    end
+
+    return segments
 end
 
 function URLClass:getQuery()

@@ -80,7 +80,7 @@ function T_Getters()
     expectedResultStr = path
     assert(testResult == expectedResultStr, "getPath() return(="..testResult..") different from expected(="..expectedResultStr..")")
     local iPathSegment = 1
-    for pathSegment in getterURL:pathSegments() do
+    for pathSegment in getterURL:pathSegments_iter() do
         expectedResultStr = pathSegments[iPathSegment]
         assert(pathSegment == expectedResultStr, "pathSegment(="..pathSegment..") different from expected(="..expectedResultStr..")")
         iPathSegment = iPathSegment + 1

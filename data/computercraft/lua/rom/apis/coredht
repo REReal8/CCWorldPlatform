@@ -113,14 +113,14 @@ function GetResource(...)
     -- get url components
     local hostURI = resourceLocator:getHostURI()
     local portURI = resourceLocator:getPortURI()
-    local pathURI = resourceLocator:getPathURI()
+    local pathSegments = resourceLocator:pathSegments()
 
     -- get resource using url components
     local resource = nil
     if portURI == "" then
-        resource = coredht.GetData(hostURI, pathURI)
+        resource = coredht.GetData(hostURI, table.unpack(pathSegments))
     else
-        resource = coredht.GetData(hostURI, portURI, pathURI)
+        resource = coredht.GetData(hostURI, portURI, table.unpack(pathSegments))
     end
 
     -- end
@@ -144,13 +144,13 @@ function SaveResource(...)
     -- get url components
     local hostURI = resourceLocator:getHostURI()
     local portURI = resourceLocator:getPortURI()
-    local pathURI = resourceLocator:getPathURI()
+    local pathSegments = resourceLocator:pathSegments()
 
     -- save resource using url components
     if portURI == "" then
-        resource = coredht.SaveData(resource, hostURI, pathURI)
+        resource = coredht.SaveData(resource, hostURI, table.unpack(pathSegments))
     else
-        resource = coredht.SaveData(resource, hostURI, portURI, pathURI)
+        resource = coredht.SaveData(resource, hostURI, portURI, table.unpack(pathSegments))
     end
 
     -- end
@@ -173,13 +173,13 @@ function RemoveResource(...)
     -- get url components
     local hostURI = resourceLocator:getHostURI()
     local portURI = resourceLocator:getPortURI()
-    local pathURI = resourceLocator:getPathURI()
+    local pathSegments = resourceLocator:pathSegments()
 
     -- remove resource using url components
     if portURI == "" then
-        coredht.SaveData(nil, hostURI, pathURI)
+        coredht.SaveData(nil, hostURI, table.unpack(pathSegments))
     else
-        coredht.SaveData(nil, hostURI, portURI, pathURI)
+        coredht.SaveData(nil, hostURI, portURI, table.unpack(pathSegments))
     end
 end
 
