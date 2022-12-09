@@ -1,7 +1,7 @@
 local db = {
     hostName    = "enterprise_woods",
     dhtForests  = "forests",
-    dhtOaks     = "oak",
+    dhtOaks     = "oaks",
 }
 
 function AddNewSite_ASrv(...)
