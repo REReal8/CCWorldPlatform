@@ -1,4 +1,9 @@
 
+function T_All()
+    T_DeleteForests()
+    T_SaveAndRemoveForest()
+end
+
 function T_DeleteForests()
     -- prepare test
     corelog.WriteToLog("# DeleteForests tests")

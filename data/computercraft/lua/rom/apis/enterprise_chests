@@ -737,7 +737,8 @@ function GetChestLocator(...)
 
     -- construct URL
     local chestURL = GetHostLocator_Att()
-    chestURL:setPath({id = id})
+    local path = "/id="..id
+    chestURL:setPath(path)
 
     -- end
     return chestURL
