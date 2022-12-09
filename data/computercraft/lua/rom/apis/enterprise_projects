@@ -1,5 +1,5 @@
 local db = {
-    dhtRoot     = "projects",
+    dhtRoot     = "enterprise_projects",
 }
 
 --[[
