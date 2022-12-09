@@ -1,5 +1,5 @@
 local db = {
-    hostName        = "woods", -- ToDo: consider changing to enterprise_woods
+    hostName        = "enterprise_woods",
     oakForestPath   = "/forests/oak",
 }
 
