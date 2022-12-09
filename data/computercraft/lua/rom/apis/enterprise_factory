@@ -260,7 +260,7 @@ function GetNumberOfSites_Att()
     --]]
 
     -- get sites
-    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local sites = GetSites()
 
     -- loop on sites
     local count = 0
@@ -564,13 +564,6 @@ function StartNewSite_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid input") return {success = false} end
     if not siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
 
-    -- ensure enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
-        coredht.SaveData({}, db.dhtRoot, db.dhtSites)
-    end
-
     -- get site start data
     local siteStartData = nil
     if siteVersion == "v0" then
@@ -777,8 +770,8 @@ function DeleteSites()
         Parameters:
     --]]
 
-    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
-    if not sites or type(sites) ~= "table" then corelog.Warning("enterprise_factory.DeleteSites: not a list of sites") return nil end
+    -- get sites
+    local sites = GetSites()
 
     -- remove all assignments
     for siteId, site in pairs(sites) do
@@ -787,6 +780,19 @@ function DeleteSites()
 
     -- end
     return {success = true}
+end
+
+function GetSites()
+    -- get sites
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    if not sites then sites = ResetSites() end
+
+    -- end
+    return sites
+end
+
+function ResetSites()
+    return coredht.SaveData({}, db.dhtRoot, db.dhtSites)
 end
 
 function DeleteSite(siteId)

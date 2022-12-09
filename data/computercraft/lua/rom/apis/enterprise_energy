@@ -39,16 +39,6 @@ function ProvideFuelTo_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- ToDo: remove?
-    -- ensure enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
-
-        -- reset parameters
-        ResetParameters()
-    end
-
     -- determine fuelItemsNeed
     local fuelItemsNeed = FuelItemsForFuel(fuelAmount)
 
@@ -220,7 +210,11 @@ function Refuel_ASrv(...)
 end
 
 function GetParameters()
-    return coredht.GetData(db.dhtRoot, db.dhtParameters)
+    -- get parameters
+    local parameters = coredht.GetData(db.dhtRoot, db.dhtParameters)
+    if not parameters then parameters = ResetParameters() end
+
+    return parameters
 end
 
 --    _                 _    __                  _   _
@@ -232,7 +226,7 @@ end
 
 function ResetParameters()
 --    corelog.WriteToLog("enterprise_energy: resetting parameters")
-    coredht.SaveData({
+    return coredht.SaveData({
         enterpriseLevel             = 0,
 
         forestLocator               = nil,
