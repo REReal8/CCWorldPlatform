@@ -1,6 +1,6 @@
 local scheme = "ccwprp"
-local host = "storage"
-local host2 = "turtle"
+local host = "enterprise_woods"
+local host2 = "enterprise_turtle"
 local port = 1
 local port2 = 5
 local pathSegments = {
@@ -21,7 +21,7 @@ local query = {[itemName1] = itemCount1, [itemName2] = itemCount2}
 local query2 = {[itemName1] = itemCount1, [itemName3] = itemCount3}
 
 local schemeURI = "ccwprp://"
-local hostURI = "storage"
+local hostURI = host
 local portURI = ":1"
 local pathURI = "/"..pathSegments[1].."/"..pathSegments[2].."/"..pathSegments[3]
 local queryURI = "?"..itemName2.."="..itemCount2.."&"..itemName1.."="..itemCount1

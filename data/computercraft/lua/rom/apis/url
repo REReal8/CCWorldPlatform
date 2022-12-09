@@ -73,7 +73,7 @@ function URLClass:setHost(h)
     self._host = h
 end
 
-local hostPattern = "%a+"
+local hostPattern = "[%a%_]+"
 -- aUrl.setHostURI("storage")
 function URLClass:setHostURI(hURI)
     -- check input
