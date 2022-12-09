@@ -1,6 +1,7 @@
 local db = {
-    hostName        = "enterprise_woods",
-    oakForestPath   = "/forests/oak",
+    hostName    = "enterprise_woods",
+    dhtForests  = "forests",
+    dhtOaks     = "oak",
 }
 
 function AddNewSite_ASrv(...)
@@ -129,13 +130,6 @@ function GetForest(...)
     -- end
     return forest
 end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function ExtendSite_ASrv(...)
     -- get & check input from description
@@ -613,8 +607,7 @@ function GetNumberOfForests_Att()
     --]]
 
     -- get forests
-    local forests = coredht.GetData(db.hostName)
-    if not forests or type(forests) ~= "table" then corelog.Warning("enterprise_woods.DeleteForests: no forest list") return nil end
+    local forests = GetForests()
 
     -- loop on forests
     local count = 0
@@ -625,6 +618,12 @@ function GetNumberOfForests_Att()
     return count
 end
 
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 function SaveForest(...)
     -- get & check input from description
     local checkSuccess, forest = coreutils.CheckInput([[
@@ -650,8 +649,7 @@ end
 
 function DeleteForests()
     -- get forests
-    local forests = coredht.GetData(db.hostName)
-    if not forests or type(forests) ~= "table" then corelog.Warning("enterprise_woods.DeleteForests: no forest list") return nil end
+    local forests = GetForests()
 
     -- remove all
 --    corelog.Warning("All forests are being deleted!")
@@ -664,6 +662,18 @@ function DeleteForests()
     end
 end
 
+function GetForests()
+    -- get forests
+    local forests = coredht.GetData(db.hostName, db.dhtForests, db.dhtOaks)
+    if not forests then forests = ResetForests() end
+
+    -- end
+    return forests
+end
+
+function ResetForests()
+    return coredht.SaveData({}, db.hostName, db.dhtForests, db.dhtOaks)
+end
 function RemoveForest(...)
     -- get & check input from description
     local checkSuccess, forestLocator = coreutils.CheckInput([[
@@ -739,7 +749,7 @@ function GetForestLocator(...)
 
     -- construct URL
     local forestLocator = GetHostLocator_Att()
-    local path = db.oakForestPath.."/id="..id
+    local path = "/"..db.dhtForests.."/"..db.dhtOaks.."/id="..id
     forestLocator:setPath(path)
 
     -- end
