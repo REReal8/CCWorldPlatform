@@ -1,5 +1,5 @@
 local db = {
-    hostName    = "turtle",
+    hostName    = "enterprise_turtle",
 
     fuelTurtlePriorityKey   = nil,
     fuelTurtleCallsSkippedBecausePriorityKey = 0,

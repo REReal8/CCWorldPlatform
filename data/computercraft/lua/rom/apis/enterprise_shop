@@ -1,7 +1,6 @@
 local db = {
-    dhtRoot         = "enterprise_shop",
-    dhtSuppliers    = "suppliers",
-    hostName        = "shop",
+    hostName        = "enterprise_shop",
+    psSuppliers     = "suppliers",
 }
 
 --[[
@@ -321,7 +320,7 @@ function RegisterSupplier_SSrv(...)
     table.insert(suppliers, supplierLocator)
 
     -- save Suppliers
-    coredht.SaveData(suppliers, db.dhtRoot, db.dhtSuppliers)
+    coredht.SaveData(suppliers, db.hostName, db.psSuppliers)
 
     -- end
     local result = {
@@ -332,7 +331,7 @@ end
 
 function DelistSuppliers()
     -- remove Suppliers
-    coredht.SaveData(nil, db.dhtRoot, db.dhtSuppliers)
+    coredht.SaveData(nil, db.hostName, db.psSuppliers)
 end
 
 function DelistSupplier_SSrv(...)
@@ -364,7 +363,7 @@ function DelistSupplier_SSrv(...)
             table.remove(suppliers, i)
 
             -- save Suppliers
-            coredht.SaveData(suppliers, db.dhtRoot, db.dhtSuppliers)
+            coredht.SaveData(suppliers, db.hostName, db.psSuppliers)
             break
         end
     end
@@ -447,10 +446,16 @@ function ProcureItem_ASrv(...)
 end
 
 function GetSuppliers()
-    local suppliers = coredht.GetData(db.dhtRoot, db.dhtSuppliers)
-    if not suppliers then suppliers = {} end
+    -- get suppliers
+    local suppliers = coredht.GetData(db.hostName, db.psSuppliers)
+    if not suppliers then suppliers = ResetSuppliers() end
 
+    -- end
     return suppliers
+end
+
+function ResetSuppliers()
+    return coredht.SaveData({}, db.hostName, db.psSuppliers)
 end
 
 function GetBestSupplierLocator(item)

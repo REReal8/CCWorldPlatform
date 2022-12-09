@@ -1,7 +1,7 @@
 local db = {
     hostName    = "enterprise_woods",
-    dhtForests  = "forests",
-    dhtOaks     = "oaks",
+    psForests   = "forests",
+    psOaks      = "oaks",
 }
 
 function AddNewSite_ASrv(...)
@@ -664,7 +664,7 @@ end
 
 function GetForests()
     -- get forests
-    local forests = coredht.GetData(db.hostName, db.dhtForests, db.dhtOaks)
+    local forests = coredht.GetData(db.hostName, db.psForests, db.psOaks)
     if not forests then forests = ResetForests() end
 
     -- end
@@ -672,7 +672,7 @@ function GetForests()
 end
 
 function ResetForests()
-    return coredht.SaveData({}, db.hostName, db.dhtForests, db.dhtOaks)
+    return coredht.SaveData({}, db.hostName, db.psForests, db.psOaks)
 end
 function RemoveForest(...)
     -- get & check input from description
@@ -749,7 +749,7 @@ function GetForestLocator(...)
 
     -- construct URL
     local forestLocator = GetHostLocator_Att()
-    local path = "/"..db.dhtForests.."/"..db.dhtOaks.."/id="..id
+    local path = "/"..db.psForests.."/"..db.psOaks.."/id="..id
     forestLocator:setPath(path)
 
     -- end

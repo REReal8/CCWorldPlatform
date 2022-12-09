@@ -1,9 +1,9 @@
 local db = {
-    dhtRoot     = "enterprise_factory",
-    dhtSites    = "sites",
+    hostName    = "enterprise_factory",
+    psSites     = "sites",
 }
 
--- ToDo: consider renaming and refactoring to mobj_factory
+-- ToDo: consider renaming and refactoring to mobj_factory_site
 
 --[[
     A factory site is a site (?sub enterprise) that offers production services to a factory.
@@ -17,8 +17,6 @@ local db = {
     by the site. The most simple version of these input/ output "spots" are the inventory of a turtle. They however could in principle
     also be a full fledged local storage site.
 --]]
-
--- ToDo: consider renaming to site_factory
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -66,7 +64,7 @@ function StartNewSite(...)
     -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)
 
     -- save the new site to our sites
-    coredht.SaveData(site, db.dhtRoot, db.dhtSites, site.siteId)
+    coredht.SaveData(site, db.hostName, db.psSites, site.siteId)
 
     -- end
     return site.siteId
@@ -107,7 +105,7 @@ function StopSite_ASrv(...)
 
     -- remove site from factory
     corelog.WriteToLog("  enterprise_factory_site.StopSite_ASrv: Removing site "..site.siteId)
-    coredht.SaveData(nil, db.dhtRoot, db.dhtSites, site.siteId)
+    coredht.SaveData(nil, db.hostName, db.psSites, site.siteId)
 
     -- do callback
     coreutils.DoCallback(callback, callbackData, {success = true})
@@ -128,7 +126,7 @@ function GetAvailableSiteData(...)
     if not checkSuccess then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid input") return nil end
 
     -- sites ophalen
-    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local sites = coredht.GetData(db.hostName, db.psSites)
     if type(sites) ~= "table" then corelog.Warning("enterprise_factory_site.GetAvailableSiteData: no sites present") return nil end
 
     -- ..
@@ -685,7 +683,7 @@ end
 
 function FindSiteByLocation(baseLocation)
     -- sites ophalen
-    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local sites = coredht.GetData(db.hostName, db.psSites)
 
     -- check if we have any site
     if type(sites) ~= "table" then corelog.Warning("enterprise_factory.FindSiteByLocation: no sites present") return nil end

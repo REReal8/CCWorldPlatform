@@ -1,7 +1,6 @@
 local db = {
-    dhtRoot     = "enterprise_factory",
-    dhtSites    = "sites",
-    hostName    = "factory",
+    hostName    = "enterprise_factory",
+    psSites     = "sites",
 
     -- turtle slots
     -- [ 1] [ 2] [ 3] [ 4]
@@ -784,7 +783,7 @@ end
 
 function GetSites()
     -- get sites
-    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local sites = coredht.GetData(db.hostName, db.psSites)
     if not sites then sites = ResetSites() end
 
     -- end
@@ -792,7 +791,7 @@ function GetSites()
 end
 
 function ResetSites()
-    return coredht.SaveData({}, db.dhtRoot, db.dhtSites)
+    return coredht.SaveData({}, db.hostName, db.psSites)
 end
 
 function DeleteSite(siteId)
@@ -812,7 +811,7 @@ function DeleteSite(siteId)
 
     -- remove site
     corelog.Warning('enterprise_factory.DeleteSite: Removing site '..siteId.." without doing anything with the data, structure and items present")
-    coredht.SaveData(nil, db.dhtRoot, db.dhtSites, siteId)
+    coredht.SaveData(nil, db.hostName, db.psSites, siteId)
 
     -- end
     return {success = true}

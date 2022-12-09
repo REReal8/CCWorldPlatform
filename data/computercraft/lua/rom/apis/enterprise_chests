@@ -1,5 +1,6 @@
 local db = {
-    hostName    = "chests",
+    hostName    = "enterprise_chests",
+    psChests    = "chests"
 }
 
 --[[
@@ -669,8 +670,8 @@ function SaveChest(...)
 end
 
 function DeleteChests()
-    local chests = coredht.GetData(db.hostName)
-    if not chests or type(chests) ~= "table" then corelog.Warning("enterprise_chests.DeleteChests: chests not valid") return nil end
+    -- get chests
+    local chests = GetForests()
 
     -- remove all
 --    corelog.Warning("All chests are being deleted!")
@@ -679,6 +680,19 @@ function DeleteChests()
         corelog.Warning("  removing chest "..id)
         RemoveChest(chest)
     end
+end
+
+function GetForests()
+    -- get forests
+    local chests = coredht.GetData(db.hostName, db.psChests)
+    if not chests then chests = ResetChests() end
+
+    -- end
+    return chests
+end
+
+function ResetChests()
+    return coredht.SaveData({}, db.hostName, db.psChests)
 end
 
 function RemoveChest(...)
@@ -716,7 +730,7 @@ function GetChestLocator(...)
 
     -- construct URL
     local chestURL = GetHostLocator_Att()
-    local path = "/id="..id
+    local path = "/"..db.psChests.."/id="..id
     chestURL:setPath(path)
 
     -- end
