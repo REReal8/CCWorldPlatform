@@ -3,16 +3,39 @@ local host = "storage"
 local host2 = "turtle"
 local port = 1
 local port2 = 5
-local path = {inputChest = 7, site = 3}
-local path2 = {site = 3, inputChest = 4}
-local query = {["minecraft:torch"] = 5, ["minecraft:birch_log"] = 3}
-local query2 = {["minecraft:torch"] = 5, ["minecraft:charcoal"] = 7}
+local pathSegments = {
+    "forests",
+    "oak",
+    "id=50:23012",
+    "tree=4",
+}
+local path = "/"..pathSegments[1].."/"..pathSegments[2].."/"..pathSegments[3] -- == "/forests/oak/id=50:23012"
+local path2 = "/"..pathSegments[1].."/"..pathSegments[2].."/"..pathSegments[3].."/"..pathSegments[4] -- == "/forests/oak/id=50:23012/tree=4"
+local itemName1 = "minecraft:torch"
+local itemCount1 = 5
+local itemName2 = "minecraft:birch_log"
+local itemCount2 = 3
+local itemName3 = "minecraft:charcoal"
+local itemCount3 = 7
+local query = {[itemName1] = itemCount1, [itemName2] = itemCount2}
+local query2 = {[itemName1] = itemCount1, [itemName3] = itemCount3}
 
 local schemeURI = "ccwprp://"
 local hostURI = "storage"
 local portURI = ":1"
-local pathURI = "/site=3/inputChest=7"
-local queryURI = "?minecraft:birch_log=3&minecraft:torch=5"
+local pathURI = "/"..pathSegments[1].."/"..pathSegments[2].."/"..pathSegments[3]
+local queryURI = "?"..itemName2.."="..itemCount2.."&"..itemName1.."="..itemCount1
+local expectedQueryURI = "?"..itemName1.."="..itemCount1.."&"..itemName2.."="..itemCount2
+
+function T_All()
+--    T_URL_Serializing()
+    T_Getters()
+    T_GettersURI()
+    T_Setters()
+    T_SettersFromURI()
+    T_NewFromURI()
+    T_SameURLComponents()
+end
 
 function T_URL_Serializing()
     -- new URL
@@ -54,11 +77,17 @@ function T_Getters()
     assert(testResult == expectedResultNumber, "getPort() return(="..testResult..") different from expected(="..expectedResultNumber..")")
 
     testResult = getterURL:getPath()
-    local expectedResultTable = path
-    assert(testResult == expectedResultTable, "getPath() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
+    expectedResultStr = path
+    assert(testResult == expectedResultStr, "getPath() return(="..testResult..") different from expected(="..expectedResultStr..")")
+    local iPathSegment = 1
+    for pathSegment in getterURL:pathSegments() do
+        expectedResultStr = pathSegments[iPathSegment]
+        assert(pathSegment == expectedResultStr, "pathSegment(="..pathSegment..") different from expected(="..expectedResultStr..")")
+        iPathSegment = iPathSegment + 1
+    end
 
     testResult = getterURL:getQuery()
-    expectedResultTable = query
+    local expectedResultTable = query
     assert(testResult == expectedResultTable, "getQuery() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
 
     -- cleanup test
@@ -75,35 +104,21 @@ function T_GettersURI()
     })
 
     -- test
-    local testResult = getterURL:getSchemeURI()
-    local expectedResultStr = schemeURI
-    assert(testResult == expectedResultStr, "getSchemeURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
-
-    testResult = getterURL:getHostURI()
-    expectedResultStr = hostURI
-    assert(testResult == expectedResultStr, "getHostURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
-
-    testResult = getterURL:getPortURI()
-    expectedResultStr = portURI
-    assert(testResult == expectedResultStr, "getPortURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
-
-    testResult = getterURL:getAuthorityURI()
-    expectedResultStr = hostURI..portURI
-    assert(testResult == expectedResultStr, "getAuthorityURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
-
-    testResult = getterURL:getPathURI()
-    expectedResultStr = pathURI
-    assert(testResult == expectedResultStr, "getPathURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
-
-    testResult = getterURL:getQueryURI()
-    expectedResultStr = queryURI
-    assert(testResult == expectedResultStr, "getQueryURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
-
-    testResult = getterURL:getURI()
-    expectedResultStr = schemeURI..hostURI..portURI..pathURI..queryURI
-    assert(testResult == expectedResultStr, "getURI() return(="..testResult..") different from expected(="..expectedResultStr..")")
+    assert(getterURL:getSchemeURI() == schemeURI, "getSchemeURI() return(="..getterURL:getSchemeURI()..") different from expected(="..schemeURI..")")
+    AssertWithURIs(getterURL, hostURI, portURI, pathURI, queryURI)
+    assert(getterURL:getAuthorityURI() == hostURI..portURI, "getAuthorityURI() return(="..getterURL:getAuthorityURI()..") different from expected(="..hostURI..portURI..")")
 
     -- cleanup test
+end
+
+function AssertWithURIs(aURL, aHostURI, aPortURI, aNPathURI, aQueryURI)
+    -- test
+    assert(aURL:getHostURI() == aHostURI, "getHostURI() return(="..aURL:getHostURI()..") different from expected(="..aHostURI..")")
+    assert(aURL:getPortURI() == aPortURI, "getPortURI() return(="..aURL:getPortURI()..") different from expected(="..aPortURI..")")
+    assert(aURL:getPathURI() == aNPathURI, "getPathURI() return(="..aURL:getPathURI()..") different from expected(="..aNPathURI..")")
+    assert(aURL:getQueryURI() == aQueryURI, "getQueryURI() return(="..aURL:getQueryURI()..") different from expected(="..aQueryURI..")")
+    local expectedResultStr = schemeURI..aHostURI..aPortURI..aNPathURI..aQueryURI
+    assert(aURL:getURI() == expectedResultStr, "getURI() return(="..aURL:getURI()..") different from expected(="..expectedResultStr..")")
 end
 
 function T_Setters()
@@ -124,9 +139,6 @@ function T_Setters()
     setterURL:setQuery(query)
     assert(setterURL:getQuery() == query, "setHost() result(="..textutils.serialize(setterURL:getQuery())..") different from expected(="..textutils.serialize(query)..")")
 
---    corelog.WriteToLog(" setterURL:getURI() = "..setterURL:getURI())
---    corelog.WriteToLog(" setterURL = "..textutils.serialize(setterURL))
-
     -- cleanup test
 end
 
@@ -146,7 +158,9 @@ function T_SettersFromURI()
     assert(uriSetterURL:getPathURI() == pathURI, "setPathURI() result(="..uriSetterURL:getPathURI()..") different from expected(="..pathURI..")")
 
     uriSetterURL:setQueryURI(queryURI)
-    assert(uriSetterURL:getQueryURI() == queryURI, "setQueryURI() result(="..uriSetterURL:getQueryURI()..") different from expected(="..queryURI..")")
+    local testResult = uriSetterURL:getQuery()
+    assert(testResult[itemName1] == itemCount1, "testResult.itemName1 (="..testResult[itemName1]..") different from expected(="..itemCount1..")")
+    assert(testResult[itemName2] == itemCount2, "testResult.itemName1 (="..testResult[itemName2]..") different from expected(="..itemCount2..")")
 
     -- cleanup test
 end
@@ -154,32 +168,31 @@ end
 function T_NewFromURI()
     -- prepare test
     corelog.WriteToLog("* URL from URI tests (0)")
-    local uriSetterURL = url.URLClass:new()
 
     -- test
-    local newURI0=uriSetterURL:getSchemeURI()..hostURI..portURI..pathURI..queryURI
+    local newURI0=schemeURI..hostURI..portURI..pathURI..queryURI
     local fromURI_URL0 = url.URLClass:newFromURI(newURI0)
-    corelog.WriteToLog(" fromURI_URL0:getURI() = "..fromURI_URL0:getURI())
+    AssertWithURIs(fromURI_URL0, hostURI, portURI, pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (1: no host)")
-    local newURI1=uriSetterURL:getSchemeURI()..portURI..pathURI..queryURI
+    local newURI1=schemeURI..portURI..pathURI..queryURI
     local fromURI_URL1 = url.URLClass:newFromURI(newURI1) -- note: should fail
-    corelog.WriteToLog(" fromURI_URL1:getURI() = "..fromURI_URL1:getURI())
+--    AssertWithURIs(fromURI_URL1, "", portURI, pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (2: no port)")
-    local newURI2=uriSetterURL:getSchemeURI()..hostURI..pathURI..queryURI
+    local newURI2=schemeURI..hostURI..pathURI..queryURI
     local fromURI_URL2 = url.URLClass:newFromURI(newURI2)
-    corelog.WriteToLog(" fromURI_URL2:getURI() = "..fromURI_URL2:getURI())
+    AssertWithURIs(fromURI_URL2, hostURI, "", pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (3: no path)")
-    local newURI3=uriSetterURL:getSchemeURI()..hostURI..portURI..queryURI
+    local newURI3=schemeURI..hostURI..portURI..queryURI
     local fromURI_URL3 = url.URLClass:newFromURI(newURI3)
-    corelog.WriteToLog(" fromURI_URL3:getURI() = "..fromURI_URL3:getURI())
+    AssertWithURIs(fromURI_URL3, hostURI, portURI, "", expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (4: no query)")
-    local newURI4=uriSetterURL:getSchemeURI()..hostURI..portURI..pathURI
+    local newURI4=schemeURI..hostURI..portURI..pathURI
     local fromURI_URL4 = url.URLClass:newFromURI(newURI4)
-    corelog.WriteToLog(" fromURI_URL4:getURI() = "..fromURI_URL4:getURI())
+    AssertWithURIs(fromURI_URL4, hostURI, portURI, pathURI, "")
 
     -- cleanup test
 end

@@ -10,7 +10,7 @@
 URLClass = {
     _host = "",
     _port = nil,
-    _path = {},
+    _path = "",
     _query = {},
 }
 
@@ -31,8 +31,7 @@ function URLClass:new(o)
                                 - (table) table with
                 host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "storage")
                 port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
-                path                - [optional] (table) of key-value pairs with path segments
-                                        (e.g. {x=12, y=12, z= 1} indicating a location in the "world" host)
+                path                - [optional] (string) defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
                 query               - [optional] (table) of key-value pairs with (item) query segments
                                         (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
     --]]
@@ -131,35 +130,32 @@ function URLClass:getPath()
 end
 
 function URLClass:getPathURI()
-    local pathURI = ""
-    for key, value in pairs(self:getPath()) do
-        pathURI = pathURI.."/"..key.."="..value
-    end
-    return pathURI
+    return self:getPath()
 end
 
 function URLClass:setPath(p)
     -- check input
-    if type(p) ~= "table" then corelog.Error("url.setPath: invalid path type: "..type(p)) return end
+    if type(p) ~= "string" then corelog.Error("url.setPath: invalid path type: "..type(p)) return end
 
     self._path = p
 end
 
--- aUrl.setPathURI("/site=3/inputChest=7")
+local pathURIPattern = "^([%/%w%=%:]*)"
+-- aUrl.setPathURI("/forests/oak/id=50:23012")
 function URLClass:setPathURI(pURI)
     -- check input
-    if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid path URI type: "..type(pURI)) return end
+    if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid host URI type: "..type(pURI)) return end
 
-    if pURI ~= "" then
-        local p = {}
-        local pathSegmentPattern = "%/(%a+)%=([%w%:]+)"
-        for key, value in string.gmatch(pURI, pathSegmentPattern) do
-            p[key] = value
-        end
-        self:setPath(p)
-    else
---            corelog.WriteToLog("url.setPathURI: path URI value empty: "..pURI)
-    end
+    self:setPath(string.match(pURI, pathURIPattern)) -- in effect this should be the same as setPath(pURI)
+end
+
+local pathSegmentsPattern = "%/([%w%=%:]+)"
+function URLClass:pathSegments()
+    --[[
+        Factory for iterator over path segments
+    --]]
+
+    return self:getPath():gmatch(pathSegmentsPattern)
 end
 
 function URLClass:getQuery()

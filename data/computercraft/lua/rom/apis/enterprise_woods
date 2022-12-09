@@ -1,7 +1,6 @@
 local db = {
---    dhtRoot     = "enterprise_woods",
---    dhtForest   = "forests",
-    hostName    = "woods",
+    hostName        = "woods", -- ToDo: consider changing to enterprise_woods
+    oakForestPath   = "/forests/oak",
 }
 
 function AddNewSite_ASrv(...)
@@ -740,7 +739,8 @@ function GetForestLocator(...)
 
     -- construct URL
     local forestLocator = GetHostLocator_Att()
-    forestLocator:setPath({id = id})
+    local path = db.oakForestPath.."/id="..id
+    forestLocator:setPath(path)
 
     -- end
     return forestLocator
