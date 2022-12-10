@@ -1,10 +1,9 @@
-function T_buildAndStartNewSite()
+function T_BuildAndStartNewSite_ASrv()
     -- prepare test
-    corelog.WriteToLog("# Test BuildAndStartNewSite_ASrv")
-    local forest = enterprise_woods.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    corelog.WriteToLog("# BuildAndStartNewSite_ASrv test")
+    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forestLocator = enterprise_woods.SaveForest(forest)
+
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
 
@@ -16,14 +15,14 @@ function T_buildAndStartNewSite()
         topChests               = 2,
         layers                  = 2,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_storage.Cleanup_Callback", { originalForestLevel = originalForestLevel, originalNTrees = originalNTrees, location = location })
-
+    }, "t_storage.Cleanup_Callback", { forestLocator = forestLocator, location = location })
 end
 
 function Cleanup_Callback(callbackData, taskResult)
     corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     -- cleanup test
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = callbackData.originalForestLevel, nTrees = callbackData.originalNTrees })
     t_factory.StopV0Site(callbackData.location)
+
+    enterprise_woods.RemoveForest(callbackData.forestLocator)
 end
