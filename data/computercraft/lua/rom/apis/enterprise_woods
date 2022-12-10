@@ -1,7 +1,7 @@
 local db = {
     hostName    = "enterprise_woods",
     psForests   = "forests",
-    psOaks      = "oaks",
+    psBirches   = "birch",
 }
 
 function AddNewSite_ASrv(...)
@@ -32,7 +32,7 @@ function AddNewSite_ASrv(...)
     if nTrees ~=1 then corelog.Warning("enterprise_woods.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create new forest
-    local forest = mobj_oakforest.OakForestClass:new({
+    local forest = mobj_birchforest.BirchForestClass:new({
         _id                     = coreutils.NewId(),
         _level                  = forestLevel,
 
@@ -128,7 +128,7 @@ function GetForest(...)
     -- object ophalen
     local forest = coredht.GetResource(forestLocator)
     if type(forest) ~= "table" then corelog.Warning("enterprise_woods.GetForest: forest "..forestLocator:getURI().." not found") return nil end
-    forest = mobj_oakforest.OakForestClass:new(forest)
+    forest = mobj_birchforest.BirchForestClass:new(forest)
 
     -- end
     return forest
@@ -625,7 +625,7 @@ end
 
 function GetForests()
     -- get forests
-    local forests = coredht.GetData(db.hostName, db.psForests, db.psOaks)
+    local forests = coredht.GetData(db.hostName, db.psForests, db.psBirches)
     if not forests then forests = ResetForests() end
 
     -- end
@@ -633,7 +633,7 @@ function GetForests()
 end
 
 function ResetForests()
-    return coredht.SaveData({}, db.hostName, db.psForests, db.psOaks)
+    return coredht.SaveData({}, db.hostName, db.psForests, db.psBirches)
 end
 
 function RemoveForest(...)
@@ -711,7 +711,7 @@ function GetForestLocator(...)
 
     -- construct URL
     local forestLocator = GetHostLocator_Att()
-    local path = "/"..db.psForests.."/"..db.psOaks.."/id="..id
+    local path = "/"..db.psForests.."/"..db.psBirches.."/id="..id
     forestLocator:setPath(path)
 
     -- end

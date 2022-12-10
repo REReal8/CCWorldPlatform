@@ -19,7 +19,7 @@ end
 
 function T_SaveAndRemoveForest()
     -- prepare test
-    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local originalNForests = enterprise_woods.GetNumberOfForests_Att()
 
     -- SaveForest test

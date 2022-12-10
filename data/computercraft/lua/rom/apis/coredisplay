@@ -351,7 +351,7 @@ function ExecuteMObjTest(t)
 
 		-- test options
 		local options	= {
-			{key = "o", desc = "oakforest",			func = ExecuteMObjTest, param = {file = t_mobj_oakforest, filename = "t_mobj_oakforest"}},
+			{key = "b", desc = "birchforest",		func = ExecuteMObjTest, param = {file = t_mobj_birchforest, filename = "t_mobj_birchforest"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 

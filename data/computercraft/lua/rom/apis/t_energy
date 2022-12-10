@@ -13,7 +13,7 @@ end
 function T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("# GetFuelNeed_Refuel_Att tests")
-    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_woods.SaveForest(forest)
 
     local location = coremove.GetLocation()

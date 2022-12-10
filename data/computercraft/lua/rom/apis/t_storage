@@ -1,7 +1,7 @@
 function T_BuildAndStartNewSite_ASrv()
     -- prepare test
     corelog.WriteToLog("# BuildAndStartNewSite_ASrv test")
-    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_woods.SaveForest(forest)
 
     local location = coremove.GetLocation()

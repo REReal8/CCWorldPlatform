@@ -17,7 +17,7 @@ end
 
 function T_Getters()
     -- prepare test
-    corelog.WriteToLog("* mobj_oakforest getter tests")
+    corelog.WriteToLog("* mobj_birchforest getter tests")
     local id = coreutils.NewId()
     local forest = CreateForest(id) if not forest then corelog.Error("failed obtaining forest") return end
 
@@ -39,7 +39,7 @@ function CreateForest(id)
     localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetHostLocator_Att()
 
     -- create forest object
-    local forest = mobj_oakforest.OakForestClass:new({
+    local forest = mobj_birchforest.BirchForestClass:new({
         _id                     = id,
         _forestLevel            = level,
 
@@ -56,7 +56,7 @@ end
 
 function T_Setters()
     -- prepare test
-    corelog.WriteToLog("* mobj_oakforest setter tests")
+    corelog.WriteToLog("* mobj_birchforest setter tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local localLogsLocator2 = enterprise_chests.GetHostLocator_Att()
     local localSaplingsLocator2 = enterprise_chests.GetHostLocator_Att()
@@ -78,7 +78,7 @@ end
 
 function T_getFuelNeed_Harvest_Att()
     -- prepare test
-    corelog.WriteToLog("# mobj_oakforest:getFuelNeed_Harvest_Att() tests")
+    corelog.WriteToLog("# mobj_birchforest:getFuelNeed_Harvest_Att() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
@@ -96,7 +96,7 @@ end
 
 function T_getFuelNeedExtraTree_Att()
     -- prepare test
-    corelog.WriteToLog("# mobj_oakforest:getFuelNeedExtraTree_Att() tests")
+    corelog.WriteToLog("# mobj_birchforest:getFuelNeedExtraTree_Att() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
@@ -114,7 +114,7 @@ end
 
 function T_needsTo_ProvideItemsTo_SSrv()
     -- prepare test
-    corelog.WriteToLog("# mobj_oakforest:needsTo_ProvideItemsTo_SSrv() tests")
+    corelog.WriteToLog("# mobj_birchforest:needsTo_ProvideItemsTo_SSrv() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
