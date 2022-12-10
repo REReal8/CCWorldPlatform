@@ -671,7 +671,7 @@ end
 
 function DeleteChests()
     -- get chests
-    local chests = GetForests()
+    local chests = GetChests()
 
     -- remove all
 --    corelog.Warning("All chests are being deleted!")
@@ -682,7 +682,7 @@ function DeleteChests()
     end
 end
 
-function GetForests()
+function GetChests()
     -- get forests
     local chests = coredht.GetData(db.hostName, db.psChests)
     if not chests then chests = ResetChests() end
