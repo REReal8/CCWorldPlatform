@@ -176,6 +176,130 @@ function BirchForestClass:getFuelNeedExtraTree_Att()
     return fuelNeed_OneTreeExtra - fuelNeed_Current
 end
 
+function BirchForestClass:provideItemsTo_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
+        This async public Supplier service provides specific items to a Storage.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                                                the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                     - (table) data for the service
+                provideItems                + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                        + (string) name of function to call once service is ready
+            callbackData                    + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- loop on items
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+        -- check for birchlog or sapling
+        local localStorageLocator = nil
+        if itemName == "minecraft:birch_log" then
+            localStorageLocator = self:getLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            localStorageLocator = self:getLocalSaplingsLocator()
+        else
+            corelog.Error("mobj_birchforest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
+        end
+
+        -- check items already available in localStorageLocator
+        local localItemsLocator = localStorageLocator:copy()
+        local item = { [itemName] = itemCount }
+        localItemsLocator:setQuery(item)
+        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
+            -- yes: return the items
+            local transferData = {
+                sourceItemsLocator          = localItemsLocator,
+                destinationStorageLocator   = storageLocator,
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+--            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
+            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+        else
+            -- construct new itemsLocator for this forest
+            local forestLocator = enterprise_woods.GetForestLocator(self:getId())
+            local itemsLocator = forestLocator:copy()
+            itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localSupplierLocator
+
+            -- construct taskData
+            local harvestForestTaskData = {
+                forestLevel         = self:getLevel(),
+                firstTreeLocation   = coremove.GetRelativeLocation(self:getLocation(), 3, 2, 0),
+                nTrees              = self:getNTrees(),
+                waitForFirstTree    = true,
+--                waitForFirstTree    = (assignmentsPriorityKey ~= nil), -- energy efficient mode if assignmentsPriorityKey is set -- ToDo: consider change
+
+                priorityKey         = assignmentsPriorityKey,
+            }
+
+            -- create project service data
+            local projectDef = {
+                steps = {
+                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
+                    --          (or will this be part of harvestForest?)
+                    { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                        { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestForest_Task" },
+                        { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
+                        { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
+                    }},
+                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
+                    --          (or will this be part of harvestForest?)
+                    -- ToDo: consider storing rest/ waste materials (e.g. sticks)
+                    { stepName = "enterprise_woods.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
+                        { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "itemsLocator" },
+                        { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
+                        { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                        { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    }},
+                    { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                        { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                        { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                    }},
+                },
+                returnData  = {
+                    { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+                    { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
+                }
+            }
+            local projectData = {
+                itemsLocator                = itemsLocator,
+                ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
+                storageLocator              = storageLocator:copy(),
+
+                harvestForest_Task          = "role_forester.HarvestForest_Task",
+                harvestForestTaskData       = harvestForestTaskData,
+                harvestForestMetaData       = role_forester.HarvestForest_MetaData(harvestForestTaskData),
+
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+            local projectServiceData = {
+                projectDef  = projectDef,
+                projectData = projectData,
+            }
+
+            -- start project
+--            corelog.WriteToLog(">Harvesting "..itemCount.." "..itemName.."'s from Forest")
+            enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+        end
+    end
+end
+
 function BirchForestClass:needsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, storageLocator = coreutils.CheckInput([[

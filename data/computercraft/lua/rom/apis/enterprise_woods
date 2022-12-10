@@ -390,98 +390,14 @@ function ProvideItemsTo_ASrv(...)
     local forest = GetForest(itemsLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- loop on items
+    -- have forest provide items
     local provideItems = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(provideItems) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-        -- check for birchlog or sapling
-        local localStorageLocator = nil
-        if itemName == "minecraft:birch_log" then
-            localStorageLocator = forest:getLocalLogsLocator()
-        elseif itemName == "minecraft:birch_sapling" then
-            localStorageLocator = forest:getLocalSaplingsLocator()
-        else
-            corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
-        end
-
-        -- check items already available in localStorageLocator
-        local localItemsLocator = localStorageLocator:copy()
-        local item = { [itemName] = itemCount }
-        localItemsLocator:setQuery(item)
-        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
-            -- yes: return the items
-            local transferData = {
-                sourceItemsLocator          = localItemsLocator,
-                destinationStorageLocator   = storageLocator,
-                assignmentsPriorityKey      = assignmentsPriorityKey,
-            }
---            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
-            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
-        else
-            -- construct taskData
-            local harvestForestTaskData = {
-                forestLevel         = forest:getLevel(),
-                firstTreeLocation   = coremove.GetRelativeLocation(forest:getLocation(), 3, 2, 0),
-                nTrees              = forest:getNTrees(),
-                waitForFirstTree    = true,
---                waitForFirstTree    = (assignmentsPriorityKey ~= nil), -- energy efficient mode if assignmentsPriorityKey is set -- ToDo: consider change
-
-                priorityKey         = assignmentsPriorityKey,
-            }
-
-            -- create project service data
-            local projectDef = {
-                steps = {
-                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
-                    --          (or will this be part of harvestForest?)
-                    { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                        { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestForest_Task" },
-                        { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
-                        { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
-                    }},
-                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
-                    --          (or will this be part of harvestForest?)
-                    -- ToDo: consider storing rest/ waste materials (e.g. sticks)
-                    { stepName = "enterprise_woods.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
-                        { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "itemsLocator" },
-                        { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
-                        { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
-                        { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
-                    }},
-                    { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                        { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-                        { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
-                    }},
-                },
-                returnData  = {
-                    { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
-                    { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
-                }
-            }
-            local projectData = {
-                itemsLocator                = itemsLocator, -- ToDo: consider lower count with possible # items already present in localSupplierLocator
-                ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
-                storageLocator              = storageLocator:copy(),
-
-                harvestForest_Task          = "role_forester.HarvestForest_Task",
-                harvestForestTaskData       = harvestForestTaskData,
-                harvestForestMetaData       = role_forester.HarvestForest_MetaData(harvestForestTaskData),
-
-                assignmentsPriorityKey      = assignmentsPriorityKey,
-            }
-            local projectServiceData = {
-                projectDef  = projectDef,
-                projectData = projectData,
-            }
-
-            -- start project
---            corelog.WriteToLog(">Harvesting "..itemCount.." "..itemName.."'s from Forest")
-            enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-        end
-    end
+    forest:provideItemsTo_ASrv({
+        provideItems                = provideItems,
+        storageLocator              = storageLocator,
+        ingredientsSupplierLocator  = ingredientsSupplierLocator,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }, callback, callbackData)
 end
 
 function Can_ProvideItems_QSrv(...)
