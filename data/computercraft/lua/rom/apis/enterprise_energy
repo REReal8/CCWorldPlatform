@@ -72,7 +72,7 @@ function GetFuelNeed_Refuel_Att()
         -- object ophalen
 --        forest = coredht.GetResource(forestLocator)
         forest = enterprise_woods.GetForest(forestLocator)
-        if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return nil end
+        if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return GetLargeFuelAmount_Att() end
     end
 
     -- check there is (already) a forest
