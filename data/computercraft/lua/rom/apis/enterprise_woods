@@ -417,28 +417,18 @@ function Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
-    local serviceResults = IsForestURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    -- get forest
+    local forest = GetForest(itemsLocator)
+    if type(forest) ~="table" then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: Failed retrieving forest = "..itemsLocator:getURI()) return {success = false} end
 
-    -- loop on items
-    local items = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(items) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_woods.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-
-        -- check for birchlog or sapling
-        if itemName == "minecraft:birch_log" then
-        elseif itemName == "minecraft:birch_sapling" then
-        else
-            return {success = false}
-        end
-    end
+    -- check forest can provide items
+    local provideItems = itemsLocator:getQuery()
+    local canProvide = forest:can_ProvideItems_QSrv({
+        provideItems    = provideItems,
+    })
 
     -- end
-    return {
-        success = true,
-    }
+    return canProvide
 end
 
 function NeedsTo_ProvideItemsTo_SSrv(...)

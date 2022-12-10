@@ -13,6 +13,7 @@ function T_All()
     T_getFuelNeed_Harvest_Att()
     T_getFuelNeedExtraTree_Att()
     T_needsTo_ProvideItemsTo_SSrv()
+    T_can_ProvideItems_QSrv()
 end
 
 function T_Getters()
@@ -130,6 +131,30 @@ function T_needsTo_ProvideItemsTo_SSrv()
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
+
+    -- cleanup test
+end
+
+function T_can_ProvideItems_QSrv()
+    -- prepare test
+    corelog.WriteToLog("# mobj_birchforest:can_ProvideItems_QSrv() tests")
+    local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+
+    -- test
+    local itemName = "minecraft:birch_log"
+    local itemCount = 20
+    local serviceResults = forest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:birch_sapling"
+    itemCount = 2
+    serviceResults = forest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:dirt"
+    itemCount = 10
+    serviceResults = forest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(not serviceResults.success, "can_ProvideItems_QSrv incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
 end
