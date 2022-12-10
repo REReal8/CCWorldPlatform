@@ -12,6 +12,7 @@ function T_All()
     T_Setters()
     T_getFuelNeed_Harvest_Att()
     T_getFuelNeedExtraTree_Att()
+    T_needsTo_ProvideItemsTo_SSrv()
 end
 
 function T_Getters()
@@ -107,6 +108,28 @@ function T_getFuelNeedExtraTree_Att()
     fuelNeed = forest:getFuelNeedExtraTree_Att()
     expectedFuelNeed = 36 + 2*6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
+
+function T_needsTo_ProvideItemsTo_SSrv()
+    -- prepare test
+    corelog.WriteToLog("# mobj_oakforest:needsTo_ProvideItemsTo_SSrv() tests")
+    local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+    }
+    local storageLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- test
+    local needsTo_Provide = forest:needsTo_ProvideItemsTo_SSrv({
+        provideItems    = provideItems,
+        storageLocator  = storageLocator,
+    })
+    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees)
+    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
+    assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+    assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
 
     -- cleanup test
 end

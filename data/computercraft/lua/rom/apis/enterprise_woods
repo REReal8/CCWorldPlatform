@@ -549,59 +549,16 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
     -- get forest
     local forest = GetForest(itemsLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Failed retrieving forest = "..itemsLocator:getURI()) return {success = false} end
-    local nTrees = forest:getNTrees()
 
-    -- loop on items
-    local fuelNeed = 0
-    local ingredientsNeed = {} -- ToDo ? should we add saplings for a harvest round here?
-    local supplyItems = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(supplyItems) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
-
-        -- check for birchlog or sapling
-        local itemPerRound = 1
-        local localSupplierLocator = nil
-        if itemName == "minecraft:birch_log" then
-            itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
-            localSupplierLocator = forest:getLocalLogsLocator()
-        elseif itemName == "minecraft:birch_sapling" then
-            itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
-            -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
-            localSupplierLocator = forest:getLocalSaplingsLocator()
-        else
-            return corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") {success = false}
-        end
-
-        -- fuelNeed per round
-        local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
-        local nRounds = math.ceil(itemCount / itemPerRound)
-        local fuelNeed_Rounds = nRounds * fuelPerRound
-
-        -- fuelNeed transfer
-        local localSupplierItemsLocator = localSupplierLocator:copy()
-        local items = { [itemName] = itemCount }
-        localSupplierItemsLocator:setQuery(items)
-        local transferData = {
-            sourceItemsLocator          = localSupplierItemsLocator,
-            destinationStorageLocator   = storageLocator,
-        }
-        local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
-        if not serviceResults.success then corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-        local fuelNeed_Transfer = serviceResults.fuelNeed
-
-        -- add fuelNeed
---        corelog.WriteToLog("C  fuelNeed_Rounds="..fuelNeed_Rounds.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), fuelNeed_Transfer="..fuelNeed_Transfer)
-        fuelNeed = fuelNeed + fuelNeed_Rounds + fuelNeed_Transfer
-    end
+    -- determine needs
+    local provideItems = itemsLocator:getQuery()
+    local needs = forest:needsTo_ProvideItemsTo_SSrv({
+        provideItems    = provideItems,
+        storageLocator  = storageLocator,
+    })
 
     -- end
-    return {
-        success         = true,
-        fuelNeed        = fuelNeed,
-        ingredientsNeed = ingredientsNeed,
-    }
+    return needs
 end
 
 function GetNumberOfForests_Att()
