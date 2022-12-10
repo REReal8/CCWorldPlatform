@@ -5,6 +5,7 @@ local itemsQuery = {
 
 local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
+local level0 = 0
 
 function T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
@@ -38,21 +39,28 @@ end
 function T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
-    local forest = enterprise_woods.GetForest()
-    local originalForestLevel = forest.forestLevel
-    local originalNTrees = forest.nTrees
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = 0, nTrees = 1 })
+    local forest = t_mobj_oakforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forestLocator = enterprise_woods.SaveForest(forest)
+
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
 
+    local energyParameters = enterprise_energy.GetParameters()
+    local originalLevel = energyParameters.enterpriseLevel
+    local originalLocator = energyParameters.forestLocator
+
     -- test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator })
     local fuelLevels = enterprise_turtle.GetFuelLevels_Att()
-    local fuelLevel_Priority = fuelLevels.fuelLevel_Priority
-    local fuelLevel_Assignment = fuelLevels.fuelLevel_Assignment
-    corelog.WriteToLog("   "..fuelLevel_Priority.." fuelLevel_Priority")
-    corelog.WriteToLog("   "..fuelLevel_Assignment.." fuelLevel_Assignment")
+    local expectedFuelLevel_Priority = 41
+    assert(fuelLevels.fuelLevel_Priority == expectedFuelLevel_Priority, "gotten fuelLevel_Priority(="..fuelLevels.fuelLevel_Priority..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Priority..")")
+    local expectedFuelLevel_Assignment = 41 -- ToDo: consider taking enterprise_assignmentboard maxFuelNeed_Assignment into account as well
+    assert(fuelLevels.fuelLevel_Assignment == expectedFuelLevel_Assignment, "gotten fuelLevel_Assignment(="..fuelLevels.fuelLevel_Assignment..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Assignment..")")
 
     -- cleanup test
-    enterprise_woods.UpdateForest_SSrv({ forestLevel = originalForestLevel, nTrees = originalNTrees })
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
+
     t_factory.StopV0Site(location)
+
+    enterprise_woods.RemoveForest(forestLocator)
 end
