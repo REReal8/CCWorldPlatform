@@ -4,6 +4,15 @@ local nTrees = 1
 local level2 = 1
 local location2 = {x= 6, y= 12, z= 1, dx=0, dy=1}
 local nTrees2 = 2
+local localLogsLocator
+local localSaplingsLocator
+
+function T_All()
+    T_Getters()
+    T_Setters()
+    T_getFuelNeed_Harvest_Att()
+    T_getFuelNeedExtraTree_Att()
+end
 
 function T_Getters()
     -- prepare test
@@ -16,6 +25,8 @@ function T_Getters()
     assert(forest:getLevel() == level, "gotten level(="..forest:getLevel()..") not the same as expected(="..level..")")
     assert(forest:getLocation() == location, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location)..")")
     assert(forest:getNTrees() == nTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees..")")
+    assert(forest:getLocalLogsLocator() == localLogsLocator, "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
+    assert(forest:getLocalSaplingsLocator() == localSaplingsLocator, "gotten localSaplingsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator:getURI()..")")
 
     -- cleanup test
 end
@@ -23,14 +34,19 @@ end
 function CreateForest(id)
     -- check input
     id = id or coreutils.NewId()
+    localLogsLocator = localLogsLocator or enterprise_turtle.GetHostLocator_Att()
+    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetHostLocator_Att()
 
     -- create forest object
     local forest = mobj_oakforest.OakForestClass:new({
-        _id          = id,
-        _forestLevel = level,
+        _id                     = id,
+        _forestLevel            = level,
 
-        _location    = location,
-        _nTrees      = nTrees,
+        _location               = location,
+        _nTrees                 = nTrees,
+
+        _localLogsLocator       = localLogsLocator,
+        _localSaplingsLocator   = localSaplingsLocator,
     })
 
     -- end
@@ -41,6 +57,8 @@ function T_Setters()
     -- prepare test
     corelog.WriteToLog("* mobj_oakforest setter tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local localLogsLocator2 = enterprise_chests.GetHostLocator_Att()
+    local localSaplingsLocator2 = enterprise_chests.GetHostLocator_Att()
 
     -- test
     forest:setLevel(level2)
@@ -49,6 +67,10 @@ function T_Setters()
     assert(forest:getLocation() == location2, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location2)..")")
     forest:setNTrees(nTrees2)
     assert(forest:getNTrees() == nTrees2, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees2..")")
+    forest:setLocalLogsLocator(localLogsLocator2)
+    assert(forest:getLocalLogsLocator() == localLogsLocator2, "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator2:getURI()..")")
+    forest:setLocalSaplingsLocator(localSaplingsLocator2)
+    assert(forest:getLocalSaplingsLocator() == localSaplingsLocator2, "gotten localLogsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator2:getURI()..")")
 
     -- cleanup test
 end

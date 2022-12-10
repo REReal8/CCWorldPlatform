@@ -33,11 +33,14 @@ function AddNewSite_ASrv(...)
 
     -- create new forest
     local forest = mobj_oakforest.OakForestClass:new({
-        _id          = coreutils.NewId(),
-        _level       = forestLevel,
+        _id                     = coreutils.NewId(),
+        _level                  = forestLevel,
 
-        _location    = coremove.CopyLocation(baseLocation),
-        _nTrees      = 0,
+        _location               = coremove.CopyLocation(baseLocation),
+        _nTrees                 = 0,
+
+        _localLogsLocator       = enterprise_turtle.GetHostLocator_Att(),
+        _localSaplingsLocator   = enterprise_turtle.GetHostLocator_Att(),
     })
 
     -- save the forest
@@ -397,9 +400,9 @@ function ProvideItemsTo_ASrv(...)
         -- check for birchlog or sapling
         local localStorageLocator = nil
         if itemName == "minecraft:birch_log" then
-            localStorageLocator = GetLocalLogsLocator()
+            localStorageLocator = forest:getLocalLogsLocator()
         elseif itemName == "minecraft:birch_sapling" then
-            localStorageLocator = GetLocalSaplingsLocator()
+            localStorageLocator = forest:getLocalSaplingsLocator()
         else
             corelog.Error("enterprise_woods.ProvideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
         end
@@ -562,11 +565,11 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
         local localSupplierLocator = nil
         if itemName == "minecraft:birch_log" then
             itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
-            localSupplierLocator = GetLocalLogsLocator()
+            localSupplierLocator = forest:getLocalLogsLocator()
         elseif itemName == "minecraft:birch_sapling" then
             itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
             -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
-            localSupplierLocator = GetLocalSaplingsLocator()
+            localSupplierLocator = forest:getLocalSaplingsLocator()
         else
             return corelog.Error("enterprise_woods.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") {success = false}
         end
@@ -756,16 +759,6 @@ function GetForestLocator(...)
 
     -- end
     return forestLocator
-end
-
-function GetLocalLogsLocator()
-    -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
-    return enterprise_turtle.GetHostLocator_Att()
-end
-
-function GetLocalSaplingsLocator()
-    -- ToDo: generalise this, e.g. make a property of the specific forest (could for example also be a chest)
-    return enterprise_turtle.GetHostLocator_Att()
 end
 
 tree_pattern = {
