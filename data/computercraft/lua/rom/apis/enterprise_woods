@@ -121,10 +121,12 @@ function AddNewSite_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function ExtendSite_ASrv(...)
+function UpgradeSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocator, treesNeeded, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
-        This private async service extends a forest from the current # trees to another number of trees.
+    local checkSuccess, forestLocator, forestLevel, nTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+        This private async service upgrades a forest site from the current configuration (i.e. level, # trees, ...) to a new configuration.
+
+        Note: downgrading a forest is not supported.
 
         Return value:
             nil
@@ -136,16 +138,20 @@ function ExtendSite_ASrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 forestLocator           + (URL) locating the forest
-                treesNeeded             + (number) number of trees to extend forest to
+                forestLevel             + (number) with forest level to upgrade too
+                nTrees                  + (number) number of trees to upgrade forest to
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_woods.ExtendSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_woods.UpgradeSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get forest
     local forest = GetForest(forestLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_woods.ExtendSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if type(forest) ~="table" then corelog.Error("enterprise_woods.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
+
+    -- temp check ToDo: implement changing forest level
+    if forest:getLevel() ~= forestLevel then corelog.Error("enterprise_woods.UpgradeSite_ASrv: Upgrading forest level not yet supported") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine projectSteps and projectData
     local projectSteps = { }
@@ -159,7 +165,7 @@ function ExtendSite_ASrv(...)
     -- add project step for all trees to add
     local iStep = 0
     local forestNTrees = forest:getNTrees()    -- note: first already created in PlantFirstSapling_Task
-    for iTree = forestNTrees + 1, treesNeeded do
+    for iTree = forestNTrees + 1, nTrees do
         -- ToDo: simplify looping (currentNTreesStr and newNTreesStr are related/ almost the same)
 
         -- add collect and build tree step
@@ -218,7 +224,7 @@ function ExtendSite_ASrv(...)
     }
 
     -- start project
-    corelog.WriteToLog(">Extending forest to " .. treesNeeded .. " trees")
+    corelog.WriteToLog(">Upgrading forest "..forestLocator:getURI().." to level "..forestLevel.." and "..nTrees.." trees")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 

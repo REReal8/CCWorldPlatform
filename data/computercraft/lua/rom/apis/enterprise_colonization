@@ -151,13 +151,14 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_woods.ExtendSite_ASrv", async = true, stepDataDef = {
+            { stepName = "enterprise_woods.UpgradeSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
-                { keyDef = "treesNeeded"                , valueSource = 0, keyDefSource = "treesNeeded" },
+                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
+                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "treesNeeded" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             -- Finish Forest ("redo base/ first tree according to pattern")
-            -- ToDo: consider changing this to a forest service that upgrades the forest to next level (v1 or v2 (incl chests))
+            -- ToDo: consider implementing ans using enterprise_woods.UpgradeSite_ASrv to upgrade the forest to next level (v1 or v2 (incl chests))
             { stepName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, stepDataDef = {
                 { keyDef = "startpoint"                 , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "buildFromAbove"             , valueSource = 0, keyDefSource = "forestBuildFromAbove" },
