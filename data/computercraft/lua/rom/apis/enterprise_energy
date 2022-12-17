@@ -68,10 +68,10 @@ function GetFuelNeed_Refuel_Att()
     local forest = nil
     local forestLocator = parameters.forestLocator
     if forestLocator then
---        forest =  mobj_birchforest.BirchForestClass:new(enterprise_woods.GetForest(forestLocator)) -- ToDo: get mobj_birchforest directly
+--        forest =  mobj_birchforest.BirchForestClass:new(enterprise_forestry.GetForest(forestLocator)) -- ToDo: get mobj_birchforest directly
         -- object ophalen
 --        forest = coredht.GetResource(forestLocator)
-        forest = enterprise_woods.GetForest(forestLocator)
+        forest = enterprise_forestry.GetForest(forestLocator)
         if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return GetLargeFuelAmount_Att() end
     end
 

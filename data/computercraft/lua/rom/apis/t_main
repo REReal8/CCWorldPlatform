@@ -13,7 +13,7 @@ function T_ResetWorld()
     enterprise_turtle.Reset()
     enterprise_chests.DeleteChests()
     enterprise_shop.DelistSuppliers()
-    enterprise_woods.DeleteForests()
+    enterprise_forestry.DeleteForests()
 end
 
 function T_enterprise_test()

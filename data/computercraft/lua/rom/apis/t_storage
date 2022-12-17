@@ -2,7 +2,7 @@ function T_BuildAndStartNewSite_ASrv()
     -- prepare test
     corelog.WriteToLog("# BuildAndStartNewSite_ASrv test")
     local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local forestLocator = enterprise_woods.SaveForest(forest)
+    local forestLocator = enterprise_forestry.SaveForest(forest)
 
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
@@ -24,5 +24,5 @@ function Cleanup_Callback(callbackData, taskResult)
     -- cleanup test
     t_factory.StopV0Site(callbackData.location)
 
-    enterprise_woods.RemoveForest(callbackData.forestLocator)
+    enterprise_forestry.RemoveForest(callbackData.forestLocator)
 end

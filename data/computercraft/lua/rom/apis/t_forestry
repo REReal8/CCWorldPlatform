@@ -9,8 +9,8 @@ function T_DeleteForests()
     corelog.WriteToLog("# DeleteForests tests")
 
     -- test
-    enterprise_woods.DeleteForests()
-    local nForests = enterprise_woods.GetNumberOfForests_Att()
+    enterprise_forestry.DeleteForests()
+    local nForests = enterprise_forestry.GetNumberOfForests_Att()
     local expectedNForests = 0
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
@@ -20,19 +20,19 @@ end
 function T_SaveAndRemoveForest()
     -- prepare test
     local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local originalNForests = enterprise_woods.GetNumberOfForests_Att()
+    local originalNForests = enterprise_forestry.GetNumberOfForests_Att()
 
     -- SaveForest test
     corelog.WriteToLog("# SaveForest tests")
-    local forestLocator = enterprise_woods.SaveForest(forest)
-    local nForests = enterprise_woods.GetNumberOfForests_Att()
+    local forestLocator = enterprise_forestry.SaveForest(forest)
+    local nForests = enterprise_forestry.GetNumberOfForests_Att()
     local expectedNForests = originalNForests + 1
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- RemoveForest test
     corelog.WriteToLog("# RemoveForest tests")
-    enterprise_woods.RemoveForest(forestLocator)
-    nForests = enterprise_woods.GetNumberOfForests_Att()
+    enterprise_forestry.RemoveForest(forestLocator)
+    nForests = enterprise_forestry.GetNumberOfForests_Att()
     expectedNForests = originalNForests
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 

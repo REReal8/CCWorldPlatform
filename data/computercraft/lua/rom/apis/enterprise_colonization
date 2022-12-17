@@ -50,10 +50,10 @@ function CreateNewWorld_ASrv(...)
         coredht.SaveData({}, db.dhtRoot)
 
         -- reset forest
-        enterprise_woods.DeleteForests()
+        enterprise_forestry.DeleteForests()
     end
 
-    -- add default suppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_woods
+    -- add default suppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
     enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_turtle.GetHostLocator_Att()})
     enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_factory.GetHostLocator_Att()})
 
@@ -94,7 +94,7 @@ function CreateNewWorld_ASrv(...)
 
         treesNeeded                 = treesNeeded,
 
-        forestV2BasePattern         = role_builder.CopyPattern(enterprise_woods.tree_pattern), -- ToDo: use a new pattern including chests
+        forestV2BasePattern         = role_builder.CopyPattern(enterprise_forestry.tree_pattern), -- ToDo: use a new pattern including chests
         forestBuildFromAbove        = true,
         forestReplacePresentObjects = false,
 
@@ -122,7 +122,7 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "upgrade"                    , valueSource = 0, keyDefSource = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_woods.AddNewSite_ASrv", async = true, stepDataDef = {
+            { stepName = "enterprise_forestry.AddNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
@@ -151,14 +151,14 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_woods.UpgradeSite_ASrv", async = true, stepDataDef = {
+            { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
                 { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "treesNeeded" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             -- Finish Forest ("redo base/ first tree according to pattern")
-            -- ToDo: consider implementing ans using enterprise_woods.UpgradeSite_ASrv to upgrade the forest to next level (v1 or v2 (incl chests))
+            -- ToDo: consider implementing ans using enterprise_forestry.UpgradeSite_ASrv to upgrade the forest to next level (v1 or v2 (incl chests))
             { stepName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, stepDataDef = {
                 { keyDef = "startpoint"                 , valueSource = 0, keyDefSource = "forestLocation" },
                 { keyDef = "buildFromAbove"             , valueSource = 0, keyDefSource = "forestBuildFromAbove" },

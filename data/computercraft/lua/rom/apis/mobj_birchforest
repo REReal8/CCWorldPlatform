@@ -233,7 +233,7 @@ function BirchForestClass:provideItemsTo_ASrv(...)
             enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
         else
             -- construct new itemsLocator for this forest
-            local forestLocator = enterprise_woods.GetForestLocator(self:getId())
+            local forestLocator = enterprise_forestry.GetForestLocator(self:getId())
             local itemsLocator = forestLocator:copy()
             itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localSupplierLocator
 
@@ -261,7 +261,7 @@ function BirchForestClass:provideItemsTo_ASrv(...)
                     -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
                     --          (or will this be part of harvestForest?)
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
-                    { stepName = "enterprise_woods.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
+                    { stepName = "enterprise_forestry.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
                         { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "itemsLocator" },
                         { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
                         { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },

@@ -14,7 +14,7 @@ function T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("# GetFuelNeed_Refuel_Att tests")
     local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local forestLocator = enterprise_woods.SaveForest(forest)
+    local forestLocator = enterprise_forestry.SaveForest(forest)
 
     local location = coremove.GetLocation()
     t_factory.StartNewV0Site(location)
@@ -39,7 +39,7 @@ function T_GetFuelNeed_Refuel_Att()
 
     t_factory.StopV0Site(location)
 
-    enterprise_woods.RemoveForest(forestLocator)
+    enterprise_forestry.RemoveForest(forestLocator)
 end
 
 function T_GetRefuelAmount_Att()
