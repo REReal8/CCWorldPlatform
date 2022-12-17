@@ -49,13 +49,12 @@ function T_AddNewSite_ASrv()
 
     -- SaveForest test
     corelog.WriteToLog("# AddNewSite_ASrv test")
-    local serviceResults = enterprise_forestry.AddNewSite_ASrv({
+    enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
         nTrees                  = nTrees,
         materialsHostLocator    = enterprise_shop.GetHostLocator_Att(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
-
 end
 
 function AddNewSite_ASrv_Callback(callbackData, serviceResults)
@@ -69,5 +68,4 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
 
     -- cleanup test
     serviceResults = enterprise_forestry.RemoveForest(forestLocator)
---    assert(serviceResults.success, "failed removing forest "..forestLocator:getURI())
 end
