@@ -158,57 +158,102 @@ function UpgradeSite_ASrv(...)
     local projectSteps = { }
     local areAllTrueStepDataDef = {}
     local projectData = {
-        forestLevel             = targetLevel,
         forestLocator           = forestLocator,
+        targetLevel             = targetLevel,
+        treePattern             = forest:getTreePattern(targetLevel),
         materialsHostLocator    = materialsHostLocator,
     }
 
     -- add project steps for upgrading level
-    if startingLevel < targetLevel then
-    end
-
-    -- add project step for all trees to add
     local iStep = 0
     local startingNTrees = forest:getNTrees()
-    projectData.treePattern = role_builder.CopyPattern(enterprise_forestry.tree_pattern)
-    for iTree = startingNTrees + 1, targetNTrees do
-        -- add build tree step
-        iStep = iStep + 1
-        local iStepStr = tostring(iStep)
-        local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
-        local treeBaseLocationStr = "treeBaseLocation"..iStepStr
-        table.insert(projectSteps,
-            { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
-                { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
-                { keyDef = "treePattern"            , valueSource = 0, keyDefSource = "treePattern" },
-                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
-            }}
-        )
+    if startingLevel < targetLevel and startingNTrees > 0 then
+        -- upgrade level data
+        projectData.basePattern     = forest:getBasePattern(targetLevel)
+        projectData.startingNTrees  = startingNTrees
 
-        -- add step data
-        projectData[treeBaseLocationStr] = treeBaseLocation
+        -- loop on current trees
+        for iTree = 1, startingNTrees do
+            -- add build tree step
+            iStep = iStep + 1
+            local iStepStr = tostring(iStep)
+            local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
+            local treeBaseLocationStr = "treeBaseLocation"..iStepStr
+            local patternStr = "treePattern"
+            if iTree == 1 then patternStr = "basePattern" end
+            table.insert(projectSteps,
+                { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
+                    { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
+                    { keyDef = "treePattern"            , valueSource = 0, keyDefSource = patternStr },
+                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                }}
+            )
 
-        -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+            -- add step data
+            projectData[treeBaseLocationStr] = treeBaseLocation
+
+            -- add success stepDataDef
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+        end
 
         -- update forest info
         iStep = iStep + 1
-        iStepStr = tostring(iStep)
-        local newNTreesStr = "newNTreeStep"..iStepStr
+        local iStepStr = tostring(iStep)
         table.insert(projectSteps,
             { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
                 { keyDef = "forestLocator"          , valueSource = 0, keyDefSource = "forestLocator" },
-                { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "forestLevel" },
-                { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = newNTreesStr },
+                { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "targetLevel" },
+                { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = "startingNTrees" },
             }}
         )
-
-        -- add step data
-        projectData[newNTreesStr] = iTree
 
         -- add success stepDataDef
         table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
     end
+
+    -- add project step for trees to add
+    if startingNTrees < targetNTrees then
+        -- loop on trees to add
+        for iTree = startingNTrees + 1, targetNTrees do
+            -- add build tree step
+            iStep = iStep + 1
+            local iStepStr = tostring(iStep)
+            local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
+            local treeBaseLocationStr = "treeBaseLocation"..iStepStr
+            table.insert(projectSteps,
+                { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
+                    { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
+                    { keyDef = "treePattern"            , valueSource = 0, keyDefSource = "treePattern" },
+                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                }}
+            )
+
+            -- add step data
+            projectData[treeBaseLocationStr] = treeBaseLocation
+
+            -- add success stepDataDef
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+
+            -- update forest info
+            iStep = iStep + 1
+            iStepStr = tostring(iStep)
+            local newNTreesStr = "newNTreeStep"..iStepStr
+            table.insert(projectSteps,
+                { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
+                    { keyDef = "forestLocator"          , valueSource = 0, keyDefSource = "forestLocator" },
+                    { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "targetLevel" },
+                    { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = newNTreesStr },
+                }}
+            )
+
+            -- add step data
+            projectData[newNTreesStr] = iTree
+
+            -- add success stepDataDef
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+        end
+    end
+
     -- add check for all a success
     iStep = iStep + 1
     table.insert(projectSteps,

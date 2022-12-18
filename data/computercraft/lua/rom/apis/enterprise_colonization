@@ -92,6 +92,7 @@ function CreateNewWorld_ASrv(...)
         factoryLocation             = coremove.CopyLocation(factoryLocation),
         factoryVersion1             = "v1",
 
+        forestL1                    = 1,
         nTreeswanted                = nTreeswanted,
 
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_forestry.tree_pattern), -- ToDo: use a new pattern including chests
@@ -153,7 +154,7 @@ function CreateNewWorld_ASrv(...)
             }},
             { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
-                { keyDef = "targetLevel"                , valueSource = 0, keyDefSource = "forestL0" },
+                { keyDef = "targetLevel"                , valueSource = 0, keyDefSource = "forestL1" },
                 { keyDef = "targetNTrees"               , valueSource = 0, keyDefSource = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
