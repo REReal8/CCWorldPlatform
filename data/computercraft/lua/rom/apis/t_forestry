@@ -40,9 +40,10 @@ function T_SaveAndRemoveForest()
 end
 
 local level = 0
+local level1 = 1
 local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
-local nTrees = 1
-local nWantedTrees = 3
+local nTrees1 = 1
+local nTrees3 = 3
 
 function T_AddNewSite_ASrv()
     -- prepare test
@@ -53,7 +54,7 @@ function T_AddNewSite_ASrv()
     enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
-        nTrees                  = nTrees,
+        nTrees                  = nTrees1,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
@@ -77,9 +78,9 @@ function T_UpgradeSite_ASrv_Trees()
     enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
-        nTrees                  = nTrees,
+        nTrees                  = nTrees1,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level, treesWanted = nWantedTrees })
+    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level, treesWanted = nTrees3 })
 end
 
 function UpgradeSite_ASrv_PrepCallback(...)
@@ -104,7 +105,7 @@ function UpgradeSite_ASrv_PrepCallback(...)
         forestLevel             = levelWanted,
         nTrees                  = treesWanted,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = level, treesWanted = nWantedTrees })
+    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
 end
 
 function UpgradeSite_ASrv_TestCallback(...)
