@@ -42,6 +42,7 @@ end
 local level = 0
 local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
 local nTrees = 1
+local turtleHostLocator = enterprise_turtle.GetHostLocator_Att()
 
 function T_AddNewSite_ASrv()
     -- prepare test
@@ -53,7 +54,7 @@ function T_AddNewSite_ASrv()
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
         nTrees                  = nTrees,
-        materialsHostLocator    = enterprise_shop.GetHostLocator_Att(),
+        materialsHostLocator    = turtleHostLocator,
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
 
@@ -61,7 +62,7 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     -- test result
     assert(serviceResults.success, "failed adding forest")
     local forestLocator = serviceResults.forestLocator
-    assert(forestLocator ~= nil, "failed obtaining  forestLocator")
+    assert(forestLocator ~= nil, "failed obtaining forestLocator")
     local nForests = enterprise_forestry.GetNumberOfForests_Att()
     local expectedNForests = callbackData.originalNForests + 1
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
