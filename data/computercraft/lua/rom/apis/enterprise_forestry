@@ -640,14 +640,3 @@ function GetForestLocator(...)
     -- end
     return forestLocator
 end
-
-tree_pattern = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 3, y = 3, block = "minecraft:birch_sapling"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 0, y = 3, block = "minecraft:torch"},
-    },
-    clearRemainingSpace = true,
-}

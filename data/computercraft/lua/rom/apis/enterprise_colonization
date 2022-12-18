@@ -95,10 +95,6 @@ function CreateNewWorld_ASrv(...)
         forestL1                    = 1,
         nTreeswanted                = nTreeswanted,
 
-        forestV2BasePattern         = role_builder.CopyPattern(enterprise_forestry.tree_pattern), -- ToDo: use a new pattern including chests
-        forestBuildFromAbove        = true,
-        forestReplacePresentObjects = false,
-
         factoryVersion2             = "v2",
         upgradeToV2                 = true,
 
@@ -158,15 +154,7 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "targetNTrees"               , valueSource = 0, keyDefSource = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            -- Finish Forest ("redo base/ first tree according to pattern")
-            -- ToDo: consider implementing ans using enterprise_forestry.UpgradeSite_ASrv to upgrade the forest to next level (v1 or v2 (incl chests))
-            { stepName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, stepDataDef = {
-                { keyDef = "startpoint"                 , valueSource = 0, keyDefSource = "forestLocation" },
-                { keyDef = "buildFromAbove"             , valueSource = 0, keyDefSource = "forestBuildFromAbove" },
-                { keyDef = "replacePresentObjects"      , valueSource = 0, keyDefSource = "forestReplacePresentObjects" },
-                { keyDef = "pattern"                    , valueSource = 0, keyDefSource = "forestV2BasePattern" },
-                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
-            }},
+            -- ToDo: consider implementing forest level 2 and use enterprise_forestry.UpgradeSite_ASrv to upgrade to that level
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion2" },
@@ -193,11 +181,10 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "success9"                   , valueSource = 9, keyDefSource = "success" },
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
-                { keyDef = "success12"                  , valueSource = 11, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 13, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 12, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
