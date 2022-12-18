@@ -42,24 +42,24 @@ end
 local level = 0
 local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
 local nTrees = 1
-local turtleHostLocator = enterprise_turtle.GetHostLocator_Att()
+local nWantedTrees = 3
 
 function T_AddNewSite_ASrv()
     -- prepare test
+    corelog.WriteToLog("# AddNewSite_ASrv test")
     local originalNForests = enterprise_forestry.GetNumberOfForests_Att()
 
-    -- SaveForest test
-    corelog.WriteToLog("# AddNewSite_ASrv test")
+    -- test
     enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
         nTrees                  = nTrees,
-        materialsHostLocator    = turtleHostLocator,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
 
 function AddNewSite_ASrv_Callback(callbackData, serviceResults)
-    -- test result
+    -- test (cont))
     assert(serviceResults.success, "failed adding forest")
     local forestLocator = serviceResults.forestLocator
     assert(forestLocator ~= nil, "failed obtaining forestLocator")
@@ -68,5 +68,60 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- cleanup test
-    serviceResults = enterprise_forestry.RemoveForest(forestLocator)
+    enterprise_forestry.RemoveForest(forestLocator)
+end
+
+function T_UpgradeSite_ASrv()
+    -- prepare test
+    corelog.WriteToLog("# UpgradeSite_ASrv test")
+    enterprise_forestry.AddNewSite_ASrv({
+        baseLocation            = coremove.CopyLocation(location),
+        forestLevel             = level,
+        nTrees                  = nTrees,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
+    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { })
+end
+
+function UpgradeSite_ASrv_PrepCallback(...)
+    -- get & check input
+    local checkSuccess, serviceSuccess, forestLocator = coreutils.CheckInput([[
+        Parameters:
+            callbackData                - (table) callback data
+            serviceResults              - (table) results of the service
+                success                 + (boolean)
+                forestLocator           + (URL) locating the forest
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("UpgradeSite_ASrv_PrepCallback: Invalid input") return end
+
+    -- prepare test (cont)
+    assert(serviceSuccess, "failed preparing test")
+
+    -- test
+    enterprise_forestry.UpgradeSite_ASrv({
+        forestLocator           = forestLocator:copy(),
+        forestLevel             = level,
+        nTrees                  = nWantedTrees,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
+    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy() })
+end
+
+function UpgradeSite_ASrv_TestCallback(...)
+    -- get & check input
+    local checkSuccess, forestLocator, serviceSuccess = coreutils.CheckInput([[
+        Parameters:
+            callbackData                - (table) callback data
+                forestLocator           + (URL) locating the forest
+            serviceResults              - (table) results of the services
+                success                 + (boolean)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("UpgradeSite_ASrv_TestCallback: Invalid input") return end
+
+    -- test result
+    assert(serviceSuccess, "failed upgrading forest")
+    local forest = enterprise_forestry.GetForest(forestLocator)
+    assert(forest:getLevel() == level, "gotten level(="..forest:getLevel()..") not the same as expected(="..level..")")
+    assert(forest:getNTrees() == nWantedTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nWantedTrees..")")
+
+    -- cleanup test
+    enterprise_forestry.RemoveForest(forestLocator)
 end
