@@ -130,3 +130,14 @@ function UpgradeSite_ASrv_TestCallback(...)
     -- cleanup test
     enterprise_forestry.RemoveForest(forestLocator)
 end
+
+function T_UpgradeSite_ASrv_Level()
+    -- prepare test
+    corelog.WriteToLog("# UpgradeSite_ASrv (trees) test")
+    enterprise_forestry.AddNewSite_ASrv({
+        baseLocation            = coremove.CopyLocation(location),
+        forestLevel             = level,
+        nTrees                  = nTrees1,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
+    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level1, treesWanted = nTrees1 })
+end

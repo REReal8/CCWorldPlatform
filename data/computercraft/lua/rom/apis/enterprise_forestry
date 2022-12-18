@@ -167,22 +167,20 @@ function UpgradeSite_ASrv(...)
     local iStep = 0
     local startingNTrees = forest:getNTrees()
     for iTree = startingNTrees + 1, targetNTrees do
-        -- ToDo: simplify looping (currentNTreesStr and newNTreesStr are related/ almost the same)
-
-        -- add collect and build tree step
+        -- add build tree step
         iStep = iStep + 1
         local iStepStr = tostring(iStep)
-        local currentNTreesStr = "currentNTreeStep"..iStepStr
+        local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
+        local treeBaseLocationStr = "treeBaseLocation"..iStepStr
         table.insert(projectSteps,
-            { stepName = "enterprise_forestry.CollectAndBuildForestTree_ASrv", async = true, stepDataDef = {
-                { keyDef = "forestLocator"          , valueSource = 0, keyDefSource = "forestLocator" },
-                { keyDef = "currentNTrees"          , valueSource = 0, keyDefSource = currentNTreesStr },
+            { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
+                { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }}
         )
 
         -- add step data
-        projectData[currentNTreesStr] = iTree - 1
+        projectData[treeBaseLocationStr] = treeBaseLocation
 
         -- add success stepDataDef
         table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
@@ -387,59 +385,6 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function CollectAndBuildForestTree_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, forestLocator, currentNTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
-        This private async service first collects the resources and than extends the forest with 1 tree.
-
-        Return value:
-            nil
-
-        Async service return value (to callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData                 - (table) data about the service
-                forestLocator           + (URL) locating the forest
-                currentNTrees           + (number) current number of trees in the forest
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table) data to supply to callback function
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.CollectAndBuildForestTree_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- get forest
-    local forest = GetForest(forestLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.CollectAndBuildForestTree_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
-
-    -- create projectServiceData
-    local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * currentNTrees, 0)
-    local projectData = {
-        treeBaseLocation        = treeBaseLocation,
-        materialsHostLocator    = materialsHostLocator,
-    }
-    local projectDef = {
-        steps = {
-            { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
-                { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = "treeBaseLocation" },
-                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"                    , valueSource = 1, keyDefSource = "success" },
-        }
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-    }
-
-    -- start project
-    corelog.WriteToLog("  >Extending forest with one tree to "..(currentNTrees + 1).." trees")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-end
 
 function BuildForestTree_ASrv(...)
     -- get & check input from description
