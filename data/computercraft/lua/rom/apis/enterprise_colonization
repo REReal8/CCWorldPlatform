@@ -65,7 +65,7 @@ function CreateNewWorld_ASrv(...)
     }
 
     local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
-    local treesNeeded = 6
+    local nTreeswanted = 6
     local settleData = {
         materialsHostLocator        = enterprise_shop.GetHostLocator_Att(),
 
@@ -92,7 +92,7 @@ function CreateNewWorld_ASrv(...)
         factoryLocation             = coremove.CopyLocation(factoryLocation),
         factoryVersion1             = "v1",
 
-        treesNeeded                 = treesNeeded,
+        nTreeswanted                = nTreeswanted,
 
         forestV2BasePattern         = role_builder.CopyPattern(enterprise_forestry.tree_pattern), -- ToDo: use a new pattern including chests
         forestBuildFromAbove        = true,
@@ -154,7 +154,7 @@ function CreateNewWorld_ASrv(...)
             { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
                 { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
-                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "treesNeeded" },
+                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             -- Finish Forest ("redo base/ first tree according to pattern")
