@@ -163,9 +163,14 @@ function UpgradeSite_ASrv(...)
         materialsHostLocator    = materialsHostLocator,
     }
 
+    -- add project steps for upgrading level
+    if startingLevel < targetLevel then
+    end
+
     -- add project step for all trees to add
     local iStep = 0
     local startingNTrees = forest:getNTrees()
+    projectData.treePattern = role_builder.CopyPattern(enterprise_forestry.tree_pattern)
     for iTree = startingNTrees + 1, targetNTrees do
         -- add build tree step
         iStep = iStep + 1
@@ -175,6 +180,7 @@ function UpgradeSite_ASrv(...)
         table.insert(projectSteps,
             { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
                 { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
+                { keyDef = "treePattern"            , valueSource = 0, keyDefSource = "treePattern" },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }}
         )
@@ -388,7 +394,7 @@ end
 
 function BuildForestTree_ASrv(...)
     -- get & check input from description
-    local checkSuccess, treeBaseLocation, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, treeBaseLocation, treePattern, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This private async service extends the forest with 1 tree
 
         Return value:
@@ -401,6 +407,7 @@ function BuildForestTree_ASrv(...)
         Parameters:
             serviceData                 - (table) data about this service
                 treeBaseLocation        + (table) location of the base (lower left corner) of a forest tree (pattern)
+                treePattern             + (table) tree pattern to build
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
@@ -412,7 +419,7 @@ function BuildForestTree_ASrv(...)
         startpoint = coremove.CopyLocation(treeBaseLocation),
         buildFromAbove = true,
         replacePresentObjects = false,
-        pattern = enterprise_forestry.tree_pattern,
+        pattern = treePattern,
         materialsHostLocator = materialsHostLocator,
     }
     corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint))
