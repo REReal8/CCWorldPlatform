@@ -153,8 +153,8 @@ function CreateNewWorld_ASrv(...)
             }},
             { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
-                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
-                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "nTreeswanted" },
+                { keyDef = "targetLevel"                , valueSource = 0, keyDefSource = "forestL0" },
+                { keyDef = "targetNTrees"               , valueSource = 0, keyDefSource = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             -- Finish Forest ("redo base/ first tree according to pattern")

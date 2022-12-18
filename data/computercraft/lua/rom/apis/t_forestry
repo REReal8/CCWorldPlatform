@@ -102,8 +102,8 @@ function UpgradeSite_ASrv_PrepCallback(...)
     -- test
     enterprise_forestry.UpgradeSite_ASrv({
         forestLocator           = forestLocator:copy(),
-        forestLevel             = levelWanted,
-        nTrees                  = treesWanted,
+        targetLevel             = levelWanted,
+        targetNTrees            = treesWanted,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
 end

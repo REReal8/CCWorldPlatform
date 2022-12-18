@@ -123,7 +123,7 @@ end
 
 function UpgradeSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocator, forestLevel, nTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This private async service upgrades a forest site from the current configuration (i.e. level, # trees, ...) to a new configuration.
 
         Note: downgrading a forest is not supported.
@@ -138,8 +138,8 @@ function UpgradeSite_ASrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 forestLocator           + (URL) locating the forest
-                forestLevel             + (number) with forest level to upgrade too
-                nTrees                  + (number) number of trees to upgrade forest to
+                targetLevel             + (number) with forest level to upgrade to
+                targetNTrees            + (number) number of trees to upgrade forest to
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
@@ -150,22 +150,23 @@ function UpgradeSite_ASrv(...)
     local forest = GetForest(forestLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- temp check ToDo: implement changing forest level
-    if forest:getLevel() ~= forestLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Upgrading forest level not yet supported") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    -- check not downgrading
+    local startingLevel = forest:getLevel()
+    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading forest level (from "..startingLevel.." to "..targetLevel..") not supported") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine projectSteps and projectData
     local projectSteps = { }
     local areAllTrueStepDataDef = {}
     local projectData = {
-        forestLevel             = forest:getLevel(),
+        forestLevel             = targetLevel,
         forestLocator           = forestLocator,
         materialsHostLocator    = materialsHostLocator,
     }
 
     -- add project step for all trees to add
     local iStep = 0
-    local forestNTrees = forest:getNTrees()    -- note: first already created in PlantFirstSapling_Task
-    for iTree = forestNTrees + 1, nTrees do
+    local startingNTrees = forest:getNTrees()
+    for iTree = startingNTrees + 1, targetNTrees do
         -- ToDo: simplify looping (currentNTreesStr and newNTreesStr are related/ almost the same)
 
         -- add collect and build tree step
@@ -224,7 +225,7 @@ function UpgradeSite_ASrv(...)
     }
 
     -- start project
-    corelog.WriteToLog(">Upgrading forest "..forestLocator:getURI().." to level "..forestLevel.." and "..nTrees.." trees")
+    corelog.WriteToLog(">Upgrading forest "..forestLocator:getURI().." from level "..startingLevel.." to "..targetLevel.." and from "..startingNTrees.." to "..targetNTrees.." trees")
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
