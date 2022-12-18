@@ -467,7 +467,7 @@ function GetSupplierName_SSrv(...)
     if type(host) ~= "string" then corelog.Error("enterprise_isp.GetSupplierName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
     local enterpriseName = nil
         if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
-    elseif host == "enterprise_forestry"   then enterpriseName = "enterprise_forestry"
+    elseif host == "enterprise_forestry"then enterpriseName = "enterprise_forestry"
     elseif host == "enterprise_factory" then enterpriseName = "enterprise_factory"
     elseif host == "enterprise_shop"    then enterpriseName = "enterprise_shop"
     elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
