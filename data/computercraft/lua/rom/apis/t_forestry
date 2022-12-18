@@ -71,22 +71,24 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     enterprise_forestry.RemoveForest(forestLocator)
 end
 
-function T_UpgradeSite_ASrv()
+function T_UpgradeSite_ASrv_Trees()
     -- prepare test
-    corelog.WriteToLog("# UpgradeSite_ASrv test")
+    corelog.WriteToLog("# UpgradeSite_ASrv (trees) test")
     enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
         nTrees                  = nTrees,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { })
+    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level, treesWanted = nWantedTrees })
 end
 
 function UpgradeSite_ASrv_PrepCallback(...)
     -- get & check input
-    local checkSuccess, serviceSuccess, forestLocator = coreutils.CheckInput([[
+    local checkSuccess, levelWanted, treesWanted, serviceSuccess, forestLocator = coreutils.CheckInput([[
         Parameters:
             callbackData                - (table) callback data
+                levelWanted             + (number)
+                treesWanted             + (number)
             serviceResults              - (table) results of the service
                 success                 + (boolean)
                 forestLocator           + (URL) locating the forest
@@ -99,18 +101,20 @@ function UpgradeSite_ASrv_PrepCallback(...)
     -- test
     enterprise_forestry.UpgradeSite_ASrv({
         forestLocator           = forestLocator:copy(),
-        forestLevel             = level,
-        nTrees                  = nWantedTrees,
+        forestLevel             = levelWanted,
+        nTrees                  = treesWanted,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy() })
+    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = level, treesWanted = nWantedTrees })
 end
 
 function UpgradeSite_ASrv_TestCallback(...)
     -- get & check input
-    local checkSuccess, forestLocator, serviceSuccess = coreutils.CheckInput([[
+    local checkSuccess, forestLocator, levelWanted, treesWanted, serviceSuccess = coreutils.CheckInput([[
         Parameters:
             callbackData                - (table) callback data
                 forestLocator           + (URL) locating the forest
+                levelWanted             + (number)
+                treesWanted             + (number)
             serviceResults              - (table) results of the services
                 success                 + (boolean)
     --]], table.unpack(arg))
@@ -119,8 +123,8 @@ function UpgradeSite_ASrv_TestCallback(...)
     -- test result
     assert(serviceSuccess, "failed upgrading forest")
     local forest = enterprise_forestry.GetForest(forestLocator)
-    assert(forest:getLevel() == level, "gotten level(="..forest:getLevel()..") not the same as expected(="..level..")")
-    assert(forest:getNTrees() == nWantedTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nWantedTrees..")")
+    assert(forest:getLevel() == levelWanted, "gotten level(="..forest:getLevel()..") not the same as expected(="..levelWanted..")")
+    assert(forest:getNTrees() == treesWanted, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..treesWanted..")")
 
     -- cleanup test
     enterprise_forestry.RemoveForest(forestLocator)
