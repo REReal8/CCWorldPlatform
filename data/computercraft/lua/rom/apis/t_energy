@@ -10,6 +10,9 @@ function T_ResetParameters()
     enterprise_energy.ResetParameters()
 end
 
+-- print("GetParameters="..textutils.serialize(enterprise_energy.GetParameters()))
+
+-- print("GetFuelNeed_Refuel_Att="..textutils.serialize(enterprise_energy.GetFuelNeed_Refuel_Att()))
 function T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("# GetFuelNeed_Refuel_Att tests")

@@ -36,7 +36,7 @@ function T_Can_ProvideItems()
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
 
--- print("fuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
+-- print("GetFuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
 function T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
