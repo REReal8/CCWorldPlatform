@@ -41,7 +41,7 @@ function AddNewSite_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    -- check nTrees == 1
+    -- check nTrees == 1  -- ToDo: remove this restriction
     if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create new forest
@@ -508,6 +508,7 @@ function UpdateForest_SSrv(...)
     }
 end
 
+-- ToDo: consider CheckInput for mobj_birchforest
 function SaveForest(...)
     -- get & check input from description
     local checkSuccess, forest = coreutils.CheckInput([[
