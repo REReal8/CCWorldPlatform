@@ -34,6 +34,30 @@ function CopyObjectList(objectList)
 	return objectListCopy
 end
 
+function IsSamePattern(patternA, patternB)
+	return patternA.deltaX == patternB.deltaX and patternA.deltaY == patternB.deltaY and patternA.clearRemainingSpace == patternB.clearRemainingSpace and IsSameObjectList(patternA.objectList, patternB.objectList)
+end
+
+function IsSameObjectList(objectListA, objectListB)
+    -- check same size
+    if table.getn(objectListA) ~= table.getn(objectListB) then return false end
+
+    -- check same elements
+    for i, objectA in ipairs(objectListA) do
+        local objectB = objectListB[i]
+
+        -- check same object
+        local sameObject = objectA.x == objectB.x and objectA.y == objectB.y and objectA.block == objectB.block
+        if objectA.dx ~= nil and objectA.dy ~= nil then
+            sameObject = sameObject and objectA.dx == objectB.dx and objectA.dy == objectB.dy
+        end
+        if not sameObject then return false end
+    end
+
+	return true
+end
+
+
 function BuildBlueprint_MetaData(buildData)
     local metaData = {
         startTime = coreutils.UniversalTime(),

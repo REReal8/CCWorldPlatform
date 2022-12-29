@@ -61,7 +61,8 @@
         "mobj_chest",
         "t_coredht",
         "mobj_birchforest",
-        "t_mobj_birchforest"
+        "t_mobj_birchforest",
+        "t_builder"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

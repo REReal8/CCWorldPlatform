@@ -285,6 +285,7 @@ function ExecuteRoleTest(t)
 		-- test options
 		local options	= {
 			{key = "a", desc = "alchemist", 		func = ExecuteRoleTest, param = {file = t_alchemist, filename = "t_alchemist"}},
+			{key = "b", desc = "builder", 			func = ExecuteRoleTest, param = {file = t_builder, filename = "t_builder"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
 

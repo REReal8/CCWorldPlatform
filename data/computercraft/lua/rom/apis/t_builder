@@ -1,0 +1,52 @@
+
+local pattern1 = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 3, y = 3, block = "minecraft:birch_sapling"},
+        { x = 3, y = 0, block = "minecraft:torch"},
+        { x = 0, y = 3, block = "minecraft:torch"},
+    },
+    clearRemainingSpace = true,
+}
+
+local pattern2 = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+        { x = 1, y = 1, block = "minecraft:birch_sapling"},
+    },
+    clearRemainingSpace = true,
+}
+
+function T_All()
+    T_IsSamePattern()
+    T_CopyPattern()
+end
+
+function T_IsSamePattern()
+    -- prepare test
+    corelog.WriteToLog("* role_builder IsSamePattern tests")
+
+    -- test
+    local isSamePattern = role_builder.IsSamePattern(pattern1, pattern1)
+    local expectedIsSamePattern = true
+    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
+
+    isSamePattern = role_builder.IsSamePattern(pattern1, pattern2)
+    expectedIsSamePattern = false
+    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
+
+    -- cleanup test
+end
+
+function T_CopyPattern()
+    -- prepare test
+    corelog.WriteToLog("* role_builder CopyPattern tests")
+
+    -- test
+    local patternCopy = role_builder.CopyPattern(pattern1)
+    assert(role_builder.IsSamePattern(patternCopy, pattern1), "gotten CopyPattern(="..textutils.serialize(patternCopy)..") not the same as expected(="..textutils.serialize(pattern1)..")")
+
+    -- cleanup test
+end
