@@ -44,7 +44,7 @@ function T_GetFuelLevels_Att()
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
     local location = coremove.GetLocation()
-    t_factory.StartNewV0Site(location)
+    t_factory.StartNewSite(location)
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -61,7 +61,7 @@ function T_GetFuelLevels_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
 
-    t_factory.StopV0Site(location)
+    t_factory.StopSite(location)
 
     enterprise_forestry.RemoveForest(forestLocator)
 end

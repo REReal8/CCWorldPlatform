@@ -35,14 +35,14 @@ function T_GetFuelNeed_Production_Att()
     corelog.WriteToLog("# Test GetFuelNeed_Production_Att")
     local items = { ["minecraft:birch_planks"] = 4 }
     local location = coremove.GetLocation()
-    StartNewV0Site(location)
+    StartNewSite(location)
 
     -- check
     local fuelNeed = enterprise_factory.GetFuelNeed_Production_Att(items)
     corelog.WriteToLog("   "..fuelNeed.." fuelNeed for "..textutils.serialize(items))
 
     -- cleanup test
-    StopV0Site(location)
+    StopSite(location)
 end
 
 function T_BuildAndStartNewV1Site()
@@ -81,13 +81,15 @@ function T_BuildNewV0Site()
 end
 
 function T_StartNewV0Site()
-    StartNewV0Site(baseLocationV0)
+    StartNewSite(baseLocationV0)
 end
 
-function StartNewV0Site(baseLocation)
+function StartNewSite(baseLocation, version)
+    version = version or "v0"
+
     enterprise_factory.StartNewSite_SSrv({
         baseLocation        = baseLocation,
-        siteVersion         = "v0",
+        siteVersion         = version,
         siteAlreadyBuild    = true
     }, "t_main.Func1_Callback", {"some callback data"})
 end
@@ -106,10 +108,10 @@ function DismantleV0Site(baseLocation)
 end
 
 function T_StopV0Site()
-    StopV0Site(baseLocationV0)
+    StopSite(baseLocationV0)
 end
 
-function StopV0Site(baseLocation)
+function StopSite(baseLocation)
     enterprise_factory.StopSite_ASrv({
         baseLocation    = baseLocation
     }, "t_main.Func1_Callback", {"some callback data"})

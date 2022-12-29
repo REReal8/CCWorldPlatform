@@ -1,5 +1,6 @@
 local level0 = 0
 local level1 = 1
+local baseLocationV0 = {x=3, y= 2, z= 1, dx=0, dy=1}
 
 function T_All()
     T_GetFuelNeed_Refuel_Att()
@@ -19,8 +20,7 @@ function T_GetFuelNeed_Refuel_Att()
     local forest = t_mobj_birchforest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
-    local location = coremove.GetLocation()
-    t_factory.StartNewV0Site(location)
+    t_factory.StartNewSite(baseLocationV0)
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -36,11 +36,11 @@ function T_GetFuelNeed_Refuel_Att()
     fuelNeed = enterprise_energy.GetFuelNeed_Refuel_Att()
     expectedFuelNeed = 89
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level1.." not the same as expected(="..expectedFuelNeed..")")
+    t_factory.StopSite(baseLocationV0)
 
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
 
-    t_factory.StopV0Site(location)
 
     enterprise_forestry.RemoveForest(forestLocator)
 end

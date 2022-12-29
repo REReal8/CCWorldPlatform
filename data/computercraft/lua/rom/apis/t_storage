@@ -5,7 +5,7 @@ function T_BuildAndStartNewSite_ASrv()
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
     local location = coremove.GetLocation()
-    t_factory.StartNewV0Site(location)
+    t_factory.StartNewSite(location)
 
     -- test
     enterprise_storage.BuildAndStartNewSite_ASrv({
@@ -22,7 +22,7 @@ function Cleanup_Callback(callbackData, taskResult)
     corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     -- cleanup test
-    t_factory.StopV0Site(callbackData.location)
+    t_factory.StopSite(callbackData.location)
 
     enterprise_forestry.RemoveForest(callbackData.forestLocator)
 end

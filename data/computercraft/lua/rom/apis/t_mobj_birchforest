@@ -1,4 +1,4 @@
-local level = 0
+local level0 = 0
 local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
 local nTrees = 1
 local level2 = 1
@@ -20,11 +20,11 @@ function T_Getters()
     -- prepare test
     corelog.WriteToLog("* mobj_birchforest getter tests")
     local id = coreutils.NewId()
-    local forest = CreateForest(id) if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = CreateForest(level0, id) if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
     assert(forest:getId() == id, "gotten id(="..forest:getId()..") not the same as expected(="..id..")")
-    assert(forest:getLevel() == level, "gotten level(="..forest:getLevel()..") not the same as expected(="..level..")")
+    assert(forest:getLevel() == level0, "gotten level(="..forest:getLevel()..") not the same as expected(="..level0..")")
     assert(forest:getLocation() == location, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location)..")")
     assert(forest:getNTrees() == nTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees..")")
     assert(forest:getLocalLogsLocator() == localLogsLocator, "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
@@ -33,8 +33,9 @@ function T_Getters()
     -- cleanup test
 end
 
-function CreateForest(id)
+function CreateForest(level, id)
     -- check input
+    level = level or level0
     id = id or coreutils.NewId()
     localLogsLocator = localLogsLocator or enterprise_turtle.GetHostLocator_Att()
     localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetHostLocator_Att()
