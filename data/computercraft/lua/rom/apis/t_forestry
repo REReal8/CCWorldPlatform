@@ -39,14 +39,25 @@ function T_SaveAndRemoveForest()
     -- cleanup test
 end
 
+local levelm1 = -1
 local level0 = 0
 local level1 = 1
+local level2 = 2
 local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
 local nTrees1 = 1
+local nTrees2 = 2
 local nTrees3 = 3
+
+function T_AddNewSite_ASrv_Levelm1()
+    AddNewSite_ASrv(levelm1, nTrees1)
+end
 
 function T_AddNewSite_ASrv_Level0()
     AddNewSite_ASrv(level0, nTrees1)
+end
+
+function T_AddNewSite_ASrv_Level2()
+    AddNewSite_ASrv(level2, nTrees1)
 end
 
 function AddNewSite_ASrv(level, nTrees)
@@ -76,12 +87,24 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     enterprise_forestry.RemoveForest(forestLocator)
 end
 
+function T_UpgradeSite_ASrv_Levelm1_Level0Trees1()
+    UpgradeSite_ASrv(levelm1, nTrees1, level0, nTrees1)
+end
+
 function T_UpgradeSite_ASrv_Level1Trees1()
     UpgradeSite_ASrv(level0, nTrees1, level1, nTrees1)
 end
 
 function T_UpgradeSite_ASrv_Level1Trees3()
     UpgradeSite_ASrv(level0, nTrees1, level1, nTrees3)
+end
+
+function T_UpgradeSite_ASrv_Level2Trees1()
+    UpgradeSite_ASrv(level0, nTrees1, level2, nTrees1)
+end
+
+function T_UpgradeSite_ASrv_Level2Trees2()
+    UpgradeSite_ASrv(level0, nTrees1, level2, nTrees2)
 end
 
 function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted)

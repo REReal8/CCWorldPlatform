@@ -63,46 +63,41 @@ function GetFuelNeed_Refuel_Att()
 
     -- determine fuelNeed
     local fuelNeed = 0
-
-    -- get forest if it (already) exists
-    local forest = nil
-    local forestLocator = parameters.forestLocator
-    if forestLocator then
+    local enterpriseLevel = parameters.enterpriseLevel
+    if enterpriseLevel > 0 then
+        -- get forest
+        local forestLocator = parameters.forestLocator
+        local forest = nil
 --        forest =  mobj_birchforest.BirchForestClass:new(enterprise_forestry.GetForest(forestLocator)) -- ToDo: get mobj_birchforest directly
         -- object ophalen
 --        forest = coredht.GetResource(forestLocator)
         forest = enterprise_forestry.GetForest(forestLocator)
         if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return GetLargeFuelAmount_Att() end
-    end
 
-    -- check there is (already) a forest
-    if forest then
         -- determine fuelNeed by forest
         local fuelNeed_Harvest = forest:getFuelNeed_Harvest_Att()
         fuelNeed = fuelNeed + fuelNeed_Harvest
 
         -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
-        if parameters.enterpriseLevel > 0 then
+        if enterpriseLevel > 1 then
             local fuelNeed_ExtraTree = forest:getFuelNeedExtraTree_Att()
             fuelNeed = fuelNeed + fuelNeed_ExtraTree
         end
-    end
 
-    -- check there is (already) a factory
-    local aFactoryExists = enterprise_factory.GetNumberOfSites_Att() > 0
-    if aFactoryExists then
+        -- check there is a factory
+        local aFactoryExists = enterprise_factory.GetNumberOfSites_Att() > 0
+        if not aFactoryExists then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: not factory found") return GetLargeFuelAmount_Att() end
+
         -- determine fuelNeed by factory
         local items = FuelItemsForFuel(1)
         local fuelNeed_Production = enterprise_factory.GetFuelNeed_Production_Att(items)
         fuelNeed = fuelNeed + fuelNeed_Production
 
         -- determine fuelNeed for traveling
-        if forest then
-            local forestLocation = forest:getLocation()
-            local factoryLocation = enterprise_factory.GetSiteLocation_Att(items)
-            local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
-            fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
-        end
+        local forestLocation = forest:getLocation()
+        local factoryLocation = enterprise_factory.GetSiteLocation_Att(items)
+        local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
+        fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
     end
 
     -- end
@@ -118,9 +113,13 @@ function GetRefuelAmount_Att()
     local parameters = GetParameters()
     local enterpriseLevel = parameters.enterpriseLevel
     if enterpriseLevel == 0 then
-        return 60 -- 1 log = 4 planks = 60 fuel
+        return 0
     elseif enterpriseLevel == 1 then
+        return 60 -- 1 log = 4 planks = 60 fuel
+    elseif enterpriseLevel == 2 then
         return 300 -- 1 tree = min 5 logs = 20 planks = 300 fuel
+    elseif enterpriseLevel == 3 then
+        return 1800 -- 6 tree = min 30 logs = 120 planks = 1800 fuel
     else
         corelog.Warning("enterprise_energy.GetRefuelAmount_Att: not (yet) implemented for enterpriseLevel="..enterpriseLevel)
         return GetLargeFuelAmount_Att()
@@ -251,6 +250,9 @@ function UpdateEnterprise_SSrv(...)
                 forestLocator           + (URL, nil) locating the forest intended for raw fuel materials
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid input") return {success = false} end
+
+    -- check forestLocator
+    if enterpriseLevel > 0 and not forestLocator then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid forestLocator(=nil) for enterpriseLevel="..enterpriseLevel) return {success = false} end
 
     -- get parameters
     local parameters = GetParameters()

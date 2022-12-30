@@ -19,7 +19,7 @@ local db = {
 
 function AddNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, forestLevel, nTrees, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, baseLocation, forestLevel, nTrees, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This async public service builds a new forest site and ensures it's ready for use.
 
         Return value:
@@ -35,7 +35,7 @@ function AddNewSite_ASrv(...)
                 baseLocation            + (table) world location of the base (lower left corner) of this site
                 forestLevel             + (number) level of the site
                 nTrees                  + (number) number of initial trees
-                materialsHostLocator    - (URL) locating the host of the building materials
+                materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
@@ -61,54 +61,67 @@ function AddNewSite_ASrv(...)
     local forestLocator = SaveForest(forest)
 
     -- create projectDef and projectData
-    local firstTreeLocation         = coremove.GetRelativeLocation(baseLocation, 3, 2, 0)
-    local plantFirstSaplingTaskData =  {
-        startLocation               = coremove.CopyLocation(firstTreeLocation),
-    }
-    local harvestFirstTreeTaskData = {
-        forestLevel                 = forestLevel, -- should be 0 ...
-        firstTreeLocation           = coremove.CopyLocation(firstTreeLocation),
-        nTrees                      = nTrees, -- should be 1 .,,
-        waitForFirstTree            = false, -- first log should already be chopped
-    }
     local projectData = {
-        plantFirstSaplingTaskData   = plantFirstSaplingTaskData,
-        plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData),
-        plantFirstSapling_Task      = "role_forester.PlantFirstSapling_Task",
-
         forestLocator               = forestLocator,
-        forestL0                    = forestLevel,
-        forestFirstTree             = nTrees,
-
-        harvestFirstTreeTaskData    = harvestFirstTreeTaskData,
-        harvestFirstTreeMetaData    = role_forester.HarvestForest_MetaData(harvestFirstTreeTaskData),
-        harvestFirstTree_Task       = "role_forester.HarvestForest_Task",
+        forestLevel                 = forestLevel,
+        nTrees                      = nTrees,
     }
-    local projectDef = {
-        steps   = {
+
+    local projectSteps = { }
+    if forestLevel == -1 then
+        -- add build tree step
+        table.insert(projectSteps,
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingTaskData" },
-            }},
-            { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
-                { keyDef = "forestLocator"              , valueSource = 0, keyDefSource = "forestLocator" },
-                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
-                { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
-            }},
-            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestFirstTree_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestFirstTreeTaskData" },
-            }},
-            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"                   , valueSource = 3, keyDefSource = "success" },
-            }},
-        },
+            }}
+        )
+
+        -- add step data
+        local firstTreeLocation         = coremove.GetRelativeLocation(baseLocation, 3, 2, 0)
+        local plantFirstSaplingTaskData =  {
+            startLocation               = coremove.CopyLocation(firstTreeLocation),
+        }
+        projectData.plantFirstSaplingTaskData   = plantFirstSaplingTaskData
+        projectData.plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData)
+        projectData.plantFirstSapling_Task      = "role_forester.PlantFirstSapling_Task"
+    else
+        -- add build tree step
+        table.insert(projectSteps,
+            { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
+                { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = "treeBaseLocation" },
+                { keyDef = "treePattern"            , valueSource = 0, keyDefSource = "treePattern" },
+                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            }}
+        )
+
+        -- add step data
+        local treeBaseLocation  = coremove.CopyLocation(baseLocation)
+        local targetBasePattern = forest:getBasePattern(forestLevel)
+        projectData.materialsHostLocator        = materialsHostLocator
+        projectData.treeBaseLocation            = treeBaseLocation
+        projectData.treePattern                 = targetBasePattern
+    end
+
+    table.insert(projectSteps,
+        { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
+            { keyDef = "forestLocator"              , valueSource = 0, keyDefSource = "forestLocator" },
+            { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestLevel" },
+            { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "nTrees" },
+        }}
+    )
+    table.insert(projectSteps,
+        { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+            { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+            { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+        }}
+    )
+
+    local projectDef = {
+        steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                        , valueSource = 4, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
             { keyDef = "forestLocator"                  , valueSource = 2, keyDefSource = "forestLocator" },
         }
     }
@@ -157,43 +170,58 @@ function UpgradeSite_ASrv(...)
     -- determine projectSteps and projectData
     local projectSteps = { }
     local areAllTrueStepDataDef = {}
+    local targetTreePattern = forest:getTreePattern(targetLevel)
     local projectData = {
         forestLocator           = forestLocator,
         targetLevel             = targetLevel,
-        treePattern             = forest:getTreePattern(targetLevel),
+        treePattern             = targetTreePattern,
         materialsHostLocator    = materialsHostLocator,
     }
 
     -- add project steps for upgrading level
     local iStep = 0
+    local startingTreePattern = forest:getTreePattern(startingLevel)
     local startingNTrees = forest:getNTrees()
     if startingLevel < targetLevel and startingNTrees > 0 then
         -- upgrade level data
-        projectData.basePattern     = forest:getBasePattern(targetLevel)
+        local targetBasePattern = forest:getBasePattern(targetLevel)
+        local startingBasePattern = forest:getBasePattern(startingLevel)
+        projectData.basePattern     = targetBasePattern
         projectData.startingNTrees  = startingNTrees
 
         -- loop on current trees
         for iTree = 1, startingNTrees do
-            -- add build tree step
-            iStep = iStep + 1
-            local iStepStr = tostring(iStep)
-            local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
-            local treeBaseLocationStr = "treeBaseLocation"..iStepStr
+            -- get pattern
+            local startingParttern = startingTreePattern
+            local targetPattern = targetTreePattern
             local patternStr = "treePattern"
-            if iTree == 1 then patternStr = "basePattern" end
-            table.insert(projectSteps,
-                { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
-                    { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
-                    { keyDef = "treePattern"            , valueSource = 0, keyDefSource = patternStr },
-                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
-                }}
-            )
+            if iTree == 1 then
+                startingParttern = startingBasePattern
+                targetPattern = targetBasePattern
+                patternStr = "basePattern"
+            end
 
-            -- add step data
-            projectData[treeBaseLocationStr] = treeBaseLocation
+            -- check pattern needs update
+            if not role_builder.IsSamePattern(targetPattern, startingParttern) then
+                -- add build tree step
+                iStep = iStep + 1
+                local iStepStr = tostring(iStep)
+                local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
+                local treeBaseLocationStr = "treeBaseLocation"..iStepStr
+                table.insert(projectSteps,
+                    { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
+                        { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
+                        { keyDef = "treePattern"            , valueSource = 0, keyDefSource = patternStr },
+                        { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                    }}
+                )
 
-            -- add success stepDataDef
-            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+                -- add step data
+                projectData[treeBaseLocationStr] = treeBaseLocation
+
+                -- add success stepDataDef
+                table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+            end
         end
 
         -- update forest info

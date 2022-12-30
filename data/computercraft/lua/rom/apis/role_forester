@@ -63,8 +63,8 @@ function HarvestForest_MetaData(taskData)
 
     -- determine fuelNeed
     local fuelNeed = 0
-    local fuelLevel = turtle.getFuelLevel()
-    if forestLevel > 0 or fuelLevel >= FuelNeededPerTree() then
+--    local fuelLevel = turtle.getFuelLevel()
+    if forestLevel > -1 then
         fuelNeed = FuelNeededPerRound(nTrees)
     end
 
@@ -117,20 +117,22 @@ function HarvestForest_Task(taskData)
 
     -- check for L0 case with very little fuel
     local fuelLevel = turtle.getFuelLevel()
-    if forestLevel == 0 and fuelLevel < FuelNeededPerTree() then
+    if forestLevel == -1 and fuelLevel < FuelNeededPerTree() then
         -- wait and chop first log
         WaitAndChopFirstLog()
     else
         -- optionally wait for tree
-        if waitForFirstTree then
+        if waitForFirstTree and forestLevel > -1 then
             WaitForTree()
         end
 
         -- harvest forest
+        local dontCleanup = true
+--        if forestLevel >= 2 then dontCleanup = false end -- ToDo: consider implementing in enterprise to ensure proper usages of chests
         Rondje({
-            depth = nTrees,
-            width = 1,
-            dontCleanup = true,
+            depth       = nTrees, -- ToDo: modify to spread nTrees over depth and width
+            width       = 1,
+            dontCleanup = dontCleanup,
         })
     end
 

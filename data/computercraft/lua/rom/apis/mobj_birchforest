@@ -16,6 +16,15 @@ BirchForestClass = {
     _localSaplingsLocator   = nil,
 }
 
+local tree_patternLm1 = {
+    deltaX      = 1,
+    deltaY      = 1,
+    objectList  = {
+        { x = 0, y = 0, block = "minecraft:birch_sapling"},
+    },
+    clearRemainingSpace = true,
+}
+
 local tree_patternL0 = {
     deltaX      = 6,
     deltaY      = 6,
@@ -32,6 +41,20 @@ local tree_patternL1 = {
         { x = 3, y = 3, block = "minecraft:birch_sapling"},
         { x = 3, y = 0, block = "minecraft:torch"},
         { x = 0, y = 3, block = "minecraft:torch"},
+    },
+    clearRemainingSpace = true,
+}
+
+local base_patternL2 = {
+    deltaX      = 6,
+    deltaY      = 6,
+    objectList  = {
+        { x = 3, y = 3, block = "minecraft:birch_sapling"},
+        { x = 3, y = 0, block = "minecraft:torch"},
+        { x = 0, y = 3, block = "minecraft:torch"},
+        { x = 2, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+        { x = 4, y = 1, dx =1, dy = 0, block = "minecraft:chest"},
+        { x = 5, y = 2, dx =1, dy = 0, block = "minecraft:chest"},
     },
     clearRemainingSpace = true,
 }
@@ -125,16 +148,18 @@ function BirchForestClass:setLocalSaplingsLocator(localSaplingsLocator)
 end
 
 function BirchForestClass:getBasePattern(level)
-    if level == 0 then      return role_builder.CopyPattern(tree_patternL0)
+    if level == -1 then     return role_builder.CopyPattern(tree_patternLm1)
+    elseif level == 0 then  return role_builder.CopyPattern(tree_patternL0)
     elseif level == 1 then  return role_builder.CopyPattern(tree_patternL1)
---    elseif level == 2 then  return role_builder.CopyPattern(base_patternL2)
+    elseif level == 2 then  return role_builder.CopyPattern(base_patternL2)
     else                    corelog.Error("mobj_birchforest.getBasePattern: Don't know pattern for level "..level) return nil end
 end
 
 function BirchForestClass:getTreePattern(level)
-    if level == 0 then      return role_builder.CopyPattern(tree_patternL0)
+    if level == -1 then     return role_builder.CopyPattern(tree_patternLm1)
+    elseif level == 0 then  return role_builder.CopyPattern(tree_patternL0)
     elseif level == 1 then  return role_builder.CopyPattern(tree_patternL1)
---    elseif level == 2 then  return role_builder.CopyPattern(tree_patternL1) -- same as L1
+    elseif level == 2 then  return role_builder.CopyPattern(tree_patternL1) -- same as L1
     else                    corelog.Error("mobj_birchforest.getTreePattern: Don't know pattern for level "..level) return nil end
 end
 
