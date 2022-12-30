@@ -39,22 +39,26 @@ function T_SaveAndRemoveForest()
     -- cleanup test
 end
 
-local level = 0
+local level0 = 0
 local level1 = 1
 local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
 local nTrees1 = 1
 local nTrees3 = 3
 
-function T_AddNewSite_ASrv()
+function T_AddNewSite_ASrv_Level0()
+    AddNewSite_ASrv(level0, nTrees1)
+end
+
+function AddNewSite_ASrv(level, nTrees)
     -- prepare test
-    corelog.WriteToLog("# AddNewSite_ASrv test")
+    corelog.WriteToLog("# AddNewSite_ASrv (L"..level..",trees"..nTrees..") test")
     local originalNForests = enterprise_forestry.GetNumberOfForests_Att()
 
     -- test
     enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
         forestLevel             = level,
-        nTrees                  = nTrees1,
+        nTrees                  = nTrees,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
@@ -72,15 +76,23 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     enterprise_forestry.RemoveForest(forestLocator)
 end
 
-function T_UpgradeSite_ASrv_Trees3()
+function T_UpgradeSite_ASrv_Level1Trees1()
+    UpgradeSite_ASrv(level0, nTrees1, level1, nTrees1)
+end
+
+function T_UpgradeSite_ASrv_Level1Trees3()
+    UpgradeSite_ASrv(level0, nTrees1, level1, nTrees3)
+end
+
+function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted)
     -- prepare test
-    corelog.WriteToLog("# UpgradeSite_ASrv (trees3) test")
+    corelog.WriteToLog("# UpgradeSite_ASrv (L"..levelStart..",trees"..treesStart..") => (L"..levelWanted..",trees"..treesWanted..") test")
     enterprise_forestry.AddNewSite_ASrv({
         baseLocation            = coremove.CopyLocation(location),
-        forestLevel             = level,
-        nTrees                  = nTrees1,
+        forestLevel             = levelStart,
+        nTrees                  = treesStart,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level, treesWanted = nTrees3 })
+    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted })
 end
 
 function UpgradeSite_ASrv_PrepCallback(...)
@@ -129,26 +141,4 @@ function UpgradeSite_ASrv_TestCallback(...)
 
     -- cleanup test
     enterprise_forestry.RemoveForest(forestLocator)
-end
-
-function T_UpgradeSite_ASrv_Level1()
-    -- prepare test
-    corelog.WriteToLog("# UpgradeSite_ASrv (level1) test")
-    enterprise_forestry.AddNewSite_ASrv({
-        baseLocation            = coremove.CopyLocation(location),
-        forestLevel             = level,
-        nTrees                  = nTrees1,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level1, treesWanted = nTrees1 })
-end
-
-function T_UpgradeSite_ASrv_Level1Trees3()
-    -- prepare test
-    corelog.WriteToLog("# UpgradeSite_ASrv (level1 & trees3) test")
-    enterprise_forestry.AddNewSite_ASrv({
-        baseLocation            = coremove.CopyLocation(location),
-        forestLevel             = level,
-        nTrees                  = nTrees1,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = level1, treesWanted = nTrees3 })
 end
