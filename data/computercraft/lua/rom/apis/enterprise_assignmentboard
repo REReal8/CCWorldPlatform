@@ -303,8 +303,8 @@ end
 function ResetStatistics()
     coredht.SaveData({
         maxFuelNeed_Assignment  = 0,
-        minLocation             = {x= 0, y= 0, z= 1, dx=0, dy=1},
-        maxLocation             = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        minLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        maxLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
         maxFuelNeed_Travel      = 0,
     }, db.dhtRoot, db.dhtStatistics)
 end
