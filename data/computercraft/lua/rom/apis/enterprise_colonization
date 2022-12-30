@@ -81,19 +81,25 @@ function CreateNewWorld_ASrv(...)
         upgradeFalse                = false,
 
         forestLocation              = coremove.CopyLocation(forestLocation),
-        forestL0                    = 0,
+        forestLm1                   = -1,
         forestFirstTree             = 1,
 
+        forestL0                    = 0,
+
+        forestL1                    = 1,
+        forestL2                    = 2,
+        nTreeswanted                = nTreeswanted,
+
+        energyL0                    = 0,
         energyL1                    = 1,
+        energyL2                    = 2,
+        energyL3                    = 3,
 
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
         collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
 
         factoryLocation             = coremove.CopyLocation(factoryLocation),
         factoryVersion1             = "v1",
-
-        forestL1                    = 1,
-        nTreeswanted                = nTreeswanted,
 
         factoryVersion2             = "v2",
         upgradeToV2                 = true,
@@ -108,6 +114,9 @@ function CreateNewWorld_ASrv(...)
     -- create project definition
     local createNewWorldProjectDef = {
         steps   = {
+            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL0" },
+            }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "initialiseCoordinates_Task" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "initialiseCoordinatesMetaData" },
@@ -121,16 +130,26 @@ function CreateNewWorld_ASrv(...)
             }},
             { stepName = "enterprise_forestry.AddNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "forestLocation" },
-                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestL0" },
+                { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestLm1" },
                 { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "forestFirstTree" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_shop.RegisterSupplier_SSrv", async = false, stepDataDef = {
-                { keyDef = "supplierLocator"            , valueSource = 3, keyDefSource = "forestLocator" },
+                { keyDef = "supplierLocator"            , valueSource = 4, keyDefSource = "forestLocator" },
             }},
             { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL1" },
-                { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
+                { keyDef = "forestLocator"              , valueSource = 4, keyDefSource = "forestLocator" },
+            }},
+            { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "forestLocator"              , valueSource = 4, keyDefSource = "forestLocator" },
+                { keyDef = "targetLevel"                , valueSource = 0, keyDefSource = "forestL0" },
+                { keyDef = "targetNTrees"               , valueSource = 0, keyDefSource = "forestFirstTree" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            }},
+            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL2" },
+                { keyDef = "forestLocator"              , valueSource = 4, keyDefSource = "forestLocator" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "collectCobbleStone_Task" },
@@ -149,12 +168,17 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
             { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "forestLocator"              , valueSource = 3, keyDefSource = "forestLocator" },
+                { keyDef = "forestLocator"              , valueSource = 4, keyDefSource = "forestLocator" },
                 { keyDef = "targetLevel"                , valueSource = 0, keyDefSource = "forestL1" },
                 { keyDef = "targetNTrees"               , valueSource = 0, keyDefSource = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
-            -- ToDo: consider implementing forest level 2 and use enterprise_forestry.UpgradeSite_ASrv to upgrade to that level
+            { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
+                { keyDef = "forestLocator"              , valueSource = 4, keyDefSource = "forestLocator" },
+                { keyDef = "targetLevel"                , valueSource = 0, keyDefSource = "forestL2" },
+                { keyDef = "targetNTrees"               , valueSource = 0, keyDefSource = "nTreeswanted" },
+                { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            }},
             { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
                 { keyDef = "baseLocation"               , valueSource = 0, keyDefSource = "factoryLocation" },
                 { keyDef = "siteVersion"                , valueSource = 0, keyDefSource = "factoryVersion2" },
@@ -169,6 +193,10 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "layers"                     , valueSource = 0, keyDefSource = "layers" },
                 { keyDef = "materialsHostLocator"       , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }},
+            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL3" },
+                { keyDef = "forestLocator"              , valueSource = 4, keyDefSource = "forestLocator" },
+            }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
                 { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
@@ -181,10 +209,15 @@ function CreateNewWorld_ASrv(...)
                 { keyDef = "success9"                   , valueSource = 9, keyDefSource = "success" },
                 { keyDef = "success10"                  , valueSource = 10, keyDefSource = "success" },
                 { keyDef = "success11"                  , valueSource = 11, keyDefSource = "success" },
+                { keyDef = "success12"                  , valueSource = 12, keyDefSource = "success" },
+                { keyDef = "success13"                  , valueSource = 13, keyDefSource = "success" },
+                { keyDef = "success14"                  , valueSource = 14, keyDefSource = "success" },
+                { keyDef = "success15"                  , valueSource = 15, keyDefSource = "success" },
+                { keyDef = "success16"                  , valueSource = 16, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 12, keyDefSource = "success" },
+            { keyDef = "success"                        , valueSource = 17, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
