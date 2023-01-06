@@ -495,7 +495,7 @@ function BuildForestTree_ASrv(...)
         pattern = treePattern,
         materialsHostLocator = materialsHostLocator,
     }
-    corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint))
+    corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint, { compact = true }))
     enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
 end
 
