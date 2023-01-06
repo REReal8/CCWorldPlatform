@@ -56,7 +56,7 @@ function DefaultMainMenu()
 			intro   = "Choose your action",
 			option  = {
 				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
-				{key = "t", desc = "Execute tests",  			func = ExecuteTest,	    		param = {}},
+				{key = "t", desc = "Execute general tests", 	func = ExecuteTest,	    		param = {}},
 				{key = "r", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
 				{key = "o", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
 				{key = "e", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
@@ -72,7 +72,7 @@ function DefaultMainMenu()
 			intro   = "Choose your action",
 			option  = {
 				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    param = {step = 1}},
-				{key = "t", desc = "Execute tests",  			func = ExecuteTest,	    param = {}},
+				{key = "t", desc = "Execute general tests",  	func = ExecuteTest,	    param = {}},
 				{key = "l", desc = "Load event",				func = LoadEvent,		param = {}},
 				{key = "q", desc = "Quit",          			func = core.DoQuit,		param = {}},
 			},
