@@ -63,9 +63,16 @@ function HarvestForest_MetaData(taskData)
 
     -- determine fuelNeed
     local fuelNeed = 0
---    local fuelLevel = turtle.getFuelLevel()
     if forestLevel > -1 then
         fuelNeed = FuelNeededPerRound(nTrees)
+    end
+
+    -- determine itemsNeeded
+    local itemsNeeded = {
+        ["minecraft:crafting_table"] = 1,
+    }
+    if forestLevel >= 2 then
+        itemsNeeded["minecraft:birch_sapling"] = nTrees
     end
 
     -- end
@@ -75,9 +82,7 @@ function HarvestForest_MetaData(taskData)
         needTool    = true,
         needTurtle  = true,
         fuelNeeded  = fuelNeed,
-        itemsNeeded = {
-            ["minecraft:crafting_table"] = 1,
-        },
+        itemsNeeded = itemsNeeded,
 
         priorityKey = priorityKey,
     }
