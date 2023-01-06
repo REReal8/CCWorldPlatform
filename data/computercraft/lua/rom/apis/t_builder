@@ -14,7 +14,7 @@ local pattern2 = {
     deltaX      = 1,
     deltaY      = 1,
     objectList  = {
-        { x = 1, y = 1, block = "minecraft:birch_sapling"},
+        { x = 0, y = 0, block = "minecraft:birch_sapling"},
     },
     clearRemainingSpace = true,
 }
@@ -28,12 +28,28 @@ function T_IsSamePattern()
     -- prepare test
     corelog.WriteToLog("* role_builder IsSamePattern tests")
 
-    -- test
+    -- test same
     local isSamePattern = role_builder.IsSamePattern(pattern1, pattern1)
     local expectedIsSamePattern = true
     assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
 
+    -- test different
     isSamePattern = role_builder.IsSamePattern(pattern1, pattern2)
+    expectedIsSamePattern = false
+    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
+
+    -- test both nil
+    isSamePattern = role_builder.IsSamePattern(nil, nil)
+    expectedIsSamePattern = true
+    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
+
+    -- test 1st nil
+    isSamePattern = role_builder.IsSamePattern(nil, pattern2)
+    expectedIsSamePattern = false
+    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
+
+    -- test 2nd nil
+    isSamePattern = role_builder.IsSamePattern(pattern1, nil)
     expectedIsSamePattern = false
     assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
 

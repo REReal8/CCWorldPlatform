@@ -35,7 +35,10 @@ function CopyObjectList(objectList)
 end
 
 function IsSamePattern(patternA, patternB)
-	return patternA.deltaX == patternB.deltaX and patternA.deltaY == patternB.deltaY and patternA.clearRemainingSpace == patternB.clearRemainingSpace and IsSameObjectList(patternA.objectList, patternB.objectList)
+    if patternA and patternB then
+	    return patternA.deltaX == patternB.deltaX and patternA.deltaY == patternB.deltaY and patternA.clearRemainingSpace == patternB.clearRemainingSpace and IsSameObjectList(patternA.objectList, patternB.objectList)
+    elseif not patternA and not patternB then return true
+    else return false end
 end
 
 function IsSameObjectList(objectListA, objectListB)
