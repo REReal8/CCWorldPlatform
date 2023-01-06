@@ -36,7 +36,7 @@ end
 
 function T_GetFuelNeed_Production_Att()
     -- prepare test
-    corelog.WriteToLog("# Test GetFuelNeed_Production_Att")
+    corelog.WriteToLog("* Test GetFuelNeed_Production_Att")
     local items = { ["minecraft:birch_planks"] = 4 }
     local location = coremove.GetLocation()
     StartNewSite(location)

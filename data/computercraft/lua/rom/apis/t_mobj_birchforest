@@ -81,7 +81,7 @@ end
 
 function T_getFuelNeed_Harvest_Att()
     -- prepare test
-    corelog.WriteToLog("# mobj_birchforest:getFuelNeed_Harvest_Att() tests")
+    corelog.WriteToLog("* mobj_birchforest:getFuelNeed_Harvest_Att() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
@@ -99,7 +99,7 @@ end
 
 function T_getFuelNeedExtraTree_Att()
     -- prepare test
-    corelog.WriteToLog("# mobj_birchforest:getFuelNeedExtraTree_Att() tests")
+    corelog.WriteToLog("* mobj_birchforest:getFuelNeedExtraTree_Att() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
@@ -117,7 +117,7 @@ end
 
 function T_needsTo_ProvideItemsTo_SSrv()
     -- prepare test
-    corelog.WriteToLog("# mobj_birchforest:needsTo_ProvideItemsTo_SSrv() tests")
+    corelog.WriteToLog("* mobj_birchforest:needsTo_ProvideItemsTo_SSrv() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -139,7 +139,7 @@ end
 
 function T_can_ProvideItems_QSrv()
     -- prepare test
-    corelog.WriteToLog("# mobj_birchforest:can_ProvideItems_QSrv() tests")
+    corelog.WriteToLog("* mobj_birchforest:can_ProvideItems_QSrv() tests")
     local forest = CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test

@@ -12,7 +12,7 @@ end
 
 function T_TestPureLogicService_SSrv()
     -- prepare test
-    corelog.WriteToLog("# TestPureLogicService_SSrv test")
+    corelog.WriteToLog("* TestPureLogicService_SSrv test")
 
     -- test
     local serviceResults = enterprise_test.TestPureLogicService_SSrv(testData)
@@ -29,7 +29,7 @@ function T_TestServiceWithAssignmentAndCallback_ASrv()
     -- prepare test
 
     -- test
-    corelog.WriteToLog("# TestServiceWithAssignmentAndCallback_ASrv test")
+    corelog.WriteToLog("* TestServiceWithAssignmentAndCallback_ASrv test")
     local callbackFunction = "t_test.TestServiceWithAssignmentAndCallback_ASrv_Callback"
     enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(testData, callbackFunction)
 end
@@ -48,7 +48,7 @@ function T_TestServiceWithAssignmentAndCallbackAndArguments_ASrv()
     -- prepare test
 
     -- test
-    corelog.WriteToLog("# TestServiceWithAssignmentAndCallbackAndArguments_ASrv test")
+    corelog.WriteToLog("* TestServiceWithAssignmentAndCallbackAndArguments_ASrv test")
     local callbackFunction = "t_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv_Callback"
     local callbackData = { [0] = callbackTestValue}
     enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(testData, callbackFunction, callbackData)

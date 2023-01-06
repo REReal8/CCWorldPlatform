@@ -6,7 +6,7 @@ end
 
 function T_DeleteForests()
     -- prepare test
-    corelog.WriteToLog("# DeleteForests test")
+    corelog.WriteToLog("* DeleteForests test")
 
     -- test
     enterprise_forestry.DeleteForests()
@@ -23,14 +23,14 @@ function T_SaveAndRemoveForest()
     local originalNForests = enterprise_forestry.GetNumberOfForests_Att()
 
     -- SaveForest test
-    corelog.WriteToLog("# SaveForest test")
+    corelog.WriteToLog("* SaveForest test")
     local forestLocator = enterprise_forestry.SaveForest(forest)
     local nForests = enterprise_forestry.GetNumberOfForests_Att()
     local expectedNForests = originalNForests + 1
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- RemoveForest test
-    corelog.WriteToLog("# RemoveForest test")
+    corelog.WriteToLog("* RemoveForest test")
     enterprise_forestry.RemoveForest(forestLocator)
     nForests = enterprise_forestry.GetNumberOfForests_Att()
     expectedNForests = originalNForests
