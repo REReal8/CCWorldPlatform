@@ -2,6 +2,10 @@ local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV2 = baseLocationV1
 
+function T_All()
+    T_GetFuelNeed_Production_Att()
+end
+
 function T_ProvideItemsTo_Craft()
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
@@ -37,9 +41,10 @@ function T_GetFuelNeed_Production_Att()
     local location = coremove.GetLocation()
     StartNewSite(location)
 
-    -- check
+    -- test
     local fuelNeed = enterprise_factory.GetFuelNeed_Production_Att(items)
-    corelog.WriteToLog("   "..fuelNeed.." fuelNeed for "..textutils.serialize(items))
+    local expectedFuelNeed = 0
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
     StopSite(location)

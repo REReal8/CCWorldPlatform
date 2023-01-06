@@ -15,8 +15,9 @@ function T_All()
 
     -- enterprise tests
     t_test.T_All()
-    t_energy.T_All()
     t_forestry.T_All()
+    t_factory.T_All()
+    t_energy.T_All()
 end
 
 function T_ResetWorld()
