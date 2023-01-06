@@ -22,6 +22,47 @@ local compact = { compact = true }
 function T_All()
     T_IsSamePattern()
     T_CopyPattern()
+    T_IsPattern()
+end
+
+function T_IsPattern()
+    -- prepare test
+    corelog.WriteToLog("* role_builder IsPattern tests")
+
+    -- test correct pattern
+    local isPattern = role_builder.IsPattern(pattern1)
+    local expectedIsPattern = true
+    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
+
+    -- test deltaX
+    local incorrectPattern = role_builder.CopyPattern(pattern1)
+    incorrectPattern.deltaX = nil
+    isPattern = role_builder.IsPattern(incorrectPattern)
+    expectedIsPattern = false
+    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
+
+    -- test deltaY
+    incorrectPattern = role_builder.CopyPattern(pattern1)
+    incorrectPattern.deltaY = nil
+    isPattern = role_builder.IsPattern(incorrectPattern)
+    expectedIsPattern = false
+    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
+
+    -- test clearRemainingSpace
+    incorrectPattern = role_builder.CopyPattern(pattern1)
+    incorrectPattern.clearRemainingSpace = nil
+    isPattern = role_builder.IsPattern(incorrectPattern)
+    expectedIsPattern = false
+    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
+
+    -- test clearRemainingSpace not nil
+    incorrectPattern = role_builder.CopyPattern(pattern1)
+    incorrectPattern.objectList = nil
+    isPattern = role_builder.IsPattern(incorrectPattern)
+    expectedIsPattern = false
+    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
+
+    -- cleanup test
 end
 
 function T_IsSamePattern()

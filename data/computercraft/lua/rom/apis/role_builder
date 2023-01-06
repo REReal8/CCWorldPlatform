@@ -60,6 +60,23 @@ function IsSameObjectList(objectListA, objectListB)
 	return true
 end
 
+function IsPattern(pattern)
+    return type(pattern.deltaX) == "number" and type(pattern.deltaY) == "number" and type(pattern.clearRemainingSpace) =="boolean" and IsObjectList(pattern.objectList)
+end
+
+function IsObjectList(objectList)
+    -- check table
+    if type(objectList) ~= "table" then return false end
+
+    -- check elements
+    for i, object in ipairs(objectList) do
+        if type(object.x) ~= "number" or type(object.y) ~= "number" or type(object.block) ~= "string" then return false end
+
+        if (type(object.dx) ~= "nil" and type(object.dx) ~= "number") or (type(object.dy) ~= "nil" and type(object.dy) ~= "number") then return false end
+    end
+
+    return true
+end
 
 function BuildBlueprint_MetaData(buildData)
     local metaData = {
