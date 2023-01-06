@@ -9,7 +9,6 @@ local pattern1 = {
     },
     clearRemainingSpace = true,
 }
-
 local pattern2 = {
     deltaX      = 1,
     deltaY      = 1,
@@ -18,6 +17,7 @@ local pattern2 = {
     },
     clearRemainingSpace = true,
 }
+local compact = { compact = true }
 
 function T_All()
     T_IsSamePattern()
@@ -62,7 +62,7 @@ function T_CopyPattern()
 
     -- test
     local patternCopy = role_builder.CopyPattern(pattern1)
-    assert(role_builder.IsSamePattern(patternCopy, pattern1), "gotten CopyPattern(="..textutils.serialize(patternCopy)..") not the same as expected(="..textutils.serialize(pattern1)..")")
+    assert(role_builder.IsSamePattern(patternCopy, pattern1), "gotten CopyPattern(="..textutils.serialize(patternCopy, compact)..") not the same as expected(="..textutils.serialize(pattern1, compact)..")")
 
     -- cleanup test
 end
