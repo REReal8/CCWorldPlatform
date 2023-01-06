@@ -29,7 +29,7 @@ function TestPureLogicService_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid input") return {success = false} end
 
-    corelog.WriteToLog(">calling enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
+--    corelog.WriteToLog(">calling enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
 
     -- determine result to return
     local serviceResult = {
@@ -63,7 +63,7 @@ function TestServiceWithAssignmentAndCallback_ASrv(...)
     local callbackData = {}
     if not checkSuccess then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callback..")")
+--    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callback..")")
 
     -- create assignment arguments
     local metaData = {
@@ -106,7 +106,7 @@ function TestServiceWithAssignmentAndCallbackAndArguments_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_colonization.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
-    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
+--    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
 
     -- create assignment arguments
     local metaData = {
@@ -137,7 +137,7 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function Func1_Task(taskData)
-    corelog.WriteToLog("  doing enterprise_test.Func1_Task("..textutils.serialise(taskData)..").")
+--    corelog.WriteToLog("  doing enterprise_test.Func1_Task("..textutils.serialise(taskData)..").")
 
     return { success = true, input = taskData.arg1 }
 end

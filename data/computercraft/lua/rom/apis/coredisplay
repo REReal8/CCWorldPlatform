@@ -214,6 +214,7 @@ function ExecuteTest(t)
 		-- test options
 		local options	= {
 			{key = "g", desc = "general", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
+			{key = "t", desc = "enterprise_test",	func = ExecuteTest, param = {file = t_test, filename = "t_test"}},
 			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
 			{key = "u", desc = "url", 				func = ExecuteTest, param = {file = t_url, filename = "t_url"}},
 			{key = "d", desc = "coredht", 			func = ExecuteTest, param = {file = t_coredht, filename = "t_coredht"}},

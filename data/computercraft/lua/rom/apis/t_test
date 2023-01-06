@@ -1,0 +1,68 @@
+local testValue = 20
+local testData = {
+    testArg = testValue,
+}
+local callbackTestValue = "some callback data"
+
+function T_All()
+    T_TestPureLogicService_SSrv()
+    T_TestServiceWithAssignmentAndCallback_ASrv()
+    T_TestServiceWithAssignmentAndCallbackAndArguments_ASrv()
+end
+
+function T_TestPureLogicService_SSrv()
+    -- prepare test
+    corelog.WriteToLog("# TestPureLogicService_SSrv test")
+
+    -- test
+    local serviceResults = enterprise_test.TestPureLogicService_SSrv(testData)
+    assert(serviceResults.success, "failed executing sync service")
+
+    local input = serviceResults.input
+    local expectedInput = testValue
+    assert(input == expectedInput, "gotten input(="..input..") not the same as expected(="..expectedInput..")")
+
+    -- cleanup test
+end
+
+function T_TestServiceWithAssignmentAndCallback_ASrv()
+    -- prepare test
+
+    -- test
+    corelog.WriteToLog("# TestServiceWithAssignmentAndCallback_ASrv test")
+    local callbackFunction = "t_test.TestServiceWithAssignmentAndCallback_ASrv_Callback"
+    enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(testData, callbackFunction)
+end
+
+function TestServiceWithAssignmentAndCallback_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    local arg1 = serviceResults.input
+    local expectedArg1 = testValue
+    assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
+
+    -- cleanup test
+end
+
+function T_TestServiceWithAssignmentAndCallbackAndArguments_ASrv()
+    -- prepare test
+
+    -- test
+    corelog.WriteToLog("# TestServiceWithAssignmentAndCallbackAndArguments_ASrv test")
+    local callbackFunction = "t_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv_Callback"
+    local callbackData = { [0] = callbackTestValue}
+    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(testData, callbackFunction, callbackData)
+end
+
+function TestServiceWithAssignmentAndCallbackAndArguments_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    local arg1 = serviceResults.input
+    local expectedArg1 = testValue
+    assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
+    local callbackValue = callbackData[0]
+    local expectedCallbackValue = callbackTestValue
+    assert(callbackValue == expectedCallbackValue, "gotten callbackValue(="..(callbackValue or "nil")..") not the same as expected(="..expectedCallbackValue..")")
+
+    -- cleanup test
+end

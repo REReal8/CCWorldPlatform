@@ -16,28 +16,6 @@ function T_ResetWorld()
     enterprise_forestry.DeleteForests()
 end
 
-function T_enterprise_test()
-    -- init
-    local testData = {
-        testArg = 20,
-    }
-
-    -- test sync service
-    corelog.WriteToLog("# Test sync Service")
-    local testResult = enterprise_test.TestPureLogicService_SSrv(testData)
-    corelog.WriteToLog("  testResult = "..textutils.serialize(testResult))
-
-    -- test async service 1
-    corelog.WriteToLog("# Test async service 1")
-    local callbackFunction = "t_main.Func1_Callback"
-    enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(testData, callbackFunction)
-
-    -- test async service 2
-    corelog.WriteToLog("# Test async service 2")
-    local callbackData = {"some callback data"}
-    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(testData, callbackFunction, callbackData)
-end
-
 function T_coreutils_DoCallback()
     -- test DoCallback
     corelog.WriteToLog("# Test DoCallback")
