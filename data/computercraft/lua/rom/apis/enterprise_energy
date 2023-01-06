@@ -76,12 +76,11 @@ function GetFuelNeed_Refuel_Att()
 
         -- determine fuelNeed by forest
         local fuelNeed_Harvest = forest:getFuelNeed_Harvest_Att()
-        fuelNeed = fuelNeed + fuelNeed_Harvest
 
         -- determine fuelNeed for 1 extra tree (to anticipate for fuelNeed in case the forest gets upgraded)
+        local fuelNeed_ExtraTree = 0
         if enterpriseLevel > 1 then
-            local fuelNeed_ExtraTree = forest:getFuelNeedExtraTree_Att()
-            fuelNeed = fuelNeed + fuelNeed_ExtraTree
+            fuelNeed_ExtraTree = forest:getFuelNeedExtraTree_Att()
         end
 
         -- check there is a factory
@@ -91,13 +90,15 @@ function GetFuelNeed_Refuel_Att()
         -- determine fuelNeed by factory
         local items = FuelItemsForFuel(1)
         local fuelNeed_Production = enterprise_factory.GetFuelNeed_Production_Att(items)
-        fuelNeed = fuelNeed + fuelNeed_Production
 
         -- determine fuelNeed for traveling
         local forestLocation = forest:getLocation()
         local factoryLocation = enterprise_factory.GetSiteLocation_Att(items)
         local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
-        fuelNeed = fuelNeed + fuelNeed_ForestFactoryTravel
+
+        -- add fuelNeed
+--        corelog.WriteToLog("E  fuelNeed_Harvest="..fuelNeed_Harvest..", fuelNeed_ExtraTree="..fuelNeed_ExtraTree..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_ForestFactoryTravel="..fuelNeed_ForestFactoryTravel)
+        fuelNeed = fuelNeed + fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel
     end
 
     -- end
