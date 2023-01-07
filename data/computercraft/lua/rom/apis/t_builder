@@ -23,6 +23,7 @@ function T_All()
     T_IsSamePattern()
     T_CopyPattern()
     T_IsPattern()
+--    T_PatternsSubstract()
 end
 
 function T_IsPattern()
@@ -104,6 +105,28 @@ function T_CopyPattern()
     -- test
     local patternCopy = role_builder.CopyPattern(pattern1)
     assert(role_builder.IsSamePattern(patternCopy, pattern1), "gotten CopyPattern(="..textutils.serialize(patternCopy, compact)..") not the same as expected(="..textutils.serialize(pattern1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_PatternsSubstract()
+    -- prepare test
+    corelog.WriteToLog("* role_builder PatternsSubstract tests")
+
+    -- test
+    local offset_x = 3
+    local offset_y = 3
+    local resultPattern = role_builder.PatternsSubstract(pattern1, pattern2, offset_x, offset_y)
+    local expectedPattern = {
+        deltaX      = 6,
+        deltaY      = 6,
+        objectList  = {
+            { x = 3, y = 0, block = "minecraft:torch"},
+            { x = 0, y = 3, block = "minecraft:torch"},
+        },
+        clearRemainingSpace = true,
+    }
+    assert(role_builder.IsSamePattern(resultPattern, expectedPattern), "gotten PatternsSubstract(="..textutils.serialize(resultPattern, compact)..") not the same as expected(="..textutils.serialize(expectedPattern, compact)..")")
 
     -- cleanup test
 end

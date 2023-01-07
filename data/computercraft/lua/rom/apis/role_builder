@@ -78,6 +78,33 @@ function IsObjectList(objectList)
     return true
 end
 
+function PatternsSubstract(...)
+    -- get & check input from description
+    local checkSuccess, patternA, patternB, offset_x, offset_y = coreutils.CheckInput([[
+        This function substracts patternB from patternA with an optional offset
+
+        Return value:
+            substractPattern            - (table) resulting pattern (or nil if one could not be made)
+
+        Parameters:
+            patternA                    + (table) patternA
+            patternB                    + (table) patternB
+            offset_x                    + (number, 0) offset in x direction of patternB relative to patternA
+            offset_y                    + (number, 0) offset in y direction of patternB relative to patternA
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_builder.PatternsSubstract: Invalid input") return nil end
+
+    -- check we are dealing with patterns
+    if not IsPattern(patternA) or not IsPattern(patternB) then corelog.Error("role_builder.PatternsSubstract: Invalid patterns") return nil end
+
+    -- build result pattern
+    local resultPattern = CopyPattern(patternA)
+
+    -- ToDo: check the rest
+
+    return resultPattern
+end
+
 function BuildBlueprint_MetaData(buildData)
     local metaData = {
         startTime = coreutils.UniversalTime(),
