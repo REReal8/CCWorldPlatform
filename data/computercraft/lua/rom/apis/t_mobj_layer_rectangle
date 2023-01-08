@@ -3,6 +3,7 @@ function T_All()
     T_IsOfType()
     T_isSame()
     T_copy()
+    T_ParseWithCheckInput()
 end
 
 local size_x1 = 6
@@ -186,6 +187,23 @@ function T_copy()
     -- test
     local copy = layer1:copy()
     assert(copy:isSame(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_ParseWithCheckInput()
+    -- prepare test
+    corelog.WriteToLog("* mobj_layer_rectangle parsing with CheckInput tests")
+
+    -- test
+    local checkSuccess, layer = coreutils.CheckInput([[
+        Parameters:
+            layer   + (LayerRectangle) object to retrieve from arg
+    ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
+    if not checkSuccess then corelog.Error("t_mobj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
+    local isOfType = mobj_layer_rectangle.IsOfType(layer)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- cleanup test
 end

@@ -289,10 +289,24 @@ function CheckInput(description, ...)
                 end
 
                 -- voldoet het argument aan het opgegeven type?
-                if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
-
-                -- URL omvormen
-                if typeType == "URL" then argument = url.URL:new(argument) end
+                local correctArgumentType = true
+                if type(argument) ~= typeType then
+                    if type(argument) ~= "table" then
+                        correctArgumentType = false
+                    else
+                        -- object oriented types? => tramsform
+                        if typeType == "URL" then
+                            argument = url.URL:new(argument)
+                        elseif typeType == "Block2d" then
+                            argument = mobj_block2d.Block2d:new(argument)
+                        elseif typeType == "LayerRectangle" then
+                            argument = mobj_layer_rectangle.LayerRectangle:new(argument)
+                        else
+                            correctArgumentType = false
+                        end
+                    end
+                end
+                if not correctArgumentType then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
 
                 -- is deze gewenst om terug te geven?
                 if needed == '+' then table.insert(returns, argument) end
