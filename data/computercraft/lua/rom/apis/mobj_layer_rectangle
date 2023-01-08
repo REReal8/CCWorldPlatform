@@ -1,0 +1,122 @@
+
+--[[
+    This file implements mobj_layer_rectangle.
+
+    A mobj_layer_rectangle represents a rectangular layer in the minecraft world.
+
+    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
+--]]
+
+LayerRectangleClass = {
+    _size_x                 = 0,
+    _size_y                 = 0,
+    _blockList              = {},
+    _clearRemainingSpace    = true,
+}
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function LayerRectangleClass:new(o)
+    --[[
+        Constructs a mobj_layer_rectangle.
+
+        Parameters:
+                                        - (table) table with
+                _size_x                 - (number) size of rectangle in x
+                _size_y                 - (number) size of rectangle in y
+                _blockList              - (table) list of blocks within the rectangle
+                _clearRemainingSpace    - (boolean) whether remaining space (i.e. without a block) should be kept as is cleared
+    --]]
+
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function LayerRectangleClass:getSizeX()
+    return self._size_x
+end
+
+function LayerRectangleClass:setSizeX(size_x)
+    -- check input
+    if type(size_x) ~= "number" then corelog.Error("mobj_layer_rectangle:setSizeX: invalid size_x: "..type(size_x)) return end
+
+    self._size_x = size_x
+end
+
+function LayerRectangleClass:getSizeY()
+    return self._size_y
+end
+
+function LayerRectangleClass:setSizeY(size_y)
+    -- check input
+    if type(size_y) ~= "number" then corelog.Error("mobj_layer_rectangle:setSizeY: invalid size_y: "..type(size_y)) return end
+
+    self._size_y = size_y
+end
+
+function LayerRectangleClass:getBlockList()
+    return self._blockList
+end
+
+function LayerRectangleClass:setBlockList(blockList)
+    -- check input
+    if type(blockList) ~= "table" then corelog.Error("mobj_layer_rectangle:setSizeY: invalid size_y: "..type(blockList)) return end
+
+    self._blockList = blockList -- note: no deep copy
+end
+
+function LayerRectangleClass:getClearRemainingSpace()
+    return self._clearRemainingSpace
+end
+
+function LayerRectangleClass:setClearRemainingSpace(clear)
+    -- check input
+    if type(clear) ~= "boolean" then corelog.Error("mobj_layer_rectangle:setClearRemainingSpace: invalid clear: "..type(clear)) return end
+
+    self._clearRemainingSpace = clear
+end
+
+function IsOfType(layer)
+    return type(layer._size_x) == "number" and type(layer._size_y) == "number" and type(layer._clearRemainingSpace) == "boolean" and mobj_block2d.IsBlockList(layer._blockList)
+end
+
+function LayerRectangleClass:isSame(layer)
+    -- check input
+    if not IsOfType(layer) then return false end
+
+    -- check same rectangle
+    local isSame =  self._size_x == layer._size_x and
+                    self._size_y == layer._size_y and
+                    self._clearRemainingSpace == layer._clearRemainingSpace and
+                    mobj_block2d.IsSameBlockList(self._blockList, layer._blockList)
+
+    -- end
+    return isSame
+end
+
+function LayerRectangleClass:copy()
+    local copy = LayerRectangleClass:new({
+        _size_x                 = self._size_x,
+        _size_y                 = self._size_y,
+        _blockList              = mobj_block2d.BlockListCopy(self._blockList),
+        _clearRemainingSpace    = self._clearRemainingSpace,
+    })
+
+    return copy
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/

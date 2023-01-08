@@ -63,7 +63,11 @@
         "mobj_birchforest",
         "t_mobj_birchforest",
         "t_builder",
-        "t_test"
+        "t_test",
+        "mobj_block2d",
+        "t_mobj_block2d",
+        "t_mobj_layer_rectangle",
+        "mobj_layer_rectangle"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

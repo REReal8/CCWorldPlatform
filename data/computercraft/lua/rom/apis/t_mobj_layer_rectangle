@@ -1,0 +1,191 @@
+function T_All()
+    T_new()
+    T_IsOfType()
+    T_isSame()
+    T_copy()
+end
+
+local size_x1 = 6
+local size_x2 = 3
+local size_y1 = 6
+local size_y2 = 3
+local clearRemainingSpace1 = true
+local clearRemainingSpace2 = false
+
+local block1 = mobj_block2d.Block2dClass:new({ _x = 3, _y = 3, _name = "minecraft:birch_sapling" })
+local block2 = mobj_block2d.Block2dClass:new({ _x = 3, _y = 0, _name = "minecraft:torch" })
+local block3 = mobj_block2d.Block2dClass:new({ _x = 0, _y = 3, _name = "minecraft:torch" })
+
+local layer1 = mobj_layer_rectangle.LayerRectangleClass:new({
+    _size_x                 = size_x1,
+    _size_y                 = size_y1,
+    _blockList              = {
+        block1:copy(),
+        block2:copy(),
+        block3:copy(),
+    },
+    _clearRemainingSpace    = clearRemainingSpace1,
+})
+
+local compact = { compact = true }
+
+function T_new()
+    -- prepare test
+    corelog.WriteToLog("* mobj_layer_rectangle:new() tests")
+
+    -- test full
+    local layer = mobj_layer_rectangle.LayerRectangleClass:new({
+        _size_x                 = size_x1,
+        _size_y                 = size_y1,
+        _blockList              = {
+            block1:copy(),
+            block2:copy(),
+            block3:copy(),
+        },
+        _clearRemainingSpace    = clearRemainingSpace1,
+    })
+    assert(layer:getSizeX() == size_x1, "gotten (="..layer:getSizeX()..") not the same as expected(="..size_x1..")")
+    assert(layer:getSizeY() == size_y1, "gotten getSizeY(="..layer:getSizeY()..") not the same as expected(="..size_y1..")")
+    local expectedBlockList = { block1:copy(), block2:copy(), block3:copy(),}
+    assert(mobj_block2d.IsSameBlockList(layer:getBlockList(), expectedBlockList), "gotten getBlockList(="..textutils.serialise(layer:getBlockList(), compact)..") not the same as expected(="..textutils.serialise(expectedBlockList, compact)..")")
+    assert(layer:getClearRemainingSpace() == clearRemainingSpace1, "gotten getClearRemainingSpace(="..tostring(layer:getClearRemainingSpace())..") not the same as expected(="..tostring(clearRemainingSpace1)..")")
+
+    -- test default
+    layer = mobj_layer_rectangle.LayerRectangleClass:new()
+    local defaultSize_x = 0
+    assert(layer:getSizeX() == defaultSize_x, "gotten getSizeX(="..layer:getSizeX()..") not the same as expected(="..defaultSize_x..")")
+    local defaultSize_y = 0
+    assert(layer:getSizeY() == defaultSize_y, "gotten getSizeY(="..layer:getSizeY()..") not the same as expected(="..defaultSize_y..")")
+    local expectedBlockList = { }
+    assert(mobj_block2d.IsSameBlockList(layer:getBlockList(), expectedBlockList), "gotten getBlockList(="..textutils.serialise(layer:getBlockList(), compact)..") not the same as expected(="..textutils.serialise(expectedBlockList, compact)..")")
+    local dedaultClearRemainingSpace = true
+    assert(layer:getClearRemainingSpace() == dedaultClearRemainingSpace, "gotten getClearRemainingSpace(="..tostring(layer:getClearRemainingSpace())..") not the same as expected(="..tostring(dedaultClearRemainingSpace)..")")
+
+    -- cleanup test
+end
+
+function T_IsOfType()
+    -- prepare test
+    corelog.WriteToLog("* mobj_layer_rectangle.IsOfType() tests")
+    local layer = mobj_layer_rectangle.LayerRectangleClass:new({
+        _size_x                 = size_x1,
+        _size_y                 = size_y1,
+        _blockList              = {
+            block1:copy(),
+            block2:copy(),
+            block3:copy(),
+        },
+        _clearRemainingSpace    = clearRemainingSpace1,
+    })
+
+    -- test valid
+    local isOfType = mobj_layer_rectangle.IsOfType(layer)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = mobj_layer_rectangle.IsOfType("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test invalid _size_x
+    layer._size_x = "a string"
+    isOfType = mobj_layer_rectangle.IsOfType(layer)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    layer:setSizeX(size_x1)
+
+    -- test invalid _size_y
+    layer._size_y = "a string"
+    isOfType = mobj_layer_rectangle.IsOfType(layer)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    layer:setSizeY(size_y1)
+
+    -- test invalid _blockList
+    layer._blockList = "a string"
+    isOfType = mobj_layer_rectangle.IsOfType(layer)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    layer:setBlockList({
+        block1:copy(),
+        block2:copy(),
+        block3:copy(),
+    })
+
+    -- test invalid _clearRemainingSpace
+    layer._clearRemainingSpace = 1000
+    isOfType = mobj_layer_rectangle.IsOfType(layer)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    layer:setClearRemainingSpace(clearRemainingSpace1)
+
+    -- cleanup test
+end
+
+function T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* mobj_layer_rectangle:isSame() tests")
+    local layer2 = mobj_layer_rectangle.LayerRectangleClass:new({
+        _size_x                 = size_x1,
+        _size_y                 = size_y1,
+        _blockList              = {
+            block1:copy(),
+            block2:copy(),
+            block3:copy(),
+        },
+        _clearRemainingSpace    = clearRemainingSpace1,
+    })
+
+    -- test same
+    local isSame = layer1:isSame(layer2)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different _size_x
+    layer2:setSizeX(size_x2)
+    isSame = layer1:isSame(layer2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    layer2:setSizeX(size_x1)
+
+    -- test different _size_y
+    layer2:setSizeY(size_y2)
+    isSame = layer1:isSame(layer2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    layer2:setSizeY(size_y1)
+
+    -- test different _blockList
+    layer2:setBlockList({
+        block3:copy(),
+    })
+    isSame = layer1:isSame(layer2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    layer2:setBlockList({
+        block1:copy(),
+        block2:copy(),
+        block3:copy(),
+    })
+
+    -- test different _clearRemainingSpace
+    layer2:setClearRemainingSpace(clearRemainingSpace2)
+    isSame = layer1:isSame(layer2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    layer2:setClearRemainingSpace(clearRemainingSpace1)
+
+    -- cleanup test
+end
+
+function T_copy()
+    -- prepare test
+    corelog.WriteToLog("* mobj_layer_rectangle:copy() tests")
+
+    -- test
+    local copy = layer1:copy()
+    assert(copy:isSame(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
+
+    -- cleanup test
+end
