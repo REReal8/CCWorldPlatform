@@ -93,10 +93,10 @@ end
 function T_ISPUsingProject()
     -- create project definition
     local projectData = {
-        sourceItemsLocator = url.URLClass:newFromURI(storageQueryURI),
-        localInputHostLocator = url.URLClass:newFromURI(factoryInputChestURI),
-        localOutputItemsLocation = url.URLClass:newFromURI(factoryOutputChestURI),
-        destinationStorageLocator = url.URLClass:newFromURI(storageURI)
+        sourceItemsLocator = url.URL:newFromURI(storageQueryURI),
+        localInputHostLocator = url.URL:newFromURI(factoryInputChestURI),
+        localOutputItemsLocation = url.URL:newFromURI(factoryOutputChestURI),
+        destinationStorageLocator = url.URL:newFromURI(storageURI)
      }
     local aTypicalServiceUsingItemsProjectDef = {
         steps   = {

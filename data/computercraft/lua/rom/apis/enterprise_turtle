@@ -105,7 +105,7 @@ function GetHostLocator_Att()
             nil
     --]]
 
-    local hostURL = url.URLClass:new()
+    local hostURL = url.URL:new()
     hostURL:setHost(db.hostName)
 
     return hostURL
@@ -526,7 +526,7 @@ function PutItemsFromTurtle_ASrv(...)
             corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return coreutils.DoCallback(callback, callbackData, {success = false})
         end
     end
-    local destinationItemsLocator = url.URLClass:new(turtleItemsLocator)
+    local destinationItemsLocator = url.URL:new(turtleItemsLocator)
 
     -- end
     local result = {

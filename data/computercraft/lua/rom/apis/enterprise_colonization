@@ -240,7 +240,7 @@ function GetHostLocator_Att()
             nil
     --]]
 
-    local hostURL = url.URLClass:new()
+    local hostURL = url.URL:new()
     hostURL:setHost(db.hostName)
 
     return hostURL

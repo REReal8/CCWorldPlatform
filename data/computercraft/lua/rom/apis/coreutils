@@ -292,7 +292,7 @@ function CheckInput(description, ...)
                 if type(argument) ~= typeType and not (typeType == "URL" and type(argument) == "table") then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
 
                 -- URL omvormen
-                if typeType == "URL" then argument = url.URLClass:new(argument) end
+                if typeType == "URL" then argument = url.URL:new(argument) end
 
                 -- is deze gewenst om terug te geven?
                 if needed == '+' then table.insert(returns, argument) end

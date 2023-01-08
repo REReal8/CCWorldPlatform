@@ -143,12 +143,12 @@ function GetAvailableSiteData(...)
         if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid siteId") return nil end
 
         -- get available inputLocator
-        local inputLocator = url.URLClass:new(GetAvailableLocator(site.inputLocators))
+        local inputLocator = url.URL:new(GetAvailableLocator(site.inputLocators))
         if inputLocator == nil then
             corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available inputLocator in site "..siteId)
         else
             -- get available outputLocator
-            local outputLocator = url.URLClass:new(GetAvailableLocator(site.outputLocators))
+            local outputLocator = url.URL:new(GetAvailableLocator(site.outputLocators))
             if outputLocator == nil then
                 corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available outputLocator in site "..siteId)
             else

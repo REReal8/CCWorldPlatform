@@ -40,7 +40,7 @@ end
 function T_URL_Serializing()
     -- new URL
     corelog.WriteToLog("* Test URL serialize")
-    local aURL = url.URLClass:new({
+    local aURL = url.URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -56,7 +56,7 @@ end
 function T_Getters()
     -- prepare test
     corelog.WriteToLog("* URL getter tests")
-    local getterURL = url.URLClass:new({
+    local getterURL = url.URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -96,7 +96,7 @@ end
 function T_GettersURI()
     -- prepare test
     corelog.WriteToLog("* URL URI getter tests")
-    local getterURL = url.URLClass:new({
+    local getterURL = url.URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -124,7 +124,7 @@ end
 function T_Setters()
     -- prepare test
     corelog.WriteToLog("* URL setter tests")
-    local setterURL = url.URLClass:new()
+    local setterURL = url.URL:new()
 
     -- test
     setterURL:setHost(host)
@@ -145,7 +145,7 @@ end
 function T_SettersFromURI()
     -- prepare test
     corelog.WriteToLog("* URL setter from URI tests")
-    local uriSetterURL = url.URLClass:new()
+    local uriSetterURL = url.URL:new()
 
     -- test
     uriSetterURL:setHostURI(hostURI)
@@ -171,27 +171,27 @@ function T_NewFromURI()
 
     -- test
     local newURI0=schemeURI..hostURI..portURI..pathURI..queryURI
-    local fromURI_URL0 = url.URLClass:newFromURI(newURI0)
+    local fromURI_URL0 = url.URL:newFromURI(newURI0)
     AssertWithURIs(fromURI_URL0, hostURI, portURI, pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (1: no host)")
     local newURI1=schemeURI..portURI..pathURI..queryURI
-    local fromURI_URL1 = url.URLClass:newFromURI(newURI1) -- note: should fail
+    local fromURI_URL1 = url.URL:newFromURI(newURI1) -- note: should fail
 --    AssertWithURIs(fromURI_URL1, "", portURI, pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (2: no port)")
     local newURI2=schemeURI..hostURI..pathURI..queryURI
-    local fromURI_URL2 = url.URLClass:newFromURI(newURI2)
+    local fromURI_URL2 = url.URL:newFromURI(newURI2)
     AssertWithURIs(fromURI_URL2, hostURI, "", pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (3: no path)")
     local newURI3=schemeURI..hostURI..portURI..queryURI
-    local fromURI_URL3 = url.URLClass:newFromURI(newURI3)
+    local fromURI_URL3 = url.URL:newFromURI(newURI3)
     AssertWithURIs(fromURI_URL3, hostURI, portURI, "", expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (4: no query)")
     local newURI4=schemeURI..hostURI..portURI..pathURI
-    local fromURI_URL4 = url.URLClass:newFromURI(newURI4)
+    local fromURI_URL4 = url.URL:newFromURI(newURI4)
     AssertWithURIs(fromURI_URL4, hostURI, portURI, pathURI, "")
 
     -- cleanup test
@@ -200,60 +200,60 @@ end
 function T_SameURLComponents()
     corelog.WriteToLog("* URL same components tests")
     -- same Host
-    local aURL = url.URLClass:new({
+    local aURL = url.URL:new({
         _host = host,
     })
-    local aSameURL = url.URLClass:new({
+    local aSameURL = url.URL:new({
         _host = host,
     })
     assert(aURL:sameHost(aSameURL), "hosts should be the same")
-    local aDifferentURL = url.URLClass:new({
+    local aDifferentURL = url.URL:new({
         _host = host2,
     })
     assert(not aURL:sameHost(aDifferentURL), "hosts should not be the same")
 
     -- same Authority
-    aURL = url.URLClass:new({
+    aURL = url.URL:new({
         _host = host2,
         _port = port,
     })
-    aSameURL = url.URLClass:new({
+    aSameURL = url.URL:new({
         _host = host2,
         _port = port,
     })
     assert(aURL:sameAuthority(aSameURL), "authority should be the same")
-    aDifferentURL = url.URLClass:new({
+    aDifferentURL = url.URL:new({
         _host = host2,
         _port = port2,
     })
     assert(not aURL:sameAuthority(aDifferentURL), "authority should not be the same")
 
     -- same path
-    aURL = url.URLClass:new({
+    aURL = url.URL:new({
         _path = path,
     })
-    aSameURL = url.URLClass:new({
+    aSameURL = url.URL:new({
         _path = path,
     })
     assert(aURL:samePath(aSameURL), "path should be the same")
-    aDifferentURL = url.URLClass:new({
+    aDifferentURL = url.URL:new({
         _path = path2,
     })
     assert(not aURL:samePath(aDifferentURL), "path should not be the same")
 
     -- same base
-    aURL = url.URLClass:new({
+    aURL = url.URL:new({
         _host = host2,
         _port = port,
         _path = path,
     })
-    aSameURL = url.URLClass:new({
+    aSameURL = url.URL:new({
         _host = host2,
         _port = port,
         _path = path,
     })
     assert(aURL:samePath(aSameURL), "base should be the same")
-    aDifferentURL = url.URLClass:new({
+    aDifferentURL = url.URL:new({
         _host = host2,
         _port = port,
         _path = path2,
@@ -261,14 +261,14 @@ function T_SameURLComponents()
     assert(not aURL:samePath(aDifferentURL), "base should not be the same")
 
     -- same query
-    aURL = url.URLClass:new({
+    aURL = url.URL:new({
         _query = query,
     })
-    aSameURL = url.URLClass:new({
+    aSameURL = url.URL:new({
         _query = query,
     })
     assert(aURL:sameQuery(aSameURL), "query should be the same")
-    aDifferentURL = url.URLClass:new({
+    aDifferentURL = url.URL:new({
         _query = query2,
     })
     assert(not aURL:sameQuery(aDifferentURL), "query should not be the same")

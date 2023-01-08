@@ -5,7 +5,7 @@
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
 
-Block2dClass = {
+Block2d = {
     _x      = 0,
     _y      = 0,
     _dx     = nil,
@@ -22,7 +22,7 @@ Block2dClass = {
 --   | |
 --   |_|
 
-function Block2dClass:new(o)
+function Block2d:new(o)
     --[[
         Constructs a mobj_block2d.
 
@@ -41,55 +41,55 @@ function Block2dClass:new(o)
     return o
 end
 
-function Block2dClass:getX()
+function Block2d:getX()
     return self._x
 end
 
-function Block2dClass:setX(x)
+function Block2d:setX(x)
     -- check input
     if type(x) ~= "number" then corelog.Error("mobj_block2d:setX: invalid x: "..type(x)) return end
 
     self._x = x
 end
 
-function Block2dClass:getY()
+function Block2d:getY()
     return self._y
 end
 
-function Block2dClass:setY(y)
+function Block2d:setY(y)
     -- check input
     if type(y) ~= "number" then corelog.Error("mobj_block2d:setY: invalid y: "..type(y)) return end
 
     self._y = y
 end
 
-function Block2dClass:getDx()
+function Block2d:getDx()
     return self._dx
 end
 
-function Block2dClass:setDx(dx)
+function Block2d:setDx(dx)
     -- check input
     if type(dx) ~= "nil" and type(dx) ~= "number" then corelog.Error("mobj_block2d:setDx: invalid dx: "..type(dx)) return end
 
     self._x = dx
 end
 
-function Block2dClass:getDy()
+function Block2d:getDy()
     return self._dy
 end
 
-function Block2dClass:setDy(dy)
+function Block2d:setDy(dy)
     -- check input
     if type(dy) ~= "nil" and type(dy) ~= "number" then corelog.Error("mobj_block2d:setDy: invalid dy: "..type(dy)) return end
 
     self._y = dy
 end
 
-function Block2dClass:getName()
+function Block2d:getName()
     return self._name
 end
 
-function Block2dClass:setName(name)
+function Block2d:setName(name)
     -- check input
     if type(name) ~= "string" then corelog.Error("mobj_block2d:setName: invalid name: "..type(name)) return end
 
@@ -106,7 +106,7 @@ function IsOfType(block)
     return true
 end
 
-function Block2dClass:isSame(block)
+function Block2d:isSame(block)
     -- check same block
     local isSame = self._x == block._x and self._y == block._y and self._name == block._name
     if self._dx ~= nil and self._dy ~= nil then
@@ -117,8 +117,8 @@ function Block2dClass:isSame(block)
     return isSame
 end
 
-function Block2dClass:copy()
-    local copy = Block2dClass:new({
+function Block2d:copy()
+    local copy = Block2d:new({
         _x      = self._x,
         _y      = self._y,
         _dx     = self._dx,

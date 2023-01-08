@@ -42,7 +42,7 @@ function CreateForest(level, location, id)
     localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetHostLocator_Att()
 
     -- create forest object
-    local forest = mobj_birchforest.BirchForestClass:new({
+    local forest = mobj_birchforest.BirchForest:new({
         _id                     = id,
         _forestLevel            = level,
 

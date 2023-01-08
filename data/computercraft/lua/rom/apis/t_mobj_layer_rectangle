@@ -12,11 +12,11 @@ local size_y2 = 3
 local clearRemainingSpace1 = true
 local clearRemainingSpace2 = false
 
-local block1 = mobj_block2d.Block2dClass:new({ _x = 3, _y = 3, _name = "minecraft:birch_sapling" })
-local block2 = mobj_block2d.Block2dClass:new({ _x = 3, _y = 0, _name = "minecraft:torch" })
-local block3 = mobj_block2d.Block2dClass:new({ _x = 0, _y = 3, _name = "minecraft:torch" })
+local block1 = mobj_block2d.Block2d:new({ _x = 3, _y = 3, _name = "minecraft:birch_sapling" })
+local block2 = mobj_block2d.Block2d:new({ _x = 3, _y = 0, _name = "minecraft:torch" })
+local block3 = mobj_block2d.Block2d:new({ _x = 0, _y = 3, _name = "minecraft:torch" })
 
-local layer1 = mobj_layer_rectangle.LayerRectangleClass:new({
+local layer1 = mobj_layer_rectangle.LayerRectangle:new({
     _size_x                 = size_x1,
     _size_y                 = size_y1,
     _blockList              = {
@@ -34,7 +34,7 @@ function T_new()
     corelog.WriteToLog("* mobj_layer_rectangle:new() tests")
 
     -- test full
-    local layer = mobj_layer_rectangle.LayerRectangleClass:new({
+    local layer = mobj_layer_rectangle.LayerRectangle:new({
         _size_x                 = size_x1,
         _size_y                 = size_y1,
         _blockList              = {
@@ -51,7 +51,7 @@ function T_new()
     assert(layer:getClearRemainingSpace() == clearRemainingSpace1, "gotten getClearRemainingSpace(="..tostring(layer:getClearRemainingSpace())..") not the same as expected(="..tostring(clearRemainingSpace1)..")")
 
     -- test default
-    layer = mobj_layer_rectangle.LayerRectangleClass:new()
+    layer = mobj_layer_rectangle.LayerRectangle:new()
     local defaultSize_x = 0
     assert(layer:getSizeX() == defaultSize_x, "gotten getSizeX(="..layer:getSizeX()..") not the same as expected(="..defaultSize_x..")")
     local defaultSize_y = 0
@@ -67,7 +67,7 @@ end
 function T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* mobj_layer_rectangle.IsOfType() tests")
-    local layer = mobj_layer_rectangle.LayerRectangleClass:new({
+    local layer = mobj_layer_rectangle.LayerRectangle:new({
         _size_x                 = size_x1,
         _size_y                 = size_y1,
         _blockList              = {
@@ -126,7 +126,7 @@ end
 function T_isSame()
     -- prepare test
     corelog.WriteToLog("* mobj_layer_rectangle:isSame() tests")
-    local layer2 = mobj_layer_rectangle.LayerRectangleClass:new({
+    local layer2 = mobj_layer_rectangle.LayerRectangle:new({
         _size_x                 = size_x1,
         _size_y                 = size_y1,
         _blockList              = {

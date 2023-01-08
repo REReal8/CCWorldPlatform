@@ -7,7 +7,7 @@
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
 
-LayerRectangleClass = {
+LayerRectangle = {
     _size_x                 = 0,
     _size_y                 = 0,
     _blockList              = {},
@@ -23,7 +23,7 @@ LayerRectangleClass = {
 --   | |
 --   |_|
 
-function LayerRectangleClass:new(o)
+function LayerRectangle:new(o)
     --[[
         Constructs a mobj_layer_rectangle.
 
@@ -41,44 +41,44 @@ function LayerRectangleClass:new(o)
     return o
 end
 
-function LayerRectangleClass:getSizeX()
+function LayerRectangle:getSizeX()
     return self._size_x
 end
 
-function LayerRectangleClass:setSizeX(size_x)
+function LayerRectangle:setSizeX(size_x)
     -- check input
     if type(size_x) ~= "number" then corelog.Error("mobj_layer_rectangle:setSizeX: invalid size_x: "..type(size_x)) return end
 
     self._size_x = size_x
 end
 
-function LayerRectangleClass:getSizeY()
+function LayerRectangle:getSizeY()
     return self._size_y
 end
 
-function LayerRectangleClass:setSizeY(size_y)
+function LayerRectangle:setSizeY(size_y)
     -- check input
     if type(size_y) ~= "number" then corelog.Error("mobj_layer_rectangle:setSizeY: invalid size_y: "..type(size_y)) return end
 
     self._size_y = size_y
 end
 
-function LayerRectangleClass:getBlockList()
+function LayerRectangle:getBlockList()
     return self._blockList
 end
 
-function LayerRectangleClass:setBlockList(blockList)
+function LayerRectangle:setBlockList(blockList)
     -- check input
     if type(blockList) ~= "table" then corelog.Error("mobj_layer_rectangle:setSizeY: invalid size_y: "..type(blockList)) return end
 
     self._blockList = blockList -- note: no deep copy
 end
 
-function LayerRectangleClass:getClearRemainingSpace()
+function LayerRectangle:getClearRemainingSpace()
     return self._clearRemainingSpace
 end
 
-function LayerRectangleClass:setClearRemainingSpace(clear)
+function LayerRectangle:setClearRemainingSpace(clear)
     -- check input
     if type(clear) ~= "boolean" then corelog.Error("mobj_layer_rectangle:setClearRemainingSpace: invalid clear: "..type(clear)) return end
 
@@ -89,7 +89,7 @@ function IsOfType(layer)
     return type(layer._size_x) == "number" and type(layer._size_y) == "number" and type(layer._clearRemainingSpace) == "boolean" and mobj_block2d.IsBlockList(layer._blockList)
 end
 
-function LayerRectangleClass:isSame(layer)
+function LayerRectangle:isSame(layer)
     -- check input
     if not IsOfType(layer) then return false end
 
@@ -103,8 +103,8 @@ function LayerRectangleClass:isSame(layer)
     return isSame
 end
 
-function LayerRectangleClass:copy()
-    local copy = LayerRectangleClass:new({
+function LayerRectangle:copy()
+    local copy = LayerRectangle:new({
         _size_x                 = self._size_x,
         _size_y                 = self._size_y,
         _blockList              = mobj_block2d.BlockListCopy(self._blockList),

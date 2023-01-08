@@ -7,7 +7,7 @@
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
 
-URLClass = {
+URL = {
     _host = "",
     _port = nil,
     _path = "",
@@ -23,7 +23,7 @@ URLClass = {
 --   | |
 --   |_|
 
-function URLClass:new(o)
+function URL:new(o)
     --[[
         Constructs an URL object.
 
@@ -42,31 +42,31 @@ function URLClass:new(o)
     return o
 end
 
-function URLClass:newFromURI(uri)
-    local aNewURL = URLClass:new()
+function URL:newFromURI(uri)
+    local aNewURL = URL:new()
 
     aNewURL:setURI(uri)
 
     return aNewURL
 end
 
-function URLClass:getScheme()
+function URL:getScheme()
     return "ccwprp" -- always the same
 end
 
-function URLClass:getSchemeURI()
+function URL:getSchemeURI()
     return self:getScheme().."://"
 end
 
-function URLClass:getHost()
+function URL:getHost()
     return self._host
 end
 
-function URLClass:getHostURI()
+function URL:getHostURI()
     return self:getHost()
 end
 
-function URLClass:setHost(h)
+function URL:setHost(h)
     -- check input
     if type(h) ~= "string" then corelog.Error("url.setHost: invalid host type: "..type(h)) return end
 
@@ -75,18 +75,18 @@ end
 
 local hostPattern = "[%a%_]+"
 -- aUrl.setHostURI("storage")
-function URLClass:setHostURI(hURI)
+function URL:setHostURI(hURI)
     -- check input
     if type(hURI) ~= "string" then corelog.Error("url.setHost: invalid host URI type: "..type(hURI)) return end
 
     self:setHost(string.match(hURI, hostPattern)) -- in effect this should be the same as setHost(hURI)
 end
 
-function URLClass:getPort()
+function URL:getPort()
     return self._port
 end
 
-function URLClass:getPortURI()
+function URL:getPortURI()
     local port = self:getPort()
     local portURI = ""
     if port ~= nil then
@@ -95,7 +95,7 @@ function URLClass:getPortURI()
     return portURI
 end
 
-function URLClass:setPort(p)
+function URL:setPort(p)
     -- check input
     if type(p) ~= "number" then corelog.Error("url.setPort: invalid port type: "..type(p)) return end
 
@@ -104,7 +104,7 @@ end
 
 -- aUrl.setPortURI(":1")
 local portPattern = ":%d+"
-function URLClass:setPortURI (pURI)
+function URL:setPortURI (pURI)
     -- check input
     if type(pURI) ~= "string" then corelog.Error("url.setPortURI: invalid port URI type: "..type(pURI)) return end
 
@@ -121,19 +121,19 @@ function URLClass:setPortURI (pURI)
     end
 end
 
-function URLClass:getAuthorityURI()
+function URL:getAuthorityURI()
     return self:getHostURI()..self:getPortURI()
 end
 
-function URLClass:getPath()
+function URL:getPath()
     return self._path
 end
 
-function URLClass:getPathURI()
+function URL:getPathURI()
     return self:getPath()
 end
 
-function URLClass:setPath(p)
+function URL:setPath(p)
     -- check input
     if type(p) ~= "string" then corelog.Error("url.setPath: invalid path type: "..type(p)) return end
 
@@ -142,7 +142,7 @@ end
 
 local pathURIPattern = "^([%/%w%=%:]*)"
 -- aUrl.setPathURI("/forests/oak/id=50:23012")
-function URLClass:setPathURI(pURI)
+function URL:setPathURI(pURI)
     -- check input
     if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid host URI type: "..type(pURI)) return end
 
@@ -150,7 +150,7 @@ function URLClass:setPathURI(pURI)
 end
 
 local pathSegmentsPattern = "%/([%w%=%:]+)"
-function URLClass:pathSegments_iter()
+function URL:pathSegments_iter()
     --[[
         Factory for iterator over path segments
     --]]
@@ -158,7 +158,7 @@ function URLClass:pathSegments_iter()
     return self:getPath():gmatch(pathSegmentsPattern)
 end
 
-function URLClass:pathSegments()
+function URL:pathSegments()
     --[[
         Table with path segments
     --]]
@@ -171,11 +171,11 @@ function URLClass:pathSegments()
     return segments
 end
 
-function URLClass:getQuery()
+function URL:getQuery()
     return self._query
 end
 
-function URLClass:getQueryURI()
+function URL:getQueryURI()
     local queryURI = ""
     local delimiter = "?"
     for key, value in pairs(self:getQuery()) do
@@ -185,7 +185,7 @@ function URLClass:getQueryURI()
     return queryURI
 end
 
-function URLClass:setQuery(q)
+function URL:setQuery(q)
     -- check input
     if type(q) ~= "table" then corelog.Error("url.setQuery: invalid query type: "..type(q)) return end
 
@@ -193,7 +193,7 @@ function URLClass:setQuery(q)
 end
 
 -- aUrl.setQueryURI("?minecraft:birch_log=3&minecraft:torch=5")
-function URLClass:setQueryURI(qURI)
+function URL:setQueryURI(qURI)
     -- check input
     if type(qURI) ~= "string" then corelog.Error("url.setQueryURI: invalid query URI type: "..type(qURI)) return end
 
@@ -210,11 +210,11 @@ function URLClass:setQueryURI(qURI)
     end
 end
 
-function URLClass:getURI()
+function URL:getURI()
     return self:getSchemeURI()..self:getAuthorityURI()..self:getPathURI()..self:getQueryURI()
 end
 
-function URLClass:setURI(fullURI)
+function URL:setURI(fullURI)
     -- get & set host
     local remainingURL = fullURI
     local hostURIPattern = "^"..self:getSchemeURI().."("..hostPattern..")"
@@ -257,29 +257,29 @@ function URLClass:setURI(fullURI)
     self:setQueryURI(queryURI)
 end
 
-function URLClass:copy()
+function URL:copy()
     local uri = self:getURI()
 
-    return URLClass:newFromURI(uri)
+    return URL:newFromURI(uri)
 end
 
-function URLClass:sameHost(url)
+function URL:sameHost(url)
     return self:getHostURI() == url:getHostURI()
 end
 
-function URLClass:sameAuthority(url)
+function URL:sameAuthority(url)
     return self:getAuthorityURI() == url:getAuthorityURI()
 end
 
-function URLClass:samePath(url)
+function URL:samePath(url)
     return self:getPathURI() == url:getPathURI()
 end
 
-function URLClass:sameBase(url)
+function URL:sameBase(url)
     return self:sameAuthority(url) and self:samePath(url)
 end
 
-function URLClass:sameQuery(url)
+function URL:sameQuery(url)
     return self:getQueryURI() == url:getQueryURI()
 end
 

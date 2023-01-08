@@ -21,7 +21,7 @@ local dy2 = 0
 local name1 = "minecraft:birch_sapling"
 local name2 = "minecraft:furnace"
 
-local block1 = mobj_block2d.Block2dClass:new({
+local block1 = mobj_block2d.Block2d:new({
     _x      = x1,
     _y      = y1,
     _dx     = dx1,
@@ -36,7 +36,7 @@ function T_new()
     corelog.WriteToLog("* mobj_block2d:new() tests")
 
     -- test full
-    local block = mobj_block2d.Block2dClass:new({
+    local block = mobj_block2d.Block2d:new({
         _x      = x1,
         _y      = y1,
         _dx     = dx1,
@@ -51,7 +51,7 @@ function T_new()
     assert(block:getName() == name1, "gotten getName(="..block:getName()..") not the same as expected(="..name1..")")
 
     -- test without orientations (i.e dx, dy)
-    block = mobj_block2d.Block2dClass:new({
+    block = mobj_block2d.Block2d:new({
         _x      = x1,
         _y      = y1,
 
@@ -64,7 +64,7 @@ function T_new()
     assert(block:getName() == name1, "gotten getName(="..block:getName()..") not the same as expected(="..name1..")")
 
     -- test default
-    block = mobj_block2d.Block2dClass:new()
+    block = mobj_block2d.Block2d:new()
     local defaultX = 0
     assert(block:getX() == defaultX, "gotten getX(="..block:getX()..") not the same as expected(="..defaultX..")")
     local defaultY = 0
@@ -80,7 +80,7 @@ end
 function T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.IsOfType() tests")
-    local block2 = mobj_block2d.Block2dClass:new({
+    local block2 = mobj_block2d.Block2d:new({
         _x      = x1,
         _y      = y1,
         _dx     = dx1,
@@ -140,7 +140,7 @@ end
 function T_isSame()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d:isSame() tests")
-    local block2 = mobj_block2d.Block2dClass:new({
+    local block2 = mobj_block2d.Block2d:new({
         _x      = x1,
         _y      = y1,
         _dx     = dx1,
@@ -206,7 +206,7 @@ end
 function T_IsBlockList()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.IsBlockList() tests")
-    local block2 = mobj_block2d.Block2dClass:new({
+    local block2 = mobj_block2d.Block2d:new({
         _x      = x2,
         _y      = y2,
         _name   = name2,
@@ -235,7 +235,7 @@ end
 function T_IsSameBlockList()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.IsSameBlockList() tests")
-    local block2 = mobj_block2d.Block2dClass:new({
+    local block2 = mobj_block2d.Block2d:new({
         _x      = x2,
         _y      = y2,
         _name   = name2,
@@ -268,7 +268,7 @@ function T_IsSameBlockList()
     -- test with different blocks
     isSameBlockList = mobj_block2d.IsSameBlockList(
         { block1:copy(), block2:copy() },
-        { block1:copy(), mobj_block2d.Block2dClass:new({ _x = x3, _y = y2, _name = name2,}) }
+        { block1:copy(), mobj_block2d.Block2d:new({ _x = x3, _y = y2, _name = name2,}) }
     )
     expectedIsSameBlockList = false
     assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
@@ -279,7 +279,7 @@ end
 function T_BlockListCopy()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.BlockListCopy() tests")
-    local block2 = mobj_block2d.Block2dClass:new({
+    local block2 = mobj_block2d.Block2d:new({
         _x      = x2,
         _y      = y2,
         _name   = name2,

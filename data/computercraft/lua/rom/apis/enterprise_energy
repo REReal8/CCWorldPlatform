@@ -68,7 +68,7 @@ function GetFuelNeed_Refuel_Att()
         -- get forest
         local forestLocator = parameters.forestLocator
         local forest = nil
---        forest =  mobj_birchforest.BirchForestClass:new(enterprise_forestry.GetForest(forestLocator)) -- ToDo: get mobj_birchforest directly
+--        forest =  mobj_birchforest.BirchForest:new(enterprise_forestry.GetForest(forestLocator)) -- ToDo: get mobj_birchforest directly
         -- object ophalen
 --        forest = coredht.GetResource(forestLocator)
         forest = enterprise_forestry.GetForest(forestLocator)

@@ -45,7 +45,7 @@ function AddNewSite_ASrv(...)
     if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- create new forest
-    local forest = mobj_birchforest.BirchForestClass:new({
+    local forest = mobj_birchforest.BirchForest:new({
         _id                     = coreutils.NewId(),
         _level                  = forestLevel,
 
@@ -435,7 +435,7 @@ function GetForest(...)
     -- object ophalen
     local forest = coredht.GetResource(forestLocator)
     if type(forest) ~= "table" then corelog.Warning("enterprise_forestry.GetForest: forest "..forestLocator:getURI().." not found") return nil end
-    forest = mobj_birchforest.BirchForestClass:new(forest)
+    forest = mobj_birchforest.BirchForest:new(forest)
 
     -- end
     return forest
@@ -617,7 +617,7 @@ function GetHostLocator_Att()
             nil
     --]]
 
-    local hostURL = url.URLClass:new()
+    local hostURL = url.URL:new()
     hostURL:setHost(db.hostName)
 
     return hostURL

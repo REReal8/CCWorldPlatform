@@ -23,7 +23,7 @@ end
 function T_SaveResource()
     -- prepare test
     corelog.WriteToLog("* Test SaveResource")
-    local resourceLocator = url.URLClass:newFromURI(uri)
+    local resourceLocator = url.URL:newFromURI(uri)
 
     -- test
     local resourceSaved = coredht.SaveResource(resource, resourceLocator)
@@ -35,7 +35,7 @@ end
 function T_SaveResourceWithPort()
     -- prepare test
     corelog.WriteToLog("* Test SaveResource (with port)")
-    local resourceLocator = url.URLClass:newFromURI(uriWithPort)
+    local resourceLocator = url.URL:newFromURI(uriWithPort)
 
     -- test
     local resourceSaved = coredht.SaveResource(resource2, resourceLocator)
@@ -47,7 +47,7 @@ end
 function T_GetResource()
     -- prepare test
     corelog.WriteToLog("* Test GetResource")
-    local resourceLocator = url.URLClass:newFromURI(uri)
+    local resourceLocator = url.URL:newFromURI(uri)
 
     -- test
     local resourceGotten = coredht.GetResource(resourceLocator)
@@ -59,7 +59,7 @@ end
 function T_GetResourceWithPort()
     -- prepare test
     corelog.WriteToLog("* Test GetResource (with port)")
-    local resourceLocator = url.URLClass:newFromURI(uriWithPort)
+    local resourceLocator = url.URL:newFromURI(uriWithPort)
 
     -- test
     local resourceGotten = coredht.GetResource(resourceLocator)
@@ -71,7 +71,7 @@ end
 function T_RemoveResource()
     -- prepare test
     corelog.WriteToLog("* Test RemoveResource")
-    local resourceLocator = url.URLClass:newFromURI(uri)
+    local resourceLocator = url.URL:newFromURI(uri)
 
     -- test
     coredht.RemoveResource(resourceLocator)
@@ -84,7 +84,7 @@ end
 function T_RemoveResourceWithPort()
     -- prepare test
     corelog.WriteToLog("* Test RemoveResource (with port)")
-    local resourceLocator = url.URLClass:newFromURI(uriWithPort)
+    local resourceLocator = url.URL:newFromURI(uriWithPort)
 
     -- test
     coredht.RemoveResource(resourceLocator)

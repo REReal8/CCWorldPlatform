@@ -354,7 +354,7 @@ function DelistSupplier_SSrv(...)
     local suppliers = GetSuppliers()
     local supplierFound = false
     for i, registeredSupplierLocator in ipairs(suppliers) do
-        registeredSupplierLocator = url.URLClass:new(registeredSupplierLocator)
+        registeredSupplierLocator = url.URL:new(registeredSupplierLocator)
         -- check we found it
         if supplierLocator:getURI() == registeredSupplierLocator:getURI() then
             -- remove from list
@@ -386,7 +386,7 @@ function GetHostLocator_Att()
             nil
     --]]
 
-    local hostURL = url.URLClass:new()
+    local hostURL = url.URL:new()
     hostURL:setHost(db.hostName)
 
     return hostURL
@@ -480,7 +480,7 @@ function GetBestSupplierLocator(item)
     -- loop on registered Suppliers and return first
     -- ToDo: consider selecting best Supplier based on some criterium (e.g. fuelNeed)
     for i, supplierLocator in ipairs(suppliers) do
-        supplierLocator = url.URLClass:new(supplierLocator)
+        supplierLocator = url.URL:new(supplierLocator)
         -- determine itemLocator
         local itemsLocator = supplierLocator:copy()
         itemsLocator:setQuery(item)

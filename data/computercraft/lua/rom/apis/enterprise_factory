@@ -146,8 +146,8 @@ function ProvideItemsTo_ASrv(...)
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(siteProduceItemData.itemsNeeded))
 
         -- retrieve site input & output locator's
-        local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
-        local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
+        local localInputLocator = url.URL:new(siteProduceItemData.localInputLocator)
+        local localOutputLocator = url.URL:new(siteProduceItemData.localOutputLocator)
 
         -- create project service data
         local projectDef = {
@@ -379,7 +379,7 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
         -- fuelNeed ingredients
         local ingredientsItemsLocator = ingredientsSupplierLocator:copy()
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
-        local localInputLocator = url.URLClass:new(siteProduceItemData.localInputLocator)
+        local localInputLocator = url.URL:new(siteProduceItemData.localInputLocator)
         local serviceData = {
             itemsLocator                = ingredientsItemsLocator,
             storageLocator              = localInputLocator,
@@ -403,7 +403,7 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
         local fuelNeed_SiteProduction = serviceResults.fuelNeed
 
         -- fuelNeed output transfer
-        local localOutputLocator = url.URLClass:new(siteProduceItemData.localOutputLocator)
+        local localOutputLocator = url.URL:new(siteProduceItemData.localOutputLocator)
         local localOutputItemsLocator = localOutputLocator:copy()
         local items = { [itemName] = itemCount }
         localOutputItemsLocator:setQuery(items)
@@ -717,7 +717,7 @@ function GetHostLocator_Att()
             nil
     --]]
 
-    local hostURL = url.URLClass:new()
+    local hostURL = url.URL:new()
     hostURL:setHost(db.hostName)
 
     return hostURL
@@ -745,7 +745,7 @@ function IsFactoryURL_QSrv(queryData)
 
     -- check input
     if type(queryData) ~= "table" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid queryData") return {success = false} end
-    local aURL = url.URLClass:new(queryData.aURL)
+    local aURL = url.URL:new(queryData.aURL)
     if type(aURL) ~= "table" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid aURL") return {success = false} end
 
     -- check if of this Supplier
