@@ -236,7 +236,7 @@ function CheckInput(description, ...)
         if parameterStart then
 
             -- zoeken of de parameter regel matched
-            local start, parameter, needed, typeType = string.match(stringPart, "(%s+)(%w+)%s*([%+%-])%s*%(([^%)]+)%)")
+            local start, parameter, needed, typeType = string.match(stringPart, "(%s+)([%_%w]+)%s*([%+%-])%s*%(([^%)]+)%)")
 
             -- might be a dummy line
             if start then
