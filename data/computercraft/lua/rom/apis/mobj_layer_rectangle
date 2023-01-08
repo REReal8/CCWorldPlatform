@@ -29,9 +29,9 @@ function LayerRectangle:new(o)
 
         Parameters:
                                         - (table) table with
-                _size_x                 - (number) size of rectangle in x
-                _size_y                 - (number) size of rectangle in y
-                _blockList              - (table) list of blocks within the rectangle
+                _size_x                 - (number) size of layer in x
+                _size_y                 - (number) size of layer in y
+                _blockList              - (table) list of blocks within the layer
                 _clearRemainingSpace    - (boolean) whether remaining space (i.e. without a block) should be kept as is cleared
     --]]
 
