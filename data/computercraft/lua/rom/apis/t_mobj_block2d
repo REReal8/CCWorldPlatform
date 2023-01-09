@@ -8,6 +8,7 @@ function T_All()
     T_IsBlockList()
     T_IsSameBlockList()
     T_BlockListCopy()
+    T_BlockListTransform()
 end
 
 local x1 = 3
@@ -310,3 +311,35 @@ function T_BlockListCopy()
 
     -- cleanup test
 end
+
+function T_BlockListTransform()
+    -- prepare test
+    corelog.WriteToLog("* mobj_block2d.BlockListTransform() tests")
+    local block1Table = {
+        _x      = x1,
+        _y      = y1,
+        _dx     = dx1,
+        _dy     = dy1,
+        _name   = name1,
+    }
+    local block2Table = {
+        _x      = x2,
+        _y      = y2,
+        _name   = name2,
+    }
+
+    -- test full
+    local blockListTable = { coreutils.DeepCopy(block1Table), coreutils.DeepCopy(block2Table) }
+    assert(not mobj_block2d.IsBlockList(blockListTable), "prepared blockList already a BlockList")
+    local transformedBlockList = mobj_block2d.BlockListTransform(blockListTable)
+    assert(mobj_block2d.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
+
+    -- test partial
+    blockListTable = { block1, coreutils.DeepCopy(block2Table) }
+    assert(not mobj_block2d.IsBlockList(blockListTable), "prepared blockList already a BlockList")
+    transformedBlockList = mobj_block2d.BlockListTransform(blockListTable)
+    assert(mobj_block2d.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
+
+    -- cleanup test
+end
+

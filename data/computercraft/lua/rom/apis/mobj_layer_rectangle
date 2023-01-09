@@ -23,21 +23,23 @@ LayerRectangle = {
 --   | |
 --   |_|
 
-function LayerRectangle:new(o)
-    --[[
+function LayerRectangle:new(...)
+    -- get & check input from description
+    local checkSuccess, o, blockList = coreutils.CheckInput([[
         Constructs a mobj_layer_rectangle.
 
         Parameters:
-                                        - (table) table with
-                _size_x                 - (number) size of layer in x
-                _size_y                 - (number) size of layer in y
-                _blockList              - (table) list of blocks within the layer
-                _clearRemainingSpace    - (boolean) whether remaining space (i.e. without a block) should be kept as is cleared
-    --]]
+            o                           + (table, {}) table with
+                _size_x                 - (number, 0) size of layer in x
+                _size_y                 - (number, 0) size of layer in y
+                _blockList              + (table, {}) list of blocks within the layer
+                _clearRemainingSpace    - (boolean, true) whether remaining space (i.e. without a block) should be kept as is cleared
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
 
-    o = o or {}
     setmetatable(o, self)
     self.__index = self
+    o._blockList = mobj_block2d.BlockListTransform(o._blockList)
     return o
 end
 
@@ -69,7 +71,7 @@ end
 
 function LayerRectangle:setBlockList(blockList)
     -- check input
-    if type(blockList) ~= "table" then corelog.Error("mobj_layer_rectangle:setSizeY: invalid size_y: "..type(blockList)) return end
+    if type(blockList) ~= "table" then corelog.Error("mobj_layer_rectangle:setBlockList: invalid blockList: "..type(blockList)) return end
 
     self._blockList = blockList -- note: no deep copy
 end
@@ -86,7 +88,12 @@ function LayerRectangle:setClearRemainingSpace(clear)
 end
 
 function IsOfType(layer)
-    return type(layer._size_x) == "number" and type(layer._size_y) == "number" and type(layer._clearRemainingSpace) == "boolean" and mobj_block2d.IsBlockList(layer._blockList)
+    -- check
+    if type(layer) ~= "table" then return false end
+    if type(layer._size_x) ~= "number" or type(layer._size_y) ~= "number" or type(layer._clearRemainingSpace) ~= "boolean" or not mobj_block2d.IsBlockList(layer._blockList) then return false end
+    if not layer.new then corelog.Warning("mobj_layer_rectangle.IsOfType: default methods seem not to have been inherited") return false end
+
+    return true
 end
 
 function LayerRectangle:isSame(layer)

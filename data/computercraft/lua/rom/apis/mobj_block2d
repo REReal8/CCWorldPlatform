@@ -96,7 +96,7 @@ function Block2d:setName(name)
     self._name = name
 end
 
-function IsOfType(block)
+function HasFieldsOfType(block)
     -- check
     if type(block) ~= "table" then return false end
     if type(block._x) ~= "number" or type(block._y) ~= "number" or type(block._name) ~= "string" then return false end
@@ -104,6 +104,23 @@ function IsOfType(block)
 
     -- end
     return true
+end
+
+function HasMethodsOfType(block)
+    -- check
+--    if not block.new then corelog.Warning("mobj_block2d.IsOfType: default methods seem not to have been inherited") return false end
+    if not block.new then return false end
+
+    -- end
+    return true
+end
+
+function IsOfType(block)
+    -- check
+    local isOfType = HasFieldsOfType(block) and HasMethodsOfType(block)
+
+    -- end
+    return isOfType
 end
 
 function Block2d:isSame(block)
@@ -175,6 +192,41 @@ function BlockListCopy(blockList)
 
     -- end
 	return blockListCopy
+end
+
+function BlockListTransform(blockList)
+    --[[
+        Transforms all block tables in the blockList to Block2d objects.
+
+        i.e. each block table like {
+            _x      = 0,
+            _y      = 0,
+            _dx     = nil,
+            _dy     = nil,
+            _name   = "",
+        }
+        is transformed into a block object Block2d with the same fields
+    ]]
+
+    -- check table
+    if type(blockList) ~= "table" then return false end
+
+    local blockListTransform = {}
+    -- copy elements
+    for i, block in ipairs(blockList) do
+        if HasFieldsOfType(block) then
+            if HasMethodsOfType(block) then
+                blockListTransform[i] = block -- already a Block2d
+            else
+                blockListTransform[i] = Block2d:new(block) -- transform
+            end
+        else
+            corelog.Warning("mobj_block2d.BlockListTransform: block(="..textutils.serialize(block)..") does not have all Block2d fields => skipped")
+        end
+    end
+
+    -- end
+	return blockListTransform
 end
 
 --    _                 _    __                  _   _
