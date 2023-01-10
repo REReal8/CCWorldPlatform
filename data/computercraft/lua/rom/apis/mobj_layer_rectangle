@@ -121,6 +121,19 @@ function LayerRectangle:copy()
     return copy
 end
 
+function LayerRectangle:itemsNeeded()
+    local itemList = {}
+    for i, block in ipairs(self:getBlockList()) do
+        local itemName = block._name
+
+        -- increment item counter
+        itemList[itemName] = (itemList[itemName] or 0) + 1
+    end
+
+    -- end
+    return itemList
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___

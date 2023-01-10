@@ -3,6 +3,7 @@ function T_All()
     T_IsOfType()
     T_isSame()
     T_copy()
+    T_itemsNeeded()
     T_ParseWithCheckInput()
 end
 
@@ -13,9 +14,11 @@ local size_y2 = 3
 local clearRemainingSpace1 = true
 local clearRemainingSpace2 = false
 
-local block1 = mobj_block2d.Block2d:new({ _x = 3, _y = 3, _name = "minecraft:birch_sapling" })
-local block2 = mobj_block2d.Block2d:new({ _x = 3, _y = 0, _name = "minecraft:torch" })
-local block3 = mobj_block2d.Block2d:new({ _x = 0, _y = 3, _name = "minecraft:torch" })
+local itemName1 = "minecraft:birch_sapling"
+local itemName2 = "minecraft:torch"
+local block1 = mobj_block2d.Block2d:new({ _x = 3, _y = 3, _name = itemName1 })
+local block2 = mobj_block2d.Block2d:new({ _x = 3, _y = 0, _name = itemName2 })
+local block3 = mobj_block2d.Block2d:new({ _x = 0, _y = 3, _name = itemName2 })
 
 local layer1 = mobj_layer_rectangle.LayerRectangle:new({
     _size_x                 = size_x1,
@@ -187,6 +190,18 @@ function T_copy()
     -- test
     local copy = layer1:copy()
     assert(copy:isSame(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_itemsNeeded()
+    -- prepare test
+    corelog.WriteToLog("* mobj_layer_rectangle:itemsNeeded() tests")
+
+    -- test
+    local itemsNeeded = layer1:itemsNeeded()
+    assert(itemsNeeded[itemName1] == 1, "gotten itemCount(="..itemsNeeded[itemName1]..") for "..itemName1.."'s not the same as expected(=1)")
+    assert(itemsNeeded[itemName2] == 2, "gotten itemCount(="..itemsNeeded[itemName2]..") for "..itemName2.."'s not the same as expected(=2)")
 
     -- cleanup test
 end
