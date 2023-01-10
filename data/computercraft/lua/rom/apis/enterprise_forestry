@@ -91,17 +91,17 @@ function AddNewSite_ASrv(...)
         table.insert(projectSteps,
             { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
                 { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = "treeBaseLocation" },
-                { keyDef = "treePattern"            , valueSource = 0, keyDefSource = "treePattern" },
+                { keyDef = "treeLayer"              , valueSource = 0, keyDefSource = "treeLayer" },
                 { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
             }}
         )
 
         -- add step data
         local treeBaseLocation  = coremove.CopyLocation(baseLocation)
-        local targetBasePattern = forest:getBasePattern(forestLevel)
+        local targetBaseLayer = forest:getBaseLayer(forestLevel)
         projectData.materialsHostLocator        = materialsHostLocator
         projectData.treeBaseLocation            = treeBaseLocation
-        projectData.treePattern                 = targetBasePattern
+        projectData.treeLayer                   = targetBaseLayer
     end
 
     table.insert(projectSteps,
@@ -170,39 +170,39 @@ function UpgradeSite_ASrv(...)
     -- determine projectSteps and projectData
     local projectSteps = { }
     local areAllTrueStepDataDef = {}
-    local targetTreePattern = forest:getTreePattern(targetLevel)
+    local targetTreeLayer = forest:getTreeLayer(targetLevel)
     local projectData = {
         forestLocator           = forestLocator,
         targetLevel             = targetLevel,
-        treePattern             = targetTreePattern,
+        treeLayer             = targetTreeLayer,
         materialsHostLocator    = materialsHostLocator,
     }
 
     -- add project steps for upgrading level
     local iStep = 0
-    local startingTreePattern = forest:getTreePattern(startingLevel)
+    local startingTreeLayer = forest:getTreeLayer(startingLevel)
     local startingNTrees = forest:getNTrees()
     if startingLevel < targetLevel and startingNTrees > 0 then
         -- upgrade level data
-        local targetBasePattern = forest:getBasePattern(targetLevel)
-        local startingBasePattern = forest:getBasePattern(startingLevel)
-        projectData.basePattern     = targetBasePattern
+        local targetBaseLayer = forest:getBaseLayer(targetLevel)
+        local startingBaseLayer = forest:getBaseLayer(startingLevel)
+        projectData.baseLayer    = targetBaseLayer
         projectData.startingNTrees  = startingNTrees
 
         -- loop on current trees
         for iTree = 1, startingNTrees do
-            -- get pattern
-            local startingParttern = startingTreePattern
-            local targetPattern = targetTreePattern
-            local patternStr = "treePattern"
+            -- get layer
+            local startingLayer = startingTreeLayer
+            local targetLayer = targetTreeLayer
+            local layerStr = "treeLayer"
             if iTree == 1 then
-                startingParttern = startingBasePattern
-                targetPattern = targetBasePattern
-                patternStr = "basePattern"
+                startingLayer = startingBaseLayer
+                targetLayer = targetBaseLayer
+                layerStr = "baseLayer"
             end
 
-            -- check pattern needs update
-            if not role_builder.IsSamePattern(targetPattern, startingParttern) then
+            -- check layer needs update
+            if not targetLayer:isSame(startingLayer) then
                 -- add build tree step
                 iStep = iStep + 1
                 local iStepStr = tostring(iStep)
@@ -211,7 +211,7 @@ function UpgradeSite_ASrv(...)
                 table.insert(projectSteps,
                     { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
                         { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
-                        { keyDef = "treePattern"            , valueSource = 0, keyDefSource = patternStr },
+                        { keyDef = "treeLayer"              , valueSource = 0, keyDefSource = layerStr },
                         { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
                     }}
                 )
@@ -251,7 +251,7 @@ function UpgradeSite_ASrv(...)
             table.insert(projectSteps,
                 { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
                     { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
-                    { keyDef = "treePattern"            , valueSource = 0, keyDefSource = "treePattern" },
+                    { keyDef = "treeLayer"              , valueSource = 0, keyDefSource = "treeLayer" },
                     { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
                 }}
             )
@@ -467,7 +467,7 @@ end
 
 function BuildForestTree_ASrv(...)
     -- get & check input from description
-    local checkSuccess, treeBaseLocation, treePattern, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+    local checkSuccess, treeBaseLocation, treeLayer, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
         This private async service extends the forest with 1 tree
 
         Return value:
@@ -479,8 +479,8 @@ function BuildForestTree_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about this service
-                treeBaseLocation        + (table) location of the base (lower left corner) of a forest tree (pattern)
-                treePattern             + (table) tree pattern to build
+                treeBaseLocation        + (table) location of the base (lower left corner) of a forest tree (layer)
+                treeLayer               + (LayerRectangle) tree layer to build
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
@@ -492,11 +492,11 @@ function BuildForestTree_ASrv(...)
         startpoint = coremove.CopyLocation(treeBaseLocation),
         buildFromAbove = true,
         replacePresentObjects = false,
-        pattern = treePattern,
+        layer = treeLayer,
         materialsHostLocator = materialsHostLocator,
     }
-    corelog.WriteToLog(">Building tree (forest pattern) at "..textutils.serialise(buildData.startpoint, { compact = true }))
-    enterprise_construction.BuildRectangularPattern_ASrv(buildData, callback, callbackData)
+    corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
+    enterprise_construction.BuildLayer_ASrv(buildData, callback, callbackData)
 end
 
 function UpdateForest_SSrv(...)

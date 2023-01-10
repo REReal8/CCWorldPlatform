@@ -1,97 +1,75 @@
 local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
 local testStartLocation2    = coremove.GetRelativeLocation(testStartLocation, 0, 6, 0)
 
-local testBuildPattern1 = {
-    deltaX      = 4,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3,                 block = "minecraft:torch"},
-        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
-        { x = 3, y = 0,                 block = "minecraft:torch"},
+local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = 4,
+    _size_y     = 6,
+    _blockList  = {
+        mobj_block2d.Block2d:new({_x = 0, _y = 3,                   _name = "minecraft:torch"}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 5, _dx = 0, _dy = 1, _name = "minecraft:chest"}),
+        mobj_block2d.Block2d:new({_x = 3, _y = 0,                   _name = "minecraft:torch"}),
     },
-    clearRemainingSpace = true,
-}
+    _clearRemainingSpace = true,
+})
 
-local testBuildPattern2 = {
-    deltaX      = 3,
-    deltaY      = 3,
-    objectList  = {
-        { x = 0, y = 0, dx =-1, dy = 0, block = "minecraft:chest"},
-        { x = 0, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
+local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = 3,
+    _size_y     = 3,
+    _blockList  = {
+        {_x = 0, _y = 0, _dx =-1, _dy = 0,  _name = "minecraft:chest"},
+        {_x = 0, _y = 1, _dx =-1, _dy = 0,  _name = "minecraft:chest"},
 
-        { x = 0, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
-        { x = 1, y = 2, dx = 0, dy = 1, block = "minecraft:chest"},
+        {_x = 0, _y = 2, _dx = 0, _dy = 1,  _name = "minecraft:chest"},
+        {_x = 1, _y = 2, _dx = 0, _dy = 1,  _name = "minecraft:chest"},
 
-        { x = 1, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
-        { x = 2, y = 0, dx = 0, dy =-1, block = "minecraft:chest"},
+        {_x = 1, _y = 0, _dx = 0, _dy =-1,  _name = "minecraft:chest"},
+        {_x = 2, _y = 0, _dx = 0, _dy =-1,  _name = "minecraft:chest"},
 
-        { x = 2, y = 1, dx = 1, dy = 0, block = "minecraft:chest"},
-        { x = 2, y = 2, dx = 1, dy = 0, block = "minecraft:chest"},
+        {_x = 2, _y = 1, _dx = 1, _dy = 0,  _name = "minecraft:chest"},
+        {_x = 2, _y = 2, _dx = 1, _dy = 0,  _name = "minecraft:chest"},
     },
-    clearRemainingSpace = true,
-}
+    _clearRemainingSpace = true,
+})
 
-local testBuildPattern3 = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3,                 block = "minecraft:torch"},
-        { x = 2, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
-        { x = 3, y = 0,                 block = "minecraft:torch"},
-        { x = 4, y = 5, dx = 0, dy = 1, block = "minecraft:chest"},
+local testBuildLayer3 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = 6,
+    _size_y     = 6,
+    _blockList  = {
+        {_x = 0, _y = 3,                    _name = "minecraft:torch"},
+        {_x = 2, _y = 5, _dx = 0, _dy = 1,  _name = "minecraft:chest"},
+        {_x = 3, _y = 0,                    _name = "minecraft:torch"},
+        {_x = 4, _y = 5, _dx = 0, _dy = 1,  _name = "minecraft:chest"},
     },
-    clearRemainingSpace = true,
-}
+    _clearRemainingSpace = true,
+})
 
-local testBuildPattern4 = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
+local testBuildLayer4 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = 1,
+    _size_y     = 1,
+    _blockList  = {
     },
-    clearRemainingSpace = true,
-}
+    _clearRemainingSpace = true,
+})
 
-local testBlueprint1 = {
-    layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = role_builder.CopyPattern(testBuildPattern3)},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern4)},
-        { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)},
-        { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)}
-    },
-    escapeSequence = {
-        { x= 3, y= 3, z=  1},
-    }
-}
-
-local testBlueprint2 = {
-    layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, pattern = role_builder.CopyPattern(testBuildPattern1)},
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, pattern = role_builder.CopyPattern(testBuildPattern2)},
-    },
-    escapeSequence = {
-        { x= 3, y= 3, z=  1},
-    }
-}
-
-function T_BuildRectangularPattern_FromTurtle()
+function T_BuildLayer_ASrv_FromTurtle()
     -- test service 1
-    corelog.WriteToLog("# Test BuildRectangularPattern_ASrv (from turtle)")
+    corelog.WriteToLog("* BuildLayer_ASrv (from turtle) test")
     local buildData = {
         startpoint = testStartLocation,
         buildFromAbove = true,
-        pattern = testBuildPattern1,
+        layer = testBuildLayer1,
         materialsHostLocator = enterprise_turtle.GetHostLocator_Att()
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
 
-    corelog.WriteToLog("T_construction calling BuildRectangularPattern_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
-    enterprise_construction.BuildRectangularPattern_ASrv(buildData, callbackFunction, callbackData)
+    corelog.WriteToLog("T_construction calling BuildLayer_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
+    enterprise_construction.BuildLayer_ASrv(buildData, callbackFunction, callbackData)
 end
 
-function T_BuildRectangularPattern_FromChest()
+function T_BuildLayer_ASrv_FromChest()
     -- test service
-    corelog.WriteToLog("# Test BuildRectangularPattern_ASrv (from chest)")
+    corelog.WriteToLog("* BuildLayer_ASrv (from chest) test")
 
     -- create project definition
     local buildRectangularPattern_ASrvProjectDef = {
@@ -102,11 +80,11 @@ function T_BuildRectangularPattern_FromChest()
                 { keyDef = "projectData"            , valueSource = 0, keyDefSource = "projectData" },
             }},
 
-            -- BuildRectangularPattern_ASrv
-            { stepName = "enterprise_construction.BuildRectangularPattern_ASrv", async = true, stepDataDef = {
+            -- BuildLayer_ASrv
+            { stepName = "enterprise_construction.BuildLayer_ASrv", async = true, stepDataDef = {
                 { keyDef = "startpoint"             , valueSource = 0, keyDefSource = "startpoint" },
                 { keyDef = "buildFromAbove"         , valueSource = 0, keyDefSource = "buildFromAbove" },
-                { keyDef = "pattern"                , valueSource = 0, keyDefSource = "pattern" },
+                { keyDef = "layer"                  , valueSource = 0, keyDefSource = "layer" },
 
                 { keyDef = "materialsHostLocator"   , valueSource = 1, keyDefSource = "chestLocator" },
             }},
@@ -140,7 +118,7 @@ function T_BuildRectangularPattern_FromChest()
             -- build data
             startpoint          = testStartLocation2,
             buildFromAbove      = true,
-            pattern             = testBuildPattern1,
+            layer               = testBuildLayer1,
         },
     }
 
@@ -150,9 +128,20 @@ function T_BuildRectangularPattern_FromChest()
     enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
-function T_BuildBlueprint_Service()
-    -- test service 2
-    corelog.WriteToLog("# Test BuildBlueprint_Service")
+function T_BuildBlueprint_ASrv()
+    -- prepare test
+    corelog.WriteToLog("* BuildBlueprint_ASrv test")
+    local testBlueprint1 = {
+        layerList = {
+            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, layer = testBuildLayer3:copy()},
+            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, layer = testBuildLayer4:copy()},
+            { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, layer = testBuildLayer2:copy()},
+            { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, layer = testBuildLayer2:copy()}
+        },
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
+    }
     local blueprintBuildData = {
         blueprintStartpoint     = coremove.GetRelativeLocation(testStartLocation, 0, 12, 0),
         blueprint               = testBlueprint1,
@@ -160,20 +149,10 @@ function T_BuildBlueprint_Service()
     }
     local callbackFunction = "t_main.Func1_Callback"
     local callbackData = {"some callback data"}
+
+    -- test
 --    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
     enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callbackFunction, callbackData)
-end
 
-function T_role_builder_MetaDatas()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, pattern = testBuildPattern1}
-    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint2}
-
-    corelog.WriteToLog("BuildRectangularPattern_MetaData => "..textutils.serialize(role_builder.BuildRectangularPattern_MetaData(buildData)))
-    corelog.WriteToLog("BuildBlueprint_MetaData => "..textutils.serialize(role_builder.BuildBlueprint_MetaData(blueprintBuildData)))
-end
-
-function T_BuildRectangularPattern_Task()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, pattern = testBuildPattern1}
-
-    role_builder.BuildRectangularPattern_Task(buildData)
+    -- cleanup test
 end

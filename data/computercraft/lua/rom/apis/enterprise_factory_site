@@ -419,27 +419,31 @@ end
     - no smelting spot
 --]]
 
-local shaftLayer_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-    },
-    clearRemainingSpace = true,
-}
+function Shaft_layer()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x      = 1,
+        _size_y      = 1,
+        _blockList  = {
+        },
+        _clearRemainingSpace = true,
+    })
+end
 
-local shaftLayerRestore_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:dirt"},
-    },
-    clearRemainingSpace = false,
-}
+function ShaftRestore_layer()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x      = 1,
+        _size_y      = 1,
+        _blockList  = {
+            { _x = 0, _y = 0, _name = "minecraft:dirt"},
+        },
+        _clearRemainingSpace = false,
+    })
+end
 
 function GetV0SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
+        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, layer = Shaft_layer()},
     }
 
     -- construct blueprint
@@ -461,7 +465,7 @@ end
 function GetV0SiteDismantleBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayerRestore_pattern)},
+        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, layer = ShaftRestore_layer()},
     }
 
     -- construct blueprint
@@ -512,29 +516,33 @@ end
     - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
 --]]
 
-local aboveOrBelowFurnanceLayerL1_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {},
-    clearRemainingSpace = true
-}
+function AboveOrBelowFurnanceL1_layer()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x      = 1,
+        _size_y      = 2,
+        _blockList  = {},
+        _clearRemainingSpace = true
+    })
+end
 
-local furnanceLayerL1_pattern = {
-    deltaX      = 1,
-    deltaY      = 2,
-    objectList  = {
-        { x = 0, y = 1, block = "minecraft:furnace"},
-    },
-    clearRemainingSpace = true
-}
+function FurnanceL1_layer()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x      = 1,
+        _size_y      = 2,
+        _blockList  = {
+            { _x = 0, _y = 1, _name = "minecraft:furnace"},
+        },
+        _clearRemainingSpace = true
+    })
+end
 
 function GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
-        { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = role_builder.CopyPattern(aboveOrBelowFurnanceLayerL1_pattern)},
-        { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = role_builder.CopyPattern(furnanceLayerL1_pattern)},
-        { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)},
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()},
+        { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, layer = FurnanceL1_layer()},
+        { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, layer = Shaft_layer()},
     }
 
     -- construct blueprint
@@ -590,40 +598,44 @@ end
     - ToDo and some additional chests of which we need to define what their exact purpose is.
 --]]
 
-local storageChestL2_pattern = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = false
-}
+function StorageChestL2_layer()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x      = 1,
+        _size_y      = 1,
+        _blockList  = {
+            { _x = 0, _y = 0, _name = "minecraft:chest"},
+        },
+        _clearRemainingSpace = false
+    })
+end
 
-local topLayerL2_pattern = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 0, y = 3, block = "minecraft:torch"},
-        { x = 2, y = 5, block = "minecraft:chest"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 4, y = 5, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true
-}
+function TopLayerL2_layer()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x      = 6,
+        _size_y      = 6,
+        _blockList  = {
+            { _x = 0, _y = 3, _name = "minecraft:torch"},
+            { _x = 2, _y = 5, _name = "minecraft:chest"},
+            { _x = 3, _y = 0, _name = "minecraft:torch"},
+            { _x = 4, _y = 5, _name = "minecraft:chest"},
+        },
+        _clearRemainingSpace = true
+    })
+end
 
 function GetV2SiteBuildData(serviceData)
     local onlyUpgrade = serviceData.upgrade
 
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z= 0}, buildFromAbove = true, pattern = role_builder.CopyPattern(topLayerL2_pattern)},
+        { startpoint = { x= 0, y= 0, z= 0}, buildFromAbove = true, layer = TopLayerL2_layer()},
     }
     if not onlyUpgrade then
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, pattern = role_builder.CopyPattern(shaftLayer_pattern)})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, pattern = role_builder.CopyPattern(aboveOrBelowFurnanceLayerL1_pattern)})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, pattern = role_builder.CopyPattern(furnanceLayerL1_pattern)})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
+        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, layer = FurnanceL1_layer()})
     end
-    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, pattern = role_builder.CopyPattern(storageChestL2_pattern)})
+    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, layer = StorageChestL2_layer()})
 
     -- construct blueprint
     local blueprint = {

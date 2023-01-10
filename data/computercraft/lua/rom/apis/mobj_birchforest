@@ -16,49 +16,6 @@ BirchForest = {
     _localSaplingsLocator   = nil,
 }
 
-local tree_patternLm1 = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:birch_sapling"},
-    },
-    clearRemainingSpace = true,
-}
-
-local tree_patternL0 = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 3, y = 3, block = "minecraft:birch_sapling"},
-    },
-    clearRemainingSpace = true,
-}
-
-local tree_patternL1 = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 3, y = 3, block = "minecraft:birch_sapling"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 0, y = 3, block = "minecraft:torch"},
-    },
-    clearRemainingSpace = true,
-}
-
-local base_patternL2 = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 3, y = 3, block = "minecraft:birch_sapling"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 0, y = 3, block = "minecraft:torch"},
-        { x = 2, y = 1, dx =-1, dy = 0, block = "minecraft:chest"},
-        { x = 4, y = 1, dx =1, dy = 0, block = "minecraft:chest"},
-        { x = 5, y = 2, dx =1, dy = 0, block = "minecraft:chest"},
-    },
-    clearRemainingSpace = true,
-}
-
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -147,20 +104,20 @@ function BirchForest:setLocalSaplingsLocator(localSaplingsLocator)
     self._localSaplingsLocator = localSaplingsLocator
 end
 
-function BirchForest:getBasePattern(level)
-    if level == -1 then     return role_builder.CopyPattern(tree_patternLm1)
-    elseif level == 0 then  return role_builder.CopyPattern(tree_patternL0)
-    elseif level == 1 then  return role_builder.CopyPattern(tree_patternL1)
-    elseif level == 2 then  return role_builder.CopyPattern(base_patternL2)
-    else                    corelog.Error("mobj_birchforest.getBasePattern: Don't know pattern for level "..level) return nil end
+function BirchForest:getBaseLayer(level)
+    if level == -1 then     return Tree_layerLm1()
+    elseif level == 0 then  return Tree_layerL0()
+    elseif level == 1 then  return Tree_layerL1()
+    elseif level == 2 then  return Base_layerL2()
+    else                    corelog.Error("mobj_birchforest.getBaseLayer: Don't know layer for level "..level) return nil end
 end
 
-function BirchForest:getTreePattern(level)
-    if level == -1 then     return role_builder.CopyPattern(tree_patternLm1)
-    elseif level == 0 then  return role_builder.CopyPattern(tree_patternL0)
-    elseif level == 1 then  return role_builder.CopyPattern(tree_patternL1)
-    elseif level == 2 then  return role_builder.CopyPattern(tree_patternL1) -- same as L1
-    else                    corelog.Error("mobj_birchforest.getTreePattern: Don't know pattern for level "..level) return nil end
+function BirchForest:getTreeLayer(level)
+    if level == -1 then     return Tree_layerLm1()
+    elseif level == 0 then  return Tree_layerL0()
+    elseif level == 1 then  return Tree_layerL1()
+    elseif level == 2 then  return Tree_layerL1() -- same as L1
+    else                    corelog.Error("mobj_birchforest.getTreeLayer: Don't know layer for level "..level) return nil end
 end
 
 function BirchForest:copy()
@@ -464,4 +421,55 @@ end
 
 function BirchForest:getFirstTreeLocation()
     return coremove.GetRelativeLocation(self:getLocation(), 3, 2, 0)
+end
+
+function Tree_layerLm1()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x     = 1,
+        _size_y     = 1,
+        _blockList  = {
+            { _x = 0, _y = 0, _name = "minecraft:birch_sapling"},
+        },
+        _clearRemainingSpace = true,
+    })
+end
+
+function Tree_layerL0()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x     = 6,
+        _size_y     = 6,
+        _blockList  = {
+            { _x = 3, _y = 3, _name = "minecraft:birch_sapling"},
+        },
+        _clearRemainingSpace = true,
+    })
+end
+
+function Tree_layerL1()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x     = 6,
+        _size_y     = 6,
+        _blockList  = {
+            { _x = 3, _y = 3, _name = "minecraft:birch_sapling"},
+            { _x = 3, _y = 0, _name = "minecraft:torch"},
+            { _x = 0, _y = 3, _name = "minecraft:torch"},
+        },
+        _clearRemainingSpace = true,
+    })
+end
+
+function Base_layerL2()
+    return mobj_layer_rectangle.LayerRectangle:new({
+        _size_x     = 6,
+        _size_y     = 6,
+        _blockList  = {
+            { _x = 3, _y = 3, _name = "minecraft:birch_sapling"},
+            { _x = 3, _y = 0, _name = "minecraft:torch"},
+            { _x = 0, _y = 3, _name = "minecraft:torch"},
+            { _x = 2, _y = 1, _dx =-1, _dy = 0, _name = "minecraft:chest"},
+            { _x = 4, _y = 1, _dx =1, _dy = 0, _name = "minecraft:chest"},
+            { _x = 5, _y = 2, _dx =1, _dy = 0, _name = "minecraft:chest"},
+        },
+        _clearRemainingSpace = true,
+    })
 end

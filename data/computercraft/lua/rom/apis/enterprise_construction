@@ -20,7 +20,7 @@ function BuildBlueprint_ASrv(...)
             nil
 
         Async service return value (to callback):
-                                        - (table) {success = true} if the pattern was succesfully build
+                                        - (table) {success = true} if the blueprint was succesfully build
 
         Parameters:
             buildData                   - (table) data about what to build
@@ -29,7 +29,7 @@ function BuildBlueprint_ASrv(...)
                     layerList           - (table) layer to build
                     escapeSequence      - (table) escapeSequence of blueprint
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once the pattern is build
+            callback                    + (string) name of function to call once the blueprint is build
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
@@ -104,48 +104,44 @@ function BuildBlueprint_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function BuildRectangularPattern_ASrv(...)
+function BuildLayer_ASrv(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, pattern, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
-        This async public service builds a rectangular pattern in the x,y plane as a single assignment/ task.
+    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsHostLocator, callback, callbackData = coreutils.CheckInput([[
+        This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
 
         Return value:
             nil
 
         Async service return value (to callback):
-                                        - (table) {success = true} if the pattern was succesfully build
+                                        - (table) {success = true} if the layer was succesfully build
 
         Parameters:
             buildData                   - (table) data about what to build
-                startpoint              + (table) lower left coordinate to start building the pattern
+                startpoint              + (table) lower left coordinate to start building the layer
                 buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
-                replacePresentObjects   + (boolean) whether objects should be replaced if it is already present in the minecraft world (default = false)
-                pattern                 + (table) pattern to build
-                    deltaX              - (number) x size of pattern
-                    deltaY              - (number) size of pattern
-                    objectList          - (table) array of objects to build, with for each object
-                    clearRemainingSpace - (boolean) whether space not in the objectlist should be cleared
+                replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
+                layer                   + (LayerRectangle) layer to build
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once the pattern is build
+            callback                    + (string) name of function to call once the layer is build
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_construction.BuildRectangularPattern_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- get assignment metadata
     local taskData = {
         startpoint              = startpoint,
         buildFromAbove          = buildFromAbove,
         replacePresentObjects   = replacePresentObjects,
-        pattern                 = pattern,
+        layer                   = layer,
     }
-    local metaData = role_builder.BuildRectangularPattern_MetaData(taskData)
+    local metaData = role_builder.BuildLayer_MetaData(taskData)
 
     -- check if materials needed
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
-    local taskFunctionName = "role_builder.BuildRectangularPattern_Task"
+    local taskFunctionName = "role_builder.BuildLayer_Task"
     if next(materialsNeeded) == nil then
         -- directly do assignment
---        corelog.WriteToLog(">Building (zero materials) pattern at "..textutils.serialise(startpoint))
+--        corelog.WriteToLog(">Building (zero materials) layer at "..textutils.serialise(startpoint))
         local assignmentServiceData = {
             metaData    = metaData,
             task        = taskFunctionName,
@@ -159,7 +155,7 @@ function BuildRectangularPattern_ASrv(...)
     materialsItemsLocator:setQuery(materialsNeeded)
 
     -- set local output location
-    -- note:    Because BuildRectangularPattern_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle
+    -- note:    Because BuildLayer_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle
     --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of)
     --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
@@ -203,7 +199,7 @@ function BuildRectangularPattern_ASrv(...)
     }
 
     -- start project
---    corelog.WriteToLog(">Building pattern at "..textutils.serialise(startpoint))
+--    corelog.WriteToLog(">Building layer at "..textutils.serialise(startpoint))
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 

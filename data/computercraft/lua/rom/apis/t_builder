@@ -1,132 +1,103 @@
+function T_All()
+--    T_PatternsSubstract()
+    T_BuildLayer_MetaData()
+    T_BuildBlueprint_MetaData()
+end
 
-local pattern1 = {
-    deltaX      = 6,
-    deltaY      = 6,
-    objectList  = {
-        { x = 3, y = 3, block = "minecraft:birch_sapling"},
-        { x = 3, y = 0, block = "minecraft:torch"},
-        { x = 0, y = 3, block = "minecraft:torch"},
+local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
+
+local size_x1 = 4
+local size_y1 = 6
+local itemName1 = "minecraft:chest"
+local itemName2 = "minecraft:torch"
+local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = size_x1,
+    _size_y     = size_y1,
+    _blockList  = {
+        mobj_block2d.Block2d:new({_x = 0, _y = 3,                   _name = itemName2}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 5, _dx = 0, _dy = 1, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 3, _y = 0,                   _name = itemName2}),
     },
-    clearRemainingSpace = true,
-}
-local pattern2 = {
-    deltaX      = 1,
-    deltaY      = 1,
-    objectList  = {
-        { x = 0, y = 0, block = "minecraft:birch_sapling"},
+    _clearRemainingSpace = true,
+})
+
+local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = 3,
+    _size_y     = 3,
+    _blockList  = {
+        mobj_block2d.Block2d:new({_x = 0, _y = 0, _dx =-1, _dy = 0, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 1, _dx =-1, _dy = 0, _name = itemName1}),
+
+        mobj_block2d.Block2d:new({_x = 0, _y = 2, _dx = 0, _dy = 1, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 1, _y = 2, _dx = 0, _dy = 1, _name = itemName1}),
+
+        mobj_block2d.Block2d:new({_x = 1, _y = 0, _dx = 0, _dy =-1, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 0, _dx = 0, _dy =-1, _name = itemName1}),
+
+        mobj_block2d.Block2d:new({_x = 2, _y = 1, _dx = 1, _dy = 0, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 2, _dx = 1, _dy = 0, _name = itemName1}),
     },
-    clearRemainingSpace = true,
-}
+    _clearRemainingSpace = true,
+})
+
 local compact = { compact = true }
 
-function T_All()
-    T_IsSamePattern()
-    T_CopyPattern()
-    T_IsPattern()
---    T_PatternsSubstract()
-end
-
-function T_IsPattern()
+function T_BuildLayer_MetaData()
     -- prepare test
-    corelog.WriteToLog("* role_builder IsPattern tests")
-
-    -- test correct pattern
-    local isPattern = role_builder.IsPattern(pattern1)
-    local expectedIsPattern = true
-    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
-
-    -- test deltaX
-    local incorrectPattern = role_builder.CopyPattern(pattern1)
-    incorrectPattern.deltaX = nil
-    isPattern = role_builder.IsPattern(incorrectPattern)
-    expectedIsPattern = false
-    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
-
-    -- test deltaY
-    incorrectPattern = role_builder.CopyPattern(pattern1)
-    incorrectPattern.deltaY = nil
-    isPattern = role_builder.IsPattern(incorrectPattern)
-    expectedIsPattern = false
-    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
-
-    -- test clearRemainingSpace
-    incorrectPattern = role_builder.CopyPattern(pattern1)
-    incorrectPattern.clearRemainingSpace = nil
-    isPattern = role_builder.IsPattern(incorrectPattern)
-    expectedIsPattern = false
-    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
-
-    -- test clearRemainingSpace not nil
-    incorrectPattern = role_builder.CopyPattern(pattern1)
-    incorrectPattern.objectList = nil
-    isPattern = role_builder.IsPattern(incorrectPattern)
-    expectedIsPattern = false
-    assert(isPattern == expectedIsPattern, "gotten IsPattern(="..tostring(isPattern)..") not the same as expected(="..tostring(expectedIsPattern)..")")
-
-    -- cleanup test
-end
-
-function T_IsSamePattern()
-    -- prepare test
-    corelog.WriteToLog("* role_builder IsSamePattern tests")
-
-    -- test same
-    local isSamePattern = role_builder.IsSamePattern(pattern1, pattern1)
-    local expectedIsSamePattern = true
-    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
-
-    -- test different
-    isSamePattern = role_builder.IsSamePattern(pattern1, pattern2)
-    expectedIsSamePattern = false
-    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
-
-    -- test both nil
-    isSamePattern = role_builder.IsSamePattern(nil, nil)
-    expectedIsSamePattern = true
-    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
-
-    -- test 1st nil
-    isSamePattern = role_builder.IsSamePattern(nil, pattern2)
-    expectedIsSamePattern = false
-    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
-
-    -- test 2nd nil
-    isSamePattern = role_builder.IsSamePattern(pattern1, nil)
-    expectedIsSamePattern = false
-    assert(isSamePattern == expectedIsSamePattern, "gotten IsSamePattern(="..tostring(isSamePattern)..") not the same as expected(="..tostring(expectedIsSamePattern)..")")
-
-    -- cleanup test
-end
-
-function T_CopyPattern()
-    -- prepare test
-    corelog.WriteToLog("* role_builder CopyPattern tests")
+    corelog.WriteToLog("* role_builder BuildLayer_MetaData test")
+    local buildFromAbove = true
+    local buildData = {startpoint = testStartLocation, buildFromAbove = buildFromAbove, layer = testBuildLayer1}
 
     -- test
-    local patternCopy = role_builder.CopyPattern(pattern1)
-    assert(role_builder.IsSamePattern(patternCopy, pattern1), "gotten CopyPattern(="..textutils.serialize(patternCopy, compact)..") not the same as expected(="..textutils.serialize(pattern1, compact)..")")
+    local metaData = role_builder.BuildLayer_MetaData(buildData)
+    local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
+    local expectedLocation = coremove.GetRelativeLocation(testStartLocation, 0, 0, deltaZ)
+    assert(coremove.IsSameLocation(metaData.location, expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
+    assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
+    local expectedFuelNeeded = size_x1*size_y1 - 1
+    assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
+    assert(metaData.itemsNeeded[itemName1] == 1, "gotten itemCount(="..metaData.itemsNeeded[itemName1]..") for "..itemName1.."'s not the same as expected(=1)")
+    assert(metaData.itemsNeeded[itemName2] == 2, "gotten itemCount(="..metaData.itemsNeeded[itemName2]..") for "..itemName2.."'s not the same as expected(=2)")
 
     -- cleanup test
 end
 
-function T_PatternsSubstract()
+function T_BuildBlueprint_MetaData()
     -- prepare test
-    corelog.WriteToLog("* role_builder PatternsSubstract tests")
-
-    -- test
-    local offset_x = 3
-    local offset_y = 3
-    local resultPattern = role_builder.PatternsSubstract(pattern1, pattern2, offset_x, offset_y)
-    local expectedPattern = {
-        deltaX      = 6,
-        deltaY      = 6,
-        objectList  = {
-            { x = 3, y = 0, block = "minecraft:torch"},
-            { x = 0, y = 3, block = "minecraft:torch"},
+    corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
+    local testBlueprint = {
+        layerList = {
+            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, layer = testBuildLayer1:copy()},
+            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, layer = testBuildLayer2:copy()},
         },
-        clearRemainingSpace = true,
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
     }
-    assert(role_builder.IsSamePattern(resultPattern, expectedPattern), "gotten PatternsSubstract(="..textutils.serialize(resultPattern, compact)..") not the same as expected(="..textutils.serialize(expectedPattern, compact)..")")
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
+
+    -- test
+    local metaData = role_builder.BuildBlueprint_MetaData(blueprintBuildData)
+    local expectedLocation = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0)
+    assert(coremove.IsSameLocation(metaData.location, expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
+    assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
+    local expectedFuelNeeded = 47
+    assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
+    assert(metaData.itemsNeeded[itemName1] == 9, "gotten itemCount(="..metaData.itemsNeeded[itemName1]..") for "..itemName1.."'s not the same as expected(=9)")
+    assert(metaData.itemsNeeded[itemName2] == 2, "gotten itemCount(="..metaData.itemsNeeded[itemName2]..") for "..itemName2.."'s not the same as expected(=2)")
+
+    -- cleanup test
+end
+
+function T_BuildLayer_Task()
+    -- prepare test
+    corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer1}
+
+    -- test
+    role_builder.BuildRectangularPattern_Task(buildData)
 
     -- cleanup test
 end

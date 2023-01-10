@@ -26,7 +26,7 @@ function CreateNewWorld_ASrv(...)
             It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
 
             The function also defines the coordinate system by assuming the turtle starts at the location {x= 3, y= 2, z= 1, dx=0, dy=1}. This
-            allows for the initial forest that is build to fit in the 6x6 grid that is used in patterns with the lower left coordinate of the base
+            allows for the initial forest that is build to fit in the 6x6 grid that is used in layers with the lower left coordinate of the base
             of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
 
         Return value:
