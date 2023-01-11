@@ -93,11 +93,11 @@ end
 
 function T_BuildLayer_Task()
     -- prepare test
-    corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
+    corelog.WriteToLog("* role_builder BuildLayer_Task test")
     local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer1}
 
     -- test
-    role_builder.BuildRectangularPattern_Task(buildData)
+    role_builder.BuildLayer_Task(buildData)
 
     -- cleanup test
 end
