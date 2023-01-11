@@ -3,6 +3,7 @@ function T_All()
     T_IsOfType()
     T_isSame()
     T_copy()
+    T_isMinecraftItem()
     T_ParseWithCheckInput()
 
     T_IsBlockList()
@@ -22,6 +23,8 @@ local dy1 = 1
 local dy2 = 0
 local name1 = "minecraft:birch_sapling"
 local name2 = "minecraft:furnace"
+local blockNameAny = "ccwp:any"
+local blockNameNone = "ccwp:none"
 
 local block1 = mobj_block2d.Block2d:new({
     _x      = x1,
@@ -201,6 +204,35 @@ function T_copy()
     -- test
     local copy = block1:copy()
     assert(copy:isSame(block1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(block1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_isMinecraftItem()
+    -- prepare test
+    corelog.WriteToLog("* mobj_block2d:isMinecraftItem() tests")
+    local block2 = mobj_block2d.Block2d:new({
+        _x      = x1,
+        _y      = y1,
+        _dx     = dx1,
+        _dy     = dy1,
+
+        _name   = name1,
+    })
+
+    -- test minecraft item
+    local isMinecraftItem = block2:isMinecraftItem()
+    assert(isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..name1.." not the same as expected(true)")
+
+    -- test blockNameAny
+    block2:setName(blockNameAny)
+    isMinecraftItem = block2:isMinecraftItem()
+    assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockNameAny.." not the same as expected(false)")
+
+    -- test blockNameNone
+    block2:setName(blockNameNone)
+    isMinecraftItem = block2:isMinecraftItem()
+    assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockNameNone.." not the same as expected(false)")
 
     -- cleanup test
 end

@@ -147,6 +147,10 @@ function Block2d:copy()
     return copy
 end
 
+function Block2d:isMinecraftItem()
+    return self._name:find("^minecraft:") ~= nil
+end
+
 function IsBlockList(blockList)
     -- check table
     if type(blockList) ~= "table" then return false end

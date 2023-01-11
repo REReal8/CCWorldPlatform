@@ -121,13 +121,33 @@ function LayerRectangle:copy()
     return copy
 end
 
-function LayerRectangle:itemsNeeded()
-    local itemList = {}
+function LayerRectangle:blocksNeeded()
+    -- determine block list
+    local blockList = {}
     for i, block in ipairs(self:getBlockList()) do
+        -- get name
         local itemName = block._name
 
         -- increment item counter
-        itemList[itemName] = (itemList[itemName] or 0) + 1
+        blockList[itemName] = (blockList[itemName] or 0) + 1
+    end
+
+    -- end
+    return blockList
+end
+
+function LayerRectangle:itemsNeeded()
+    -- determine item list
+    local itemList = {}
+    for i, block in ipairs(self:getBlockList()) do
+        -- check is minecraft item
+        if block:isMinecraftItem() then
+            -- get name
+            local itemName = block._name
+
+            -- increment item counter
+            itemList[itemName] = (itemList[itemName] or 0) + 1
+        end
     end
 
     -- end
