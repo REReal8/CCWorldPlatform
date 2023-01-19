@@ -4,6 +4,8 @@ function T_All()
     T_isSame()
     T_copy()
     T_isMinecraftItem()
+    T_isAnyBlock()
+    T_isNoneBlock()
     T_ParseWithCheckInput()
 
     T_IsBlockList()
@@ -23,8 +25,6 @@ local dy1 = 1
 local dy2 = 0
 local name1 = "minecraft:birch_sapling"
 local name2 = "minecraft:furnace"
-local blockNameAny = "ccwp:any"
-local blockNameNone = "ccwp:none"
 
 local block1 = mobj_block2d.Block2d:new({
     _x      = x1,
@@ -211,28 +211,83 @@ end
 function T_isMinecraftItem()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d:isMinecraftItem() tests")
+    local blockName = name1
     local block2 = mobj_block2d.Block2d:new({
         _x      = x1,
         _y      = y1,
         _dx     = dx1,
         _dy     = dy1,
 
-        _name   = name1,
+        _name   = blockName,
     })
 
     -- test minecraft item
     local isMinecraftItem = block2:isMinecraftItem()
-    assert(isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..name1.." not the same as expected(true)")
+    assert(isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(true)")
 
     -- test blockNameAny
-    block2:setName(blockNameAny)
+    blockName = mobj_block2d.AnyBlockName()
+    block2:setName(blockName)
     isMinecraftItem = block2:isMinecraftItem()
-    assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockNameAny.." not the same as expected(false)")
+    assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(false)")
 
     -- test blockNameNone
-    block2:setName(blockNameNone)
+    blockName = mobj_block2d.NoneBlockName()
+    block2:setName(blockName)
     isMinecraftItem = block2:isMinecraftItem()
-    assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockNameNone.." not the same as expected(false)")
+    assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(false)")
+
+    -- cleanup test
+end
+
+function T_isAnyBlock()
+    -- prepare test
+    corelog.WriteToLog("* mobj_block2d:isAnyBlock() tests")
+    local blockName = mobj_block2d.AnyBlockName()
+    local block2 = mobj_block2d.Block2d:new({
+        _x      = x1,
+        _y      = y1,
+        _dx     = dx1,
+        _dy     = dy1,
+
+        _name   = blockName,
+    })
+
+    -- test any block
+    local isAnyBlock = block2:isAnyBlock()
+    assert(isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(true)")
+
+    -- test not any block
+    blockName = name1
+    block2:setName(blockName)
+    isAnyBlock = block2:isAnyBlock()
+    assert(not isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(false)")
+
+    -- cleanup test
+end
+
+function T_isNoneBlock()
+    -- prepare test
+    corelog.WriteToLog("* mobj_block2d:isNoneBlock() tests")
+    local blockName = mobj_block2d.NoneBlockName()
+    local block2 = mobj_block2d.Block2d:new({
+        _x      = x1,
+        _y      = y1,
+        _dx     = dx1,
+        _dy     = dy1,
+
+        _name   = blockName,
+    })
+
+    -- test any block
+    local isNoneBlock = block2:isNoneBlock()
+    assert(isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(true)")
+
+    -- test not any block
+    blockName = name1
+    block2:setName(blockName)
+    isNoneBlock = block2:isNoneBlock()
+    assert(not isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(false)")
 
     -- cleanup test
 end

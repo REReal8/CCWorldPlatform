@@ -151,6 +151,22 @@ function Block2d:isMinecraftItem()
     return self._name:find("^minecraft:") ~= nil
 end
 
+function AnyBlockName()
+    return "ccwp:any"
+end
+
+function Block2d:isAnyBlock()
+    return self._name == AnyBlockName()
+end
+
+function NoneBlockName()
+    return "ccwp:none"
+end
+
+function Block2d:isNoneBlock()
+    return self._name == NoneBlockName()
+end
+
 function IsBlockList(blockList)
     -- check table
     if type(blockList) ~= "table" then return false end
