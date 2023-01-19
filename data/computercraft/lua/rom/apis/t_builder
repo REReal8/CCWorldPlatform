@@ -8,15 +8,15 @@ local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
 
 local size_x1 = 4
 local size_y1 = 6
-local itemName1 = "minecraft:chest"
-local itemName2 = "minecraft:torch"
+local chestItemName = "minecraft:chest"
+local torchItemName = "minecraft:torch"
 local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
     _size_x     = size_x1,
     _size_y     = size_y1,
     _blockList  = {
-        mobj_block2d.Block2d:new({_x = 0, _y = 3,                   _name = itemName2}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 5, _dx = 0, _dy = 1, _name = itemName1}),
-        mobj_block2d.Block2d:new({_x = 3, _y = 0,                   _name = itemName2}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 3,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 5, _dx = 0, _dy = 1, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 3, _y = 0,                   _name = torchItemName}),
     },
     _clearRemainingSpace = true,
 })
@@ -25,17 +25,17 @@ local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
     _size_x     = 3,
     _size_y     = 3,
     _blockList  = {
-        mobj_block2d.Block2d:new({_x = 0, _y = 0, _dx =-1, _dy = 0, _name = itemName1}),
-        mobj_block2d.Block2d:new({_x = 0, _y = 1, _dx =-1, _dy = 0, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 0, _dx =-1, _dy = 0, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 1, _dx =-1, _dy = 0, _name = chestItemName}),
 
-        mobj_block2d.Block2d:new({_x = 0, _y = 2, _dx = 0, _dy = 1, _name = itemName1}),
-        mobj_block2d.Block2d:new({_x = 1, _y = 2, _dx = 0, _dy = 1, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 2, _dx = 0, _dy = 1, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 1, _y = 2, _dx = 0, _dy = 1, _name = chestItemName}),
 
-        mobj_block2d.Block2d:new({_x = 1, _y = 0, _dx = 0, _dy =-1, _name = itemName1}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 0, _dx = 0, _dy =-1, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 1, _y = 0, _dx = 0, _dy =-1, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 0, _dx = 0, _dy =-1, _name = chestItemName}),
 
-        mobj_block2d.Block2d:new({_x = 2, _y = 1, _dx = 1, _dy = 0, _name = itemName1}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 2, _dx = 1, _dy = 0, _name = itemName1}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 1, _dx = 1, _dy = 0, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 2, _dx = 1, _dy = 0, _name = chestItemName}),
     },
     _clearRemainingSpace = true,
 })
@@ -57,8 +57,8 @@ function T_BuildLayer_MetaData()
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
     local expectedFuelNeeded = size_x1*size_y1 - 1
     assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
-    assert(metaData.itemsNeeded[itemName1] == 1, "gotten itemCount(="..metaData.itemsNeeded[itemName1]..") for "..itemName1.."'s not the same as expected(=1)")
-    assert(metaData.itemsNeeded[itemName2] == 2, "gotten itemCount(="..metaData.itemsNeeded[itemName2]..") for "..itemName2.."'s not the same as expected(=2)")
+    assert(metaData.itemsNeeded[chestItemName] == 1, "gotten itemCount(="..metaData.itemsNeeded[chestItemName]..") for "..chestItemName.."'s not the same as expected(=1)")
+    assert(metaData.itemsNeeded[torchItemName] == 2, "gotten itemCount(="..metaData.itemsNeeded[torchItemName]..") for "..torchItemName.."'s not the same as expected(=2)")
 
     -- cleanup test
 end
@@ -85,16 +85,52 @@ function T_BuildBlueprint_MetaData()
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
     local expectedFuelNeeded = 47
     assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
-    assert(metaData.itemsNeeded[itemName1] == 9, "gotten itemCount(="..metaData.itemsNeeded[itemName1]..") for "..itemName1.."'s not the same as expected(=9)")
-    assert(metaData.itemsNeeded[itemName2] == 2, "gotten itemCount(="..metaData.itemsNeeded[itemName2]..") for "..itemName2.."'s not the same as expected(=2)")
+    assert(metaData.itemsNeeded[chestItemName] == 9, "gotten itemCount(="..metaData.itemsNeeded[chestItemName]..") for "..chestItemName.."'s not the same as expected(=9)")
+    assert(metaData.itemsNeeded[torchItemName] == 2, "gotten itemCount(="..metaData.itemsNeeded[torchItemName]..") for "..torchItemName.."'s not the same as expected(=2)")
 
     -- cleanup test
 end
 
-function T_BuildLayer_Task()
+local anyBlock = mobj_block2d.AnyBlockName()
+local noneBlock = mobj_block2d.NoneBlockName()
+local testBuildLayer3 = mobj_layer_rectangle.LayerRectangle:new({
+    _size_x     = 6,
+    _size_y     = 6,
+    _blockList  = {
+        mobj_block2d.Block2d:new({_x = 0, _y = 0,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 1, _y = 1,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 2, _y = 2,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 3, _y = 3,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 4, _y = 4,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 5, _y = 5,                   _name = torchItemName}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 5, _dx = 0, _dy = 1, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 5, _y = 0, _dx = 0, _dy = 1, _name = chestItemName}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 2,                   _name = anyBlock}),
+        mobj_block2d.Block2d:new({_x = 1, _y = 2,                   _name = anyBlock}),
+        mobj_block2d.Block2d:new({_x = 0, _y = 4,                   _name = noneBlock}),
+        mobj_block2d.Block2d:new({_x = 1, _y = 4,                   _name = noneBlock}),
+    },
+    _clearRemainingSpace = true,
+})
+
+function T_BuildLayer_Task_clear()
     -- prepare test
-    corelog.WriteToLog("* role_builder BuildLayer_Task test")
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer1}
+    corelog.WriteToLog("* role_builder BuildLayer_Task (clear) test")
+    local testBuildLayer = testBuildLayer3:copy()
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer}
+
+    -- test
+    role_builder.BuildLayer_Task(buildData)
+
+    -- cleanup test
+end
+
+function T_BuildLayer_Task_noclear()
+    -- prepare test
+    corelog.WriteToLog("* role_builder BuildLayer_Task (no clear) test")
+    local testBuildLayer = testBuildLayer3:copy()
+    testBuildLayer:setClearRemainingSpace(false)
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer}
 
     -- test
     role_builder.BuildLayer_Task(buildData)

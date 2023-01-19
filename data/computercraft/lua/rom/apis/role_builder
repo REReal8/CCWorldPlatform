@@ -198,52 +198,54 @@ function BuildLayer_Task(...)
             -- ga naar de locatie
             coremove.MoveTo(coremove.GetRelativeLocation(startpoint, x, y, deltaZ), true)
 
-            -- moeten we hier wat plaatsen?
-            local placingBlock  = false
+            -- do we have a block for this location?
+            local blockFound = nil
             for i, block in ipairs(layer:getBlockList()) do
-                -- juiste coordinaat?
+                -- check coordinate
                 if block:getX() == x and block:getY() == y then
-                    -- onthouden voor zo
-                    placingBlock = true
+                    -- remember
+                    blockFound = block
 
-                    -- moeten we in een specifieke richting draaien?
-                    if block:getDx() ~= nil or block:getDy() ~= nil then
-                        -- turn in the right direction
-                        coremove.TurnTo({dx = block:getDx(), dy = block:getDy()})
-                    end
-
-                    -- check if block already present
-                    local has_block, block_data
-                    if not replacePresentObjects then
-                        if buildFromAbove then
-                            has_block, block_data = turtle.inspectDown()
-                        else
-                            has_block, block_data = turtle.inspectUp()
+                    -- check minecraft item
+                    if block:isMinecraftItem() then
+                        -- optionally turn in specific direction
+                        if block:getDx() ~= nil or block:getDy() ~= nil then
+                            -- turn in the right direction
+                            coremove.TurnTo({dx = block:getDx(), dy = block:getDy()})
                         end
-                    end
 
-                    -- check placing object
-                    local block_name = block:getName()
-                    if replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= block_name then
-                        -- block nu plaatsen
-                        if coreinventory.SelectItem(block_name) then
-                            if buildFromAbove   then turtle.digDown()   turtle.placeDown()
-                                                else turtle.digUp()     turtle.placeUp()
+                        -- check current block present
+                        local has_block, block_data
+                        if not replacePresentObjects then
+                            if buildFromAbove then
+                                has_block, block_data = turtle.inspectDown()
+                            else
+                                has_block, block_data = turtle.inspectUp()
                             end
-                        else
-                            -- mandatory item not in inventory, error message and ignore
-                            corelog.WriteToLog("Oops, BuildLayer_Task item not in inventory: "..block_name)
+                        end
+
+                        -- check placing object
+                        local block_name = block:getName()
+                        if replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= block_name then
+                            -- place block
+                            if coreinventory.SelectItem(block_name) then
+                                if buildFromAbove   then turtle.digDown()   turtle.placeDown()
+                                                    else turtle.digUp()     turtle.placeUp()
+                                end
+                            else
+                                -- mandatory item not in inventory, error message and ignore
+                                corelog.WriteToLog("Oops, BuildLayer_Task item not in inventory: "..block_name)
+                            end
                         end
                     end
 
-                    -- klaar met deze loop
+                    -- break loop
                     break
                 end
             end
 
-            -- nee? Dan iets weghalen?
-            if not placingBlock and layer:getClearRemainingSpace() then
-
+            -- no(ne) block at location, and maybe we want to clear
+            if not blockFound and layer:getClearRemainingSpace() or blockFound and blockFound:isNoneBlock() then
                 -- vak schoon maken
                 if buildFromAbove  then turtle.digDown()
                                         else turtle.digUp()
