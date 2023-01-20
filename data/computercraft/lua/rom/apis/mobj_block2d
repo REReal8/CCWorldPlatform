@@ -148,7 +148,11 @@ function Block2d:copy()
 end
 
 function Block2d:isMinecraftItem()
-    return self._name:find("^minecraft:") ~= nil
+    return IsMinceCraftItemName(self._name)
+end
+
+function IsMinceCraftItemName(name)
+    return name:find("^minecraft:") ~= nil
 end
 
 function AnyBlockName()
