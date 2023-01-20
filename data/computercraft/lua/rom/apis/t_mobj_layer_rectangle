@@ -17,8 +17,8 @@ local clearRemainingSpace2 = false
 
 local itemName1 = "minecraft:birch_sapling"
 local itemName2 = "minecraft:torch"
-local blockNameAny = "ccwp:any"
-local blockNameNone = "ccwp:none"
+local blockNameAny = mobj_block2d.AnyBlockName()
+local blockNameNone = mobj_block2d.NoneBlockName()
 local block1 = mobj_block2d.Block2d:new({ _x = 3, _y = 3, _name = itemName1 })
 local block2 = mobj_block2d.Block2d:new({ _x = 3, _y = 0, _name = itemName2 })
 local block3 = mobj_block2d.Block2d:new({ _x = 0, _y = 3, _name = itemName2 })
