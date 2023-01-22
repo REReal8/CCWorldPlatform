@@ -18,14 +18,14 @@ local dx1 = 0
 local dx2 = -1
 local dy1 = 1
 local dy2 = 0
-local name1 = "minecraft:birch_sapling"
-local name2 = "minecraft:furnace"
-local name3 = "minecraft:chest"
+local saplingItemName = "minecraft:birch_sapling"
+local furnaceItemName = "minecraft:furnace"
+local chestItemName = "minecraft:chest"
 
 local block1 = mobj_block2d.Block2d:new({
     _dx     = dx1,
     _dy     = dy1,
-    _name   = name1,
+    _name   = saplingItemName,
 })
 
 local compact = { compact = true }
@@ -39,19 +39,19 @@ function T_new()
         _dx     = dx1,
         _dy     = dy1,
 
-        _name   = name1,
+        _name   = saplingItemName,
     })
     assert(block:getDx() == dx1, "gotten getDx(="..block:getDx()..") not the same as expected(="..dx1..")")
     assert(block:getDy() == dy1, "gotten getDy(="..block:getDy()..") not the same as expected(="..dy1..")")
-    assert(block:getName() == name1, "gotten getName(="..block:getName()..") not the same as expected(="..name1..")")
+    assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
 
     -- test without orientations (i.e dx, dy)
     block = mobj_block2d.Block2d:new({
-        _name   = name1,
+        _name   = saplingItemName,
     })
     assert(block:getDx() == nil, "gotten getDx(="..(block:getDx() or "nil")..") not the same as expected(=nil)")
     assert(block:getDy() == nil, "gotten getDy(="..(block:getDy() or "nil")..") not the same as expected(=nil)")
-    assert(block:getName() == name1, "gotten getName(="..block:getName()..") not the same as expected(="..name1..")")
+    assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
 
     -- test default
     block = mobj_block2d.Block2d:new()
@@ -70,7 +70,7 @@ function T_IsOfType()
         _dx     = dx1,
         _dy     = dy1,
 
-        _name   = name1,
+        _name   = saplingItemName,
     })
 
     -- test valid
@@ -102,7 +102,7 @@ function T_IsOfType()
     isOfType = mobj_block2d.Block2d.IsOfType(block2)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    block2:setName(name1)
+    block2:setName(saplingItemName)
 
     -- cleanup test
 end
@@ -114,7 +114,7 @@ function T_isSame()
         _dx     = dx1,
         _dy     = dy1,
 
-        _name   = name1,
+        _name   = saplingItemName,
     })
 
     -- test same
@@ -137,11 +137,11 @@ function T_isSame()
     block2:setDy(dy1)
 
     -- test different name
-    block2:setName(name2)
+    block2:setName(furnaceItemName)
     isSame = block1:isSame(block2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    block2:setName(name1)
+    block2:setName(saplingItemName)
 
     -- cleanup test
 end
@@ -160,7 +160,7 @@ end
 function T_isMinecraftItem()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d:isMinecraftItem() tests")
-    local blockName = name1
+    local blockName = saplingItemName
     local block2 = mobj_block2d.Block2d:new({
         _dx     = dx1,
         _dy     = dy1,
@@ -203,7 +203,7 @@ function T_isAnyBlock()
     assert(isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(true)")
 
     -- test not any block
-    blockName = name1
+    blockName = saplingItemName
     block2:setName(blockName)
     isAnyBlock = block2:isAnyBlock()
     assert(not isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(false)")
@@ -227,7 +227,7 @@ function T_isNoneBlock()
     assert(isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(true)")
 
     -- test not any block
-    blockName = name1
+    blockName = saplingItemName
     block2:setName(blockName)
     isNoneBlock = block2:isNoneBlock()
     assert(not isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(false)")
@@ -256,7 +256,7 @@ function T_IsBlockList()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.IsBlockList() tests")
     local block2 = mobj_block2d.Block2d:new({
-        _name   = name2,
+        _name   = furnaceItemName,
     })
 
     -- test two valid blocks
@@ -269,7 +269,7 @@ function T_IsBlockList()
     isBlockList = mobj_block2d.IsBlockList( { block1:copy(), block2:copy() } )
     expectedIsBlockList = false
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
-    block2._dx = name2
+    block2._dx = furnaceItemName
 
     -- test two valid blocks + different object
     isBlockList = mobj_block2d.IsBlockList( { block1:copy(), block2:copy(), "a string" } )
@@ -283,7 +283,7 @@ function T_IsSameBlockList()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.IsSameBlockList() tests")
     local block2 = mobj_block2d.Block2d:new({
-        _name   = name2,
+        _name   = furnaceItemName,
     })
 
     -- test with same blocks in same order
@@ -313,7 +313,7 @@ function T_IsSameBlockList()
     -- test with different blocks
     isSameBlockList = mobj_block2d.IsSameBlockList(
         { block1:copy(), block2:copy() },
-        { block1:copy(), mobj_block2d.Block2d:new({ _name = name3,}) }
+        { block1:copy(), mobj_block2d.Block2d:new({ _name = chestItemName,}) }
     )
     expectedIsSameBlockList = false
     assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
@@ -325,7 +325,7 @@ function T_BlockListCopy()
     -- prepare test
     corelog.WriteToLog("* mobj_block2d.BlockListCopy() tests")
     local block2 = mobj_block2d.Block2d:new({
-        _name   = name2,
+        _name   = furnaceItemName,
     })
 
     -- test
@@ -342,10 +342,10 @@ function T_BlockListTransform()
     local block1Table = {
         _dx     = dx1,
         _dy     = dy1,
-        _name   = name1,
+        _name   = saplingItemName,
     }
     local block2Table = {
-        _name   = name2,
+        _name   = furnaceItemName,
     }
 
     -- test full
