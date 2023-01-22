@@ -59,17 +59,8 @@ function LayerRectangle:getBlock(iColumn, iRow)
     -- get code
     local code = self:getCode(iColumn, iRow)
 
-    -- get name
-    local name = self._codeArray[code]
-
-    -- construct block
-    local block = mobj_block2d.Block2d:new({
-        _x      = iRow - 1, -- ToDo: remove - 1
-        _y      = iColumn - 1, -- ToDo: remove - 1
---        _dx     = dx1,
---        _dy     = dy1,
-        _name   = name,
-    })
+    -- get block
+    local block = self._codeArray[code]
 
     -- end
     return block

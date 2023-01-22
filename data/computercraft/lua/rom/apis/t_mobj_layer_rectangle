@@ -9,6 +9,7 @@ function T_All()
     T_CodeMapCopy()
 
     T_new()
+    T_getBlock()
     T_IsOfType()
     T_isSame()
     T_copy()
@@ -232,6 +233,37 @@ function T_new()
     assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     expectedNRows = 0
     assert(layer:getNRows() == expectedNRows, "gotten getNRows(="..layer:getNRows()..") not the same as expected(="..expectedNRows..")")
+
+    -- cleanup test
+end
+
+function T_getBlock()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:getBlock() tests")
+
+    -- test full
+    local layer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = codeArray1,
+        _codeMap    = codeMap1,
+    })
+    local block = layer:getBlock(4, 1)
+    local expectedBlock = mobj_block2d.Block2d:new({ _name = torchItemName })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 4)
+    expectedBlock = mobj_block2d.Block2d:new({ _name = torchItemName })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(4, 4)
+    expectedBlock = mobj_block2d.Block2d:new({ _name = saplingItemName })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 1)
+    expectedBlock = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(3, 3)
+    expectedBlock = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.AnyBlockName() })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 6)
+    expectedBlock = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = -1, _dy = 0 })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
 
     -- cleanup test
 end
