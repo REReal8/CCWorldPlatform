@@ -49,7 +49,7 @@ end
 
 function LayerRectangle:getCode(iColumn, iRow)
     -- check
-    if iColumn > self:getNColumns() then corelog.Error("LayerRectangle:getCode: iColumn(="..iColumn..") larger than nColumns(="..self:getNColumns()..")") return "" end
+    if iColumn < 1 or iColumn > self:getNColumns() then corelog.Error("LayerRectangle:getCode: iColumn(="..iColumn..") not within range i.e. between 1 and "..self:getNColumns()) return "" end
 
     -- end
     return self:getCodeRow(iRow):sub(iColumn, iColumn)
@@ -58,6 +58,7 @@ end
 function LayerRectangle:getBlock(iColumn, iRow)
     -- get code
     local code = self:getCode(iColumn, iRow)
+    if code:len() ~= 1 then corelog.Error("LayerRectangle:getBlock: code of incorrect length(="..code:len()..")") return nil end
 
     -- get block
     local block = self._codeArray[code]
@@ -78,10 +79,6 @@ function LayerRectangle:getNRows()
     return #self._codeMap
 end
 
-function LayerRectangle:getBlockList()
-    return self._blockList
-end
-
 function LayerRectangle:setCodeMap(codeMap)
     -- check
     if not LayerRectangle.CodeMapValid(self._codeArray, codeMap, true) then corelog.Error("LayerRectangle:setCodeMap: Invalid codeMap") return end
@@ -94,17 +91,6 @@ function LayerRectangle:setCodeArray(codeArray)
     if not LayerRectangle.CodeArrayValid(codeArray, true) then corelog.Error("LayerRectangle:setCodeArray: Invalid codeArray") return end
 
     self._codeArray = codeArray -- note: no deep copy
-end
-
-function LayerRectangle:getClearRemainingSpace()
-    return self._clearRemainingSpace
-end
-
-function LayerRectangle:setClearRemainingSpace(clear)
-    -- check input
-    if type(clear) ~= "boolean" then corelog.Error("mobj_layer_rectangle:setClearRemainingSpace: invalid clear: "..type(clear)) return end
-
-    self._clearRemainingSpace = clear
 end
 
 function LayerRectangle.IsOfType(layer)
@@ -373,7 +359,7 @@ end
 
 function LayerRectangle:getCodeRow(iRow)
     -- check
-    if iRow > self:getNRows() then corelog.Error("LayerRectangle:getCodeRow: iRow(="..iRow..") larger than nRows(="..self:getNRows()..")") return "" end
+    if iRow < 1 or iRow > self:getNRows() then corelog.Error("LayerRectangle:getCodeRow: iRow(="..iRow..") not within range i.e. between 1 and "..self:getNRows()) return "" end
 
     -- end
     return self._codeMap[iRow]

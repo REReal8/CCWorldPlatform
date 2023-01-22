@@ -10,34 +10,38 @@ local size_x1 = 4
 local size_y1 = 6
 local chestItemName = "minecraft:chest"
 local torchItemName = "minecraft:torch"
+local codeArray1 = {
+    ["T"]   = mobj_block2d.Block2d:new({ _name = torchItemName }),
+    ["C"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+    ["?"]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.AnyBlockName() }),
+    [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
+}
+local codeMap1 = {
+    [6] = "  C ",
+    [5] = "    ",
+    [4] = "T   ",
+    [3] = "    ",
+    [2] = "    ",
+    [1] = "   T",
+}
 local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
-    _size_x     = size_x1,
-    _size_y     = size_y1,
-    _blockList  = {
-        mobj_block2d.Block2d:new({_x = 0, _y = 3,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 5, _dx = 0, _dy = 1, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 3, _y = 0,                   _name = torchItemName}),
-    },
-    _clearRemainingSpace = true,
+    _codeArray  = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
+    _codeMap    = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
 })
 
 local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
-    _size_x     = 3,
-    _size_y     = 3,
-    _blockList  = {
-        mobj_block2d.Block2d:new({_x = 0, _y = 0, _dx =-1, _dy = 0, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 0, _y = 1, _dx =-1, _dy = 0, _name = chestItemName}),
-
-        mobj_block2d.Block2d:new({_x = 0, _y = 2, _dx = 0, _dy = 1, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 1, _y = 2, _dx = 0, _dy = 1, _name = chestItemName}),
-
-        mobj_block2d.Block2d:new({_x = 1, _y = 0, _dx = 0, _dy =-1, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 0, _dx = 0, _dy =-1, _name = chestItemName}),
-
-        mobj_block2d.Block2d:new({_x = 2, _y = 1, _dx = 1, _dy = 0, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 2, _dx = 1, _dy = 0, _name = chestItemName}),
+    _codeArray  = {
+        ["C"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
+        ["D"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["E"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 0, _dy =-1 }),
+        ["F"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 1, _dy = 0 }),
+        [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
     },
-    _clearRemainingSpace = true,
+    _codeMap    = {
+        [3] = "DDF",
+        [2] = "C F",
+        [1] = "CEE",
+    },
 })
 
 local compact = { compact = true }
@@ -91,45 +95,30 @@ function T_BuildBlueprint_MetaData()
     -- cleanup test
 end
 
-local anyBlock = mobj_block2d.AnyBlockName()
-local noneBlock = mobj_block2d.NoneBlockName()
+local anyBlock = mobj_block2d.Block2d.AnyBlockName()
+local noneBlock = mobj_block2d.Block2d.NoneBlockName()
 local testBuildLayer3 = mobj_layer_rectangle.LayerRectangle:new({
-    _size_x     = 6,
-    _size_y     = 6,
-    _blockList  = {
-        mobj_block2d.Block2d:new({_x = 0, _y = 0,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 1, _y = 1,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 2, _y = 2,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 3, _y = 3,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 4, _y = 4,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 5, _y = 5,                   _name = torchItemName}),
-        mobj_block2d.Block2d:new({_x = 0, _y = 5, _dx = 0, _dy = 1, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 5, _y = 0, _dx = 0, _dy = 1, _name = chestItemName}),
-        mobj_block2d.Block2d:new({_x = 0, _y = 2,                   _name = anyBlock}),
-        mobj_block2d.Block2d:new({_x = 1, _y = 2,                   _name = anyBlock}),
-        mobj_block2d.Block2d:new({_x = 0, _y = 4,                   _name = noneBlock}),
-        mobj_block2d.Block2d:new({_x = 1, _y = 4,                   _name = noneBlock}),
+    _codeArray  = {
+        ["T"]   = mobj_block2d.Block2d:new({ _name = torchItemName }),
+        ["C"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
+        ["D"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["?"]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.AnyBlockName() }),
+        [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
     },
-    _clearRemainingSpace = true,
+    _codeMap    = {
+        [6] = "C    T",
+        [5] = "    T ",
+        [4] = "   T  ",
+        [3] = "??T   ",
+        [2] = " T    ",
+        [1] = "T    D",
+    },
 })
 
-function T_BuildLayer_Task_clear()
+function T_BuildLayer_Task()
     -- prepare test
-    corelog.WriteToLog("* role_builder BuildLayer_Task (clear) test")
+    corelog.WriteToLog("* role_builder BuildLayer_Task test")
     local testBuildLayer = testBuildLayer3:copy()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer}
-
-    -- test
-    role_builder.BuildLayer_Task(buildData)
-
-    -- cleanup test
-end
-
-function T_BuildLayer_Task_noclear()
-    -- prepare test
-    corelog.WriteToLog("* role_builder BuildLayer_Task (no clear) test")
-    local testBuildLayer = testBuildLayer3:copy()
-    testBuildLayer:setClearRemainingSpace(false)
     local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer}
 
     -- test

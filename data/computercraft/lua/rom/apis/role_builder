@@ -45,7 +45,7 @@ function BuildBlueprint_MetaData(buildData)
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
         end
 
-        lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.layer:getSizeX(), layerBuildData.layer:getSizeY(), deltaZ)
+        lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.layer:getNColumns(), layerBuildData.layer:getNRows(), deltaZ)
     end
 
     -- update metadata with escapeSequence (if present)
@@ -126,7 +126,7 @@ function BuildLayer_MetaData(...)
 
     -- determine needed items
     local itemList = layer:itemsNeeded()
-    local fuelNeeded = (layer:getSizeX() * layer:getSizeY() - 1)
+    local fuelNeeded = (layer:getNColumns() * layer:getNRows() - 1)
 
     -- determine startLocation (correcting for buildFromAbove)
     local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
@@ -185,71 +185,63 @@ function BuildLayer_Task(...)
     -- go to starting location
     coremove.GoTo(coremove.GetRelativeLocation(startpoint, 0, 0, deltaZ), false)
 
-    -- walk along x
-    for x=0, layer:getSizeX() - 1 do
-        -- walk along y
-        for iY=0, layer:getSizeY() - 1 do
-            -- determine y value such that path is back and forth in y
-            local y = iY
-            if x % 2 == 1 then
-                y = layer:getSizeY() - 1 - iY
+    -- walk along columns
+    for col=1, layer:getNColumns() do
+        -- walk along rows
+        for iRow=1, layer:getNRows() do
+            -- determine row value such that path is back and forth in rows
+            local row = iRow
+            if col % 2 == 0 then
+                row = layer:getNRows() + 1 - iRow
             end
 
-            -- ga naar de locatie
+            -- go to location
+            local x = col - 1
+            local y = row - 1
             coremove.MoveTo(coremove.GetRelativeLocation(startpoint, x, y, deltaZ), true)
 
-            -- do we have a block for this location?
-            local blockFound = nil
-            for i, block in ipairs(layer:getBlockList()) do
-                -- check coordinate
-                if block:getX() == x and block:getY() == y then
-                    -- remember
-                    blockFound = block
+            -- get block
+            local block = layer:getBlock(col, row)
+            if not block then corelog.Error("role_builder.BuildLayer_Task: No block at ("..col..","..row..")") return {success = false} end
 
-                    -- check minecraft item
-                    if block:isMinecraftItem() then
-                        -- optionally turn in specific direction
-                        if block:getDx() ~= nil or block:getDy() ~= nil then
-                            -- turn in the right direction
-                            coremove.TurnTo({dx = block:getDx(), dy = block:getDy()})
-                        end
+            -- check block type
+            if block:isMinecraftItem() then
+                -- optionally turn in specific direction
+                if block:getDx() ~= nil or block:getDy() ~= nil then
+                    -- turn in the right direction
+                    coremove.TurnTo({dx = block:getDx(), dy = block:getDy()})
+                end
 
-                        -- check current block present
-                        local has_block, block_data
-                        if not replacePresentObjects then
-                            if buildFromAbove then
-                                has_block, block_data = turtle.inspectDown()
-                            else
-                                has_block, block_data = turtle.inspectUp()
-                            end
-                        end
-
-                        -- check placing object
-                        local block_name = block:getName()
-                        if replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= block_name then
-                            -- place block
-                            if coreinventory.SelectItem(block_name) then
-                                if buildFromAbove   then turtle.digDown()   turtle.placeDown()
-                                                    else turtle.digUp()     turtle.placeUp()
-                                end
-                            else
-                                -- mandatory item not in inventory, error message and ignore
-                                corelog.WriteToLog("Oops, BuildLayer_Task item not in inventory: "..block_name)
-                            end
-                        end
+                -- check current block present
+                local has_block, block_data
+                if not replacePresentObjects then
+                    if buildFromAbove then
+                        has_block, block_data = turtle.inspectDown()
+                    else
+                        has_block, block_data = turtle.inspectUp()
                     end
-
-                    -- break loop
-                    break
                 end
-            end
 
-            -- no(ne) block at location, and maybe we want to clear
-            if not blockFound and layer:getClearRemainingSpace() or blockFound and blockFound:isNoneBlock() then
-                -- vak schoon maken
-                if buildFromAbove  then turtle.digDown()
-                                        else turtle.digUp()
+                -- check placing object
+                local block_name = block:getName()
+                if replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= block_name then
+                    -- place block
+                    if coreinventory.SelectItem(block_name) then
+                        if buildFromAbove   then turtle.digDown()   turtle.placeDown()
+                                            else turtle.digUp()     turtle.placeUp()
+                        end
+                    else
+                        -- mandatory item not in inventory, error message and ignore
+                        corelog.WriteToLog("Oops, BuildLayer_Task item not in inventory: "..block_name)
+                    end
                 end
+            elseif block:isNoneBlock() then
+                -- clear block
+                if buildFromAbove then turtle.digDown()
+                else turtle.digUp()
+                end
+            elseif block:isAnyBlock() then
+                -- leave current block be
             end
         end
     end
