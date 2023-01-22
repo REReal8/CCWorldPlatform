@@ -10,7 +10,6 @@
 LayerRectangle = {
     _codeMap            = {},
     _codeArray          = {},
-    _directionMap       = {},
 }
 
 --                _     _ _         __                  _   _
@@ -24,29 +23,26 @@ LayerRectangle = {
 
 function LayerRectangle:new(...)
     -- get & check input from description
-    local checkSuccess, o, codeArray, codeMap, directionMap = coreutils.CheckInput([[
+    local checkSuccess, o = coreutils.CheckInput([[
         Constructs a mobj_layer_rectangle.
 
         Parameters:
             o                           + (table, {}) table with
-                _codeArray              + (table, {}) array mapping _codeMap codes (characters) to block names
-                _codeMap                + (table, {}) map of codes of blocks within the layer
-                _directionMap           + (table, {}) map of directions of blocks within the layer
+                _codeArray              - (table, {}) array mapping _codeMap codes (characters) to Block2d's
+                _codeMap                - (table, {}) map of codes of blocks within the layer
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
-
-    -- check codeArray validity
-    if not LayerRectangle.CodeArrayValid(codeArray, true) then corelog.Error("LayerRectangle:new: Invalid codeArray") return {} end
-
-    -- check codeMap validity
-    if not LayerRectangle.CodeMapValid(codeArray, codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return {} end
-
-    -- check directionMap validity
-    if not LayerRectangle.DirectionMapValid(directionMap, true) then corelog.Error("LayerRectangle:new: Invalid directionMap") return {} end
 
     -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- check codeArray validity
+    o._codeArray = LayerRectangle.TransformToCodeArray(o._codeArray)
+    if not LayerRectangle.CodeArrayValid(o._codeArray, true) then corelog.Error("LayerRectangle:new: Invalid codeArray") return {} end
+
+    -- check codeMap validity
+    if not LayerRectangle.CodeMapValid(o._codeArray, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return {} end
 
     return o
 end
@@ -109,13 +105,6 @@ function LayerRectangle:setCodeArray(codeArray)
     self._codeArray = codeArray -- note: no deep copy
 end
 
-function LayerRectangle:setDirectionMap(directionMap)
-    -- check
-    if not LayerRectangle.DirectionMapValid(directionMap, true) then corelog.Error("LayerRectangle:setDirectionMap: Invalid directionMap") return end
-
-    self._directionMap = directionMap -- note: no deep copy
-end
-
 function LayerRectangle:getClearRemainingSpace()
     return self._clearRemainingSpace
 end
@@ -130,8 +119,7 @@ end
 function LayerRectangle.IsOfType(layer)
     -- check
     if type(layer) ~= "table" then return false end
-    if not LayerRectangle.IsCodeArray(layer._codeArray) or not LayerRectangle.IsCodeMap(layer._codeMap) or not LayerRectangle.IsDirectionMap(layer._directionMap) then return false end
---    if type(layer._size_x) ~= "number" or type(layer._size_y) ~= "number" or type(layer._clearRemainingSpace) ~= "boolean" or not mobj_block2d.IsBlockList(layer._blockList) then return false end
+    if not LayerRectangle.IsCodeArray(layer._codeArray) or not LayerRectangle.IsCodeMap(layer._codeMap) then return false end
     if not layer.new then corelog.Warning("mobj_layer_rectangle.IsOfType: default methods seem not to have been inherited") return false end
 
     return true
@@ -143,8 +131,7 @@ function LayerRectangle:isSame(layer)
 
     -- check same rectangle
     local isSame =  LayerRectangle.IsSameCodeArray(self._codeArray, layer._codeArray) and
-                    LayerRectangle.IsSameCodeMap(self._codeMap, layer._codeMap) and
-                    LayerRectangle.IsSameDirectionMap(self._directionMap, layer._directionMap)
+                    LayerRectangle.IsSameCodeMap(self._codeMap, layer._codeMap)
 
     -- end
     return isSame
@@ -154,28 +141,9 @@ function LayerRectangle:copy()
     local copy = LayerRectangle:new({
         _codeArray      = LayerRectangle.CodeArrayCopy(self._codeArray),
         _codeMap        = LayerRectangle.CodeMapCopy(self._codeMap),
-        _directionMap   = LayerRectangle.DirectionMapCopy(self._directionMap),
     })
 
     return copy
-end
-
-function LayerRectangle:blocksNeeded()
-    -- get code list
-    local codeList = self:codesNeeded()
-
-    -- determine item list
-    local blockList = {}
-    for code, codeCount in pairs(codeList) do
-        -- get name
-        local name = self._codeArray[code]
-
-        -- set counter
-        blockList[name] = codeCount
-    end
-
-    -- end
-    return blockList
 end
 
 function LayerRectangle:codesNeeded()
@@ -205,13 +173,13 @@ function LayerRectangle:itemsNeeded()
     -- determine item list
     local itemList = {}
     for code, codeCount in pairs(codeList) do
-        -- get name
-        local name = self._codeArray[code]
+        -- get block
+        local block = self._codeArray[code]
 
         -- check is minecraft item
-        if mobj_block2d.IsMinceCraftItemName(name) then
+        if block:isMinecraftItem() then
             -- set counter
-            itemList[name] = codeCount
+            itemList[block:getName()] = (itemList[block:getName()] or 0) + codeCount
         end
     end
 
@@ -234,9 +202,9 @@ end
 function LayerRectangle.CodeArrayValid(codeArray, warn)
     -- check validity
     if type(codeArray) ~= "table" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid codeArray (type="..type(codeArray)..")") end return false end
-    for code, blockName in pairs(codeArray) do
+    for code, block in pairs(codeArray) do
         if type(code) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid code (type="..type(code)..")") end return false end
-        if type(blockName) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid blockName (type="..type(code)..")") end return false end
+        if not mobj_block2d.Block2d.IsOfType(block) then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid block (type="..type(block)..")") end return false end
     end
 
     -- end
@@ -249,16 +217,16 @@ function LayerRectangle.IsSameCodeArray(codeArrayA, codeArrayB)
 
     -- check same elements as in A
     local sizeA = 0
-    for codeA, blockNameA in pairs(codeArrayA) do
+    for codeA, blockA in pairs(codeArrayA) do
         sizeA = sizeA + 1
         -- check same blockName
-        local blockNameB = codeArrayB[codeA]
-        if blockNameA ~= blockNameB then return false end
+        local blockB = codeArrayB[codeA]
+        if not blockA:isSame(blockB) then return false end
     end
 
     -- check no other elements in B
     local sizeB = 0
-    for codeB, blockNameB in pairs(codeArrayB) do
+    for codeB, blockB in pairs(codeArrayB) do
         sizeB = sizeB + 1
     end
     if sizeA ~= sizeB then return false end
@@ -273,12 +241,47 @@ function LayerRectangle.CodeArrayCopy(codeArray)
 
     -- copy elements
     local codeArrayCopy = {}
-    for code, blockName in pairs(codeArray) do
-        codeArrayCopy[code] = blockName
+    for code, block in pairs(codeArray) do
+        codeArrayCopy[code] = block:copy()
     end
 
     -- end
 	return codeArrayCopy
+end
+
+function LayerRectangle.TransformToCodeArray(...)
+    -- get & check input from description
+    local checkSuccess, codeArray = coreutils.CheckInput([[
+        Transforms all block tables in the codeArray to Block2d objects.
+
+        i.e. each block table like {
+            _dx     = nil,
+            _dy     = nil,
+            _name   = "",
+        }
+        is transformed into a block object Block2d with the same fields
+
+        Parameters:
+            codeArray                   + (table, {}) array mapping _codeMap codes (characters) to Block2d's
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle.TransformToCodeArray: Invalid input") return {} end
+
+    local codeArrayTransform = {}
+    -- copy elements
+    for code, block in pairs(codeArray) do
+        if mobj_block2d.Block2d.HasFieldsOfType(block) then
+            if mobj_block2d.Block2d.HasMethodsOfType(block) then
+                codeArrayTransform[code] = block -- already a Block2d
+            else
+                codeArrayTransform[code] = mobj_block2d.Block2d:new(block) -- transform
+            end
+        else
+            corelog.Warning("LayerRectangle.TransformToCodeArray: block(="..textutils.serialize(block)..") does not have all Block2d fields => skipped")
+        end
+    end
+
+    -- end
+	return codeArrayTransform
 end
 
 function LayerRectangle.IsCodeMap(codeMap)
@@ -375,35 +378,6 @@ function LayerRectangle.MapCopy(map)
 
     -- end
 	return mapCopy
-end
-
-function LayerRectangle.IsDirectionMap(directionMap)
-    -- end
-    return LayerRectangle.DirectionMapValid(directionMap, false)
-end
-
-function LayerRectangle.DirectionMapValid(directionMap, warn)
-    -- check directionMap validity
-    -- ToDo: implement
-
-    -- end
-    return true
-end
-
-function LayerRectangle.IsSameDirectionMap(directionMapA, directionMapB)
-    -- check input
-    if not LayerRectangle.IsDirectionMap(directionMapA) or not LayerRectangle.IsDirectionMap(directionMapB) then return false end
-
-    -- end
-	return LayerRectangle.IsSameMap(directionMapA, directionMapB)
-end
-
-function LayerRectangle.DirectionMapCopy(directionMap)
-    -- check input
-    if not LayerRectangle.IsDirectionMap(directionMap) then corelog.Error("LayerRectangle.DirectionMapCopy: invalid directionMap: "..type(directionMap)) return end
-
-    -- end
-	return LayerRectangle.MapCopy(directionMap)
 end
 
 function LayerRectangle:getCodeRow(iRow)

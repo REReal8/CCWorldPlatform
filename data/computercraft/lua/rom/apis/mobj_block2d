@@ -6,8 +6,6 @@
 --]]
 
 Block2d = {
-    _x      = 0,
-    _y      = 0,
     _dx     = nil,
     _dy     = nil,
     _name   = "",
@@ -28,8 +26,6 @@ function Block2d:new(o)
 
         Parameters:
                             - (table) table with
-                _x          - (number) x position of block (within exclosing object)
-                _y          - (number) x position of block (within exclosing object)
                 _dx         - (number) (optional) block orientation in x
                 _dy         - (number) (optional) block orientation in y
                 _name       - (string) block name (.e.g. "minecraft:oak_log")
@@ -39,28 +35,6 @@ function Block2d:new(o)
     setmetatable(o, self)
     self.__index = self
     return o
-end
-
-function Block2d:getX()
-    return self._x
-end
-
-function Block2d:setX(x)
-    -- check input
-    if type(x) ~= "number" then corelog.Error("mobj_block2d:setX: invalid x: "..type(x)) return end
-
-    self._x = x
-end
-
-function Block2d:getY()
-    return self._y
-end
-
-function Block2d:setY(y)
-    -- check input
-    if type(y) ~= "number" then corelog.Error("mobj_block2d:setY: invalid y: "..type(y)) return end
-
-    self._y = y
 end
 
 function Block2d:getDx()
@@ -96,28 +70,27 @@ function Block2d:setName(name)
     self._name = name
 end
 
-function HasFieldsOfType(block)
+function Block2d.HasFieldsOfType(block)
     -- check
     if type(block) ~= "table" then return false end
-    if type(block._x) ~= "number" or type(block._y) ~= "number" or type(block._name) ~= "string" then return false end
+    if type(block._name) ~= "string" then return false end
     if (type(block._dx) ~= "nil" and type(block._dx) ~= "number") or (type(block._dy) ~= "nil" and type(block._dy) ~= "number") then return false end
 
     -- end
     return true
 end
 
-function HasMethodsOfType(block)
+function Block2d.HasMethodsOfType(block)
     -- check
---    if not block.new then corelog.Warning("mobj_block2d.IsOfType: default methods seem not to have been inherited") return false end
     if not block.new then return false end
 
     -- end
     return true
 end
 
-function IsOfType(block)
+function Block2d.IsOfType(block)
     -- check
-    local isOfType = HasFieldsOfType(block) and HasMethodsOfType(block)
+    local isOfType = Block2d.HasFieldsOfType(block) and Block2d.HasMethodsOfType(block)
 
     -- end
     return isOfType
@@ -125,7 +98,7 @@ end
 
 function Block2d:isSame(block)
     -- check same block
-    local isSame = self._x == block._x and self._y == block._y and self._name == block._name
+    local isSame = self._name == block._name
     if self._dx ~= nil and self._dy ~= nil then
         isSame = isSame and self._dx == block._dx and self._dy == block._dy
     end
@@ -136,8 +109,6 @@ end
 
 function Block2d:copy()
     local copy = Block2d:new({
-        _x      = self._x,
-        _y      = self._y,
         _dx     = self._dx,
         _dy     = self._dy,
 
@@ -148,27 +119,27 @@ function Block2d:copy()
 end
 
 function Block2d:isMinecraftItem()
-    return IsMinceCraftItemName(self._name)
+    return Block2d.IsMinceCraftItemName(self._name)
 end
 
-function IsMinceCraftItemName(name)
+function Block2d.IsMinceCraftItemName(name)
     return name:find("^minecraft:") ~= nil
 end
 
-function AnyBlockName()
+function Block2d.AnyBlockName()
     return "ccwp:any"
 end
 
 function Block2d:isAnyBlock()
-    return self._name == AnyBlockName()
+    return self._name == Block2d.AnyBlockName()
 end
 
-function NoneBlockName()
+function Block2d.NoneBlockName()
     return "ccwp:none"
 end
 
 function Block2d:isNoneBlock()
-    return self._name == NoneBlockName()
+    return self._name == Block2d.NoneBlockName()
 end
 
 function IsBlockList(blockList)
@@ -177,7 +148,7 @@ function IsBlockList(blockList)
 
     -- check elements
     for i, block in ipairs(blockList) do
-        if not IsOfType(block) then return false end
+        if not Block2d.IsOfType(block) then return false end
     end
 
     -- end
@@ -223,8 +194,6 @@ function BlockListTransform(blockList)
         Transforms all block tables in the blockList to Block2d objects.
 
         i.e. each block table like {
-            _x      = 0,
-            _y      = 0,
             _dx     = nil,
             _dy     = nil,
             _name   = "",
@@ -238,8 +207,8 @@ function BlockListTransform(blockList)
     local blockListTransform = {}
     -- copy elements
     for i, block in ipairs(blockList) do
-        if HasFieldsOfType(block) then
-            if HasMethodsOfType(block) then
+        if Block2d.HasFieldsOfType(block) then
+            if Block2d.HasMethodsOfType(block) then
                 blockListTransform[i] = block -- already a Block2d
             else
                 blockListTransform[i] = Block2d:new(block) -- transform
