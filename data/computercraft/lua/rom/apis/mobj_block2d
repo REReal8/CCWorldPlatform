@@ -71,7 +71,7 @@ function Block2d:setDx(dx)
     -- check input
     if type(dx) ~= "nil" and type(dx) ~= "number" then corelog.Error("mobj_block2d:setDx: invalid dx: "..type(dx)) return end
 
-    self._x = dx
+    self._dx = dx
 end
 
 function Block2d:getDy()
@@ -82,7 +82,7 @@ function Block2d:setDy(dy)
     -- check input
     if type(dy) ~= "nil" and type(dy) ~= "number" then corelog.Error("mobj_block2d:setDy: invalid dy: "..type(dy)) return end
 
-    self._y = dy
+    self._dy = dy
 end
 
 function Block2d:getName()
