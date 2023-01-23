@@ -297,8 +297,8 @@ function CheckInput(description, ...)
                         -- object oriented types? => tramsform
                         if typeType == "URL" then
                             argument = url.URL:new(argument)
-                        elseif typeType == "Block2d" then
-                            argument = mobj_block2d.Block2d:new(argument)
+                        elseif typeType == "Block" then
+                            argument = mobj_block.Block:new(argument)
                         elseif typeType == "LayerRectangle" then
                             argument = mobj_layer_rectangle.LayerRectangle:new(argument)
                         else

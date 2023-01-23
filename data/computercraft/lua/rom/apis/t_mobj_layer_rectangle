@@ -21,12 +21,12 @@ local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
 local codeArray1 = {
-    ["T"]   = mobj_block2d.Block2d:new({ _name = torchItemName }),
-    ["S"]   = mobj_block2d.Block2d:new({ _name = saplingItemName }),
-    ["C"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-    ["D"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-    ["?"]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.AnyBlockName() }),
-    [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
+    ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+    ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+    ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+    ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+    ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+    [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
 }
 
 function T_IsCodeArray()
@@ -50,12 +50,12 @@ function T_IsSameCodeArray()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle.IsSameCodeArray() tests")
     local codeArray2 = {
-        ["T"]   = mobj_block2d.Block2d:new({ _name = torchItemName }),
-        ["S"]   = mobj_block2d.Block2d:new({ _name = saplingItemName }),
-        ["C"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-        ["D"]   = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["?"]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.AnyBlockName() }),
-        [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
+        ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+        ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+        ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+        ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+        [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
     }
 
     -- test same
@@ -64,14 +64,14 @@ function T_IsSameCodeArray()
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different
-    codeArray2["T"] = mobj_block2d.Block2d:new({ _name = "minecraft:something"})
+    codeArray2["T"] = mobj_block.Block:new({ _name = "minecraft:something"})
     isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    codeArray2["T"] = mobj_block2d.Block2d:new({ _name = "minecraft:torch" })
+    codeArray2["T"] = mobj_block.Block:new({ _name = "minecraft:torch" })
 
     -- test different (size)
-    codeArray2["Z"] = mobj_block2d.Block2d:new({ _name = "minecraft:something"})
+    codeArray2["Z"] = mobj_block.Block:new({ _name = "minecraft:something"})
     isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
@@ -119,7 +119,7 @@ function T_TransformToCodeArray()
 
     -- test partial
     codeArrayTable = {
-        ["T"] = mobj_block2d.Block2d:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
+        ["T"] = mobj_block.Block:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
         ["S"] = coreutils.DeepCopy(block2Table),
     }
     assert(not mobj_layer_rectangle.LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
@@ -247,22 +247,22 @@ function T_getBlock()
         _codeMap    = codeMap1,
     })
     local block = layer:getBlock(4, 1)
-    local expectedBlock = mobj_block2d.Block2d:new({ _name = torchItemName })
+    local expectedBlock = mobj_block.Block:new({ _name = torchItemName })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 4)
-    expectedBlock = mobj_block2d.Block2d:new({ _name = torchItemName })
+    expectedBlock = mobj_block.Block:new({ _name = torchItemName })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(4, 4)
-    expectedBlock = mobj_block2d.Block2d:new({ _name = saplingItemName })
+    expectedBlock = mobj_block.Block:new({ _name = saplingItemName })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 1)
-    expectedBlock = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() })
+    expectedBlock = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(3, 3)
-    expectedBlock = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.AnyBlockName() })
+    expectedBlock = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 6)
-    expectedBlock = mobj_block2d.Block2d:new({ _name = chestItemName, _dx = -1, _dy = 0 })
+    expectedBlock = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
 
     -- cleanup test
@@ -364,10 +364,10 @@ function T_itemsNeeded()
     name = chestItemName
     expectedCount = 2
     assert(needed[name] == expectedCount, "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
-    name = mobj_block2d.Block2d.AnyBlockName()
+    name = mobj_block.Block.AnyBlockName()
     expectedCount = 0
     assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
-    name = mobj_block2d.Block2d.NoneBlockName()
+    name = mobj_block.Block.NoneBlockName()
     expectedCount = 0
     assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
 

@@ -353,7 +353,7 @@ function ExecuteMObjTest(t)
 
 		-- test options
 		local options	= {
-			{key = "b", desc = "block2d",			func = ExecuteMObjTest, param = {file = t_mobj_block2d, filename = "t_mobj_block2d"}},
+			{key = "b", desc = "block",				func = ExecuteMObjTest, param = {file = t_mobj_block, filename = "t_mobj_block"}},
 			{key = "l", desc = "layerRectangle",	func = ExecuteMObjTest, param = {file = t_mobj_layer_rectangle, filename = "t_mobj_layer_rectangle"}},
 			{key = "f", desc = "birchForest",		func = ExecuteMObjTest, param = {file = t_mobj_birchforest, filename = "t_mobj_birchforest"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }

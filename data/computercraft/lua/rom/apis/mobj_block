@@ -1,11 +1,11 @@
 
 --[[
-    This file implements mobj_block2d.
+    This file implements mobj_block.
 
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
 
-Block2d = {
+Block = {
     _dx     = nil,
     _dy     = nil,
     _name   = "",
@@ -20,9 +20,9 @@ Block2d = {
 --   | |
 --   |_|
 
-function Block2d:new(o)
+function Block:new(o)
     --[[
-        Constructs a mobj_block2d.
+        Constructs a mobj_block.
 
         Parameters:
                             - (table) table with
@@ -37,40 +37,40 @@ function Block2d:new(o)
     return o
 end
 
-function Block2d:getDx()
+function Block:getDx()
     return self._dx
 end
 
-function Block2d:setDx(dx)
+function Block:setDx(dx)
     -- check input
-    if type(dx) ~= "nil" and type(dx) ~= "number" then corelog.Error("mobj_block2d:setDx: invalid dx: "..type(dx)) return end
+    if type(dx) ~= "nil" and type(dx) ~= "number" then corelog.Error("mobj_block:setDx: invalid dx: "..type(dx)) return end
 
     self._dx = dx
 end
 
-function Block2d:getDy()
+function Block:getDy()
     return self._dy
 end
 
-function Block2d:setDy(dy)
+function Block:setDy(dy)
     -- check input
-    if type(dy) ~= "nil" and type(dy) ~= "number" then corelog.Error("mobj_block2d:setDy: invalid dy: "..type(dy)) return end
+    if type(dy) ~= "nil" and type(dy) ~= "number" then corelog.Error("mobj_block:setDy: invalid dy: "..type(dy)) return end
 
     self._dy = dy
 end
 
-function Block2d:getName()
+function Block:getName()
     return self._name
 end
 
-function Block2d:setName(name)
+function Block:setName(name)
     -- check input
-    if type(name) ~= "string" then corelog.Error("mobj_block2d:setName: invalid name: "..type(name)) return end
+    if type(name) ~= "string" then corelog.Error("mobj_block:setName: invalid name: "..type(name)) return end
 
     self._name = name
 end
 
-function Block2d.HasFieldsOfType(block)
+function Block.HasFieldsOfType(block)
     -- check
     if type(block) ~= "table" then return false end
     if type(block._name) ~= "string" then return false end
@@ -80,7 +80,7 @@ function Block2d.HasFieldsOfType(block)
     return true
 end
 
-function Block2d.HasMethodsOfType(block)
+function Block.HasMethodsOfType(block)
     -- check
     if not block.new then return false end
 
@@ -88,17 +88,17 @@ function Block2d.HasMethodsOfType(block)
     return true
 end
 
-function Block2d.IsOfType(block)
+function Block.IsOfType(block)
     -- check
-    local isOfType = Block2d.HasFieldsOfType(block) and Block2d.HasMethodsOfType(block)
+    local isOfType = Block.HasFieldsOfType(block) and Block.HasMethodsOfType(block)
 
     -- end
     return isOfType
 end
 
-function Block2d:isSame(block)
+function Block:isSame(block)
     -- check input
-    if not Block2d.IsOfType(block) then return false end
+    if not Block.IsOfType(block) then return false end
 
     -- check same block
     local isSame = self._name == block._name
@@ -110,8 +110,8 @@ function Block2d:isSame(block)
     return isSame
 end
 
-function Block2d:copy()
-    local copy = Block2d:new({
+function Block:copy()
+    local copy = Block:new({
         _dx     = self._dx,
         _dy     = self._dy,
 
@@ -121,28 +121,28 @@ function Block2d:copy()
     return copy
 end
 
-function Block2d:isMinecraftItem()
-    return Block2d.IsMinceCraftItemName(self._name)
+function Block:isMinecraftItem()
+    return Block.IsMinceCraftItemName(self._name)
 end
 
-function Block2d.IsMinceCraftItemName(name)
+function Block.IsMinceCraftItemName(name)
     return name:find("^minecraft:") ~= nil
 end
 
-function Block2d.AnyBlockName()
+function Block.AnyBlockName()
     return "ccwp:any"
 end
 
-function Block2d:isAnyBlock()
-    return self._name == Block2d.AnyBlockName()
+function Block:isAnyBlock()
+    return self._name == Block.AnyBlockName()
 end
 
-function Block2d.NoneBlockName()
+function Block.NoneBlockName()
     return "ccwp:none"
 end
 
-function Block2d:isNoneBlock()
-    return self._name == Block2d.NoneBlockName()
+function Block:isNoneBlock()
+    return self._name == Block.NoneBlockName()
 end
 
 function IsBlockList(blockList)
@@ -151,7 +151,7 @@ function IsBlockList(blockList)
 
     -- check elements
     for i, block in ipairs(blockList) do
-        if not Block2d.IsOfType(block) then return false end
+        if not Block.IsOfType(block) then return false end
     end
 
     -- end
@@ -180,7 +180,7 @@ end
 
 function BlockListCopy(blockList)
     -- check input
-    if not IsBlockList(blockList) then corelog.Error("mobj_block2d.BlockListCopy: invalid blockList: "..type(blockList)) return end
+    if not IsBlockList(blockList) then corelog.Error("mobj_block.BlockListCopy: invalid blockList: "..type(blockList)) return end
 
     local blockListCopy = {}
     -- copy elements
@@ -194,14 +194,14 @@ end
 
 function BlockListTransform(blockList)
     --[[
-        Transforms all block tables in the blockList to Block2d objects.
+        Transforms all block tables in the blockList to Block objects.
 
         i.e. each block table like {
             _dx     = nil,
             _dy     = nil,
             _name   = "",
         }
-        is transformed into a block object Block2d with the same fields
+        is transformed into a block object Block with the same fields
     ]]
 
     -- check table
@@ -210,14 +210,14 @@ function BlockListTransform(blockList)
     local blockListTransform = {}
     -- copy elements
     for i, block in ipairs(blockList) do
-        if Block2d.HasFieldsOfType(block) then
-            if Block2d.HasMethodsOfType(block) then
-                blockListTransform[i] = block -- already a Block2d
+        if Block.HasFieldsOfType(block) then
+            if Block.HasMethodsOfType(block) then
+                blockListTransform[i] = block -- already a Block
             else
-                blockListTransform[i] = Block2d:new(block) -- transform
+                blockListTransform[i] = Block:new(block) -- transform
             end
         else
-            corelog.Warning("mobj_block2d.BlockListTransform: block(="..textutils.serialize(block)..") does not have all Block2d fields => skipped")
+            corelog.Warning("mobj_block.BlockListTransform: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
         end
     end
 
