@@ -129,7 +129,7 @@ function LayerRectangle:codesNeeded()
 
     -- loop on rows
     local nCol = self:getNColumns()
-    for iRow, row in pairs(self._codeMap) do
+    for iRow, row in ipairs(self._codeMap) do
         for iCol = 1, nCol do
             -- get code
             local code = row:sub(iCol, iCol)
