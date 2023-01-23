@@ -149,7 +149,7 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
         blueprint               = GetSiloL0_blueprint(siteData),
         materialsHostLocator    = materialsHostLocator,
     }
-    corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint))
+    corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint, { compact = true }))
     enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback, callbackData)
 end
 
