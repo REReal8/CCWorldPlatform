@@ -174,7 +174,7 @@ function UpgradeSite_ASrv(...)
     local projectData = {
         forestLocator           = forestLocator,
         targetLevel             = targetLevel,
-        treeLayer             = targetTreeLayer,
+        treeLayer               = targetTreeLayer,
         materialsHostLocator    = materialsHostLocator,
     }
 
