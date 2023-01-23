@@ -425,51 +425,66 @@ end
 
 function Tree_layerLm1()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x     = 1,
-        _size_y     = 1,
-        _blockList  = {
-            { _x = 0, _y = 0, _name = "minecraft:birch_sapling"},
+        _codeArray  = {
+            ["S"]   = mobj_block2d.Block2d:new({ _name = "minecraft:birch_sapling" }),
         },
-        _clearRemainingSpace = true,
+        _codeMap    = {
+            [1] = "S",
+        },
     })
 end
 
 function Tree_layerL0()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x     = 6,
-        _size_y     = 6,
-        _blockList  = {
-            { _x = 3, _y = 3, _name = "minecraft:birch_sapling"},
+        _codeArray  = {
+            ["S"]   = mobj_block2d.Block2d:new({ _name = "minecraft:birch_sapling" }),
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
         },
-        _clearRemainingSpace = true,
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "   S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "      ",
+        },
     })
 end
 
 function Tree_layerL1()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x     = 6,
-        _size_y     = 6,
-        _blockList  = {
-            { _x = 3, _y = 3, _name = "minecraft:birch_sapling"},
-            { _x = 3, _y = 0, _name = "minecraft:torch"},
-            { _x = 0, _y = 3, _name = "minecraft:torch"},
+        _codeArray  = {
+            ["S"]   = mobj_block2d.Block2d:new({ _name = "minecraft:birch_sapling" }),
+            ["T"]   = mobj_block2d.Block2d:new({ _name = "minecraft:torch" }),
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
         },
-        _clearRemainingSpace = true,
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
     })
 end
 
 function Base_layerL2()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x     = 6,
-        _size_y     = 6,
-        _blockList  = {
-            { _x = 3, _y = 3, _name = "minecraft:birch_sapling"},
-            { _x = 3, _y = 0, _name = "minecraft:torch"},
-            { _x = 0, _y = 3, _name = "minecraft:torch"},
-            { _x = 2, _y = 1, _dx =-1, _dy = 0, _name = "minecraft:chest"},
-            { _x = 4, _y = 1, _dx =1, _dy = 0, _name = "minecraft:chest"},
-            { _x = 5, _y = 2, _dx =1, _dy = 0, _name = "minecraft:chest"},
+        _codeArray  = {
+            ["S"]   = mobj_block2d.Block2d:new({ _name = "minecraft:birch_sapling" }),
+            ["T"]   = mobj_block2d.Block2d:new({ _name = "minecraft:torch" }),
+            ["C"]   = mobj_block2d.Block2d:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
+            ["D"]   = mobj_block2d.Block2d:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
         },
-        _clearRemainingSpace = true,
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "     D",
+            [2] = "  C D ",
+            [1] = "   T  ",
+        },
     })
 end

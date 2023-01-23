@@ -421,22 +421,23 @@ end
 
 function Shaft_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x      = 1,
-        _size_y      = 1,
-        _blockList  = {
+        _codeArray  = {
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
         },
-        _clearRemainingSpace = true,
+        _codeMap    = {
+            [1] = " ",
+        },
     })
 end
 
 function ShaftRestore_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x      = 1,
-        _size_y      = 1,
-        _blockList  = {
-            { _x = 0, _y = 0, _name = "minecraft:dirt"},
+        _codeArray  = {
+            ["D"]   = mobj_block2d.Block2d:new({ _name = "minecraft:dirt" }),
         },
-        _clearRemainingSpace = false,
+        _codeMap    = {
+            [1] = "D",
+        },
     })
 end
 
@@ -518,21 +519,26 @@ end
 
 function AboveOrBelowFurnanceL1_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x      = 1,
-        _size_y      = 2,
-        _blockList  = {},
-        _clearRemainingSpace = true
+        _codeArray  = {
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [2] = " ",
+            [1] = " ",
+        },
     })
 end
 
 function FurnanceL1_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x      = 1,
-        _size_y      = 2,
-        _blockList  = {
-            { _x = 0, _y = 1, _name = "minecraft:furnace"},
+        _codeArray  = {
+            ["F"]   = mobj_block2d.Block2d:new({ _name = "minecraft:furnace" }),
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
         },
-        _clearRemainingSpace = true
+        _codeMap    = {
+            [2] = "F",
+            [1] = " ",
+        },
     })
 end
 
@@ -600,26 +606,30 @@ end
 
 function StorageChestL2_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x      = 1,
-        _size_y      = 1,
-        _blockList  = {
-            { _x = 0, _y = 0, _name = "minecraft:chest"},
+        _codeArray  = {
+            ["C"]   = mobj_block2d.Block2d:new({ _name = "minecraft:chest" }),
         },
-        _clearRemainingSpace = false
+        _codeMap    = {
+            [1] = "C",
+        },
     })
 end
 
 function TopLayerL2_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
-        _size_x      = 6,
-        _size_y      = 6,
-        _blockList  = {
-            { _x = 0, _y = 3, _name = "minecraft:torch"},
-            { _x = 2, _y = 5, _name = "minecraft:chest"},
-            { _x = 3, _y = 0, _name = "minecraft:torch"},
-            { _x = 4, _y = 5, _name = "minecraft:chest"},
+        _codeArray  = {
+            ["T"]   = mobj_block2d.Block2d:new({ _name = "minecraft:torch" }),
+            ["C"]   = mobj_block2d.Block2d:new({ _name = "minecraft:chest" }),
+            [" "]   = mobj_block2d.Block2d:new({ _name = mobj_block2d.Block2d.NoneBlockName() }),
         },
-        _clearRemainingSpace = true
+        _codeMap    = {
+            [6] = "  C C ",
+            [5] = "      ",
+            [4] = "T     ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
     })
 end
 
