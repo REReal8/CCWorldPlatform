@@ -97,6 +97,9 @@ function Block2d.IsOfType(block)
 end
 
 function Block2d:isSame(block)
+    -- check input
+    if not Block2d.IsOfType(block) then return false end
+
     -- check same block
     local isSame = self._name == block._name
     if self._dx ~= nil and self._dy ~= nil then
