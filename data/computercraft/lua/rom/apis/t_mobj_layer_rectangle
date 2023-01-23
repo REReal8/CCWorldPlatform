@@ -14,6 +14,7 @@ function T_All()
     T_isSame()
     T_copy()
     T_itemsNeeded()
+    T_transformToLayer()
     T_ParseWithCheckInput()
 end
 
@@ -370,6 +371,67 @@ function T_itemsNeeded()
     name = mobj_block.Block.NoneBlockName()
     expectedCount = 0
     assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
+
+    -- cleanup test
+end
+
+function T_transformToLayer()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
+    local fromLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "   S  ",
+            [5] = "      ",
+            [4] = "   S  ",
+            [3] = "   ?  ",
+            [2] = "   ?  ",
+            [1] = "   ?  ",
+        },
+    })
+    local toLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "   ?  ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "   ?  ",
+            [1] = "   T  ",
+        },
+    })
+
+    -- test
+    local transformLayer = fromLayer:transformToLayer(toLayer)
+    local isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(transformLayer)
+    local expectedIsOfType = true
+    assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "T?????",
+            [3] = "??? ??",
+            [2] = "??????",
+            [1] = "???T??",
+        },
+    })
+    assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end

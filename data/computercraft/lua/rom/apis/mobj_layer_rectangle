@@ -164,6 +164,63 @@ function LayerRectangle:itemsNeeded()
     return itemList
 end
 
+function LayerRectangle:transformToLayer(...)
+    -- get & check input from description
+    local checkSuccess, toLayer = coreutils.CheckInput([[
+        This method returns the layer that is needed to transform this layer into toLayer.
+
+        Parameters:
+            toLayer                     + (LayerRectangle) table with
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:transformToLayer: Invalid input") return nil end
+
+    -- check size
+    local fromLayer = self
+    if fromLayer:getNRows() ~= toLayer:getNRows() then corelog.Error("LayerRectangle:transformToLayer: # rows in fromLayer(="..fromLayer:getNRows()..") not equal to that in toLayer(="..toLayer:getNRows()..")") return nil end
+    if fromLayer:getNColumns() ~= toLayer:getNColumns() then corelog.Error("LayerRectangle:transformToLayer: # columns in fromLayer(="..fromLayer:getNColumns()..") not equal to that in toLayer(="..toLayer:getNColumns()..")") return nil end
+
+    -- construct transformCodeMap
+    local transformCodeMap = {}
+    local nCol = fromLayer:getNColumns()
+    local anyBlockCode = "?"
+
+    -- loop on rows
+    for iRow, fromRow in ipairs(fromLayer._codeMap) do
+        -- construct transformRow
+        local transformRow = ""
+
+        -- loop on columns
+        for iCol = 1, nCol do
+            -- get code's
+            local fromCode = fromRow:sub(iCol, iCol)
+            local toCode = toLayer:getCode(iCol, iRow)
+
+            -- check code's
+            if fromCode == toCode then
+                transformRow = transformRow..anyBlockCode
+            else
+                transformRow = transformRow..toCode
+            end
+        end
+
+        -- save row
+        transformCodeMap[iRow] = transformRow
+    end
+
+    -- construct transformCodeArray
+    local transformCodeArray = {}
+    for code, codeCount in pairs(toLayer:codesNeeded()) do
+        transformCodeArray[code] = toLayer._codeArray[code]:copy()
+    end
+
+    -- end
+    local transformLayer = LayerRectangle:new({
+        _codeArray  = transformCodeArray,
+        _codeMap    = transformCodeMap,
+    })
+    return transformLayer
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
