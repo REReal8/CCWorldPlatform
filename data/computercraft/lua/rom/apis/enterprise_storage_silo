@@ -170,7 +170,7 @@ function StartNewSite_SSrv(siteData)
 
     -- what kind of new silo is this?
     if siteData.siloType == "basic" then
-        corelog.WriteToLog(">Starting silo at "..textutils.serialise(site.location))
+        corelog.WriteToLog(">Starting silo at "..textutils.serialise(site.location, { compact = true }))
 
         -- defaults to input
         siteData.topChests  = siteData.topChests    or 2
