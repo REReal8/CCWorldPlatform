@@ -32,7 +32,7 @@ local compact = { compact = true }
 
 function T_new()
     -- prepare test
-    corelog.WriteToLog("* mobj_block:new() tests")
+    corelog.WriteToLog("* Block:new() tests")
 
     -- test full
     local block = mobj_block.Block:new({
@@ -109,7 +109,7 @@ end
 
 function T_isSame()
     -- prepare test
-    corelog.WriteToLog("* mobj_block:isSame() tests")
+    corelog.WriteToLog("* Block:isSame() tests")
     local block2 = mobj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
@@ -148,7 +148,7 @@ end
 
 function T_copy()
     -- prepare test
-    corelog.WriteToLog("* mobj_block:copy() tests")
+    corelog.WriteToLog("* Block:copy() tests")
 
     -- test
     local copy = block1:copy()
@@ -159,7 +159,7 @@ end
 
 function T_isMinecraftItem()
     -- prepare test
-    corelog.WriteToLog("* mobj_block:isMinecraftItem() tests")
+    corelog.WriteToLog("* Block:isMinecraftItem() tests")
     local blockName = saplingItemName
     local block2 = mobj_block.Block:new({
         _dx     = dx1,
@@ -189,7 +189,7 @@ end
 
 function T_isAnyBlock()
     -- prepare test
-    corelog.WriteToLog("* mobj_block:isAnyBlock() tests")
+    corelog.WriteToLog("* Block:isAnyBlock() tests")
     local blockName = mobj_block.Block.AnyBlockName()
     local block2 = mobj_block.Block:new({
         _dx     = dx1,
@@ -213,7 +213,7 @@ end
 
 function T_isNoneBlock()
     -- prepare test
-    corelog.WriteToLog("* mobj_block:isNoneBlock() tests")
+    corelog.WriteToLog("* Block:isNoneBlock() tests")
     local blockName = mobj_block.Block.NoneBlockName()
     local block2 = mobj_block.Block:new({
         _dx     = dx1,
@@ -237,7 +237,7 @@ end
 
 function T_ParseWithCheckInput()
     -- prepare test
-    corelog.WriteToLog("* mobj_block parsing with CheckInput tests")
+    corelog.WriteToLog("* Block parsing with CheckInput tests")
 
     -- test
     local checkSuccess, block = coreutils.CheckInput([[
