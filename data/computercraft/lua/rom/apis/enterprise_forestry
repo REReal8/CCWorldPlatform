@@ -213,8 +213,6 @@ function UpgradeSite_ASrv(...)
             end
 
             -- check layer needs update
-            if not targetLayer:isSame(startingLayer) then
-                -- add build tree step
             if buildLayer:getNRows() > 0 then
                     -- add build tree step
                 iStep = iStep + 1
