@@ -107,7 +107,31 @@ function T_UpgradeSite_ASrv_Level2Trees2()
     UpgradeSite_ASrv(level0, nTrees1, level2, nTrees2)
 end
 
-function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted)
+function T_UpgradeSite_ASrv_Level1Trees3_Level2Trees3()
+    UpgradeSite_ASrv(level1, nTrees1, level1, nTrees3, "t_forestry.ExtraCallback", { levelWanted = level2, treesWanted = nTrees3 })
+end
+
+function ExtraCallback(...)
+    -- get & check input
+    local checkSuccess, levelWanted, treesWanted, forestLocator = coreutils.CheckInput([[
+        Parameters:
+            extraCallbackData           - (table) callback data
+                levelWanted             + (number)
+                treesWanted             + (number)
+                forestLocator           + (URL) locating the forest
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ExtraCallback: Invalid input") return end
+
+    -- test
+    enterprise_forestry.UpgradeSite_ASrv({
+        forestLocator           = forestLocator:copy(),
+        targetLevel             = levelWanted,
+        targetNTrees            = treesWanted,
+        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
+    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
+end
+
+function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted, extraCallback, extraCallbackData)
     -- prepare test
     corelog.WriteToLog("# UpgradeSite_ASrv (L"..levelStart..",trees"..treesStart..") => (L"..levelWanted..",trees"..treesWanted..") test")
     enterprise_forestry.AddNewSite_ASrv({
@@ -115,16 +139,18 @@ function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted)
         forestLevel             = levelStart,
         nTrees                  = treesStart,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted })
+    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted, extraCallback = extraCallback, extraCallbackData = extraCallbackData})
 end
 
 function UpgradeSite_ASrv_PrepCallback(...)
     -- get & check input
-    local checkSuccess, levelWanted, treesWanted, serviceSuccess, forestLocator = coreutils.CheckInput([[
+    local checkSuccess, levelWanted, treesWanted, extraCallback, extraCallbackData, serviceSuccess, forestLocator = coreutils.CheckInput([[
         Parameters:
             callbackData                - (table) callback data
                 levelWanted             + (number)
                 treesWanted             + (number)
+                extraCallback           + (string, "") extra callback
+                extraCallbackData       + (table, {}) extra callback data
             serviceResults              - (table) results of the service
                 success                 + (boolean)
                 forestLocator           + (URL) locating the forest
@@ -140,17 +166,19 @@ function UpgradeSite_ASrv_PrepCallback(...)
         targetLevel             = levelWanted,
         targetNTrees            = treesWanted,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
-    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
+    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted, extraCallback = extraCallback, extraCallbackData = extraCallbackData })
 end
 
 function UpgradeSite_ASrv_TestCallback(...)
     -- get & check input
-    local checkSuccess, forestLocator, levelWanted, treesWanted, serviceSuccess = coreutils.CheckInput([[
+    local checkSuccess, forestLocator, levelWanted, treesWanted, extraCallback, extraCallbackData, serviceSuccess = coreutils.CheckInput([[
         Parameters:
             callbackData                - (table) callback data
                 forestLocator           + (URL) locating the forest
                 levelWanted             + (number)
                 treesWanted             + (number)
+                extraCallback           + (string, "") extra callback
+                extraCallbackData       + (table, {}) extra callback data
             serviceResults              - (table) results of the services
                 success                 + (boolean)
     --]], table.unpack(arg))
@@ -162,6 +190,13 @@ function UpgradeSite_ASrv_TestCallback(...)
     assert(forest:getLevel() == levelWanted, "gotten level(="..forest:getLevel()..") not the same as expected(="..levelWanted..")")
     assert(forest:getNTrees() == treesWanted, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..treesWanted..")")
 
-    -- cleanup test
-    enterprise_forestry.RemoveForest(forestLocator)
+    -- extraCallback?
+    if extraCallback == "" then
+        -- cleanup test
+        enterprise_forestry.RemoveForest(forestLocator)
+    else
+        -- call extraCallback
+        extraCallbackData.forestLocator = forestLocator
+        coreutils.DoSyncService(extraCallback, extraCallbackData)
+    end
 end
