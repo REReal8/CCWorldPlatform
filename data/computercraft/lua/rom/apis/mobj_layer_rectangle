@@ -24,10 +24,10 @@ LayerRectangle = {
 function LayerRectangle:new(...)
     -- get & check input from description
     local checkSuccess, o = coreutils.CheckInput([[
-        Constructs a mobj_layer_rectangle.
+        Construct a mobj_layer_rectangle.
 
         Parameters:
-            o                           + (table, {}) table with
+            o                           + (table, {}) table with object fields
                 _codeArray              - (table, {}) array mapping _codeMap codes (characters) to Block's
                 _codeMap                - (table, {}) map of codes of blocks within the layer
     --]], table.unpack(arg))
