@@ -28,7 +28,7 @@ BirchForest = {
 function BirchForest:new(...)
     -- get & check input from description
     local checkSuccess, o = coreutils.CheckInput([[
-        Construct a mobj_birchforest.
+        Construct a BirchForest.
 
         Parameters:
             o                           + (table, {}) table with object fields

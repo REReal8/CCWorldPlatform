@@ -24,7 +24,7 @@ LayerRectangle = {
 function LayerRectangle:new(...)
     -- get & check input from description
     local checkSuccess, o = coreutils.CheckInput([[
-        Construct a mobj_layer_rectangle.
+        Construct a LayerRectangle.
 
         Parameters:
             o                           + (table, {}) table with object fields

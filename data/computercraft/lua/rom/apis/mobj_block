@@ -22,7 +22,7 @@ Block = {
 
 function Block:new(o)
     --[[
-        Constructs a mobj_block.
+        Constructs a Block.
 
         Parameters:
                             - (table) table with
