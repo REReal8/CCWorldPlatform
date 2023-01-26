@@ -457,6 +457,44 @@ function T_transformToLayer()
     })
     assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
+    -- test anyBlock added to _codeArray
+    toLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+    transformLayer = fromLayer:transformToLayer(toLayer)
+    isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(transformLayer)
+    expectedIsOfType = true
+    assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??? ??",
+            [5] = "??????",
+            [4] = "T?????",
+            [3] = "??? ??",
+            [2] = "??? ??",
+            [1] = "???T??",
+        },
+    })
+    assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
     -- cleanup test
 end
 

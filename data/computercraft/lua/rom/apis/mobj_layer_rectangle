@@ -187,6 +187,7 @@ function LayerRectangle:transformToLayer(...)
     local anyBlockCode = "?"
 
     -- loop on rows
+    local anyBlockInserted = false
     for iRow, fromRow in ipairs(fromLayer._codeMap) do
         -- construct transformRow
         local transformRow = ""
@@ -200,6 +201,7 @@ function LayerRectangle:transformToLayer(...)
             -- check code's
             if fromCode == toCode then
                 transformRow = transformRow..anyBlockCode
+                anyBlockInserted = true
             else
                 transformRow = transformRow..toCode
             end
@@ -213,6 +215,9 @@ function LayerRectangle:transformToLayer(...)
     local transformCodeArray = {}
     for code, codeCount in pairs(toLayer:codesNeeded()) do
         transformCodeArray[code] = toLayer._codeArray[code]:copy()
+    end
+    if anyBlockInserted and not transformCodeArray[anyBlockCode] then
+        transformCodeArray[anyBlockCode] = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() })
     end
 
     -- end
