@@ -25,23 +25,27 @@ BirchForest = {
 --   | |
 --   |_|
 
-function BirchForest:new(o)
-    --[[
-        Constructs a mobj_birchforest.
+function BirchForest:new(...)
+    -- get & check input from description
+    local checkSuccess, o = coreutils.CheckInput([[
+        Construct a mobj_birchforest.
 
         Parameters:
-                                        - (table) table with
+            o                           + (table, {}) table with object fields
                 _id                     - (string) id of the forest
                 _level                  - (number) level of the forest
                 _location               - (table) base location of the forest
-                _nTrees                 - (string) # trees in the forest
+                _nTrees                 - (number) # trees in the forest
                 _localLogsLocator       - (URL) locating the local Supplier of logs (e.g. a chest)
                 _localSaplingsLocator   - (URL) locating the local Supplier of saplings (e.g. a chest)
-    --]]
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
 
-    o = o or {}   -- create object if user does not provide one
+    -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- end
     return o
 end
 

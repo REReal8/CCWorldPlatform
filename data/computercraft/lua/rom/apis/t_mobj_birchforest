@@ -44,7 +44,7 @@ function CreateForest(level, location, id)
     -- create forest object
     local forest = mobj_birchforest.BirchForest:new({
         _id                     = id,
-        _forestLevel            = level,
+        _level                  = level,
 
         _location               = location,
         _nTrees                 = nTrees,
