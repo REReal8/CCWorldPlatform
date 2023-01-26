@@ -13,12 +13,16 @@ function T_All()
     T_IsOfType()
     T_isSame()
     T_copy()
+    T_ParseWithCheckInput()
+
     T_itemsNeeded()
     T_transformToLayer()
     T_cleanCodeArray()
     T_removeRow()
     T_removeColumn()
-    T_ParseWithCheckInput()
+    T_getCodeCol()
+    T_removeBoundariesWithOnly()
+    T_buildData()
 end
 
 local torchItemName = "minecraft:torch"
@@ -353,6 +357,23 @@ function T_copy()
     -- cleanup test
 end
 
+function T_ParseWithCheckInput()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle parsing with CheckInput tests")
+
+    -- test
+    local checkSuccess, layer = coreutils.CheckInput([[
+        Parameters:
+            layer   + (LayerRectangle) object to retrieve from arg
+    ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
+    if not checkSuccess then corelog.Error("t_mobj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
+    local isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(layer)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- cleanup test
+end
+
 function T_itemsNeeded()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:itemsNeeded() tests")
@@ -539,6 +560,18 @@ function T_removeRow()
     -- cleanup test
 end
 
+function T_getCodeCol()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:getCodeCol() tests")
+
+    -- test
+    local column = layer1:getCodeCol(4)
+    local expectedColumn = "T  S  "
+    assert(column == expectedColumn, "gotten column(="..column..") not the same as expected(="..expectedColumn..")")
+
+    -- cleanup test
+end
+
 function T_removeColumn()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:removeColumn() tests")
@@ -613,19 +646,91 @@ function T_removeColumn()
     -- cleanup test
 end
 
-function T_ParseWithCheckInput()
+function T_removeBoundariesWithOnly()
     -- prepare test
-    corelog.WriteToLog("* LayerRectangle parsing with CheckInput tests")
+    corelog.WriteToLog("* LayerRectangle:removeBoundariesWithOnly() tests")
 
-    -- test
-    local checkSuccess, layer = coreutils.CheckInput([[
-        Parameters:
-            layer   + (LayerRectangle) object to retrieve from arg
-    ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
-    if not checkSuccess then corelog.Error("t_mobj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(layer)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    -- test right
+    local layer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "??TC ?",
+            [3] = "?? C??",
+            [2] = "??? T?",
+            [1] = "??????",
+        },
+    })
+    local code = "?"
+    local colOffset, rowOffset = layer:removeBoundariesWithOnly(code)
+    local expectedOffset = 1
+    assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
+    expectedOffset = 2
+    assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
+    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "TC ",
+            [2] = " C?",
+            [1] = "? T",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- cleanup test
+end
+
+function T_buildData()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:buildData() tests")
+
+    -- test right
+    local layer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "??TC ?",
+            [3] = "?? C??",
+            [2] = "??? T?",
+            [1] = "??????",
+        },
+    })
+    local colOffset, rowOffset, buildLayer = layer:buildData()
+    local expectedOffset = 1
+    assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
+    expectedOffset = 2
+    assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
+    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
+            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "TC ",
+            [2] = " C?",
+            [1] = "? T",
+        },
+    })
+    assert(buildLayer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end

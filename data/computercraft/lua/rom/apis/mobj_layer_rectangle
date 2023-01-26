@@ -284,6 +284,117 @@ function LayerRectangle:cleanCodeArray()
     end
 end
 
+function LayerRectangle:removeBoundariesWithOnly(...)
+    -- get & check input from description
+    local checkSuccess, code = coreutils.CheckInput([[
+        Remove boundary rows and columns that only contain a given code.
+
+        Return value:
+            col_offset                  - (number) column offset relative to original LayerRectangle
+            row_offset                  - (number) row offset relative to original LayerRectangle
+
+        Parameters:
+            code                        + (string) off which rows and columns should be removed
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:removeBoundariesWithOnly: Invalid input") return nil end
+
+    --
+    local col_offset = 0
+    local row_offset = 0
+
+    -- ...
+    local nCol = self:getNColumns()
+
+    -- loop from top row
+    for iRow = self:getNRows(), 1, -1 do
+        -- check only code's
+        local row = self._codeMap[iRow]
+        local _, nBlocks = row:gsub(code, "")
+        if nBlocks == nCol then
+            -- remove row
+            self:removeRow(iRow)
+        else
+            break
+        end
+    end
+
+    -- loop from bottom row
+    local iRow = 1
+    while iRow < self:getNRows() do
+        -- check only code's
+        local row = self._codeMap[iRow]
+        local _, nBlocks = row:gsub(code, "")
+        if nBlocks == nCol then
+            -- remove row
+            self:removeRow(iRow)
+            row_offset = row_offset + 1
+        else
+            break
+        end
+    end
+
+    -- loop from right column
+    local nRow = self:getNRows()
+    for iCol = nCol, 1, -1 do
+        -- check only code's
+        local col = self:getCodeCol(iCol)
+        local _, nBlocks = col:gsub(code, "")
+        if nBlocks == nRow then
+            -- remove row
+            self:removeColumn(iCol)
+        else
+            break
+        end
+    end
+
+    -- loop from left column
+    local iCol = 1
+    while iCol < self:getNColumns() do
+        -- check only code's
+        local col = self:getCodeCol(iCol)
+        local _, nBlocks = col:gsub(code, "")
+        if nBlocks == nRow then
+            -- remove row
+            self:removeColumn(iCol)
+            col_offset = col_offset + 1
+        else
+            break
+        end
+    end
+
+    -- end
+    return col_offset, row_offset
+end
+
+function LayerRectangle:buildData()
+    --[[
+        Obtain data to build this LayerRectangle.
+
+        The build data is a LayerRectangle with no AnyBlock's at the boundaries and the column and row offsets relative to this LayerRectangle.
+
+        Return value:
+            buildLayer                  - (LayerRectangle) with layer to build
+            col_offset                  - (number) column offset relative to original LayerRectangle
+            row_offset                  - (number) row offset relative to original LayerRectangle
+    ]]
+
+    -- get AnyBlock code
+    local anyBlockCode = "?" -- default, but allowed to be different
+    for code, block in pairs(self._codeArray) do
+        if block:isAnyBlock() then
+            anyBlockCode = code
+            break
+        end
+    end
+
+    -- get build data
+    local buildLayer = self:copy()
+    local col_offset, row_offset = buildLayer:removeBoundariesWithOnly(anyBlockCode)
+
+    -- end
+    return col_offset, row_offset, buildLayer
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -483,4 +594,19 @@ function LayerRectangle:getCodeRow(iRow)
 
     -- end
     return self._codeMap[iRow]
+end
+
+function LayerRectangle:getCodeCol(iColumn)
+    -- check
+    local nCol = self:getNColumns()
+    if iColumn < 1 or iColumn > nCol then corelog.Error("LayerRectangle:getCodeCol: iColumn(="..iColumn..") not within range i.e. between 1 and "..nCol) return "" end
+
+    -- construct column
+    local column = ""
+    for iRow = 1, self:getNRows() do
+        column = column..self:getCodeRow(iRow):sub(iColumn, iColumn)
+    end
+
+    -- end
+    return column
 end
