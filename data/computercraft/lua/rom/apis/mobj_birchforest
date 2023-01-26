@@ -433,9 +433,15 @@ function Tree_layerLm1()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["S"]   = mobj_block.Block:new({ _name = "minecraft:birch_sapling" }),
+            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
         },
         _codeMap    = {
-            [1] = "S",
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "???S??",
+            [3] = "??????",
+            [2] = "??????",
+            [1] = "??????",
         },
     })
 end

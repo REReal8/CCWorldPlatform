@@ -186,27 +186,40 @@ function UpgradeSite_ASrv(...)
         -- upgrade level data
         local targetBaseLayer = forest:getBaseLayer(targetLevel)
         local startingBaseLayer = forest:getBaseLayer(startingLevel)
-        projectData.baseLayer    = targetBaseLayer
+        local transformLayer = startingBaseLayer:transformToLayer(targetBaseLayer)
+        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No base transformLayer") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        local baseColOffset, baseRowOffset, baseBuildLayer = transformLayer:buildData()
+        projectData.baseBuildLayer = baseBuildLayer
+
+        transformLayer = startingTreeLayer:transformToLayer(targetTreeLayer)
+        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No tree transformLayer") return coreutils.DoCallback(callback, callbackData, {success = false}) end
+        local treeColOffset, treeRowOffset, treeBuildLayer = transformLayer:buildData()
+        projectData.treeBuildLayer = treeBuildLayer
+
         projectData.startingNTrees  = startingNTrees
 
         -- loop on current trees
         for iTree = 1, startingNTrees do
             -- get layer
-            local startingLayer = startingTreeLayer
-            local targetLayer = targetTreeLayer
-            local layerStr = "treeLayer"
+            local buildLayer = treeBuildLayer
+            local layerStr = "treeBuildLayer"
+            local colOffset = treeColOffset
+            local rowOffset = treeRowOffset
             if iTree == 1 then
-                startingLayer = startingBaseLayer
-                targetLayer = targetBaseLayer
-                layerStr = "baseLayer"
+                buildLayer = baseBuildLayer
+                layerStr = "baseBuildLayer"
+                colOffset = baseColOffset
+                rowOffset = baseRowOffset
             end
 
             -- check layer needs update
             if not targetLayer:isSame(startingLayer) then
                 -- add build tree step
+            if buildLayer:getNRows() > 0 then
+                    -- add build tree step
                 iStep = iStep + 1
                 local iStepStr = tostring(iStep)
-                local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
+                local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
                 local treeBaseLocationStr = "treeBaseLocation"..iStepStr
                 table.insert(projectSteps,
                     { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {

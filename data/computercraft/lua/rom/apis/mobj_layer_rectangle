@@ -31,7 +31,7 @@ function LayerRectangle:new(...)
                 _codeArray              - (table, {}) array mapping _codeMap codes (characters) to Block's
                 _codeMap                - (table, {}) map of codes of blocks within the layer
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return nil end
 
     -- set class info
     setmetatable(o, self)
@@ -39,10 +39,10 @@ function LayerRectangle:new(...)
 
     -- check codeArray validity
     o._codeArray = LayerRectangle.TransformToCodeArray(o._codeArray)
-    if not LayerRectangle.CodeArrayValid(o._codeArray, true) then corelog.Error("LayerRectangle:new: Invalid codeArray") return {} end
+    if not LayerRectangle.CodeArrayValid(o._codeArray, true) then corelog.Error("LayerRectangle:new: Invalid codeArray") return nil end
 
     -- check codeMap validity
-    if not LayerRectangle.CodeMapValid(o._codeArray, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return {} end
+    if not LayerRectangle.CodeMapValid(o._codeArray, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return nil end
 
     -- end
     return o
@@ -394,6 +394,7 @@ function LayerRectangle:buildData()
 
     -- get build data
     local buildLayer = self:copy()
+---@diagnostic disable-next-line: need-check-nil
     local col_offset, row_offset = buildLayer:removeBoundariesWithOnly(anyBlockCode)
 
     -- end
