@@ -227,6 +227,7 @@ function BirchForest:provideItemsTo_ASrv(...)
         else
             corelog.Error("mobj_birchforest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return coreutils.DoCallback(callback, callbackData, {success = false})
         end
+        if not localStorageLocator then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
 
         -- check items already available in localStorageLocator
         local localItemsLocator = localStorageLocator:copy()
@@ -383,8 +384,9 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
             -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
             localSupplierLocator = self:getLocalSaplingsLocator()
         else
-            return corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") {success = false}
+            corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false}
         end
+        if not localSupplierLocator then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid localSupplierLocator (type="..type(localSupplierLocator)..")") return {success = false} end
 
         -- fuelNeed per round
         local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
