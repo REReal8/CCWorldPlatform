@@ -337,7 +337,7 @@ function LayerRectangle:removeBoundariesWithOnly(...)
             break
         end
     end
-    nCol = self:getNColumns() -- just in case we have no left it should be updated to 0
+    nCol = self:getNColumns() -- just in case we have no rows left it should be updated to 0
 
     -- loop from right column
     local nRow = self:getNRows()
