@@ -44,6 +44,7 @@ function LayerRectangle:new(...)
     -- check codeMap validity
     if not LayerRectangle.CodeMapValid(o._codeArray, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return {} end
 
+    -- end
     return o
 end
 
