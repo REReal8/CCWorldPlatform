@@ -373,9 +373,9 @@ function LayerRectangle:buildData()
         The build data is a LayerRectangle with no AnyBlock's at the boundaries and the column and row offsets relative to this LayerRectangle.
 
         Return value:
-            buildLayer                  - (LayerRectangle) with layer to build
             col_offset                  - (number) column offset relative to original LayerRectangle
             row_offset                  - (number) row offset relative to original LayerRectangle
+            buildLayer                  - (LayerRectangle) with layer to build
     ]]
 
     -- get AnyBlock code
