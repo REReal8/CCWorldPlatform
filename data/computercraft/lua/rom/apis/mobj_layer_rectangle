@@ -131,6 +131,7 @@ function LayerRectangle:codesNeeded()
     -- loop on rows
     local nCol = self:getNColumns()
     for iRow, row in ipairs(self._codeMap) do
+        -- loop on columns
         for iCol = 1, nCol do
             -- get code
             local code = row:sub(iCol, iCol)
@@ -172,7 +173,7 @@ function LayerRectangle:transformToLayer(...)
 
         Parameters:
             toLayer                     + (LayerRectangle) table with
-    --]], table.unpack(arg))
+    ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:transformToLayer: Invalid input") return nil end
 
     -- check size
@@ -220,6 +221,67 @@ function LayerRectangle:transformToLayer(...)
         _codeMap    = transformCodeMap,
     })
     return transformLayer
+end
+
+function LayerRectangle:removeRow(...)
+    -- get & check input from description
+    local checkSuccess, iRow = coreutils.CheckInput([[
+        Remove a row from the LayerRectangle.
+
+        Parameters:
+            iRow                        + (number) index of row to remove
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:removeRow: Invalid input") return nil end
+
+    -- check range
+    if iRow < 1 or iRow > self:getNRows() then corelog.Error("LayerRectangle:removeRow: iRow(="..iRow..") not within range i.e. between 1 and "..self:getNRows()) return end
+
+    -- remove row
+    table.remove(self._codeMap, iRow)
+
+    -- clean codeArray
+    self:cleanCodeArray()
+end
+
+function LayerRectangle:removeColumn(...)
+    -- get & check input from description
+    local checkSuccess, iCol = coreutils.CheckInput([[
+        Remove a column from the LayerRectangle.
+
+        Parameters:
+            iCol                        + (number) index of column to remove
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:removeColumn: Invalid input") return nil end
+
+    -- check range
+    local nCol = self:getNColumns()
+    if iCol < 1 or iCol > nCol then corelog.Error("LayerRectangle:removeColumn: iCol(="..iCol..") not within range i.e. between 1 and "..nCol) return end
+
+    -- loop on rows
+    for iRow, row in ipairs(self._codeMap) do
+        -- remove column
+        self._codeMap[iRow] = row:sub(1, iCol - 1)..row:sub(iCol + 1, nCol)
+    end
+
+    -- clean codeArray
+    self:cleanCodeArray()
+end
+
+function LayerRectangle:cleanCodeArray()
+    --[[
+        Remove code's from codeArray that are not (anymore) in codeMap
+    ]]
+
+    -- get codeList
+    local codeList = self:codesNeeded()
+
+    -- check for unused codes
+    for code, block in pairs(self._codeArray) do
+        if not codeList[code] then
+            -- remove code
+            self._codeArray[code] = nil
+        end
+    end
 end
 
 --    _                 _    __                  _   _
