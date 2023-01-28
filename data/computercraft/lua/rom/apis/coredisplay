@@ -216,7 +216,7 @@ function ExecuteTest(t)
 			{key = "g", desc = "general", 			func = ExecuteTest, param = {file = t_main, filename = "t_main"}},
 			{key = "t", desc = "enterprise_test",	func = ExecuteTest, param = {file = t_test, filename = "t_test"}},
 			{key = "m", desc = "move", 				func = ExecuteTest, param = {file = t_move, filename = "t_move"}},
-			{key = "u", desc = "url", 				func = ExecuteTest, param = {file = t_url, filename = "t_url"}},
+			{key = "u", desc = "URL", 				func = ExecuteTest, param = {file = t_obj_url, filename = "t_obj_url"}},
 			{key = "d", desc = "coredht", 			func = ExecuteTest, param = {file = t_coredht, filename = "t_coredht"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}

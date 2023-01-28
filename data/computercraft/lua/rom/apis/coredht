@@ -110,12 +110,12 @@ function GetResource(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("coredht.GetResource: Invalid input") return nil end
 
-    -- get url components
+    -- get URL components
     local hostURI = resourceLocator:getHostURI()
     local portURI = resourceLocator:getPortURI()
     local pathSegments = resourceLocator:pathSegments()
 
-    -- get resource using url components
+    -- get resource using URL components
     local resource = nil
     if portURI == "" then
         resource = coredht.GetData(hostURI, table.unpack(pathSegments))
@@ -141,12 +141,12 @@ function SaveResource(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("coredht.SaveResource: Invalid input") return nil end
 
-    -- get url components
+    -- get URL components
     local hostURI = resourceLocator:getHostURI()
     local portURI = resourceLocator:getPortURI()
     local pathSegments = resourceLocator:pathSegments()
 
-    -- save resource using url components
+    -- save resource using URL components
     if portURI == "" then
         resource = coredht.SaveData(resource, hostURI, table.unpack(pathSegments))
     else
@@ -170,12 +170,12 @@ function RemoveResource(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("coredht.RemoveResource: Invalid input") return nil end
 
-    -- get url components
+    -- get URL components
     local hostURI = resourceLocator:getHostURI()
     local portURI = resourceLocator:getPortURI()
     local pathSegments = resourceLocator:pathSegments()
 
-    -- remove resource using url components
+    -- remove resource using URL components
     if portURI == "" then
         coredht.SaveData(nil, hostURI, table.unpack(pathSegments))
     else

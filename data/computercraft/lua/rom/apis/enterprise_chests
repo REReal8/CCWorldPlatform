@@ -189,7 +189,7 @@ function GetHostLocator_Att()
             nil
     --]]
 
-    local hostURL = url.URL:new()
+    local hostURL = obj_url.URL:new()
     hostURL:setHost(db.hostName)
 
     return hostURL
@@ -551,7 +551,7 @@ function PutItemsFromTurtle_ASrv(...)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Chest "..destinationHostLocator:getURI().." not found.") return coreutils.DoCallback(callback, callbackData, {success = false}) end
 
     -- set (expected) destinationItemsLocator
-    local destinationItemsLocator = url.URL:new(destinationHostLocator)
+    local destinationItemsLocator = obj_url.URL:new(destinationHostLocator)
     destinationItemsLocator:setQuery(coreutils.DeepCopy(turtleItemsLocator:getQuery()))
 
     -- create project definition

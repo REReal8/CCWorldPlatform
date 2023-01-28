@@ -378,7 +378,7 @@ function AddItemsLocators_SSrv(serviceData)
         -- check if it's a URL
         if type(fieldvalue) == "table" then
             -- wrap into URL
-            local fieldItemsLocator = url.URL:new(fieldvalue)
+            local fieldItemsLocator = obj_url.URL:new(fieldvalue)
 
             -- check if first
             if resultItemsLocator == nil then

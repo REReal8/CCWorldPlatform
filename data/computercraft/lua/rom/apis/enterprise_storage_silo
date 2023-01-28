@@ -140,7 +140,7 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     -- check input
     if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid siteData input') return nil end
     if type(siteData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return coreutils.DoCallback(callback, callbackData, {success = false}) end
-    local materialsHostLocator = url.URL:new(siteData.materialsHostLocator)
+    local materialsHostLocator = obj_url.URL:new(siteData.materialsHostLocator)
     if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid callback function') return nil end
 
     -- let construction enterprise build the silo

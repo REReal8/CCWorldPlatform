@@ -68,7 +68,7 @@ end
 
 function URL:setHost(h)
     -- check input
-    if type(h) ~= "string" then corelog.Error("url.setHost: invalid host type: "..type(h)) return end
+    if type(h) ~= "string" then corelog.Error("URL:setHost: invalid host type: "..type(h)) return end
 
     self._host = h
 end
@@ -77,7 +77,7 @@ local hostPattern = "[%a%_]+"
 -- aUrl.setHostURI("storage")
 function URL:setHostURI(hURI)
     -- check input
-    if type(hURI) ~= "string" then corelog.Error("url.setHost: invalid host URI type: "..type(hURI)) return end
+    if type(hURI) ~= "string" then corelog.Error("URL:setHost: invalid host URI type: "..type(hURI)) return end
 
     self:setHost(string.match(hURI, hostPattern)) -- in effect this should be the same as setHost(hURI)
 end
@@ -97,7 +97,7 @@ end
 
 function URL:setPort(p)
     -- check input
-    if type(p) ~= "number" then corelog.Error("url.setPort: invalid port type: "..type(p)) return end
+    if type(p) ~= "number" then corelog.Error("URL:setPort: invalid port type: "..type(p)) return end
 
     self._port = p
 end
@@ -106,7 +106,7 @@ end
 local portPattern = ":%d+"
 function URL:setPortURI (pURI)
     -- check input
-    if type(pURI) ~= "string" then corelog.Error("url.setPortURI: invalid port URI type: "..type(pURI)) return end
+    if type(pURI) ~= "string" then corelog.Error("URL:setPortURI: invalid port URI type: "..type(pURI)) return end
 
     if pURI ~= "" then
         local i, j = string.find(pURI, portPattern)
@@ -114,10 +114,10 @@ function URL:setPortURI (pURI)
             local p = tonumber(string.sub(pURI, i+1, j))
             self:setPort(p)
         else
-            corelog.Warning("url.setPortURI: invalid port URI value: "..pURI)
+            corelog.Warning("URL:setPortURI: invalid port URI value: "..pURI)
         end
     else
---            corelog.WriteToLog("url.setPortURI: port URI value empty: "..pURI)
+--            corelog.WriteToLog("URL:setPortURI: port URI value empty: "..pURI)
     end
 end
 
@@ -135,7 +135,7 @@ end
 
 function URL:setPath(p)
     -- check input
-    if type(p) ~= "string" then corelog.Error("url.setPath: invalid path type: "..type(p)) return end
+    if type(p) ~= "string" then corelog.Error("URL:setPath: invalid path type: "..type(p)) return end
 
     self._path = p
 end
@@ -144,7 +144,7 @@ local pathURIPattern = "^([%/%w%=%:]*)"
 -- aUrl.setPathURI("/forests/oak/id=50:23012")
 function URL:setPathURI(pURI)
     -- check input
-    if type(pURI) ~= "string" then corelog.Error("url.setPathURI: invalid host URI type: "..type(pURI)) return end
+    if type(pURI) ~= "string" then corelog.Error("URL:setPathURI: invalid host URI type: "..type(pURI)) return end
 
     self:setPath(string.match(pURI, pathURIPattern)) -- in effect this should be the same as setPath(pURI)
 end
@@ -187,7 +187,7 @@ end
 
 function URL:setQuery(q)
     -- check input
-    if type(q) ~= "table" then corelog.Error("url.setQuery: invalid query type: "..type(q)) return end
+    if type(q) ~= "table" then corelog.Error("URL:setQuery: invalid query type: "..type(q)) return end
 
     self._query = q
 end
@@ -195,7 +195,7 @@ end
 -- aUrl.setQueryURI("?minecraft:birch_log=3&minecraft:torch=5")
 function URL:setQueryURI(qURI)
     -- check input
-    if type(qURI) ~= "string" then corelog.Error("url.setQueryURI: invalid query URI type: "..type(qURI)) return end
+    if type(qURI) ~= "string" then corelog.Error("URL:setQueryURI: invalid query URI type: "..type(qURI)) return end
 
     if qURI ~= "" then
         -- loop on query segments
@@ -206,7 +206,7 @@ function URL:setQueryURI(qURI)
         end
         self:setQuery(q)
     else
---            corelog.WriteToLog("url.setQueryURI: query URI value empty: "..qURI)
+--            corelog.WriteToLog("URL:setQueryURI: query URI value empty: "..qURI)
     end
 end
 
@@ -219,12 +219,12 @@ function URL:setURI(fullURI)
     local remainingURL = fullURI
     local hostURIPattern = "^"..self:getSchemeURI().."("..hostPattern..")"
     local hostURI = string.match(remainingURL, hostURIPattern)
-    if type(hostURI) ~= "string" then corelog.Error("url.setURI: could not find mandatory host in URI: "..fullURI) return end
+    if type(hostURI) ~= "string" then corelog.Error("URL:setURI: could not find mandatory host in URI: "..fullURI) return end
 --        corelog.WriteToLog("hostURI="..(hostURI or "<nil>"))
     self:setHostURI(hostURI)
 
     remainingURL = string.gsub(remainingURL, hostURIPattern, "", 1) -- remove for easier next match
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+--        corelog.WriteToLog("URL:setURI: remainingURL="..remainingURL)
 
     -- get  & set optional port
     local portURIPattern = "^("..portPattern..")"
@@ -233,7 +233,7 @@ function URL:setURI(fullURI)
     self:setPortURI(portURI)
 
     remainingURL = string.gsub(remainingURL, portURIPattern, "", 1) -- remove for easier next match
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+--        corelog.WriteToLog("URL:setURI: remainingURL="..remainingURL)
 
     -- get  & set optional path
     local pathURIPattern = "^([%/%w%=%:]+)"
@@ -242,7 +242,7 @@ function URL:setURI(fullURI)
     self:setPathURI(pathURI)
 
     remainingURL = string.gsub(remainingURL, pathURIPattern, "", 1) -- remove for easier next match
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL)
+--        corelog.WriteToLog("URL:setURI: remainingURL="..remainingURL)
 
     -- get  & set optional query
     local queryURIPattern = "^([%?][%&_%:%=%w]+)"
@@ -250,9 +250,9 @@ function URL:setURI(fullURI)
 --        corelog.WriteToLog("queryURI="..(queryURI or "<nil>"))
 
     remainingURL = string.gsub(remainingURL, queryURIPattern, "", 1)
-    if remainingURL ~= "" then corelog.Warning("url.setURI: remainingURL not empty at end of matching patterns: "..remainingURL) end
+    if remainingURL ~= "" then corelog.Warning("URL:setURI: remainingURL not empty at end of matching patterns: "..remainingURL) end
 
---        corelog.WriteToLog("url.setURI: remainingURL="..remainingURL) -- should be empty!
+--        corelog.WriteToLog("URL:setURI: remainingURL="..remainingURL) -- should be empty!
 
     self:setQueryURI(queryURI)
 end

@@ -73,7 +73,7 @@ function BuildBlueprint_ASrv(...)
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "taskFunctionName" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
+                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -172,7 +172,7 @@ function BuildLayer_ASrv(...)
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
                 { keyDef = "task"                       , valueSource = 0, keyDefSource = "taskFunctionName" },
                 { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing url internal _port
+                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
                 { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {

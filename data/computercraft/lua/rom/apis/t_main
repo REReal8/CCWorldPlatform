@@ -5,7 +5,7 @@ end
 
 function T_All()
     -- general tests
-    t_url.T_All()
+    t_obj_url.T_All()
 
     -- role tests
     t_builder.T_All()
