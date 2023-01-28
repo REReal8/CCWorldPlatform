@@ -269,7 +269,7 @@ end
 --                           |_|                                                                  |_|
 
 function TopL0_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
             ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
@@ -287,7 +287,7 @@ function TopL0_layer()
 end
 
 function Shaft_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
@@ -298,7 +298,7 @@ function Shaft_layer()
 end
 
 function Chest_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
             ["D"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),

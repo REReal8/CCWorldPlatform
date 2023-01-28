@@ -1,8 +1,8 @@
 
 --[[
-    This file implements mobj_layer_rectangle.
+    This file implements obj_layer_rectangle.
 
-    A mobj_layer_rectangle represents a rectangular layer in the minecraft world.
+    A obj_layer_rectangle represents a rectangular layer in the minecraft world.
 
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
@@ -98,7 +98,7 @@ function LayerRectangle.IsOfType(layer)
     -- check
     if type(layer) ~= "table" then return false end
     if not LayerRectangle.IsCodeArray(layer._codeArray) or not LayerRectangle.IsCodeMap(layer._codeMap) then return false end
-    if not layer.new then corelog.Warning("mobj_layer_rectangle.IsOfType: default methods seem not to have been inherited") return false end
+    if not layer.new then corelog.Warning("obj_layer_rectangle.IsOfType: default methods seem not to have been inherited") return false end
 
     return true
 end

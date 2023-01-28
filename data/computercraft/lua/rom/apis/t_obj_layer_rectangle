@@ -42,12 +42,12 @@ function T_IsCodeArray()
     corelog.WriteToLog("* LayerRectangle.IsCodeArray tests")
 
     -- test valid
-    local isOfType = mobj_layer_rectangle.LayerRectangle.IsCodeArray(codeArray1)
+    local isOfType = obj_layer_rectangle.LayerRectangle.IsCodeArray(codeArray1)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsCodeArray(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test different object
-    isOfType = mobj_layer_rectangle.LayerRectangle.IsCodeArray("a atring")
+    isOfType = obj_layer_rectangle.LayerRectangle.IsCodeArray("a atring")
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsCodeArray(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
@@ -67,20 +67,20 @@ function T_IsSameCodeArray()
     }
 
     -- test same
-    local isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
+    local isSame = obj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different
     codeArray2["T"] = obj_block.Block:new({ _name = "minecraft:something"})
-    isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
+    isSame = obj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     codeArray2["T"] = obj_block.Block:new({ _name = "minecraft:torch" })
 
     -- test different (size)
     codeArray2["Z"] = obj_block.Block:new({ _name = "minecraft:something"})
-    isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
+    isSame = obj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     codeArray2["Z"] = nil
@@ -95,8 +95,8 @@ function T_CodeArrayCopy()
     corelog.WriteToLog("* LayerRectangle.CodeArrayCopy() tests")
 
     -- test
-    local copy = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1)
-    assert(mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(copy, codeArray1), "gotten CodeArrayCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeArray1, compact)..")")
+    local copy = obj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1)
+    assert(obj_layer_rectangle.LayerRectangle.IsSameCodeArray(copy, codeArray1), "gotten CodeArrayCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeArray1, compact)..")")
 
     -- cleanup test
 end
@@ -121,18 +121,18 @@ function T_TransformToCodeArray()
         ["T"] = coreutils.DeepCopy(block1Table),
         ["S"] = coreutils.DeepCopy(block2Table),
     }
-    assert(not mobj_layer_rectangle.LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
-    local transformed = mobj_layer_rectangle.LayerRectangle.TransformToCodeArray(codeArrayTable)
-    assert(mobj_layer_rectangle.LayerRectangle.IsCodeArray(transformed), "transformed codeArray not a codeArray")
+    assert(not obj_layer_rectangle.LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
+    local transformed = obj_layer_rectangle.LayerRectangle.TransformToCodeArray(codeArrayTable)
+    assert(obj_layer_rectangle.LayerRectangle.IsCodeArray(transformed), "transformed codeArray not a codeArray")
 
     -- test partial
     codeArrayTable = {
         ["T"] = obj_block.Block:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
         ["S"] = coreutils.DeepCopy(block2Table),
     }
-    assert(not mobj_layer_rectangle.LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
-    transformed = mobj_layer_rectangle.LayerRectangle.TransformToCodeArray(codeArrayTable)
-    assert(mobj_layer_rectangle.LayerRectangle.IsCodeArray(transformed), "transformed codeArray(="..textutils.serialise(transformed, compact)..") not a codeArray")
+    assert(not obj_layer_rectangle.LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
+    transformed = obj_layer_rectangle.LayerRectangle.TransformToCodeArray(codeArrayTable)
+    assert(obj_layer_rectangle.LayerRectangle.IsCodeArray(transformed), "transformed codeArray(="..textutils.serialise(transformed, compact)..") not a codeArray")
 
     -- cleanup test
 end
@@ -151,12 +151,12 @@ function T_IsCodeMap()
     corelog.WriteToLog("* LayerRectangle.IsCodeMap tests")
 
     -- test valid
-    local isOfType = mobj_layer_rectangle.LayerRectangle.IsCodeMap(codeMap1)
+    local isOfType = obj_layer_rectangle.LayerRectangle.IsCodeMap(codeMap1)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsCodeMap(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test different object
-    isOfType = mobj_layer_rectangle.LayerRectangle.IsCodeMap("a atring")
+    isOfType = obj_layer_rectangle.LayerRectangle.IsCodeMap("a atring")
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsCodeMap(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
@@ -176,20 +176,20 @@ function T_IsSameCodeMap()
     }
 
     -- test same
-    local isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
+    local isSame = obj_layer_rectangle.LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different
     codeMap2[4] = "TTTSTT"
-    isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
+    isSame = obj_layer_rectangle.LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     codeMap2[4] = "T  S  "
 
     -- test different (size)
     codeMap2[7] = "TT  TT"
-    isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
+    isSame = obj_layer_rectangle.LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     codeMap2[7] = nil
@@ -202,13 +202,13 @@ function T_CodeMapCopy()
     corelog.WriteToLog("* LayerRectangle.CodeMapCopy() tests")
 
     -- test
-    local copy = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1)
-    assert(mobj_layer_rectangle.LayerRectangle.IsSameCodeMap(copy, codeMap1), "gotten CodeMapCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeMap1, compact)..")")
+    local copy = obj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1)
+    assert(obj_layer_rectangle.LayerRectangle.IsSameCodeMap(copy, codeMap1), "gotten CodeMapCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeMap1, compact)..")")
 
     -- cleanup test
 end
 
-local layer1 = mobj_layer_rectangle.LayerRectangle:new({
+local layer1 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = codeArray1,
     _codeMap    = codeMap1,
 })
@@ -218,7 +218,7 @@ function T_new()
     corelog.WriteToLog("* LayerRectangle:new() tests")
 
     -- test full
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
+    local layer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = codeArray1,
         _codeMap    = codeMap1,
     })
@@ -236,7 +236,7 @@ function T_new()
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
 
     -- test default
-    layer = mobj_layer_rectangle.LayerRectangle:new()
+    layer = obj_layer_rectangle.LayerRectangle:new()
     expectedNColumns = 0
     assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     expectedNRows = 0
@@ -250,7 +250,7 @@ function T_getBlock()
     corelog.WriteToLog("* LayerRectangle:getBlock() tests")
 
     -- test full
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
+    local layer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = codeArray1,
         _codeMap    = codeMap1,
     })
@@ -279,34 +279,34 @@ end
 function T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle.IsOfType() tests")
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
-        _codeArray  = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
-        _codeMap    = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
+    local layer = obj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = obj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
+        _codeMap    = obj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
     })
 
     -- test valid
-    local isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(layer)
+    local isOfType = obj_layer_rectangle.LayerRectangle.IsOfType(layer)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test different object
-    isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType("a atring")
+    isOfType = obj_layer_rectangle.LayerRectangle.IsOfType("a atring")
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test invalid _codeArray
     layer._codeArray = "a string"
-    isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(layer)
+    isOfType = obj_layer_rectangle.LayerRectangle.IsOfType(layer)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    layer._codeArray = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1)
+    layer._codeArray = obj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1)
 
     -- test invalid _codeMap
     layer._codeMap = "a string"
-    isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(layer)
+    isOfType = obj_layer_rectangle.LayerRectangle.IsOfType(layer)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    layer._codeMap = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1)
+    layer._codeMap = obj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1)
 
     -- cleanup test
 end
@@ -314,9 +314,9 @@ end
 function T_isSame()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:isSame() tests")
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
-        _codeArray  = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
-        _codeMap    = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
+    local layer = obj_layer_rectangle.LayerRectangle:new({
+        _codeArray  = obj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
+        _codeMap    = obj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
     })
 
     -- test same
@@ -331,7 +331,7 @@ function T_isSame()
     isSame = layer1:isSame(layer)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    layer._codeArray = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1)
+    layer._codeArray = obj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1)
 
     -- test different _codeMap
     layer._codeMap = {
@@ -341,7 +341,7 @@ function T_isSame()
     isSame = layer1:isSame(layer)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    layer._codeMap = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1)
+    layer._codeMap = obj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1)
 
     -- cleanup test
 end
@@ -366,8 +366,8 @@ function T_ParseWithCheckInput()
         Parameters:
             layer   + (LayerRectangle) object to retrieve from arg
     ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
-    if not checkSuccess then corelog.Error("t_mobj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(layer)
+    if not checkSuccess then corelog.Error("t_obj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
+    local isOfType = obj_layer_rectangle.LayerRectangle.IsOfType(layer)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
@@ -402,7 +402,7 @@ end
 function T_transformToLayer()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
-    local fromLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local fromLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
             ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
@@ -417,7 +417,7 @@ function T_transformToLayer()
             [1] = "   ?  ",
         },
     })
-    local toLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local toLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -436,10 +436,10 @@ function T_transformToLayer()
 
     -- test
     local transformLayer = fromLayer:transformToLayer(toLayer)
-    local isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(transformLayer)
+    local isOfType = obj_layer_rectangle.LayerRectangle.IsOfType(transformLayer)
     local expectedIsOfType = true
     assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -458,7 +458,7 @@ function T_transformToLayer()
     assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test anyBlock added to _codeArray
-    toLayer = mobj_layer_rectangle.LayerRectangle:new({
+    toLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -474,10 +474,10 @@ function T_transformToLayer()
         },
     })
     transformLayer = fromLayer:transformToLayer(toLayer)
-    isOfType = mobj_layer_rectangle.LayerRectangle.IsOfType(transformLayer)
+    isOfType = obj_layer_rectangle.LayerRectangle.IsOfType(transformLayer)
     expectedIsOfType = true
     assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -501,7 +501,7 @@ end
 function T_cleanCodeArray()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:cleanCodeArray() tests")
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
+    local layer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  ={
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -523,7 +523,7 @@ function T_cleanCodeArray()
         ["T"]   = obj_block.Block:new({ _name = torchItemName }),
         [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
     }
-    assert(mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
+    assert(obj_layer_rectangle.LayerRectangle.IsSameCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
 
     -- cleanup test
 end
@@ -535,7 +535,7 @@ function T_removeRow()
     -- test top
     local layer = layer1:copy()
     layer:removeRow(6)
-    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -555,7 +555,7 @@ function T_removeRow()
     -- test a mid
     layer = layer1:copy()
     layer:removeRow(4)
-    expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
@@ -576,7 +576,7 @@ function T_removeRow()
     -- test bottom
     layer = layer1:copy()
     layer:removeRow(1)
-    expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -617,7 +617,7 @@ function T_removeColumn()
     -- test right
     local layer = layer1:copy()
     layer:removeColumn(6)
-    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -640,7 +640,7 @@ function T_removeColumn()
     -- test mid
     layer = layer1:copy()
     layer:removeColumn(4)
-    expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
@@ -662,7 +662,7 @@ function T_removeColumn()
     -- test left
     layer = layer1:copy()
     layer:removeColumn(1)
-    expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
@@ -689,7 +689,7 @@ function T_removeBoundariesWithOnly()
     corelog.WriteToLog("* LayerRectangle:removeBoundariesWithOnly() tests")
 
     -- test right
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
+    local layer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
@@ -711,7 +711,7 @@ function T_removeBoundariesWithOnly()
     assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
-    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
@@ -734,7 +734,7 @@ function T_buildData()
     corelog.WriteToLog("* LayerRectangle:buildData() tests")
 
     -- test right
-    local layer = mobj_layer_rectangle.LayerRectangle:new({
+    local layer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
@@ -755,7 +755,7 @@ function T_buildData()
     assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
-    local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
+    local expectedLayer = obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = torchItemName }),
             ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),

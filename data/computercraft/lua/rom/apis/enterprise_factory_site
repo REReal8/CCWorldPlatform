@@ -420,7 +420,7 @@ end
 --]]
 
 function Shaft_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
@@ -431,7 +431,7 @@ function Shaft_layer()
 end
 
 function ShaftRestore_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["D"]   = obj_block.Block:new({ _name = "minecraft:dirt" }),
         },
@@ -518,7 +518,7 @@ end
 --]]
 
 function AboveOrBelowFurnanceL1_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
@@ -530,7 +530,7 @@ function AboveOrBelowFurnanceL1_layer()
 end
 
 function FurnanceL1_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["F"]   = obj_block.Block:new({ _name = "minecraft:furnace" }),
             [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
@@ -605,7 +605,7 @@ end
 --]]
 
 function StorageChestL2_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["C"]   = obj_block.Block:new({ _name = "minecraft:chest" }),
         },
@@ -616,7 +616,7 @@ function StorageChestL2_layer()
 end
 
 function TopLayerL2_layer()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
             ["C"]   = obj_block.Block:new({ _name = "minecraft:chest" }),

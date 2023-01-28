@@ -300,7 +300,7 @@ function CheckInput(description, ...)
                         elseif typeType == "Block" then
                             argument = obj_block.Block:new(argument)
                         elseif typeType == "LayerRectangle" then
-                            argument = mobj_layer_rectangle.LayerRectangle:new(argument)
+                            argument = obj_layer_rectangle.LayerRectangle:new(argument)
                         else
                             correctArgumentType = false
                         end

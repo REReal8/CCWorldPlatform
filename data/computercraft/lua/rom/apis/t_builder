@@ -24,12 +24,12 @@ local codeMap1 = {
     [2] = "    ",
     [1] = "   T",
 }
-local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
-    _codeArray  = mobj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
-    _codeMap    = mobj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
+local testBuildLayer1 = obj_layer_rectangle.LayerRectangle:new({
+    _codeArray  = obj_layer_rectangle.LayerRectangle.CodeArrayCopy(codeArray1),
+    _codeMap    = obj_layer_rectangle.LayerRectangle.CodeMapCopy(codeMap1),
 })
 
-local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
+local testBuildLayer2 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = {
         ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
         ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
@@ -97,7 +97,7 @@ end
 
 local anyBlock = obj_block.Block.AnyBlockName()
 local noneBlock = obj_block.Block.NoneBlockName()
-local testBuildLayer3 = mobj_layer_rectangle.LayerRectangle:new({
+local testBuildLayer3 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = {
         ["T"]   = obj_block.Block:new({ _name = torchItemName }),
         ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),

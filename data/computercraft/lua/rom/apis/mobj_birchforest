@@ -430,7 +430,7 @@ function BirchForest:getFirstTreeLocation()
 end
 
 function Tree_layerLm1()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["S"]   = obj_block.Block:new({ _name = "minecraft:birch_sapling" }),
             ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
@@ -447,7 +447,7 @@ function Tree_layerLm1()
 end
 
 function Tree_layerL0()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["S"]   = obj_block.Block:new({ _name = "minecraft:birch_sapling" }),
             [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
@@ -464,7 +464,7 @@ function Tree_layerL0()
 end
 
 function Tree_layerL1()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["S"]   = obj_block.Block:new({ _name = "minecraft:birch_sapling" }),
             ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
@@ -482,7 +482,7 @@ function Tree_layerL1()
 end
 
 function Base_layerL2()
-    return mobj_layer_rectangle.LayerRectangle:new({
+    return obj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
             ["S"]   = obj_block.Block:new({ _name = "minecraft:birch_sapling" }),
             ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),

@@ -1,7 +1,7 @@
 local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
 local testStartLocation2    = coremove.GetRelativeLocation(testStartLocation, 0, 6, 0)
 
-local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
+local testBuildLayer1 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = {
         ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
         ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
@@ -17,7 +17,7 @@ local testBuildLayer1 = mobj_layer_rectangle.LayerRectangle:new({
     },
 })
 
-local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
+local testBuildLayer2 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = {
         ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
         ["D"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
@@ -32,7 +32,7 @@ local testBuildLayer2 = mobj_layer_rectangle.LayerRectangle:new({
     },
 })
 
-local testBuildLayer3 = mobj_layer_rectangle.LayerRectangle:new({
+local testBuildLayer3 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = {
         ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
         ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
@@ -48,7 +48,7 @@ local testBuildLayer3 = mobj_layer_rectangle.LayerRectangle:new({
     },
 })
 
-local testBuildLayer4 = mobj_layer_rectangle.LayerRectangle:new({
+local testBuildLayer4 = obj_layer_rectangle.LayerRectangle:new({
     _codeArray  = {
         [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
     },
