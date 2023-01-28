@@ -10,9 +10,12 @@ function T_All()
     -- role tests
     t_builder.T_All()
 
-    -- mobj tests
+    -- obj tests
     t_obj_block.T_All()
     t_obj_layer_rectangle.T_All()
+    t_obj_item_inventory.T_All()
+
+    -- mobj tests
     t_mobj_birchforest.T_All()
 
     -- enterprise tests

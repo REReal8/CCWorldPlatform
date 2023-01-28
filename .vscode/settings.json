@@ -67,7 +67,9 @@
         "obj_block",
         "t_obj_block",
         "t_obj_layer_rectangle",
-        "obj_layer_rectangle"
+        "obj_layer_rectangle",
+        "obj_item_inventory",
+        "t_obj_item_inventory"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",

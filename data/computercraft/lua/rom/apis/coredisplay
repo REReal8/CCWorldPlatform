@@ -58,7 +58,7 @@ function DefaultMainMenu()
 				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
 				{key = "t", desc = "Execute general tests", 	func = ExecuteTest,	    		param = {}},
 				{key = "r", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
-				{key = "o", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
+				{key = "o", desc = "Execute (m)obj tests",		func = ExecuteMObjTest,			param = {}},
 				{key = "e", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
 				{key = "l", desc = "Load event",				func = LoadEvent,				param = {}},
 				{key = "m", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
@@ -355,6 +355,8 @@ function ExecuteMObjTest(t)
 		local options	= {
 			{key = "b", desc = "Block",				func = ExecuteMObjTest, param = {file = t_obj_block, filename = "t_obj_block"}},
 			{key = "l", desc = "LayerRectangle",	func = ExecuteMObjTest, param = {file = t_obj_layer_rectangle, filename = "t_obj_layer_rectangle"}},
+			{key = "i", desc = "ItemInventory",		func = ExecuteMObjTest, param = {file = t_obj_item_inventory, filename = "t_obj_item_inventory"}},
+
 			{key = "f", desc = "BirchForest",		func = ExecuteMObjTest, param = {file = t_mobj_birchforest, filename = "t_mobj_birchforest"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}
@@ -362,7 +364,7 @@ function ExecuteMObjTest(t)
 		-- this is the next screen
 		NextScreen({
 			clear       = true,
-			intro       = "Choose a mobj test type",
+			intro       = "Choose a (m)obj test type",
 			option      = options,
 			question    = "Make your choice"
 		})
