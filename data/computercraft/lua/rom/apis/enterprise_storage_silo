@@ -271,9 +271,9 @@ end
 function TopL0_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = "minecraft:torch" }),
-            ["C"]   = mobj_block.Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "  C C ",
@@ -289,7 +289,7 @@ end
 function Shaft_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [1] = " ",
@@ -300,11 +300,11 @@ end
 function Chest_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = mobj_block.Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
-            ["D"]   = mobj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
-            ["E"]   = mobj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy =-1 }),
-            ["F"]   = mobj_block.Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["C"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
+            ["D"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
+            ["E"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx = 0, _dy =-1 }),
+            ["F"]   = obj_block.Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [3] = "DDF",

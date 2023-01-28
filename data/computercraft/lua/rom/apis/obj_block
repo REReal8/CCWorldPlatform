@@ -1,6 +1,6 @@
 
 --[[
-    This file implements mobj_block.
+    This file implements obj_block.
 
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
@@ -43,7 +43,7 @@ end
 
 function Block:setDx(dx)
     -- check input
-    if type(dx) ~= "nil" and type(dx) ~= "number" then corelog.Error("mobj_block:setDx: invalid dx: "..type(dx)) return end
+    if type(dx) ~= "nil" and type(dx) ~= "number" then corelog.Error("obj_block:setDx: invalid dx: "..type(dx)) return end
 
     self._dx = dx
 end
@@ -54,7 +54,7 @@ end
 
 function Block:setDy(dy)
     -- check input
-    if type(dy) ~= "nil" and type(dy) ~= "number" then corelog.Error("mobj_block:setDy: invalid dy: "..type(dy)) return end
+    if type(dy) ~= "nil" and type(dy) ~= "number" then corelog.Error("obj_block:setDy: invalid dy: "..type(dy)) return end
 
     self._dy = dy
 end
@@ -65,7 +65,7 @@ end
 
 function Block:setName(name)
     -- check input
-    if type(name) ~= "string" then corelog.Error("mobj_block:setName: invalid name: "..type(name)) return end
+    if type(name) ~= "string" then corelog.Error("obj_block:setName: invalid name: "..type(name)) return end
 
     self._name = name
 end
@@ -180,7 +180,7 @@ end
 
 function BlockListCopy(blockList)
     -- check input
-    if not IsBlockList(blockList) then corelog.Error("mobj_block.BlockListCopy: invalid blockList: "..type(blockList)) return end
+    if not IsBlockList(blockList) then corelog.Error("obj_block.BlockListCopy: invalid blockList: "..type(blockList)) return end
 
     local blockListCopy = {}
     -- copy elements
@@ -217,7 +217,7 @@ function BlockListTransform(blockList)
                 blockListTransform[i] = Block:new(block) -- transform
             end
         else
-            corelog.Warning("mobj_block.BlockListTransform: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
+            corelog.Warning("obj_block.BlockListTransform: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
         end
     end
 

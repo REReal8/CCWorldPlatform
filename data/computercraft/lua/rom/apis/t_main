@@ -11,7 +11,7 @@ function T_All()
     t_builder.T_All()
 
     -- mobj tests
-    t_mobj_block.T_All()
+    t_obj_block.T_All()
     t_mobj_layer_rectangle.T_All()
     t_mobj_birchforest.T_All()
 

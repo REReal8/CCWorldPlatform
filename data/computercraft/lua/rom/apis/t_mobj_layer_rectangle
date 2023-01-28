@@ -29,12 +29,12 @@ local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
 local codeArray1 = {
-    ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-    ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-    ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-    ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-    ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-    [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+    ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+    ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+    ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+    ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+    ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+    [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
 }
 
 function T_IsCodeArray()
@@ -58,12 +58,12 @@ function T_IsSameCodeArray()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle.IsSameCodeArray() tests")
     local codeArray2 = {
-        ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-        ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-        ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-        ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-        [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+        ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+        ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+        ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+        [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
     }
 
     -- test same
@@ -72,14 +72,14 @@ function T_IsSameCodeArray()
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different
-    codeArray2["T"] = mobj_block.Block:new({ _name = "minecraft:something"})
+    codeArray2["T"] = obj_block.Block:new({ _name = "minecraft:something"})
     isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    codeArray2["T"] = mobj_block.Block:new({ _name = "minecraft:torch" })
+    codeArray2["T"] = obj_block.Block:new({ _name = "minecraft:torch" })
 
     -- test different (size)
-    codeArray2["Z"] = mobj_block.Block:new({ _name = "minecraft:something"})
+    codeArray2["Z"] = obj_block.Block:new({ _name = "minecraft:something"})
     isSame = mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
@@ -127,7 +127,7 @@ function T_TransformToCodeArray()
 
     -- test partial
     codeArrayTable = {
-        ["T"] = mobj_block.Block:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
+        ["T"] = obj_block.Block:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
         ["S"] = coreutils.DeepCopy(block2Table),
     }
     assert(not mobj_layer_rectangle.LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
@@ -255,22 +255,22 @@ function T_getBlock()
         _codeMap    = codeMap1,
     })
     local block = layer:getBlock(4, 1)
-    local expectedBlock = mobj_block.Block:new({ _name = torchItemName })
+    local expectedBlock = obj_block.Block:new({ _name = torchItemName })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 4)
-    expectedBlock = mobj_block.Block:new({ _name = torchItemName })
+    expectedBlock = obj_block.Block:new({ _name = torchItemName })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(4, 4)
-    expectedBlock = mobj_block.Block:new({ _name = saplingItemName })
+    expectedBlock = obj_block.Block:new({ _name = saplingItemName })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 1)
-    expectedBlock = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() })
+    expectedBlock = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(3, 3)
-    expectedBlock = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() })
+    expectedBlock = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 6)
-    expectedBlock = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 })
+    expectedBlock = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 })
     assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
 
     -- cleanup test
@@ -389,10 +389,10 @@ function T_itemsNeeded()
     name = chestItemName
     expectedCount = 2
     assert(needed[name] == expectedCount, "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
-    name = mobj_block.Block.AnyBlockName()
+    name = obj_block.Block.AnyBlockName()
     expectedCount = 0
     assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
-    name = mobj_block.Block.NoneBlockName()
+    name = obj_block.Block.NoneBlockName()
     expectedCount = 0
     assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
 
@@ -404,9 +404,9 @@ function T_transformToLayer()
     corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
     local fromLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "   S  ",
@@ -419,10 +419,10 @@ function T_transformToLayer()
     })
     local toLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "   ?  ",
@@ -441,10 +441,10 @@ function T_transformToLayer()
     assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "??????",
@@ -460,9 +460,9 @@ function T_transformToLayer()
     -- test anyBlock added to _codeArray
     toLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "      ",
@@ -479,10 +479,10 @@ function T_transformToLayer()
     assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "??? ??",
@@ -503,11 +503,11 @@ function T_cleanCodeArray()
     corelog.WriteToLog("* LayerRectangle:cleanCodeArray() tests")
     local layer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  ={
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [4] = "    ",
@@ -520,8 +520,8 @@ function T_cleanCodeArray()
     -- test
     layer:cleanCodeArray()
     local expectedCodeArray  = {
-        ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-        [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+        ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+        [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
     }
     assert(mobj_layer_rectangle.LayerRectangle.IsSameCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
 
@@ -537,10 +537,10 @@ function T_removeRow()
     layer:removeRow(6)
     local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [5] = "      ",
@@ -557,11 +557,11 @@ function T_removeRow()
     layer:removeRow(4)
     expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [5] = "CD   ?",
@@ -578,12 +578,12 @@ function T_removeRow()
     layer:removeRow(1)
     expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [5] = "CD   ?",
@@ -619,12 +619,12 @@ function T_removeColumn()
     layer:removeColumn(6)
     local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "CD   ",
@@ -642,11 +642,11 @@ function T_removeColumn()
     layer:removeColumn(4)
     expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "CD  ?",
@@ -664,11 +664,11 @@ function T_removeColumn()
     layer:removeColumn(1)
     expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["S"]   = mobj_block.Block:new({ _name = saplingItemName }),
-            ["D"]   = mobj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["S"]   = obj_block.Block:new({ _name = saplingItemName }),
+            ["D"]   = obj_block.Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "D   ?",
@@ -691,10 +691,10 @@ function T_removeBoundariesWithOnly()
     -- test right
     local layer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "??????",
@@ -713,10 +713,10 @@ function T_removeBoundariesWithOnly()
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [3] = "TC ",
@@ -736,10 +736,10 @@ function T_buildData()
     -- test right
     local layer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "??????",
@@ -757,10 +757,10 @@ function T_buildData()
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = torchItemName }),
-            ["C"]   = mobj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = mobj_block.Block:new({ _name = mobj_block.Block.AnyBlockName() }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = torchItemName }),
+            ["C"]   = obj_block.Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = obj_block.Block:new({ _name = obj_block.Block.AnyBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [3] = "TC ",

@@ -298,7 +298,7 @@ function CheckInput(description, ...)
                         if typeType == "URL" then
                             argument = obj_url.URL:new(argument)
                         elseif typeType == "Block" then
-                            argument = mobj_block.Block:new(argument)
+                            argument = obj_block.Block:new(argument)
                         elseif typeType == "LayerRectangle" then
                             argument = mobj_layer_rectangle.LayerRectangle:new(argument)
                         else

@@ -22,7 +22,7 @@ local saplingItemName = "minecraft:birch_sapling"
 local furnaceItemName = "minecraft:furnace"
 local chestItemName = "minecraft:chest"
 
-local block1 = mobj_block.Block:new({
+local block1 = obj_block.Block:new({
     _dx     = dx1,
     _dy     = dy1,
     _name   = saplingItemName,
@@ -35,7 +35,7 @@ function T_new()
     corelog.WriteToLog("* Block:new() tests")
 
     -- test full
-    local block = mobj_block.Block:new({
+    local block = obj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
@@ -46,7 +46,7 @@ function T_new()
     assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
 
     -- test without orientations (i.e dx, dy)
-    block = mobj_block.Block:new({
+    block = obj_block.Block:new({
         _name   = saplingItemName,
     })
     assert(block:getDx() == nil, "gotten getDx(="..(block:getDx() or "nil")..") not the same as expected(=nil)")
@@ -54,7 +54,7 @@ function T_new()
     assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
 
     -- test default
-    block = mobj_block.Block:new()
+    block = obj_block.Block:new()
     assert(block:getDx() == nil, "gotten getDx(="..(block:getDx() or "nil")..") not the same as expected(=nil)")
     assert(block:getDy() == nil, "gotten getDy(="..(block:getDy() or "nil")..") not the same as expected(=nil)")
     local dedaultName = ""
@@ -66,7 +66,7 @@ end
 function T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* Block.IsOfType() tests")
-    local block2 = mobj_block.Block:new({
+    local block2 = obj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
@@ -74,32 +74,32 @@ function T_IsOfType()
     })
 
     -- test valid
-    local isOfType = mobj_block.Block.IsOfType(block2)
+    local isOfType = obj_block.Block.IsOfType(block2)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test different object
-    isOfType = mobj_block.Block.IsOfType("a atring")
+    isOfType = obj_block.Block.IsOfType("a atring")
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test invalid dx
     block2._dx = "a string"
-    isOfType = mobj_block.Block.IsOfType(block2)
+    isOfType = obj_block.Block.IsOfType(block2)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     block2:setDx(dx1)
 
     -- test invalid dy
     block2._dy = "a string"
-    isOfType = mobj_block.Block.IsOfType(block2)
+    isOfType = obj_block.Block.IsOfType(block2)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     block2:setDy(dy1)
 
     -- test invalid name
     block2._name = 1000
-    isOfType = mobj_block.Block.IsOfType(block2)
+    isOfType = obj_block.Block.IsOfType(block2)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     block2:setName(saplingItemName)
@@ -110,7 +110,7 @@ end
 function T_isSame()
     -- prepare test
     corelog.WriteToLog("* Block:isSame() tests")
-    local block2 = mobj_block.Block:new({
+    local block2 = obj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
@@ -161,7 +161,7 @@ function T_isMinecraftItem()
     -- prepare test
     corelog.WriteToLog("* Block:isMinecraftItem() tests")
     local blockName = saplingItemName
-    local block2 = mobj_block.Block:new({
+    local block2 = obj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
@@ -173,13 +173,13 @@ function T_isMinecraftItem()
     assert(isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(true)")
 
     -- test blockNameAny
-    blockName = mobj_block.Block.AnyBlockName()
+    blockName = obj_block.Block.AnyBlockName()
     block2:setName(blockName)
     isMinecraftItem = block2:isMinecraftItem()
     assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(false)")
 
     -- test blockNameNone
-    blockName = mobj_block.Block.NoneBlockName()
+    blockName = obj_block.Block.NoneBlockName()
     block2:setName(blockName)
     isMinecraftItem = block2:isMinecraftItem()
     assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(false)")
@@ -190,8 +190,8 @@ end
 function T_isAnyBlock()
     -- prepare test
     corelog.WriteToLog("* Block:isAnyBlock() tests")
-    local blockName = mobj_block.Block.AnyBlockName()
-    local block2 = mobj_block.Block:new({
+    local blockName = obj_block.Block.AnyBlockName()
+    local block2 = obj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
@@ -214,8 +214,8 @@ end
 function T_isNoneBlock()
     -- prepare test
     corelog.WriteToLog("* Block:isNoneBlock() tests")
-    local blockName = mobj_block.Block.NoneBlockName()
-    local block2 = mobj_block.Block:new({
+    local blockName = obj_block.Block.NoneBlockName()
+    local block2 = obj_block.Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
@@ -244,8 +244,8 @@ function T_ParseWithCheckInput()
         Parameters:
             block   + (Block) object to retrieve from arg
     ]], table.unpack({ textutils.unserialize(textutils.serialize(block1)) }))
-    if not checkSuccess then corelog.Error("t_mobj_block.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isOfType = mobj_block.Block.IsOfType(block)
+    if not checkSuccess then corelog.Error("t_obj_block.T_ParseWithCheckInput: Invalid input") return {success = false} end
+    local isOfType = obj_block.Block.IsOfType(block)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
@@ -254,25 +254,25 @@ end
 
 function T_IsBlockList()
     -- prepare test
-    corelog.WriteToLog("* mobj_block.IsBlockList() tests")
-    local block2 = mobj_block.Block:new({
+    corelog.WriteToLog("* obj_block.IsBlockList() tests")
+    local block2 = obj_block.Block:new({
         _name   = furnaceItemName,
     })
 
     -- test two valid blocks
-    local isBlockList = mobj_block.IsBlockList( { block1:copy(), block2:copy() } )
+    local isBlockList = obj_block.IsBlockList( { block1:copy(), block2:copy() } )
     local expectedIsBlockList = true
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
 
     -- test one valid block + one almost valid block
     block2._name = 10
-    isBlockList = mobj_block.IsBlockList( { block1:copy(), block2:copy() } )
+    isBlockList = obj_block.IsBlockList( { block1:copy(), block2:copy() } )
     expectedIsBlockList = false
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
     block2._dx = furnaceItemName
 
     -- test two valid blocks + different object
-    isBlockList = mobj_block.IsBlockList( { block1:copy(), block2:copy(), "a string" } )
+    isBlockList = obj_block.IsBlockList( { block1:copy(), block2:copy(), "a string" } )
     expectedIsBlockList = false
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
 
@@ -281,13 +281,13 @@ end
 
 function T_IsSameBlockList()
     -- prepare test
-    corelog.WriteToLog("* mobj_block.IsSameBlockList() tests")
-    local block2 = mobj_block.Block:new({
+    corelog.WriteToLog("* obj_block.IsSameBlockList() tests")
+    local block2 = obj_block.Block:new({
         _name   = furnaceItemName,
     })
 
     -- test with same blocks in same order
-    local isSameBlockList = mobj_block.IsSameBlockList(
+    local isSameBlockList = obj_block.IsSameBlockList(
         { block1:copy(), block2:copy() },
         { block1:copy(), block2:copy() }
     )
@@ -295,7 +295,7 @@ function T_IsSameBlockList()
     assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
 
     -- test with 2 empty lists
-    isSameBlockList = mobj_block.IsSameBlockList(
+    isSameBlockList = obj_block.IsSameBlockList(
         { },
         { }
     )
@@ -303,7 +303,7 @@ function T_IsSameBlockList()
     assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
 
     -- test with same blocks in different order
-    isSameBlockList = mobj_block.IsSameBlockList(
+    isSameBlockList = obj_block.IsSameBlockList(
         { block1:copy(), block2:copy() },
         { block2:copy(), block1:copy() }
     )
@@ -311,9 +311,9 @@ function T_IsSameBlockList()
     assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
 
     -- test with different blocks
-    isSameBlockList = mobj_block.IsSameBlockList(
+    isSameBlockList = obj_block.IsSameBlockList(
         { block1:copy(), block2:copy() },
-        { block1:copy(), mobj_block.Block:new({ _name = chestItemName,}) }
+        { block1:copy(), obj_block.Block:new({ _name = chestItemName,}) }
     )
     expectedIsSameBlockList = false
     assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
@@ -323,22 +323,22 @@ end
 
 function T_BlockListCopy()
     -- prepare test
-    corelog.WriteToLog("* mobj_block.BlockListCopy() tests")
-    local block2 = mobj_block.Block:new({
+    corelog.WriteToLog("* obj_block.BlockListCopy() tests")
+    local block2 = obj_block.Block:new({
         _name   = furnaceItemName,
     })
 
     -- test
-    local copy = mobj_block.BlockListCopy({ block1:copy(), block2:copy() })
+    local copy = obj_block.BlockListCopy({ block1:copy(), block2:copy() })
     local expectedCopy = { block1:copy(), block2:copy() }
-    assert(mobj_block.IsSameBlockList(copy, expectedCopy), "gotten BlockListCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
+    assert(obj_block.IsSameBlockList(copy, expectedCopy), "gotten BlockListCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
 
     -- cleanup test
 end
 
 function T_BlockListTransform()
     -- prepare test
-    corelog.WriteToLog("* mobj_block.BlockListTransform() tests")
+    corelog.WriteToLog("* obj_block.BlockListTransform() tests")
     local block1Table = {
         _dx     = dx1,
         _dy     = dy1,
@@ -350,15 +350,15 @@ function T_BlockListTransform()
 
     -- test full
     local blockListTable = { coreutils.DeepCopy(block1Table), coreutils.DeepCopy(block2Table) }
-    assert(not mobj_block.IsBlockList(blockListTable), "prepared blockList already a BlockList")
-    local transformedBlockList = mobj_block.BlockListTransform(blockListTable)
-    assert(mobj_block.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
+    assert(not obj_block.IsBlockList(blockListTable), "prepared blockList already a BlockList")
+    local transformedBlockList = obj_block.BlockListTransform(blockListTable)
+    assert(obj_block.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
 
     -- test partial
     blockListTable = { block1, coreutils.DeepCopy(block2Table) }
-    assert(not mobj_block.IsBlockList(blockListTable), "prepared blockList already a BlockList")
-    transformedBlockList = mobj_block.BlockListTransform(blockListTable)
-    assert(mobj_block.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
+    assert(not obj_block.IsBlockList(blockListTable), "prepared blockList already a BlockList")
+    transformedBlockList = obj_block.BlockListTransform(blockListTable)
+    assert(obj_block.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
 
     -- cleanup test
 end

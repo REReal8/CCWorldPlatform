@@ -422,7 +422,7 @@ end
 function Shaft_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [1] = " ",
@@ -433,7 +433,7 @@ end
 function ShaftRestore_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["D"]   = mobj_block.Block:new({ _name = "minecraft:dirt" }),
+            ["D"]   = obj_block.Block:new({ _name = "minecraft:dirt" }),
         },
         _codeMap    = {
             [1] = "D",
@@ -520,7 +520,7 @@ end
 function AboveOrBelowFurnanceL1_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [2] = " ",
@@ -532,8 +532,8 @@ end
 function FurnanceL1_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["F"]   = mobj_block.Block:new({ _name = "minecraft:furnace" }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["F"]   = obj_block.Block:new({ _name = "minecraft:furnace" }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [2] = "F",
@@ -607,7 +607,7 @@ end
 function StorageChestL2_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = mobj_block.Block:new({ _name = "minecraft:chest" }),
+            ["C"]   = obj_block.Block:new({ _name = "minecraft:chest" }),
         },
         _codeMap    = {
             [1] = "C",
@@ -618,9 +618,9 @@ end
 function TopLayerL2_layer()
     return mobj_layer_rectangle.LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = mobj_block.Block:new({ _name = "minecraft:torch" }),
-            ["C"]   = mobj_block.Block:new({ _name = "minecraft:chest" }),
-            [" "]   = mobj_block.Block:new({ _name = mobj_block.Block.NoneBlockName() }),
+            ["T"]   = obj_block.Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = obj_block.Block:new({ _name = "minecraft:chest" }),
+            [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
         },
         _codeMap    = {
             [6] = "  C C ",

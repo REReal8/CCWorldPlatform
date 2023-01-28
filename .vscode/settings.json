@@ -64,8 +64,8 @@
         "t_mobj_birchforest",
         "t_builder",
         "t_test",
-        "mobj_block",
-        "t_mobj_block",
+        "obj_block",
+        "t_obj_block",
         "t_mobj_layer_rectangle",
         "mobj_layer_rectangle"
     ],
