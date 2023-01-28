@@ -90,6 +90,30 @@ function ItemInventory:copy()
     return copy
 end
 
+function ItemInventory:setFromSlotTable(...)
+    -- get & check input from description
+    local checkSuccess, slotTable = coreutils.CheckInput([[
+        Construct a ItemInventory.
+
+        Parameters:
+            slotTable           + (table, {}) slot inventory
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemInventory:setFromSlotTable: Invalid input") return end
+    if not ItemInventory.IsSlotTable(slotTable) then corelog.Error("ItemInventory:setFromSlotTable: Invalid slotTable") return end
+
+    -- new _itemTable
+    self._itemTable = {}
+
+    -- loop on slots
+    for slot, item in pairs(slotTable) do
+        -- right item?
+        if type(item) == "table" then
+            -- add to items
+            self._itemTable[ item.name ]  = (self._itemTable[ item.name ] or 0) + item.count
+        end
+    end
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -149,4 +173,20 @@ function ItemInventory.ItemTableCopy(itemTable)
 
     -- end
 	return copy
+end
+
+function ItemInventory.IsSlotTable(slotTable)
+    -- check table
+    if type(slotTable) ~= "table" then return false end
+
+    -- check elements
+    for slot, item in pairs(slotTable) do
+        if type(slot) ~= "number" then return false end
+        if type(item) ~= "table" then return false end
+        if type(item.name) ~= "string" then return false end
+        if type(item.count) ~= "number" then return false end
+    end
+
+    -- end
+    return true
 end
