@@ -113,7 +113,7 @@ function CreateNewWorld_ASrv(...)
 
     -- create project definition
     local createNewWorldProjectDef = {
-        steps   = {
+        steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap crreate steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
             { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , valueSource = 0, keyDefSource = "energyL0" },
             }},
