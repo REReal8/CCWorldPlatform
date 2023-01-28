@@ -1,6 +1,6 @@
 
 --[[
-    This file implements obj_block.
+    This file implements Block.
 
     Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
 --]]
