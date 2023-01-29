@@ -171,17 +171,3 @@ function T_PutItemsFromTurtle1()
     local result = enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callbackFunction, callbackData)
     corelog.WriteToLog("  result="..textutils.serialize(result))
 end
-
-function T_Can_ProvideItems1()
-    corelog.WriteToLog("* Test Can_ProvideItems_QSrv for chest:")
-    -- create transferData
-    local itemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemsQuery = itemsQuery}).itemsLocator
-    local queryData = {
-        itemsLocator = itemsLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.Can_ProvideItems_QSrv("..textutils.serialize(queryData)..")")
-    local result = enterprise_chests.Can_ProvideItems_QSrv(queryData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
-end
