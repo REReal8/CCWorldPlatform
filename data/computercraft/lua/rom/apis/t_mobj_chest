@@ -3,7 +3,7 @@ function T_All()
     T_IsOfType()
     T_isSame()
     T_copy()
---    T_needsTo_ProvideItemsTo_SSrv()
+    T_needsTo_ProvideItemsTo_SSrv()
 --    T_can_ProvideItems_QSrv()
 end
 
@@ -135,7 +135,6 @@ function T_copy()
     -- cleanup test
 end
 
---[[
 function T_needsTo_ProvideItemsTo_SSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SSrv() tests")
@@ -144,13 +143,14 @@ function T_needsTo_ProvideItemsTo_SSrv()
         ["minecraft:birch_log"]  = 5,
     }
     local storageLocator = enterprise_turtle.GetHostLocator_Att()
+    local storageLocation = coremove.GetLocation()
 
     -- test
     local needsTo_Provide = chest:needsTo_ProvideItemsTo_SSrv({
         provideItems    = provideItems,
         storageLocator  = storageLocator,
     })
-    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees)
+    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(storageLocation, chest:getLocation())
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
@@ -158,6 +158,7 @@ function T_needsTo_ProvideItemsTo_SSrv()
     -- cleanup test
 end
 
+--[[
 function T_can_ProvideItems_QSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:can_ProvideItems_QSrv() tests")

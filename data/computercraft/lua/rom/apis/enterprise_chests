@@ -332,38 +332,15 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
     local chest = GetChest(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..storageLocator:getURI().." not found.") return {success = false} end
 
-    -- get location
-    local chestLocation = chest:getLocation()
-
-    -- loop on items
-    local fuelNeed = 0
-    local supplyItems = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(supplyItems) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
-
-        -- fuelNeed from chest to storageLocator
-        local serviceData = {
-            storageLocator  = storageLocator,
-        }
-        local serviceResults =  enterprise_isp.GetStorageLocation_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..type(storageLocator)..".") return {success = false} end
-        -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fuelNeed_FromChestToStorage = role_fuel_worker.NeededFuelToFrom(serviceResults.location, chestLocation)
-
-        -- add fuelNeed
---        corelog.WriteToLog("C  fuelNeed_FromChestToStorage="..fuelNeed_FromChestToStorage)
-        fuelNeed = fuelNeed + fuelNeed_FromChestToStorage
-    end
+    -- determine needs
+    local provideItems = itemsLocator:getQuery()
+    local needs = chest:needsTo_ProvideItemsTo_SSrv({
+        provideItems    = provideItems,
+        storageLocator  = storageLocator,
+    })
 
     -- end
-    local ingredientsNeed = {}
-    return {
-        success         = true,
-        fuelNeed        = fuelNeed,
-        ingredientsNeed = ingredientsNeed,
-    }
+    return needs
 end
 
 function GetItemsLocations_SSrv(...)
