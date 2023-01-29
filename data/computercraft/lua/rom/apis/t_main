@@ -16,6 +16,7 @@ function T_All()
     t_obj_item_inventory.T_All()
 
     -- mobj tests
+    t_mobj_chest.T_All()
     t_mobj_birchforest.T_All()
 
     -- enterprise tests

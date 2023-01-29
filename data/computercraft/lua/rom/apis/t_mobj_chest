@@ -1,0 +1,49 @@
+--    T_needsTo_ProvideItemsTo_SSrv()
+--    T_can_ProvideItems_QSrv()
+--[[
+function T_needsTo_ProvideItemsTo_SSrv()
+    -- prepare test
+    corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SSrv() tests")
+    local chest = CreateChest() if not chest then corelog.Error("failed obtaining chest") return end
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+    }
+    local storageLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- test
+    local needsTo_Provide = chest:needsTo_ProvideItemsTo_SSrv({
+        provideItems    = provideItems,
+        storageLocator  = storageLocator,
+    })
+    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees)
+    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
+    assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+    assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
+
+    -- cleanup test
+end
+
+function T_can_ProvideItems_QSrv()
+    -- prepare test
+    corelog.WriteToLog("* Chest:can_ProvideItems_QSrv() tests")
+    local chest = CreateChest() if not chest then corelog.Error("failed obtaining chest") return end
+
+    -- test
+    local itemName = "minecraft:birch_log"
+    local itemCount = 20
+    local serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:birch_sapling"
+    itemCount = 2
+    serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:dirt"
+    itemCount = 10
+    serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(not serviceResults.success, "can_ProvideItems_QSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+
+    -- cleanup test
+end
+]]

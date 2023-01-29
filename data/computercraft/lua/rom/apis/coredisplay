@@ -357,6 +357,7 @@ function ExecuteMObjTest(t)
 			{key = "l", desc = "LayerRectangle",	func = ExecuteMObjTest, param = {file = t_obj_layer_rectangle, filename = "t_obj_layer_rectangle"}},
 			{key = "i", desc = "ItemInventory",		func = ExecuteMObjTest, param = {file = t_obj_item_inventory, filename = "t_obj_item_inventory"}},
 
+			{key = "c", desc = "Chest",				func = ExecuteMObjTest, param = {file = t_mobj_chest, filename = "t_mobj_chest"}},
 			{key = "f", desc = "BirchForest",		func = ExecuteMObjTest, param = {file = t_mobj_birchforest, filename = "t_mobj_birchforest"}},
 			{key = "x", desc = "Back to main menu", func = function () return true end }
 		}

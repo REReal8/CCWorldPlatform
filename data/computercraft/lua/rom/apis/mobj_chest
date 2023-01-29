@@ -8,6 +8,14 @@
         - Chest s should never be accessed directly but only via the services of this mobj.
 --]]
 
+Chest = {
+    _id                     = "",
+
+    _location               = nil,
+    _accessDirection        = "",
+    _itemsInventory         = {},
+}
+
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
 --    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -16,6 +24,44 @@
 --   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --   | |
 --   |_|
+
+function Chest:new(...)
+    -- get & check input from description
+    local checkSuccess, o = coreutils.CheckInput([[
+        Construct a Chest.
+
+        Parameters:
+            o                           + (table, {}) table with object fields
+                _id                     - (string) id of the Chest
+                _location               - (table) location of the Chest
+                _accessDirection        - (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+                _itemsInventory         - (table, {}) items inventory of Chest
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Chest:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function Chest:getId()
+    return self._id
+end
+
+function Chest:getLocation()
+    return self._location
+end
+
+function Chest:getAccessDirection()
+    return self._accessDirection
+end
+
+function Chest:getItemsInventory()
+    return self._itemsInventory
+end
 
 function UpdateChestInventory_ASrv(...)
     -- get & check input from description
