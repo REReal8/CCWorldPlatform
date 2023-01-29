@@ -1,14 +1,17 @@
-function FetchChestSlotsInventory_MetaData(taskData)
-    --[[
-        This function returns the metadata for the FetchChestSlotsInventory_Task supplied with argument taskData.
-    --]]
+function FetchChestSlotsInventory_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, location, accessDirection = coreutils.CheckInput([[
+        This function returns the MetaData for FetchChestSlotsInventory_Task.
 
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: taskData not a valid") return {success = false} end
-    local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: location not valid") return {success = false} end
-    local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: invalid accessDirection") return {success = false} end
+        Return value:
+                                - (table) metadata
+
+        Parameters:
+            taskData            - (table) data about the chest
+                location        + (table) location of the chest
+                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.FetchChestSlotsInventory_MetaData: Invalid input") return {} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -25,8 +28,9 @@ function FetchChestSlotsInventory_MetaData(taskData)
     }
 end
 
-function FetchChestSlotsInventory_Task(taskData)
-    --[[
+function FetchChestSlotsInventory_Task(...)
+    -- get & check input from description
+    local checkSuccess, location, accessDirection = coreutils.CheckInput([[
         This Task function fetches the slots inventory of a chest.
 
         The slots inventory is retrieved by the list method as described here: https://tweaked.cc/generic_peripheral/inventory.html
@@ -38,16 +42,10 @@ function FetchChestSlotsInventory_Task(taskData)
 
         Parameters:
             taskData            - (table) data about the chest
-                location        - (table) location of the chest
-                accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
-    --]]
-
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: taskData not a valid") return {success = false} end
-    local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: location not valid") return {success = false} end
-    local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: invalid accessDirection") return {success = false} end
+                location        + (table) location of the chest
+                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.FetchChestSlotsInventory_Task: Invalid input") return {success = false} end
 
     -- move to workingLocation
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -71,19 +69,22 @@ function FetchChestSlotsInventory_Task(taskData)
     return result
 end
 
-function FetchItemsFromChestIntoTurtle_MetaData(taskData)
-    --[[
-        This function returns the metadata for the FetchItemsFromChestIntoTurtle_Task supplied with argument taskData.
-    --]]
+function FetchItemsFromChestIntoTurtle_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, location, accessDirection, priorityKey = coreutils.CheckInput([[
+        This function returns the MetaData for FetchItemsFromChestIntoTurtle_Task.
 
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: taskData not valid") return {success = false} end
-    local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: location not valid") return {success = false} end
-    local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: invalid accessDirection") return {success = false} end
-    local priorityKey = taskData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: Invalid priorityKey") return {success = false} end
+        Return value:
+                                - (table) metadata
+
+        Parameters:
+            taskData            - (table) data about the task
+                location        + (table) location of the chest
+                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                itemsQuery      - (table) which items to be fetched
+                priorityKey     + (string, "") priorityKey for this assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Invalid input") return { } end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -98,12 +99,13 @@ function FetchItemsFromChestIntoTurtle_MetaData(taskData)
         fuelNeeded  = fuelNeeded,
         itemsNeeded = {},
 
-        priorityKey = taskData.priorityKey,
+        priorityKey = priorityKey,
     }
 end
 
-function FetchItemsFromChestIntoTurtle_Task(taskData)
-    --[[
+function FetchItemsFromChestIntoTurtle_Task(...)
+    -- get & check input from description
+    local checkSuccess, location, accessDirection, itemsQuery = coreutils.CheckInput([[
         This Task function fetches items from a chest into the inventory of a turtle.
 
         Return value:
@@ -115,19 +117,11 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
 
         Parameters:
             taskData            - (table) data about the task
-                location        - (table) location of the chest
-                accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
-                itemsQuery      - (table) which items to be fetched
-    --]]
-
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: taskData not valid") return {success = false} end
-    local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: location not valid") return {success = false} end
-    local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid accessDirection") return {success = false} end
-    local itemsQuery = taskData.itemsQuery
-    if type(itemsQuery) ~= "table" then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: invalid itemsQuery") return {success = false} end
+                location        + (table) location of the chest
+                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                itemsQuery      + (table) which items to be fetched
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Invalid input") return {success = false} end
 
     -- move to workingLocation
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -205,23 +199,23 @@ function FetchItemsFromChestIntoTurtle_Task(taskData)
     return result
 end
 
-function PutItemsFromTurtleIntoChest_MetaData(taskData)
-    --[[
-        This function returns the metadata for the PutItemsFromTurtleIntoChest_Task supplied with argument taskData.
-    --]]
+function PutItemsFromTurtleIntoChest_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, turtleId, location, accessDirection, priorityKey = coreutils.CheckInput([[
+        This function returns the MetaData for PutItemsFromTurtleIntoChest_Task.
 
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: taskData not valid") return {success = false} end
-    local turtleId = taskData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid turtleId") return {success = false} end
-    local itemsQuery = taskData.itemsQuery
-    if type(itemsQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid itemsQuery") return {success = false} end
-    local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: location not valid") return {success = false} end
-    local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: invalid accessDirection") return {success = false} end
-    local priorityKey = taskData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: Invalid priorityKey") return {success = false} end
+            Return value:
+                                    - (table) metadata
+
+        Parameters:
+            taskData            - (table) data about the task
+                turtleId        + (number) id of the turtle that has the items
+                itemsQuery      - (table) which items to be put
+                location        + (table) location of the chest
+                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                priorityKey     + (string, "") priorityKey for this assignment
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
@@ -237,12 +231,13 @@ function PutItemsFromTurtleIntoChest_MetaData(taskData)
         fuelNeeded  = fuelNeeded,
         itemsNeeded = {},
 
-        priorityKey = taskData.priorityKey,
+        priorityKey = priorityKey,
     }
 end
 
-function PutItemsFromTurtleIntoChest_Task(taskData)
-    --[[
+function PutItemsFromTurtleIntoChest_Task(...)
+    -- get & check input from description
+    local checkSuccess, turtleId, itemsQuery, location, accessDirection = coreutils.CheckInput([[
         This Task function puts items from a the inventory of a turtle into a chest.
 
         Return value:
@@ -252,22 +247,12 @@ function PutItemsFromTurtleIntoChest_Task(taskData)
 
         Parameters:
             taskData            - (table) data about the task
-                turtleId        - (number) id of the turtle that has the items
-                itemsQuery      - (table) which items to be put
-                location        - (table) location of the chest
-                accessDirection - (string) whether to access chest from front, back, up, down, left or right (relative to location)
-    --]]
-
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: taskData not valid") return {success = false} end
-    local turtleId = taskData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid turtleId") return {success = false} end
-    local itemsQuery = taskData.itemsQuery
-    if type(itemsQuery) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid itemsQuery") return {success = false} end
-    local location = taskData.location
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: location not valid") return {success = false} end
-    local accessDirection = taskData.accessDirection
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: invalid accessDirection") return {success = false} end
+                turtleId        + (number) id of the turtle that has the items
+                itemsQuery      + (table) which items to be put
+                location        + (table) location of the chest
+                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.PutItemsFromTurtleIntoChest_Task: Invalid input") return {success = false} end
 
     -- check correct turtle
     local currentTurtleId = os.getComputerID()
@@ -340,10 +325,19 @@ end
 --
 --
 
-function GetWorkingLocation(location, accessDirection)
-    -- check input
-    if type(location) ~= "table" then corelog.Error("role_chests_worker.GetWorkingLocation: location not valid") return nil end
-    if type(accessDirection) ~= "string" then corelog.Error("role_chests_worker.GetWorkingLocation: invalid accessDirection") return nil end
+function GetWorkingLocation(...)
+    -- get & check input from description
+    local checkSuccess, location, accessDirection = coreutils.CheckInput([[
+        This function returns the working location (including orientation) for a Chest.
+
+        Return value:
+                            - (table) working location
+
+        Parameters:
+            location        + (table) location of the chest
+            accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_chests_worker.GetWorkingLocation: Invalid input") return nil end
 
     -- determine workingLocation from accessDirection, i.e. "bottom", "top", "left", "right", "front" or "back"
     local workingDirection = coremove.CopyLocation(location)
