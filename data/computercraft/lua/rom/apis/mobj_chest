@@ -130,13 +130,13 @@ function Chest:can_ProvideItems_QSrv(...)
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("Chest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- query chests inventory
     local itemsInventory = self:getItemsInventory()
     for itemName, itemCount in pairs(provideItems) do
-        if type(itemName) ~= "string" then corelog.Error("mobj_chest.can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("mobj_chest.can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("Chest:can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("Chest:can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
 
         local inventoryCount = itemsInventory[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
@@ -167,7 +167,7 @@ function Chest:needsTo_ProvideItemsTo_SSrv(...)
                 storageLocator              + (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- get location
     local chestLocation = self:getLocation()
@@ -176,15 +176,15 @@ function Chest:needsTo_ProvideItemsTo_SSrv(...)
     local fuelNeed = 0
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("mobj_chest.needsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("mobj_chest.needsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("Chest:needsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("Chest:needsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
 
         -- fuelNeed from chest to storageLocator
         local serviceData = {
             storageLocator  = storageLocator,
         }
         local serviceResults =  enterprise_isp.GetStorageLocation_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("mobj_chest.needsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..type(storageLocator)..".") return {success = false} end
+        if not serviceResults.success then corelog.Error("Chest:needsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..type(storageLocator)..".") return {success = false} end
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
         local fuelNeed_FromChestToStorage = role_fuel_worker.NeededFuelToFrom(serviceResults.location, chestLocation)
 
