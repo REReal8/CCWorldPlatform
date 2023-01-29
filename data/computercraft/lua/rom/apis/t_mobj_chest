@@ -1,5 +1,51 @@
+function T_All()
+    T_Getters()
 --    T_needsTo_ProvideItemsTo_SSrv()
 --    T_can_ProvideItems_QSrv()
+end
+
+local location1 = {x= 0, y= 0, z= 1, dx=0, dy=1}
+local accessDirection1 = "top"
+
+local compact = { compact = true }
+
+function T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* Chest getter tests")
+    local id = coreutils.NewId()
+    local accessDirection = "bottom"
+    local itemsInventory = {}
+    local chest = CreateChest(location1, accessDirection, itemsInventory, id) if not chest then corelog.Error("failed obtaining Chest") return end
+
+    -- test
+    assert(chest:getId() == id, "gotten id(="..chest:getId()..") not the same as expected(="..id..")")
+    assert(chest:getLocation() == location1, "gotten getLocation(="..textutils.serialize(chest:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(chest:getAccessDirection() == accessDirection, "gotten getAccessDirection(="..chest:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
+    assert(chest:getItemsInventory() == itemsInventory, "gotten getItemsInventory(="..textutils.serialize(chest:getItemsInventory(), compact)..") not the same as expected(="..textutils.serialize(itemsInventory, compact)..")")
+
+    -- cleanup test
+end
+
+function CreateChest(location, accessDirection, itemsInventory, id)
+    -- check input
+    location = location or location1
+    id = id or coreutils.NewId()
+    accessDirection1 = accessDirection or accessDirection1
+    itemsInventory = itemsInventory or { }
+
+    -- create Chest object
+    local chest = mobj_chest.Chest:new({
+        _id                     = id,
+
+        _location               = location,
+        _accessDirection        = accessDirection1,
+        _itemsInventory         = itemsInventory,
+    })
+
+    -- end
+    return chest
+end
+
 --[[
 function T_needsTo_ProvideItemsTo_SSrv()
     -- prepare test
