@@ -4,7 +4,7 @@ function T_All()
     T_isSame()
     T_copy()
     T_needsTo_ProvideItemsTo_SSrv()
---    T_can_ProvideItems_QSrv()
+    T_can_ProvideItems_QSrv()
 end
 
 local location1 = {x= 0, y= 0, z= 1, dx=0, dy=1}
@@ -158,15 +158,19 @@ function T_needsTo_ProvideItemsTo_SSrv()
     -- cleanup test
 end
 
---[[
 function T_can_ProvideItems_QSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:can_ProvideItems_QSrv() tests")
-    local chest = CreateChest() if not chest then corelog.Error("failed obtaining chest") return end
+    local itemsInventory = {
+        ["minecraft:dirt"] = 20,
+        ["minecraft:birch_log"] = 1,
+        ["minecraft:birch_sapling"] = 5,
+    }
+    local chest = CreateChest(location1, accessDirection1, itemsInventory) if not chest then corelog.Error("failed obtaining chest") return end
 
     -- test
-    local itemName = "minecraft:birch_log"
-    local itemCount = 20
+    local itemName = "minecraft:dirt"
+    local itemCount = 10
     local serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
@@ -175,11 +179,15 @@ function T_can_ProvideItems_QSrv()
     serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
-    itemName = "minecraft:dirt"
+    itemName = "minecraft:birch_log"
     itemCount = 10
+    serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
+    assert(not serviceResults.success, "can_ProvideItems_QSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:furnace"
+    itemCount = 1
     serviceResults = chest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QSrv incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
 end
-]]

@@ -287,23 +287,14 @@ function Can_ProvideItems_QSrv(...)
     local chest = GetChest(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- query chests inventory
-    local items = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
-    local itemsInventory = chest:getItemsInventory()
-    for itemName, itemCount in pairs(items) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
-
-        local inventoryCount = itemsInventory[itemName]
-        if inventoryCount == nil or inventoryCount < itemCount then
-            return {success = false}
-        end
-    end
+    -- check forest can provide items
+    local provideItems = itemsLocator:getQuery()
+    local canProvide = chest:can_ProvideItems_QSrv({
+        provideItems    = provideItems,
+    })
 
     -- end
-    return {
-        success = true,
-    }
+    return canProvide
 end
 
 function NeedsTo_ProvideItemsTo_SSrv(...)

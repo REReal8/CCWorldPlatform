@@ -117,6 +117,39 @@ function Chest:copy()
     return copy
 end
 
+function Chest:can_ProvideItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems = coreutils.CheckInput([[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
+
+    -- query chests inventory
+    local itemsInventory = self:getItemsInventory()
+    for itemName, itemCount in pairs(provideItems) do
+        if type(itemName) ~= "string" then corelog.Error("mobj_chest.can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("mobj_chest.can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
+
+        local inventoryCount = itemsInventory[itemName]
+        if inventoryCount == nil or inventoryCount < itemCount then
+            return {success = false}
+        end
+    end
+
+    -- end
+    return {
+        success = true,
+    }
+end
+
 function Chest:needsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, storageLocator = coreutils.CheckInput([[
