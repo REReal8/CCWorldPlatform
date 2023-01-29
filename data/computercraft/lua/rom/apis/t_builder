@@ -106,7 +106,7 @@ local testBuildLayer3 = obj_layer_rectangle.LayerRectangle:new({
         [" "]   = obj_block.Block:new({ _name = obj_block.Block.NoneBlockName() }),
     },
     _codeMap    = {
-        [6] = "C    T",
+        [6] = "C  D T",
         [5] = "    T ",
         [4] = "   T  ",
         [3] = "??T   ",
