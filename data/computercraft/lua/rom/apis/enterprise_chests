@@ -334,6 +334,7 @@ function NeedsTo_ProvideItemsTo_SSrv(...)
     return needs
 end
 
+-- ToDo: consider getting from/ moving to Chest
 function GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = coreutils.CheckInput([[
@@ -366,6 +367,7 @@ function GetItemsLocations_SSrv(...)
     }
 end
 
+-- ToDo: consider getting from/ moving to Chest
 function GetStorageLocation_SSrv(...)
     -- get & check input from description
     local checkSuccess, storageLocator = coreutils.CheckInput([[
