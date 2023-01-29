@@ -1,6 +1,6 @@
 
 --[[
-    The Chest mobj represents a chest in the minecraft world and provides services to operate on that chest.
+    The Chest mobj represents a chest in the minecraft world and provides services to operate on that Chest.
 
 ??    This enterprise is both a Supplier and a Storage, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
@@ -63,10 +63,64 @@ function Chest:getItemsInventory()
     return self._itemsInventory
 end
 
+function Chest.HasFieldsOfType(chest)
+    -- check
+    if type(chest) ~= "table" then return false end
+    if type(chest._id) ~= "string" then return false end
+    if (type(chest._location) ~= "nil" and type(chest._location) ~= "table") then return false end
+    if type(chest._accessDirection) ~= "string" then return false end
+    if type(chest._itemsInventory) ~= "table" then return false end
+
+    -- end
+    return true
+end
+
+function Chest.HasMethodsOfType(chest)
+    -- check
+    if not chest.new then return false end
+
+    -- end
+    return true
+end
+
+function Chest.IsOfType(chest)
+    -- check
+    local isOfType = Chest.HasFieldsOfType(chest) and Chest.HasMethodsOfType(chest)
+
+    -- end
+    return isOfType
+end
+
+function Chest:isSame(chest)
+    -- check input
+    if not Chest.IsOfType(chest) then return false end
+
+    -- check same object
+    local isSame =  self._id == chest._id
+                and coremove.IsSameLocation(self._location, chest._location)
+                and self._accessDirection == chest._accessDirection
+                and obj_item_inventory.ItemInventory.IsSameItemTable(self._itemsInventory, chest._itemsInventory)
+
+    -- end
+    return isSame
+end
+
+function Chest:copy()
+    local copy = Chest:new({
+        _id             = self._id,
+
+        _location       = coremove.CopyLocation(self._location),
+        _accessDirection= self._accessDirection,
+        _itemsInventory = obj_item_inventory.ItemInventory.ItemTableCopy(self._itemsInventory)
+    })
+
+    return copy
+end
+
 function UpdateChestInventory_ASrv(...)
     -- get & check input from description
     local checkSuccess, chest, callback, callbackData = coreutils.CheckInput([[
-        This async private service updates (fetches) the inventory from a chest.
+        This async private service updates (fetches) the inventory from a Chest.
 
         Return value:
             nil
@@ -78,7 +132,7 @@ function UpdateChestInventory_ASrv(...)
 
         Parameters:
             serviceData         - (table) data about the service
-                chest           + (table) the chest
+                chest           + (Chest) the Chest
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
@@ -86,11 +140,11 @@ function UpdateChestInventory_ASrv(...)
 
     -- create project definition
     local taskData = {
-        location = coremove.CopyLocation(chest.location),
-        accessDirection = chest.accessDirection,
+        location = coremove.CopyLocation(chest:getLocation()),
+        accessDirection = chest:getAccessDirection(),
     }
     local projectData = {
-        chest           = mobj_chest.CopyChest(chest),
+        chest           = chest:copy(),
 
         task            = "role_chests_worker.FetchChestSlotsInventory_Task",
         metaData        = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
@@ -114,7 +168,7 @@ function UpdateChestInventory_ASrv(...)
         returnData  = {
             { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
             { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
-            { keyDef = "chest.itemsInventory"       , valueSource = 2, keyDefSource = "items" },
+            { keyDef = "chest._itemsInventory"      , valueSource = 2, keyDefSource = "items" },
         }
     }
     local projectServiceData = {
@@ -129,7 +183,7 @@ end
 function FetchItemsFromChestIntoTurtle_ASrv(...)
     -- get & check input from description
     local checkSuccess, chest, items, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
-        This async private service fetches items from a chest into the inventory of a turtle.
+        This async private service fetches items from a Chest into the inventory of a turtle.
 
         Return value:
             nil
@@ -142,7 +196,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about the service
-                chest                   + (table) the chest
+                chest                   + (Chest) the Chest
                 items                   + (table) items to be fetched
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (string) name of function to call once service is ready
@@ -152,14 +206,14 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
 
     -- create project definition
     local taskData = {
-        location        = coremove.CopyLocation(chest.location),
-        accessDirection = chest.accessDirection,
+        location        = coremove.CopyLocation(chest:getLocation()),
+        accessDirection = chest:getAccessDirection(),
         itemsQuery      = items,
 
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
-        chest           = mobj_chest.CopyChest(chest),
+        chest           = chest:copy(),
 
         task            = "role_chests_worker.FetchItemsFromChestIntoTurtle_Task",
         metaData        = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
@@ -188,7 +242,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
         returnData  = {
             { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
             { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
-            { keyDef = "chest.itemsInventory"       , valueSource = 2, keyDefSource = "items" },
+            { keyDef = "chest._itemsInventory"      , valueSource = 2, keyDefSource = "items" },
             { keyDef = "turtleItemsLocator"         , valueSource = 3, keyDefSource = "itemsLocator" },
         }
     }
@@ -204,7 +258,7 @@ end
 function PutItemsFromTurtleIntoChest_ASrv(...)
     -- get & check input from description
     local checkSuccess, chest, turtleItemsLocator, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
-        This async private service puts items from a the inventory of a turtle into a chest.
+        This async private service puts items from a the inventory of a turtle into a Chest.
 
         Return value:
             nil
@@ -216,7 +270,7 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about the service
-                chest                   + (table) the chest
+                chest                   + (Chest) the Chest
                 turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (string) name of function to call once service is ready
@@ -232,13 +286,13 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
     local taskData = {
         turtleId        = turtleItemsLocator:getPort(),
         itemsQuery      = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
-        location        = coremove.CopyLocation(chest.location),
-        accessDirection = chest.accessDirection,
+        location        = coremove.CopyLocation(chest:getLocation()),
+        accessDirection = chest:getAccessDirection(),
 
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
-        chest           = mobj_chest.CopyChest(chest),
+        chest           = chest:copy(),
 
         task            = "role_chests_worker.PutItemsFromTurtleIntoChest_Task",
         metaData        = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
@@ -262,7 +316,7 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
         returnData  = {
             { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
             { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
-            { keyDef = "chest.itemsInventory"       , valueSource = 2, keyDefSource = "items" },
+            { keyDef = "chest._itemsInventory"      , valueSource = 2, keyDefSource = "items" },
         }
     }
     local projectServiceData = {
@@ -272,33 +326,6 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
 
     -- start project
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-end
-
-function CopyChest(...)
-    -- get & check input from description
-    local checkSuccess, id, location, accessDirection, itemsInventory = coreutils.CheckInput([[
-        This async private function copies a chest mobj.
-
-        Return value:
-            chest                       - (table) copy of the chest
-
-        Parameters:
-            chest                       - (table) chest to copy
-                id                      + (string) id of the chest
-                location                + (table) location to the chest
-                accessDirection         + (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-                itemsInventory          + (table) the (items) inventory of the chest
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.CopyChest: Invalid input") return nil end
-
-	return {
-        id              = id,
-
-        location        = coremove.CopyLocation(location),
-        accessDirection = accessDirection,
-
-        itemsInventory  = coreinventory.CopyItems(itemsInventory)
-	}
 end
 
 --    _                 _    __                  _   _

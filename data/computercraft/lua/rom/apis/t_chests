@@ -1,3 +1,8 @@
+function T_All()
+    T_DeleteChests()
+    T_SaveGetAndRemoveChest()
+end
+
 local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
 local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
 local itemsQuery = {
@@ -13,7 +18,45 @@ local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
 
 function T_DeleteChests()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_chests.DeleteChests test")
+
+    -- test
     enterprise_chests.DeleteChests()
+    local nChests = enterprise_chests.GetNumberOfChests_Att()
+    local expectedNChests = 0
+    assert(nChests == expectedNChests, "gotten nChests(="..nChests..") not the same as expected(="..expectedNChests..")")
+
+    -- cleanup test
+end
+
+function T_SaveGetAndRemoveChest()
+    -- prepare test
+    local chest = t_mobj_chest.CreateChest() if not chest then corelog.Error("failed obtaining Chest") return end
+    local originalNChests = enterprise_chests.GetNumberOfChests_Att()
+
+    -- SaveChest test
+    corelog.WriteToLog("* enterprise_chests.SaveChest test")
+    local chestLocator = enterprise_chests.SaveChest(chest)
+    local nChests = enterprise_chests.GetNumberOfChests_Att()
+    local expectedNChests = originalNChests + 1
+    assert(nChests == expectedNChests, "gotten nChests(="..nChests..") not the same as expected(="..expectedNChests..")")
+
+    -- GetChest test
+    corelog.WriteToLog("* enterprise_chests.GetChest test")
+    local chestGotton = enterprise_chests.GetChest(chestLocator)
+    local isSame = chestGotton:isSame(chest)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- RemoveChest test
+    corelog.WriteToLog("* enterprise_chests.RemoveChest test")
+    enterprise_chests.RemoveChest(chestLocator)
+    nChests = enterprise_chests.GetNumberOfChests_Att()
+    expectedNChests = originalNChests
+    assert(nChests == expectedNChests, "gotten nChests(="..nChests..") not the same as expected(="..expectedNChests..")")
+
+    -- cleanup test
 end
 
 function T_RegisterAndUpdateChest()

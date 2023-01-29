@@ -303,6 +303,8 @@ function CheckInput(description, ...)
                             argument = obj_layer_rectangle.LayerRectangle:new(argument)
                         elseif typeType == "ItemInventory" then
                             argument = obj_item_inventory.ItemInventory:new(argument)
+                        elseif typeType == "Chest" then
+                            argument = mobj_chest.Chest:new(argument)
                         else
                             correctArgumentType = false
                         end

@@ -201,33 +201,9 @@ function CopyInventory(...)
 
     -- construct copy
     local copy = {
-        items   = CopyItems(items),
+        items   = obj_item_inventory.ItemInventory.ItemTableCopy(items),
         slots   = CopySlots(slots),
     }
-
-    -- end
-    return copy
-end
-
-function CopyItems(...)
-    -- get & check input from description
-    local checkSuccess, items = coreutils.CheckInput([[
-        This async private function copies items (inventory).
-
-        Return value:
-            itemsCopy                   - (table) copy of the items
-
-        Parameters:
-            items                       + (table) items to copy
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.CopyItems: Invalid input") return nil end
-
-    -- construct copy
-    local copy = {}
-    for itemName, itemCount in pairs(items) do
-        -- add to items
-        copy[ itemName ] = itemCount
-    end
 
     -- end
     return copy
