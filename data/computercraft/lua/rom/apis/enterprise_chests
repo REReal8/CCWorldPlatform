@@ -598,7 +598,7 @@ function SaveChest_SSrv(...)
 
         Parameters:
             serviceData         - (table) data for this service
-                chest           + (table) the chest
+                chest           + (Chest) the chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.SaveChest_SSrv: Invalid input") return {success = false} end
 
