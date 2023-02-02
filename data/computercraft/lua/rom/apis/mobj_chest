@@ -268,7 +268,7 @@ end
 function FetchItemsFromChestIntoTurtle_ASrv(...)
     -- get & check input from description
     local checkSuccess, chest, items, assignmentsPriorityKey, callback, callbackData = coreutils.CheckInput([[
-        This async private service fetches items from a Chest into the inventory of a turtle.
+        This async private service fetches items from the Chest into the inventory of a turtle.
 
         Return value:
             nil
@@ -276,7 +276,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
         Async service return value (to callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
-                chest                   - (table) the chest (after the items have been removed)
+                chest                   - (Chest) the Chest (after the items have been removed)
                 turtleItemsLocator      - (URL) locating a specific turtle and the items it has gotton in it's inventory
 
         Parameters:
