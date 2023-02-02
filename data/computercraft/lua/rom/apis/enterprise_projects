@@ -171,6 +171,21 @@ function NextProjectStep(internalProjectData, stepResults)
         end
     end
 
+    --[[ ToDo: improve and use this tryout to allow for object based steps
+    -- prepare stepObj
+    local stepObj = nil
+    local stepObjDef = step.stepObjDef
+    if stepObjDef then
+        -- get stepObjSource
+        local valueSourceIndex = stepObjDef.valueSourceIndex
+        local stepObjSource = project.outputs[ valueSourceIndex ]
+        if type(stepObjSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepObjSource") TerminateProject(internalProjectData) return nil end
+
+        -- get stepObj
+        stepObj = GetFieldValueFromKeyDef(stepObjSource, stepObjDef.keyDefSource)
+    end
+    ]]
+
     -- type of step?
     local serviceName = step.stepName -- note: possibly later also none service steps, for now it always is a service
     if step.async == true then

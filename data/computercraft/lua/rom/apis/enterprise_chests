@@ -430,6 +430,10 @@ function GetItemsIntoTurtle_ASrv(...)
     -- create project definition
     local getItemsIntoTurtleProjectDef = {
         steps   = {
+-- ToDo: consider how we objectivy this.
+-- option1: add a new project step type (next to async true/false) that operates on an object (self)
+-- option?: also automatically handle save object again?
+--            { stepName = "getItemsIntoTurtle_ASrv", async = true, stepObjDef = { valueSourceIndex = 0, keyDefSource = "chest"}, stepDataDef = {
             { stepName = "mobj_chest.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
                 { keyDef = "items"                  , valueSource = 0, keyDefSource = "items" },

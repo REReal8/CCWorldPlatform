@@ -167,6 +167,7 @@ function GetInventoryDetail()
     return inventory
 end
 
+-- ToDo: consider removing once we fully use ItemInventory object
 function DetermineItemsList(slots)
     -- construct items list
     local items = {}
@@ -184,6 +185,7 @@ function DetermineItemsList(slots)
     return items
 end
 
+-- ToDo: consider removing once we fully use ItemInventory object
 function CopyInventory(...)
     -- get & check input from description
     local checkSuccess, items, slots = coreutils.CheckInput([[
