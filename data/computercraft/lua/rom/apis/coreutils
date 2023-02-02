@@ -294,7 +294,7 @@ function CheckInput(description, ...)
                     if type(argument) ~= "table" then
                         correctArgumentType = false
                     else
-                        -- object oriented types? => tramsform
+                        -- object oriented types? => transform
                         if typeType == "URL" then
                             argument = obj_url.URL:new(argument)
                         elseif typeType == "Block" then
