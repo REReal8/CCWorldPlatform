@@ -1,0 +1,20 @@
+local ObjectFactory = {}
+
+local classes = {
+    URL = obj_url.URL,
+    Block = obj_block.Block,
+    LayerRectangle = obj_layer_rectangle.LayerRectangle,
+    ItemInventory = obj_item_inventory.ItemInventory,
+    Chest = mobj_chest.Chest,
+}
+
+function ObjectFactory.create(objType, objTable)
+    local class = classes[objType]
+    if class then
+        return class:new(objTable)
+    else
+        return nil
+    end
+end
+
+return ObjectFactory
