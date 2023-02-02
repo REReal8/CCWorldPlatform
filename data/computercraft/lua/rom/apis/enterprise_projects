@@ -163,9 +163,7 @@ function NextProjectStep(internalProjectData, stepResults)
         -- get fieldValue
         local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.keyDefSource)
         if type(fieldValue) == "nil" then
-            if fieldDef.keyDef ~= "assignmentsPriorityKey" then
-                corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil")
-            end
+            if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil") end
         else
             -- add field
             local setSuccess = SetFieldValueFromKeyDef(stepData, fieldDef.keyDef, fieldValue)
