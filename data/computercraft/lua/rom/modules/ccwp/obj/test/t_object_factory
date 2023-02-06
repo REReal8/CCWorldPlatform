@@ -1,4 +1,10 @@
-local ObjectFactory = require "core_object_factory"
+local T_ObjectFactory = {}
+
+local corelog = require "corelog"
+
+local URL = require "obj_url"
+
+local ObjectFactory = require "object_factory"
 
 function T_create()
     -- prepare test
@@ -9,7 +15,7 @@ function T_create()
     local objTable1 = { } -- default
     local obj1 = ObjectFactory.create(objType1, objTable1)
     assert(obj1, "Failed to create object of type " .. objType1)
-    assert(type(obj1) == "table" and obj1.__index == obj_url.URL, "Failed to create object of type URL")
+    assert(type(obj1) == "table" and obj1.__index == URL, "Failed to create object of type URL")
     corelog.WriteToLog(" obj1="..obj1:getURI())
 
     -- test invalid
@@ -20,3 +26,5 @@ function T_create()
 end
 
 T_create()
+
+return T_ObjectFactory

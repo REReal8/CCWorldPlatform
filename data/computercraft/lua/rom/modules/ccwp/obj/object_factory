@@ -1,11 +1,17 @@
 local ObjectFactory = {}
 
+local URL = require "obj_url"
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
+local ItemInventory = require "obj_item_inventory"
+local Chest = require "mobj_chest"
+
 local classes = {
-    URL = obj_url.URL,
-    Block = obj_block.Block,
-    LayerRectangle = obj_layer_rectangle.LayerRectangle,
-    ItemInventory = obj_item_inventory.ItemInventory,
-    Chest = mobj_chest.Chest,
+    URL = URL,
+    Block = Block,
+    LayerRectangle = LayerRectangle,
+    ItemInventory = ItemInventory,
+    Chest = Chest,
 }
 
 function ObjectFactory.create(objType, objTable)
