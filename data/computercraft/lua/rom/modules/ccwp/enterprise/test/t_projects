@@ -1,0 +1,116 @@
+local t_construction = {}
+
+local enterprise_projects = require "enterprise_projects"
+
+function t_construction.T_CombineStepResults()
+    -- init
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData1" },
+            }},
+            { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData2" },
+            }},
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData3" },
+                { keyDef = "serviceResult"  , valueSource = 0, keyDefSource = "falseServiceResult" },
+            }},
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData4" },
+            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = { -- ToDo: consider introducing simple syntax to the projectDef whether this step should automatically be added at the end of a sequence
+                { keyDef = "success1"       , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"       , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"       , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success4"       , valueSource = 4, keyDefSource = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"            , valueSource = 5, keyDefSource = "success" },
+        }
+    }
+    local projectData = {
+        testData1 = 10,
+        testData2 = 20,
+        testData3 = 30,
+        falseServiceResult = {success = false},
+        testData4 = 40,
+    }
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = { "rootCallBackData" }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+end
+
+function t_construction.T_StartProject()
+    -- init
+    local testArgValue = 20
+    local projectDef = {
+        steps   = {
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testArgSource" },
+            }},
+            { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testArgSource" },
+            }},
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTableSource.key3.nKey2" },
+            }},--[[ -- ToDo: figure out why both of these steps causes the infamous failure on serializing
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTable2" },
+                { keyDef = "testArg.field2" , valueSource = 0, keyDefSource = "testTable3" },
+                { keyDef = "testArg.field2.field3" , valueSource = 0, keyDefSource = "testArgSource" },
+            }},]]
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTable4" },
+                { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "testBArg0"      , valueSource = 0, keyDefSource = "testArgSource" },
+            { keyDef = "testBArg1"      , valueSource = 1, keyDefSource = "input" },
+            { keyDef = "testBArg2"      , valueSource = 2, keyDefSource = "input" },
+            { keyDef = "testBArg3"      , valueSource = 3, keyDefSource = "input" },
+            { keyDef = "testBArg4"      , valueSource = 4, keyDefSource = "input" },
+--            { keyDef = "testBArg5"      , valueSource = 5, keyDefSource = "input" },
+        }
+    }
+    local projectData = {
+        testArgSource = testArgValue,
+        testTableSource = {
+            key1 = 11,
+            key2 = 22,
+            key3 = {
+                nKey1 = 111,
+                nKey2 = 222,
+                nKey3 = 333,
+            }
+        },
+        testTable2 = { },
+        testTable3 = { },
+        testTableSource2 = {
+            key4 = 44,
+            key5 = 55,
+        },
+        testTable4 = { },
+    }
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = { "rootCallBackData" }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+end
+
+function t_construction.T_DeleteProjects()
+    enterprise_projects.DeleteProjects()
+end
+
+return t_construction

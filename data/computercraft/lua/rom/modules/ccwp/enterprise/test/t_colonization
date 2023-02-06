@@ -1,0 +1,17 @@
+local t_colonization = {}
+local corelog = require "corelog"
+
+local enterprise_colonization = require "enterprise_colonization"
+
+function t_colonization.T_CreateNewWorld()
+    -- test CreateNewWorld_ASrv
+    corelog.WriteToLog("# Test CreateNewWorld_ASrv")
+    local callbackFunction = "t_main.GoHomeCallBack"
+    local callbackData = {"some callback data"}
+    local serviceData = {}
+
+    corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld_ASrv("..textutils.serialize(serviceData)..", "..callbackFunction..", "..textutils.serialize(callbackData)..")")
+    enterprise_colonization.CreateNewWorld_ASrv(serviceData, callbackFunction, callbackData)
+end
+
+return t_colonization

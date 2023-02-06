@@ -1,0 +1,244 @@
+local FunctionExecutor = {}
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+
+function FunctionExecutor.DoCallback(...)
+    -- get & check input from description
+    local checkSuccess, callback, callbackData, resultData = InputChecker.Check([[
+        This function executes a callback function with two arguments.
+
+        Return value:
+            nil
+
+        Parameters:
+            callback                    + (string) name of callback function to execute
+            callbackData                + (table) with first argument to supply to callback function
+            resultData                  + (table) with second argument to supply to callback function, typically the return data of the task function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("FunctionExecutor.DoCallback: Invalid input") return nil end
+
+    -- split callback in objName and methodName
+    -- ToDo: already provide this split in this method call
+    local objName, methodName = callback:match("(.*)%.(.*)")
+
+    -- call method
+    return FunctionExecutor.CallMethod(objName, methodName, { callbackData, resultData })
+
+    --[[
+    -- call callBack function
+    local stringToLoad = callback.."("..textutils.serialize(callbackData)..","..textutils.serialize(resultData).. ")"
+    local f, err = loadstring(stringToLoad)
+    if f then f() else corelog.Error("FunctionExecutor.DoCallback: loadstring("..stringToLoad..") did not supply a function, error given: "..err) end
+    ]]
+end
+
+function FunctionExecutor.DoSyncService(...)
+    -- get & check input from description
+    local checkSuccess, service, serviceData = InputChecker.Check([[
+        This function executes a sync service function.
+
+        Return value:
+            results                     - (?) service function return value
+
+        Parameters:
+            service                     + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("FunctionExecutor.DoSyncService: Invalid input") return nil end
+
+    -- split service in objName and methodName
+    -- ToDo: already provide this split in this method call
+    local objName, methodName = service:match("(.*)%.(.*)")
+
+    -- call method
+    return FunctionExecutor.CallMethod(objName, methodName, { serviceData })
+
+    --[[
+	-- prepare sync service call
+	local f, err = loadstring("return "..service.."("..textutils.serialize(serviceData)..")")
+	if not f then corelog.Error("FunctionExecutor.DoSyncService(): loadstring did not supply a function, error given: "..err) return end
+
+	-- execute the service
+	local results = f()
+
+	-- end
+	return results
+    ]]
+end
+
+function FunctionExecutor.DoASyncService(...)
+    -- get & check input from description
+    local checkSuccess, service, serviceData, callback, callbackData = InputChecker.Check([[
+        This function executes an async service function.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+            callbackData                - (table) with callbackData below
+            results                     - (?) service function return value
+
+        Parameters:
+            service                     + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+            callback                    + (string) name of callback function to execute
+            callbackData                + (table) with first argument to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("FunctionExecutor.DoASyncService: Invalid input") return nil end
+
+    -- split service in objName and methodName
+    -- ToDo: already provide this split in this method call
+    local objName, methodName = service:match("(.*)%.(.*)")
+
+    -- call method
+    return FunctionExecutor.CallMethod(objName, methodName, { serviceData, callback, callbackData})
+
+    --[[
+    -- check service actually exists
+    -- ToDo: implement
+    corelog.WriteToLog("1")
+
+	-- prepare async service call
+    local str = service.."("..textutils.serialize(serviceData)..", '"..callback.."', "..textutils.serialize(callbackData)..")"
+--    enterprise_isp = enterprise_isp or require "enterprise_isp"
+--    if not enterprise_isp then
+--        corelog.WriteToLog("   enterprise_isp = nil")
+--    end
+--    str = "local enterprise_isp = _G['require']('enterprise_isp') "..str
+    corelog.WriteToLog("   str = "..str)
+	local f, err = loadstring(str)
+	if not f then corelog.Error("FunctionExecutor.DoASyncService(): loadstring did not supply a function, error given: "..err) return nil end
+
+    corelog.WriteToLog("2")
+
+	-- execute the service
+	f()
+    corelog.WriteToLog("3")
+
+	-- end
+	return nil
+        ]]
+end
+
+function FunctionExecutor.GetObject(...)
+    -- get & check input from description
+    local checkSuccess, objName = InputChecker.Check([[
+        This method returns an object (table) with the name objName.
+
+        Return value:
+            results                     - (table) object
+
+        Parameters:
+            objName                     + (string) name of object to execute on
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("FunctionExecutor.GetObject(...): Invalid input") return nil end
+
+    -- object
+    -- ToDo: consider putting in file scope, or even different module
+    local objects = {
+        t_main                      = require "test.t_main",
+        t_move                      = require "test.t_move",
+        t_coredht                   = require "test.t_coredht",
+
+        T_URL                       = require "test.t_obj_url",
+        T_Block                     = require "test.t_obj_block",
+        T_LayerRectangle            = require "test.t_obj_layer_rectangle",
+        T_ItemInventory             = require "test.t_obj_item_inventory",
+        T_Chest                     = require "test.t_mobj_chest",
+        T_BirchForest               = require "test.t_mobj_birchforest",
+
+        t_alchemist                 = require "test.t_alchemist",
+        t_builder                   = require "test.t_builder",
+
+        enterprise_assignmentboard  = require "enterprise_assignmentboard",
+        enterprise_chests           = require "enterprise_chests",
+        enterprise_construction     = require "enterprise_construction",
+        enterprise_energy           = require "enterprise_energy",
+        enterprise_factory          = require "enterprise_factory",
+        enterprise_factory_site     = require "enterprise_factory_site",
+        enterprise_forestry         = require "enterprise_forestry",
+        enterprise_isp              = require "enterprise_isp",
+        enterprise_projects         = require "enterprise_projects",
+        enterprise_shop             = require "enterprise_shop",
+        enterprise_storage          = require "enterprise_storage",
+        enterprise_test             = require "enterprise_test",
+        enterprise_turtle           = require "enterprise_turtle",
+
+        t_test                      = require "test.t_test",
+        t_assignmentboard           = require "test.t_assignmentboard",
+        t_turtle                    = require "test.t_turtle",
+        t_projects                  = require "test.t_projects",
+        t_isp                       = require "test.t_isp",
+        t_energy                    = require "test.t_energy",
+        t_chests                    = require "test.t_chests",
+        t_construction              = require "test.t_construction",
+        t_storage                   = require "test.t_storage",
+        t_factory                   = require "test.t_factory",
+        t_forestry                  = require "test.t_forestry",
+        t_shop                      = require "test.t_shop",
+        t_colonization              = require "test.t_colonization",
+    }
+
+    -- get object
+    local object = objects[objName]
+    if not object then corelog.Warning("FunctionExecutor.GetObject(...): Object "..objName.." not found") return nil end
+    if type(object) ~= "table" then corelog.Warning("FunctionExecutor.GetObject(...): Object "..objName.." not a table") return nil end
+
+    -- end
+    return object
+end
+
+function FunctionExecutor.GetMethod(...)
+    -- get & check input from description
+    local checkSuccess, objName, methodName = InputChecker.Check([[
+        This method gets a function based on a methodName and an object (table) with the name objName.
+
+        Return value:
+            results                     - (?) function return value(s)
+
+        Parameters:
+            objName                     + (string) name of object to execute on
+            methodName                  + (string) name of method to execute
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("FunctionExecutor.GetMethod(...): Invalid input") return nil end
+
+    -- get object
+    local object = FunctionExecutor.GetObject(objName)
+    if not object then corelog.Warning("FunctionExecutor.GetMethod(...): Object "..objName.." not found") return nil end
+
+    -- get method
+    local method = object[methodName]
+    if not method then corelog.Warning("FunctionExecutor.GetMethod(...): Method "..methodName.." not found in object "..objName) return nil end
+
+    -- end
+    return method
+end
+
+function FunctionExecutor.CallMethod(...)
+    -- get & check input from description
+    local checkSuccess, objName, methodName, methodArguments = InputChecker.Check([[
+        This method executes an function based on a methodName and the methodArguments on an object (table) with the name objName.
+
+        Return value:
+            results                     - (?) function return value(s)
+
+        Parameters:
+            objName                     + (string) name of object to execute on
+            methodName                  + (string) name of method to execute
+            methodArguments             + (table) with arguments to supply to the method
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("FunctionExecutor.CallFunction(...): Invalid input") return nil end
+
+    -- get method
+    local method = FunctionExecutor.GetMethod(objName, methodName)
+    if not method then corelog.Warning("FunctionExecutor.CallFunction(...): Method "..methodName.." not found in object "..objName) return nil end
+
+    -- call method
+    local results = method(table.unpack(methodArguments))
+
+    -- end
+    return results
+end
+
+return FunctionExecutor

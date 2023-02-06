@@ -1,0 +1,385 @@
+local enterprise_storage = {}
+local corelog = require "corelog"
+local coredht = require "coredht"
+
+local InputChecker = require "input_checker"
+local FunctionExecutor = require "function_executor"
+
+local enterprise_projects = require "enterprise_projects"
+local enterprise_storage_silo = require "enterprise_storage_silo"
+
+local db = {
+    dhtRoot     = "enterprise_storage",
+    dhtSites    = "sites",
+}
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+-- print(textutils.serialize(enterprise_storage.StoreItems({itemList={{itemName="minecraft:charcoal", itemCount=12, stackSize="64"}}, location={x=0, y=0, z= 1, dx=0, dy=1}})))
+function StoreItems(argumentTable) -- itemList, location
+--[[
+    This public function is for storing items. It does not care if there is space, all items are accepted
+
+    Return value:
+        location where to drop the items
+
+    Parameters:
+        itemList - (table) list of items (name and count) to be stored
+        location - (table) location where the items are now, to search of a nearby site
+--]]
+
+    -- check input
+    if type(argumentTable) ~= "table" then corelog.Error('enterprise_storage.StoreItems: argumentTable is not a table') return {success = false} end
+
+    -- get arguments out of the table
+    local requestersLocation    = argumentTable.location
+    local itemList              = argumentTable.itemList
+
+    -- what we use for our output
+    local location              = nil
+    local success               = false
+
+    -- check our input again :-)
+    if type(itemList) ~= "table" or type(requestersLocation) ~= "table" then corelog.Error('enterprise_storage.StoreItems: Invalid input') return {success = false} end
+
+    -- this site is best
+    local site  = FindClosestSite(requestersLocation)
+    if site == nil then corelog.Error('enterprise_storage.StoreItems: No valid site') return {success = false} end
+
+    -- let the site handle this request
+    if site.type == "silo" then location = enterprise_storage_silo.StoreItems(site, itemList)
+    end
+
+    -- was this a success?
+    if location ~= nil then success = true end
+
+    -- return as a table
+    return {
+        success     = success,
+        location    = location
+    }
+end
+
+-- enterprise_storage.ItemsDelivered({itemList = {}, location = {y = 17,x = 14,z = 1,dx = 0,dy = 1,}})
+function ItemsDelivered(argumentTable) -- itemList, location
+--[[
+    This public function notifies the storage enterprise that items have been delivered
+
+    Return value:
+        nil
+
+    Parameters:
+        itemList - (table) list of items (name and count) to be stored (ignored btw, maybe used later)
+        location - (table) location of the items
+--]]
+
+    -- check input
+    if type(argumentTable) ~= "table" then corelog.Error('enterprise_storage.ItemsDelivered: argumentTable is not a table') return {success = false} end
+
+    -- get arguments out of the table
+    local topChestLocation      = argumentTable.location
+    local itemList              = argumentTable.itemList
+
+    -- check our input
+    if type(itemList) ~= "table" or type(topChestLocation) ~= "table" then corelog.Error('enterprise_storage.ItemsDelivered: Invalid input') return nil end
+
+    -- find the site this top chest location belongs to
+    local site, topChest = FindSiteByTopChest(topChestLocation)
+
+    -- got anything?
+    if site == nil or topChest == nil then corelog.Error('enterprise_storage.ItemsDelivered: No site found') return nil end
+
+    -- what kind of site is this anyways?
+    if site.type == "silo" then enterprise_storage_silo.ItemsDelivered(site.sitesIndex, topChest.chestIndex, itemList, topChestLocation) end
+
+    -- does not return anything
+end
+
+-- corelog.WriteToLog(textutils.serialize(enterprise_storage.ItemPresent({itemName = "minecraft:stick"})))
+function ItemPresent(argumentTable) -- itemName
+--[[
+    This public function counts how many of an item is present in the system. Unknown items return 0 (not nil)
+
+    Return value:
+        integer how many of that item is present in the storage system
+
+    Parameters:
+        itemName - (string) name of the item to be counted
+--]]
+
+    -- check input
+    if type(argumentTable) ~= "table" then corelog.Error('enterprise_storage.ItemPresent: argumentTable is not a table') return {success = false} end
+
+    -- get arguments out of the table
+    local itemName  = argumentTable.itemName
+
+    -- variables
+    local sites     = coredht.GetData(db.dhtRoot, db.dhtSites)
+    local itemCount = 0
+    local result    = {
+        total           = 0,
+        sites           = {},
+        success         = true,
+    }
+
+    -- parameter must be a string
+    if type(itemName) ~= "string" then corelog.Error("enterprise_storage.ItemPresent: itemName nog a string") return nil end
+
+    -- loop the sites
+    for i, site in ipairs(sites) do
+
+        -- let the type determine how this is managed
+        if site.type == "silo" then itemCount = enterprise_storage_silo.ItemPresent(site, itemName)
+        end
+
+        -- add to our data structure
+        result.total    = result.total + itemCount
+        table.insert(result.sites, {
+            siteIndex   = site.sitesIndex,
+            itemCount   = itemCount
+        })
+    end
+
+    -- this is what we have
+    return result
+end
+
+-- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 2}, "enterprise_assignmentboard.Dummy_Callback", {})))
+function RetrieveItems(argumentTable) -- sitesIndex, itemList, callback, callbackArgs
+--[[
+    This public function is retrieving items from the storage. When the requested items are not
+        all present, the function will return nil and no action will follow
+
+    Return value:
+        location where there items will be dropped for pick up
+
+    Parameters:
+        siteIndex - (integer) index of the delivering site
+        itemList  - (table) list of items (name and count) to be stored
+        callback  - (string) function name to call once the items are ready for pickup
+--]]
+
+    -- check input
+    if type(argumentTable) ~= "table" then corelog.Error('enterprise_storage.RetrieveItems: argumentTable is not a table') return {success = false} end
+
+    -- get arguments out of the table
+    local sitesIndex    = argumentTable.sitesIndex
+    local itemList      = argumentTable.itemList
+    local callback      = argumentTable.callback
+    local callbackArgs  = argumentTable.callbackArgs
+
+    -- variables
+    local site      = coredht.GetData(db.dhtRoot, db.dhtSites, sitesIndex)
+
+    -- check paramters (should check if sitesIndex is really a valid sitesIndex)
+    if type(sitesIndex) ~= "number" or type(site) ~= "table" or type(itemList) ~= "table" or type(callback) ~= "string" then corelog.Error("enterprise_storage.RetrieveItems: invalid paramters") return {success = false} end
+
+    -- tell this site do retrieve the items
+    if site.type == "silo" then return enterprise_storage_silo.RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
+    end
+
+end
+
+-- enterprise_storage.ItemsCollected({location={y = 17, x = 14, z = 1, dy = 1, dx = 0}})
+function ItemsCollected(argumentTable) -- location
+--[[
+    This public function notifies the storage enterprise that the items have been collected
+
+    Return value:
+        nil
+
+    Parameters:
+        itemList - (table) list of items (name and count) collected (must be all of it)
+        location - (table) location of the items
+--]]
+
+    -- check input
+    if type(argumentTable) ~= "table" then corelog.Error('enterprise_storage.RetrieveItems: argumentTable is not a table') return {success = false} end
+
+    -- get arguments out of the table
+    local location      = argumentTable.location
+
+    -- lets find the site to start with
+    local site, topChest = FindSiteByTopChest(location)
+
+    -- check what we got
+    if site == nil or topChest == nil then corelog.Error("enterprise_storage.ItemsCollected: no site and/or topchest found") return {success = false} end
+
+    -- let the site fix this
+    if site.type == "silo" then enterprise_storage_silo.ItemsCollected(site, topChest) end
+end
+
+function BuildAndStartNewSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, siteData, type, callback, callbackData = InputChecker.Check([[
+        This public function (service) builds a new storage site and starts it.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                            - (table)
+                success     - (boolean) whether the service was executed successfully
+
+        Parameters:
+            siteData        + (table) data about this site, like type and layout
+                type        + (string) storage type
+            callback        + (string) function name to call once the site is build and started
+            callbackData    + (table, "") function data to supply to callback
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- what kind of storage is this?
+    if type == 'silo' then
+        -- create project definition
+        local buildAndStartNewSiteProjecDef = {
+            steps   = {
+                { stepName = "enterprise_storage.BuildNewSite_ASrv", async = true, stepDataDef = {
+                    { keyDef = "location"               , valueSource = 0, keyDefSource = "location" },
+                    { keyDef = "type"                   , valueSource = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"               , valueSource = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
+                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                }},
+                { stepName = "enterprise_storage.StartNewSite_SSrv", async = false, stepDataDef = {
+                    { keyDef = "location"               , valueSource = 0, keyDefSource = "location" },
+                    { keyDef = "type"                   , valueSource = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"               , valueSource = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
+                }},
+                { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                    { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
+                    { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                }},
+            },
+            returnData  = {
+                { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+            }
+        }
+        local projectServiceData = {
+            projectDef  = buildAndStartNewSiteProjecDef,
+            projectData = siteData,
+        }
+
+        -- start project
+        enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    else corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Don't know how to build and start a site of type "..type) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- nothing to return
+end
+
+function BuildNewSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, siteData, type, callback, callbackData = InputChecker.Check([[
+        This public function (service) builds a new site.
+
+        Async service return value (to callback):
+                            - (table)
+                success     - (boolean) whether the service was executed successfully
+
+        Parameters:
+            siteData        + (table) data about this site, like type and layout
+                type        + (string) storage type
+            callback        + (string) function name to call once the site is build
+            callbackData    + (table, "") function data to supply to callback
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.BuildNewSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- what kind of storage is this?
+    if type == 'silo' then
+        enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback, callbackData)
+    else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+end
+
+-- enterprise_storage.StartNewSite_SSrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
+function StartNewSite_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, siteData, type = InputChecker.Check([[
+        This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
+
+        Return value:
+                            - (table)
+                success     - (boolean) whether the site is ready for business
+
+        Parameters:
+            siteData        + (table) data about this site, like type and layout
+                type        + (string) storage type
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.StartNewSite_SSrv: Invalid input") return {success = false} end
+
+    -- just check if our enterprise has a key in the dht
+    if coredht.GetData(db.dhtRoot) == nil then
+
+        -- create the entry
+        coredht.SaveData({}, db.dhtRoot)
+        coredht.SaveData({}, db.dhtRoot, db.dhtSites)
+    end
+
+    -- what kind of storage is this?
+    if siteData.type == 'silo' then enterprise_storage_silo.StartNewSite_SSrv(siteData)
+    else corelog.Error("enterprise_storage.StartNewSite_SSrv: Don't know how to start a site of type "..type) return {success = false} end
+
+    -- end
+    return {success = true}
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function FindClosestSite(location)
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- check if we have any site
+    if type(sites) ~= "table" or #sites == 0 then corelog.Error('enterprise_storage.FindClosestSite: no sites present') return nil end
+
+    -- we should look for the best site, for now just take the first
+    return sites[1]
+end
+
+function FindSiteByTopChest(location)
+    -- sites ophalen
+    local sites = coredht.GetData(db.dhtRoot, db.dhtSites)
+
+    -- loop the sites
+    for i, site in ipairs(sites) do
+
+        -- this one?
+        local topChest    = nil
+
+        -- let the type determine how this is managed
+        if site.type == "silo" then topChest = enterprise_storage_silo.FindSiteByTopChest(site, location)
+        end
+
+        -- do we have anything?
+        if site ~= nil then return site, topChest end
+    end
+
+    -- found nothing
+    return nil, nil
+end
+
+-- enterprise_storage.CheckIntegrity(1)
+function CheckIntegrity(sitesIndex)
+    -- sites ophalen
+    local site = coredht.GetData(db.dhtRoot, db.dhtSites, sitesIndex)
+
+    -- let the type determine how this is managed
+    if site.type == "silo" then enterprise_storage_silo.CheckIntegrity(site)
+    end
+end
+
+return enterprise_storage

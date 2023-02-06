@@ -1,0 +1,197 @@
+local ItemInventory = {
+    _itemTable  = {},
+}
+local corelog = require "corelog"
+local InputChecker = require "input_checker"
+
+--[[
+    This file implements ItemInventory.
+
+    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
+--]]
+
+
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function ItemInventory:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a ItemInventory.
+
+        Parameters:
+            o                           + (table, {}) table with object fields
+                _itemTable              - (table, {}) itemTable
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemInventory:new: Invalid input") return {} end
+
+    o = o or {}   -- create object if user does not provide one
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function ItemInventory:getItemTable()
+    return self._itemTable
+end
+
+function ItemInventory:setItemTable(itemTable)
+    -- check input
+    if not ItemInventory.IsItemTable(itemTable) then corelog.Error("ItemInventory:setItemTable: invalid itemTable: "..type(itemTable)) return end
+
+    self._itemTable = itemTable
+end
+
+function ItemInventory.HasFieldsOfType(itemInventory)
+    -- check
+    if type(itemInventory) ~= "table" then return false end
+    if not ItemInventory.IsItemTable(itemInventory._itemTable) then return false end
+
+    -- end
+    return true
+end
+
+function ItemInventory.HasMethodsOfType(itemInventory)
+    -- check
+    if not itemInventory.new then return false end
+
+    -- end
+    return true
+end
+
+function ItemInventory.IsOfType(itemInventory)
+    -- check
+    local isOfType = ItemInventory.HasFieldsOfType(itemInventory) and ItemInventory.HasMethodsOfType(itemInventory)
+
+    -- end
+    return isOfType
+end
+
+function ItemInventory:isSame(itemInventory)
+    -- check input
+    if not ItemInventory.IsOfType(itemInventory) then return false end
+
+    -- check same ItemInventory
+    local isSame = ItemInventory.IsSameItemTable(self._itemTable, itemInventory._itemTable)
+
+    -- end
+    return isSame
+end
+
+function ItemInventory:copy()
+    local copy = ItemInventory:new({
+        _itemTable  = ItemInventory.ItemTableCopy(self._itemTable),
+    })
+
+    return copy
+end
+
+function ItemInventory:setFromSlotTable(...)
+    -- get & check input from description
+    local checkSuccess, slotTable = InputChecker.Check([[
+        Construct a ItemInventory.
+
+        Parameters:
+            slotTable           + (table, {}) slot inventory
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemInventory:setFromSlotTable: Invalid input") return end
+    if not ItemInventory.IsSlotTable(slotTable) then corelog.Error("ItemInventory:setFromSlotTable: Invalid slotTable") return end
+
+    -- new _itemTable
+    self._itemTable = {}
+
+    -- loop on slots
+    for slot, item in pairs(slotTable) do
+        -- right item?
+        if type(item) == "table" then
+            -- add to items
+            self._itemTable[ item.name ]  = (self._itemTable[ item.name ] or 0) + item.count
+        end
+    end
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function ItemInventory.IsItemTable(itemTable)
+    -- check table
+    if type(itemTable) ~= "table" then return false end
+
+    -- check elements
+    for itemName, itemCount in pairs(itemTable) do
+        if type(itemName) ~= "string" then return false end
+        if type(itemCount) ~= "number" then return false end
+    end
+
+    -- end
+    return true
+end
+
+function ItemInventory.IsSameItemTable(itemTableA, itemTableB)
+    -- check input
+    if not ItemInventory.IsItemTable(itemTableA) or not ItemInventory.IsItemTable(itemTableB) then return false end
+
+    -- check all itemTableA elements are in itemTableB
+    local sizeA = 0
+    for itemNameA, itemCountA in pairs(itemTableA) do
+        local itemBCount = itemTableB[itemNameA]
+        sizeA = sizeA + 1
+
+        -- check same
+        if itemCountA ~= itemBCount then return false end
+    end
+
+    -- check same size
+    local sizeB = 0
+    for _ in pairs(itemTableB) do
+        sizeB = sizeB + 1
+    end
+    if sizeA ~= sizeB then return false end
+
+    -- end
+	return true
+end
+
+function ItemInventory.ItemTableCopy(itemTable)
+    -- check input
+    if not ItemInventory.IsItemTable(itemTable) then corelog.Error("ItemInventory.ItemTableCopy: invalid itemTable: "..type(itemTable)) return end
+
+    local copy = {}
+    -- copy elements
+    for itemName, itemCount in pairs(itemTable) do
+        -- add to items
+        copy[ itemName ] = itemCount
+    end
+
+    -- end
+	return copy
+end
+
+function ItemInventory.IsSlotTable(slotTable)
+    -- check table
+    if type(slotTable) ~= "table" then return false end
+
+    -- check elements
+    for slot, item in pairs(slotTable) do
+        if type(slot) ~= "number" then return false end
+        if type(item) ~= "table" then return false end
+        if type(item.name) ~= "string" then return false end
+        if type(item.count) ~= "number" then return false end
+    end
+
+    -- end
+    return true
+end
+
+return ItemInventory

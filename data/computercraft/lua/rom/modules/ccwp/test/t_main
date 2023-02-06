@@ -1,0 +1,87 @@
+local t_main = {}
+
+local corelog = require "corelog"
+local coreinventory = require "coreinventory"
+local coreassignment = require "coreassignment"
+
+local t_move = require "test.t_move"
+local t_builder = require "test.t_builder"
+
+local T_URL = require "test.t_obj_url"
+local T_Block = require "test.t_obj_block"
+local T_LayerRectangle = require "test.t_obj_layer_rectangle"
+local T_ItemInventory = require "test.t_obj_item_inventory"
+
+local T_Chest = require "test.t_mobj_chest"
+local T_BirchForest = require "test.t_mobj_birchforest"
+
+local enterprise_assignmentboard = require "enterprise_assignmentboard"
+local enterprise_projects = require "enterprise_projects"
+local enterprise_energy = require "enterprise_energy"
+local enterprise_factory = require "enterprise_factory"
+local enterprise_turtle = require "enterprise_turtle"
+local enterprise_chests = require "enterprise_chests"
+local enterprise_shop = require "enterprise_shop"
+local enterprise_forestry = require "enterprise_forestry"
+
+local t_test                      = require "test.t_test"
+local t_isp                       = require "test.t_isp"
+local t_energy                    = require "test.t_energy"
+local t_chests                    = require "test.t_chests"
+local t_factory                   = require "test.t_factory"
+local t_forestry                  = require "test.t_forestry"
+local t_shop                      = require "test.t_shop"
+
+function t_main.T_dummy()
+    corelog.WriteToLog("Running T_()")
+    print("!")
+end
+
+function t_main.T_All()
+    -- role tests
+    t_builder.T_All()
+
+    -- obj tests
+    T_URL.T_All()
+    T_Block.T_All()
+    T_LayerRectangle.T_All()
+    T_ItemInventory.T_All()
+
+    -- mobj tests
+    T_Chest.T_All()
+    T_BirchForest.T_All()
+
+    -- enterprise tests
+    t_test.T_All()
+    t_isp.T_All()
+    t_forestry.T_All()
+    t_factory.T_All()
+    t_energy.T_All()
+    t_chests.T_All()
+    t_shop.T_All()
+end
+
+function t_main.T_ResetWorld()
+    coreinventory.ResetAllItems()
+    coreassignment.Reset()
+    enterprise_assignmentboard.Reset()
+    enterprise_projects.DeleteProjects()
+    enterprise_energy.ResetParameters()
+    enterprise_factory.DeleteSites()
+    enterprise_turtle.Reset()
+    enterprise_chests.DeleteChests()
+    enterprise_shop.DelistSuppliers()
+    enterprise_forestry.DeleteForests()
+end
+
+function t_main.Func1_Callback(callbackData, taskResult)
+--    corelog.WriteToLog("  doing t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
+end
+
+function t_main.GoHomeCallBack(callbackData, taskResult)
+    corelog.WriteToLog("  doing t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
+
+    t_move.T_GoHome()
+end
+
+return t_main

@@ -1,0 +1,25 @@
+local corelog = require "corelog"
+
+local FunctionExecutor = require "function_executor"
+
+function T_DoCallback()
+    -- test DoCallback
+    corelog.WriteToLog("# Test DoCallback")
+    local callbackFunction = "t_main.Func1_Callback"
+    local callbackData = {"some callback data"}
+    local result = {"some task result"}
+
+    corelog.WriteToLog("T_coreutils_DoCallback calling DoCallback("..callbackFunction..", "..textutils.serialize(callbackData)..", "..textutils.serialize(result)..")")
+    FunctionExecutor.DoCallback(callbackFunction, callbackData, result)
+end
+
+function T_DoSyncService()
+    -- test DoSyncService
+    corelog.WriteToLog("# Test DoSyncService")
+    local serviceFunction = "enterprise_test.TestPureLogicService_SSrv"
+    local serviceData = {"some service data"}
+
+    corelog.WriteToLog("T_coreutils_DoSyncService calling DoSyncService("..serviceFunction..", "..textutils.serialize(serviceData)..")")
+    local results = FunctionExecutor.DoSyncService(serviceFunction, serviceData)
+    corelog.WriteToLog("T_coreutils_DoSyncService results = "..textutils.serialize(results))
+end

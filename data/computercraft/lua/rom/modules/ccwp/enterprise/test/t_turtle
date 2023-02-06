@@ -1,0 +1,81 @@
+local t_turle = {}
+local corelog = require "corelog"
+local coremove = require "coremove"
+
+local enterprise_turtle = require "enterprise_turtle"
+local enterprise_energy = require "enterprise_energy"
+local enterprise_forestry = require "enterprise_forestry"
+local enterprise_isp = require "enterprise_isp"
+
+local t_factory = require "test.t_factory"
+local T_BirchForest = require "test.t_mobj_birchforest"
+
+local itemsQuery = {
+    ["minecraft:birch_log"] = 1,
+    ["minecraft:torch"]     = 5,
+}
+
+local callbackFunction = "t_main.Func1_Callback"
+local callbackData = {"some callback data"}
+local level0 = 0
+
+function t_turle.T_TransferItemsFromTo_Turtles()
+    corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
+    -- create transferData
+    local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
+    local destinationStorageLocator = enterprise_turtle.GetHostLocator_Att()
+    local transferData = {
+        sourceItemsLocator          = sourceItemsLocator,
+        destinationStorageLocator   = destinationStorageLocator,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
+    enterprise_isp.TransferItemsFromTo_ASrv(transferData, callbackFunction, callbackData)
+end
+
+function t_turle.T_Can_ProvideItems()
+    corelog.WriteToLog("* Test Can_ProvideItems_QSrv for turtles:")
+    -- create transferData
+    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
+    local queryData = {
+        itemsLocator = itemsLocator,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.Can_ProvideItems_QSrv("..textutils.serialize(queryData)..")")
+    local result = enterprise_isp.Can_ProvideItems_QSrv(queryData)
+    corelog.WriteToLog("  result="..textutils.serialize(result))
+end
+
+-- print("GetFuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
+function t_turle.T_GetFuelLevels_Att()
+    -- prepare test
+    corelog.WriteToLog("# Test GetFuelLevels_Att")
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forestLocator = enterprise_forestry.SaveForest(forest)
+
+    local location = coremove.GetLocation()
+    t_factory.StartNewSite(location)
+
+    local energyParameters = enterprise_energy.GetParameters()
+    local originalLevel = energyParameters.enterpriseLevel
+    local originalLocator = energyParameters.forestLocator
+
+    -- test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator })
+    local fuelLevels = enterprise_turtle.GetFuelLevels_Att()
+    local expectedFuelLevel_Priority = 41
+    assert(fuelLevels.fuelLevel_Priority == expectedFuelLevel_Priority, "gotten fuelLevel_Priority(="..fuelLevels.fuelLevel_Priority..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Priority..")")
+    local expectedFuelLevel_Assignment = 41 -- ToDo: consider taking enterprise_assignmentboard maxFuelNeed_Assignment into account as well
+    assert(fuelLevels.fuelLevel_Assignment == expectedFuelLevel_Assignment, "gotten fuelLevel_Assignment(="..fuelLevels.fuelLevel_Assignment..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Assignment..")")
+
+    -- cleanup test
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
+
+    t_factory.StopSite(location)
+
+    enterprise_forestry.RemoveForest(forestLocator)
+end
+
+return t_turle

@@ -1,0 +1,518 @@
+local BirchForest = {
+    _id                     = "",
+    _level                  = 0,
+
+    _location               = nil,
+    _nTrees                 = 0,
+
+    _localLogsLocator       = nil,
+    _localSaplingsLocator   = nil,
+}
+
+local corelog = require "corelog"
+local coremove = require "coremove"
+
+local FunctionExecutor = require "function_executor"
+local InputChecker = require "input_checker"
+
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
+
+local role_forester = require "role_forester"
+
+local enterprise_isp = require "enterprise_isp"
+local enterprise_projects = require "enterprise_projects"
+
+--[[
+    This file implements BirchForest.
+
+    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function BirchForest:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a BirchForest.
+
+        Parameters:
+            o                           + (table, {}) table with object fields
+                _id                     - (string) id of the forest
+                _level                  - (number) level of the forest
+                _location               - (table) base location of the forest
+                _nTrees                 - (number) # trees in the forest
+                _localLogsLocator       - (URL) locating the local Supplier of logs (e.g. a chest)
+                _localSaplingsLocator   - (URL) locating the local Supplier of saplings (e.g. a chest)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function BirchForest:getId()
+    return self._id
+end
+
+function BirchForest:getLevel()
+    return self._level
+end
+
+function BirchForest:setLevel(level)
+    -- check input
+    if type(level) ~= "number" then corelog.Error("mobj_birchforest:setLevel: invalid level: "..type(level)) return end
+
+    self._level = level
+end
+
+function BirchForest:getLocation()
+    return self._location
+end
+
+function BirchForest:setLocation(location)
+    -- check input
+    if type(location) ~= "table" then corelog.Error("mobj_birchforest:setLocation: invalid location: "..type(location)) return end
+
+    self._location = location
+end
+
+function BirchForest:getNTrees()
+    return self._nTrees
+end
+
+function BirchForest:setNTrees(nTrees)
+    -- check input
+    if type(nTrees) ~= "number" then corelog.Error("mobj_birchforest:setNTrees: invalid # trees: "..type(nTrees)) return end
+
+    self._nTrees = nTrees
+end
+
+function BirchForest:getLocalLogsLocator()
+    return self._localLogsLocator
+end
+
+function BirchForest:setLocalLogsLocator(localLogsLocator)
+    -- check input
+    if type(localLogsLocator) ~= "table" then corelog.Error("mobj_birchforest:setLocalLogsLocator: Invalid localLogsLocator "..type(localLogsLocator)) return end
+
+    self._localLogsLocator = localLogsLocator
+end
+
+function BirchForest:getLocalSaplingsLocator()
+    return self._localSaplingsLocator
+end
+
+function BirchForest:setLocalSaplingsLocator(localSaplingsLocator)
+    -- check input
+    if type(localSaplingsLocator) ~= "table" then corelog.Error("mobj_birchforest:setLocalSaplingsLocator: Invalid localLogsLocator "..type(localSaplingsLocator)) return end
+
+    self._localSaplingsLocator = localSaplingsLocator
+end
+
+function BirchForest:getBaseLayer(level)
+    if level == -1 then     return Tree_layerLm1()
+    elseif level == 0 then  return Tree_layerL0()
+    elseif level == 1 then  return Tree_layerL1()
+    elseif level == 2 then  return Base_layerL2()
+    else                    corelog.Error("mobj_birchforest.getBaseLayer: Don't know layer for level "..level) return nil end
+end
+
+function BirchForest:getTreeLayer(level)
+    if level == -1 then     return Tree_layerLm1()
+    elseif level == 0 then  return Tree_layerL0()
+    elseif level == 1 then  return Tree_layerL1()
+    elseif level == 2 then  return Tree_layerL1() -- same as L1
+    else                    corelog.Error("mobj_birchforest.getTreeLayer: Don't know layer for level "..level) return nil end
+end
+
+function BirchForest:copy()
+    local forestCopy = BirchForest:new({
+        _id                     = self._id,
+        _level                  = self._level,
+
+        _location               = coremove.CopyLocation(self._location),
+        _nTrees                 = self._nTrees,
+
+        _localLogsLocator       = self._localLogsLocator:copy(),
+        _localSaplingsLocator   = self._localSaplingsLocator:copy(),
+    })
+
+    return forestCopy
+end
+
+function BirchForest:sameId(forest)
+    return self:getId() == forest:getId()
+end
+
+function BirchForest:sameLevel(forest)
+    return self:getLevel() == forest:getLevel()
+end
+
+function BirchForest:sameLocation(forest)
+    local loc1 = self:getLocation()
+    local loc2 = forest:getLocation()
+
+    return coremove.IsSameLocation(loc1, loc2) and coremove.IsSameDirection(loc1, loc2)
+end
+
+function BirchForest:sameNTrees(forest)
+    return self:getNTrees() == forest:getNTrees()
+end
+
+function BirchForest:getFuelNeed_Harvest_Att()
+    --[[
+        Forest attribute with the current fuelNeed to do one harvesting round.
+    --]]
+
+    -- determine fuelNeed
+    local nTrees = self:getNTrees()
+    local fuelNeed = role_forester.FuelNeededPerRound(nTrees)
+
+    -- end
+    return fuelNeed
+end
+
+function BirchForest:getFuelNeedExtraTree_Att()
+    --[[
+        Forest attribute with the fuelNeed for harvesting one extra tree.
+        (i.e. it return the difference between the current getFuelNeed_Harvest_Att and the getFuelNeed_Harvest_Att if there would be 1 extra tree)
+    --]]
+
+    -- determine fuelNeed
+    local nTrees = self:getNTrees()
+    local fuelNeed_Current = role_forester.FuelNeededPerRound(nTrees)
+    local fuelNeed_OneTreeExtra = role_forester.FuelNeededPerRound(nTrees + 1)
+
+    -- end
+    return fuelNeed_OneTreeExtra - fuelNeed_Current
+end
+
+function BirchForest:provideItemsTo_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+        This async public Supplier service provides specific items to a Storage.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                                                the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                     - (table) data for the service
+                provideItems                + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                        + (string) name of function to call once service is ready
+            callbackData                    + (table) data to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- loop on items
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+        -- check for birchlog or sapling
+        local localStorageLocator = nil
+        if itemName == "minecraft:birch_log" then
+            localStorageLocator = self:getLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            localStorageLocator = self:getLocalSaplingsLocator()
+        else
+            corelog.Error("mobj_birchforest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return FunctionExecutor.DoCallback(callback, callbackData, {success = false})
+        end
+        if not localStorageLocator then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
+
+        -- check items already available in localStorageLocator
+        local localItemsLocator = localStorageLocator:copy()
+        local item = { [itemName] = itemCount }
+        localItemsLocator:setQuery(item)
+        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
+            -- yes: return the items
+            local transferData = {
+                sourceItemsLocator          = localItemsLocator,
+                destinationStorageLocator   = storageLocator,
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+--            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
+            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+        else
+            -- construct new itemsLocator for this forest
+            local enterprise_forestry = require "enterprise_forestry"
+            local forestLocator = enterprise_forestry.GetForestLocator(self:getId())
+            local itemsLocator = forestLocator:copy()
+            itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localSupplierLocator
+
+            -- construct taskData
+            local harvestForestTaskData = {
+                forestLevel         = self:getLevel(),
+                firstTreeLocation   = self:getFirstTreeLocation(),
+                nTrees              = self:getNTrees(),
+                waitForFirstTree    = true,
+--                waitForFirstTree    = (assignmentsPriorityKey ~= nil), -- energy efficient mode if assignmentsPriorityKey is set -- ToDo: consider change
+
+                priorityKey         = assignmentsPriorityKey,
+            }
+
+            -- create project service data
+            local projectDef = {
+                steps = {
+                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
+                    --          (or will this be part of harvestForest?)
+                    { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+                        { keyDef = "task"                       , valueSource = 0, keyDefSource = "harvestForest_Task" },
+                        { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "harvestForestMetaData" },
+                        { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "harvestForestTaskData" },
+                    }},
+                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
+                    --          (or will this be part of harvestForest?)
+                    -- ToDo: consider storing rest/ waste materials (e.g. sticks)
+                    { stepName = "enterprise_forestry.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
+                        { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "itemsLocator" },
+                        { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "storageLocator" },
+                        { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                        { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    }},
+                    { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                        { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                        { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                    }},
+                },
+                returnData  = {
+                    { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+                    { keyDef = "destinationItemsLocator"        , valueSource = 2, keyDefSource = "destinationItemsLocator" },
+                }
+            }
+            local projectData = {
+                itemsLocator                = itemsLocator,
+                ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
+                storageLocator              = storageLocator:copy(),
+
+                harvestForest_Task          = "role_forester.HarvestForest_Task",
+                harvestForestTaskData       = harvestForestTaskData,
+                harvestForestMetaData       = role_forester.HarvestForest_MetaData(harvestForestTaskData),
+
+                assignmentsPriorityKey      = assignmentsPriorityKey,
+            }
+            local projectServiceData = {
+                projectDef  = projectDef,
+                projectData = projectData,
+            }
+
+            -- start project
+--            corelog.WriteToLog(">Harvesting "..itemCount.." "..itemName.."'s from Forest")
+            enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+        end
+    end
+end
+
+function BirchForest:can_ProvideItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems = InputChecker.Check([[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_birchforest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
+
+    -- loop on items
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+
+        -- check for birchlog or sapling
+        if itemName == "minecraft:birch_log" then
+        elseif itemName == "minecraft:birch_sapling" then
+        else
+            return {success = false}
+        end
+    end
+
+    -- end
+    return {
+        success = true,
+    }
+end
+
+function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, storageLocator = InputChecker.Check([[
+        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+
+        Return value:
+                                            - (table)
+                success                     - (boolean) whether the service executed correctly
+                fuelNeed                    - (number) amount of fuel needed to provide items
+                ingredientsNeed             - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                     - (table) data to the query
+                provideItems                + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                ingredientsSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
+
+    -- loop on items
+    local fuelNeed = 0
+    local ingredientsNeed = {} -- ToDo ? should we add saplings for a harvest round here?
+    local nTrees = self:getNTrees()
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- check for birchlog or sapling
+        local itemPerRound = 1
+        local localSupplierLocator = nil
+        if itemName == "minecraft:birch_log" then
+            itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
+            localSupplierLocator = self:getLocalLogsLocator()
+        elseif itemName == "minecraft:birch_sapling" then
+            itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
+            -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
+            localSupplierLocator = self:getLocalSaplingsLocator()
+        else
+            corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false}
+        end
+        if not localSupplierLocator then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid localSupplierLocator (type="..type(localSupplierLocator)..")") return {success = false} end
+
+        -- fuelNeed per round
+        local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
+        local nRounds = math.ceil(itemCount / itemPerRound)
+        local fuelNeed_Rounds = nRounds * fuelPerRound
+
+        -- fuelNeed transfer
+        local localSupplierItemsLocator = localSupplierLocator:copy()
+        local items = { [itemName] = itemCount }
+        localSupplierItemsLocator:setQuery(items)
+        local transferData = {
+            sourceItemsLocator          = localSupplierItemsLocator,
+            destinationStorageLocator   = storageLocator,
+        }
+        local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
+        if not serviceResults.success then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        local fuelNeed_Transfer = serviceResults.fuelNeed
+
+        -- add fuelNeed
+--        corelog.WriteToLog("C  fuelNeed_Rounds="..fuelNeed_Rounds.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), fuelNeed_Transfer="..fuelNeed_Transfer)
+        fuelNeed = fuelNeed + fuelNeed_Rounds + fuelNeed_Transfer
+    end
+
+    -- end
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+        ingredientsNeed = ingredientsNeed,
+    }
+end
+
+--    _                 _    __                  _   _
+--   | |               | |  / _|                | | (_)
+--   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function BirchForest:getFirstTreeLocation()
+    return coremove.GetRelativeLocation(self:getLocation(), 3, 2, 0)
+end
+
+function Tree_layerLm1()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "???S??",
+            [3] = "??????",
+            [2] = "??????",
+            [1] = "??????",
+        },
+    })
+end
+
+function Tree_layerL0()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "   S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "      ",
+        },
+    })
+end
+
+function Tree_layerL1()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
+            ["T"]   = Block:new({ _name = "minecraft:torch" }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+end
+
+function Base_layerL2()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
+            ["T"]   = Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "     D",
+            [2] = "  C D ",
+            [1] = "   T  ",
+        },
+    })
+end
+
+return BirchForest

@@ -1,0 +1,785 @@
+local T_LayerRectangle = {}
+local corelog = require "corelog"
+local coreutils = require "coreutils"
+
+local InputChecker = require "input_checker"
+
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
+
+function T_LayerRectangle.T_All()
+    T_LayerRectangle.T_IsCodeArray()
+    T_LayerRectangle.T_IsSameCodeArray()
+    T_LayerRectangle.T_CodeArrayCopy()
+    T_LayerRectangle.T_TransformToCodeArray()
+
+    T_LayerRectangle.T_IsCodeMap()
+    T_LayerRectangle.T_IsSameCodeMap()
+    T_LayerRectangle.T_CodeMapCopy()
+
+    T_LayerRectangle.T_new()
+    T_LayerRectangle.T_getBlock()
+    T_LayerRectangle.T_IsOfType()
+    T_LayerRectangle.T_isSame()
+    T_LayerRectangle.T_copy()
+    T_LayerRectangle.T_ParseWithCheckInput()
+
+    T_LayerRectangle.T_itemsNeeded()
+    T_LayerRectangle.T_transformToLayer()
+    T_LayerRectangle.T_cleanCodeArray()
+    T_LayerRectangle.T_removeRow()
+    T_LayerRectangle.T_removeColumn()
+    T_LayerRectangle.T_getCodeCol()
+    T_LayerRectangle.T_removeBoundariesWithOnly()
+    T_LayerRectangle.T_buildData()
+end
+
+local torchItemName = "minecraft:torch"
+local saplingItemName = "minecraft:birch_sapling"
+local chestItemName = "minecraft:chest"
+local codeArray1 = {
+    ["T"]   = Block:new({ _name = torchItemName }),
+    ["S"]   = Block:new({ _name = saplingItemName }),
+    ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+    ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+    ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+    [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+}
+
+function T_LayerRectangle.T_IsCodeArray()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.IsCodeArray tests")
+
+    -- test valid
+    local isOfType = LayerRectangle.IsCodeArray(codeArray1)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsCodeArray(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = LayerRectangle.IsCodeArray("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsCodeArray(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_IsSameCodeArray()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.IsSameCodeArray() tests")
+    local codeArray2 = {
+        ["T"]   = Block:new({ _name = torchItemName }),
+        ["S"]   = Block:new({ _name = saplingItemName }),
+        ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    }
+
+    -- test same
+    local isSame = LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different
+    codeArray2["T"] = Block:new({ _name = "minecraft:something"})
+    isSame = LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    codeArray2["T"] = Block:new({ _name = "minecraft:torch" })
+
+    -- test different (size)
+    codeArray2["Z"] = Block:new({ _name = "minecraft:something"})
+    isSame = LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    codeArray2["Z"] = nil
+
+    -- cleanup test
+end
+
+local compact = { compact = true }
+
+function T_LayerRectangle.T_CodeArrayCopy()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.CodeArrayCopy() tests")
+
+    -- test
+    local copy = LayerRectangle.CodeArrayCopy(codeArray1)
+    assert(LayerRectangle.IsSameCodeArray(copy, codeArray1), "gotten CodeArrayCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeArray1, compact)..")")
+
+    -- cleanup test
+end
+
+local dx1 = 0
+local dy1 = 1
+
+function T_LayerRectangle.T_TransformToCodeArray()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.TransformToCodeArray() tests")
+    local block1Table = {
+        _name   = "minecraft:torch",
+        _dx     = dx1,
+        _dy     = dy1,
+    }
+    local block2Table = {
+        _name   = "minecraft:birch_sapling",
+    }
+
+    -- test full
+    local codeArrayTable = {
+        ["T"] = coreutils.DeepCopy(block1Table),
+        ["S"] = coreutils.DeepCopy(block2Table),
+    }
+    assert(not LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
+    local transformed = LayerRectangle.TransformToCodeArray(codeArrayTable)
+    assert(LayerRectangle.IsCodeArray(transformed), "transformed codeArray not a codeArray")
+
+    -- test partial
+    codeArrayTable = {
+        ["T"] = Block:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
+        ["S"] = coreutils.DeepCopy(block2Table),
+    }
+    assert(not LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
+    transformed = LayerRectangle.TransformToCodeArray(codeArrayTable)
+    assert(LayerRectangle.IsCodeArray(transformed), "transformed codeArray(="..textutils.serialise(transformed, compact)..") not a codeArray")
+
+    -- cleanup test
+end
+
+local codeMap1 = {
+    [6] = "CD   ?",
+    [5] = "      ",
+    [4] = "T  S  ",
+    [3] = "  ?   ",
+    [2] = "      ",
+    [1] = "   T  ",
+}
+
+function T_LayerRectangle.T_IsCodeMap()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.IsCodeMap tests")
+
+    -- test valid
+    local isOfType = LayerRectangle.IsCodeMap(codeMap1)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsCodeMap(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = LayerRectangle.IsCodeMap("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsCodeMap(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_IsSameCodeMap()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.IsSameCodeMap() tests")
+    local codeMap2 = {
+        [6] = "CD   ?",
+        [5] = "      ",
+        [4] = "T  S  ",
+        [3] = "  ?   ",
+        [2] = "      ",
+        [1] = "   T  ",
+    }
+
+    -- test same
+    local isSame = LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different
+    codeMap2[4] = "TTTSTT"
+    isSame = LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    codeMap2[4] = "T  S  "
+
+    -- test different (size)
+    codeMap2[7] = "TT  TT"
+    isSame = LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    codeMap2[7] = nil
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_CodeMapCopy()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.CodeMapCopy() tests")
+
+    -- test
+    local copy = LayerRectangle.CodeMapCopy(codeMap1)
+    assert(LayerRectangle.IsSameCodeMap(copy, codeMap1), "gotten CodeMapCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeMap1, compact)..")")
+
+    -- cleanup test
+end
+
+local layer1 = LayerRectangle:new({
+    _codeArray  = codeArray1,
+    _codeMap    = codeMap1,
+})
+
+function T_LayerRectangle.T_new()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:new() tests")
+
+    -- test full
+    local layer = LayerRectangle:new({
+        _codeArray  = codeArray1,
+        _codeMap    = codeMap1,
+    })
+    local expectedNColumns = 6
+    assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
+    local expectedNRows = 6
+    assert(layer:getNRows() == expectedNRows, "gotten getNRows(="..layer:getNRows()..") not the same as expected(="..expectedNRows..")")
+    local code = layer:getCode(4, 1)
+    local expectedCode = "T"
+    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
+    code = layer:getCode(1, 4)
+    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
+    code = layer:getCode(4, 4)
+    expectedCode = "S"
+    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
+
+    -- test default
+    layer = LayerRectangle:new()
+    expectedNColumns = 0
+    assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
+    expectedNRows = 0
+    assert(layer:getNRows() == expectedNRows, "gotten getNRows(="..layer:getNRows()..") not the same as expected(="..expectedNRows..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_getBlock()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:getBlock() tests")
+
+    -- test full
+    local layer = LayerRectangle:new({
+        _codeArray  = codeArray1,
+        _codeMap    = codeMap1,
+    })
+    local block = layer:getBlock(4, 1)
+    local expectedBlock = Block:new({ _name = torchItemName })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 4)
+    expectedBlock = Block:new({ _name = torchItemName })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(4, 4)
+    expectedBlock = Block:new({ _name = saplingItemName })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 1)
+    expectedBlock = Block:new({ _name = Block.NoneBlockName() })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(3, 3)
+    expectedBlock = Block:new({ _name = Block.AnyBlockName() })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 6)
+    expectedBlock = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 })
+    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_IsOfType()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle.IsOfType() tests")
+    local layer = LayerRectangle:new({
+        _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
+        _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
+    })
+
+    -- test valid
+    local isOfType = LayerRectangle.IsOfType(layer)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = LayerRectangle.IsOfType("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test invalid _codeArray
+    layer._codeArray = "a string"
+    isOfType = LayerRectangle.IsOfType(layer)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    layer._codeArray = LayerRectangle.CodeArrayCopy(codeArray1)
+
+    -- test invalid _codeMap
+    layer._codeMap = "a string"
+    isOfType = LayerRectangle.IsOfType(layer)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    layer._codeMap = LayerRectangle.CodeMapCopy(codeMap1)
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:isSame() tests")
+    local layer = LayerRectangle:new({
+        _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
+        _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
+    })
+
+    -- test same
+    local isSame = layer1:isSame(layer)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different _codeArray
+    layer._codeArray = {
+        ["T"]   = "minecraft:torch",
+    }
+    isSame = layer1:isSame(layer)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    layer._codeArray = LayerRectangle.CodeArrayCopy(codeArray1)
+
+    -- test different _codeMap
+    layer._codeMap = {
+        [2] = "      ",
+        [1] = "   T  ",
+    }
+    isSame = layer1:isSame(layer)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    layer._codeMap = LayerRectangle.CodeMapCopy(codeMap1)
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_copy()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:copy() tests")
+
+    -- test
+    local copy = layer1:copy()
+    assert(copy:isSame(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_ParseWithCheckInput()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle parsing with CheckInput tests")
+
+    -- test
+    local checkSuccess, layer = InputChecker.Check([[
+        Parameters:
+            layer   + (LayerRectangle) object to retrieve from arg
+    ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
+    if not checkSuccess then corelog.Error("t_obj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
+    local isOfType = LayerRectangle.IsOfType(layer)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_itemsNeeded()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:itemsNeeded() tests")
+
+    -- test
+    local needed = layer1:itemsNeeded()
+    local name = torchItemName
+    local expectedCount = 2
+    assert(needed[name] == expectedCount, "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
+    name = saplingItemName
+    expectedCount = 1
+    assert(needed[name] == expectedCount, "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
+    name = chestItemName
+    expectedCount = 2
+    assert(needed[name] == expectedCount, "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
+    name = Block.AnyBlockName()
+    expectedCount = 0
+    assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
+    name = Block.NoneBlockName()
+    expectedCount = 0
+    assert(not needed[name], "gotten count(="..(needed[name] or 0)..") for "..name.."'s not the same as expected(="..expectedCount..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_transformToLayer()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
+    local fromLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "   S  ",
+            [5] = "      ",
+            [4] = "   S  ",
+            [3] = "   ?  ",
+            [2] = "   ?  ",
+            [1] = "   ?  ",
+        },
+    })
+    local toLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "   ?  ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "   ?  ",
+            [1] = "   T  ",
+        },
+    })
+
+    -- test
+    local transformLayer = fromLayer:transformToLayer(toLayer)
+    local isOfType = LayerRectangle.IsOfType(transformLayer)
+    local expectedIsOfType = true
+    assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "T?????",
+            [3] = "??? ??",
+            [2] = "??????",
+            [1] = "???T??",
+        },
+    })
+    assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- test anyBlock added to _codeArray
+    toLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+    transformLayer = fromLayer:transformToLayer(toLayer)
+    isOfType = LayerRectangle.IsOfType(transformLayer)
+    expectedIsOfType = true
+    assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??? ??",
+            [5] = "??????",
+            [4] = "T?????",
+            [3] = "??? ??",
+            [2] = "??? ??",
+            [1] = "???T??",
+        },
+    })
+    assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_cleanCodeArray()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:cleanCodeArray() tests")
+    local layer = LayerRectangle:new({
+        _codeArray  ={
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [4] = "    ",
+            [3] = "T   ",
+            [2] = "    ",
+            [1] = " T  ",
+        },
+    })
+
+    -- test
+    layer:cleanCodeArray()
+    local expectedCodeArray  = {
+        ["T"]   = Block:new({ _name = torchItemName }),
+        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    }
+    assert(LayerRectangle.IsSameCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_removeRow()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:removeRow() tests")
+
+    -- test top
+    local layer = layer1:copy()
+    layer:removeRow(6)
+    local expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "  ?   ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- test a mid
+    layer = layer1:copy()
+    layer:removeRow(4)
+    expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [5] = "CD   ?",
+            [4] = "      ",
+            [3] = "  ?   ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- test bottom
+    layer = layer1:copy()
+    layer:removeRow(1)
+    expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [5] = "CD   ?",
+            [4] = "      ",
+            [3] = "T  S  ",
+            [2] = "  ?   ",
+            [1] = "      ",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_getCodeCol()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:getCodeCol() tests")
+
+    -- test
+    local column = layer1:getCodeCol(4)
+    local expectedColumn = "T  S  "
+    assert(column == expectedColumn, "gotten column(="..column..") not the same as expected(="..expectedColumn..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_removeColumn()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:removeColumn() tests")
+
+    -- test right
+    local layer = layer1:copy()
+    layer:removeColumn(6)
+    local expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "CD   ",
+            [5] = "     ",
+            [4] = "T  S ",
+            [3] = "  ?  ",
+            [2] = "     ",
+            [1] = "   T ",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- test mid
+    layer = layer1:copy()
+    layer:removeColumn(4)
+    expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "CD  ?",
+            [5] = "     ",
+            [4] = "T    ",
+            [3] = "  ?  ",
+            [2] = "     ",
+            [1] = "     ",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- test left
+    layer = layer1:copy()
+    layer:removeColumn(1)
+    expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["S"]   = Block:new({ _name = saplingItemName }),
+            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "D   ?",
+            [5] = "     ",
+            [4] = "  S  ",
+            [3] = " ?   ",
+            [2] = "     ",
+            [1] = "  T  ",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_removeBoundariesWithOnly()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:removeBoundariesWithOnly() tests")
+
+    -- test right
+    local layer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "??TC ?",
+            [3] = "?? C??",
+            [2] = "??? T?",
+            [1] = "??????",
+        },
+    })
+    local code = "?"
+    local colOffset, rowOffset = layer:removeBoundariesWithOnly(code)
+    local expectedOffset = 1
+    assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
+    expectedOffset = 2
+    assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
+    local expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "TC ",
+            [2] = " C?",
+            [1] = "? T",
+        },
+    })
+    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- cleanup test
+end
+
+function T_LayerRectangle.T_buildData()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:buildData() tests")
+
+    -- test right
+    local layer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "??TC ?",
+            [3] = "?? C??",
+            [2] = "??? T?",
+            [1] = "??????",
+        },
+    })
+    local colOffset, rowOffset, buildLayer = layer:buildData()
+    local expectedOffset = 1
+    assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
+    expectedOffset = 2
+    assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
+    local expectedLayer = LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = torchItemName }),
+            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "TC ",
+            [2] = " C?",
+            [1] = "? T",
+        },
+    })
+    assert(buildLayer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+
+    -- cleanup test
+end
+
+return T_LayerRectangle

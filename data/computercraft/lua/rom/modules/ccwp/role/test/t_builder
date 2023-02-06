@@ -1,0 +1,139 @@
+local t_builder = {}
+local corelog = require "corelog"
+local coremove = require "coremove"
+
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
+
+local role_builder = require "role_builder"
+
+function t_builder.T_All()
+--    T_PatternsSubstract()
+    t_builder.T_BuildLayer_MetaData()
+    t_builder.T_BuildBlueprint_MetaData()
+end
+
+local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
+
+local size_x1 = 4
+local size_y1 = 6
+local chestItemName = "minecraft:chest"
+local torchItemName = "minecraft:torch"
+local codeArray1 = {
+    ["T"]   = Block:new({ _name = torchItemName }),
+    ["C"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+    ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+    [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+}
+local codeMap1 = {
+    [6] = "  C ",
+    [5] = "    ",
+    [4] = "T   ",
+    [3] = "    ",
+    [2] = "    ",
+    [1] = "   T",
+}
+local testBuildLayer1 = LayerRectangle:new({
+    _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
+    _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
+})
+
+local testBuildLayer2 = LayerRectangle:new({
+    _codeArray  = {
+        ["C"]   = Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
+        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["E"]   = Block:new({ _name = chestItemName, _dx = 0, _dy =-1 }),
+        ["F"]   = Block:new({ _name = chestItemName, _dx = 1, _dy = 0 }),
+        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    },
+    _codeMap    = {
+        [3] = "DDF",
+        [2] = "C F",
+        [1] = "CEE",
+    },
+})
+
+local compact = { compact = true }
+
+function t_builder.T_BuildLayer_MetaData()
+    -- prepare test
+    corelog.WriteToLog("* role_builder BuildLayer_MetaData test")
+    local buildFromAbove = true
+    local buildData = {startpoint = testStartLocation, buildFromAbove = buildFromAbove, layer = testBuildLayer1}
+
+    -- test
+    local metaData = role_builder.BuildLayer_MetaData(buildData)
+    local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
+    local expectedLocation = coremove.GetRelativeLocation(testStartLocation, 0, 0, deltaZ)
+    assert(coremove.IsSameLocation(metaData.location, expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
+    assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
+    local expectedFuelNeeded = size_x1*size_y1 - 1
+    assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
+    assert(metaData.itemsNeeded[chestItemName] == 1, "gotten itemCount(="..metaData.itemsNeeded[chestItemName]..") for "..chestItemName.."'s not the same as expected(=1)")
+    assert(metaData.itemsNeeded[torchItemName] == 2, "gotten itemCount(="..metaData.itemsNeeded[torchItemName]..") for "..torchItemName.."'s not the same as expected(=2)")
+
+    -- cleanup test
+end
+
+function t_builder.T_BuildBlueprint_MetaData()
+    -- prepare test
+    corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
+    local testBlueprint = {
+        layerList = {
+            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, layer = testBuildLayer1:copy()},
+            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, layer = testBuildLayer2:copy()},
+        },
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
+    }
+    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
+
+    -- test
+    local metaData = role_builder.BuildBlueprint_MetaData(blueprintBuildData)
+    local expectedLocation = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0)
+    assert(coremove.IsSameLocation(metaData.location, expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
+    assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
+    local expectedFuelNeeded = 47
+    assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
+    assert(metaData.itemsNeeded[chestItemName] == 9, "gotten itemCount(="..metaData.itemsNeeded[chestItemName]..") for "..chestItemName.."'s not the same as expected(=9)")
+    assert(metaData.itemsNeeded[torchItemName] == 2, "gotten itemCount(="..metaData.itemsNeeded[torchItemName]..") for "..torchItemName.."'s not the same as expected(=2)")
+
+    -- cleanup test
+end
+
+local anyBlock = Block.AnyBlockName()
+local noneBlock = Block.NoneBlockName()
+local testBuildLayer3 = LayerRectangle:new({
+    _codeArray  = {
+        ["T"]   = Block:new({ _name = torchItemName }),
+        ["C"]   = Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
+        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    },
+    _codeMap    = {
+        [6] = "C D  T",
+        [5] = "    T ",
+        [4] = "   T  ",
+        [3] = "??T   ",
+        [2] = " T    ",
+        [1] = "T    D",
+    },
+})
+
+function t_builder.T_BuildLayer_Task()
+    -- prepare test
+    corelog.WriteToLog("* role_builder BuildLayer_Task test")
+    local testBuildLayer = testBuildLayer3:copy()
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer}
+
+    -- test
+    role_builder.BuildLayer_Task(buildData)
+
+    -- cleanup test
+end
+
+return t_builder
