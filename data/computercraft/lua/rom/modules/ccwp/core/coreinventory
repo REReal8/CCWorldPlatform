@@ -1,3 +1,12 @@
+local coreinventory = {}
+local corelog = require "corelog"
+local coredht = require "coredht"
+local coreutils = require "coreutils"
+
+local InputChecker = require "input_checker"
+
+local ItemInventory = require "obj_item_inventory"
+
 local db	= {
 	dbFilename  = "/db/coreinventory.lua",
 	protocol	= "coreinventory",
@@ -6,7 +15,7 @@ local db	= {
 }
 
 -- init, read last db from file
-function Init()
+function coreinventory.Init()
 	-- read from file
 	local dbFile = coreutils.ReadTableFromFile(db.dbFilename)
 
@@ -14,21 +23,21 @@ function Init()
 	if next(dbFile) ~= nil then db = dbFile end
 end
 
-function Setup()
+function coreinventory.Setup()
     -- niks te doen voor setup
     coredht.DHTReadyFunction(DHTReadySetup)
 end
 
 function DHTReadySetup()
     -- controleren of dht root bestaat
-    if not coredht.GetData("allItems") then ResetAllItems() end
+    if not coredht.GetData("allItems") then coreinventory.ResetAllItems() end
 end
 
-function ResetAllItems()
+function coreinventory.ResetAllItems()
     coredht.SaveData({}, "allItems")
 end
 
-function GetEmptySlot(list)
+function coreinventory.GetEmptySlot(list)
     -- list is an optional table containing which slots are allowed
 
     -- alle slots nalopen
@@ -38,7 +47,7 @@ function GetEmptySlot(list)
         if not list or list[slot] then
 
             -- wat zit er in dit slot
-            local data = GetItemDetail(slot)
+            local data = coreinventory.GetItemDetail(slot)
 
             -- deze slot wel het juiste item?
             if not data then
@@ -56,7 +65,7 @@ function GetEmptySlot(list)
     return false
 end
 
-function GetItemDetail(slot)
+function coreinventory.GetItemDetail(slot)
     -- wrap around turtle.getItemDetail to store all known information about items
 
     -- informatie ophalen
@@ -74,14 +83,14 @@ function GetItemDetail(slot)
     return data
 end
 
-function GetStackSize(itemName)
+function coreinventory.GetStackSize(itemName)
     -- return what the dht has, otherwise 64 as default value
     return coredht.GetData("allItems", itemName, "stackSize") or 64
 end
 
-function SelectItem(itemName)
+function coreinventory.SelectItem(itemName)
     -- eerst huidige slot onderzoeken
-    local data = GetItemDetail()
+    local data = coreinventory.GetItemDetail()
 
     -- juiste?
     if data and data.name == itemName then return true end
@@ -90,7 +99,7 @@ function SelectItem(itemName)
     for slot = 1, 16 do
 
         -- wat zit er in dit slot
-        data = GetItemDetail(slot)
+        data = coreinventory.GetItemDetail(slot)
 
         -- deze slot wel het juiste item?
         if data and data.name == itemName then
@@ -107,7 +116,7 @@ function SelectItem(itemName)
     return false
 end
 
-function CountItem(itemName)
+function coreinventory.CountItem(itemName)
     -- keep itemCount
     local itemCount = 0
 
@@ -115,7 +124,7 @@ function CountItem(itemName)
     for slot=1,16 do
 
         -- get detailed information about this slot
-        local itemDetail = GetItemDetail(slot)
+        local itemDetail = coreinventory.GetItemDetail(slot)
 
         -- right item?
         if type(itemDetail) == "table" and itemDetail.name == itemName then itemCount = itemCount + itemDetail.count end
@@ -125,7 +134,7 @@ function CountItem(itemName)
     return itemCount
 end
 
-function GetAllItems(direction)
+function coreinventory.GetAllItems(direction)
     local f    = turtle.suck
 
     -- andere richting?
@@ -136,7 +145,7 @@ function GetAllItems(direction)
     while f() do end
 end
 
-function GetInventoryDetail()
+function coreinventory.GetInventoryDetail()
     -- to hold the data
     local inventory = {
         items   = {},
@@ -147,7 +156,7 @@ function GetInventoryDetail()
     for slot=1,16 do
 
         -- get detailed information about this slot
-        local itemDetail = GetItemDetail(slot)
+        local itemDetail = coreinventory.GetItemDetail(slot)
 
         -- right item?
         if type(itemDetail) == "table" then
@@ -168,7 +177,7 @@ function GetInventoryDetail()
 end
 
 -- ToDo: consider removing once we fully use ItemInventory object
-function DetermineItemsList(slots)
+function coreinventory.DetermineItemsList(slots)
     -- construct items list
     local items = {}
 
@@ -188,7 +197,7 @@ end
 -- ToDo: consider removing once we fully use ItemInventory object
 function CopyInventory(...)
     -- get & check input from description
-    local checkSuccess, items, slots = coreutils.CheckInput([[
+    local checkSuccess, items, slots = InputChecker.Check([[
         This async private function copies an inventory.
 
         Return value:
@@ -203,7 +212,7 @@ function CopyInventory(...)
 
     -- construct copy
     local copy = {
-        items   = obj_item_inventory.ItemInventory.ItemTableCopy(items),
+        items   = ItemInventory.ItemTableCopy(items),
         slots   = CopySlots(slots),
     }
 
@@ -213,7 +222,7 @@ end
 
 function CopySlots(...)
     -- get & check input from description
-    local checkSuccess, slots = coreutils.CheckInput([[
+    local checkSuccess, slots = InputChecker.Check([[
         This async private function copies slots (inventory).
 
         Return value:
@@ -238,7 +247,7 @@ function CopySlots(...)
     return copy
 end
 
-function DropAllItems(direction)
+function coreinventory.DropAllItems(direction)
     -- check the direction, lowercase only
     direction = direction or "down"
     direction = string.lower(direction)
@@ -253,7 +262,7 @@ function DropAllItems(direction)
         turtle.select(slot)
 
         -- for the cargoList
-        local itemData = GetItemDetail(slot)
+        local itemData = coreinventory.GetItemDetail(slot)
 
         -- add to the cargoList
         if itemData then cargoList[ itemData.name ] = (cargoList[ itemData.name ] or 0) + itemData.count end
@@ -269,7 +278,7 @@ function DropAllItems(direction)
     return cargoList
 end
 
-function DropAll(itemName, direction)
+function coreinventory.DropAll(itemName, direction)
     -- check the direction, lowercase only
     direction = direction or "front"
     direction = string.lower(direction)
@@ -278,7 +287,7 @@ function DropAll(itemName, direction)
     for slot = 1, 16 do
 
         -- wat zit er in dit slot
-        local data = GetItemDetail(slot)
+        local data = coreinventory.GetItemDetail(slot)
 
         -- deze slot wel het juiste item?
         if data and data.name == itemName then
@@ -295,14 +304,14 @@ function DropAll(itemName, direction)
     end
 end
 
-function Equip(itemName)
+function coreinventory.Equip(itemName)
     local slot = nil
 
     -- already equiped?
     if db.right == itemName then return true end
 
     -- find empty spot (remove current equiped to the right when we have an empty spot)
-    if GetEmptySlot() then
+    if coreinventory.GetEmptySlot() then
 
         -- remember this slot
         slot = turtle.getSelectedSlot()
@@ -312,10 +321,10 @@ function Equip(itemName)
     end
 
     -- find the crafting table
-    SelectItem(itemName)
+    coreinventory.SelectItem(itemName)
 
     -- did we found one?
-    if GetItemDetail() then -- ToDo: shouldn't a slot be passed to GetItemDetail() ?
+    if coreinventory.GetItemDetail() then -- ToDo: shouldn't a slot be passed to GetItemDetail() ?
         -- remember this
         db.right    = itemName
 
@@ -347,7 +356,7 @@ function Refuel(fuel)
     local itemsLeft  = fuel.itemCount
 
     -- find the fuel in the inventory
-    while SelectItem(fuel.itemName) and itemsLeft > 0 do
+    while coreinventory.SelectItem(fuel.itemName) and itemsLeft > 0 do
 
         -- how many present
         local itemsPresent  = turtle.getItemCount()
@@ -368,3 +377,5 @@ function Refuel(fuel)
     -- done
     return true
 end
+
+return coreinventory
