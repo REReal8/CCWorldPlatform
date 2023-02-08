@@ -199,16 +199,6 @@ local function SetFieldValueFromKeyDef(stepData, keyDef, fieldValue)
     return true
 end
 
-local function TerminateProject(internalProjectData)
-    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
-    if type(project) ~= "table" then corelog.Error("enterprise_projects.TerminateProject: Invalid/ no project retrieved from "..internalProjectData.projectId) return nil end
-
-    corelog.WriteToProjectsLog("Warning!: Early Termination", project.projectId)
-    corelog.Error("Early Termination of project "..project.projectId)
-
-    EndProject(internalProjectData)
-end
-
 local function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
@@ -238,6 +228,16 @@ local function EndProject(internalProjectData)
     -- forget about this project
     corelog.WriteToProjectsLog("Ended", project.projectId)
     coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
+end
+
+local function TerminateProject(internalProjectData)
+    local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+    if type(project) ~= "table" then corelog.Error("enterprise_projects.TerminateProject: Invalid/ no project retrieved from "..internalProjectData.projectId) return nil end
+
+    corelog.WriteToProjectsLog("Warning!: Early Termination", project.projectId)
+    corelog.Error("Early Termination of project "..project.projectId)
+
+    EndProject(internalProjectData)
 end
 
 function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
