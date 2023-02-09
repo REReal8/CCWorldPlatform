@@ -24,7 +24,7 @@ local enterprise_turtle
 --   | |
 --   |_|
 
-function BuildBlueprint_ASrv(...)
+function enterprise_construction.BuildBlueprint_ASrv(...)
     -- get & check input from description
     local checkSuccess, blueprintStartpoint, blueprint, materialsHostLocator, callback, callbackData = InputChecker.Check([[
         This async public service builds a blueprint as a single assignment/ task.
@@ -118,7 +118,7 @@ function BuildBlueprint_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function BuildLayer_ASrv(...)
+function enterprise_construction.BuildLayer_ASrv(...)
     -- get & check input from description
     local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsHostLocator, callback, callbackData = InputChecker.Check([[
         This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
