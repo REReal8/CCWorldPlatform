@@ -37,6 +37,7 @@ local t_chests                    = require "test.t_chests"
 local t_factory                   = require "test.t_factory"
 local t_forestry                  = require "test.t_forestry"
 local t_shop                      = require "test.t_shop"
+local t_turtle                    = require "test.t_turtle"
 
 function t_main.T_dummy()
     corelog.WriteToLog("Running T_()")
@@ -72,6 +73,7 @@ function t_main.T_All()
     t_energy.T_All()
     t_chests.T_All()
     t_shop.T_All()
+    t_turtle.T_All()
 end
 
 function t_main.T_ResetWorld()

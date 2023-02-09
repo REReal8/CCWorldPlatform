@@ -36,6 +36,7 @@ function library.Setup()
     objectRegistry:requireAndRegisterObjectTests("t_shop")
     objectRegistry:requireAndRegisterObjectTests("t_storage")
     objectRegistry:requireAndRegisterObjectTests("t_test")
+    objectRegistry:requireAndRegisterObjectTests("t_turtle")
 
     -- do other stuff
 end

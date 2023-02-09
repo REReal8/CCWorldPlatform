@@ -1,4 +1,4 @@
-local t_turle = {}
+local t_turtle = {}
 local corelog = require "corelog"
 local coremove = require "coremove"
 
@@ -10,6 +10,10 @@ local enterprise_isp = require "enterprise_isp"
 local t_factory = require "test.t_factory"
 local T_BirchForest = require "test.t_mobj_birchforest"
 
+function t_turtle.T_All()
+--    t_turtle.T_GetFuelLevels_Att()
+end
+
 local itemsQuery = {
     ["minecraft:birch_log"] = 1,
     ["minecraft:torch"]     = 5,
@@ -19,7 +23,7 @@ local callbackFunction = "t_main.Func1_Callback"
 local callbackData = {"some callback data"}
 local level0 = 0
 
-function t_turle.T_TransferItemsFromTo_Turtles()
+function t_turtle.T_TransferItemsFromTo_Turtles()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
     -- create transferData
     local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
@@ -34,7 +38,7 @@ function t_turle.T_TransferItemsFromTo_Turtles()
     enterprise_isp.TransferItemsFromTo_ASrv(transferData, callbackFunction, callbackData)
 end
 
-function t_turle.T_Can_ProvideItems()
+function t_turtle.T_Can_ProvideItems()
     corelog.WriteToLog("* Test Can_ProvideItems_QSrv for turtles:")
     -- create transferData
     local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
@@ -49,7 +53,7 @@ function t_turle.T_Can_ProvideItems()
 end
 
 -- print("GetFuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
-function t_turle.T_GetFuelLevels_Att()
+function t_turtle.T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
@@ -78,4 +82,4 @@ function t_turle.T_GetFuelLevels_Att()
     enterprise_forestry.RemoveForest(forestLocator)
 end
 
-return t_turle
+return t_turtle
