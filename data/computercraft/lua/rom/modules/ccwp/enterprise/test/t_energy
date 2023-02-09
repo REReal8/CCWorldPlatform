@@ -29,7 +29,7 @@ end
 -- print("GetFuelNeed_Refuel_Att="..textutils.serialize(enterprise_energy.GetFuelNeed_Refuel_Att()))
 function t_energy.T_GetFuelNeed_Refuel_Att()
     -- prepare test
-    corelog.WriteToLog("* GetFuelNeed_Refuel_Att tests")
+    corelog.WriteToLog("* enterprise_energy.GetFuelNeed_Refuel_Att() tests")
     local turtleLocation = coremove.GetLocation()
     local forestLocation = coremove.GetRelativeLocation(turtleLocation, -3, -2, 0)
     local forest = T_BirchForest.CreateForest(levelm1, forestLocation) if not forest then corelog.Error("failed obtaining forest") return end
@@ -91,7 +91,7 @@ end
 
 function t_energy.T_GetRefuelAmount_Att()
     -- prepare test
-    corelog.WriteToLog("* GetRefuelAmount_Att tests")
+    corelog.WriteToLog("* enterprise_energy.GetRefuelAmount_Att() tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
