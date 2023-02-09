@@ -132,6 +132,47 @@ function coreutils.DeepCopy(orig)
     return copy
 end
 
+function ArrayContainsElement(array,  searchElement)
+	-- loop over elements
+	for i, element in ipairs(array) do
+		-- check if searchElement
+		if element == searchElement then
+			return true
+		end
+	end
+
+	-- end
+	return false
+end
+
+function coreutils.CheckForRepetitions(orig, allTablesArray, duplicatTablesArray)
+    local orig_type = type(orig)
+	allTablesArray = allTablesArray or {}
+	duplicatTablesArray = duplicatTablesArray or {}
+
+	-- check orig is a table
+    if orig_type == 'table' then
+		-- check table already listed
+		if ArrayContainsElement(allTablesArray, orig) then
+--			corelog.WriteToLog(" duplicate table found:"..textutils.serialize(orig))
+			-- check it is the first time
+			if not ArrayContainsElement(duplicatTablesArray, orig) then
+				table.insert(duplicatTablesArray, orig)
+			end
+		else
+			table.insert(allTablesArray, orig)
+		end
+
+		-- loop on elements in table
+        for key, value in pairs(orig) do
+            coreutils.CheckForRepetitions(value, allTablesArray, duplicatTablesArray)
+        end
+    else -- number, string, boolean, etc
+    end
+
+	return duplicatTablesArray
+end
+
 -- dummy function to claim namespace until the function will be implemented
 function coreutils.NIY(msg)
 	-- Not implemented yet, do nothing special
