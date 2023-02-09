@@ -194,32 +194,6 @@ function coreinventory.DetermineItemsList(slots)
     return items
 end
 
--- ToDo: consider removing once we fully use ItemInventory object
-local function CopyInventory(...)
-    -- get & check input from description
-    local checkSuccess, items, slots = InputChecker.Check([[
-        This async private function copies an inventory.
-
-        Return value:
-            inventoryCopy               - (table) copy of the inventory
-
-        Parameters:
-            inventory                   - (table) inventory to copy
-                items                   + (table) items inventory
-                slots                   + (table) slots inventory
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.CopyInventory: Invalid input") return nil end
-
-    -- construct copy
-    local copy = {
-        items   = ItemInventory.ItemTableCopy(items),
-        slots   = CopySlots(slots),
-    }
-
-    -- end
-    return copy
-end
-
 local function CopySlots(...)
     -- get & check input from description
     local checkSuccess, slots = InputChecker.Check([[
@@ -242,6 +216,32 @@ local function CopySlots(...)
             itemCount   = slot.itemCount,
         }
     end
+
+    -- end
+    return copy
+end
+
+-- ToDo: consider removing once we fully use ItemInventory object
+local function CopyInventory(...)
+    -- get & check input from description
+    local checkSuccess, items, slots = InputChecker.Check([[
+        This async private function copies an inventory.
+
+        Return value:
+            inventoryCopy               - (table) copy of the inventory
+
+        Parameters:
+            inventory                   - (table) inventory to copy
+                items                   + (table) items inventory
+                slots                   + (table) slots inventory
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("mobj_chest.CopyInventory: Invalid input") return nil end
+
+    -- construct copy
+    local copy = {
+        items   = ItemInventory.ItemTableCopy(items),
+        slots   = CopySlots(slots),
+    }
 
     -- end
     return copy
