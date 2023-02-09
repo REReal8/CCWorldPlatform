@@ -89,8 +89,11 @@ local function SaveDataToDB(data, ...)
             ldb = ldb[node]
         end
 
+        -- ensure a copy of the data (to prevent possible table repetitions in db)
+        local dataCopy = textutils.unserialise(textutils.serialise(data))
+
         -- store the data in the last given node
-        ldb[listOfNodes[#listOfNodes]] = data
+        ldb[listOfNodes[#listOfNodes]] = dataCopy
     end
 
     -- save the db table to a file
