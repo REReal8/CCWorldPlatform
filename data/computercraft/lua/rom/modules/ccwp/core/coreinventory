@@ -205,7 +205,7 @@ local function CopySlots(...)
         Parameters:
             slots                       + (table) slots to copy
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.CopySlots: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("coreinventory.CopySlots: Invalid input") return nil end
 
     -- construct copy
     local copy = {}
@@ -235,7 +235,7 @@ local function CopyInventory(...)
                 items                   + (table) items inventory
                 slots                   + (table) slots inventory
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.CopyInventory: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("coreinventory.CopyInventory: Invalid input") return nil end
 
     -- construct copy
     local copy = {
