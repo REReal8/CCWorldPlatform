@@ -137,7 +137,75 @@ function ItemsCollected(site, topChest)
     coredht.SaveData("free", db.dhtRoot, db.dhtSites, site.sitesIndex, "topChests", topChest.chestIndex, "status")
 end
 
-function BuildNewSite_ASrv(siteData, callback, callbackData)
+local function TopL0_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "  C C ",
+            [5] = "      ",
+            [4] = "T     ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+end
+
+local function Shaft_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [1] = " ",
+        },
+    })
+end
+
+local function Chest_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
+            ["E"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy =-1 }),
+            ["F"]   = Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "DDF",
+            [2] = "C F",
+            [1] = "CEE",
+        },
+    })
+end
+
+local function GetSiloL0_blueprint(siteData)
+    -- construct layer list
+    if siteData.topChests ~= 2 then corelog.Warning("enterprise_storage_silo.GetSiloL0_blueprint: Not yet implemented for other (="..siteData.topChests..") than 2 top chests") end
+    local layerList = {
+        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use siteData.topChests
+        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = false, layer = Shaft_layer()},
+    }
+    for i=1, siteData.layers, 1 do
+        table.insert(layerList, { startpoint = { x= 2, y= 2, z= -1-i}, buildFromAbove = false, layer = Chest_layer()})
+    end
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+            { x= 3, y= 3, z=  1},
+        }
+    }
+
+    return blueprint
+end
+
+function enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback, callbackData)
     --[[
         This public function (service) builds a new silo.
 
@@ -167,7 +235,7 @@ function BuildNewSite_ASrv(siteData, callback, callbackData)
     enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback, callbackData)
 end
 
-function StartNewSite_SSrv(siteData)
+function enterprise_storage_silo.StartNewSite_SSrv(siteData)
     -- variables
     local site  = {
         type            = "silo",
@@ -281,73 +349,5 @@ end
 --   |_.__/ \__,_|_|_|\__,_| | .__/ \__,_|\__|\__\___|_|  |_| |_|___/  \___/\/ |_.__/|_|\__,_|\___| .__/|_|  |_|_| |_|\__|___/
 --                           | |                                                                  | |
 --                           |_|                                                                  |_|
-
-function TopL0_layer()
-    return LayerRectangle:new({
-        _codeArray  = {
-            ["T"]   = Block:new({ _name = "minecraft:torch" }),
-            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
-        },
-        _codeMap    = {
-            [6] = "  C C ",
-            [5] = "      ",
-            [4] = "T     ",
-            [3] = "      ",
-            [2] = "      ",
-            [1] = "   T  ",
-        },
-    })
-end
-
-function Shaft_layer()
-    return LayerRectangle:new({
-        _codeArray  = {
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
-        },
-        _codeMap    = {
-            [1] = " ",
-        },
-    })
-end
-
-function Chest_layer()
-    return LayerRectangle:new({
-        _codeArray  = {
-            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
-            ["D"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
-            ["E"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy =-1 }),
-            ["F"]   = Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
-        },
-        _codeMap    = {
-            [3] = "DDF",
-            [2] = "C F",
-            [1] = "CEE",
-        },
-    })
-end
-
-function GetSiloL0_blueprint(siteData)
-    -- construct layer list
-    if siteData.topChests ~= 2 then corelog.Warning("enterprise_storage_silo.GetSiloL0_blueprint: Not yet implemented for other (="..siteData.topChests..") than 2 top chests") end
-    local layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use siteData.topChests
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = false, layer = Shaft_layer()},
-    }
-    for i=1, siteData.layers, 1 do
-        table.insert(layerList, { startpoint = { x= 2, y= 2, z= -1-i}, buildFromAbove = false, layer = Chest_layer()})
-    end
-
-    -- construct blueprint
-    local blueprint = {
-        layerList = layerList,
-        escapeSequence = {
-            { x= 3, y= 3, z=  1},
-        }
-    }
-
-    return blueprint
-end
 
 return enterprise_storage_silo
