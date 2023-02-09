@@ -180,7 +180,7 @@ function ExecuteTest(t)
 	-- forward call with options
 	local options	= {
 		{key = "g", desc = "general", 			func = ExecuteTest, param = {filename = "t_main"}},
-		{key = "m", desc = "move", 				func = ExecuteTest, param = {filename = "t_move"}},
+		{key = "m", desc = "move", 				func = ExecuteTest, param = {filename = "t_coremove"}},
 		{key = "d", desc = "coredht", 			func = ExecuteTest, param = {filename = "t_coredht"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}

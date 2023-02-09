@@ -1,9 +1,9 @@
-local t_move = {}
+local t_coremove = {}
 
 local corelog = require "corelog"
 local coremove = require "coremove"
 
-function t_move.T_GoHome()
+function t_coremove.T_GoHome()
     coremove.GoTo({
         x	= 0,
         y	= 0,
@@ -13,7 +13,7 @@ function t_move.T_GoHome()
     })
 end
 
-function t_move.T_GoToLeftHome()
+function t_coremove.T_GoToLeftHome()
     coremove.GoTo({
         x	= -24,
         y	= 0,
@@ -23,7 +23,7 @@ function t_move.T_GoToLeftHome()
     })
 end
 
-function t_move.T_GoToRightHome()
+function t_coremove.T_GoToRightHome()
     coremove.GoTo({
         x	= 24,
         y	= 0,
@@ -33,11 +33,11 @@ function t_move.T_GoToRightHome()
     })
 end
 
-function t_move.T_GoStart()
+function t_coremove.T_GoStart()
     coremove.GoTo({x= 3, y= 2, z= 1, dx=0, dy=1})
 end
 
-function t_move.T_Reset()
+function t_coremove.T_Reset()
     coremove.SetLocation({
         x	= 0,
         y	= 0,
@@ -47,22 +47,22 @@ function t_move.T_Reset()
     })
 end
 
-function t_move.T_DeFuel()
+function t_coremove.T_DeFuel()
     while turtle.getFuelLevel() > 2*24 do
-        t_move.T_GoToLeftHome()
+        t_coremove.T_GoToLeftHome()
 
-        t_move.T_GoHome()
+        t_coremove.T_GoHome()
 
         corelog.WriteToLog(" deFueled to "..turtle.getFuelLevel())
     end
 
     while turtle.getFuelLevel() > 2*5 do
-        t_move.T_GoStart()
+        t_coremove.T_GoStart()
 
-        t_move.T_GoHome()
+        t_coremove.T_GoHome()
 
         corelog.WriteToLog(" deFueled to "..turtle.getFuelLevel())
     end
 end
 
-return t_move
+return t_coremove

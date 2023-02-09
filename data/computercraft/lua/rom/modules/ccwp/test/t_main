@@ -5,7 +5,7 @@ local coreinventory = require "coreinventory"
 local coreassignment = require "coreassignment"
 
 local t_coredht = require "test.t_coredht"
-local t_move = require "test.t_move"
+local t_coremove = require "test.t_coremove"
 
 local t_alchemist = require "test.t_alchemist"
 local t_builder = require "test.t_builder"
@@ -94,7 +94,7 @@ end
 function t_main.GoHomeCallBack(callbackData, taskResult)
     corelog.WriteToLog("  doing t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
-    t_move.T_GoHome()
+    t_coremove.T_GoHome()
 end
 
 return t_main
