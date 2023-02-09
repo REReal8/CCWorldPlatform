@@ -218,7 +218,7 @@ function Chest:needsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
-function UpdateChestInventory_ASrv(...)
+function Chest.UpdateChestInventory_ASrv(...)
     -- get & check input from description
     local checkSuccess, chest, callback, callbackData = InputChecker.Check([[
         This async private service updates (fetches) the inventory from a Chest.
@@ -237,7 +237,7 @@ function UpdateChestInventory_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.UpdateChestInventory_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest.UpdateChestInventory_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
@@ -258,7 +258,7 @@ function UpdateChestInventory_ASrv(...)
                 { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
                 { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
             }},
-            { stepName = "mobj_chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
+            { stepName = "Chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
                 { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -283,7 +283,7 @@ end
 
 -- ToDo: objectify
 -- function Chest:getItemsIntoTurtle_ASrv(...)
-function FetchItemsFromChestIntoTurtle_ASrv(...)
+function Chest.FetchItemsFromChestIntoTurtle_ASrv(...)
     -- get & check input from description
 -- ToDo: objectify
 --    local checkSuccess, items, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
@@ -307,7 +307,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
     -- ToDo: objectify
 --    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
 --    local chest = self
@@ -334,7 +334,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
                 { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
                 { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
             }},
-            { stepName = "mobj_chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
+            { stepName = "Chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
                 { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_turtle.GetItemsLocator_SSrv", async = false, stepDataDef = {
@@ -363,7 +363,7 @@ function FetchItemsFromChestIntoTurtle_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function PutItemsFromTurtleIntoChest_ASrv(...)
+function Chest.PutItemsFromTurtleIntoChest_ASrv(...)
     -- get & check input from description
     local checkSuccess, chest, turtleItemsLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
         This async private service puts items from a the inventory of a turtle into a Chest.
@@ -384,12 +384,12 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_chest.PutItemsFromTurtleIntoChest_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check source is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
-    if not serviceResults.success then corelog.Error("mobj_chest.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
@@ -414,7 +414,7 @@ function PutItemsFromTurtleIntoChest_ASrv(...)
                 { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
                 { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
             }},
-            { stepName = "mobj_chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
+            { stepName = "Chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
                 { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
@@ -444,7 +444,7 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function DetermineItemsList_SSrv(...)
+function Chest.DetermineItemsList_SSrv(...)
     -- get & check input from description
     local checkSuccess, slots = InputChecker.Check([[
         This sync private service determined an items list from a slots inventory.

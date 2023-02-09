@@ -9,7 +9,8 @@ function library.Setup()
     -- register library objects
     local ObjectRegistry = require "object_registry"
     local objectRegistry = ObjectRegistry:getInstance()
-    -- ToDo: add
+    objectRegistry:requireAndRegisterObject("Chest", "mobj_chest")
+    -- ToDo: consider adding & using object_factory
 
     -- register library object tests
     objectRegistry:requireAndRegisterObject("T_Chest", "test.t_mobj_chest")

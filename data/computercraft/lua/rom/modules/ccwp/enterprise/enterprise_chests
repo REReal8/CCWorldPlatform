@@ -165,7 +165,7 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
     -- create project definition
     local updateChestRecordsProjectDef = {
         steps   = {
-            { stepName = "mobj_chest.UpdateChestInventory_ASrv", async = true, stepDataDef = {
+            { stepName = "Chest.UpdateChestInventory_ASrv", async = true, stepDataDef = {
                 { keyDef = "chest"      , valueSource = 0, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
@@ -474,7 +474,7 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
 -- option1: add a new project step type (next to async true/false) that operates on an object (self)
 -- option?: also automatically handle save object again?
 --            { stepName = "getItemsIntoTurtle_ASrv", async = true, stepObjDef = { valueSourceIndex = 0, keyDefSource = "chest"}, stepDataDef = {
-            { stepName = "mobj_chest.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
+            { stepName = "Chest.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
                 { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
                 { keyDef = "items"                  , valueSource = 0, keyDefSource = "items" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
@@ -546,7 +546,7 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
     -- create project definition
     local putItemsIntoChestProjectDef = {
         steps   = {
-            { stepName = "mobj_chest.PutItemsFromTurtleIntoChest_ASrv", async = true, stepDataDef = {
+            { stepName = "Chest.PutItemsFromTurtleIntoChest_ASrv", async = true, stepDataDef = {
                 { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
                 { keyDef = "turtleItemsLocator"     , valueSource = 0, keyDefSource = "turtleItemsLocator" },
                 { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
