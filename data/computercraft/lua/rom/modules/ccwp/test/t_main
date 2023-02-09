@@ -5,9 +5,11 @@ local coreinventory = require "coreinventory"
 local coreassignment = require "coreassignment"
 
 local t_coredht = require "test.t_coredht"
-
 local t_move = require "test.t_move"
+
+local t_alchemist = require "test.t_alchemist"
 local t_builder = require "test.t_builder"
+local t_foresting = require "test.t_foresting"
 
 local T_ObjectRegistry = require "test.t_object_registry"
 local T_ObjectFactory = require "test.t_object_factory"
@@ -46,7 +48,9 @@ function t_main.T_All()
     t_coredht.T_All()
 
     -- role tests
+    t_alchemist.T_All()
     t_builder.T_All()
+    t_foresting.T_All()
 
     -- obj tests
     T_ObjectRegistry.T_All()

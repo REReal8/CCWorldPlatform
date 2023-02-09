@@ -4,6 +4,9 @@ local coremove = require "coremove"
 
 local role_alchemist = require "role_alchemist"
 
+function t_alchemist.T_All()
+end
+
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
 
 function t_alchemist.T_Craft_Task()

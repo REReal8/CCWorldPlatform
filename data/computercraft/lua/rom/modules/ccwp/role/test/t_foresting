@@ -1,9 +1,17 @@
+local t_foresting = {}
+
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 local coreutils = require "coreutils"
 local coredht = require "coredht"
+local coremove = require "coremove"
 
-function T_BirchGrow()
+local role_forester = require "role_forester"
+
+function t_foresting.T_All()
+end
+
+function t_foresting.T_BirchGrow()
     -- zorg dat er een kist onder de turtle staat met een paar saplings. De turtle moet een modem (links) en een diamond axe (rechts of inventory) hebben
 
     local saplings
@@ -91,7 +99,7 @@ function T_BirchGrow()
     end
 end
 
-function T_BirchGrowToFile()
+function t_foresting.T_BirchGrowToFile()
     -- get the data
     local filename  = '/log/birchgrow.csv'
     local data = coredht.GetData("test", "BirchGrow")
@@ -107,3 +115,5 @@ function T_BirchGrowToFile()
         coreutils.WriteToFile(filename, v.saplings..";"..v.logs..";"..v.sticks..";"..v.fuelUsage..";"..string.format("%.3f", v.growTime)..";"..string.format("%.3f", v.harvestTime), "append")
     end
 end
+
+return t_foresting
