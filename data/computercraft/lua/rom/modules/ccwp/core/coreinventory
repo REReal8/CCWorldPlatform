@@ -23,14 +23,14 @@ function coreinventory.Init()
 	if next(dbFile) ~= nil then db = dbFile end
 end
 
+local function DHTReadySetup()
+    -- controleren of dht root bestaat
+    if not coredht.GetData("allItems") then coreinventory.ResetAllItems() end
+end
+
 function coreinventory.Setup()
     -- niks te doen voor setup
     coredht.DHTReadyFunction(DHTReadySetup)
-end
-
-function DHTReadySetup()
-    -- controleren of dht root bestaat
-    if not coredht.GetData("allItems") then coreinventory.ResetAllItems() end
 end
 
 function coreinventory.ResetAllItems()
@@ -195,7 +195,7 @@ function coreinventory.DetermineItemsList(slots)
 end
 
 -- ToDo: consider removing once we fully use ItemInventory object
-function CopyInventory(...)
+local function CopyInventory(...)
     -- get & check input from description
     local checkSuccess, items, slots = InputChecker.Check([[
         This async private function copies an inventory.
@@ -220,7 +220,7 @@ function CopyInventory(...)
     return copy
 end
 
-function CopySlots(...)
+local function CopySlots(...)
     -- get & check input from description
     local checkSuccess, slots = InputChecker.Check([[
         This async private function copies slots (inventory).
