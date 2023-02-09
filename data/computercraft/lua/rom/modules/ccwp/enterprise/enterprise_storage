@@ -216,7 +216,7 @@ function ItemsCollected(argumentTable) -- location
     if site.type == "silo" then enterprise_storage_silo.ItemsCollected(site, topChest) end
 end
 
-function BuildAndStartNewSite_ASrv(...)
+function enterprise_storage.BuildAndStartNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type, callback, callbackData = InputChecker.Check([[
         This public function (service) builds a new storage site and starts it.
@@ -277,7 +277,7 @@ function BuildAndStartNewSite_ASrv(...)
     -- nothing to return
 end
 
-function BuildNewSite_ASrv(...)
+function enterprise_storage.BuildNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type, callback, callbackData = InputChecker.Check([[
         This public function (service) builds a new site.
@@ -301,7 +301,7 @@ function BuildNewSite_ASrv(...)
 end
 
 -- enterprise_storage.StartNewSite_SSrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
-function StartNewSite_SSrv(...)
+function enterprise_storage.StartNewSite_SSrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type = InputChecker.Check([[
         This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
