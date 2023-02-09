@@ -60,6 +60,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     -- test L2
     forest:setLevel(level0)
+    forestLocator = enterprise_forestry.SaveForest(forest)
     level = level2
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator })
@@ -72,6 +73,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- test L3
     forest:setLevel(level2)
     forest:setNTrees(3*6)
+    forestLocator = enterprise_forestry.SaveForest(forest)
     local factoryLocation2 = coremove.GetRelativeLocation(forestLocation, 12, 0, 0)
     t_factory.StartNewSite(factoryLocation2)
     level = level3
