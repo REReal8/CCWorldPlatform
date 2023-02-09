@@ -97,24 +97,14 @@ function FunctionExecutor.DoASyncService(...)
     --[[
     -- check service actually exists
     -- ToDo: implement
-    corelog.WriteToLog("1")
 
 	-- prepare async service call
     local str = service.."("..textutils.serialize(serviceData)..", '"..callback.."', "..textutils.serialize(callbackData)..")"
---    enterprise_isp = enterprise_isp or require "enterprise_isp"
---    if not enterprise_isp then
---        corelog.WriteToLog("   enterprise_isp = nil")
---    end
---    str = "local enterprise_isp = _G['require']('enterprise_isp') "..str
-    corelog.WriteToLog("   str = "..str)
 	local f, err = loadstring(str)
 	if not f then corelog.Error("FunctionExecutor.DoASyncService(): loadstring did not supply a function, error given: "..err) return nil end
 
-    corelog.WriteToLog("2")
-
 	-- execute the service
 	f()
-    corelog.WriteToLog("3")
 
 	-- end
 	return nil
