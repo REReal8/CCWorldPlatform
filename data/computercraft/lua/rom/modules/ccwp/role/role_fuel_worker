@@ -36,6 +36,35 @@ function role_fuel_worker.Refuel_MetaData(taskData)
     }
 end
 
+local function Refuel(fuel)
+    -- check input arguments
+    if type(fuel) ~= "table" or type(fuel.itemName) ~= "string" or type(fuel.itemCount) ~= "number" or fuel.itemCount < 1 then return false end
+
+    -- handig voor de loop
+    local itemsLeft  = fuel.itemCount
+
+    -- find the fuel in the inventory
+    while coreinventory.SelectItem(fuel.itemName) and itemsLeft > 0 do
+        -- how many present
+        local itemsPresent  = turtle.getItemCount()
+
+        -- how many to burn
+        local itemsToBurn   = nil
+        if itemsLeft < itemsPresent then itemsToBurn = itemsLeft
+                                    else itemsToBurn = itemsPresent
+        end
+
+        -- do the refuelling
+        turtle.refuel(itemsToBurn)
+
+        -- adjust itemsLeft
+        itemsLeft = itemsLeft - itemsToBurn
+    end
+
+    -- done
+    return true
+end
+
 function role_fuel_worker.Refuel_Task(taskData)
     --[[
         This Task function (re)fuels a (the current) turtle.
@@ -63,7 +92,7 @@ function role_fuel_worker.Refuel_Task(taskData)
 
     -- fuel from all fuelItems
     for itemName, itemCount in pairs(fuelItems) do
-        local refuelResult = coreinventory.Refuel({itemName = itemName,  itemCount = itemCount})
+        local refuelResult = Refuel({itemName = itemName,  itemCount = itemCount})
         if refuelResult == false then corelog.Warning("role_fuel_worker.Refuel_Task: Failed refueling from "..itemCount.." "..itemName.."'s") return {success = false} end
 
         corelog.WriteToLog(">Refueled with "..itemCount.." "..itemName.."'s to "..turtle.getFuelLevel())
