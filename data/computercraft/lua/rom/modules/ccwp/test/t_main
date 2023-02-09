@@ -4,6 +4,8 @@ local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 local coreassignment = require "coreassignment"
 
+local t_coredht = require "test.t_coredht"
+
 local t_move = require "test.t_move"
 local t_builder = require "test.t_builder"
 
@@ -38,6 +40,9 @@ function t_main.T_dummy()
 end
 
 function t_main.T_All()
+    -- core tests
+    t_coredht.T_All()
+
     -- role tests
     t_builder.T_All()
 

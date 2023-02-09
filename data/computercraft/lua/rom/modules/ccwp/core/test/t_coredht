@@ -5,6 +5,15 @@ local coredht = require "coredht"
 
 local URL = require "obj_url"
 
+function t_coredht.T_All()
+    t_coredht.T_SaveResource()
+    t_coredht.T_GetResource()
+    t_coredht.T_RemoveResource()
+    t_coredht.T_SaveResourceWithPort()
+    t_coredht.T_GetResourceWithPort()
+    t_coredht.T_RemoveResourceWithPort()
+end
+
 local resource = {
     aNumber     = 10,
     aString     = "top",
@@ -18,18 +27,25 @@ local resource2 = {
 }
 local uriWithPort = "ccwprp://resource:23/id=20/subid=77"
 
-function t_coredht.T_All()
-    t_coredht.T_SaveResource()
-    t_coredht.T_GetResource()
-    t_coredht.T_RemoveResource()
-    t_coredht.T_SaveResourceWithPort()
-    t_coredht.T_GetResourceWithPort()
-    t_coredht.T_RemoveResourceWithPort()
+local compact = { compact = true }
+
+local function SameATable(aTable1, aTable2)
+    if aTable1 == nil and aTable2 == nil then return true end
+    if aTable1 == nil or aTable2 == nil then return false end
+
+    return aTable1.x == aTable2.x and aTable1.y == aTable2.y and aTable1.z == aTable2.z and aTable1.dx == aTable2.dx and aTable1.dy == aTable2.dy
+end
+
+local function SameResource(res1, res2)
+    if res1 == nil and res2 == nil then return true end
+    if res1 == nil or res2 == nil then return false end
+
+    return res1.aNumber == res2.aNumber and res1.aString == res2.aString and SameATable(res1.aTable, res2.aTable)
 end
 
 function t_coredht.T_SaveResource()
     -- prepare test
-    corelog.WriteToLog("* Test SaveResource")
+    corelog.WriteToLog("* coredht.SaveResource() tests")
     local resourceLocator = URL:newFromURI(uri)
 
     -- test
@@ -41,71 +57,64 @@ end
 
 function t_coredht.T_SaveResourceWithPort()
     -- prepare test
-    corelog.WriteToLog("* Test SaveResource (with port)")
+    corelog.WriteToLog("* coredht.SaveResource (with port) tests")
     local resourceLocator = URL:newFromURI(uriWithPort)
 
     -- test
     local resourceSaved = coredht.SaveResource(resource2, resourceLocator)
-    assert(SameResource(resource2, resourceSaved), "saved resource(="..textutils.serialize(resourceSaved)..") not the same as expected(="..textutils.serialize(resource2)..")")
+    assert(SameResource(resource2, resourceSaved), "saved resource(="..textutils.serialize(resourceSaved, compact)..") not the same as expected(="..textutils.serialize(resource2, compact)..")")
 
     -- cleanup test
 end
 
 function t_coredht.T_GetResource()
     -- prepare test
-    corelog.WriteToLog("* Test GetResource")
+    corelog.WriteToLog("* coredht.GetResource tests")
     local resourceLocator = URL:newFromURI(uri)
 
     -- test
     local resourceGotten = coredht.GetResource(resourceLocator)
-    assert(SameResource(resource, resourceGotten), "gotten resource(="..textutils.serialize(resourceGotten)..") not the same as expected(="..textutils.serialize(resource)..")")
+    assert(SameResource(resource, resourceGotten), "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not the same as expected(="..textutils.serialize(resource, compact)..")")
 
     -- cleanup test
 end
 
 function t_coredht.T_GetResourceWithPort()
     -- prepare test
-    corelog.WriteToLog("* Test GetResource (with port)")
+    corelog.WriteToLog("* coredht.GetResource (with port) tests")
     local resourceLocator = URL:newFromURI(uriWithPort)
 
     -- test
     local resourceGotten = coredht.GetResource(resourceLocator)
-    assert(SameResource(resource2, resourceGotten), "gotten resource(="..textutils.serialize(resourceGotten)..") not the same as expected(="..textutils.serialize(resource2)..")")
+    assert(SameResource(resource2, resourceGotten), "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not the same as expected(="..textutils.serialize(resource2, compact)..")")
 
     -- cleanup test
 end
 
 function t_coredht.T_RemoveResource()
     -- prepare test
-    corelog.WriteToLog("* Test RemoveResource")
+    corelog.WriteToLog("* coredht.RemoveResource tests")
     local resourceLocator = URL:newFromURI(uri)
 
     -- test
     coredht.RemoveResource(resourceLocator)
     local resourceGotten = coredht.GetResource(resourceLocator)
-    assert(resourceGotten == nil, "gotten resource(="..textutils.serialize(resourceGotten)..") not nil")
+    assert(resourceGotten == nil, "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not nil")
 
     -- cleanup test
 end
 
 function t_coredht.T_RemoveResourceWithPort()
     -- prepare test
-    corelog.WriteToLog("* Test RemoveResource (with port)")
+    corelog.WriteToLog("* coredht.RemoveResource (with port) tests")
     local resourceLocator = URL:newFromURI(uriWithPort)
 
     -- test
     coredht.RemoveResource(resourceLocator)
     local resourceGotten = coredht.GetResource(resourceLocator)
-    assert(resourceGotten == nil, "gotten resource(="..textutils.serialize(resourceGotten)..") not nil")
+    assert(resourceGotten == nil, "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not nil")
 
     -- cleanup test
-end
-
-function SameResource(res1, res2)
-    if res1 == nil and res2 == nil then return true end
-    if res1 == nil or res2 == nil then return false end
-
-    return res1.aNumber == res2.aNumber and res1.aString == res2.aString and res1.aTable == res2.aTable
 end
 
 return t_coredht
