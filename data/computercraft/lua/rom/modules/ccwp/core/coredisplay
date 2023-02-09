@@ -67,10 +67,11 @@ function DefaultMainMenu()
 				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
 				{key = "t", desc = "Execute general tests", 	func = ExecuteTest,	    		param = {}},
 				{key = "r", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
-				{key = "o", desc = "Execute (m)obj tests",		func = ExecuteMObjTest,			param = {}},
+				{key = "o", desc = "Execute obj tests",			func = ExecuteObjTest,			param = {}},
+				{key = "m", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
 				{key = "e", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
 				{key = "l", desc = "Load event",				func = LoadEvent,				param = {}},
-				{key = "m", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
+				{key = "d", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
 				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
@@ -194,19 +195,28 @@ function ExecuteRoleTest(t)
 	return ExecuteXObjTest(t, "role", options, ExecuteRoleTest)
 end
 
+function ExecuteObjTest(t)
+	-- forward call with options
+	local options	= {
+		{key = "r", desc = "ObjectRegistry", 	func = ExecuteObjTest, param = {filename = "T_ObjectRegistry"}},
+		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
+		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
+		{key = "l", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
+		{key = "i", desc = "ItemInventory",		func = ExecuteObjTest, param = {filename = "T_ItemInventory"}},
+		{key = "u", desc = "URL", 				func = ExecuteObjTest, param = {filename = "T_URL"}},
+		{key = "x", desc = "Back to main menu", func = function () return true end }
+	}
+	return ExecuteXObjTest(t, "obj", options, ExecuteMObjTest)
+end
+
 function ExecuteMObjTest(t)
 	-- forward call with options
 	local options	= {
-		{key = "b", desc = "Block",				func = ExecuteMObjTest, param = {filename = "T_Block"}},
-		{key = "l", desc = "LayerRectangle",	func = ExecuteMObjTest, param = {filename = "T_LayerRectangle"}},
-		{key = "i", desc = "ItemInventory",		func = ExecuteMObjTest, param = {filename = "T_ItemInventory"}},
-		{key = "u", desc = "URL", 				func = ExecuteMObjTest, param = {filename = "T_URL"}},
-
 		{key = "c", desc = "Chest",				func = ExecuteMObjTest, param = {filename = "T_Chest"}},
 		{key = "f", desc = "BirchForest",		func = ExecuteMObjTest, param = {filename = "T_BirchForest"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
-	return ExecuteXObjTest(t, "(m)obj", options, ExecuteMObjTest)
+	return ExecuteXObjTest(t, "mobj", options, ExecuteMObjTest)
 end
 
 function ExecuteEnterpriseTest(t)
