@@ -27,13 +27,6 @@ function FunctionExecutor.DoCallback(...)
 
     -- call method
     return FunctionExecutor.CallMethod(objName, methodName, { callbackData, resultData })
-
-    --[[
-    -- call callBack function
-    local stringToLoad = callback.."("..textutils.serialize(callbackData)..","..textutils.serialize(resultData).. ")"
-    local f, err = loadstring(stringToLoad)
-    if f then f() else corelog.Error("FunctionExecutor.DoCallback: loadstring("..stringToLoad..") did not supply a function, error given: "..err) end
-    ]]
 end
 
 function FunctionExecutor.DoSyncService(...)
@@ -56,18 +49,6 @@ function FunctionExecutor.DoSyncService(...)
 
     -- call method
     return FunctionExecutor.CallMethod(objName, methodName, { serviceData })
-
-    --[[
-	-- prepare sync service call
-	local f, err = loadstring("return "..service.."("..textutils.serialize(serviceData)..")")
-	if not f then corelog.Error("FunctionExecutor.DoSyncService(): loadstring did not supply a function, error given: "..err) return end
-
-	-- execute the service
-	local results = f()
-
-	-- end
-	return results
-    ]]
 end
 
 function FunctionExecutor.DoASyncService(...)
@@ -96,22 +77,6 @@ function FunctionExecutor.DoASyncService(...)
 
     -- call method
     return FunctionExecutor.CallMethod(objName, methodName, { serviceData, callback, callbackData})
-
-    --[[
-    -- check service actually exists
-    -- ToDo: implement
-
-	-- prepare async service call
-    local str = service.."("..textutils.serialize(serviceData)..", '"..callback.."', "..textutils.serialize(callbackData)..")"
-	local f, err = loadstring(str)
-	if not f then corelog.Error("FunctionExecutor.DoASyncService(): loadstring did not supply a function, error given: "..err) return nil end
-
-	-- execute the service
-	f()
-
-	-- end
-	return nil
-        ]]
 end
 
 function FunctionExecutor.GetMethod(...)
