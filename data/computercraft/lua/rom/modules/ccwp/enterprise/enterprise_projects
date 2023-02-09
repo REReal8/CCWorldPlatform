@@ -265,7 +265,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     local currentStep = project.currentStep
 
     -- save to dht
---    coredht.SaveData(project, db.dhtRoot, projectId)
+    coredht.SaveData(project, db.dhtRoot, projectId)
 
     -- get new step
     local step = project.projectDef.steps[ currentStep ]
