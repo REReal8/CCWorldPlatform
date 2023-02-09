@@ -3,6 +3,9 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
+local ObjectRegistry = require "object_registry"
+local objectRegistry = ObjectRegistry:getInstance()
+
 function FunctionExecutor.DoCallback(...)
     -- get & check input from description
     local checkSuccess, callback, callbackData, resultData = InputChecker.Check([[
@@ -124,54 +127,8 @@ function FunctionExecutor.GetObject(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("FunctionExecutor.GetObject(...): Invalid input") return nil end
 
-    -- object
-    -- ToDo: consider putting in file scope, or even different module
-    local objects = {
-        t_main                      = require "test.t_main",
-        t_move                      = require "test.t_move",
-        t_coredht                   = require "test.t_coredht",
-
-        T_URL                       = require "test.t_obj_url",
-        T_Block                     = require "test.t_obj_block",
-        T_LayerRectangle            = require "test.t_obj_layer_rectangle",
-        T_ItemInventory             = require "test.t_obj_item_inventory",
-        T_Chest                     = require "test.t_mobj_chest",
-        T_BirchForest               = require "test.t_mobj_birchforest",
-
-        t_alchemist                 = require "test.t_alchemist",
-        t_builder                   = require "test.t_builder",
-
-        enterprise_assignmentboard  = require "enterprise_assignmentboard",
-        enterprise_chests           = require "enterprise_chests",
-        enterprise_construction     = require "enterprise_construction",
-        enterprise_energy           = require "enterprise_energy",
-        enterprise_factory          = require "enterprise_factory",
-        enterprise_factory_site     = require "enterprise_factory_site",
-        enterprise_forestry         = require "enterprise_forestry",
-        enterprise_isp              = require "enterprise_isp",
-        enterprise_projects         = require "enterprise_projects",
-        enterprise_shop             = require "enterprise_shop",
-        enterprise_storage          = require "enterprise_storage",
-        enterprise_test             = require "enterprise_test",
-        enterprise_turtle           = require "enterprise_turtle",
-
-        t_test                      = require "test.t_test",
-        t_assignmentboard           = require "test.t_assignmentboard",
-        t_turtle                    = require "test.t_turtle",
-        t_projects                  = require "test.t_projects",
-        t_isp                       = require "test.t_isp",
-        t_energy                    = require "test.t_energy",
-        t_chests                    = require "test.t_chests",
-        t_construction              = require "test.t_construction",
-        t_storage                   = require "test.t_storage",
-        t_factory                   = require "test.t_factory",
-        t_forestry                  = require "test.t_forestry",
-        t_shop                      = require "test.t_shop",
-        t_colonization              = require "test.t_colonization",
-    }
-
-    -- get object
-    local object = objects[objName]
+    -- try get object from ObjectRegistry
+    local object = objectRegistry:getObject(objName)
     if not object then corelog.Warning("FunctionExecutor.GetObject(...): Object "..objName.." not found") return nil end
     if type(object) ~= "table" then corelog.Warning("FunctionExecutor.GetObject(...): Object "..objName.." not a table") return nil end
 
