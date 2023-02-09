@@ -5,6 +5,8 @@ local coreutils = require "coreutils"
 local coretask = require "coretask"
 local coremove = require "coremove"
 
+local ObjectRegistry = require "object_registry"
+local objectRegistry = ObjectRegistry:getInstance()
 local FunctionExecutor = require "function_executor"
 
 -- declare display space
@@ -255,7 +257,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		-- test functions screen
 
 		-- get file
-    	local file = FunctionExecutor.GetObject(t.filename)
+		local file = objectRegistry:getObject(t.filename)
     	if not file then corelog.Warning("coredisplay.ExecuteXObjTest(...): File "..t.filename.." not found") return false end
 
 		-- variables

@@ -114,28 +114,6 @@ function FunctionExecutor.DoASyncService(...)
         ]]
 end
 
-function FunctionExecutor.GetObject(...)
-    -- get & check input from description
-    local checkSuccess, objName = InputChecker.Check([[
-        This method returns an object (table) with the name objName.
-
-        Return value:
-            results                     - (table) object
-
-        Parameters:
-            objName                     + (string) name of object to execute on
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("FunctionExecutor.GetObject(...): Invalid input") return nil end
-
-    -- try get object from ObjectRegistry
-    local object = objectRegistry:getObject(objName)
-    if not object then corelog.Warning("FunctionExecutor.GetObject(...): Object "..objName.." not found") return nil end
-    if type(object) ~= "table" then corelog.Warning("FunctionExecutor.GetObject(...): Object "..objName.." not a table") return nil end
-
-    -- end
-    return object
-end
-
 function FunctionExecutor.GetMethod(...)
     -- get & check input from description
     local checkSuccess, objName, methodName = InputChecker.Check([[
@@ -151,7 +129,7 @@ function FunctionExecutor.GetMethod(...)
     if not checkSuccess then corelog.Error("FunctionExecutor.GetMethod(...): Invalid input") return nil end
 
     -- get object
-    local object = FunctionExecutor.GetObject(objName)
+    local object = objectRegistry:getObject(objName)
     if not object then corelog.Warning("FunctionExecutor.GetMethod(...): Object "..objName.." not found") return nil end
 
     -- get method
