@@ -43,6 +43,12 @@ local function SaveDBToFile()
     -- no longer in the queue since we are doing it now
     writeToFileQueued = false
 
+    -- check for repetitions
+--    local duplicatTablesArray = coreutils.CheckForRepetitions(db)
+--    for i, duplicateTable in ipairs(duplicatTablesArray) do
+--        corelog.Warning("coredht.SaveDBToFile(): duplicate table found:"..textutils.serialise(duplicateTable))
+--    end
+
     -- save the db table to a file (this may take some time with larger dht's)
     coreutils.WriteToFile(filename, db, "overwrite")
 
