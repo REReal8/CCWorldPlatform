@@ -9,7 +9,8 @@ function library.Setup()
     -- register library objects
     local ObjectRegistry = require "object_registry"
     local objectRegistry = ObjectRegistry:getInstance()
-    -- ToDo: add
+    objectRegistry:requireAndRegisterObject("role_settler")
+    -- ToDo: add others
 
     -- register library object tests
     objectRegistry:requireAndRegisterObject("t_alchemist", "test.t_alchemist")
