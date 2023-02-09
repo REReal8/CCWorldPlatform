@@ -144,6 +144,24 @@ function enterprise_assignmentboard.GetStatistics_Att()
     return coredht.GetData(db.dhtRoot, db.dhtStatistics)
 end
 
+local function ForgetSkipReasons()
+    db.skipReasons = {}
+end
+
+local function RememberSkipReason(skipReason)
+    table.insert(db.skipReasons, skipReason)
+end
+
+local function KnownSkipReason(skipReason)
+    -- check skipReason is known
+    for i, prevSkipReason in ipairs(db.skipReasons) do
+        if skipReason == prevSkipReason then return true end
+    end
+
+    -- end
+    return false
+end
+
 function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
     -- get & check input from description
     local checkSuccess, assignmentFilter, turtleResume = InputChecker.Check([[
@@ -293,6 +311,15 @@ function enterprise_assignmentboard.Dummy_Callback(emptyTable)
     -- do nothing
 end
 
+local function ResetStatistics()
+    coredht.SaveData({
+        maxFuelNeed_Assignment  = 0,
+        minLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        maxLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        maxFuelNeed_Travel      = 0,
+    }, db.dhtRoot, db.dhtStatistics)
+end
+
 function enterprise_assignmentboard.Reset()
     -- end assignments
     enterprise_assignmentboard.EndAssignments()
@@ -311,15 +338,6 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function ResetStatistics()
-    coredht.SaveData({
-        maxFuelNeed_Assignment  = 0,
-        minLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
-        maxLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
-        maxFuelNeed_Travel      = 0,
-    }, db.dhtRoot, db.dhtStatistics)
-end
-
 function enterprise_assignmentboard.EndAssignments()
     local assignmentList = coredht.GetData(db.dhtRoot, db.dhtList)
     if not assignmentList or type(assignmentList) ~= "table" then corelog.Warning("enterprise_assignmentboard.EndAssignments: not a (valid) assignmentList") return nil end
@@ -336,24 +354,6 @@ function enterprise_assignmentboard.DHTReadySetup()
     -- bestaat de entry al in de dht?
     if not coredht.GetData(db.dhtRoot)              then coredht.SaveData({}, db.dhtRoot ) end
     if not coredht.GetData(db.dhtRoot, db.dhtList) then coredht.SaveData({}, db.dhtRoot, db.dhtList ) end
-end
-
-function ForgetSkipReasons()
-    db.skipReasons = {}
-end
-
-function RememberSkipReason(skipReason)
-    table.insert(db.skipReasons, skipReason)
-end
-
-function KnownSkipReason(skipReason)
-    -- check skipReason is known
-    for i, prevSkipReason in ipairs(db.skipReasons) do
-        if skipReason == prevSkipReason then return true end
-    end
-
-    -- end
-    return false
 end
 
 function enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2)
