@@ -20,7 +20,7 @@ function ccwp.Startup()
     mobjLibrary.Setup()
     enterpriseLibrary.Setup()
 
-    -- register ccwp object tests
+    -- register global ccwp object tests
     local ObjectRegistry = require "object_registry"
     local objectRegistry = ObjectRegistry:getInstance()
     objectRegistry:requireAndRegisterObject("t_main", "test.t_main")
