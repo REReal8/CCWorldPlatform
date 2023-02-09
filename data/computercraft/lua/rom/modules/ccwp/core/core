@@ -1,4 +1,5 @@
 local core = {}
+
 local coresystem = require "coresystem"
 local coreevent = require "coreevent"
 local corelog = require "corelog"
@@ -11,6 +12,7 @@ local coremap = require "coremap"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
 local coretask = require "coretask"
+
 local enterprise = require "enterprise"
 
 local db	    = {

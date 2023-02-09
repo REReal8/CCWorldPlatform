@@ -1,0 +1,34 @@
+local T_ObjectRegistry = {}
+local corelog = require "corelog"
+
+local ObjectRegistry = require "object_registry"
+
+function T_ObjectRegistry.T_All()
+    T_ObjectRegistry.T_registerAndGetObject()
+end
+
+function T_ObjectRegistry.T_registerAndGetObject()
+    -- prepare test
+    corelog.WriteToLog("* ObjectRegistry.registerObject() and ObjectRegistry.getObject() tests")
+    local object1 = {name = "object1"}
+    local object2 = {name = "object2"}
+    local registry = ObjectRegistry:getInstance()
+
+    -- test valid
+
+    -- Register the objects with the registry
+    registry:registerObject("object1", object1)
+    registry:registerObject("object2", object2)
+
+    -- Get the objects back from the registry
+    local retrievedObject1 = registry:getObject("object1")
+    local retrievedObject2 = registry:getObject("object2")
+
+    -- Use assertions to confirm that the retrieved objects match the original objects
+    assert(retrievedObject1 == object1, "Retrieved object 1 does not match original object 1")
+    assert(retrievedObject2 == object2, "Retrieved object 2 does not match original object 2")
+
+    -- cleanup test
+end
+
+return T_ObjectRegistry

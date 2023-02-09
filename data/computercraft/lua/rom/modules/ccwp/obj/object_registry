@@ -1,0 +1,34 @@
+local ObjectRegistry = {
+    objects = {},
+}
+
+function ObjectRegistry:getObject(name)
+    return self.objects[name]
+end
+
+local instance = nil
+function ObjectRegistry:getInstance()
+    if not instance then
+        instance = setmetatable({}, { __index = ObjectRegistry })
+    end
+    return instance
+end
+
+function ObjectRegistry:registerObject(name, object)
+    self.objects[name] = object
+end
+
+function ObjectRegistry:requireAndRegisterObject(name, requireName)
+    -- use require to get object
+    requireName = requireName or name
+    local object = require(requireName)
+
+    -- register object
+    self:registerObject(name, object)
+end
+
+function ObjectRegistry:requireAndRegisterObjectTests(name)
+    self:requireAndRegisterObject(name, "test."..name)
+end
+
+return ObjectRegistry
