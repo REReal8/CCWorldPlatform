@@ -72,7 +72,7 @@ end
 
 function BirchForest:setLevel(level)
     -- check input
-    if type(level) ~= "number" then corelog.Error("mobj_birchforest:setLevel: invalid level: "..type(level)) return end
+    if type(level) ~= "number" then corelog.Error("BirchForest:setLevel: invalid level: "..type(level)) return end
 
     self._level = level
 end
@@ -83,7 +83,7 @@ end
 
 function BirchForest:setLocation(location)
     -- check input
-    if type(location) ~= "table" then corelog.Error("mobj_birchforest:setLocation: invalid location: "..type(location)) return end
+    if type(location) ~= "table" then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
 
     self._location = location
 end
@@ -94,7 +94,7 @@ end
 
 function BirchForest:setNTrees(nTrees)
     -- check input
-    if type(nTrees) ~= "number" then corelog.Error("mobj_birchforest:setNTrees: invalid # trees: "..type(nTrees)) return end
+    if type(nTrees) ~= "number" then corelog.Error("BirchForest:setNTrees: invalid # trees: "..type(nTrees)) return end
 
     self._nTrees = nTrees
 end
@@ -105,7 +105,7 @@ end
 
 function BirchForest:setLocalLogsLocator(localLogsLocator)
     -- check input
-    if type(localLogsLocator) ~= "table" then corelog.Error("mobj_birchforest:setLocalLogsLocator: Invalid localLogsLocator "..type(localLogsLocator)) return end
+    if type(localLogsLocator) ~= "table" then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLogsLocator "..type(localLogsLocator)) return end
 
     self._localLogsLocator = localLogsLocator
 end
@@ -116,7 +116,7 @@ end
 
 function BirchForest:setLocalSaplingsLocator(localSaplingsLocator)
     -- check input
-    if type(localSaplingsLocator) ~= "table" then corelog.Error("mobj_birchforest:setLocalSaplingsLocator: Invalid localLogsLocator "..type(localSaplingsLocator)) return end
+    if type(localSaplingsLocator) ~= "table" then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLogsLocator "..type(localSaplingsLocator)) return end
 
     self._localSaplingsLocator = localSaplingsLocator
 end
@@ -126,7 +126,7 @@ function BirchForest:getBaseLayer(level)
     elseif level == 0 then  return Tree_layerL0()
     elseif level == 1 then  return Tree_layerL1()
     elseif level == 2 then  return Base_layerL2()
-    else                    corelog.Error("mobj_birchforest.getBaseLayer: Don't know layer for level "..level) return nil end
+    else                    corelog.Error("BirchForest:getBaseLayer: Don't know layer for level "..level) return nil end
 end
 
 function BirchForest:getTreeLayer(level)
@@ -134,7 +134,7 @@ function BirchForest:getTreeLayer(level)
     elseif level == 0 then  return Tree_layerL0()
     elseif level == 1 then  return Tree_layerL1()
     elseif level == 2 then  return Tree_layerL1() -- same as L1
-    else                    corelog.Error("mobj_birchforest.getTreeLayer: Don't know layer for level "..level) return nil end
+    else                    corelog.Error("BirchForest:getTreeLayer: Don't know layer for level "..level) return nil end
 end
 
 function BirchForest:copy()
@@ -223,13 +223,13 @@ function BirchForest:provideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- loop on items
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
 
         -- check for birchlog or sapling
         local localStorageLocator = nil
@@ -238,9 +238,9 @@ function BirchForest:provideItemsTo_ASrv(...)
         elseif itemName == "minecraft:birch_sapling" then
             localStorageLocator = self:getLocalSaplingsLocator()
         else
-            corelog.Error("mobj_birchforest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return FunctionExecutor.DoCallback(callback, callbackData, {success = false})
+            corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return FunctionExecutor.DoCallback(callback, callbackData, {success = false})
         end
-        if not localStorageLocator then corelog.Error("mobj_birchforest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
+        if not localStorageLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
 
         -- check items already available in localStorageLocator
         local localItemsLocator = localStorageLocator:copy()
@@ -338,12 +338,12 @@ function BirchForest:can_ProvideItems_QSrv(...)
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_birchforest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("BirchForest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- loop on items
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("BirchForest:can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
 
         -- check for birchlog or sapling
         if itemName == "minecraft:birch_log" then
@@ -376,7 +376,7 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
                 storageLocator              + (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- loop on items
     local fuelNeed = 0
@@ -384,8 +384,8 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
     local nTrees = self:getNTrees()
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
 
         -- check for birchlog or sapling
         local itemPerRound = 1
@@ -398,9 +398,9 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
             -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
             localSupplierLocator = self:getLocalSaplingsLocator()
         else
-            corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false}
+            corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false}
         end
-        if not localSupplierLocator then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Invalid localSupplierLocator (type="..type(localSupplierLocator)..")") return {success = false} end
+        if not localSupplierLocator then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid localSupplierLocator (type="..type(localSupplierLocator)..")") return {success = false} end
 
         -- fuelNeed per round
         local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
@@ -416,7 +416,7 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
             destinationStorageLocator   = storageLocator,
         }
         local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
-        if not serviceResults.success then corelog.Error("mobj_birchforest:needsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        if not serviceResults.success then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
         local fuelNeed_Transfer = serviceResults.fuelNeed
 
         -- add fuelNeed
