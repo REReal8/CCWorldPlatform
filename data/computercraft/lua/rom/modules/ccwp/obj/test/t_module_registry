@@ -9,7 +9,7 @@ end
 
 function T_ModuleRegistry.T_registerAndGetObject()
     -- prepare test
-    corelog.WriteToLog("* ModuleRegistry.registerModule() and ModuleRegistry.getModule() tests")
+    corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
     local module1 = {name = "module1"}
     local module2 = {name = "module2"}
     local registry = ModuleRegistry:getInstance()
