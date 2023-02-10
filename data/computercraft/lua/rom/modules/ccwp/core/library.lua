@@ -6,11 +6,11 @@ function library.Init()
 end
 
 function library.Setup()
-    -- register library objects
+    -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
 
-    -- register library object tests
+    -- register library modules test modules
     moduleRegistry:requireAndRegisterObject("t_coremove", "test.t_coremove")
     moduleRegistry:requireAndRegisterObject("t_coredht", "test.t_coredht")
 

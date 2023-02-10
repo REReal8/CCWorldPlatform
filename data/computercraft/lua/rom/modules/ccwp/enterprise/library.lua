@@ -6,7 +6,7 @@ function library.Init()
 end
 
 function library.Setup()
-    -- register library objects
+    -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterObject("enterprise_assignmentboard")
@@ -23,7 +23,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterObject("enterprise_test")
     moduleRegistry:requireAndRegisterObject("enterprise_turtle")
 
-    -- register library object tests
+    -- register library modules test modules
     moduleRegistry:requireAndRegisterObjectTests("t_assignmentboard")
     moduleRegistry:requireAndRegisterObjectTests("t_chests")
     moduleRegistry:requireAndRegisterObjectTests("t_colonization")

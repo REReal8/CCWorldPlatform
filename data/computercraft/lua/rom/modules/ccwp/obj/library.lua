@@ -11,7 +11,7 @@ function library.Setup()
     local moduleRegistry = ModuleRegistry:getInstance()
     -- ToDo: add
 
-    -- register library module tests
+    -- register library modules test modules
     moduleRegistry:requireAndRegisterObject("T_ModuleRegistry", "test.t_module_registry")
     moduleRegistry:requireAndRegisterObject("T_ObjectFactory", "test.t_object_factory")
     moduleRegistry:requireAndRegisterObject("T_URL", "test.t_obj_url")

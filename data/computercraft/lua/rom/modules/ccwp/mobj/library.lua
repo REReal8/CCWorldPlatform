@@ -6,13 +6,13 @@ function library.Init()
 end
 
 function library.Setup()
-    -- register library objects
+    -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterObject("Chest", "mobj_chest")
     -- ToDo: consider adding & using object_factory
 
-    -- register library object tests
+    -- register library modules test modules
     moduleRegistry:requireAndRegisterObject("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterObject("T_BirchForest", "test.t_mobj_birchforest")
 
