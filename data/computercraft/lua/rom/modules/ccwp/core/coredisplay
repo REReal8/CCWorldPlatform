@@ -66,14 +66,15 @@ function DefaultMainMenu()
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
-				{key = "t", desc = "Execute general tests", 	func = ExecuteTest,	    		param = {}},
-				{key = "r", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
-				{key = "o", desc = "Execute obj tests",			func = ExecuteObjTest,			param = {}},
-				{key = "m", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
-				{key = "e", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
-				{key = "l", desc = "Load event",				func = LoadEvent,				param = {}},
-				{key = "d", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
+				{key = "1", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
+				{key = "2", desc = "Execute tests", 			func = ExecuteTest,	    		param = {}},
+				{key = "3", desc = "Execute core tests", 		func = ExecuteCoreTest,	    	param = {}},
+				{key = "4", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
+				{key = "5", desc = "Execute obj tests",			func = ExecuteObjTest,			param = {}},
+				{key = "6", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
+				{key = "7", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
+				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
+				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
 				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
@@ -83,9 +84,9 @@ function DefaultMainMenu()
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "c", desc = "Execute code",  			func = ExecuteCode,	    	param = {step = 1}},
-				{key = "t", desc = "Execute general tests",  	func = ExecuteTest,	    	param = {}},
-				{key = "l", desc = "Load event",				func = LoadEvent,			param = {}},
+				{key = "1", desc = "Execute code",  			func = ExecuteCode,	    	param = {step = 1}},
+				{key = "2", desc = "Execute general tests",  	func = ExecuteTest,	    	param = {}},
+				{key = "3", desc = "Load event",				func = LoadEvent,			param = {}},
 				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,	param = {}},
 			},
 			question	= "Make your choice",
@@ -180,11 +181,19 @@ function ExecuteTest(t)
 	-- forward call with options
 	local options	= {
 		{key = "g", desc = "general", 			func = ExecuteTest, param = {filename = "t_main"}},
-		{key = "m", desc = "coremove", 			func = ExecuteTest, param = {filename = "t_coremove"}},
-		{key = "d", desc = "coredht", 			func = ExecuteTest, param = {filename = "t_coredht"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "general", options, ExecuteTest)
+end
+
+function ExecuteCoreTest(t)
+	-- forward call with options
+	local options	= {
+		{key = "m", desc = "coremove", 			func = ExecuteCoreTest, param = {filename = "t_coremove"}},
+		{key = "d", desc = "coredht", 			func = ExecuteCoreTest, param = {filename = "t_coredht"}},
+		{key = "x", desc = "Back to main menu", func = function () return true end }
+	}
+	return ExecuteXObjTest(t, "core", options, ExecuteCoreTest)
 end
 
 function ExecuteRoleTest(t)
