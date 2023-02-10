@@ -9,24 +9,24 @@ end
 
 function T_ModuleRegistry.T_registerAndGetObject()
     -- prepare test
-    corelog.WriteToLog("* ModuleRegistry.registerObject() and ModuleRegistry.getModule() tests")
-    local object1 = {name = "object1"}
-    local object2 = {name = "object2"}
+    corelog.WriteToLog("* ModuleRegistry.registerModule() and ModuleRegistry.getModule() tests")
+    local module1 = {name = "module1"}
+    local module2 = {name = "module2"}
     local registry = ModuleRegistry:getInstance()
 
     -- test valid
 
-    -- Register the objects with the registry
-    registry:registerObject("object1", object1)
-    registry:registerObject("object2", object2)
+    -- Register the modules with the registry
+    registry:registerModule("module1", module1)
+    registry:registerModule("module2", module2)
 
-    -- Get the objects back from the registry
-    local retrievedObject1 = registry:getModule("object1")
-    local retrievedObject2 = registry:getModule("object2")
+    -- Get the modules back from the registry
+    local retrievedObject1 = registry:getModule("module1")
+    local retrievedObject2 = registry:getModule("module2")
 
-    -- Use assertions to confirm that the retrieved objects match the original objects
-    assert(retrievedObject1 == object1, "Retrieved object 1 does not match original object 1")
-    assert(retrievedObject2 == object2, "Retrieved object 2 does not match original object 2")
+    -- Use assertions to confirm that the retrieved modules match the original modules
+    assert(retrievedObject1 == module1, "Retrieved module 1 does not match original module 1")
+    assert(retrievedObject2 == module2, "Retrieved module 2 does not match original module 2")
 
     -- cleanup test
 end
