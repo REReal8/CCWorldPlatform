@@ -1,8 +1,13 @@
+local T_MethodExecutor = {}
+
 local corelog = require "corelog"
 
 local MethodExecutor = require "method_executor"
 
-function T_DoCallback()
+function T_MethodExecutor.T_All()
+end
+
+function T_MethodExecutor.T_DoCallback()
     -- test DoCallback
     corelog.WriteToLog("# Test DoCallback")
     local callbackFunction = "t_main.Func1_Callback"
@@ -13,7 +18,7 @@ function T_DoCallback()
     MethodExecutor.DoCallback(callbackFunction, callbackData, result)
 end
 
-function T_DoSyncService()
+function T_MethodExecutor.T_DoSyncService()
     -- test DoSyncService
     corelog.WriteToLog("# Test DoSyncService")
     local serviceFunction = "enterprise_test.TestPureLogicService_SSrv"
@@ -23,3 +28,5 @@ function T_DoSyncService()
     local results = MethodExecutor.DoSyncService(serviceFunction, serviceData)
     corelog.WriteToLog("T_coreutils_DoSyncService results = "..textutils.serialize(results))
 end
+
+return T_MethodExecutor
