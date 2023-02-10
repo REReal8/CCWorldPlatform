@@ -2,7 +2,7 @@ local enterprise_construction = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 local InputChecker = require "input_checker"
 
 local role_builder = require "role_builder"

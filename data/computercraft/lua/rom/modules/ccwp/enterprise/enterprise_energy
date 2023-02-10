@@ -6,7 +6,7 @@ local coredht = require "coredht"
 local role_fuel_worker = require "role_fuel_worker"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local enterprise_projects = require "enterprise_projects"
 

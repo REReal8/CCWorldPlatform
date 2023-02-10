@@ -3,7 +3,7 @@ local coresystem = require "coresystem"
 local coredht = require "coredht"
 local corelog = require "corelog"
 
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_turtle

@@ -22,7 +22,6 @@ function MethodExecutor.DoCallback(...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoCallback: Invalid input") return nil end
 
     -- split callback in objName and methodName
-    -- ToDo: already provide this split in this method call
     local objName, methodName = callback:match("(.*)%.(.*)")
 
     -- call method
@@ -44,7 +43,6 @@ function MethodExecutor.DoSyncService(...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return nil end
 
     -- split service in objName and methodName
-    -- ToDo: already provide this split in this method call
     local objName, methodName = service:match("(.*)%.(.*)")
 
     -- call method
@@ -72,7 +70,6 @@ function MethodExecutor.DoASyncService(...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
     -- split service in objName and methodName
-    -- ToDo: already provide this split in this method call
     local objName, methodName = service:match("(.*)%.(.*)")
 
     -- call method

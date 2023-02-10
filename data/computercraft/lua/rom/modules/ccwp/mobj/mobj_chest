@@ -12,7 +12,7 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local ItemInventory = require "obj_item_inventory"
 

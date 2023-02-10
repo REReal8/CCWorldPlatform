@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_storage_silo = require "enterprise_storage_silo"

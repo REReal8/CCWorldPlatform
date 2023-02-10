@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local db = {
     dhtRoot     = "enterprise_projects",

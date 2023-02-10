@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local URL = require "obj_url"
 local Block = require "obj_block"

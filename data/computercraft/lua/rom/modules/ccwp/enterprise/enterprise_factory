@@ -7,7 +7,7 @@ local corejob = require "corejob" -- ToDo: remove dependency on old code
 local coretask = require "coretask" -- ToDo: remove dependency on old code
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 local URL = require "obj_url"
 
 local role_alchemist = require "role_alchemist" -- ToDo: remove dependency on old code

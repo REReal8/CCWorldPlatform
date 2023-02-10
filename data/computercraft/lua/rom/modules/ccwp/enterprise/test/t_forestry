@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 

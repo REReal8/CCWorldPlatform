@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
 

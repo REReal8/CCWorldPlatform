@@ -2,7 +2,7 @@ local enterprise_isp = {}
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 local URL = require "obj_url"
 
 local role_fuel_worker = require "role_fuel_worker"

@@ -4,7 +4,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 

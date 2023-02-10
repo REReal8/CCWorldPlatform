@@ -1,6 +1,6 @@
 local corelog = require "corelog"
 
-local MethodExecutor = require "function_executor"
+local MethodExecutor = require "method_executor"
 
 function T_DoCallback()
     -- test DoCallback
