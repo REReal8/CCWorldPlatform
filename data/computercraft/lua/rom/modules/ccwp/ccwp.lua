@@ -21,7 +21,7 @@ function ccwp.Startup()
     enterpriseLibrary.Setup()
 
     -- register global ccwp object tests
-    local ModuleRegistry = require "object_registry"
+    local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterObject("t_main", "test.t_main")
 

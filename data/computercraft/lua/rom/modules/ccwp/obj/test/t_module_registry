@@ -1,13 +1,13 @@
-local T_ObjectRegistry = {}
+local T_ModuleRegistry = {}
 local corelog = require "corelog"
 
-local ModuleRegistry = require "object_registry"
+local ModuleRegistry = require "module_registry"
 
-function T_ObjectRegistry.T_All()
-    T_ObjectRegistry.T_registerAndGetObject()
+function T_ModuleRegistry.T_All()
+    T_ModuleRegistry.T_registerAndGetObject()
 end
 
-function T_ObjectRegistry.T_registerAndGetObject()
+function T_ModuleRegistry.T_registerAndGetObject()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry.registerObject() and ModuleRegistry.getObject() tests")
     local object1 = {name = "object1"}
@@ -31,4 +31,4 @@ function T_ObjectRegistry.T_registerAndGetObject()
     -- cleanup test
 end
 
-return T_ObjectRegistry
+return T_ModuleRegistry

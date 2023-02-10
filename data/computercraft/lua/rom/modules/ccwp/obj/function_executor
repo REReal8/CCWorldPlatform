@@ -3,7 +3,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
-local ModuleRegistry = require "object_registry"
+local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
 function FunctionExecutor.DoCallback(...)

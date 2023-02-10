@@ -5,7 +5,7 @@ local coreutils = require "coreutils"
 local coretask = require "coretask"
 local coremove = require "coremove"
 
-local ModuleRegistry = require "object_registry"
+local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local FunctionExecutor = require "function_executor"
 
@@ -200,7 +200,7 @@ end
 function ExecuteObjTest(t)
 	-- forward call with options
 	local options	= {
-		{key = "r", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ObjectRegistry"}},
+		{key = "r", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ModuleRegistry"}},
 		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
 		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
 		{key = "l", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},

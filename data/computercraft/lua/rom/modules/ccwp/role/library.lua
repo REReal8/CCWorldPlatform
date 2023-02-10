@@ -7,7 +7,7 @@ end
 
 function library.Setup()
     -- register library objects
-    local ModuleRegistry = require "object_registry"
+    local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterObject("role_alchemist")
     moduleRegistry:requireAndRegisterObject("role_builder")

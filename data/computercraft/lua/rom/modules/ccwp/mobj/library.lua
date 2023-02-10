@@ -7,7 +7,7 @@ end
 
 function library.Setup()
     -- register library objects
-    local ModuleRegistry = require "object_registry"
+    local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterObject("Chest", "mobj_chest")
     -- ToDo: consider adding & using object_factory
