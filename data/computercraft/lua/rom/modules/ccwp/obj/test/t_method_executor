@@ -22,7 +22,9 @@ function T_MethodExecutor.T_DoSyncService()
     -- test DoSyncService
     corelog.WriteToLog("# Test DoSyncService")
     local serviceFunction = "enterprise_test.TestPureLogicService_SSrv"
-    local serviceData = {"some service data"}
+    local serviceData = {
+        testArg = 20,
+    }
 
     corelog.WriteToLog("T_coreutils_DoSyncService calling DoSyncService("..serviceFunction..", "..textutils.serialize(serviceData)..")")
     local results = MethodExecutor.DoSyncService(serviceFunction, serviceData)
