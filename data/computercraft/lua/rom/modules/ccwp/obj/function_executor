@@ -88,7 +88,6 @@ function FunctionExecutor.GetMethod(...)
             results                     - (?) function return value(s)
 
         Parameters:
-            objName                     + (string) name of object to execute on
             moduleName                  + (string) name of module to get method from
             methodName                  + (string) name of method to execute
     ]], table.unpack(arg))
