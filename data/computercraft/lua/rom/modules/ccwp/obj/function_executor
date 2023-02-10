@@ -81,25 +81,26 @@ end
 
 function FunctionExecutor.GetMethod(...)
     -- get & check input from description
-    local checkSuccess, objName, methodName = InputChecker.Check([[
-        This method gets a function based on a methodName and an object (table) with the name objName.
+    local checkSuccess, moduleName, methodName = InputChecker.Check([[
+        This method gets a method based on a methodName and a module with the name moduleName.
 
         Return value:
             results                     - (?) function return value(s)
 
         Parameters:
             objName                     + (string) name of object to execute on
+            moduleName                  + (string) name of module to get method from
             methodName                  + (string) name of method to execute
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("FunctionExecutor.GetMethod(...): Invalid input") return nil end
 
-    -- get object
-    local object = moduleRegistry:getModule(objName)
-    if not object then corelog.Warning("FunctionExecutor.GetMethod(...): Object "..objName.." not found") return nil end
+    -- get module
+    local module = moduleRegistry:getModule(moduleName)
+    if not module then corelog.Warning("FunctionExecutor.GetMethod(...): Module "..moduleName.." not found") return nil end
 
     -- get method
-    local method = object[methodName]
-    if not method then corelog.Warning("FunctionExecutor.GetMethod(...): Method "..methodName.." not found in object "..objName) return nil end
+    local method = module[methodName]
+    if not method then corelog.Warning("FunctionExecutor.GetMethod(...): Method "..methodName.." not found in module "..moduleName) return nil end
 
     -- end
     return method
@@ -108,7 +109,7 @@ end
 function FunctionExecutor.CallMethod(...)
     -- get & check input from description
     local checkSuccess, objName, methodName, methodArguments = InputChecker.Check([[
-        This method executes an function based on a methodName and the methodArguments on an object (table) with the name objName.
+        This method executes a method based on a methodName and the methodArguments on an object (table) with the name objName.
 
         Return value:
             results                     - (?) function return value(s)
