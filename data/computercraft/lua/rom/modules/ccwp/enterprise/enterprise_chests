@@ -5,7 +5,7 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local URL = require "obj_url"
 
 local Chest = require "mobj_chest"
@@ -115,11 +115,11 @@ function enterprise_chests.DelistChest_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get the chest
     local chest = enterprise_chests.GetChest(chestLocator)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- stop doing business for this chest
     -- ToDo: implement
@@ -132,7 +132,7 @@ function enterprise_chests.DelistChest_ASrv(...)
     enterprise_chests.RemoveChest(chestLocator)
 
     -- do callback
-    FunctionExecutor.DoCallback(callback, callbackData, {success = true})
+    MethodExecutor.DoCallback(callback, callbackData, {success = true})
 end
 
 function enterprise_chests.UpdateChestRecord_ASrv(...)
@@ -156,11 +156,11 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get chest
     local chest = enterprise_chests.GetChest(chestLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Chest "..chestLocator:getURI().." not found.") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Chest "..chestLocator:getURI().." not found.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local updateChestRecordsProjectDef = {
@@ -290,11 +290,11 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsChestURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- transfer using TransferItemsFromTo_ASrv
     local transferData = {
@@ -461,11 +461,11 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get chest
     local chest = enterprise_chests.GetChest(sourceItemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Chest "..sourceItemsLocator:getURI().." not found.") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Chest "..sourceItemsLocator:getURI().." not found.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local getItemsIntoTurtleProjectDef = {
@@ -533,11 +533,11 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get chest
     local chest = enterprise_chests.GetChest(destinationHostLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Chest "..destinationHostLocator:getURI().." not found.") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Chest "..destinationHostLocator:getURI().." not found.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- set (expected) destinationItemsLocator
     local destinationItemsLocator = URL:new(destinationHostLocator)

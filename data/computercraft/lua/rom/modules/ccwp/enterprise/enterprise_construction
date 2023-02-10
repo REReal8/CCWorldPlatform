@@ -2,7 +2,7 @@ local enterprise_construction = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local InputChecker = require "input_checker"
 
 local role_builder = require "role_builder"
@@ -45,7 +45,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
             callback                    + (string) name of function to call once the blueprint is build
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- construct assignment metadata
     local taskData = {
@@ -139,7 +139,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
             callback                    + (string) name of function to call once the layer is build
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get assignment metadata
     local taskData = {

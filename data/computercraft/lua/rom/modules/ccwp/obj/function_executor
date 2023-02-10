@@ -1,4 +1,4 @@
-local FunctionExecutor = {}
+local MethodExecutor = {}
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
@@ -6,7 +6,7 @@ local InputChecker = require "input_checker"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
-function FunctionExecutor.DoCallback(...)
+function MethodExecutor.DoCallback(...)
     -- get & check input from description
     local checkSuccess, callback, callbackData, resultData = InputChecker.Check([[
         This function executes a callback function with two arguments.
@@ -19,17 +19,17 @@ function FunctionExecutor.DoCallback(...)
             callbackData                + (table) with first argument to supply to callback function
             resultData                  + (table) with second argument to supply to callback function, typically the return data of the task function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("FunctionExecutor.DoCallback: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("MethodExecutor.DoCallback: Invalid input") return nil end
 
     -- split callback in objName and methodName
     -- ToDo: already provide this split in this method call
     local objName, methodName = callback:match("(.*)%.(.*)")
 
     -- call method
-    return FunctionExecutor.CallMethod(objName, methodName, { callbackData, resultData })
+    return MethodExecutor.CallMethod(objName, methodName, { callbackData, resultData })
 end
 
-function FunctionExecutor.DoSyncService(...)
+function MethodExecutor.DoSyncService(...)
     -- get & check input from description
     local checkSuccess, service, serviceData = InputChecker.Check([[
         This function executes a sync service function.
@@ -41,17 +41,17 @@ function FunctionExecutor.DoSyncService(...)
             service                     + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("FunctionExecutor.DoSyncService: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return nil end
 
     -- split service in objName and methodName
     -- ToDo: already provide this split in this method call
     local objName, methodName = service:match("(.*)%.(.*)")
 
     -- call method
-    return FunctionExecutor.CallMethod(objName, methodName, { serviceData })
+    return MethodExecutor.CallMethod(objName, methodName, { serviceData })
 end
 
-function FunctionExecutor.DoASyncService(...)
+function MethodExecutor.DoASyncService(...)
     -- get & check input from description
     local checkSuccess, service, serviceData, callback, callbackData = InputChecker.Check([[
         This function executes an async service function.
@@ -69,17 +69,17 @@ function FunctionExecutor.DoASyncService(...)
             callback                    + (string) name of callback function to execute
             callbackData                + (table) with first argument to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("FunctionExecutor.DoASyncService: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
     -- split service in objName and methodName
     -- ToDo: already provide this split in this method call
     local objName, methodName = service:match("(.*)%.(.*)")
 
     -- call method
-    return FunctionExecutor.CallMethod(objName, methodName, { serviceData, callback, callbackData})
+    return MethodExecutor.CallMethod(objName, methodName, { serviceData, callback, callbackData})
 end
 
-function FunctionExecutor.GetMethod(...)
+function MethodExecutor.GetMethod(...)
     -- get & check input from description
     local checkSuccess, moduleName, methodName = InputChecker.Check([[
         This method gets a method based on a methodName and a module with the name moduleName.
@@ -91,21 +91,21 @@ function FunctionExecutor.GetMethod(...)
             moduleName                  + (string) name of module to get method from
             methodName                  + (string) name of method to execute
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("FunctionExecutor.GetMethod(...): Invalid input") return nil end
+    if not checkSuccess then corelog.Error("MethodExecutor.GetMethod(...): Invalid input") return nil end
 
     -- get module
     local module = moduleRegistry:getModule(moduleName)
-    if not module then corelog.Warning("FunctionExecutor.GetMethod(...): Module "..moduleName.." not found") return nil end
+    if not module then corelog.Warning("MethodExecutor.GetMethod(...): Module "..moduleName.." not found") return nil end
 
     -- get method
     local method = module[methodName]
-    if not method then corelog.Warning("FunctionExecutor.GetMethod(...): Method "..methodName.." not found in module "..moduleName) return nil end
+    if not method then corelog.Warning("MethodExecutor.GetMethod(...): Method "..methodName.." not found in module "..moduleName) return nil end
 
     -- end
     return method
 end
 
-function FunctionExecutor.CallMethod(...)
+function MethodExecutor.CallMethod(...)
     -- get & check input from description
     local checkSuccess, objName, methodName, methodArguments = InputChecker.Check([[
         This method executes a method based on a methodName and the methodArguments on an object (table) with the name objName.
@@ -118,11 +118,11 @@ function FunctionExecutor.CallMethod(...)
             methodName                  + (string) name of method to execute
             methodArguments             + (table) with arguments to supply to the method
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("FunctionExecutor.CallFunction(...): Invalid input") return nil end
+    if not checkSuccess then corelog.Error("MethodExecutor.CallFunction(...): Invalid input") return nil end
 
     -- get method
-    local method = FunctionExecutor.GetMethod(objName, methodName)
-    if not method then corelog.Warning("FunctionExecutor.CallFunction(...): Method "..methodName.." not found in object "..objName) return nil end
+    local method = MethodExecutor.GetMethod(objName, methodName)
+    if not method then corelog.Warning("MethodExecutor.CallFunction(...): Method "..methodName.." not found in object "..objName) return nil end
 
     -- call method
     local results = method(table.unpack(methodArguments))
@@ -131,4 +131,4 @@ function FunctionExecutor.CallMethod(...)
     return results
 end
 
-return FunctionExecutor
+return MethodExecutor

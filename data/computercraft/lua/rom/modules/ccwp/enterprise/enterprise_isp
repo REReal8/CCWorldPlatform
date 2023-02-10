@@ -2,7 +2,7 @@ local enterprise_isp = {}
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local URL = require "obj_url"
 
 local role_fuel_worker = require "role_fuel_worker"
@@ -72,16 +72,16 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get Supplier
     local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
     local supplierName = serviceResults.enterpriseName
 
     -- call method on Supplier
     local serviceName = supplierName..".ProvideItemsTo_ASrv"
-    return FunctionExecutor.DoASyncService(serviceName, serviceData, callback, callbackData)
+    return MethodExecutor.DoASyncService(serviceName, serviceData, callback, callbackData)
 end
 
 function enterprise_isp.Can_ProvideItems_QSrv(...)
@@ -108,7 +108,7 @@ function enterprise_isp.Can_ProvideItems_QSrv(...)
 
     -- call method on Supplier
     local serviceName = supplierName..".Can_ProvideItems_QSrv"
-    serviceResults = FunctionExecutor.DoSyncService(serviceName, serviceData)
+    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -143,7 +143,7 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- call method on Supplier
     local serviceName = supplierName..".NeedsTo_ProvideItemsTo_SSrv"
-    serviceResults = FunctionExecutor.DoSyncService(serviceName, serviceData)
+    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -178,23 +178,23 @@ function enterprise_isp.TransferItemsFromTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get source Storage
     local serviceResults = GetStorageName_SSrv( { storageLocator = sourceItemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..sourceItemsLocator:getURI()..".") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..sourceItemsLocator:getURI()..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
     local sourceStorageName = serviceResults.enterpriseName
 
     -- get target Storage
     serviceResults = GetStorageName_SSrv( { storageLocator = destinationStorageLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationStorageLocator:getURI()..".") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationStorageLocator:getURI()..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
     local destinationStorageName = serviceResults.enterpriseName
 
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
     if next(transferItems) == nil then
         corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationStorageLocator:getURI()..").")
-        return FunctionExecutor.DoCallback(callback, callbackData, {
+        return MethodExecutor.DoCallback(callback, callbackData, {
             success                 = true,
             destinationItemsLocator = destinationStorageLocator:copy()
         })
@@ -322,7 +322,7 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
 
     -- call method on Storage
     local serviceName = storageName..".GetItemsLocations_SSrv"
-    serviceResults = FunctionExecutor.DoSyncService(serviceName, serviceData)
+    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -352,7 +352,7 @@ function enterprise_isp.GetStorageLocation_SSrv(...)
 
     -- call method on Storage
     local serviceName = storageName..".GetStorageLocation_SSrv"
-    serviceResults = FunctionExecutor.DoSyncService(serviceName, serviceData)
+    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
 
     -- end
     return serviceResults

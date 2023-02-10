@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
 
@@ -57,10 +57,10 @@ function enterprise_forestry.AddNewSite_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check nTrees == 1  -- ToDo: remove this restriction
-    if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create new forest
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
@@ -176,15 +176,15 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get forest
     local forest = enterprise_forestry.GetForest(forestLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check not downgrading
     local startingLevel = forest:getLevel()
-    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading forest level (from "..startingLevel.." to "..targetLevel..") not supported") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading forest level (from "..startingLevel.." to "..targetLevel..") not supported") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine projectSteps and projectData
     local projectSteps = { }
@@ -206,12 +206,12 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         local targetBaseLayer = forest:getBaseLayer(targetLevel)
         local startingBaseLayer = forest:getBaseLayer(startingLevel)
         local transformLayer = startingBaseLayer:transformToLayer(targetBaseLayer)
-        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No base transformLayer") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No base transformLayer") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
         local baseColOffset, baseRowOffset, baseBuildLayer = transformLayer:buildData()
         projectData.baseBuildLayer = baseBuildLayer
 
         transformLayer = startingTreeLayer:transformToLayer(targetTreeLayer)
-        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No tree transformLayer") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No tree transformLayer") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
         local treeColOffset, treeRowOffset, treeBuildLayer = transformLayer:buildData()
         projectData.treeBuildLayer = treeBuildLayer
 
@@ -362,11 +362,11 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get forest
     local forest = enterprise_forestry.GetForest(itemsLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(forest) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- have forest provide items
     local provideItems = itemsLocator:getQuery()
@@ -528,7 +528,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- let construction enterprise build the tree
     local buildData = {

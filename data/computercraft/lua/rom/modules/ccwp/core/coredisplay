@@ -7,7 +7,7 @@ local coremove = require "coremove"
 
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 -- declare display space
 local db    = {
@@ -256,7 +256,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		-- execute function
 
 		-- seems our user has made a choice
-		local f = FunctionExecutor.GetMethod(t.filename, t.func)
+		local f = MethodExecutor.GetMethod(t.filename, t.func)
     	if not f then corelog.Warning("coredisplay.ExecuteXObjTest(...): Function "..t.func.." not found in file "..t.filename) return false end
 
 		-- executing the code as wordt

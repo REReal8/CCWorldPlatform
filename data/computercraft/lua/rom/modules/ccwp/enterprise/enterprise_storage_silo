@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 local URL = require "obj_url"
 local Block = require "obj_block"
@@ -221,7 +221,7 @@ function enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback, callbackD
 
     -- check input
     if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid siteData input') return nil end
-    if type(siteData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(siteData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
     local materialsHostLocator = URL:new(siteData.materialsHostLocator)
     if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid callback function') return nil end
 

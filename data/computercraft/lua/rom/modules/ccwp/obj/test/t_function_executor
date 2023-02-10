@@ -1,6 +1,6 @@
 local corelog = require "corelog"
 
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 function T_DoCallback()
     -- test DoCallback
@@ -10,7 +10,7 @@ function T_DoCallback()
     local result = {"some task result"}
 
     corelog.WriteToLog("T_coreutils_DoCallback calling DoCallback("..callbackFunction..", "..textutils.serialize(callbackData)..", "..textutils.serialize(result)..")")
-    FunctionExecutor.DoCallback(callbackFunction, callbackData, result)
+    MethodExecutor.DoCallback(callbackFunction, callbackData, result)
 end
 
 function T_DoSyncService()
@@ -20,6 +20,6 @@ function T_DoSyncService()
     local serviceData = {"some service data"}
 
     corelog.WriteToLog("T_coreutils_DoSyncService calling DoSyncService("..serviceFunction..", "..textutils.serialize(serviceData)..")")
-    local results = FunctionExecutor.DoSyncService(serviceFunction, serviceData)
+    local results = MethodExecutor.DoSyncService(serviceFunction, serviceData)
     corelog.WriteToLog("T_coreutils_DoSyncService results = "..textutils.serialize(results))
 end

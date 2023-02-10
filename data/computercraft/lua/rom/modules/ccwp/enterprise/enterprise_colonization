@@ -5,7 +5,7 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local URL = require "obj_url"
 
 local role_settler = require "role_settler"
@@ -60,7 +60,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then

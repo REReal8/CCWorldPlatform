@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local URL = require "obj_url"
 
 local enterprise_projects = require "enterprise_projects"
@@ -72,7 +72,7 @@ function enterprise_shop.OrderItems_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- set ingredientsSupplierLocator to this enterprise
     local ingredientsSupplierLocator = enterprise_shop.GetHostLocator_Att()
@@ -140,7 +140,7 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsShopURL_QSrv({ aURL = itemsLocator})
@@ -510,11 +510,11 @@ function enterprise_shop.ProcureItem_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get best supplierLocator
     local supplierLocator = GetBestSupplierLocator(item)
-    if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..textutils.serialise(item)) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..textutils.serialise(item)) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine itemLocator
     local itemLocator = supplierLocator:copy()

@@ -12,7 +12,7 @@ local BirchForest = {
 local corelog = require "corelog"
 local coremove = require "coremove"
 
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local InputChecker = require "input_checker"
 
 local Block = require "obj_block"
@@ -223,13 +223,13 @@ function BirchForest:provideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- loop on items
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
         -- check for birchlog or sapling
         local localStorageLocator = nil
@@ -238,7 +238,7 @@ function BirchForest:provideItemsTo_ASrv(...)
         elseif itemName == "minecraft:birch_sapling" then
             localStorageLocator = self:getLocalSaplingsLocator()
         else
-            corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return FunctionExecutor.DoCallback(callback, callbackData, {success = false})
+            corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return MethodExecutor.DoCallback(callback, callbackData, {success = false})
         end
         if not localStorageLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
 

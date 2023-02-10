@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 
@@ -208,7 +208,7 @@ function UpgradeSite_ASrv_TestCallback(...)
     else
         -- call extraCallback
         extraCallbackData.forestLocator = forestLocator
-        FunctionExecutor.DoSyncService(extraCallback, extraCallbackData)
+        MethodExecutor.DoSyncService(extraCallback, extraCallbackData)
     end
 end
 

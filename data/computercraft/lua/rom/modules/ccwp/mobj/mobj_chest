@@ -12,7 +12,7 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 local ItemInventory = require "obj_item_inventory"
 
@@ -237,7 +237,7 @@ function Chest.UpdateChestInventory_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.UpdateChestInventory_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest.UpdateChestInventory_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
@@ -307,9 +307,9 @@ function Chest.FetchItemsFromChestIntoTurtle_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
     -- ToDo: objectify
---    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+--    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 --    local chest = self
 
     -- create project definition
@@ -384,12 +384,12 @@ function Chest.PutItemsFromTurtleIntoChest_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check source is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
-    if not serviceResults.success then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {

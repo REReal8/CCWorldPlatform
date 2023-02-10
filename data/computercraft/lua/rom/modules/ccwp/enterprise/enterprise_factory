@@ -7,7 +7,7 @@ local corejob = require "corejob" -- ToDo: remove dependency on old code
 local coretask = require "coretask" -- ToDo: remove dependency on old code
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 local URL = require "obj_url"
 
 local role_alchemist = require "role_alchemist" -- ToDo: remove dependency on old code
@@ -142,26 +142,26 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
             callback                        + (string) name of function to call once service is ready
             callbackData                    + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- loop on items
     local provideItems = itemsLocator:getQuery()
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
         -- select recipe to produce item
         local recipe = db.recipes[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No recipe for item "..itemName) return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No recipe for item "..itemName) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
         -- select a suitable site
         local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
-        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
         -- determine ingredientsItemsLocator (by updating ingredientsSupplierLocator with itemsNeeded)
         local ingredientsItemsLocator = ingredientsSupplierLocator:copy()
@@ -472,7 +472,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- determine projectSteps
     local projectSteps = { }
@@ -541,7 +541,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get site build data
     local siteBuildData = nil
@@ -553,7 +553,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
         siteBuildData = enterprise_factory_site.GetV2SiteBuildData(serviceData)
     else
         corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
-        return FunctionExecutor.DoCallback(callback, callbackData, {success = false})
+        return MethodExecutor.DoCallback(callback, callbackData, {success = false})
     end
     siteBuildData.materialsHostLocator = materialsHostLocator
 
@@ -625,7 +625,7 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local stopAndDismantleSiteProjectDef = {
@@ -676,10 +676,10 @@ function enterprise_factory.DismantleSite_ASrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check input
-    if not siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- get site dismantal data
     local siteDismantleBuildData = nil
@@ -692,7 +692,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
 --        siteDismantleBuildData = enterprise_factory_site.GetV2SiteDismantleBuildData(serviceData)
     else
         corelog.Error("enterprise_factory.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteVersion)
-        return FunctionExecutor.DoCallback(callback, callbackData, {success = false})
+        return MethodExecutor.DoCallback(callback, callbackData, {success = false})
     end
     siteDismantleBuildData.materialsHostLocator = materialsHostLocator
 
@@ -721,7 +721,7 @@ function enterprise_factory.StopSite_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- pass on the request to site file
     enterprise_factory_site.StopSite_ASrv(serviceData, callback, callbackData)

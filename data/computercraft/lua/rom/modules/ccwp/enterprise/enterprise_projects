@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 local db = {
     dhtRoot     = "enterprise_projects",
@@ -49,7 +49,7 @@ function enterprise_projects.StartProject_ASrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- set metaData defaults  ToDo: consider doing with CheckInput
     if type(projectDef.returnData) ~= "table" then projectDef.returnData = {} end
@@ -223,7 +223,7 @@ local function EndProject(internalProjectData)
 
     -- we are done, do the callback
     corelog.WriteToProjectsLog("Calling callback function", project.projectId)
-    FunctionExecutor.DoCallback(project.callbackFunction, project.callbackData, projectResults)
+    MethodExecutor.DoCallback(project.callbackFunction, project.callbackData, projectResults)
 
     -- forget about this project
     corelog.WriteToProjectsLog("Ended", project.projectId)
@@ -312,12 +312,12 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- do async function call
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
-        FunctionExecutor.DoASyncService(serviceName, stepData, callback, callbackData)
+        MethodExecutor.DoASyncService(serviceName, stepData, callback, callbackData)
     else
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync", projectId)
 
         -- do sync function call, keep the results
-        local results = FunctionExecutor.DoSyncService(serviceName, stepData)
+        local results = MethodExecutor.DoSyncService(serviceName, stepData)
 
         -- recursive is the future!
         enterprise_projects.NextProjectStep(internalProjectData, results)

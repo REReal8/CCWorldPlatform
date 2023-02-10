@@ -4,7 +4,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local FunctionExecutor = require "function_executor"
+local MethodExecutor = require "function_executor"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
@@ -71,7 +71,7 @@ function enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(...)
             callback            + (string) name of function to call once service is ready
     --]], table.unpack(arg))
     local callbackData = {}
-    if not checkSuccess then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
 --    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callback..")")
 
@@ -114,7 +114,7 @@ function enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(.
             callback            + (string) name of function to call once service is ready
             callbackData        + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_colonization.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid input") return FunctionExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_colonization.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
 --    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
 
