@@ -5,8 +5,8 @@ local coreutils = require "coreutils"
 local coretask = require "coretask"
 local coremove = require "coremove"
 
-local ObjectRegistry = require "object_registry"
-local objectRegistry = ObjectRegistry:getInstance()
+local ModuleRegistry = require "object_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
 local FunctionExecutor = require "function_executor"
 
 -- declare display space
@@ -200,7 +200,7 @@ end
 function ExecuteObjTest(t)
 	-- forward call with options
 	local options	= {
-		{key = "r", desc = "ObjectRegistry", 	func = ExecuteObjTest, param = {filename = "T_ObjectRegistry"}},
+		{key = "r", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ObjectRegistry"}},
 		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
 		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
 		{key = "l", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
@@ -257,7 +257,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		-- test functions screen
 
 		-- get file
-		local file = objectRegistry:getObject(t.filename)
+		local file = moduleRegistry:getObject(t.filename)
     	if not file then corelog.Warning("coredisplay.ExecuteXObjTest(...): File "..t.filename.." not found") return false end
 
 		-- variables

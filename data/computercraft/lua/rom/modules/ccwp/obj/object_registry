@@ -1,24 +1,24 @@
-local ObjectRegistry = {
+local ModuleRegistry = {
     objects = {},
 }
 
-function ObjectRegistry:getObject(name)
+function ModuleRegistry:getObject(name)
     return self.objects[name]
 end
 
 local instance = nil
-function ObjectRegistry:getInstance()
+function ModuleRegistry:getInstance()
     if not instance then
-        instance = setmetatable({}, { __index = ObjectRegistry })
+        instance = setmetatable({}, { __index = ModuleRegistry })
     end
     return instance
 end
 
-function ObjectRegistry:registerObject(name, object)
+function ModuleRegistry:registerObject(name, object)
     self.objects[name] = object
 end
 
-function ObjectRegistry:requireAndRegisterObject(name, requireName)
+function ModuleRegistry:requireAndRegisterObject(name, requireName)
     -- use require to get object
     requireName = requireName or name
     local object = require(requireName)
@@ -27,8 +27,8 @@ function ObjectRegistry:requireAndRegisterObject(name, requireName)
     self:registerObject(name, object)
 end
 
-function ObjectRegistry:requireAndRegisterObjectTests(name)
+function ModuleRegistry:requireAndRegisterObjectTests(name)
     self:requireAndRegisterObject(name, "test."..name)
 end
 
-return ObjectRegistry
+return ModuleRegistry

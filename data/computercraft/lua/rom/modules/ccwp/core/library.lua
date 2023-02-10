@@ -7,12 +7,12 @@ end
 
 function library.Setup()
     -- register library objects
-    local ObjectRegistry = require "object_registry"
-    local objectRegistry = ObjectRegistry:getInstance()
+    local ModuleRegistry = require "object_registry"
+    local moduleRegistry = ModuleRegistry:getInstance()
 
     -- register library object tests
-    objectRegistry:requireAndRegisterObject("t_coremove", "test.t_coremove")
-    objectRegistry:requireAndRegisterObject("t_coredht", "test.t_coredht")
+    moduleRegistry:requireAndRegisterObject("t_coremove", "test.t_coremove")
+    moduleRegistry:requireAndRegisterObject("t_coredht", "test.t_coredht")
 
     -- do other stuff
 end

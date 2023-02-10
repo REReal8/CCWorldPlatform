@@ -7,14 +7,14 @@ end
 
 function library.Setup()
     -- register library objects
-    local ObjectRegistry = require "object_registry"
-    local objectRegistry = ObjectRegistry:getInstance()
-    objectRegistry:requireAndRegisterObject("Chest", "mobj_chest")
+    local ModuleRegistry = require "object_registry"
+    local moduleRegistry = ModuleRegistry:getInstance()
+    moduleRegistry:requireAndRegisterObject("Chest", "mobj_chest")
     -- ToDo: consider adding & using object_factory
 
     -- register library object tests
-    objectRegistry:requireAndRegisterObject("T_Chest", "test.t_mobj_chest")
-    objectRegistry:requireAndRegisterObject("T_BirchForest", "test.t_mobj_birchforest")
+    moduleRegistry:requireAndRegisterObject("T_Chest", "test.t_mobj_chest")
+    moduleRegistry:requireAndRegisterObject("T_BirchForest", "test.t_mobj_birchforest")
 
     -- do other stuff
 end
