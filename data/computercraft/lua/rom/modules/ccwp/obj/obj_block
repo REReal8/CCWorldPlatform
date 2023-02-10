@@ -26,7 +26,7 @@ function Block:new(o)
         Constructs a Block.
 
         Parameters:
-                            - (table) table with
+            o               - (table) table with
                 _dx         - (number) (optional) block orientation in x
                 _dy         - (number) (optional) block orientation in y
                 _name       - (string) block name (.e.g. "minecraft:oak_log")
