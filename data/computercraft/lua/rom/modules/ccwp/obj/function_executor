@@ -94,7 +94,7 @@ function FunctionExecutor.GetMethod(...)
     if not checkSuccess then corelog.Error("FunctionExecutor.GetMethod(...): Invalid input") return nil end
 
     -- get object
-    local object = moduleRegistry:getObject(objName)
+    local object = moduleRegistry:getModule(objName)
     if not object then corelog.Warning("FunctionExecutor.GetMethod(...): Object "..objName.." not found") return nil end
 
     -- get method

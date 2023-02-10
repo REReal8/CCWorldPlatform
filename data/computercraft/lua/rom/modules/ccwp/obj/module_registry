@@ -1,9 +1,9 @@
 local ModuleRegistry = {
-    objects = {},
+    modules = {},
 }
 
-function ModuleRegistry:getObject(name)
-    return self.objects[name]
+function ModuleRegistry:getModule(name)
+    return self.modules[name]
 end
 
 local instance = nil
@@ -14,17 +14,17 @@ function ModuleRegistry:getInstance()
     return instance
 end
 
-function ModuleRegistry:registerObject(name, object)
-    self.objects[name] = object
+function ModuleRegistry:registerObject(name, module)
+    self.modules[name] = module
 end
 
 function ModuleRegistry:requireAndRegisterObject(name, requireName)
-    -- use require to get object
+    -- use require to get module
     requireName = requireName or name
-    local object = require(requireName)
+    local module = require(requireName)
 
     -- register object
-    self:registerObject(name, object)
+    self:registerObject(name, module)
 end
 
 function ModuleRegistry:requireAndRegisterObjectTests(name)

@@ -9,7 +9,7 @@ end
 
 function T_ModuleRegistry.T_registerAndGetObject()
     -- prepare test
-    corelog.WriteToLog("* ModuleRegistry.registerObject() and ModuleRegistry.getObject() tests")
+    corelog.WriteToLog("* ModuleRegistry.registerObject() and ModuleRegistry.getModule() tests")
     local object1 = {name = "object1"}
     local object2 = {name = "object2"}
     local registry = ModuleRegistry:getInstance()
@@ -21,8 +21,8 @@ function T_ModuleRegistry.T_registerAndGetObject()
     registry:registerObject("object2", object2)
 
     -- Get the objects back from the registry
-    local retrievedObject1 = registry:getObject("object1")
-    local retrievedObject2 = registry:getObject("object2")
+    local retrievedObject1 = registry:getModule("object1")
+    local retrievedObject2 = registry:getModule("object2")
 
     -- Use assertions to confirm that the retrieved objects match the original objects
     assert(retrievedObject1 == object1, "Retrieved object 1 does not match original object 1")
