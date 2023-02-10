@@ -1,26 +1,32 @@
-local ObjectFactory = {}
-
-local URL = require "obj_url"
-local Block = require "obj_block"
-local LayerRectangle = require "obj_layer_rectangle"
-local ItemInventory = require "obj_item_inventory"
-local Chest = require "mobj_chest"
-
-local classes = {
-    URL = URL,
-    Block = Block,
-    LayerRectangle = LayerRectangle,
-    ItemInventory = ItemInventory,
-    Chest = Chest,
+local ObjectFactory = {
+    classes = {},
 }
 
-function ObjectFactory.create(objType, objTable)
-    local class = classes[objType]
+local instance = nil
+function ObjectFactory:getInstance()
+    if not instance then
+        instance = setmetatable({}, { __index = ObjectFactory })
+    end
+    return instance
+end
+
+function ObjectFactory:create(className, objectFieldsTable)
+--    local corelog = require "corelog"
+--    corelog.WriteToLog("about to create "..className.." with "..textutils.serialise(objectFieldsTable))
+    local class = self.classes[className]
     if class then
-        return class:new(objTable)
+        return class:new(objectFieldsTable)
     else
         return nil
     end
+end
+
+function ObjectFactory:registerClass(className, class)
+    self.classes[className] = class
+end
+
+function ObjectFactory:delistClass(className)
+    self.classes[className] = nil
 end
 
 return ObjectFactory

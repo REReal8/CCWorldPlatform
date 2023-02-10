@@ -5,6 +5,7 @@ local corelog = require "corelog"
 local URL = require "obj_url"
 
 local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
 
 function T_ObjectFactory.T_All()
     T_ObjectFactory.T_create()
@@ -12,21 +13,25 @@ end
 
 function T_ObjectFactory.T_create()
     -- prepare test
-    corelog.WriteToLog("* ObjectFactory.create() tests")
+    corelog.WriteToLog("* ObjectFactory:create() tests")
+    objectFactory:registerClass("t_URL", URL)
 
     -- test valid
-    local objType1 = "URL"
+    local objType1 = "t_URL"
     local objTable1 = { } -- default
-    local obj1 = ObjectFactory.create(objType1, objTable1)
+    local obj1 = objectFactory:create(objType1, objTable1)
     assert(obj1, "Failed to create object of type " .. objType1)
-    assert(type(obj1) == "table" and obj1.__index == URL, "Failed to create object of type URL")
+    assert(type(obj1) == "table" and obj1.__index == URL, "Failed to create object of type "..objType1)
 --    corelog.WriteToLog(" obj1="..obj1:getURI())
 
     -- test invalid
     local objType2 = "InvalidType"
     local objTable2 = { "some field" }
-    local obj2 = ObjectFactory.create(objType2, objTable2)
+    local obj2 = objectFactory:create(objType2, objTable2)
     assert(not obj2, "Unexpectedly created object of type " .. objType2)
+
+    -- cleanup test
+    objectFactory:delistClass("t_URL")
 end
 
 return T_ObjectFactory

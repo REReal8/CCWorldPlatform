@@ -1,6 +1,9 @@
 local InputChecker = {}
 local corelog = require "corelog"
 
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
+
 function InputChecker.Check(description, ...)
     -- for debugging
     local callingFunctionInfo = debug.getinfo(2)
@@ -84,30 +87,12 @@ function InputChecker.Check(description, ...)
                     if type(argument) ~= "table" then
                         correctArgumentType = false
                     else
-                        local ObjectFactory = require "object_factory"
-                        local object = ObjectFactory.create(typeType, argument)
+                        local object = objectFactory:create(typeType, argument)
                         if object then
                             argument = object
                         else
                             correctArgumentType = false
                         end
-
-                        --[[
-                        -- object oriented types? => transform
-                        if typeType == "URL" then
-                            argument = URL:new(argument)
-                        elseif typeType == "Block" then
-                            argument = obj_block.Block:new(argument)
-                        elseif typeType == "LayerRectangle" then
-                            argument = obj_layer_rectangle.LayerRectangle:new(argument)
-                        elseif typeType == "ItemInventory" then
-                            argument = obj_item_inventory.ItemInventory:new(argument)
-                        elseif typeType == "Chest" then
-                            argument = mobj_chest.Chest:new(argument)
-                        else
-                            correctArgumentType = false
-                        end
-                        ]]
                     end
                 end
                 if not correctArgumentType then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
