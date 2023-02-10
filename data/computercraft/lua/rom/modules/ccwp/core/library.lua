@@ -11,8 +11,8 @@ function library.Setup()
     local moduleRegistry = ModuleRegistry:getInstance()
 
     -- register library modules test modules
-    moduleRegistry:requireAndRegisterObject("t_coremove", "test.t_coremove")
-    moduleRegistry:requireAndRegisterObject("t_coredht", "test.t_coredht")
+    moduleRegistry:requireAndRegisterModule("t_coremove", "test.t_coremove")
+    moduleRegistry:requireAndRegisterModule("t_coredht", "test.t_coredht")
 
     -- do other stuff
 end

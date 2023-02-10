@@ -18,7 +18,7 @@ function ModuleRegistry:registerModule(name, module)
     self.modules[name] = module
 end
 
-function ModuleRegistry:requireAndRegisterObject(name, requireName)
+function ModuleRegistry:requireAndRegisterModule(name, requireName)
     -- use require to get module
     requireName = requireName or name
     local module = require(requireName)
@@ -27,8 +27,8 @@ function ModuleRegistry:requireAndRegisterObject(name, requireName)
     self:registerModule(name, module)
 end
 
-function ModuleRegistry:requireAndRegisterObjectTests(name)
-    self:requireAndRegisterObject(name, "test."..name)
+function ModuleRegistry:requireAndRegisterModuleTests(name)
+    self:requireAndRegisterModule(name, "test."..name)
 end
 
 return ModuleRegistry

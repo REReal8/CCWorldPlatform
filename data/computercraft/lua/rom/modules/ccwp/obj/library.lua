@@ -12,12 +12,12 @@ function library.Setup()
     -- ToDo: add
 
     -- register library modules test modules
-    moduleRegistry:requireAndRegisterObject("T_ModuleRegistry", "test.t_module_registry")
-    moduleRegistry:requireAndRegisterObject("T_ObjectFactory", "test.t_object_factory")
-    moduleRegistry:requireAndRegisterObject("T_URL", "test.t_obj_url")
-    moduleRegistry:requireAndRegisterObject("T_Block", "test.t_obj_block")
-    moduleRegistry:requireAndRegisterObject("T_LayerRectangle", "test.t_obj_layer_rectangle")
-    moduleRegistry:requireAndRegisterObject("T_ItemInventory", "test.t_obj_item_inventory")
+    moduleRegistry:requireAndRegisterModule("T_ModuleRegistry", "test.t_module_registry")
+    moduleRegistry:requireAndRegisterModule("T_ObjectFactory", "test.t_object_factory")
+    moduleRegistry:requireAndRegisterModule("T_URL", "test.t_obj_url")
+    moduleRegistry:requireAndRegisterModule("T_Block", "test.t_obj_block")
+    moduleRegistry:requireAndRegisterModule("T_LayerRectangle", "test.t_obj_layer_rectangle")
+    moduleRegistry:requireAndRegisterModule("T_ItemInventory", "test.t_obj_item_inventory")
 
     -- do other stuff
 end

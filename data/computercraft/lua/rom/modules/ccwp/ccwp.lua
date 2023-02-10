@@ -20,10 +20,10 @@ function ccwp.Startup()
     mobjLibrary.Setup()
     enterpriseLibrary.Setup()
 
-    -- register global ccwp object tests
+    -- register global ccwp module tests
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
-    moduleRegistry:requireAndRegisterObject("t_main", "test.t_main")
+    moduleRegistry:requireAndRegisterModule("t_main", "test.t_main")
 
     -- initialize core modules (old style)
     local core = require "core"
