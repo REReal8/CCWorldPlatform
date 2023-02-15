@@ -21,11 +21,11 @@ function MethodExecutor.DoCallback(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.DoCallback: Invalid input") return nil end
 
-    -- split callback in objName and methodName
-    local objName, methodName = callback:match("(.*)%.(.*)")
+    -- split callback in moduleName and methodName
+    local moduleName, methodName = callback:match("(.*)%.(.*)")
 
     -- call method
-    return MethodExecutor.CallMethod(objName, methodName, { callbackData, resultData })
+    return MethodExecutor.CallModuleMethod(moduleName, methodName, { callbackData, resultData })
 end
 
 function MethodExecutor.DoSyncService(...)
@@ -42,11 +42,11 @@ function MethodExecutor.DoSyncService(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return nil end
 
-    -- split service in objName and methodName
-    local objName, methodName = service:match("(.*)%.(.*)")
+    -- split service in moduleName and methodName
+    local moduleName, methodName = service:match("(.*)%.(.*)")
 
     -- call method
-    return MethodExecutor.CallMethod(objName, methodName, { serviceData })
+    return MethodExecutor.CallModuleMethod(moduleName, methodName, { serviceData })
 end
 
 function MethodExecutor.DoASyncService(...)
@@ -69,11 +69,11 @@ function MethodExecutor.DoASyncService(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
-    -- split service in objName and methodName
-    local objName, methodName = service:match("(.*)%.(.*)")
+    -- split service in moduleName and methodName
+    local moduleName, methodName = service:match("(.*)%.(.*)")
 
     -- call method
-    return MethodExecutor.CallMethod(objName, methodName, { serviceData, callback, callbackData})
+    return MethodExecutor.CallModuleMethod(moduleName, methodName, { serviceData, callback, callbackData})
 end
 
 function MethodExecutor.GetMethod(...)
@@ -102,24 +102,24 @@ function MethodExecutor.GetMethod(...)
     return method
 end
 
-function MethodExecutor.CallMethod(...)
+function MethodExecutor.CallModuleMethod(...)
     -- get & check input from description
-    local checkSuccess, objName, methodName, methodArguments = InputChecker.Check([[
-        This method executes a method based on a methodName and the methodArguments on an object (table) with the name objName.
+    local checkSuccess, moduleName, methodName, methodArguments = InputChecker.Check([[
+        This method executes a method of a module based on a methodName and the methodArguments.
 
         Return value:
             results                     - (?) function return value(s)
 
         Parameters:
-            objName                     + (string) name of object to execute on
+            moduleName                  + (string) name of module to execute on
             methodName                  + (string) name of method to execute
             methodArguments             + (table) with arguments to supply to the method
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.CallFunction(...): Invalid input") return nil end
 
     -- get method
-    local method = MethodExecutor.GetMethod(objName, methodName)
-    if not method then corelog.Warning("MethodExecutor.CallFunction(...): Method "..methodName.." not found in object "..objName) return nil end
+    local method = MethodExecutor.GetMethod(moduleName, methodName)
+    if not method then corelog.Warning("MethodExecutor.CallFunction(...): Method "..methodName.." not found in module "..moduleName) return nil end
 
     -- call method
     local results = method(table.unpack(methodArguments))
