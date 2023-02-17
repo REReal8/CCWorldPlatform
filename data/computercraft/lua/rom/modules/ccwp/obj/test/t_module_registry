@@ -4,14 +4,14 @@ local corelog = require "corelog"
 local ModuleRegistry = require "module_registry"
 
 function T_ModuleRegistry.T_All()
-    T_ModuleRegistry.T_registerAndGetObject()
+    T_ModuleRegistry.T_registerAndGetModule()
     T_ModuleRegistry.T_delistModule()
 end
 
 local registry = ModuleRegistry:getInstance()
 local module1 = {name = "module1"}
 
-function T_ModuleRegistry.T_registerAndGetObject()
+function T_ModuleRegistry.T_registerAndGetModule()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
     local module2 = {name = "module2"}
