@@ -31,4 +31,8 @@ function ModuleRegistry:requireAndRegisterModuleTests(name)
     self:requireAndRegisterModule(name, "test."..name)
 end
 
+function ModuleRegistry:delistModule(name)
+    self.modules[name] = nil
+end
+
 return ModuleRegistry

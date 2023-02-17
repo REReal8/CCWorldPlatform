@@ -5,16 +5,16 @@ local ModuleRegistry = require "module_registry"
 
 function T_ModuleRegistry.T_All()
     T_ModuleRegistry.T_registerAndGetObject()
+    T_ModuleRegistry.T_delistModule()
 end
+
+local registry = ModuleRegistry:getInstance()
+local module1 = {name = "module1"}
 
 function T_ModuleRegistry.T_registerAndGetObject()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
-    local module1 = {name = "module1"}
     local module2 = {name = "module2"}
-    local registry = ModuleRegistry:getInstance()
-
-    -- test valid
 
     -- Register the modules with the registry
     registry:registerModule("module1", module1)
@@ -29,6 +29,21 @@ function T_ModuleRegistry.T_registerAndGetObject()
     assert(retrievedObject2 == module2, "Retrieved module 2 does not match original module 2")
 
     -- cleanup test
+    registry:delistModule("module1")
+    registry:delistModule("module2")
+end
+
+function T_ModuleRegistry.T_delistModule()
+    -- prepare test
+    corelog.WriteToLog("* ModuleRegistry:delistModule() test")
+    registry:registerModule("module1", module1)
+    assert(registry:getModule("module1") == module1, "Module not registered")
+
+    -- test
+    registry:delistModule("module1")
+    assert(registry:getModule("module1") == nil, "Module not delisted")
+
+    -- cleanup
 end
 
 return T_ModuleRegistry
