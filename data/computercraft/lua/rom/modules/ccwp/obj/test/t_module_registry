@@ -26,6 +26,19 @@ function T_ModuleRegistry.T_registerModule_isRegistered()
     registry:delistModule(module1Name)
 end
 
+function T_ModuleRegistry.T_delistModule()
+    -- prepare test
+    corelog.WriteToLog("* ModuleRegistry:delistModule() test")
+    registry:registerModule(module1Name, module1)
+    assert(registry:isRegistered(module1Name), "Module not registered")
+
+    -- test
+    registry:delistModule(module1Name)
+    assert(not registry:isRegistered(module1Name), "Module not delisted")
+
+    -- cleanup
+end
+
 function T_ModuleRegistry.T_registerModule_getModule()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
@@ -47,19 +60,6 @@ function T_ModuleRegistry.T_registerModule_getModule()
     -- cleanup test
     registry:delistModule(module1Name)
     registry:delistModule(module2Name)
-end
-
-function T_ModuleRegistry.T_delistModule()
-    -- prepare test
-    corelog.WriteToLog("* ModuleRegistry:delistModule() test")
-    registry:registerModule(module1Name, module1)
-    assert(registry:isRegistered(module1Name), "Module not registered")
-
-    -- test
-    registry:delistModule(module1Name)
-    assert(not registry:isRegistered(module1Name), "Module not delisted")
-
-    -- cleanup
 end
 
 return T_ModuleRegistry
