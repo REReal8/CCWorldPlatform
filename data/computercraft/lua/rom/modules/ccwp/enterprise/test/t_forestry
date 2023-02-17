@@ -208,7 +208,8 @@ function UpgradeSite_ASrv_TestCallback(...)
     else
         -- call extraCallback
         extraCallbackData.forestLocator = forestLocator
-        MethodExecutor.DoSyncService(extraCallback, extraCallbackData)
+        local moduleName, extraCallbackName = extraCallback:match("(.*)%.(.*)")
+        MethodExecutor.DoSyncService(moduleName, extraCallbackName, extraCallbackData)
     end
 end
 

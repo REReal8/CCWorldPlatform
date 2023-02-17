@@ -63,7 +63,7 @@ function T_MethodExecutor.T_DoSyncService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoSyncService() test")
     local moduleName = "enterprise_test"
-    local serviceMethod = moduleName..".TestPureLogicService_SSrv"
+    local serviceName = "TestPureLogicService_SSrv"
     assert(moduleRegistry:isRegistered(moduleName), "Module "..moduleName.." is not registered in the registry.")
     local testValue = 20
     local serviceData = {
@@ -71,7 +71,7 @@ function T_MethodExecutor.T_DoSyncService()
     }
 
     -- test
-    local results = MethodExecutor.DoSyncService(serviceMethod, serviceData)
+    local results = MethodExecutor.DoSyncService(moduleName, serviceName, serviceData)
     assert(results.input == testValue, "Unexpected result from myService: " .. tostring(results.input))
 
     -- cleanup test

@@ -107,8 +107,8 @@ function enterprise_isp.Can_ProvideItems_QSrv(...)
     local supplierName = serviceResults.enterpriseName
 
     -- call method on Supplier
-    local serviceName = supplierName..".Can_ProvideItems_QSrv"
-    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
+    local serviceName = "Can_ProvideItems_QSrv"
+    serviceResults = MethodExecutor.DoSyncService(supplierName, serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -142,8 +142,8 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
     local supplierName = serviceResults.enterpriseName
 
     -- call method on Supplier
-    local serviceName = supplierName..".NeedsTo_ProvideItemsTo_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
+    local serviceName = "NeedsTo_ProvideItemsTo_SSrv"
+    serviceResults = MethodExecutor.DoSyncService(supplierName, serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -321,8 +321,8 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
     local storageName = serviceResults.enterpriseName
 
     -- call method on Storage
-    local serviceName = storageName..".GetItemsLocations_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
+    local serviceName = "GetItemsLocations_SSrv"
+    serviceResults = MethodExecutor.DoSyncService(storageName, serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -351,8 +351,8 @@ function enterprise_isp.GetStorageLocation_SSrv(...)
     local storageName = serviceResults.enterpriseName
 
     -- call method on Storage
-    local serviceName = storageName..".GetStorageLocation_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(serviceName, serviceData)
+    local serviceName = "GetStorageLocation_SSrv"
+    serviceResults = MethodExecutor.DoSyncService(storageName, serviceName, serviceData)
 
     -- end
     return serviceResults

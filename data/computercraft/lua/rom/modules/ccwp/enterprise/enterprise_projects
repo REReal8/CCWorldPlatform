@@ -305,19 +305,20 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     ]]
 
     -- type of step?
-    local serviceName = step.stepName -- note: possibly later also none service steps, for now it always is a service
+    local stepName = step.stepName -- note: possibly later also none service steps, for now it always is a service
+    local moduleName, serviceName = stepName:match("(.*)%.(.*)")
     if step.async == true then
         corelog.WriteToProjectsLog("Start step "..currentStep.." async", projectId)
 
         -- do async function call
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
-        MethodExecutor.DoASyncService(serviceName, stepData, callback, callbackData)
+        MethodExecutor.DoASyncService(stepName, stepData, callback, callbackData)
     else
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync", projectId)
 
         -- do sync function call, keep the results
-        local results = MethodExecutor.DoSyncService(serviceName, stepData)
+        local results = MethodExecutor.DoSyncService(moduleName, serviceName, stepData)
 
         -- recursive is the future!
         enterprise_projects.NextProjectStep(internalProjectData, results)

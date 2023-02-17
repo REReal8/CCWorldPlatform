@@ -104,7 +104,8 @@ function DoAssignment(assignment)
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
     corelog.WriteToLog("Starting "..assignment.taskFunction)
-    local taskResult = MethodExecutor.DoSyncService(assignment.taskFunction, assignment.taskData)
+    local moduleName, taskName = assignment.taskFunction:match("(.*)%.(.*)")
+    local taskResult = MethodExecutor.DoSyncService(moduleName, taskName, assignment.taskData)
     corelog.WriteToAssignmentLog("Completed task (result="..textutils.serialize(taskResult)..")", assignmentId)
 
     -- call callBack function
