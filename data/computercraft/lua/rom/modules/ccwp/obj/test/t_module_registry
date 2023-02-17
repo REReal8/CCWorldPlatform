@@ -11,7 +11,7 @@ end
 
 local registry = ModuleRegistry:getInstance()
 local module1Name = "module1"
-local module1 = {name = "module1"}
+local module1 = {aValue = 1}
 
 function T_ModuleRegistry.T_registerModule_isRegistered()
     -- prepare test
@@ -29,15 +29,16 @@ end
 function T_ModuleRegistry.T_registerModule_getModule()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
-    local module2 = {name = "module2"}
+    local module2Name = "module2"
+    local module2 = {aValue = 2}
 
     -- Register the modules with the registry
     registry:registerModule(module1Name, module1)
-    registry:registerModule("module2", module2)
+    registry:registerModule(module2Name, module2)
 
     -- Get the modules back from the registry
-    local retrievedObject1 = registry:getModule("module1")
-    local retrievedObject2 = registry:getModule("module2")
+    local retrievedObject1 = registry:getModule(module1Name)
+    local retrievedObject2 = registry:getModule(module2Name)
 
     -- Use assertions to confirm that the retrieved modules match the original modules
     assert(retrievedObject1 == module1, "Retrieved module 1 does not match original module 1")
@@ -45,18 +46,18 @@ function T_ModuleRegistry.T_registerModule_getModule()
 
     -- cleanup test
     registry:delistModule(module1Name)
-    registry:delistModule("module2")
+    registry:delistModule(module2Name)
 end
 
 function T_ModuleRegistry.T_delistModule()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:delistModule() test")
     registry:registerModule(module1Name, module1)
-    assert(registry:getModule(module1Name) == module1, "Module not registered")
+    assert(registry:isRegistered(module1Name), "Module not registered")
 
     -- test
     registry:delistModule(module1Name)
-    assert(registry:getModule(module1Name) == nil, "Module not delisted")
+    assert(not registry:isRegistered(module1Name), "Module not delisted")
 
     -- cleanup
 end
