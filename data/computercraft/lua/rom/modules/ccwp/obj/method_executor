@@ -49,8 +49,8 @@ end
 
 function MethodExecutor.DoASyncService(...)
     -- get & check input from description
-    local checkSuccess, service, serviceData, callback, callbackData = InputChecker.Check([[
-        This function executes an async service function.
+    local checkSuccess, moduleName, serviceName, serviceData, callback, callbackData = InputChecker.Check([[
+        This function executes an async service method of a module.
 
         Return value:
             nil
@@ -60,18 +60,16 @@ function MethodExecutor.DoASyncService(...)
             results                     - (?) service function return value
 
         Parameters:
-            service                     + (string) name of service function to execute
+            moduleName                  + (string) name of module with the service
+            serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
             callback                    + (string) name of callback function to execute
             callbackData                + (table) with first argument to supply to callback function
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
-    -- split service in moduleName and methodName
-    local moduleName, methodName = service:match("(.*)%.(.*)")
-
     -- call method
-    return MethodExecutor.CallModuleMethod(moduleName, methodName, { serviceData, callback, callbackData})
+    return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback, callbackData})
 end
 
 function MethodExecutor.GetModuleMethod(...)

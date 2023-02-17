@@ -313,7 +313,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- do async function call
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
-        MethodExecutor.DoASyncService(stepName, stepData, callback, callbackData)
+        MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback, callbackData)
     else
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync", projectId)
 

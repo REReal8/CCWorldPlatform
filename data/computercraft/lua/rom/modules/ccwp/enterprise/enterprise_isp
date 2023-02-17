@@ -80,8 +80,8 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
     local supplierName = serviceResults.enterpriseName
 
     -- call method on Supplier
-    local serviceName = supplierName..".ProvideItemsTo_ASrv"
-    return MethodExecutor.DoASyncService(serviceName, serviceData, callback, callbackData)
+    local serviceName = "ProvideItemsTo_ASrv"
+    return MethodExecutor.DoASyncService(supplierName, serviceName, serviceData, callback, callbackData)
 end
 
 function enterprise_isp.Can_ProvideItems_QSrv(...)
