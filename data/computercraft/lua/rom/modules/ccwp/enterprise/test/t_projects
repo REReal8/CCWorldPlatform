@@ -1,8 +1,8 @@
-local t_construction = {}
+local t_projects = {}
 
 local enterprise_projects = require "enterprise_projects"
 
-function t_construction.T_CombineStepResults()
+function t_projects.T_CombineStepResults()
     -- init
     local projectDef = {
         steps   = {
@@ -47,7 +47,7 @@ function t_construction.T_CombineStepResults()
     enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
-function t_construction.T_StartProject()
+function t_projects.T_StartProject()
     -- init
     local testArgValue = 20
     local projectDef = {
@@ -109,8 +109,8 @@ function t_construction.T_StartProject()
     enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
 end
 
-function t_construction.T_DeleteProjects()
+function t_projects.T_DeleteProjects()
     enterprise_projects.DeleteProjects()
 end
 
-return t_construction
+return t_projects
