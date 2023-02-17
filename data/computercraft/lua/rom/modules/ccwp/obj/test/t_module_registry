@@ -5,8 +5,8 @@ local ModuleRegistry = require "module_registry"
 
 function T_ModuleRegistry.T_All()
     T_ModuleRegistry.T_registerModule_isRegistered()
-    T_ModuleRegistry.T_registerModule_getModule()
     T_ModuleRegistry.T_delistModule()
+    T_ModuleRegistry.T_getModule()
 end
 
 local registry = ModuleRegistry:getInstance()
@@ -39,22 +39,20 @@ function T_ModuleRegistry.T_delistModule()
     -- cleanup
 end
 
-function T_ModuleRegistry.T_registerModule_getModule()
+function T_ModuleRegistry.T_getModule()
     -- prepare test
-    corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
+    corelog.WriteToLog("* ModuleRegistry:getModule() tests")
+    assert(not registry:isRegistered(module1Name), "Module "..module1Name.." already registered")
+    registry:registerModule(module1Name, module1)
     local module2Name = "module2"
     local module2 = {aValue = 2}
-
-    -- Register the modules with the registry
-    registry:registerModule(module1Name, module1)
+    assert(not registry:isRegistered(module2Name), "Module "..module2Name.." already registered")
     registry:registerModule(module2Name, module2)
 
-    -- Get the modules back from the registry
+    -- test
     local retrievedObject1 = registry:getModule(module1Name)
-    local retrievedObject2 = registry:getModule(module2Name)
-
-    -- Use assertions to confirm that the retrieved modules match the original modules
     assert(retrievedObject1 == module1, "Retrieved module 1 does not match original module 1")
+    local retrievedObject2 = registry:getModule(module2Name)
     assert(retrievedObject2 == module2, "Retrieved module 2 does not match original module 2")
 
     -- cleanup test
