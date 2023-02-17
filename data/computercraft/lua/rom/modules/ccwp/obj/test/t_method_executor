@@ -2,26 +2,48 @@ local T_MethodExecutor = {}
 
 local corelog = require "corelog"
 
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
+
 local MethodExecutor = require "method_executor"
 
 function T_MethodExecutor.T_All()
     T_MethodExecutor.T_CallMethod()
+    T_MethodExecutor.T_CallModuleMethod()
+end
+
+local testMethod = function(num)
+    return num + 1
 end
 
 function T_MethodExecutor.T_CallMethod()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.CallMethod() test")
-    local object = {
-        increment = function(num)
-            return num + 1
-        end
+    local myObject = {
+        increment = testMethod
     }
 
     -- test
-    local result = MethodExecutor.CallMethod(object, "increment", {5})
+    local result = MethodExecutor.CallMethod(myObject, "increment", {5})
     assert(result == 6, "Unexpected result from increment method: " .. tostring(result))
 
     -- cleanup test
+end
+
+function T_MethodExecutor.T_CallModuleMethod()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.CallModuleMethod() test")
+    local myModule = {
+        increment = testMethod
+    }
+    moduleRegistry:registerModule("myModule", myModule)
+
+    -- test
+    local result = MethodExecutor.CallModuleMethod("myModule", "increment", {5})
+    assert(result == 6, "Unexpected result from increment method: " .. tostring(result))
+
+    -- cleanup test
+    moduleRegistry:delistModule("myModule")
 end
 
 function T_MethodExecutor.T_DoCallback()
