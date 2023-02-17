@@ -18,6 +18,10 @@ function ModuleRegistry:registerModule(name, module)
     self.modules[name] = module
 end
 
+function ModuleRegistry:isRegistered(name)
+    return self.modules[name] ~= nil
+end
+
 function ModuleRegistry:requireAndRegisterModule(name, requireName)
     -- use require to get module
     requireName = requireName or name

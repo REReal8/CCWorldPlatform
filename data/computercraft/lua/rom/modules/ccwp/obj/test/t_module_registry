@@ -4,20 +4,35 @@ local corelog = require "corelog"
 local ModuleRegistry = require "module_registry"
 
 function T_ModuleRegistry.T_All()
-    T_ModuleRegistry.T_registerAndGetModule()
+    T_ModuleRegistry.T_registerModule_isRegistered()
+    T_ModuleRegistry.T_registerModule_getModule()
     T_ModuleRegistry.T_delistModule()
 end
 
 local registry = ModuleRegistry:getInstance()
+local module1Name = "module1"
 local module1 = {name = "module1"}
 
-function T_ModuleRegistry.T_registerAndGetModule()
+function T_ModuleRegistry.T_registerModule_isRegistered()
+    -- prepare test
+    corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:isRegistered() tests")
+    assert(not registry:isRegistered(module1Name), "Module "..module1Name.." already registered")
+
+    -- test
+    registry:registerModule(module1Name, module1)
+    assert(registry:isRegistered(module1Name), "Module "..module1Name.." not registered")
+
+    -- cleanup test
+    registry:delistModule(module1Name)
+end
+
+function T_ModuleRegistry.T_registerModule_getModule()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:getModule() tests")
     local module2 = {name = "module2"}
 
     -- Register the modules with the registry
-    registry:registerModule("module1", module1)
+    registry:registerModule(module1Name, module1)
     registry:registerModule("module2", module2)
 
     -- Get the modules back from the registry
@@ -29,19 +44,19 @@ function T_ModuleRegistry.T_registerAndGetModule()
     assert(retrievedObject2 == module2, "Retrieved module 2 does not match original module 2")
 
     -- cleanup test
-    registry:delistModule("module1")
+    registry:delistModule(module1Name)
     registry:delistModule("module2")
 end
 
 function T_ModuleRegistry.T_delistModule()
     -- prepare test
     corelog.WriteToLog("* ModuleRegistry:delistModule() test")
-    registry:registerModule("module1", module1)
-    assert(registry:getModule("module1") == module1, "Module not registered")
+    registry:registerModule(module1Name, module1)
+    assert(registry:getModule(module1Name) == module1, "Module not registered")
 
     -- test
-    registry:delistModule("module1")
-    assert(registry:getModule("module1") == nil, "Module not delisted")
+    registry:delistModule(module1Name)
+    assert(registry:getModule(module1Name) == nil, "Module not delisted")
 
     -- cleanup
 end
