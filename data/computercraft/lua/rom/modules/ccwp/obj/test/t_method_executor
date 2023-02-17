@@ -5,6 +5,23 @@ local corelog = require "corelog"
 local MethodExecutor = require "method_executor"
 
 function T_MethodExecutor.T_All()
+    T_MethodExecutor.T_CallMethod()
+end
+
+function T_MethodExecutor.T_CallMethod()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.CallMethod() test")
+    local object = {
+        increment = function(num)
+            return num + 1
+        end
+    }
+
+    -- test
+    local result = MethodExecutor.CallMethod(object, "increment", {5})
+    assert(result == 6, "Unexpected result from increment method: " .. tostring(result))
+
+    -- cleanup test
 end
 
 function T_MethodExecutor.T_DoCallback()
