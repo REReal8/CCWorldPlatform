@@ -50,49 +50,6 @@ function enterprise_test.Test_SSrv(...)
     return serviceResult
 end
 
-function enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, serviceData, testArg, callback = InputChecker.Check([[
-        This public async service executes an assignment with a callback function (and no callback data).
-
-        Return value:
-            nil
-
-        Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData         + (table) data about the service
-                testArg         + (number) as a test argument
-            callback            + (string) name of function to call once service is ready
-    --]], table.unpack(arg))
-    local callbackData = {}
-    if not checkSuccess then corelog.Error("enterprise_test.TestServiceWithAssignmentAndCallback_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-
---    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallback_ASrv("..textutils.serialize(serviceData)..", "..callback..")")
-
-    -- create assignment arguments
-    local metaData = {
-        startTime = coreutils.UniversalTime(),
-        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
-        needTool = false,
-        needTurtle = false,
-        fuelNeeded = 0
-    }
-    local taskData = {
-        arg1 = testArg
-    }
-
-    -- do assignment
-    local assignmentServiceData = {
-        metaData    = metaData,
-        task        = "enterprise_test.Func1_Task",
-        taskData    = taskData,
-    }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
-end
-
 function enterprise_test.Test_ASrv(...)
     -- get & check input from description
     local checkSuccess, testArg, callback, callbackData = InputChecker.Check([[

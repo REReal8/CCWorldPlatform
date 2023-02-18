@@ -11,7 +11,6 @@ local callbackTestValue = "some callback data"
 
 function t_test.T_All()
     t_test.T_Test_SSrv()
-    t_test.T_TestServiceWithAssignmentAndCallback_ASrv()
     t_test.T_Test_ASrv()
 end
 
@@ -26,25 +25,6 @@ function t_test.T_Test_SSrv()
     local input = serviceResults.input
     local expectedInput = testValue
     assert(input == expectedInput, "gotten input(="..input..") not the same as expected(="..expectedInput..")")
-
-    -- cleanup test
-end
-
-function t_test.T_TestServiceWithAssignmentAndCallback_ASrv()
-    -- prepare test
-
-    -- test
-    corelog.WriteToLog("* TestServiceWithAssignmentAndCallback_ASrv test")
-    local callbackFunction = "t_test.TestServiceWithAssignmentAndCallback_ASrv_Callback"
-    enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(testData, callbackFunction)
-end
-
-function t_test.TestServiceWithAssignmentAndCallback_ASrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-    local arg1 = serviceResults.input
-    local expectedArg1 = testValue
-    assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
 
     -- cleanup test
 end
