@@ -43,7 +43,8 @@ function t_projects.T_AreAllTrue_QSrv()
 end
 
 local callbackTestValue = "some callback data"
-local testArgValue1 = 20
+local testArgValue20 = 20
+local testArgValue222 = 222
 
 function t_projects.T_StartProject_ASrv()
     -- prepare test
@@ -85,13 +86,13 @@ function t_projects.T_StartProject_ASrv()
         }
     }
     local projectData = {
-        testArgSource = testArgValue1,
+        testArgSource = testArgValue20,
         testTableSource = {
             key1 = 11,
             key2 = 22,
             key3 = {
                 nKey1 = 111,
-                nKey2 = 222,
+                nKey2 = testArgValue222,
                 nKey3 = 333,
             }
         },
@@ -121,7 +122,16 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     local expectedCallbackValue = callbackTestValue
     assert(callbackValue == expectedCallbackValue, "gotten callbackValue(="..(callbackValue or "nil")..") not the same as expected(="..expectedCallbackValue..")")
     local testBArg = serviceResults.testBArg0
-    local expectedTestBArg = testArgValue1
+    local expectedTestBArg = testArgValue20
+    assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
+    testBArg = serviceResults.testBArg1
+    expectedTestBArg = testArgValue20
+    assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
+    testBArg = serviceResults.testBArg2
+    expectedTestBArg = testArgValue20
+    assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
+    testBArg = serviceResults.testBArg3
+    expectedTestBArg = testArgValue222
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- cleanup test
