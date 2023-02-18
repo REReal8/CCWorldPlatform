@@ -60,12 +60,7 @@ function t_projects.T_StartProject_ASrv()
             }},
             { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTableSource.key3.nKey2" },
-            }},--[[ -- ToDo: figure out why both of these steps causes the infamous failure on serializing
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTable2" },
-                { keyDef = "testArg.field2" , valueSource = 0, keyDefSource = "testTable3" },
-                { keyDef = "testArg.field2.field3" , valueSource = 0, keyDefSource = "testArgSource" },
-            }},]]
+            }},
             { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTable4" },
                 { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
@@ -83,7 +78,6 @@ function t_projects.T_StartProject_ASrv()
             { keyDef = "testBArg2"          , valueSource = 2, keyDefSource = "input" },
             { keyDef = "testBArg3"          , valueSource = 3, keyDefSource = "input" },
             { keyDef = "testBArg4"          , valueSource = 4, keyDefSource = "input" },
---            { keyDef = "testBArg5"      , valueSource = 5, keyDefSource = "input" },
             { keyDef = "success"            , valueSource = 5, keyDefSource = "success" },
         }
     }
@@ -98,8 +92,6 @@ function t_projects.T_StartProject_ASrv()
                 nKey3 = 333,
             }
         },
-        testTable2 = { },
-        testTable3 = { },
         testTableSource2 = {
             key4 = testArgValue44,
             key5 = 55,
