@@ -7,6 +7,7 @@ local enterprise_projects = require "enterprise_projects"
 function t_projects.T_All()
     t_projects.T_AreAllTrue_QSrv()
     t_projects.T_DeleteProjects()
+    t_projects.T_StartProject_ASrv()
 end
 
 function t_projects.T_AreAllTrue_QSrv()
@@ -41,10 +42,12 @@ function t_projects.T_AreAllTrue_QSrv()
     -- cleanup test
 end
 
+local callbackTestValue = "some callback data"
+local testArgValue1 = 20
+
 function t_projects.T_StartProject_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
-    local testArgValue = 20
     local projectDef = {
         steps   = {
             { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
@@ -61,9 +64,14 @@ function t_projects.T_StartProject_ASrv()
                 { keyDef = "testArg.field2" , valueSource = 0, keyDefSource = "testTable3" },
                 { keyDef = "testArg.field2.field3" , valueSource = 0, keyDefSource = "testArgSource" },
             }},]]
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTable4" },
-                { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
+--            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+--                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTable4" },
+--                { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
+--            }},
+            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success3"                   , valueSource = 3, keyDefSource = "success" },
             }},
         },
         returnData  = {
@@ -71,12 +79,13 @@ function t_projects.T_StartProject_ASrv()
             { keyDef = "testBArg1"      , valueSource = 1, keyDefSource = "input" },
             { keyDef = "testBArg2"      , valueSource = 2, keyDefSource = "input" },
             { keyDef = "testBArg3"      , valueSource = 3, keyDefSource = "input" },
-            { keyDef = "testBArg4"      , valueSource = 4, keyDefSource = "input" },
+--            { keyDef = "testBArg4"      , valueSource = 4, keyDefSource = "input" },
 --            { keyDef = "testBArg5"      , valueSource = 5, keyDefSource = "input" },
+            { keyDef = "success"        , valueSource = 4, keyDefSource = "success" },
         }
     }
     local projectData = {
-        testArgSource = testArgValue,
+        testArgSource = testArgValue1,
         testTableSource = {
             key1 = 11,
             key2 = 22,
@@ -94,8 +103,8 @@ function t_projects.T_StartProject_ASrv()
         },
         testTable4 = { },
     }
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = { "rootCallBackData" }
+    local callbackFunction = "t_projects.StartProject_ASrv_Callback"
+    local callbackData = { [0] = callbackTestValue }
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
@@ -103,6 +112,17 @@ function t_projects.T_StartProject_ASrv()
 
     -- test
     enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+end
+
+function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    local callbackValue = callbackData[0]
+    local expectedCallbackValue = callbackTestValue
+    assert(callbackValue == expectedCallbackValue, "gotten callbackValue(="..(callbackValue or "nil")..") not the same as expected(="..expectedCallbackValue..")")
+    local testBArg = serviceResults.testBArg0
+    local expectedTestBArg = testArgValue1
+    assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- cleanup test
 end
