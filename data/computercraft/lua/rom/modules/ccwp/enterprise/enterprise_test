@@ -93,9 +93,9 @@ function enterprise_test.TestServiceWithAssignmentAndCallback_ASrv(...)
     enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
 end
 
-function enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(...)
+function enterprise_test.Test_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, testArg, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, testArg, callback, callbackData = InputChecker.Check([[
         This public async service executes an assignment with a callback function and callback data.
 
         Return value:
@@ -104,16 +104,17 @@ function enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(.
         Async service return value (to callback):
                                 - (table)
                 success         - (boolean) whether the service executed successfully
+                input           - (?) the test input argument
 
         Parameters:
-            serviceData         + (table) data about the service
+            serviceData         - (table) data about the service
                 testArg         + (number) as a test argument
             callback            + (string) name of function to call once service is ready
             callbackData        + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_colonization.TestServiceWithAssignmentAndCallbackAndArguments_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_colonization.Test_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
---    corelog.WriteToLog(">calling enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
+--    corelog.WriteToLog(">calling enterprise_test.Test_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
 
     -- create assignment arguments
     local metaData = {

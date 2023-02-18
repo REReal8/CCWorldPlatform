@@ -55,7 +55,7 @@ function t_projects.T_StartProject_ASrv()
             { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testArgSource" },
             }},
-            { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
+            { stepName = "enterprise_test.Test_ASrv", async = true, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testArgSource" },
             }},
             { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {

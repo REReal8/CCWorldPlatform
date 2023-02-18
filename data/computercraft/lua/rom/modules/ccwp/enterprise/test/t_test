@@ -12,7 +12,7 @@ local callbackTestValue = "some callback data"
 function t_test.T_All()
     t_test.T_Test_SSrv()
     t_test.T_TestServiceWithAssignmentAndCallback_ASrv()
-    t_test.T_TestServiceWithAssignmentAndCallbackAndArguments_ASrv()
+    t_test.T_Test_ASrv()
 end
 
 function t_test.T_Test_SSrv()
@@ -49,17 +49,17 @@ function t_test.TestServiceWithAssignmentAndCallback_ASrv_Callback(callbackData,
     -- cleanup test
 end
 
-function t_test.T_TestServiceWithAssignmentAndCallbackAndArguments_ASrv()
+function t_test.T_Test_ASrv()
     -- prepare test
 
     -- test
-    corelog.WriteToLog("* TestServiceWithAssignmentAndCallbackAndArguments_ASrv test")
-    local callbackFunction = "t_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv_Callback"
+    corelog.WriteToLog("* enterprise_test.Test_ASrv() test")
+    local callbackFunction = "t_test.Test_ASrv_Callback"
     local callbackData = { [0] = callbackTestValue}
-    enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv(testData, callbackFunction, callbackData)
+    enterprise_test.Test_ASrv(testData, callbackFunction, callbackData)
 end
 
-function t_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv_Callback(callbackData, serviceResults)
+function t_test.Test_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
     local arg1 = serviceResults.input
