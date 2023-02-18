@@ -10,17 +10,17 @@ local testData = {
 local callbackTestValue = "some callback data"
 
 function t_test.T_All()
-    t_test.T_TestPureLogicService_SSrv()
+    t_test.T_Test_SSrv()
     t_test.T_TestServiceWithAssignmentAndCallback_ASrv()
     t_test.T_TestServiceWithAssignmentAndCallbackAndArguments_ASrv()
 end
 
-function t_test.T_TestPureLogicService_SSrv()
+function t_test.T_Test_SSrv()
     -- prepare test
-    corelog.WriteToLog("* TestPureLogicService_SSrv test")
+    corelog.WriteToLog("* enterprise_test.Test_SSrv() test")
 
     -- test
-    local serviceResults = enterprise_test.TestPureLogicService_SSrv(testData)
+    local serviceResults = enterprise_test.Test_SSrv(testData)
     assert(serviceResults.success, "failed executing sync service")
 
     local input = serviceResults.input

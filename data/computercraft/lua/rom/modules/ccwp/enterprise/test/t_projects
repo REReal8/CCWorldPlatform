@@ -52,16 +52,16 @@ function t_projects.T_StartProject_ASrv()
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
     local projectDef = {
         steps   = {
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testArgSource" },
             }},
             { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testArgSource" },
             }},
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTableSource.key3.nKey2" },
             }},
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+            { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
                 { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTable4" },
                 { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
             }},

@@ -21,25 +21,22 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 --   | |
 --   |_|
 
-function enterprise_test.TestPureLogicService_SSrv(...)
+function enterprise_test.Test_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, testArg = InputChecker.Check([[
-        This public async service executes an assignment with a callback function (and no callback data)
+        This public sync service returns a test argument.
 
         Return value:
-            nil
-
-        Async service return value (to callback):
-                                - (table)
-                success         - (boolean) whether the service executed successfully
+            success             - (boolean) whether the service executed successfully
+            input               - (?) the test input argument
 
         Parameters:
             serviceData         + (table) data about the service
                 testArg         + (?) as a test argument
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_test.Test_SSrv: Invalid input") return {success = false} end
 
---    corelog.WriteToLog(">calling enterprise_test.TestPureLogicService_SSrv("..textutils.serialize(serviceData)..")")
+--    corelog.WriteToLog(">calling enterprise_test.Test_SSrv("..textutils.serialize(serviceData)..")")
 
     -- determine result to return
     local serviceResult = {

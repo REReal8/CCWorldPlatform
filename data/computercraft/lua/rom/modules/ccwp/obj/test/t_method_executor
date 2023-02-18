@@ -63,7 +63,7 @@ function T_MethodExecutor.T_DoSyncService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoSyncService() test")
     local moduleName = "enterprise_test"
-    local serviceName = "TestPureLogicService_SSrv"
+    local serviceName = "Test_SSrv"
     assert(moduleRegistry:isRegistered(moduleName), "Module "..moduleName.." is not registered in the registry.")
     local testValue = 20
     local serviceData = {
