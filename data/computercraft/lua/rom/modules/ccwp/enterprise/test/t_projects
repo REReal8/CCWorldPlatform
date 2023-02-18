@@ -45,6 +45,7 @@ end
 local callbackTestValue = "some callback data"
 local testArgValue20 = 20
 local testArgValue222 = 222
+local testArgValue44 = 44
 
 function t_projects.T_StartProject_ASrv()
     -- prepare test
@@ -65,14 +66,15 @@ function t_projects.T_StartProject_ASrv()
                 { keyDef = "testArg.field2" , valueSource = 0, keyDefSource = "testTable3" },
                 { keyDef = "testArg.field2.field3" , valueSource = 0, keyDefSource = "testArgSource" },
             }},]]
---            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
---                { keyDef = "testArg"    , valueSource = 0, keyDefSource = "testTable4" },
---                { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
---            }},
+            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
+                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTable4" },
+                { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
+            }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
                 { keyDef = "success1"       , valueSource = 1, keyDefSource = "success" },
                 { keyDef = "success2"       , valueSource = 2, keyDefSource = "success" },
                 { keyDef = "success3"       , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success4"       , valueSource = 4, keyDefSource = "success" },
             }},
         },
         returnData  = {
@@ -80,9 +82,9 @@ function t_projects.T_StartProject_ASrv()
             { keyDef = "testBArg1"          , valueSource = 1, keyDefSource = "input" },
             { keyDef = "testBArg2"          , valueSource = 2, keyDefSource = "input" },
             { keyDef = "testBArg3"          , valueSource = 3, keyDefSource = "input" },
---            { keyDef = "testBArg4"      , valueSource = 4, keyDefSource = "input" },
+            { keyDef = "testBArg4"          , valueSource = 4, keyDefSource = "input" },
 --            { keyDef = "testBArg5"      , valueSource = 5, keyDefSource = "input" },
-            { keyDef = "success"            , valueSource = 4, keyDefSource = "success" },
+            { keyDef = "success"            , valueSource = 5, keyDefSource = "success" },
         }
     }
     local projectData = {
@@ -99,7 +101,7 @@ function t_projects.T_StartProject_ASrv()
         testTable2 = { },
         testTable3 = { },
         testTableSource2 = {
-            key4 = 44,
+            key4 = testArgValue44,
             key5 = 55,
         },
         testTable4 = { },
@@ -132,6 +134,9 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
     testBArg = serviceResults.testBArg3
     expectedTestBArg = testArgValue222
+    assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
+    testBArg = serviceResults.testBArg4.field4
+    expectedTestBArg = testArgValue44
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- cleanup test
