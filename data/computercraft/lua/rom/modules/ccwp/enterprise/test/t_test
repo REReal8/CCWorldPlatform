@@ -31,11 +31,11 @@ end
 
 function t_test.T_Test_ASrv()
     -- prepare test
-
-    -- test
     corelog.WriteToLog("* enterprise_test.Test_ASrv() test")
     local callbackFunction = "t_test.Test_ASrv_Callback"
     local callbackData = { [0] = callbackTestValue}
+
+    -- test
     enterprise_test.Test_ASrv(testData, callbackFunction, callbackData)
 end
 
