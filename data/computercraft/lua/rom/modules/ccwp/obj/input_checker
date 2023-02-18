@@ -83,7 +83,7 @@ function InputChecker.Check(description, ...)
 
                 -- voldoet het argument aan het opgegeven type?
                 local correctArgumentType = true
-                if type(argument) ~= typeType then
+                if typeType ~= "?" and type(argument) ~= typeType then
                     if type(argument) ~= "table" then
                         correctArgumentType = false
                     else

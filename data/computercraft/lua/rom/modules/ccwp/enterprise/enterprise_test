@@ -35,7 +35,7 @@ function enterprise_test.TestPureLogicService_SSrv(...)
 
         Parameters:
             serviceData         + (table) data about the service
-                testArg         + (number) as a test argument
+                testArg         + (?) as a test argument
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_test.TestPureLogicService_SSrv: Invalid input") return {success = false} end
 
