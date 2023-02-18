@@ -110,6 +110,36 @@ function enterprise_projects.AreAllTrue_QSrv(serviceData)
     return {success = allTrue}
 end
 
+local function ResetProjects()
+    return coredht.SaveData({}, db.dhtRoot)
+end
+
+local function GetProjects()
+    -- get items
+    local projects = coredht.GetData(db.dhtRoot)
+    if not projects or type(projects) ~= "table" then projects = ResetProjects() end
+
+    -- end
+    return projects
+end
+
+function enterprise_projects.GetNumberOfProjects_Att()
+    --[[
+        Enterprise attribute: number of projects administered by the enterprise.
+    --]]
+
+    -- get projects
+    local projects = GetProjects()
+
+    -- loop on items
+    local count = 0
+    for k, site in pairs(projects) do
+        count = count + 1
+    end
+
+    return count
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
@@ -118,8 +148,8 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function enterprise_projects.DeleteProjects()
-    local projects = coredht.GetData(db.dhtRoot)
-    if not projects or type(projects) ~= "table" then corelog.Warning("coreassignment.DeleteProjects: projects not valid") return nil end
+    -- get projects
+    local projects = GetProjects()
 
     -- remove all projects
     corelog.WriteToProjectsLog("All projects are being deleted!")

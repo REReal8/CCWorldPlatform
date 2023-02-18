@@ -1,9 +1,16 @@
 local t_projects = {}
 
+local corelog = require "corelog"
+
 local enterprise_projects = require "enterprise_projects"
 
+function t_projects.T_All()
+    t_projects.T_DeleteProjects()
+end
+
 function t_projects.T_CombineStepResults()
-    -- init
+    -- prepare test
+    corelog.WriteToLog("* enterprise_projects.AreAllTrue_QSrv() tests")
     local projectDef = {
         steps   = {
             { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
@@ -44,11 +51,15 @@ function t_projects.T_CombineStepResults()
         projectData = projectData,
     }
 
+    -- test
     enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+
+    -- cleanup test
 end
 
-function t_projects.T_StartProject()
-    -- init
+function t_projects.T_StartProject_ASrv()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
     local testArgValue = 20
     local projectDef = {
         steps   = {
@@ -106,11 +117,23 @@ function t_projects.T_StartProject()
         projectData = projectData,
     }
 
+    -- test
     enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+
+    -- cleanup test
 end
 
 function t_projects.T_DeleteProjects()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_projects.DeleteProjects() test")
+
+    -- test
     enterprise_projects.DeleteProjects()
+    local nProjects = enterprise_projects.GetNumberOfProjects_Att()
+    local expectedNProjects = 0
+    assert(nProjects == expectedNProjects, "gotten nProjects(="..nProjects..") not the same as expected(="..expectedNProjects..")")
+
+    -- cleanup test
 end
 
 return t_projects

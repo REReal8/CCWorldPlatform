@@ -32,6 +32,7 @@ local enterprise_shop = require "enterprise_shop"
 local enterprise_forestry = require "enterprise_forestry"
 
 local t_test                      = require "test.t_test"
+local t_projects                  = require "test.t_projects"
 local t_isp                       = require "test.t_isp"
 local t_energy                    = require "test.t_energy"
 local t_chests                    = require "test.t_chests"
@@ -69,6 +70,7 @@ function t_main.T_All()
 
     -- enterprise tests
     t_test.T_All()
+    t_projects.T_All()
     t_isp.T_All()
     t_forestry.T_All()
     t_factory.T_All()
