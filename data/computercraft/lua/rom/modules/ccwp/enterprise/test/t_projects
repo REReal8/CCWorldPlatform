@@ -5,54 +5,38 @@ local corelog = require "corelog"
 local enterprise_projects = require "enterprise_projects"
 
 function t_projects.T_All()
+    t_projects.T_AreAllTrue_QSrv()
     t_projects.T_DeleteProjects()
 end
 
-function t_projects.T_CombineStepResults()
+function t_projects.T_AreAllTrue_QSrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.AreAllTrue_QSrv() tests")
-    local projectDef = {
-        steps   = {
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData1" },
-            }},
-            { stepName = "enterprise_test.TestServiceWithAssignmentAndCallbackAndArguments_ASrv", async = true, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData2" },
-            }},
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData3" },
-                { keyDef = "serviceResult"  , valueSource = 0, keyDefSource = "falseServiceResult" },
-            }},
-            { stepName = "enterprise_test.TestPureLogicService_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testData4" },
-            }},
-            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = { -- ToDo: consider introducing simple syntax to the projectDef whether this step should automatically be added at the end of a sequence
-                { keyDef = "success1"       , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"       , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"       , valueSource = 3, keyDefSource = "success" },
-                { keyDef = "success4"       , valueSource = 4, keyDefSource = "success" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"            , valueSource = 5, keyDefSource = "success" },
-        }
-    }
-    local projectData = {
-        testData1 = 10,
-        testData2 = 20,
-        testData3 = 30,
-        falseServiceResult = {success = false},
-        testData4 = 40,
-    }
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = { "rootCallBackData" }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
+    local serviceData = {
+        booleanArg1 = true,
+        booleanArg2 = true,
+        booleanArg3 = true,
+        booleanArg4 = true,
     }
 
-    -- test
-    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+    -- test all boolean true
+    local result = enterprise_projects.AreAllTrue_QSrv(serviceData)
+    local expectedSuccess = true
+    assert(result.success, "gotten AreAllTrue_QSrv(="..tostring(result.success)..") not the same as expected(="..tostring(expectedSuccess)..")")
+
+    -- test ignore none boolean arguments
+    serviceData.noneBooleanArg1 = "none boolean Arg1"
+    serviceData.noneBooleanArg2 = "none boolean Arg2"
+    result = enterprise_projects.AreAllTrue_QSrv(serviceData)
+    expectedSuccess = true
+    assert(result.success, "gotten AreAllTrue_QSrv(="..tostring(result.success)..") not the same as expected(="..tostring(expectedSuccess)..")")
+
+    -- test one boolean false
+    serviceData.booleanArg3 = false
+    result = enterprise_projects.AreAllTrue_QSrv(serviceData)
+    expectedSuccess = false
+    assert(not result.success, "gotten AreAllTrue_QSrv(="..tostring(result.success)..") not the same as expected(="..tostring(expectedSuccess)..")")
+    serviceData.booleanArg3 = true
 
     -- cleanup test
 end
