@@ -12,6 +12,7 @@ function T_MethodExecutor.T_All()
     T_MethodExecutor.T_CallModuleMethod()
 
     T_MethodExecutor.T_DoSyncService()
+    T_MethodExecutor.T_DoASyncService()
 end
 
 local testMethod = function(num)
@@ -72,7 +73,39 @@ function T_MethodExecutor.T_DoSyncService()
 
     -- test
     local results = MethodExecutor.DoSyncService(moduleName, serviceName, serviceData)
-    assert(results.input == testValue, "Unexpected result from myService: " .. tostring(results.input))
+    assert(results.input == testValue, "Unexpected result from service: " .. tostring(results.input))
+
+    -- cleanup test
+end
+
+local testValue = 20
+local callbackTestValue = "some callback data"
+
+function T_MethodExecutor.T_DoASyncService()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.DoASyncService() test")
+    local moduleName = "enterprise_test"
+    local serviceName = "Test_ASrv"
+    assert(moduleRegistry:isRegistered(moduleName), "Module "..moduleName.." is not registered in the registry.")
+    local serviceData = {
+        testArg = testValue,
+    }
+    local callback = "t_test.Test_ASrv_Callback"
+    local callbackData = { [0] = callbackTestValue}
+
+    -- test
+    MethodExecutor.DoASyncService(moduleName, serviceName, serviceData, callback, callbackData)
+end
+
+function T_MethodExecutor.DoASyncService_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    local arg1 = serviceResults.input
+    local expectedArg1 = testValue
+    assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
+    local callbackValue = callbackData[0]
+    local expectedCallbackValue = callbackTestValue
+    assert(callbackValue == expectedCallbackValue, "gotten callbackValue(="..(callbackValue or "nil")..") not the same as expected(="..expectedCallbackValue..")")
 
     -- cleanup test
 end
