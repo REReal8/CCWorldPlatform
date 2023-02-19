@@ -38,45 +38,45 @@ function t_isp.T_TransferItemsFromTo_Chests()
         steps   = {
             -- preparation
             { stepName = "enterprise_projects.StartProject_ASrv", async = true, stepDataDef = {
-                { keyDef = "projectDef"                 , sourceStep = 0, keyDefSource = "projectDef1" },
-                { keyDef = "projectData"                , sourceStep = 0, keyDefSource = "projectData1" },
+                { keyDef = "projectDef"                 , sourceStep = 0, sourceKeyDef = "projectDef1" },
+                { keyDef = "projectData"                , sourceStep = 0, sourceKeyDef = "projectData1" },
             }},
             { stepName = "enterprise_chests.GetItemsLocator_SSrv", async = false, stepDataDef = {
-                { keyDef = "chestLocator"               , sourceStep = 1, keyDefSource = "chestLocator" },
-                { keyDef = "itemsQuery"                 , sourceStep = 0, keyDefSource = "itemsToTransferQuery" },
+                { keyDef = "chestLocator"               , sourceStep = 1, sourceKeyDef = "chestLocator" },
+                { keyDef = "itemsQuery"                 , sourceStep = 0, sourceKeyDef = "itemsToTransferQuery" },
             }},
             { stepName = "enterprise_projects.StartProject_ASrv", async = true, stepDataDef = {
-                { keyDef = "projectDef"                 , sourceStep = 0, keyDefSource = "projectDef2" },
-                { keyDef = "projectData"                , sourceStep = 0, keyDefSource = "projectData2" },
+                { keyDef = "projectDef"                 , sourceStep = 0, sourceKeyDef = "projectDef2" },
+                { keyDef = "projectData"                , sourceStep = 0, sourceKeyDef = "projectData2" },
             }},
 
             -- TransferItemsFromTo_ASrv
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 2, keyDefSource = "itemsLocator" },
-                { keyDef = "destinationStorageLocator"  , sourceStep = 3, keyDefSource = "chestLocator" },
+                { keyDef = "sourceItemsLocator"         , sourceStep = 2, sourceKeyDef = "itemsLocator" },
+                { keyDef = "destinationStorageLocator"  , sourceStep = 3, sourceKeyDef = "chestLocator" },
             }},
 
             -- cleanup
             { stepName = "enterprise_chests.DelistChest_ASrv", async = true, stepDataDef = {
-                { keyDef = "chestLocator"               , sourceStep = 1, keyDefSource = "chestLocator" },
+                { keyDef = "chestLocator"               , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
             { stepName = "enterprise_chests.DelistChest_ASrv", async = true, stepDataDef = {
-                { keyDef = "chestLocator"               , sourceStep = 3, keyDefSource = "chestLocator" },
+                { keyDef = "chestLocator"               , sourceStep = 3, sourceKeyDef = "chestLocator" },
             }},
 
             -- wrap-up
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
-                { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
-                { keyDef = "success3"                   , sourceStep = 3, keyDefSource = "success" },
-                { keyDef = "success4"                   , sourceStep = 4, keyDefSource = "success" },
-                { keyDef = "success5"                   , sourceStep = 5, keyDefSource = "success" },
-                { keyDef = "success6"                   , sourceStep = 6, keyDefSource = "success" },
+                { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
+                { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
+                { keyDef = "success4"                   , sourceStep = 4, sourceKeyDef = "success" },
+                { keyDef = "success5"                   , sourceStep = 5, sourceKeyDef = "success" },
+                { keyDef = "success6"                   , sourceStep = 6, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 7, keyDefSource = "success" },
-            { keyDef = "destinationItemsLocator"        , sourceStep = 4, keyDefSource = "destinationItemsLocator" },
+            { keyDef = "success"                        , sourceStep = 7, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"        , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectServiceData = {
@@ -117,23 +117,23 @@ function t_isp.T_ISPUsingProject()
     local aTypicalServiceUsingItemsProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 0, keyDefSource = "sourceItemsLocator" },
-                { keyDef = "destinationStorageLocator"  , sourceStep = 0, keyDefSource = "localInputHostLocator" },
+                { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "sourceItemsLocator" },
+                { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "localInputHostLocator" },
             }},
 
             -- other services (that e.g. could require items in a turtle's iventory) to implement the typical service
 
             { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 0, keyDefSource = "localOutputItemsLocation" },
-                { keyDef = "destinationStorageLocator"  , sourceStep = 0, keyDefSource = "destinationStorageLocator" },
+                { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localOutputItemsLocation" },
+                { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "destinationStorageLocator" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
-                { keyDef = "successN"                   , sourceStep = 2 --[[ likely higher]], keyDefSource = "success" },
+                { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "successN"                   , sourceStep = 2 --[[ likely higher]], sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 3 --[[ likely higher]], keyDefSource = "success" },
+            { keyDef = "success"                        , sourceStep = 3 --[[ likely higher]], sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

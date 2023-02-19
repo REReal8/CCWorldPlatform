@@ -279,27 +279,27 @@ function BirchForest:provideItemsTo_ASrv(...)
                     -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
                     --          (or will this be part of harvestForest?)
                     { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                        { keyDef = "task"                       , sourceStep = 0, keyDefSource = "harvestForest_Task" },
-                        { keyDef = "metaData"                   , sourceStep = 0, keyDefSource = "harvestForestMetaData" },
-                        { keyDef = "taskData"                   , sourceStep = 0, keyDefSource = "harvestForestTaskData" },
+                        { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "harvestForest_Task" },
+                        { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
+                        { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "harvestForestTaskData" },
                     }},
                     -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
                     --          (or will this be part of harvestForest?)
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
                     { stepName = "enterprise_forestry.ProvideItemsTo_ASrv", async = true, stepDataDef = { -- note: recursive call
-                        { keyDef = "itemsLocator"               , sourceStep = 0, keyDefSource = "itemsLocator" },
-                        { keyDef = "storageLocator"             , sourceStep = 0, keyDefSource = "storageLocator" },
-                        { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, keyDefSource = "ingredientsSupplierLocator" },
-                        { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                        { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "itemsLocator" },
+                        { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "storageLocator" },
+                        { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
+                        { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                        { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
-                        { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
+                        { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
+                        { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
                     }},
                 },
                 returnData  = {
-                    { keyDef = "success"                        , sourceStep = 3, keyDefSource = "success" },
-                    { keyDef = "destinationItemsLocator"        , sourceStep = 2, keyDefSource = "destinationItemsLocator" },
+                    { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
+                    { keyDef = "destinationItemsLocator"        , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
                 }
             }
             local projectData = {

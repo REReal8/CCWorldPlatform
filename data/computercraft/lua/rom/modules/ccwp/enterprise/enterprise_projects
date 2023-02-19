@@ -242,7 +242,7 @@ local function EndProject(internalProjectData)
         if type(stepDataSource) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid stepDataSource for field "..fieldDef.keyDef) break end
 
         -- get fieldValue
-        local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.keyDefSource)
+        local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.sourceKeyDef)
         if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid fieldValue field "..fieldDef.keyDef) break end
 
         -- add the requested field
@@ -309,7 +309,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(stepDataSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepDataSource for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
 
         -- get fieldValue
-        local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.keyDefSource)
+        local fieldValue = GetFieldValueFromKeyDef(stepDataSource, fieldDef.sourceKeyDef)
         if type(fieldValue) == "nil" then
             if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil") end
         else
@@ -330,7 +330,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(stepObjSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepObjSource") TerminateProject(internalProjectData) return nil end
 
         -- get stepObj
-        stepObj = GetFieldValueFromKeyDef(stepObjSource, stepObjDef.keyDefSource)
+        stepObj = GetFieldValueFromKeyDef(stepObjSource, stepObjDef.sourceKeyDef)
     end
     ]]
 

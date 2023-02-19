@@ -204,22 +204,22 @@ function enterprise_isp.TransferItemsFromTo_ASrv(...)
     local transferItemsProjectDef = {
         steps   = {
             { stepName = sourceStorageName..".GetItemsIntoTurtle_ASrv", async = true, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 0, keyDefSource = "sourceItemsLocator" },
-                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "sourceItemsLocator" },
+                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             { stepName = destinationStorageName..".PutItemsFromTurtle_ASrv", async = true, stepDataDef = {
-                { keyDef = "turtleItemsLocator"         , sourceStep = 1, keyDefSource = "turtleItemsLocator" },
-                { keyDef = "destinationHostLocator"     , sourceStep = 0, keyDefSource = "destinationStorageLocator" },
-                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "turtleItemsLocator"         , sourceStep = 1, sourceKeyDef = "turtleItemsLocator" },
+                { keyDef = "destinationHostLocator"     , sourceStep = 0, sourceKeyDef = "destinationStorageLocator" },
+                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
-                { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 3, keyDefSource = "success" },
-            { keyDef = "destinationItemsLocator"        , sourceStep = 2, keyDefSource = "destinationItemsLocator" },
+            { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"        , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectData = {

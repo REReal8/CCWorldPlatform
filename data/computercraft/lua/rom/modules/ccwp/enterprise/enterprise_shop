@@ -165,10 +165,10 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         local procureItem = "procureItem"..iStepStr
         table.insert(projectSteps,
             { stepName = "enterprise_shop.ProcureItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "item"                       , sourceStep = 0, keyDefSource = procureItem },
-                { keyDef = "storageLocator"             , sourceStep = 0, keyDefSource = "storageLocator" },
-                { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, keyDefSource = "ingredientsSupplierLocator" },
-                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "item"                       , sourceStep = 0, sourceKeyDef = procureItem },
+                { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "storageLocator" },
+                { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
+                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
 
@@ -177,10 +177,10 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         projectData[procureItem] = item
 
         -- add combine stepDataDef
-        table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , sourceStep = iStep, keyDefSource = "destinationItemsLocator" })
+        table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , sourceStep = iStep, sourceKeyDef = "destinationItemsLocator" })
 
         -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, keyDefSource = "success" })
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
     end
 
     -- set remaining projectData
@@ -207,8 +207,8 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                , sourceStep = iAreAllTrueStep, keyDefSource = "success" },
-            { keyDef = "destinationItemsLocator", sourceStep = iAddItemsLocatorStep, keyDefSource = "itemsLocator" },
+            { keyDef = "success"                , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator", sourceStep = iAddItemsLocatorStep, sourceKeyDef = "itemsLocator" },
         }
     }
     local projectServiceData = {

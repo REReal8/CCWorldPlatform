@@ -392,9 +392,9 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     -- determine production steps
     local projectSteps = {
         { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-            { keyDef = "sourceItemsLocator"         , sourceStep = 0, keyDefSource = "localInputItemsLocator" },
-            { keyDef = "destinationStorageLocator"  , sourceStep = 0, keyDefSource = "turtleInputLocator" },
-            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+            { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
+            { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
+            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }},
     }
 
@@ -405,50 +405,50 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
         -- add crafting step
         table.insert(projectSteps,
             { stepName = "enterprise_factory_site.CraftItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "turtleInputItemsLocator", sourceStep = 1, keyDefSource = "destinationItemsLocator" },
-                { keyDef = "productionSpot"         , sourceStep = 0, keyDefSource = "productionSpot" },
-                { keyDef = "productItemName"        , sourceStep = 0, keyDefSource = "productItemName" },
-                { keyDef = "productItemCount"       , sourceStep = 0, keyDefSource = "productItemCount" },
-                { keyDef = "productionRecipe"       , sourceStep = 0, keyDefSource = "productionRecipe" },
-                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
+                { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
+                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
+                { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
 
         -- are all true step
         areAllTrueStep = { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-            { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
-            { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
-            { keyDef = "success3"                   , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
+            { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
+            { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
         }}
     elseif productionMethod == "smelt" then
         -- add smelting step
         table.insert(projectSteps,
             { stepName = "enterprise_factory_site.SmeltItem_ASrv", async = true, stepDataDef = {
-                { keyDef = "turtleInputItemsLocator", sourceStep = 1, keyDefSource = "destinationItemsLocator" },
-                { keyDef = "productionSpot"         , sourceStep = 0, keyDefSource = "productionSpot" },
-                { keyDef = "productItemCount"       , sourceStep = 0, keyDefSource = "productItemCount" },
-                { keyDef = "productionRecipe"       , sourceStep = 0, keyDefSource = "productionRecipe" },
-                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
+                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
+                { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
 
         -- add pickup step
         table.insert(projectSteps,
             { stepName = "enterprise_factory_site.Pickup_ASrv", async = true, stepDataDef = {
-                { keyDef = "pickUpTime"             , sourceStep = 2, keyDefSource = "smeltReadyTime" },
-                { keyDef = "productionSpot"         , sourceStep = 0, keyDefSource = "productionSpot" },
-                { keyDef = "productItemName"        , sourceStep = 0, keyDefSource = "productItemName" },
-                { keyDef = "productItemCount"       , sourceStep = 0, keyDefSource = "productItemCount" },
-                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
+                { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
+                { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
+                { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
 
         -- are all true step
         areAllTrueStep = { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-            { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
-            { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
-            { keyDef = "success3"                   , sourceStep = 3, keyDefSource = "success" },
-            { keyDef = "success4"                   , sourceStep = 4, keyDefSource = "success" },
+            { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
+            { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
+            { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "success4"                   , sourceStep = 4, sourceKeyDef = "success" },
         }}
         extraStep = 1
     else corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
@@ -456,9 +456,9 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     -- add remaining steps
     table.insert(projectSteps,
         { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-            { keyDef = "sourceItemsLocator"         , sourceStep = 2 + extraStep, keyDefSource = "turtleOutputItemsLocator" },
-            { keyDef = "destinationStorageLocator"  , sourceStep = 0, keyDefSource = "localOutputLocator" },
-            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
+            { keyDef = "sourceItemsLocator"         , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
+            { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
+            { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }}
     )
     table.insert(projectSteps, areAllTrueStep)
@@ -467,8 +467,8 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 4 + extraStep, keyDefSource = "success" },
-            { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, keyDefSource = "destinationItemsLocator" },
+            { keyDef = "success"                    , sourceStep = 4 + extraStep, sourceKeyDef = "success" },
+            { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectData = {
