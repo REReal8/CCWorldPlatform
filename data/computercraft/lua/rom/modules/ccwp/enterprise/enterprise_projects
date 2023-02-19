@@ -323,6 +323,10 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     -- get new step
     local step = project.projectDef.steps[ currentStep ]
 
+    -- get stepType
+    local stepType = step.stepType
+    if type(stepType) ~= "string" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepType "..type(stepType).." for step "..currentStep) TerminateProject(internalProjectData) return nil end
+
     -- prepare stepData
     local stepData = GetStepData(project, step.stepDataDef)
     if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep) TerminateProject(internalProjectData) return nil end
@@ -342,17 +346,19 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     end
     ]]
 
-    -- type of step?
-    local stepName = step.stepName -- note: possibly later also none service steps, for now it always is a service
+    -- get moduleName and serviceName
+    local stepName = step.stepName
     local moduleName, serviceName = stepName:match("(.*)%.(.*)")
-    if step.async == true then
+
+    -- select stepType
+    if stepType == "ASrv" then
         corelog.WriteToProjectsLog("Start step "..currentStep.." async", projectId)
 
         -- do async function call
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
         MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback, callbackData)
-    else
+    elseif stepType == "SSrv" then
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync", projectId)
 
         -- do sync function call, keep the results
@@ -360,6 +366,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- recursive is the future!
         enterprise_projects.NextProjectStep(internalProjectData, results)
+    else
+        corelog.Error("enterprise_projects.NextProjectStep: Unkown stepType "..stepType.." for step "..currentStep) TerminateProject(internalProjectData) return nil
     end
 end
 

@@ -133,78 +133,78 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- create project definition
     local createNewWorldProjectDef = {
         steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap crreate steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
-            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+            { stepType = "SSrv", stepName = "enterprise_energy.UpdateEnterprise_SSrv", stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL0" },
             }},
-            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_assignmentboard.DoAssignment_ASrv", stepDataDef = {
                 { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "initialiseCoordinates_Task" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesMetaData" },
                 { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "primaryTaskData" },
             }},
-            { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_forestry.AddNewSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_forestry.AddNewSite_ASrv", stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "forestLocation" },
                 { keyDef = "forestLevel"                , sourceStep = 0, sourceKeyDef = "forestLm1" },
                 { keyDef = "nTrees"                     , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_shop.RegisterSupplier_SSrv", async = false, stepDataDef = {
+            { stepType = "SSrv", stepName = "enterprise_shop.RegisterSupplier_SSrv", stepDataDef = {
                 { keyDef = "supplierLocator"            , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
-            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+            { stepType = "SSrv", stepName = "enterprise_energy.UpdateEnterprise_SSrv", stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
-            { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_forestry.UpgradeSite_ASrv", stepDataDef = {
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                , sourceStep = 0, sourceKeyDef = "forestL0" },
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+            { stepType = "SSrv", stepName = "enterprise_energy.UpdateEnterprise_SSrv", stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
-            { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_assignmentboard.DoAssignment_ASrv", stepDataDef = {
                 { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "collectCobbleStone_Task" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
                 { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "primaryTaskData" },
             }},
-            { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion1" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_factory.StopAndDismantleSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_factory.StopAndDismantleSite_ASrv", stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_forestry.UpgradeSite_ASrv", stepDataDef = {
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                , sourceStep = 0, sourceKeyDef = "forestL1" },
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_forestry.UpgradeSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_forestry.UpgradeSite_ASrv", stepDataDef = {
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                , sourceStep = 0, sourceKeyDef = "forestL2" },
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_factory.BuildAndStartNewSite_ASrv", stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion2" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeToV2" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_storage.BuildAndStartNewSite_ASrv", async = true, stepDataDef = {
+            { stepType = "ASrv", stepName = "enterprise_storage.BuildAndStartNewSite_ASrv", stepDataDef = {
                 { keyDef = "location"                   , sourceStep = 0, sourceKeyDef = "siloLocation" },
                 { keyDef = "type"                       , sourceStep = 0, sourceKeyDef = "type" },
                 { keyDef = "siloType"                   , sourceStep = 0, sourceKeyDef = "siloType" },
@@ -212,11 +212,11 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "layers"                     , sourceStep = 0, sourceKeyDef = "layers" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepName = "enterprise_energy.UpdateEnterprise_SSrv", async = false, stepDataDef = {
+            { stepType = "SSrv", stepName = "enterprise_energy.UpdateEnterprise_SSrv", stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
-            { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
+            { stepType = "SSrv", stepName = "enterprise_projects.AreAllTrue_QSrv", stepDataDef = {
                 { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
                 { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
