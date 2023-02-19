@@ -323,9 +323,11 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     -- get new step
     local step = project.projectDef.steps[ currentStep ]
 
-    -- get stepType
+    -- get stepType & stepTypeDef
     local stepType = step.stepType
     if type(stepType) ~= "string" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepType "..type(stepType).." for step "..currentStep) TerminateProject(internalProjectData) return nil end
+    local stepTypeDef = step.stepTypeDef
+    if type(stepTypeDef) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepTypeDef "..type(stepTypeDef).." for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
     -- prepare stepData
     local stepData = GetStepData(project, step.stepDataDef)
@@ -347,21 +349,23 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     ]]
 
     -- get moduleName and serviceName
-    local stepName = step.stepName
-    local moduleName, serviceName = stepName:match("(.*)%.(.*)")
+    local moduleName = stepTypeDef.module
+    if not moduleName then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining moduleName for step "..currentStep) TerminateProject(internalProjectData) return nil end
+    local serviceName = stepTypeDef.service
+    if not serviceName then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining serviceName for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
     -- select stepType
     if stepType == "ASrv" then
-        corelog.WriteToProjectsLog("Start step "..currentStep.." async", projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." async service", projectId)
 
-        -- do async function call
+        -- do async service
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
         MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback, callbackData)
     elseif stepType == "SSrv" then
-        corelog.WriteToProjectsLog("Start step "..currentStep.." sync", projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." sync service", projectId)
 
-        -- do sync function call, keep the results
+        -- do sync service, keep the results
         local results = MethodExecutor.DoSyncService(moduleName, serviceName, stepData)
 
         -- recursive is the future!
