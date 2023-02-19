@@ -242,27 +242,27 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         local buildAndStartNewSiteProjecDef = {
             steps   = {
                 { stepName = "enterprise_storage.BuildNewSite_ASrv", async = true, stepDataDef = {
-                    { keyDef = "location"               , valueSource = 0, keyDefSource = "location" },
-                    { keyDef = "type"                   , valueSource = 0, keyDefSource = "type" },
-                    { keyDef = "siloType"               , valueSource = 0, keyDefSource = "siloType" },
-                    { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
-                    { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
-                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                    { keyDef = "location"               , sourceStep = 0, keyDefSource = "location" },
+                    { keyDef = "type"                   , sourceStep = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"               , sourceStep = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"              , sourceStep = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"                 , sourceStep = 0, keyDefSource = "layers" },
+                    { keyDef = "materialsHostLocator"   , sourceStep = 0, keyDefSource = "materialsHostLocator" },
                 }},
                 { stepName = "enterprise_storage.StartNewSite_SSrv", async = false, stepDataDef = {
-                    { keyDef = "location"               , valueSource = 0, keyDefSource = "location" },
-                    { keyDef = "type"                   , valueSource = 0, keyDefSource = "type" },
-                    { keyDef = "siloType"               , valueSource = 0, keyDefSource = "siloType" },
-                    { keyDef = "topChests"              , valueSource = 0, keyDefSource = "topChests" },
-                    { keyDef = "layers"                 , valueSource = 0, keyDefSource = "layers" },
+                    { keyDef = "location"               , sourceStep = 0, keyDefSource = "location" },
+                    { keyDef = "type"                   , sourceStep = 0, keyDefSource = "type" },
+                    { keyDef = "siloType"               , sourceStep = 0, keyDefSource = "siloType" },
+                    { keyDef = "topChests"              , sourceStep = 0, keyDefSource = "topChests" },
+                    { keyDef = "layers"                 , sourceStep = 0, keyDefSource = "layers" },
                 }},
                 { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                    { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                    { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                    { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                    { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
                 }},
             },
             returnData  = {
-                { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success"                    , sourceStep = 3, keyDefSource = "success" },
             }
         }
         local projectServiceData = {

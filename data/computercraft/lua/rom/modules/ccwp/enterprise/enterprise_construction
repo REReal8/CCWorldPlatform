@@ -80,23 +80,23 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     local buildBlueprintProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "materialsItemsLocator" },
-                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
-                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                { keyDef = "itemsLocator"               , sourceStep = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "storageLocator"             , sourceStep = 0, keyDefSource = "materialsLocalHostLocator" },
+                { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, keyDefSource = "ingredientsSupplierLocator" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "taskFunctionName" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "task"                       , sourceStep = 0, keyDefSource = "taskFunctionName" },
+                { keyDef = "metaData"                   , sourceStep = 0, keyDefSource = "metaData" },
+                { keyDef = "metaData.needTurtleId"      , sourceStep = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
+                { keyDef = "taskData"                   , sourceStep = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"                        , sourceStep = 3, keyDefSource = "success" },
         }
     }
     local projectData = {
@@ -180,23 +180,23 @@ function enterprise_construction.BuildLayer_ASrv(...)
     local buildRectangularPatternProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "materialsItemsLocator" },
-                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "materialsLocalHostLocator" },
-                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
+                { keyDef = "itemsLocator"               , sourceStep = 0, keyDefSource = "materialsItemsLocator" },
+                { keyDef = "storageLocator"             , sourceStep = 0, keyDefSource = "materialsLocalHostLocator" },
+                { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, keyDefSource = "ingredientsSupplierLocator" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "taskFunctionName" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "metaData.needTurtleId"      , valueSource = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "task"                       , sourceStep = 0, keyDefSource = "taskFunctionName" },
+                { keyDef = "metaData"                   , sourceStep = 0, keyDefSource = "metaData" },
+                { keyDef = "metaData.needTurtleId"      , sourceStep = 1, keyDefSource = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
+                { keyDef = "taskData"                   , sourceStep = 0, keyDefSource = "taskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"                        , sourceStep = 3, keyDefSource = "success" },
         }
     }
     local projectData = {

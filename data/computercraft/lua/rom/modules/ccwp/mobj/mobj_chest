@@ -254,22 +254,22 @@ function Chest.UpdateChestInventory_ASrv(...)
     local projectDef = {
         steps   = {
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                   , valueSource = 0, keyDefSource = "task" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "task"                   , sourceStep = 0, keyDefSource = "task" },
+                { keyDef = "metaData"               , sourceStep = 0, keyDefSource = "metaData" },
+                { keyDef = "taskData"               , sourceStep = 0, keyDefSource = "taskData" },
             }},
             { stepName = "Chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
-                { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
+                { keyDef = "slots"                  , sourceStep = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
-            { keyDef = "chest._itemsInventory"      , valueSource = 2, keyDefSource = "items" },
+            { keyDef = "success"                    , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "chest"                      , sourceStep = 0, keyDefSource = "chest" },
+            { keyDef = "chest._itemsInventory"      , sourceStep = 2, keyDefSource = "items" },
         }
     }
     local projectServiceData = {
@@ -330,28 +330,28 @@ function Chest.FetchItemsFromChestIntoTurtle_ASrv(...)
     local projectDef = {
         steps   = {
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                   , valueSource = 0, keyDefSource = "task" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "task"                   , sourceStep = 0, keyDefSource = "task" },
+                { keyDef = "metaData"               , sourceStep = 0, keyDefSource = "metaData" },
+                { keyDef = "taskData"               , sourceStep = 0, keyDefSource = "taskData" },
             }},
             { stepName = "Chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
-                { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
+                { keyDef = "slots"                  , sourceStep = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_turtle.GetItemsLocator_SSrv", async = false, stepDataDef = {
-                { keyDef = "turtleId"               , valueSource = 1, keyDefSource = "turtleId" },
-                { keyDef = "itemsQuery"             , valueSource = 1, keyDefSource = "itemResultQuery" },
+                { keyDef = "turtleId"               , sourceStep = 1, keyDefSource = "turtleId" },
+                { keyDef = "itemsQuery"             , sourceStep = 1, keyDefSource = "itemResultQuery" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
+                { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
+                { keyDef = "success3"               , sourceStep = 3, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
-            { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
-            { keyDef = "chest._itemsInventory"      , valueSource = 2, keyDefSource = "items" },
-            { keyDef = "turtleItemsLocator"         , valueSource = 3, keyDefSource = "itemsLocator" },
+            { keyDef = "success"                    , sourceStep = 4, keyDefSource = "success" },
+            { keyDef = "chest"                      , sourceStep = 0, keyDefSource = "chest" },
+            { keyDef = "chest._itemsInventory"      , sourceStep = 2, keyDefSource = "items" },
+            { keyDef = "turtleItemsLocator"         , sourceStep = 3, keyDefSource = "itemsLocator" },
         }
     }
     local projectServiceData = {
@@ -410,22 +410,22 @@ function Chest.PutItemsFromTurtleIntoChest_ASrv(...)
     local projectDef = {
         steps   = {
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                   , valueSource = 0, keyDefSource = "task" },
-                { keyDef = "metaData"               , valueSource = 0, keyDefSource = "metaData" },
-                { keyDef = "taskData"               , valueSource = 0, keyDefSource = "taskData" },
+                { keyDef = "task"                   , sourceStep = 0, keyDefSource = "task" },
+                { keyDef = "metaData"               , sourceStep = 0, keyDefSource = "metaData" },
+                { keyDef = "taskData"               , sourceStep = 0, keyDefSource = "taskData" },
             }},
             { stepName = "Chest.DetermineItemsList_SSrv", async = false, stepDataDef = {
-                { keyDef = "slots"                  , valueSource = 1, keyDefSource = "slots" },
+                { keyDef = "slots"                  , sourceStep = 1, keyDefSource = "slots" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "chest"                      , valueSource = 0, keyDefSource = "chest" },
-            { keyDef = "chest._itemsInventory"      , valueSource = 2, keyDefSource = "items" },
+            { keyDef = "success"                    , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "chest"                      , sourceStep = 0, keyDefSource = "chest" },
+            { keyDef = "chest._itemsInventory"      , sourceStep = 2, keyDefSource = "items" },
         }
     }
     local projectServiceData = {

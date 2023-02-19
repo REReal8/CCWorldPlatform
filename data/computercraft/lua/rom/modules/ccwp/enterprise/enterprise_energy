@@ -81,23 +81,23 @@ local function Refuel_ASrv(...)
     local buildBlueprintProjectDef = {
         steps   = {
             { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
-                { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "fuelItemsLocator" },
-                { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "turtleToRefuelLocator" },
-                { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
-                { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "itemsLocator"               , sourceStep = 0, keyDefSource = "fuelItemsLocator" },
+                { keyDef = "storageLocator"             , sourceStep = 0, keyDefSource = "turtleToRefuelLocator" },
+                { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, keyDefSource = "ingredientsSupplierLocator" },
+                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "refuel_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "refuelMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "refuelTaskData" },
+                { keyDef = "task"                       , sourceStep = 0, keyDefSource = "refuel_Task" },
+                { keyDef = "metaData"                   , sourceStep = 0, keyDefSource = "refuelMetaData" },
+                { keyDef = "taskData"                   , sourceStep = 0, keyDefSource = "refuelTaskData" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"                    , sourceStep = 3, keyDefSource = "success" },
         }
     }
     local projectData = {

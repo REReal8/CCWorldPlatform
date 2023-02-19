@@ -175,36 +175,36 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
         local projectDef = {
             steps = {
                 { stepName = "enterprise_isp.ProvideItemsTo_ASrv", async = true, stepDataDef = {
-                    { keyDef = "itemsLocator"               , valueSource = 0, keyDefSource = "ingredientsItemsLocator" },
-                    { keyDef = "storageLocator"             , valueSource = 0, keyDefSource = "localInputLocator" },
-                    { keyDef = "ingredientsSupplierLocator" , valueSource = 0, keyDefSource = "ingredientsSupplierLocator" },
-                    { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    { keyDef = "itemsLocator"               , sourceStep = 0, keyDefSource = "ingredientsItemsLocator" },
+                    { keyDef = "storageLocator"             , sourceStep = 0, keyDefSource = "localInputLocator" },
+                    { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, keyDefSource = "ingredientsSupplierLocator" },
+                    { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
                 }},
                 { stepName = "enterprise_factory_site.ProduceItem_ASrv", async = true, stepDataDef = {
-                    { keyDef = "localInputItemsLocator"     , valueSource = 1, keyDefSource = "destinationItemsLocator" },
-                    { keyDef = "localOutputLocator"         , valueSource = 0, keyDefSource = "localOutputLocator" },
-                    { keyDef = "productionMethod"           , valueSource = 0, keyDefSource = "productionMethod" },
-                    { keyDef = "productionSpot"             , valueSource = 0, keyDefSource = "productionSpot" },
-                    { keyDef = "productItemName"            , valueSource = 0, keyDefSource = "itemName" },
-                    { keyDef = "productItemCount"           , valueSource = 0, keyDefSource = "itemCount" },
-                    { keyDef = "productionRecipe"           , valueSource = 0, keyDefSource = "productionRecipe" },
-                    { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    { keyDef = "localInputItemsLocator"     , sourceStep = 1, keyDefSource = "destinationItemsLocator" },
+                    { keyDef = "localOutputLocator"         , sourceStep = 0, keyDefSource = "localOutputLocator" },
+                    { keyDef = "productionMethod"           , sourceStep = 0, keyDefSource = "productionMethod" },
+                    { keyDef = "productionSpot"             , sourceStep = 0, keyDefSource = "productionSpot" },
+                    { keyDef = "productItemName"            , sourceStep = 0, keyDefSource = "itemName" },
+                    { keyDef = "productItemCount"           , sourceStep = 0, keyDefSource = "itemCount" },
+                    { keyDef = "productionRecipe"           , sourceStep = 0, keyDefSource = "productionRecipe" },
+                    { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
                 }},
                 { stepName = "enterprise_isp.TransferItemsFromTo_ASrv", async = true, stepDataDef = {
-                    { keyDef = "sourceItemsLocator"         , valueSource = 2, keyDefSource = "localOutputItemsLocator" },
-                    { keyDef = "destinationStorageLocator"  , valueSource = 0, keyDefSource = "storageLocator" },
-                    { keyDef = "assignmentsPriorityKey"     , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                    { keyDef = "sourceItemsLocator"         , sourceStep = 2, keyDefSource = "localOutputItemsLocator" },
+                    { keyDef = "destinationStorageLocator"  , sourceStep = 0, keyDefSource = "storageLocator" },
+                    { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
                 }},
                 -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
                 { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                    { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                    { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
-                    { keyDef = "success3"               , valueSource = 3, keyDefSource = "success" },
+                    { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                    { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
+                    { keyDef = "success3"               , sourceStep = 3, keyDefSource = "success" },
                 }},
             },
             returnData  = {
-                { keyDef = "success"                    , valueSource = 4, keyDefSource = "success" },
-                { keyDef = "destinationItemsLocator"    , valueSource = 3, keyDefSource = "destinationItemsLocator" },
+                { keyDef = "success"                    , sourceStep = 4, keyDefSource = "success" },
+                { keyDef = "destinationItemsLocator"    , sourceStep = 3, keyDefSource = "destinationItemsLocator" },
             }
         }
         local projectData = {
@@ -479,26 +479,26 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
     local iStep = 0
     table.insert(projectSteps,
         { stepName = "enterprise_factory.BuildNewSite_ASrv", async = true, stepDataDef = {
-            { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
-            { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
-            { keyDef = "upgrade"                , valueSource = 0, keyDefSource = "upgrade" },
-            { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+            { keyDef = "baseLocation"           , sourceStep = 0, keyDefSource = "baseLocation" },
+            { keyDef = "siteVersion"            , sourceStep = 0, keyDefSource = "siteVersion" },
+            { keyDef = "upgrade"                , sourceStep = 0, keyDefSource = "upgrade" },
+            { keyDef = "materialsHostLocator"   , sourceStep = 0, keyDefSource = "materialsHostLocator" },
         }}
     )
     iStep = iStep + 1
     if upgrade then
         table.insert(projectSteps,
             { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"       , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "baseLocation"       , sourceStep = 0, keyDefSource = "baseLocation" },
             }}
         )
         iStep = iStep + 1
     end
     table.insert(projectSteps,
         { stepName = "enterprise_factory.StartNewSite_SSrv", async = false, stepDataDef = {
-            { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
-            { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
-            { keyDef = "siteAlreadyBuild"       , valueSource = iStep, keyDefSource = "success" }
+            { keyDef = "baseLocation"           , sourceStep = 0, keyDefSource = "baseLocation" },
+            { keyDef = "siteVersion"            , sourceStep = 0, keyDefSource = "siteVersion" },
+            { keyDef = "siteAlreadyBuild"       , sourceStep = iStep, keyDefSource = "success" }
         }}
     )
     iStep = iStep + 1
@@ -507,7 +507,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
     local buildAndStartNewSiteProjectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                , valueSource = iStep, keyDefSource = "success" },
+            { keyDef = "success"                , sourceStep = iStep, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
@@ -631,17 +631,17 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
     local stopAndDismantleSiteProjectDef = {
         steps = {
             { stepName = "enterprise_factory.StopSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
+                { keyDef = "baseLocation"           , sourceStep = 0, keyDefSource = "baseLocation" },
             }},
             { stepName = "enterprise_factory.DismantleSite_ASrv", async = true, stepDataDef = {
-                { keyDef = "baseLocation"           , valueSource = 0, keyDefSource = "baseLocation" },
-                { keyDef = "siteVersion"            , valueSource = 0, keyDefSource = "siteVersion" },
-                { keyDef = "siteStopped"            , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                { keyDef = "baseLocation"           , sourceStep = 0, keyDefSource = "baseLocation" },
+                { keyDef = "siteVersion"            , sourceStep = 0, keyDefSource = "siteVersion" },
+                { keyDef = "siteStopped"            , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "materialsHostLocator"   , sourceStep = 0, keyDefSource = "materialsHostLocator" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success"                    , sourceStep = 2, keyDefSource = "success" },
         }
     }
     local projectServiceData = {

@@ -237,8 +237,8 @@ local function EndProject(internalProjectData)
     -- create the projectResult
     for iField, fieldDef in ipairs(project.projectDef.returnData) do
         -- get stepDataSource
-        local valueSourceIndex = fieldDef.valueSource
-        local stepDataSource = project.outputs[ valueSourceIndex ]
+        local sourceStep = fieldDef.sourceStep
+        local stepDataSource = project.outputs[ sourceStep ]
         if type(stepDataSource) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid stepDataSource for field "..fieldDef.keyDef) break end
 
         -- get fieldValue
@@ -304,8 +304,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     local stepData = {}
     for iField, fieldDef in ipairs(step.stepDataDef) do
         -- get stepDataSource
-        local valueSourceIndex = fieldDef.valueSource -- ToDo: consider renaming valueSource => valueSourceIndex
-        local stepDataSource = project.outputs[ valueSourceIndex ]
+        local sourceStep = fieldDef.sourceStep
+        local stepDataSource = project.outputs[ sourceStep ]
         if type(stepDataSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepDataSource for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
 
         -- get fieldValue
@@ -325,8 +325,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     local stepObjDef = step.stepObjDef
     if stepObjDef then
         -- get stepObjSource
-        local valueSourceIndex = stepObjDef.valueSourceIndex
-        local stepObjSource = project.outputs[ valueSourceIndex ]
+        local sourceStep = stepObjDef.sourceStep
+        local stepObjSource = project.outputs[ sourceStep ]
         if type(stepObjSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepObjSource") TerminateProject(internalProjectData) return nil end
 
         -- get stepObj

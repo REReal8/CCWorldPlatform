@@ -90,20 +90,20 @@ function t_chests.GetRegisterAndUpdateChestProjectDef()
     return {
         steps = {
             { stepName = "enterprise_chests.RegisterChest_SSrv", async = false, stepDataDef = {
-                { keyDef = "location"           , valueSource = 0, keyDefSource = "chestLocation" },
-                { keyDef = "accessDirection"    , valueSource = 0, keyDefSource = "chestAccessDirection" },
+                { keyDef = "location"           , sourceStep = 0, keyDefSource = "chestLocation" },
+                { keyDef = "accessDirection"    , sourceStep = 0, keyDefSource = "chestAccessDirection" },
             }},
             { stepName = "enterprise_chests.UpdateChestRecord_ASrv", async = true, stepDataDef = {
-                { keyDef = "chestLocator"       , valueSource = 1, keyDefSource = "chestLocator" },
+                { keyDef = "chestLocator"       , sourceStep = 1, keyDefSource = "chestLocator" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"           , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"           , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"           , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"           , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData = {
-            { keyDef = "success"                , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "chestLocator"           , valueSource = 1, keyDefSource = "chestLocator" },
+            { keyDef = "success"                , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "chestLocator"           , sourceStep = 1, keyDefSource = "chestLocator" },
         }
     }
 end

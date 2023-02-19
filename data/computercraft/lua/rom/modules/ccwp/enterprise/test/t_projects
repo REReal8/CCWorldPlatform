@@ -53,32 +53,32 @@ function t_projects.T_StartProject_ASrv()
     local projectDef = {
         steps   = {
             { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testArgSource" },
+                { keyDef = "testArg"        , sourceStep = 0, keyDefSource = "testArgSource" },
             }},
             { stepName = "enterprise_test.Test_ASrv", async = true, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testArgSource" },
+                { keyDef = "testArg"        , sourceStep = 0, keyDefSource = "testArgSource" },
             }},
             { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTableSource.key3.nKey2" },
+                { keyDef = "testArg"        , sourceStep = 0, keyDefSource = "testTableSource.key3.nKey2" },
             }},
             { stepName = "enterprise_test.Test_SSrv", async = false, stepDataDef = {
-                { keyDef = "testArg"        , valueSource = 0, keyDefSource = "testTable4" },
-                { keyDef = "testArg.field4" , valueSource = 0, keyDefSource = "testTableSource2.key4" },
+                { keyDef = "testArg"        , sourceStep = 0, keyDefSource = "testTable4" },
+                { keyDef = "testArg.field4" , sourceStep = 0, keyDefSource = "testTableSource2.key4" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"       , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"       , valueSource = 2, keyDefSource = "success" },
-                { keyDef = "success3"       , valueSource = 3, keyDefSource = "success" },
-                { keyDef = "success4"       , valueSource = 4, keyDefSource = "success" },
+                { keyDef = "success1"       , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"       , sourceStep = 2, keyDefSource = "success" },
+                { keyDef = "success3"       , sourceStep = 3, keyDefSource = "success" },
+                { keyDef = "success4"       , sourceStep = 4, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "testBArg0"          , valueSource = 0, keyDefSource = "testArgSource" },
-            { keyDef = "testBArg1"          , valueSource = 1, keyDefSource = "input" },
-            { keyDef = "testBArg2"          , valueSource = 2, keyDefSource = "input" },
-            { keyDef = "testBArg3"          , valueSource = 3, keyDefSource = "input" },
-            { keyDef = "testBArg4"          , valueSource = 4, keyDefSource = "input" },
-            { keyDef = "success"            , valueSource = 5, keyDefSource = "success" },
+            { keyDef = "testBArg0"          , sourceStep = 0, keyDefSource = "testArgSource" },
+            { keyDef = "testBArg1"          , sourceStep = 1, keyDefSource = "input" },
+            { keyDef = "testBArg2"          , sourceStep = 2, keyDefSource = "input" },
+            { keyDef = "testBArg3"          , sourceStep = 3, keyDefSource = "input" },
+            { keyDef = "testBArg4"          , sourceStep = 4, keyDefSource = "input" },
+            { keyDef = "success"            , sourceStep = 5, keyDefSource = "success" },
         }
     }
     local projectData = {

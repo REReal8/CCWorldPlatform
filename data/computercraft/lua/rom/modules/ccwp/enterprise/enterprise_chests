@@ -166,18 +166,18 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
     local updateChestRecordsProjectDef = {
         steps   = {
             { stepName = "Chest.UpdateChestInventory_ASrv", async = true, stepDataDef = {
-                { keyDef = "chest"      , valueSource = 0, keyDefSource = "chest" },
+                { keyDef = "chest"      , sourceStep = 0, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
-                { keyDef = "chest"      , valueSource = 1, keyDefSource = "chest" },
+                { keyDef = "chest"      , sourceStep = 1, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"   , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"   , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"   , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"   , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"        , valueSource = 3, keyDefSource = "success" },
+            { keyDef = "success"        , sourceStep = 3, keyDefSource = "success" },
         }
     }
     local projectData = {
@@ -473,23 +473,23 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
 -- ToDo: consider how we objectivy this.
 -- option1: add a new project step type (next to async true/false) that operates on an object (self)
 -- option?: also automatically handle save object again?
---            { stepName = "getItemsIntoTurtle_ASrv", async = true, stepObjDef = { valueSourceIndex = 0, keyDefSource = "chest"}, stepDataDef = {
+--            { stepName = "getItemsIntoTurtle_ASrv", async = true, stepObjDef = { sourceStep = 0, keyDefSource = "chest"}, stepDataDef = {
             { stepName = "Chest.FetchItemsFromChestIntoTurtle_ASrv", async = true, stepDataDef = {
-                { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
-                { keyDef = "items"                  , valueSource = 0, keyDefSource = "items" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "chest"                  , sourceStep = 0, keyDefSource = "chest" },
+                { keyDef = "items"                  , sourceStep = 0, keyDefSource = "items" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
-                { keyDef = "chest"                  , valueSource = 1, keyDefSource = "chest" },
+                { keyDef = "chest"                  , sourceStep = 1, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "turtleItemsLocator"         , valueSource = 1, keyDefSource = "turtleItemsLocator" },
+            { keyDef = "success"                    , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "turtleItemsLocator"         , sourceStep = 1, keyDefSource = "turtleItemsLocator" },
         }
     }
     local projectData = {
@@ -547,21 +547,21 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
     local putItemsIntoChestProjectDef = {
         steps   = {
             { stepName = "Chest.PutItemsFromTurtleIntoChest_ASrv", async = true, stepDataDef = {
-                { keyDef = "chest"                  , valueSource = 0, keyDefSource = "chest" },
-                { keyDef = "turtleItemsLocator"     , valueSource = 0, keyDefSource = "turtleItemsLocator" },
-                { keyDef = "assignmentsPriorityKey" , valueSource = 0, keyDefSource = "assignmentsPriorityKey" },
+                { keyDef = "chest"                  , sourceStep = 0, keyDefSource = "chest" },
+                { keyDef = "turtleItemsLocator"     , sourceStep = 0, keyDefSource = "turtleItemsLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, keyDefSource = "assignmentsPriorityKey" },
             }},
             { stepName = "enterprise_chests.SaveChest_SSrv", async = false, stepDataDef = {
-                { keyDef = "chest"                  , valueSource = 1, keyDefSource = "chest" },
+                { keyDef = "chest"                  , sourceStep = 1, keyDefSource = "chest" },
             }},
             { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-                { keyDef = "success1"               , valueSource = 1, keyDefSource = "success" },
-                { keyDef = "success2"               , valueSource = 2, keyDefSource = "success" },
+                { keyDef = "success1"               , sourceStep = 1, keyDefSource = "success" },
+                { keyDef = "success2"               , sourceStep = 2, keyDefSource = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "destinationItemsLocator"    , valueSource = 0, keyDefSource = "destinationItemsLocator" },
+            { keyDef = "success"                    , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 0, keyDefSource = "destinationItemsLocator" },
         }
     }
     local projectData = {

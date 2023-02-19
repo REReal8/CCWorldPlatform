@@ -91,9 +91,9 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         -- add build tree step
         table.insert(projectSteps,
             { stepName = "enterprise_assignmentboard.DoAssignment_ASrv", async = true, stepDataDef = {
-                { keyDef = "task"                       , valueSource = 0, keyDefSource = "plantFirstSapling_Task" },
-                { keyDef = "metaData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingMetaData" },
-                { keyDef = "taskData"                   , valueSource = 0, keyDefSource = "plantFirstSaplingTaskData" },
+                { keyDef = "task"                       , sourceStep = 0, keyDefSource = "plantFirstSapling_Task" },
+                { keyDef = "metaData"                   , sourceStep = 0, keyDefSource = "plantFirstSaplingMetaData" },
+                { keyDef = "taskData"                   , sourceStep = 0, keyDefSource = "plantFirstSaplingTaskData" },
             }}
         )
 
@@ -109,9 +109,9 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         -- add build tree step
         table.insert(projectSteps,
             { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
-                { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = "treeBaseLocation" },
-                { keyDef = "treeLayer"              , valueSource = 0, keyDefSource = "treeLayer" },
-                { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                { keyDef = "treeBaseLocation"       , sourceStep = 0, keyDefSource = "treeBaseLocation" },
+                { keyDef = "treeLayer"              , sourceStep = 0, keyDefSource = "treeLayer" },
+                { keyDef = "materialsHostLocator"   , sourceStep = 0, keyDefSource = "materialsHostLocator" },
             }}
         )
 
@@ -125,23 +125,23 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
     table.insert(projectSteps,
         { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
-            { keyDef = "forestLocator"              , valueSource = 0, keyDefSource = "forestLocator" },
-            { keyDef = "forestLevel"                , valueSource = 0, keyDefSource = "forestLevel" },
-            { keyDef = "nTrees"                     , valueSource = 0, keyDefSource = "nTrees" },
+            { keyDef = "forestLocator"              , sourceStep = 0, keyDefSource = "forestLocator" },
+            { keyDef = "forestLevel"                , sourceStep = 0, keyDefSource = "forestLevel" },
+            { keyDef = "nTrees"                     , sourceStep = 0, keyDefSource = "nTrees" },
         }}
     )
     table.insert(projectSteps,
         { stepName = "enterprise_projects.AreAllTrue_QSrv", async = false, stepDataDef = {
-            { keyDef = "success1"                   , valueSource = 1, keyDefSource = "success" },
-            { keyDef = "success2"                   , valueSource = 2, keyDefSource = "success" },
+            { keyDef = "success1"                   , sourceStep = 1, keyDefSource = "success" },
+            { keyDef = "success2"                   , sourceStep = 2, keyDefSource = "success" },
         }}
     )
 
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                        , valueSource = 3, keyDefSource = "success" },
-            { keyDef = "forestLocator"                  , valueSource = 2, keyDefSource = "forestLocator" },
+            { keyDef = "success"                        , sourceStep = 3, keyDefSource = "success" },
+            { keyDef = "forestLocator"                  , sourceStep = 2, keyDefSource = "forestLocator" },
         }
     }
     local projectServiceData = {
@@ -240,9 +240,9 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 local treeBaseLocationStr = "treeBaseLocation"..iStepStr
                 table.insert(projectSteps,
                     { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
-                        { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
-                        { keyDef = "treeLayer"              , valueSource = 0, keyDefSource = layerStr },
-                        { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                        { keyDef = "treeBaseLocation"       , sourceStep = 0, keyDefSource = treeBaseLocationStr },
+                        { keyDef = "treeLayer"              , sourceStep = 0, keyDefSource = layerStr },
+                        { keyDef = "materialsHostLocator"   , sourceStep = 0, keyDefSource = "materialsHostLocator" },
                     }}
                 )
 
@@ -250,7 +250,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 projectData[treeBaseLocationStr] = treeBaseLocation
 
                 -- add success stepDataDef
-                table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+                table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, keyDefSource = "success" })
             end
         end
 
@@ -259,14 +259,14 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         local iStepStr = tostring(iStep)
         table.insert(projectSteps,
             { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
-                { keyDef = "forestLocator"          , valueSource = 0, keyDefSource = "forestLocator" },
-                { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "targetLevel" },
-                { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = "startingNTrees" },
+                { keyDef = "forestLocator"          , sourceStep = 0, keyDefSource = "forestLocator" },
+                { keyDef = "forestLevel"            , sourceStep = 0, keyDefSource = "targetLevel" },
+                { keyDef = "nTrees"                 , sourceStep = 0, keyDefSource = "startingNTrees" },
             }}
         )
 
         -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, keyDefSource = "success" })
     end
 
     -- add project step for trees to add
@@ -280,9 +280,9 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             local treeBaseLocationStr = "treeBaseLocation"..iStepStr
             table.insert(projectSteps,
                 { stepName = "enterprise_forestry.BuildForestTree_ASrv", async = true, stepDataDef = {
-                    { keyDef = "treeBaseLocation"       , valueSource = 0, keyDefSource = treeBaseLocationStr },
-                    { keyDef = "treeLayer"              , valueSource = 0, keyDefSource = "treeLayer" },
-                    { keyDef = "materialsHostLocator"   , valueSource = 0, keyDefSource = "materialsHostLocator" },
+                    { keyDef = "treeBaseLocation"       , sourceStep = 0, keyDefSource = treeBaseLocationStr },
+                    { keyDef = "treeLayer"              , sourceStep = 0, keyDefSource = "treeLayer" },
+                    { keyDef = "materialsHostLocator"   , sourceStep = 0, keyDefSource = "materialsHostLocator" },
                 }}
             )
 
@@ -290,7 +290,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             projectData[treeBaseLocationStr] = treeBaseLocation
 
             -- add success stepDataDef
-            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, keyDefSource = "success" })
 
             -- update forest info
             iStep = iStep + 1
@@ -298,9 +298,9 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             local newNTreesStr = "newNTreeStep"..iStepStr
             table.insert(projectSteps,
                 { stepName = "enterprise_forestry.UpdateForest_SSrv", async = false, stepDataDef = {
-                    { keyDef = "forestLocator"          , valueSource = 0, keyDefSource = "forestLocator" },
-                    { keyDef = "forestLevel"            , valueSource = 0, keyDefSource = "targetLevel" },
-                    { keyDef = "nTrees"                 , valueSource = 0, keyDefSource = newNTreesStr },
+                    { keyDef = "forestLocator"          , sourceStep = 0, keyDefSource = "forestLocator" },
+                    { keyDef = "forestLevel"            , sourceStep = 0, keyDefSource = "targetLevel" },
+                    { keyDef = "nTrees"                 , sourceStep = 0, keyDefSource = newNTreesStr },
                 }}
             )
 
@@ -308,7 +308,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             projectData[newNTreesStr] = iTree
 
             -- add success stepDataDef
-            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, valueSource = iStep, keyDefSource = "success" })
+            table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, keyDefSource = "success" })
         end
     end
 
@@ -323,7 +323,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"    , valueSource = iAreAllTrueStep, keyDefSource = "success" },
+            { keyDef = "success"    , sourceStep = iAreAllTrueStep, keyDefSource = "success" },
         }
     }
     local projectServiceData = {
