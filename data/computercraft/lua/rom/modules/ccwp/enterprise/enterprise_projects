@@ -270,6 +270,29 @@ local function TerminateProject(internalProjectData)
     EndProject(internalProjectData)
 end
 
+local function GetStepData(project, stepDataDef)
+    local stepData = {}
+    for iField, fieldDef in ipairs(stepDataDef) do
+        -- get sourceStepData
+        local sourceStep = fieldDef.sourceStep
+        local sourceStepData = project.outputs[ sourceStep ]
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.GetStepData: Invalid sourceStepData for field "..fieldDef.keyDef) return nil end
+
+        -- get fieldValue
+        local fieldValue = GetFieldValueFromDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
+        if type(fieldValue) == "nil" then
+            if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.GetStepData: FieldValue for field "..fieldDef.keyDef.." = nil") end
+        else
+            -- add field
+            local setSuccess = SetDataFieldUsingKeyDef(stepData, fieldDef.keyDef, fieldValue)
+            if not setSuccess then corelog.Error("enterprise_projects.GetStepData: Failed setting stepData for field "..fieldDef.keyDef) return nil end
+        end
+    end
+
+    -- end
+    return stepData
+end
+
 function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     -- get the project information
     local projectId = internalProjectData.projectId
@@ -301,23 +324,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     local step = project.projectDef.steps[ currentStep ]
 
     -- prepare stepData
-    local stepData = {}
-    for iField, fieldDef in ipairs(step.stepDataDef) do
-        -- get sourceStepData
-        local sourceStep = fieldDef.sourceStep
-        local sourceStepData = project.outputs[ sourceStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
-
-        -- get fieldValue
-        local fieldValue = GetFieldValueFromDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
-        if type(fieldValue) == "nil" then
-            if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil") end
-        else
-            -- add field
-            local setSuccess = SetDataFieldUsingKeyDef(stepData, fieldDef.keyDef, fieldValue)
-            if not setSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed setting stepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
-        end
-    end
+    local stepData = GetStepData(project, step.stepDataDef)
+    if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
     --[[ ToDo: improve and use this tryout to allow for object based steps
     -- prepare stepObj
