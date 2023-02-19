@@ -160,17 +160,17 @@ function enterprise_projects.DeleteProjects()
     end
 end
 
-local function GetFieldValueFromKeyDef(stepData, keyDef)
+local function GetFieldValueFromStepDataUsingKeyDef(stepData, keyDef)
     -- check input
     local fieldValue = stepData
 
     -- loop on indexing
     local indexingPattern = "([%_%w]+)[%.]?"
     for keyName in string.gmatch(keyDef, indexingPattern) do
-        if type(keyName) ~= "string" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Invalid (type="..type(keyName)..") keyName") return nil end
-        if type(fieldValue) ~= "table" then corelog.Error("enterprise_projects.GetFieldValueFromKeyDef: Can't index further into fieldValue="..fieldValue.." (type="..type(fieldValue)..")") return nil end
+        if type(keyName) ~= "string" then corelog.Error("enterprise_projects.GetFieldValueFromStepDataUsingKeyDef: Invalid (type="..type(keyName)..") keyName") return nil end
+        if type(fieldValue) ~= "table" then corelog.Error("enterprise_projects.GetFieldValueFromStepDataUsingKeyDef: Can't index further into fieldValue="..fieldValue.." (type="..type(fieldValue)..")") return nil end
         fieldValue = fieldValue[keyName]
-        if type(fieldValue) == "nil" and keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.GetFieldValueFromKeyDef: FieldValue for key "..keyName.." = nil") return nil end
+        if type(fieldValue) == "nil" and keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.GetFieldValueFromStepDataUsingKeyDef: FieldValue for key "..keyName.." = nil") return nil end
     end
 
     -- end
@@ -242,7 +242,7 @@ local function EndProject(internalProjectData)
         if type(sourceStepData) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid sourceStepData for field "..fieldDef.keyDef) break end
 
         -- get fieldValue
-        local fieldValue = GetFieldValueFromKeyDef(sourceStepData, fieldDef.sourceKeyDef)
+        local fieldValue = GetFieldValueFromStepDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
         if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid fieldValue field "..fieldDef.keyDef) break end
 
         -- add the requested field
@@ -309,7 +309,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for field "..fieldDef.keyDef) TerminateProject(internalProjectData) return nil end
 
         -- get fieldValue
-        local fieldValue = GetFieldValueFromKeyDef(sourceStepData, fieldDef.sourceKeyDef)
+        local fieldValue = GetFieldValueFromStepDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
         if type(fieldValue) == "nil" then
             if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.NextProjectStep: FieldValue for field "..fieldDef.keyDef.." = nil") end
         else
@@ -330,7 +330,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(stepObjSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepObjSource") TerminateProject(internalProjectData) return nil end
 
         -- get stepObj
-        stepObj = GetFieldValueFromKeyDef(stepObjSource, stepObjDef.sourceKeyDef)
+        stepObj = GetFieldValueFromStepDataUsingKeyDef(stepObjSource, stepObjDef.sourceKeyDef)
     end
     ]]
 
