@@ -214,7 +214,7 @@ function ExecuteObjTest(t)
 		{key = "e", desc = "MethodExecutor", 	func = ExecuteObjTest, param = {filename = "T_MethodExecutor"}},
 		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
 		{key = "l", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
-		{key = "i", desc = "ItemInventory",		func = ExecuteObjTest, param = {filename = "T_ItemInventory"}},
+		{key = "i", desc = "Inventory",			func = ExecuteObjTest, param = {filename = "T_Inventory"}},
 		{key = "u", desc = "URL", 				func = ExecuteObjTest, param = {filename = "T_URL"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}

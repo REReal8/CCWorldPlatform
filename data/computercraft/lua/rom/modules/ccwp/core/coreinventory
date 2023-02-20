@@ -5,7 +5,7 @@ local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 
-local ItemInventory = require "obj_item_inventory"
+local Inventory = require "obj_item_inventory"
 
 local db	= {
 	dbFilename  = "/db/coreinventory.lua",
@@ -176,7 +176,6 @@ function coreinventory.GetInventoryDetail()
     return inventory
 end
 
--- ToDo: consider removing once we fully use ItemInventory object
 function coreinventory.DetermineItemsList(slots)
     -- construct items list
     local items = {}
@@ -221,7 +220,6 @@ local function CopySlots(...)
     return copy
 end
 
--- ToDo: consider removing once we fully use ItemInventory object
 local function CopyInventory(...)
     -- get & check input from description
     local checkSuccess, items, slots = InputChecker.Check([[
@@ -239,7 +237,7 @@ local function CopyInventory(...)
 
     -- construct copy
     local copy = {
-        items   = ItemInventory.ItemTableCopy(items),
+        items   = Inventory.ItemTableCopy(items),
         slots   = CopySlots(slots),
     }
 

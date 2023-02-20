@@ -1,23 +1,23 @@
-local T_ItemInventory = {}
+local T_Inventory = {}
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
-local ItemInventory = require "obj_item_inventory"
+local Inventory = require "obj_item_inventory"
 
-function T_ItemInventory.T_All()
-    T_ItemInventory.T_IsItemTable()
-    T_ItemInventory.T_IsSameItemTable()
-    T_ItemInventory.T_ItemTableCopy()
+function T_Inventory.T_All()
+    T_Inventory.T_IsItemTable()
+    T_Inventory.T_IsSameItemTable()
+    T_Inventory.T_ItemTableCopy()
 
-    T_ItemInventory.T_IsSlotTable()
+    T_Inventory.T_IsSlotTable()
 
-    T_ItemInventory.T_new()
-    T_ItemInventory.T_IsOfType()
-    T_ItemInventory.T_isSame()
-    T_ItemInventory.T_copy()
-    T_ItemInventory.T_ParseWithCheckInput()
-    T_ItemInventory.T_setFromSlotTable()
+    T_Inventory.T_new()
+    T_Inventory.T_IsOfType()
+    T_Inventory.T_isSame()
+    T_Inventory.T_copy()
+    T_Inventory.T_ParseWithCheckInput()
+    T_Inventory.T_setFromSlotTable()
 end
 
 local saplingItemName = "minecraft:birch_sapling"
@@ -38,25 +38,25 @@ local itemTable2 = {
 
 local compact = { compact = true }
 
-function T_ItemInventory.T_IsItemTable()
+function T_Inventory.T_IsItemTable()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory.IsItemTable() tests")
+    corelog.WriteToLog("* Inventory.IsItemTable() tests")
 
     -- test valid
-    local isItemTable = ItemInventory.IsItemTable( itemTable1 )
+    local isItemTable = Inventory.IsItemTable( itemTable1 )
     local expectedIsItemTable = true
     assert(isItemTable == expectedIsItemTable, "gotten IsItemTable(="..tostring(isItemTable)..") not the same as expected(="..tostring(expectedIsItemTable)..")")
 
     -- test with wrong name type
     itemTable1[20] = 50
-    isItemTable = ItemInventory.IsItemTable( itemTable1 )
+    isItemTable = Inventory.IsItemTable( itemTable1 )
     expectedIsItemTable = false
     assert(isItemTable == expectedIsItemTable, "gotten IsItemTable(="..tostring(isItemTable)..") not the same as expected(="..tostring(expectedIsItemTable)..")")
     itemTable1[20] = nil
 
     -- test with wrong count type
     itemTable1.something = "a string"
-    isItemTable = ItemInventory.IsItemTable( itemTable1 )
+    isItemTable = Inventory.IsItemTable( itemTable1 )
     expectedIsItemTable = false
     assert(isItemTable == expectedIsItemTable, "gotten IsItemTable(="..tostring(isItemTable)..") not the same as expected(="..tostring(expectedIsItemTable)..")")
     itemTable1.something = nil
@@ -64,17 +64,17 @@ function T_ItemInventory.T_IsItemTable()
     -- cleanup test
 end
 
-function T_ItemInventory.T_IsSameItemTable()
+function T_Inventory.T_IsSameItemTable()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory.IsSameItemTable() tests")
+    corelog.WriteToLog("* Inventory.IsSameItemTable() tests")
 
     -- test same
-    local isSameItemTable = ItemInventory.IsSameItemTable(itemTable1, itemTable1)
+    local isSameItemTable = Inventory.IsSameItemTable(itemTable1, itemTable1)
     local expectedIsSameItemTable = true
     assert(isSameItemTable == expectedIsSameItemTable, "gotten IsSameItemTable(="..tostring(isSameItemTable)..") not the same as expected(="..tostring(expectedIsSameItemTable)..")")
 
     -- test with 2 empty lists
-    isSameItemTable = ItemInventory.IsSameItemTable(
+    isSameItemTable = Inventory.IsSameItemTable(
         { },
         { }
     )
@@ -82,21 +82,21 @@ function T_ItemInventory.T_IsSameItemTable()
     assert(isSameItemTable == expectedIsSameItemTable, "gotten IsSameItemTable(="..tostring(isSameItemTable)..") not the same as expected(="..tostring(expectedIsSameItemTable)..")")
 
     -- test with different items
-    isSameItemTable = ItemInventory.IsSameItemTable(itemTable1, itemTable2)
+    isSameItemTable = Inventory.IsSameItemTable(itemTable1, itemTable2)
     expectedIsSameItemTable = false
     assert(isSameItemTable == expectedIsSameItemTable, "gotten IsSameItemTable(="..tostring(isSameItemTable)..") not the same as expected(="..tostring(expectedIsSameItemTable)..")")
 
     -- cleanup test
 end
 
-function T_ItemInventory.T_ItemTableCopy()
+function T_Inventory.T_ItemTableCopy()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory.ItemTableCopy() tests")
+    corelog.WriteToLog("* Inventory.ItemTableCopy() tests")
 
     -- test
-    local copy = ItemInventory.ItemTableCopy(itemTable1)
+    local copy = Inventory.ItemTableCopy(itemTable1)
     local expectedCopy = itemTable1
-    assert(ItemInventory.IsSameItemTable(copy, expectedCopy), "gotten ItemTableCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
+    assert(Inventory.IsSameItemTable(copy, expectedCopy), "gotten ItemTableCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
 
     -- cleanup test
 end
@@ -106,25 +106,25 @@ local slotTable1 = {
     { name = chestItemName, count = chestCount1 },
 }
 
-function T_ItemInventory.T_IsSlotTable()
+function T_Inventory.T_IsSlotTable()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory.IsSlotTable() tests")
+    corelog.WriteToLog("* Inventory.IsSlotTable() tests")
 
     -- test valid
-    local isSlotTable = ItemInventory.IsSlotTable( slotTable1 )
+    local isSlotTable = Inventory.IsSlotTable( slotTable1 )
     local expectedIsSlotTable = true
     assert(isSlotTable == expectedIsSlotTable, "gotten IsSlotTable(="..tostring(isSlotTable)..") not the same as expected(="..tostring(expectedIsSlotTable)..")")
 
     -- test with wrong slotItem name type
     slotTable1[1] = { name = 40, count = saplingCount1 }
-    isSlotTable = ItemInventory.IsSlotTable( slotTable1 )
+    isSlotTable = Inventory.IsSlotTable( slotTable1 )
     expectedIsSlotTable = false
     assert(isSlotTable == expectedIsSlotTable, "gotten IsSlotTable(="..tostring(isSlotTable)..") not the same as expected(="..tostring(expectedIsSlotTable)..")")
     slotTable1[1] = { name = saplingItemName, count = saplingCount1 }
 
     -- test with wrong slotItem count type
     slotTable1[1] = { name = saplingItemName, count =  "a string" }
-    isSlotTable = ItemInventory.IsSlotTable( slotTable1 )
+    isSlotTable = Inventory.IsSlotTable( slotTable1 )
     expectedIsSlotTable = false
     assert(isSlotTable == expectedIsSlotTable, "gotten IsSlotTable(="..tostring(isSlotTable)..") not the same as expected(="..tostring(expectedIsSlotTable)..")")
     slotTable1[1] = { name = saplingItemName, count = saplingCount1 }
@@ -132,59 +132,59 @@ function T_ItemInventory.T_IsSlotTable()
     -- cleanup test
 end
 
-local itemInventory1 = ItemInventory:new({
+local itemInventory1 = Inventory:new({
     _itemTable  = itemTable1,
 })
 
-function T_ItemInventory.T_new()
+function T_Inventory.T_new()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory:new() tests")
+    corelog.WriteToLog("* Inventory:new() tests")
 
     -- test full
-    local itemInventory = ItemInventory:new({
-        _itemTable  = ItemInventory.ItemTableCopy(itemTable1),
+    local itemInventory = Inventory:new({
+        _itemTable  = Inventory.ItemTableCopy(itemTable1),
     })
-    assert(ItemInventory.IsSameItemTable(itemInventory:getItemTable(), itemTable1), "gotten getItemTable(="..textutils.serialize(itemInventory:getItemTable(), compact)..") not the same as expected(="..textutils.serialize(itemTable1)..")")
+    assert(Inventory.IsSameItemTable(itemInventory:getItemTable(), itemTable1), "gotten getItemTable(="..textutils.serialize(itemInventory:getItemTable(), compact)..") not the same as expected(="..textutils.serialize(itemTable1)..")")
 
     -- test default
-    itemInventory = ItemInventory:new()
-    assert(ItemInventory.IsSameItemTable(itemInventory:getItemTable(), {}), "gotten getItemTable(="..textutils.serialize(itemInventory:getItemTable(), compact)..") not the same as expected(="..textutils.serialize({})..")")
+    itemInventory = Inventory:new()
+    assert(Inventory.IsSameItemTable(itemInventory:getItemTable(), {}), "gotten getItemTable(="..textutils.serialize(itemInventory:getItemTable(), compact)..") not the same as expected(="..textutils.serialize({})..")")
 
     -- cleanup test
 end
 
-function T_ItemInventory.T_IsOfType()
+function T_Inventory.T_IsOfType()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory.IsOfType() tests")
-    local itemInventory = ItemInventory:new({
-        _itemTable  = ItemInventory.ItemTableCopy(itemTable1),
+    corelog.WriteToLog("* Inventory.IsOfType() tests")
+    local itemInventory = Inventory:new({
+        _itemTable  = Inventory.ItemTableCopy(itemTable1),
     })
 
     -- test valid
-    local isOfType = ItemInventory.IsOfType(itemInventory)
+    local isOfType = Inventory.IsOfType(itemInventory)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test different object
-    isOfType = ItemInventory.IsOfType("a atring")
+    isOfType = Inventory.IsOfType("a atring")
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test invalid _itemTable
     itemInventory._itemTable = 1000
-    isOfType = ItemInventory.IsOfType(itemInventory)
+    isOfType = Inventory.IsOfType(itemInventory)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    itemInventory._itemTable = ItemInventory.ItemTableCopy(itemTable1)
+    itemInventory._itemTable = Inventory.ItemTableCopy(itemTable1)
 
     -- cleanup test
 end
 
-function T_ItemInventory.T_isSame()
+function T_Inventory.T_isSame()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory:isSame() tests")
-    local itemInventory2 = ItemInventory:new({
-        _itemTable  = ItemInventory.ItemTableCopy(itemTable1),
+    corelog.WriteToLog("* Inventory:isSame() tests")
+    local itemInventory2 = Inventory:new({
+        _itemTable  = Inventory.ItemTableCopy(itemTable1),
     })
 
     -- test same
@@ -202,9 +202,9 @@ function T_ItemInventory.T_isSame()
     -- cleanup test
 end
 
-function T_ItemInventory.T_copy()
+function T_Inventory.T_copy()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory:copy() tests")
+    corelog.WriteToLog("* Inventory:copy() tests")
 
     -- test
     local copy = itemInventory1:copy()
@@ -213,30 +213,30 @@ function T_ItemInventory.T_copy()
     -- cleanup test
 end
 
-function T_ItemInventory.T_ParseWithCheckInput()
+function T_Inventory.T_ParseWithCheckInput()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory parsing with CheckInput tests")
+    corelog.WriteToLog("* Inventory parsing with CheckInput tests")
 
     -- test
     local checkSuccess, itemInventory = InputChecker.Check([[
         Parameters:
-            itemInventory   + (ItemInventory) object to retrieve from arg
+            itemInventory   + (Inventory) object to retrieve from arg
     ]], table.unpack({ textutils.unserialize(textutils.serialize(itemInventory1)) }))
     assert(checkSuccess == true, "Invalid input")
 
-    local isOfType = ItemInventory.IsOfType(itemInventory)
+    local isOfType = Inventory.IsOfType(itemInventory)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- cleanup test
 end
 
-function T_ItemInventory.T_setFromSlotTable()
+function T_Inventory.T_setFromSlotTable()
     -- prepare test
-    corelog.WriteToLog("* ItemInventory:setFromSlotTable tests")
+    corelog.WriteToLog("* Inventory:setFromSlotTable tests")
 
     -- test
-    local itemInventory = ItemInventory:new()
+    local itemInventory = Inventory:new()
     itemInventory:setFromSlotTable(slotTable1)
     local isSame = itemInventory:isSame(itemInventory1)
     local expectedIsSame = true
@@ -245,4 +245,4 @@ function T_ItemInventory.T_setFromSlotTable()
     -- cleanup test
 end
 
-return T_ItemInventory
+return T_Inventory
