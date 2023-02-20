@@ -348,27 +348,65 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     end
     ]]
 
-    -- get moduleName and serviceName
-    local moduleName = stepTypeDef.moduleName
-    if not moduleName then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining moduleName for step "..currentStep) TerminateProject(internalProjectData) return nil end
-    local serviceName = stepTypeDef.serviceName
-    if not serviceName then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining serviceName for step "..currentStep) TerminateProject(internalProjectData) return nil end
-
     -- select stepType
     if stepType == "ASrv" then
-        corelog.WriteToProjectsLog("Start step "..currentStep.." async service", projectId)
+        -- get & check input from description
+        local checkSuccess, moduleName, serviceName = InputChecker.Check([[
+            Parameters:
+                stepTypeDef             - (table)
+                    moduleName          + (string)
+                    serviceName         + (string)
+        --]], stepTypeDef)
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining ASrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
-        -- do async service
+        --
         local callback          = "enterprise_projects.NextProjectStep"
         local callbackData      = internalProjectData
+
+        -- do service
+        corelog.WriteToProjectsLog("Start step "..currentStep.." async module service", projectId)
         MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback, callbackData)
     elseif stepType == "SSrv" then
-        corelog.WriteToProjectsLog("Start step "..currentStep.." sync service", projectId)
+        -- get & check input from description
+        local checkSuccess, moduleName, serviceName = InputChecker.Check([[
+            Parameters:
+                stepTypeDef             - (table)
+                    moduleName          + (string)
+                    serviceName         + (string)
+        --]], stepTypeDef)
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SSrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
-        -- do sync service, keep the results
+        -- do service, keep the results
+        corelog.WriteToProjectsLog("Start step "..currentStep.." sync module service", projectId)
         local results = MethodExecutor.DoSyncService(moduleName, serviceName, stepData)
 
-        -- recursive is the future!
+        -- next step
+        enterprise_projects.NextProjectStep(internalProjectData, results)
+    elseif stepType == "SOSrv" then
+        -- get & check input from description
+        local checkSuccess, className, serviceName, objStep, objKeyDef = InputChecker.Check([[
+            Parameters:
+                stepTypeDef             - (table)
+                    className           + (string)
+                    serviceName         + (string)
+                    objStep             + (number)
+                    objKeyDef           + (string)
+        --]], stepTypeDef)
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SOSrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
+
+        -- get sourceStepData
+        local sourceStepData = project.outputs[ objStep ]
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for obj of step "..currentStep) TerminateProject(internalProjectData) return nil end
+
+        -- get objData
+        local objData = GetFieldValueFromDataUsingKeyDef(sourceStepData, objKeyDef)
+        if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef) TerminateProject(internalProjectData) return nil end
+
+        -- do service, keep the results
+        corelog.WriteToProjectsLog("Start step "..currentStep.." sync obj service", projectId)
+        local results = MethodExecutor.DoSyncObjService(className, objData, serviceName, stepData)
+
+        -- next step
         enterprise_projects.NextProjectStep(internalProjectData, results)
     else
         corelog.Error("enterprise_projects.NextProjectStep: Unkown stepType "..stepType.." for step "..currentStep) TerminateProject(internalProjectData) return nil

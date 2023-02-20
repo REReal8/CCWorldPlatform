@@ -34,6 +34,10 @@ function ObjectFactory:registerClass(className, class)
     self.classes[className] = class
 end
 
+function ObjectFactory:isRegistered(className)
+    return self.classes[className] ~= nil
+end
+
 function ObjectFactory:delistClass(className)
     self.classes[className] = nil
 end

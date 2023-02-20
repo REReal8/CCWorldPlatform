@@ -5,6 +5,8 @@ local InputChecker = require "input_checker"
 
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
 
 function MethodExecutor.DoCallback(...)
     -- get & check input from description
@@ -45,6 +47,26 @@ function MethodExecutor.DoSyncService(...)
 
     -- call method
     return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData })
+end
+
+function MethodExecutor.DoSyncObjService(...)
+    -- get & check input from description
+    local checkSuccess, className, objData, serviceName, serviceData = InputChecker.Check([[
+        This function executes a sync service method of an obj.
+
+        Return value:
+            results                     - (?) service function return value
+
+        Parameters:
+            className                   + (string) name of class with the service
+            objData                     + (table) with obj data
+            serviceName                 + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MethodExecutor.DoSyncObjService: Invalid input") return nil end
+
+    -- call method
+    return MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData })
 end
 
 function MethodExecutor.DoASyncService(...)
@@ -119,6 +141,37 @@ function MethodExecutor.CallModuleMethod(...)
 
     -- call method
     local results = MethodExecutor.CallMethod(module, methodName, methodArguments)
+
+    -- end
+    return results
+end
+
+function MethodExecutor.CallObjMethod(...)
+    -- get & check input from description
+    local checkSuccess, className, objFieldsTable, methodName, methodArguments = InputChecker.Check([[
+        This method executes a method of ab obj based on a className and the methodArguments.
+
+        Return value:
+            results                     - (?) function return value(s)
+
+        Parameters:
+            className                   + (string) name of class to execute on
+            objFieldsTable              + (table) with obj data
+            methodName                  + (string) name of method to execute
+            methodArguments             + (table) with arguments to supply to the method
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MethodExecutor.CallObjMethod(...): Invalid input") return nil end
+
+    -- get obj
+    local obj = objectFactory:create(className, objFieldsTable)
+    if not obj then corelog.Warning("MethodExecutor.CallObjMethod(...): Object "..className.." not created for objFields "..textutils.serialise(objFieldsTable, {compact = true}) ) return nil end
+
+    -- get method
+    local method = obj[methodName]
+    if not method then corelog.Warning("MethodExecutor.CallObjMethod(...): Method "..methodName.." not found in object "..textutils.serialise(obj, {compact = true})) return nil end
+
+    -- call method
+    local results = method(obj, table.unpack(methodArguments))
 
     -- end
     return results

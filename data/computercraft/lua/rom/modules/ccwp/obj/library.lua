@@ -14,6 +14,8 @@ function library.Setup()
     objectFactory:registerClass("LayerRectangle", require "obj_layer_rectangle")
     objectFactory:registerClass("ItemInventory", require "obj_item_inventory")
 
+    objectFactory:registerClass("TestObj", require "test.obj_test")
+
     -- register library modules test modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()

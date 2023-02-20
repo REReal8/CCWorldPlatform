@@ -1,0 +1,209 @@
+local TestObj = {
+    _field1 = "",
+    _field2 = 2,
+    _field3 = nil,
+}
+
+local coreutils = require "coreutils"
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local MethodExecutor = require "method_executor"
+
+local enterprise_assignmentboard = require "enterprise_assignmentboard"
+
+--[[
+    This file implements the class TestObj.
+
+    A TestObj object can be used for testing object related functionality.
+--]]
+
+function TestObj:new(o)
+    --[[
+        Constructs a TestObj.
+
+        Parameters:
+            o               - (table) table with
+                _field1     - (string) field
+                _field2     - (number) field
+                _field3     - (number) (optional) field
+    --]]
+
+    o = o or {}   -- create object if user does not provide one
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function TestObj:getField1()
+    return self._field1
+end
+
+function TestObj:setField1(strValue)
+    -- check input
+    if type(strValue) ~= "string" then corelog.Error("TestObj:setField1: invalid strValue: "..type(strValue)) return end
+
+    self._field1 = strValue
+end
+
+function TestObj:getField2()
+    return self._field2
+end
+
+function TestObj:setField2(fieldValue)
+    -- check input
+    if type(fieldValue) ~= "number" then corelog.Error("TestObj:setField2: invalid fieldValue: "..type(fieldValue)) return end
+
+    self._field2 = fieldValue
+end
+
+function TestObj:getField3()
+    return self._field3
+end
+
+function TestObj:setField3(fieldValue)
+    -- check input
+    if type(fieldValue) ~= "nil" and type(fieldValue) ~= "number" then corelog.Error("TestObj:setField3: invalid fieldValue: "..type(fieldValue)) return end
+
+    self._field3 = fieldValue
+end
+
+function TestObj.HasFieldsOfType(testObj)
+    -- check
+    if type(testObj) ~= "table" then return false end
+    if type(testObj._field1) ~= "string" then return false end
+    if type(testObj._field2) ~= "number" or (type(testObj._field3) ~= "nil" and type(testObj._field3) ~= "number") then return false end
+
+    -- end
+    return true
+end
+
+function TestObj.HasMethodsOfType(testObj)
+    -- check
+    if not testObj.new then return false end
+
+    -- end
+    return true
+end
+
+function TestObj.IsOfType(testObj)
+    -- check
+    local isOfType = TestObj.HasFieldsOfType(testObj) and TestObj.HasMethodsOfType(testObj)
+
+    -- end
+    return isOfType
+end
+
+function TestObj:isSame(testObj)
+    -- check input
+    if not TestObj.IsOfType(testObj) then return false end
+
+    -- check same
+    local isSame = self._field1 == testObj._field1 and self._field2 == testObj._field2
+    if self._field3 ~= nil then
+        isSame = isSame and self._field3 == testObj._field3
+    end
+
+    -- end
+    return isSame
+end
+
+function TestObj:copy()
+    local copy = TestObj:new({
+        _field1 = self._field1,
+        _field2 = self._field2,
+        _field3 = self._field3,
+    })
+
+    return copy
+end
+
+--                        _
+--                       (_)
+--    ___  ___ _ ____   ___  ___ ___  ___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \/ __|
+--   \__ \  __/ |   \ V /| | (_|  __/\__ \
+--   |___/\___|_|    \_/ |_|\___\___||___/
+--
+--
+
+function TestObj:Test_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, testArg = InputChecker.Check([[
+        This public sync service returns a test argument.
+
+        Return value:
+            success             - (boolean) whether the service executed successfully
+            input               - (?) the test input argument
+
+        Parameters:
+            serviceData         + (table) data about the service
+                testArg         + (?) as a test argument
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:Test_SSrv: Invalid input") return {success = false} end
+
+    assert(TestObj.IsOfType(self), "TestObj:Test_SSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+
+    -- determine result to return
+    local serviceResult = {
+        success = true,
+        input = testArg,
+        obj = self,
+    }
+    if type(serviceData.serviceResult) == "table" then
+        serviceResult.success = serviceData.serviceResult.success
+    end
+
+    return serviceResult
+end
+
+function TestObj:Test_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, testArg, callback, callbackData = InputChecker.Check([[
+        This public async service executes an assignment with a callback function and callback data.
+
+        Return value:
+            nil
+
+        Async service return value (to callback):
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+                input           - (?) the test input argument
+
+        Parameters:
+            serviceData         - (table) data about the service
+                testArg         + (number) as a test argument
+            callback            + (string) name of function to call once service is ready
+            callbackData        + (table) data to supply to callback function
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:Test_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- create assignment arguments
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        needTool = false,
+        needTurtle = false,
+        fuelNeeded = 0
+    }
+    local taskData = {
+        arg1 = testArg
+    }
+
+    -- do assignment
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "TestObj.Func1_Task",
+        taskData    = taskData,
+    }
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+end
+
+function TestObj.Func1_Task(taskData)
+    return {
+        success = true,
+        input = taskData.arg1,
+    }
+end
+
+return TestObj
