@@ -333,21 +333,6 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     local stepData = GetStepData(project, step.stepDataDef)
     if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
-    --[[ ToDo: improve and use this tryout to allow for object based steps
-    -- prepare stepObj
-    local stepObj = nil
-    local stepObjDef = step.stepObjDef
-    if stepObjDef then
-        -- get stepObjSource
-        local sourceStep = stepObjDef.sourceStep
-        local stepObjSource = project.outputs[ sourceStep ]
-        if type(stepObjSource) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepObjSource") TerminateProject(internalProjectData) return nil end
-
-        -- get stepObj
-        stepObj = GetFieldValueFromDataUsingKeyDef(stepObjSource, stepObjDef.sourceKeyDef)
-    end
-    ]]
-
     -- select stepType
     if stepType == "ASrv" then
         -- get & check input from description
@@ -382,6 +367,33 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- next step
         enterprise_projects.NextProjectStep(internalProjectData, results)
+    elseif stepType == "AOSrv" then
+        -- get & check input from description
+        local checkSuccess, className, serviceName, objStep, objKeyDef = InputChecker.Check([[
+            Parameters:
+                stepTypeDef             - (table)
+                    className           + (string)
+                    serviceName         + (string)
+                    objStep             + (number)
+                    objKeyDef           + (string)
+        --]], stepTypeDef)
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SASrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
+
+        -- get sourceStepData
+        local sourceStepData = project.outputs[ objStep ]
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for obj of step "..currentStep) TerminateProject(internalProjectData) return nil end
+
+        -- get objData
+        local objData = GetFieldValueFromDataUsingKeyDef(sourceStepData, objKeyDef)
+        if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef) TerminateProject(internalProjectData) return nil end
+
+        --
+        local callback          = "enterprise_projects.NextProjectStep"
+        local callbackData      = internalProjectData
+
+        -- do service
+        corelog.WriteToProjectsLog("Start step "..currentStep.." async obj service", projectId)
+        MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback, callbackData)
     elseif stepType == "SOSrv" then
         -- get & check input from description
         local checkSuccess, className, serviceName, objStep, objKeyDef = InputChecker.Check([[

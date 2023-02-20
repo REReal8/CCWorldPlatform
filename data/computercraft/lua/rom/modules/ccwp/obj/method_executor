@@ -94,6 +94,32 @@ function MethodExecutor.DoASyncService(...)
     return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback, callbackData })
 end
 
+function MethodExecutor.DoASyncObjService(...)
+    -- get & check input from description
+    local checkSuccess, className, objData, serviceName, serviceData, callback, callbackData = InputChecker.Check([[
+        This function executes an async service method of an obj.
+
+     Return value:
+            nil
+
+        Async service return value (to callback):
+            callbackData                - (table) with callbackData below
+            results                     - (?) service function return value
+
+        Parameters:
+            className                   + (string) name of class with the service
+            objData                     + (table) with obj data
+            serviceName                 + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+            callback                    + (string) name of callback function to execute
+            callbackData                + (table) with first argument to supply to callback function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MethodExecutor.DoASyncObjService: Invalid input") return nil end
+
+    -- call method
+    return MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData, callback, callbackData })
+end
+
 function MethodExecutor.GetModuleMethod(...)
     -- get & check input from description
     local checkSuccess, moduleName, methodName = InputChecker.Check([[

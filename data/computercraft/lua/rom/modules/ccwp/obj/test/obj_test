@@ -140,15 +140,16 @@ function TestObj:Test_SOSrv(...)
             serviceData         + (table) data about the service
                 testArg         + (?) as a test argument
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestObj:Test_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("TestObj:Test_SOSrv: Invalid input") return {success = false} end
 
-    assert(TestObj.IsOfType(self), "TestObj:Test_SSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    -- verify true object
+    assert(TestObj.IsOfType(self), "TestObj:Test_SOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- determine result to return
     local serviceResult = {
         success = true,
         input = testArg,
-        obj = self,
+        selfObj = self,
     }
     if type(serviceData.serviceResult) == "table" then
         serviceResult.success = serviceData.serviceResult.success
@@ -176,7 +177,10 @@ function TestObj:Test_AOSrv(...)
             callback            + (string) name of function to call once service is ready
             callbackData        + (table) data to supply to callback function
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestObj:Test_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("TestObj:Test_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- verify true object
+    assert(TestObj.IsOfType(self), "TestObj:Test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- create assignment arguments
     local metaData = {
@@ -187,23 +191,17 @@ function TestObj:Test_AOSrv(...)
         fuelNeeded = 0
     }
     local taskData = {
-        arg1 = testArg
+        input = testArg,
+        selfObj = self,
     }
 
     -- do assignment
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "TestObj.Func1_Task",
+        task        = "role_test.Func2_Task",
         taskData    = taskData,
     }
     enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
-end
-
-function TestObj.Func1_Task(taskData)
-    return {
-        success = true,
-        input = taskData.arg1,
-    }
 end
 
 return TestObj

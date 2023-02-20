@@ -16,6 +16,7 @@ function T_MethodExecutor.T_All()
     T_MethodExecutor.T_DoSyncService()
     T_MethodExecutor.T_DoSyncObjService()
     T_MethodExecutor.T_DoASyncService()
+    T_MethodExecutor.T_DoASyncObjService()
 end
 
 local testMethod = function(num)
@@ -63,13 +64,14 @@ function T_MethodExecutor.T_DoCallback()
     MethodExecutor.DoCallback(callbackFunction, callbackData, result)
 end
 
+local testValue = 20
+
 function T_MethodExecutor.T_DoSyncService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoSyncService() test")
     local moduleName = "enterprise_test"
     local serviceName = "Test_SSrv"
     assert(moduleRegistry:isRegistered(moduleName), "Module "..moduleName.." is not registered in the registry.")
-    local testValue = 20
     local serviceData = {
         testArg = testValue,
     }
@@ -88,7 +90,6 @@ function T_MethodExecutor.T_DoSyncObjService()
     local serviceName = "Test_SOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
     local objData = {}
-    local testValue = 40
     local serviceData = {
         testArg = testValue,
     }
@@ -100,7 +101,6 @@ function T_MethodExecutor.T_DoSyncObjService()
     -- cleanup test
 end
 
-local testValue = 20
 local callbackTestValue = "some callback data"
 
 function T_MethodExecutor.T_DoASyncService()
@@ -112,7 +112,7 @@ function T_MethodExecutor.T_DoASyncService()
     local serviceData = {
         testArg = testValue,
     }
-    local callback = "t_test.Test_ASrv_Callback"
+    local callback = "T_MethodExecutor.DoASyncService_Callback"
     local callbackData = { [0] = callbackTestValue}
 
     -- test
@@ -122,6 +122,36 @@ end
 function T_MethodExecutor.DoASyncService_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
+    local arg1 = serviceResults.input
+    local expectedArg1 = testValue
+    assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
+    local callbackValue = callbackData[0]
+    local expectedCallbackValue = callbackTestValue
+    assert(callbackValue == expectedCallbackValue, "gotten callbackValue(="..(callbackValue or "nil")..") not the same as expected(="..expectedCallbackValue..")")
+
+    -- cleanup test
+end
+
+function T_MethodExecutor.T_DoASyncObjService()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.DoASyncObjService() test")
+    local className = "TestObj"
+    local serviceName = "Test_AOSrv"
+    assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
+    local objData = {}
+    local serviceData = {
+        testArg = testValue,
+    }
+    local callback = "T_MethodExecutor.DoASyncObjService_Callback"
+    local callbackData = { [0] = callbackTestValue}
+
+    -- test
+    MethodExecutor.DoASyncObjService(className, objData, serviceName, serviceData, callback, callbackData)
+end
+
+function T_MethodExecutor.DoASyncObjService_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async obj service")
     local arg1 = serviceResults.input
     local expectedArg1 = testValue
     assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
