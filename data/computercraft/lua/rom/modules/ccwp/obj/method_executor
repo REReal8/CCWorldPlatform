@@ -91,7 +91,7 @@ function MethodExecutor.DoASyncService(...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
     -- call method
-    return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback, callbackData})
+    return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback, callbackData })
 end
 
 function MethodExecutor.GetModuleMethod(...)
