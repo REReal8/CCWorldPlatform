@@ -66,7 +66,7 @@ end
 
 function Block:setName(name)
     -- check input
-    if type(name) ~= "string" then corelog.Error("obj_block:setName: invalid name: "..type(name)) return end
+    if type(name) ~= "string" then corelog.Error("Block:setName: invalid name: "..type(name)) return end
 
     self._name = name
 end
