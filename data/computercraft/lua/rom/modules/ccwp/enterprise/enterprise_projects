@@ -333,7 +333,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     local stepData = GetStepData(project, step.stepDataDef)
     if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
-    -- select stepType
+    -- select and do stepType
     if stepType == "ASrv" then
         -- get & check input from description
         local checkSuccess, moduleName, serviceName = InputChecker.Check([[
