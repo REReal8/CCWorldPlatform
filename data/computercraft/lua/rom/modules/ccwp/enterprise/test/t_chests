@@ -15,10 +15,6 @@ end
 
 local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
 local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
-local itemsQuery = {
-    ["minecraft:birch_log"] = 1,
-    ["minecraft:torch"]     = 5,
-}
 local multipleStacksItemsQuery = {
     ["minecraft:birch_log"] = 80,
     ["minecraft:torch"]     = 1,

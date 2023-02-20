@@ -1,7 +1,6 @@
 local T_Inventory = {}
-local corelog = require "corelog"
 
-local InputChecker = require "input_checker"
+local corelog = require "corelog"
 
 local Inventory = require "obj_inventory"
 

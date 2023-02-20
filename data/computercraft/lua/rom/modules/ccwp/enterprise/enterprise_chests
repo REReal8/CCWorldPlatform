@@ -7,6 +7,7 @@ local coremove = require "coremove"
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 local URL = require "obj_url"
+local Inventory = require "obj_inventory"
 
 local Chest = require "mobj_chest"
 
@@ -77,7 +78,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
         _location       = coremove.CopyLocation(location),
         _accessDirection= accessDirection,
 
-        _itemsInventory = { }, -- assumed to be empty
+        _inventory      = Inventory:new(), -- assumed to be empty
     })
 
     -- save the chest

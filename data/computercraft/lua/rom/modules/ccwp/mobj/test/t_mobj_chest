@@ -5,6 +5,8 @@ local coremove = require "coremove"
 
 local role_fuel_worker = require "role_fuel_worker"
 
+local Inventory = require "obj_inventory"
+
 local Chest = require "mobj_chest"
 
 local enterprise_turtle = require "enterprise_turtle"
@@ -20,7 +22,7 @@ end
 
 local location1 = {x= 0, y= 0, z= 1, dx=0, dy=1}
 local accessDirection1 = "top"
-local itemsInventory1 = { } -- ToDo: add elements
+local inventory1 = Inventory:new() -- ToDo: add elements
 
 local compact = { compact = true }
 
@@ -28,23 +30,23 @@ function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
-    local chest = T_Chest.CreateChest(location1, accessDirection1, itemsInventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
+    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
 
     -- test
     assert(chest:getId() == id, "gotten id(="..chest:getId()..") not the same as expected(="..id..")")
     assert(chest:getLocation() == location1, "gotten getLocation(="..textutils.serialize(chest:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(chest:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..chest:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
-    assert(chest:getItemsInventory() == itemsInventory1, "gotten getItemsInventory(="..textutils.serialize(chest:getItemsInventory(), compact)..") not the same as expected(="..textutils.serialize(itemsInventory1, compact)..")")
+    assert(chest:getInventory():isSame(inventory1), "gotten getInventory(="..textutils.serialize(chest:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
 
     -- cleanup test
 end
 
-function T_Chest.CreateChest(location, accessDirection, itemsInventory, id)
+function T_Chest.CreateChest(location, accessDirection, inventory, id)
     -- check input
     location = location or location1
     id = id or coreutils.NewId()
     accessDirection = accessDirection or accessDirection1
-    itemsInventory = itemsInventory or itemsInventory1
+    inventory = inventory or inventory1
 
     -- create Chest object
     local chest = Chest:new({
@@ -52,7 +54,7 @@ function T_Chest.CreateChest(location, accessDirection, itemsInventory, id)
 
         _location               = location,
         _accessDirection        = accessDirection,
-        _itemsInventory         = itemsInventory,
+        _inventory              = inventory,
     })
 
     -- end
@@ -88,12 +90,12 @@ function T_Chest.T_IsOfType()
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     chest._accessDirection = accessDirection1
 
-    -- test invalid _itemsInventory
-    chest._itemsInventory = 20
+    -- test invalid _inventory
+    chest._inventory = 20
     isOfType = Chest.IsOfType(chest)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    chest._itemsInventory = itemsInventory1
+    chest._inventory = inventory1
 
     -- cleanup test
 end
@@ -102,10 +104,10 @@ function T_Chest.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Chest:isSame() tests")
     local id = coreutils.NewId()
-    local chest = T_Chest.CreateChest(location1, accessDirection1, itemsInventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
+    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
 
     -- test same
-    local chest1 = T_Chest.CreateChest(location1, accessDirection1, itemsInventory1, id)
+    local chest1 = T_Chest.CreateChest(location1, accessDirection1, inventory1, id)
     local isSame = chest1:isSame(chest)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
@@ -125,11 +127,11 @@ function T_Chest.T_isSame()
     chest._accessDirection = accessDirection1
 
     -- test different _itemsInventory
-    chest._itemsInventory = { "ToDo: add some elements here" } -- ToDo
+    chest._inventory = { "ToDo: add some elements here" } -- ToDo
     isSame = chest1:isSame(chest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    chest._itemsInventory = itemsInventory1
+    chest._inventory = inventory1
 
     -- cleanup test
 end
@@ -137,7 +139,7 @@ end
 function T_Chest.T_copy()
     -- prepare test
     corelog.WriteToLog("* Chest:copy() tests")
-    local chest = T_Chest.CreateChest(location1, accessDirection1, itemsInventory1) if not chest then corelog.Error("failed obtaining Chest") return end
+    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1) if not chest then corelog.Error("failed obtaining Chest") return end
 
     -- test
     local copy = chest:copy()
@@ -172,12 +174,14 @@ end
 function T_Chest.T_can_ProvideItems_QSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:can_ProvideItems_QSrv() tests")
-    local itemsInventory = {
-        ["minecraft:dirt"] = 20,
-        ["minecraft:birch_log"] = 1,
-        ["minecraft:birch_sapling"] = 5,
-    }
-    local chest = T_Chest.CreateChest(location1, accessDirection1, itemsInventory) if not chest then corelog.Error("failed obtaining chest") return end
+    local inventory = Inventory:new({
+        _slotTable = {
+            { name = "minecraft:dirt", count = 20 },
+            { name = "minecraft:birch_log", count = 1 },
+            { name = "minecraft:birch_sapling", count = 5 },
+        }
+    })
+    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory) if not chest then corelog.Error("failed obtaining chest") return end
 
     -- test
     local itemName = "minecraft:dirt"

@@ -3,13 +3,12 @@ local Chest = {
 
     _location               = nil,
     _accessDirection        = "",
-    _itemsInventory         = {},
+    _inventory              = {},
 }
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
-local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
@@ -51,7 +50,7 @@ function Chest:new(...)
                 _id                     - (string) id of the Chest
                 _location               - (table) location of the Chest
                 _accessDirection        - (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-                _itemsInventory         - (table, {}) items inventory of Chest
+                _inventory              - (Inventory) inventory of Chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:new: Invalid input") return {} end
 
@@ -75,8 +74,8 @@ function Chest:getAccessDirection()
     return self._accessDirection
 end
 
-function Chest:getItemsInventory()
-    return self._itemsInventory
+function Chest:getInventory()
+    return self._inventory
 end
 
 function Chest.HasFieldsOfType(chest)
@@ -85,7 +84,7 @@ function Chest.HasFieldsOfType(chest)
     if type(chest._id) ~= "string" then return false end
     if (type(chest._location) ~= "nil" and type(chest._location) ~= "table") then return false end
     if type(chest._accessDirection) ~= "string" then return false end
-    if type(chest._itemsInventory) ~= "table" then return false end
+    if not Inventory.IsOfType(chest._inventory) then return false end
 
     -- end
     return true
@@ -115,7 +114,7 @@ function Chest:isSame(chest)
     local isSame =  self._id == chest._id
                 and coremove.IsSameLocation(self._location, chest._location)
                 and self._accessDirection == chest._accessDirection
-                and Inventory.IsSameItemTable(self._itemsInventory, chest._itemsInventory)
+                and self._inventory:isSame(chest._inventory)
 
     -- end
     return isSame
@@ -127,7 +126,7 @@ function Chest:copy()
 
         _location       = coremove.CopyLocation(self._location),
         _accessDirection= self._accessDirection,
-        _itemsInventory = Inventory.ItemTableCopy(self._itemsInventory)
+        _inventory      = self._inventory:copy()
     })
 
     return copy
@@ -158,12 +157,12 @@ function Chest:can_ProvideItems_QSrv(...)
     if not checkSuccess then corelog.Error("Chest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- query chests inventory
-    local itemsInventory = self:getItemsInventory()
+    local itemTable = self:getInventory():getItemTable()
     for itemName, itemCount in pairs(provideItems) do
         if type(itemName) ~= "string" then corelog.Error("Chest:can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
         if type(itemCount) ~= "number" then corelog.Error("Chest:can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
 
-        local inventoryCount = itemsInventory[itemName]
+        local inventoryCount = itemTable[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
             return {success = false}
         end
@@ -266,18 +265,11 @@ function Chest:updateChestRecord_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskData"               , sourceStep = 0, sourceKeyDef = "taskData" },
             }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "Chest", serviceName = "DetermineItemsList_SSrv" }, stepDataDef = {
-                { keyDef = "slots"                  , sourceStep = 1, sourceKeyDef = "slots" },
-            }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-            }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "success"                    , sourceStep = 1, sourceKeyDef = "success" },
             { keyDef = "chest"                      , sourceStep = 0, sourceKeyDef = "chest" },
-            { keyDef = "chest._itemsInventory"      , sourceStep = 2, sourceKeyDef = "items" },
+            { keyDef = "chest._inventory"           , sourceStep = 1, sourceKeyDef = "inventory" },
         }
     }
     local projectServiceData = {
@@ -334,9 +326,6 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskData"               , sourceStep = 0, sourceKeyDef = "taskData" },
             }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "Chest", serviceName = "DetermineItemsList_SSrv" }, stepDataDef = {
-                { keyDef = "slots"                  , sourceStep = 1, sourceKeyDef = "slots" },
-            }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetItemsLocator_SSrv" }, stepDataDef = {
                 { keyDef = "turtleId"               , sourceStep = 1, sourceKeyDef = "turtleId" },
                 { keyDef = "itemsQuery"             , sourceStep = 1, sourceKeyDef = "itemResultQuery" },
@@ -344,14 +333,13 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-                { keyDef = "success3"               , sourceStep = 3, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 4, sourceKeyDef = "success" },
+            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
             { keyDef = "chest"                      , sourceStep = 0, sourceKeyDef = "chest" },
-            { keyDef = "chest._itemsInventory"      , sourceStep = 2, sourceKeyDef = "items" },
-            { keyDef = "turtleItemsLocator"         , sourceStep = 3, sourceKeyDef = "itemsLocator" },
+            { keyDef = "chest._inventory"           , sourceStep = 1, sourceKeyDef = "inventory" },
+            { keyDef = "turtleItemsLocator"         , sourceStep = 2, sourceKeyDef = "itemsLocator" },
         }
     }
     local projectServiceData = {
@@ -413,18 +401,11 @@ function Chest:putItemsFromTurtle_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskData"               , sourceStep = 0, sourceKeyDef = "taskData" },
             }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "Chest", serviceName = "DetermineItemsList_SSrv" }, stepDataDef = {
-                { keyDef = "slots"                  , sourceStep = 1, sourceKeyDef = "slots" },
-            }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-            }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "success"                    , sourceStep = 1, sourceKeyDef = "success" },
             { keyDef = "chest"                      , sourceStep = 0, sourceKeyDef = "chest" },
-            { keyDef = "chest._itemsInventory"      , sourceStep = 2, sourceKeyDef = "items" },
+            { keyDef = "chest._inventory"           , sourceStep = 1, sourceKeyDef = "inventory" },
         }
     }
     local projectServiceData = {
@@ -434,39 +415,6 @@ function Chest:putItemsFromTurtle_AOSrv(...)
 
     -- start project
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function Chest.DetermineItemsList_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, slots = InputChecker.Check([[
-        This sync private service determined an items list from a slots inventory.
-
-        Return value:
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-                items           - (table) items list of a chest
-
-        Parameters:
-            serviceData         - (table) data for this service
-                slots           + (table) slots inventory of a chest
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.DetermineItemsList_SSrv: Invalid input") return {success = false} end
-
-    -- determine items inventory
-    local items = coreinventory.DetermineItemsList(slots)
-
-    -- end
-    return {
-        success = true,
-        items   = items,
-    }
 end
 
 return Chest
