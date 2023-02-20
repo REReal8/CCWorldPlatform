@@ -165,8 +165,7 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
     -- create project definition
     local updateChestRecordsProjectDef = {
         steps   = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "Chest", serviceName = "UpdateChestInventory_ASrv" }, stepDataDef = {
-                { keyDef = "chest"      , sourceStep = 0, sourceKeyDef = "chest" },
+            { stepType = "AOSrv", stepTypeDef = { className = "Chest", serviceName = "updateChestRecord_AOSrv", objStep = 0, objKeyDef = "chest" }, stepDataDef = {
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
                 { keyDef = "chest"      , sourceStep = 1, sourceKeyDef = "chest" },
@@ -541,8 +540,7 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
     -- create project definition
     local putItemsIntoChestProjectDef = {
         steps   = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "Chest", serviceName = "PutItemsFromTurtleIntoChest_ASrv" }, stepDataDef = {
-                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
+            { stepType = "AOSrv", stepTypeDef = { className = "Chest", serviceName = "putItemsFromTurtle_AOSrv", objStep = 0, objKeyDef = "chest" }, stepDataDef = {
                 { keyDef = "turtleItemsLocator"     , sourceStep = 0, sourceKeyDef = "turtleItemsLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},

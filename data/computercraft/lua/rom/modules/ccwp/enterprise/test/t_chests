@@ -176,8 +176,7 @@ function t_chests.T_PutItemsFromTurtle1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    local result = enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callbackFunction, callbackData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
+    enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callbackFunction, callbackData)
 end
 
 return t_chests

@@ -133,6 +133,15 @@ function Chest:copy()
     return copy
 end
 
+--                        _
+--                       (_)
+--    ___  ___ _ ____   ___  ___ ___  ___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \/ __|
+--   \__ \  __/ |   \ V /| | (_|  __/\__ \
+--   |___/\___|_|    \_/ |_|\___\___||___/
+--
+--
+
 function Chest:can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
@@ -218,9 +227,9 @@ function Chest:needsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
-function Chest.UpdateChestInventory_ASrv(...)
+function Chest:updateChestRecord_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, chest, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, callback, callbackData = InputChecker.Check([[
         This async private service updates (fetches) the inventory from a Chest.
 
         Return value:
@@ -233,19 +242,18 @@ function Chest.UpdateChestInventory_ASrv(...)
 
         Parameters:
             serviceData         - (table) data about the service
-                chest           + (Chest) the Chest
             callback            + (string) name of function to call once service is ready
             callbackData        + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.UpdateChestInventory_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
-        location = coremove.CopyLocation(chest:getLocation()),
-        accessDirection = chest:getAccessDirection(),
+        location = coremove.CopyLocation(self:getLocation()),
+        accessDirection = self:getAccessDirection(),
     }
     local projectData = {
-        chest           = chest:copy(),
+        chest           = self:copy(),
 
         task            = "role_chests_worker.FetchChestSlotsInventory_Task",
         metaData        = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
@@ -302,7 +310,7 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.getItemsIntoTurtle_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
@@ -355,10 +363,10 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
-function Chest.PutItemsFromTurtleIntoChest_ASrv(...)
+function Chest:putItemsFromTurtle_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, chest, turtleItemsLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
-        This async private service puts items from a the inventory of a turtle into a Chest.
+    local checkSuccess, turtleItemsLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+        This async private service puts items from a the inventory of a turtle into the Chest.
 
         Return value:
             nil
@@ -370,30 +378,29 @@ function Chest.PutItemsFromTurtleIntoChest_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about the service
-                chest                   + (Chest) the Chest
                 turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- check source is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
-    if not serviceResults.success then corelog.Error("Chest.PutItemsFromTurtleIntoChest_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
         turtleId        = turtleItemsLocator:getPort(),
         itemsQuery      = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
-        location        = coremove.CopyLocation(chest:getLocation()),
-        accessDirection = chest:getAccessDirection(),
+        location        = coremove.CopyLocation(self:getLocation()),
+        accessDirection = self:getAccessDirection(),
 
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
-        chest           = chest:copy(),
+        chest           = self:copy(),
 
         task            = "role_chests_worker.PutItemsFromTurtleIntoChest_Task",
         metaData        = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
