@@ -2,6 +2,15 @@ local ObjectFactory = {
     classes = {},
 }
 
+--[[
+    This file implements the class ObjectFactory.
+
+    The ObjectFactory object is a singleton representing a factory for creating (and obtaining) obj's based on a registered class.
+
+    A class registered at the ObjectFactory should implement a "new" method that, supplied with a table with all object fields,
+    creates a new instance of the object based on the class.
+--]]
+
 local instance = nil
 function ObjectFactory:getInstance()
     if not instance then
