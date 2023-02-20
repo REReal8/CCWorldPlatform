@@ -119,8 +119,7 @@ function t_chests.T_UpdateChestRecord1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(serviceData)..", , )")
-    local result = enterprise_chests.UpdateChestRecord_ASrv(serviceData, callbackFunction, callbackData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
+    enterprise_chests.UpdateChestRecord_ASrv(serviceData, callbackFunction, callbackData)
 end
 
 function t_chests.T_RegisterChest1()
@@ -162,8 +161,7 @@ function t_chests.T_GetItemsIntoTurtle1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    local result = enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callbackFunction, callbackData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
+    enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callbackFunction, callbackData)
 end
 
 function t_chests.T_PutItemsFromTurtle1()

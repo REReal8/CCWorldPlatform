@@ -470,12 +470,7 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
     -- create project definition
     local getItemsIntoTurtleProjectDef = {
         steps   = {
--- ToDo: consider how we objectivy this.
--- option1: add a new project step type (next to async true/false) that operates on an object (self)
--- option?: also automatically handle save object again?
---            { stepType = "ASrv", stepTypeDef = { service = "getItemsIntoTurtle_ASrv" }, stepObjDef = { sourceStep = 0, sourceKeyDef = "chest"}, stepDataDef = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "Chest", serviceName = "FetchItemsFromChestIntoTurtle_ASrv" }, stepDataDef = {
-                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
+            { stepType = "AOSrv", stepTypeDef = { className = "Chest", serviceName = "getItemsIntoTurtle_AOSrv", objStep = 0, objKeyDef = "chest" }, stepDataDef = {
                 { keyDef = "items"                  , sourceStep = 0, sourceKeyDef = "items" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},

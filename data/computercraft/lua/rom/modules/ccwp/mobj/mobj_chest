@@ -281,13 +281,9 @@ function Chest.UpdateChestInventory_ASrv(...)
     enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
 end
 
--- ToDo: objectify
--- function Chest:getItemsIntoTurtle_ASrv(...)
-function Chest.FetchItemsFromChestIntoTurtle_ASrv(...)
+function Chest:getItemsIntoTurtle_AOSrv(...)
     -- get & check input from description
--- ToDo: objectify
---    local checkSuccess, items, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
-    local checkSuccess, chest, items, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, items, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
         This async private service fetches items from the Chest into the inventory of a turtle.
 
         Return value:
@@ -301,27 +297,23 @@ function Chest.FetchItemsFromChestIntoTurtle_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about the service
-                chest                   + (Chest) the Chest
                 items                   + (table) items to be fetched
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (string) name of function to call once service is ready
             callbackData                + (table, {}) data to supply to callback function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest.FetchItemsFromChestIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-    -- ToDo: objectify
---    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
---    local chest = self
+    if not checkSuccess then corelog.Error("Chest.getItemsIntoTurtle_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
     -- create project definition
     local taskData = {
-        location        = coremove.CopyLocation(chest:getLocation()),
-        accessDirection = chest:getAccessDirection(),
+        location        = coremove.CopyLocation(self:getLocation()),
+        accessDirection = self:getAccessDirection(),
         itemsQuery      = items,
 
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
-        chest           = chest:copy(),
+        chest           = self:copy(),
 
         task            = "role_chests_worker.FetchItemsFromChestIntoTurtle_Task",
         metaData        = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
