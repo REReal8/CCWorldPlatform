@@ -12,7 +12,7 @@ function library.Setup()
     objectFactory:registerClass("URL", require "obj_url")
     objectFactory:registerClass("Block", require "obj_block")
     objectFactory:registerClass("LayerRectangle", require "obj_layer_rectangle")
-    objectFactory:registerClass("Inventory", require "obj_item_inventory")
+    objectFactory:registerClass("Inventory", require "obj_inventory")
 
     objectFactory:registerClass("TestObj", require "test.obj_test")
 
@@ -25,7 +25,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_URL", "test.t_obj_url")
     moduleRegistry:requireAndRegisterModule("T_Block", "test.t_obj_block")
     moduleRegistry:requireAndRegisterModule("T_LayerRectangle", "test.t_obj_layer_rectangle")
-    moduleRegistry:requireAndRegisterModule("T_Inventory", "test.t_obj_item_inventory")
+    moduleRegistry:requireAndRegisterModule("T_Inventory", "test.t_obj_inventory")
 
     -- do other stuff
 end

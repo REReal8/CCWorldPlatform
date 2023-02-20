@@ -3,7 +3,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
-local Inventory = require "obj_item_inventory"
+local Inventory = require "obj_inventory"
 
 function T_Inventory.T_All()
     T_Inventory.T_IsItemTable()

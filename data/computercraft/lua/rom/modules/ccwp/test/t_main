@@ -17,7 +17,7 @@ local T_MethodExecutor = require "test.t_method_executor"
 local T_URL = require "test.t_obj_url"
 local T_Block = require "test.t_obj_block"
 local T_LayerRectangle = require "test.t_obj_layer_rectangle"
-local T_Inventory = require "test.t_obj_item_inventory"
+local T_Inventory = require "test.t_obj_inventory"
 
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"

@@ -5,7 +5,7 @@ local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 
-local Inventory = require "obj_item_inventory"
+local Inventory = require "obj_inventory"
 
 local db	= {
 	dbFilename  = "/db/coreinventory.lua",
