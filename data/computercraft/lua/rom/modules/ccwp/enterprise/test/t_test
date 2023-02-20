@@ -1,7 +1,7 @@
 local t_test = {}
 local corelog = require "corelog"
 
-local enterprise_test = require "enterprise_test"
+local enterprise_test = require "test.enterprise_test"
 
 local testValue = 20
 local testData = {
