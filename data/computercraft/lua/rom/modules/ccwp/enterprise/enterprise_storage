@@ -241,7 +241,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         -- create project definition
         local buildAndStartNewSiteProjecDef = {
             steps   = {
-                { stepType = "ASrv", stepTypeDef = { module = "enterprise_storage", service = "BuildNewSite_ASrv" }, stepDataDef = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "BuildNewSite_ASrv" }, stepDataDef = {
                     { keyDef = "location"               , sourceStep = 0, sourceKeyDef = "location" },
                     { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },
                     { keyDef = "siloType"               , sourceStep = 0, sourceKeyDef = "siloType" },
@@ -249,14 +249,14 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
                     { keyDef = "layers"                 , sourceStep = 0, sourceKeyDef = "layers" },
                     { keyDef = "materialsHostLocator"   , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
                 }},
-                { stepType = "SSrv", stepTypeDef = { module = "enterprise_storage", service = "StartNewSite_SSrv" }, stepDataDef = {
+                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
                     { keyDef = "location"               , sourceStep = 0, sourceKeyDef = "location" },
                     { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },
                     { keyDef = "siloType"               , sourceStep = 0, sourceKeyDef = "siloType" },
                     { keyDef = "topChests"              , sourceStep = 0, sourceKeyDef = "topChests" },
                     { keyDef = "layers"                 , sourceStep = 0, sourceKeyDef = "layers" },
                 }},
-                { stepType = "SSrv", stepTypeDef = { module = "enterprise_projects", service = "AreAllTrue_QSrv" }, stepDataDef = {
+                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                     { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
                     { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
                 }},

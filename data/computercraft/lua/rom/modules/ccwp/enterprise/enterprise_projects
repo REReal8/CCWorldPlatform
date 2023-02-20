@@ -349,9 +349,9 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     ]]
 
     -- get moduleName and serviceName
-    local moduleName = stepTypeDef.module
+    local moduleName = stepTypeDef.moduleName
     if not moduleName then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining moduleName for step "..currentStep) TerminateProject(internalProjectData) return nil end
-    local serviceName = stepTypeDef.service
+    local serviceName = stepTypeDef.serviceName
     if not serviceName then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining serviceName for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
     -- select stepType

@@ -391,7 +391,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
 
     -- determine production steps
     local projectSteps = {
-        { stepType = "ASrv", stepTypeDef = { module = "enterprise_isp", service = "TransferItemsFromTo_ASrv" }, stepDataDef = {
+        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
             { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
             { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
@@ -404,7 +404,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     if productionMethod == "craft" then
         -- add crafting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { module = "enterprise_factory_site", service = "CraftItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "CraftItem_ASrv" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
@@ -415,7 +415,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
         )
 
         -- are all true step
-        areAllTrueStep = { stepType = "SSrv", stepTypeDef = { module = "enterprise_projects", service = "AreAllTrue_QSrv" }, stepDataDef = {
+        areAllTrueStep = { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
             { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
             { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
             { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
@@ -423,7 +423,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     elseif productionMethod == "smelt" then
         -- add smelting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { module = "enterprise_factory_site", service = "SmeltItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
@@ -434,7 +434,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
 
         -- add pickup step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { module = "enterprise_factory_site", service = "Pickup_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "Pickup_ASrv" }, stepDataDef = {
                 { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
@@ -444,7 +444,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
         )
 
         -- are all true step
-        areAllTrueStep = { stepType = "SSrv", stepTypeDef = { module = "enterprise_projects", service = "AreAllTrue_QSrv" }, stepDataDef = {
+        areAllTrueStep = { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
             { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
             { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
             { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
@@ -455,7 +455,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
 
     -- add remaining steps
     table.insert(projectSteps,
-        { stepType = "ASrv", stepTypeDef = { module = "enterprise_isp", service = "TransferItemsFromTo_ASrv" }, stepDataDef = {
+        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
             { keyDef = "sourceItemsLocator"         , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
             { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },

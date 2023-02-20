@@ -164,7 +164,7 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         -- add crafting step
         local procureItem = "procureItem"..iStepStr
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { module = "enterprise_shop", service = "ProcureItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "ProcureItem_ASrv" }, stepDataDef = {
                 { keyDef = "item"                       , sourceStep = 0, sourceKeyDef = procureItem },
                 { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "storageLocator" },
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
@@ -192,14 +192,14 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
     -- add combining URL's
     iStep = iStep + 1
     table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { module = "enterprise_isp", service = "AddItemsLocators_SSrv" }, stepDataDef = addItemLocatorsStepDataDef}
+        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "AddItemsLocators_SSrv" }, stepDataDef = addItemLocatorsStepDataDef}
     )
     local iAddItemsLocatorStep = iStep
 
     -- add check for all a success
     iStep = iStep + 1
     table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { module = "enterprise_projects", service = "AreAllTrue_QSrv" }, stepDataDef = areAllTrueStepDataDef}
+        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = areAllTrueStepDataDef}
     )
     local iAreAllTrueStep = iStep
 
