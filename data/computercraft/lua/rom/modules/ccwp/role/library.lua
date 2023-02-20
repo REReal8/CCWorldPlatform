@@ -18,6 +18,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("role_storage_silo_worker")
 
     -- register library modules test modules
+    moduleRegistry:requireAndRegisterModule("role_test", "test.role_test")
     moduleRegistry:requireAndRegisterModule("t_alchemist", "test.t_alchemist")
     moduleRegistry:requireAndRegisterModule("t_builder", "test.t_builder")
     moduleRegistry:requireAndRegisterModule("t_foresting", "test.t_foresting")

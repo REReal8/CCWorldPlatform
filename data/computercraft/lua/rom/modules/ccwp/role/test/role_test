@@ -1,0 +1,10 @@
+local role_test = {}
+
+function role_test.Func1_Task(taskData)
+    return {
+        success = true,
+        input   = taskData.arg1
+    }
+end
+
+return role_test

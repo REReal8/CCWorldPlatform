@@ -12,15 +12,6 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
     The test enterprise offers test services for debugging/ testing purposes.
 --]]
 
---                _     _ _         __                  _   _
---               | |   | (_)       / _|                | | (_)
---    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---   | |
---   |_|
-
 function enterprise_test.Test_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, testArg = InputChecker.Check([[
@@ -88,27 +79,10 @@ function enterprise_test.Test_ASrv(...)
     -- do assignment
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "enterprise_test.Func1_Task",
+        task        = "role_test.Func1_Task",
         taskData    = taskData,
     }
     enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function enterprise_test.Func1_Task(taskData)
---    corelog.WriteToLog("  doing enterprise_test.Func1_Task("..textutils.serialise(taskData)..").")
-
-    return { success = true, input = taskData.arg1 }
-end
-
-function enterprise_test.ACallBackFunc1(callbackData, testResult)
-    corelog.WriteToLog("  doing enterprise_test.ACallBackFunc1("..textutils.serialise(callbackData)..", "..textutils.serialise(testResult)..").")
 end
 
 return enterprise_test
