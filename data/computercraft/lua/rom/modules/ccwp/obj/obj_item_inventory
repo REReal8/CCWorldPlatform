@@ -1,16 +1,15 @@
 local ItemInventory = {
     _itemTable  = {},
 }
+
 local corelog = require "corelog"
 local InputChecker = require "input_checker"
 
 --[[
-    This file implements ItemInventory.
+    This file implements the class ItemInventory.
 
-    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
+    A ItemInventory object represents an inventory in the minecraft world.
 --]]
-
-
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
