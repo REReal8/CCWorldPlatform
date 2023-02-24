@@ -218,7 +218,7 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
                 destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
@@ -429,7 +429,7 @@ function enterprise_turtle.GetItemsIntoTurtle_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 turtleItemsLocator      - (URL) locating a specific turtle and the items it has gotton in it's inventory
@@ -495,7 +495,7 @@ function enterprise_turtle.PutItemsFromTurtle_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it

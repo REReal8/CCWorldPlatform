@@ -43,7 +43,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 forestLocator           - (URL) locating the site
@@ -162,7 +162,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
 
@@ -342,7 +342,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
                 destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
@@ -513,7 +513,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
 

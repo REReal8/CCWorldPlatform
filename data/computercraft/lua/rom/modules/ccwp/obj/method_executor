@@ -55,7 +55,7 @@ function MethodExecutor.DoASyncService(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
             results                     - (?) service function return value
 
         Parameters:
@@ -78,7 +78,7 @@ function MethodExecutor.DoASyncObjService(...)
      Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
             results                     - (?) service function return value
 
         Parameters:

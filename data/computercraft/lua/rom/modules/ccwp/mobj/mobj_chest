@@ -225,7 +225,7 @@ function Chest:updateChestRecord_AOSrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                 - (table)
                 success         - (boolean) whether the service executed successfully
                 chest           - (table) the chest
@@ -281,7 +281,7 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 chest                   - (Chest) the Chest (after the items have been removed)
@@ -350,7 +350,7 @@ function Chest:putItemsFromTurtle_AOSrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
                 chest                   - (table) the chest (after the items have been put)

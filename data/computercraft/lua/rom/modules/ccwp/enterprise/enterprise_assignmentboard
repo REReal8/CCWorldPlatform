@@ -53,7 +53,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         and return
             taskResult              - (table) with return data of the task function
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
             task result             - (table) results of the task function
 
         Parameters:

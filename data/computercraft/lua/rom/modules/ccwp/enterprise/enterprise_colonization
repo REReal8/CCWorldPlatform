@@ -50,7 +50,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                 - (table)
                 success         - (boolean) whether the service executed successfully
 

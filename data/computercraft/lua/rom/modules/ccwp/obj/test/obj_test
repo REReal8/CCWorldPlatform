@@ -166,7 +166,7 @@ function TestObj:Test_AOSrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                 - (table)
                 success         - (boolean) whether the service executed successfully
                 input           - (?) the test input argument

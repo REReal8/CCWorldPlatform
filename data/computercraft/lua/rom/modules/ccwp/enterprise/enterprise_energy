@@ -51,7 +51,7 @@ local function Refuel_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed successfully
 
@@ -129,7 +129,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed successfully
 

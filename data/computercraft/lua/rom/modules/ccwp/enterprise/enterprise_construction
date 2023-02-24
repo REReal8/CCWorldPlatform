@@ -32,7 +32,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table) {success = true} if the blueprint was succesfully build
 
         Parameters:
@@ -125,7 +125,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                         - (table) {success = true} if the layer was succesfully build
 
         Parameters:

@@ -224,7 +224,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                             - (table)
                 success     - (boolean) whether the service was executed successfully
 
@@ -281,7 +281,7 @@ function enterprise_storage.BuildNewSite_ASrv(...)
     local checkSuccess, siteData, type, callback = InputChecker.Check([[
         This public function (service) builds a new site.
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                             - (table)
                 success     - (boolean) whether the service was executed successfully
 
