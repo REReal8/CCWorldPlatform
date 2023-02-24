@@ -1,6 +1,6 @@
 local Inventory = {
     _slotTable  = {},
-    _itemTable  = nil,
+    _itemTable  = {},
 }
 
 local corelog = require "corelog"
@@ -48,16 +48,7 @@ function Inventory:setSlotTable(slotTable)
     if not Inventory.IsSlotTable(slotTable) then corelog.Error("Inventory:setSlotTable: invalid slotTable: "..type(slotTable)) return end
 
     self._slotTable = slotTable
-    self._itemTable = nil -- note: drop current and have it rebuild once needed
-end
-
-function Inventory:getItemTable()
-    -- check _itemTable already build
-    if not self._itemTable then
-        self:buildItemTable()
-    end
-
-    return self._itemTable
+    self._itemTable = {} -- note: drop current and have it rebuild once needed
 end
 
 function Inventory.HasFieldsOfType(inventory)
@@ -99,24 +90,73 @@ end
 function Inventory:copy()
     local copy = Inventory:new({
         _slotTable  = Inventory.SlotTableCopy(self._slotTable),
-        _itemTable  = nil,
+        _itemTable  = {},
     })
 
     return copy
 end
 
-function Inventory:buildItemTable(...)
-    -- new _itemTable
-    self._itemTable = {}
+function Inventory:isEmpty()
+    -- check
+    local isEmpty = next(self._slotTable) == nil
+
+    -- end
+    return isEmpty
+end
+
+function Inventory:getItemTable()
+    -- check _itemTable already build
+    if not self:isEmpty() and next(self._itemTable) == nil then
+        self._itemTable = self:buildItemTable()
+    end
+
+    return self._itemTable
+end
+
+function Inventory:buildItemTable()
+    -- new itemTable
+    local itemTable = {}
 
     -- loop on slots
     for slot, item in pairs(self._slotTable) do
         -- right item?
         if type(item) == "table" then
             -- add to items
-            self._itemTable[ item.name ]  = (self._itemTable[ item.name ] or 0) + item.count
+            itemTable[ item.name ]  = (itemTable[ item.name ] or 0) + item.count
         end
     end
+
+    -- end
+    return itemTable
+end
+
+function Inventory:hasItems(...)
+    -- get & check input from description
+    local checkSuccess, items = InputChecker.Check([[
+        This sync public query service answers the question whether the Supplier can provide specific items.
+
+        Return value:
+                            - (boolean) whether the answer to the question is true
+
+        Parameters:
+            items           + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Inventory:hasItems: Invalid input") return false end
+
+    -- query chests inventory
+    local itemTable = self:getItemTable()
+    for itemName, itemCount in pairs(items) do
+        if type(itemName) ~= "string" then corelog.Error("Inventory:hasItems: itemName of wrong type = "..type(itemName)..".") return false end
+        if type(itemCount) ~= "number" then corelog.Error("Inventory:hasItems: itemCount of wrong type = "..type(itemCount)..".") return false end
+
+        local inventoryCount = itemTable[itemName]
+        if inventoryCount == nil or inventoryCount < itemCount then
+            return false
+        end
+    end
+
+    -- end
+    return true
 end
 
 --    _                 _    __                  _   _

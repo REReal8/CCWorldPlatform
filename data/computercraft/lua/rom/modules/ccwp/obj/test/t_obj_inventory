@@ -17,7 +17,9 @@ function T_Inventory.T_All()
     T_Inventory.T_IsOfType()
     T_Inventory.T_isSame()
     T_Inventory.T_copy()
+    T_Inventory.T_isEmpty()
     T_Inventory.T_getItemTable()
+    T_Inventory.T_hasItems()
 end
 
 local saplingItemName = "minecraft:birch_sapling"
@@ -255,6 +257,28 @@ function T_Inventory.T_copy()
     -- cleanup test
 end
 
+function T_Inventory.T_isEmpty()
+    -- prepare test
+    corelog.WriteToLog("* Inventory:isEmpty() tests")
+
+    -- test not empty
+    local inventory = Inventory:new({
+    })
+    local isEmpty = inventory:isEmpty()
+    local expectedIsEmpty = true
+    assert(isEmpty == expectedIsEmpty, "gotten isEmpty(="..tostring(isEmpty)..") not the same as expected(="..tostring(expectedIsEmpty)..")")
+
+    -- test not empty
+    inventory = Inventory:new({
+        _slotTable  = slotTable1,
+    })
+    isEmpty = inventory:isEmpty()
+    expectedIsEmpty = false
+    assert(isEmpty == expectedIsEmpty, "gotten isEmpty(="..tostring(isEmpty)..") not the same as expected(="..tostring(expectedIsEmpty)..")")
+
+    -- cleanup test
+end
+
 function T_Inventory.T_getItemTable()
     -- prepare test
     corelog.WriteToLog("* Inventory:getItemTable() tests")
@@ -267,6 +291,41 @@ function T_Inventory.T_getItemTable()
     local isSame = Inventory.IsSameItemTable(itemTable, itemTable1)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- cleanup test
+end
+
+function T_Inventory.T_hasItems()
+    -- prepare test
+    corelog.WriteToLog("* T_Inventory:hasItems() tests")
+    local inventory = Inventory:new({
+        _slotTable = {
+            { name = "minecraft:dirt", count = 20 },
+            { name = "minecraft:birch_log", count = 1 },
+            { name = "minecraft:birch_sapling", count = 5 },
+        }
+    })
+
+    -- test
+    local itemName = "minecraft:dirt"
+    local itemCount = 10
+    local hasItems = inventory:hasItems( { [itemName] = itemCount} )
+    assert(hasItems, "hasItems incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:birch_sapling"
+    itemCount = 2
+    hasItems = inventory:hasItems({ [itemName] = itemCount} )
+    assert(hasItems, "hasItems incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:birch_log"
+    itemCount = 10
+    hasItems = inventory:hasItems({ [itemName] = itemCount} )
+    assert(not hasItems, "hasItems incorrectly success for "..itemCount.." "..itemName.."'s")
+
+    itemName = "minecraft:furnace"
+    itemCount = 1
+    hasItems = inventory:hasItems({ [itemName] = itemCount} )
+    assert(not hasItems, "hasItems incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
 end
