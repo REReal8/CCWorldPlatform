@@ -1,0 +1,138 @@
+local Callback = {
+    _moduleName  = "",
+    _methodName  = "",
+    _data  = {},
+}
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local MethodExecutor = require "method_executor"
+
+--[[
+    This file implements the class Callback.
+
+    A Callback defines a callback function and (minimum) callback data.
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function Callback:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Callback from table.
+
+        Parameters:
+            o                       + (table, {}) table with object fields
+                _moduleName         - (string, "") name of callback module to execute
+                _methodName         - (string, "") name of callback method to execute
+                _data               - (table, {}) with first argument to supply to callback once called
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Callback:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function Callback:getModuleName()
+    return self._moduleName
+end
+
+function Callback:setModuleName(moduleName)
+    self._moduleName = moduleName
+end
+
+function Callback:getMethodName()
+    return self._methodName
+end
+
+function Callback:setMethodName(methodName)
+    self._methodName = methodName
+end
+
+function Callback:getData()
+    return self._data
+end
+
+function Callback:setData(data)
+    self._data = data
+end
+
+function Callback.HasFieldsOfType(callback)
+    -- check
+    if type(callback) ~= "table" then return false end
+    if type(callback._moduleName) ~= "string" then return false end
+    if type(callback._methodName) ~= "string" then return false end
+    if type(callback._data) ~= "table" then return false end
+
+    -- end
+    return true
+end
+
+function Callback.HasMethodsOfType(callback)
+    -- check
+    if not callback.new then return false end
+
+    -- end
+    return true
+end
+
+function Callback.IsOfType(callback)
+    -- check
+    local isOfType = Callback.HasFieldsOfType(callback) and Callback.HasMethodsOfType(callback)
+
+    -- end
+    return isOfType
+end
+
+function Callback:isSame(callback)
+    -- check input
+    if not Callback.IsOfType(callback) then return false end
+
+    -- check same
+    local isSame = self._moduleName == callback._moduleName and self._methodName == callback._methodName
+    isSame = isSame and self._data == callback._data -- ToDo: note: now an identity check. consider checking elements
+
+    -- end
+    return isSame
+end
+
+function Callback:copy()
+    local copy = Callback:new({
+        _moduleName  = self._moduleName,
+        _methodName  = self._methodName,
+        _data  = self._data, -- ToDo: note: now an identity copy. consider copying elements
+    })
+
+    return copy
+end
+
+function Callback:DoCallback(...)
+    -- get & check input from description
+    local checkSuccess, resultData = InputChecker.Check([[
+        This function executes the callback with predefined callback data and data supplied to this method.
+
+        Return value:
+            nil
+
+        Parameters:
+            resultData              + (table) with second argument to supply to callback function, typically the return data of the task function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Callback:DoCallback: Invalid input") return nil end
+
+    -- call method
+    return MethodExecutor.CallModuleMethod(self._moduleName, self._methodName, { self._data, resultData })
+end
+
+return Callback

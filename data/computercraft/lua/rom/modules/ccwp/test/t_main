@@ -14,6 +14,7 @@ local t_foresting = require "test.t_foresting"
 local T_ModuleRegistry = require "test.t_module_registry"
 local T_ObjectFactory = require "test.t_object_factory"
 local T_MethodExecutor = require "test.t_method_executor"
+local T_Callback = require "test.t_obj_callback"
 local T_URL = require "test.t_obj_url"
 local T_Block = require "test.t_obj_block"
 local T_LayerRectangle = require "test.t_obj_layer_rectangle"
@@ -58,6 +59,7 @@ function t_main.T_All()
     -- obj tests
     T_ModuleRegistry.T_All()
     T_ObjectFactory.T_All()
+    T_Callback.T_All()
     T_MethodExecutor.T_All()
     T_URL.T_All()
     T_Block.T_All()
