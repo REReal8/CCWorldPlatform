@@ -2,6 +2,9 @@ local T_Callback = {}
 
 local corelog = require "corelog"
 
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
+
 local Callback = require "obj_callback"
 
 function T_Callback.T_All()
@@ -9,11 +12,12 @@ function T_Callback.T_All()
     T_Callback.T_IsOfType()
     T_Callback.T_isSame()
     T_Callback.T_copy()
+    T_Callback.T_call()
 end
 
-local moduleName1 = "t_main"
+local moduleName1 = "T_Callback"
 local moduleName2 = "moduleName2"
-local methodName1 = "Func1_Callback"
+local methodName1 = "Call_Callback"
 local methodName2 = "methodName2"
 local data1 = {"some callback data"}
 local data2 = {"some other callback data"}
@@ -139,6 +143,31 @@ function T_Callback.T_copy()
     -- test
     local copy = callback1:copy()
     assert(copy:isSame(callback1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(callback1, compact)..")")
+
+    -- cleanup test
+end
+
+local resultData1 = { someResult = "some result", success = true }
+
+function T_Callback.T_call()
+    -- prepare test
+    corelog.WriteToLog("* Callback:call() test")
+    local callback = Callback:new({
+        _moduleName     = moduleName1,
+        _methodName     = methodName1,
+        _data           = data1,
+    })
+
+    -- test
+    callback:call(resultData1)
+
+    -- cleanup test
+end
+
+function T_Callback.Call_Callback(callbackData, resultData)
+    -- test (cont)
+    assert(callbackData == data1, "gotten callbackData(="..textutils.serialise(callbackData, compact)..") not the same as expected(="..textutils.serialise(data1, compact)..")")
+    assert(resultData == resultData1, "gotten resultData(="..textutils.serialise(resultData, compact)..") not the same as expected(="..textutils.serialise(resultData1, compact)..")")
 
     -- cleanup test
 end
