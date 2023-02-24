@@ -246,6 +246,8 @@ function Chest:updateChestRecord_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
 
+    -- ToDo: consider if we can do this without a project
+
     -- create project definition
     local taskData = {
         location = coremove.CopyLocation(self:getLocation()),
@@ -377,6 +379,8 @@ function Chest:putItemsFromTurtle_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
     if not serviceResults.success then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+
+    -- ToDo: consider if we can do this without a project
 
     -- create project definition
     local taskData = {
