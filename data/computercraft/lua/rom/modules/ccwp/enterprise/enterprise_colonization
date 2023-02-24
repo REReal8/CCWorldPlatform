@@ -5,7 +5,7 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local URL = require "obj_url"
 
 local role_settler = require "role_settler"
@@ -32,7 +32,7 @@ local db = {
 
 function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- get & check input from description
-    local checkSuccess, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, callback = InputChecker.Check([[
         This public async service creates a new CCWorldPlatform world.
             It bootstraps the world logic by building an initiating several enterprise (sites).
 
@@ -57,10 +57,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         Parameters:
             serviceData         - (table) data about the service
                 <currently none>
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
@@ -245,7 +244,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 local function GetHostLocator_Att()

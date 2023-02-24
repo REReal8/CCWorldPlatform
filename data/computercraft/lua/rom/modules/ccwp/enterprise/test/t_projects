@@ -2,8 +2,7 @@ local t_projects = {}
 
 local corelog = require "corelog"
 
-local ObjectFactory = require "object_factory"
-local objectFactory = ObjectFactory:getInstance()
+local Callback = require "obj_callback"
 
 local TestObj = require "test.obj_test"
 
@@ -122,15 +121,18 @@ function t_projects.T_StartProject_ASrv()
         testTable4 = { },
         testObj = testObj,
     }
-    local callbackFunction = "t_projects.StartProject_ASrv_Callback"
-    local callbackData = { [0] = callbackTestValue }
+    local callback = Callback:new({
+        _moduleName     = "t_projects",
+        _methodName     = "StartProject_ASrv_Callback",
+        _data           = { [0] = callbackTestValue},
+    })
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
     }
 
     -- test
-    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)

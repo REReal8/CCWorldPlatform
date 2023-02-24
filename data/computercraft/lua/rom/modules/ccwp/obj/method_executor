@@ -8,28 +8,6 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-function MethodExecutor.DoCallback(...)
-    -- get & check input from description
-    local checkSuccess, callback, callbackData, resultData = InputChecker.Check([[
-        This function executes a callback function with two arguments.
-
-        Return value:
-            nil
-
-        Parameters:
-            callback                    + (string) name of callback function to execute
-            callbackData                + (table) with first argument to supply to callback function
-            resultData                  + (table) with second argument to supply to callback function, typically the return data of the task function
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MethodExecutor.DoCallback: Invalid input") return nil end
-
-    -- split callback in moduleName and methodName
-    local moduleName, methodName = callback:match("(.*)%.(.*)")
-
-    -- call method
-    return MethodExecutor.CallModuleMethod(moduleName, methodName, { callbackData, resultData })
-end
-
 function MethodExecutor.DoSyncService(...)
     -- get & check input from description
     local checkSuccess, moduleName, serviceName, serviceData = InputChecker.Check([[
@@ -71,39 +49,36 @@ end
 
 function MethodExecutor.DoASyncService(...)
     -- get & check input from description
-    local checkSuccess, moduleName, serviceName, serviceData, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, moduleName, serviceName, serviceData, callback = InputChecker.Check([[
         This function executes an async service method of a module.
 
         Return value:
             nil
 
         Async service return value (to callback):
-            callbackData                - (table) with callbackData below
             results                     - (?) service function return value
 
         Parameters:
             moduleName                  + (string) name of module with the service
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
-            callback                    + (string) name of callback function to execute
-            callbackData                + (table) with first argument to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService: Invalid input") return nil end
 
     -- call method
-    return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback, callbackData })
+    return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback })
 end
 
 function MethodExecutor.DoASyncObjService(...)
     -- get & check input from description
-    local checkSuccess, className, objData, serviceName, serviceData, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, className, objData, serviceName, serviceData, callback = InputChecker.Check([[
         This function executes an async service method of an obj.
 
      Return value:
             nil
 
         Async service return value (to callback):
-            callbackData                - (table) with callbackData below
             results                     - (?) service function return value
 
         Parameters:
@@ -111,13 +86,12 @@ function MethodExecutor.DoASyncObjService(...)
             objData                     + (table) with obj data
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
-            callback                    + (string) name of callback function to execute
-            callbackData                + (table) with first argument to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MethodExecutor.DoASyncObjService: Invalid input") return nil end
 
     -- call method
-    return MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData, callback, callbackData })
+    return MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData, callback })
 end
 
 function MethodExecutor.GetModuleMethod(...)

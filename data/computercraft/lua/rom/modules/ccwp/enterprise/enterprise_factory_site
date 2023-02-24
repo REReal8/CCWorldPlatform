@@ -1,11 +1,12 @@
 local enterprise_factory_site = {}
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local URL = require "obj_url"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -111,7 +112,7 @@ end
 
 function enterprise_factory_site.StopSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, baseLocation, callback = InputChecker.Check([[
         This async public function stops a factory site. Stopping implies
           - the site is immediatly no longer available for new business
           - wait for all active work (production) on site to be ended
@@ -127,14 +128,13 @@ function enterprise_factory_site.StopSite_ASrv(...)
         Parameters:
             serviceData         - (table) data about the site
                 baseLocation    + (table) world location of the base (lower left corner) of the site
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.StopSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory_site.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- find the site
     local site = FindSiteByLocation(baseLocation)
-    if type(site) ~="table" then corelog.Error("enterprise_factory_site.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(site) ~="table" then corelog.Error("enterprise_factory_site.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return Callback.ErrorCall(callback) end
 
     -- stop doing business for this site
     -- ToDo: implement
@@ -147,7 +147,7 @@ function enterprise_factory_site.StopSite_ASrv(...)
     coredht.SaveData(nil, db.hostName, db.psSites, site.siteId)
 
     -- do callback
-    MethodExecutor.DoCallback(callback, callbackData, {success = true})
+    return callback:call({success = true})
 end
 
 local function GetAvailableLocator(locators)
@@ -357,7 +357,7 @@ end
 
 function enterprise_factory_site.ProduceItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
@@ -381,10 +381,9 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) production recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_turtle.GetHostLocator_Att()
@@ -451,7 +450,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
             { keyDef = "success4"                   , sourceStep = 4, sourceKeyDef = "success" },
         }}
         extraStep = 1
-    else corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    else corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return Callback.ErrorCall(callback) end
 
     -- add remaining steps
     table.insert(projectSteps,
@@ -490,7 +489,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 --    _                 _    __                  _   _
@@ -793,7 +792,7 @@ end
 
 function enterprise_factory_site.CraftItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async sewrvice should craft items at the productionSpot.
 
         Return value:
@@ -812,14 +811,13 @@ function enterprise_factory_site.CraftItem_ASrv(...)
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) crafting recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once the items are made
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get productionLocation
     local productionLocation = productionSpot.location
-    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
     local craftData = {
@@ -842,7 +840,7 @@ function enterprise_factory_site.CraftItem_ASrv(...)
         task        = "role_alchemist.Craft_Task",
         taskData    = craftData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 
     -- end
     return nil
@@ -850,7 +848,7 @@ end
 
 function enterprise_factory_site.SmeltItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemCount, productionRecipe, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should smelt items at the productionSpot.
 
         Return value:
@@ -868,14 +866,13 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) smelting recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once the items are made
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get productionLocation
     local productionLocation = productionSpot.location
-    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionLocation") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionLocation") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
     local smeltData = {
@@ -901,7 +898,7 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
         task        = "role_alchemist.Smelt_Task",
         taskData    = smeltData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 
     -- end
     return nil
@@ -909,7 +906,7 @@ end
 
 function enterprise_factory_site.Pickup_ASrv(...)
     -- get & check input from description
-    local checkSuccess, pickUpTime, productionSpot, productItemName, productItemCount, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, pickUpTime, productionSpot, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should pickup the results from a previous smelt step.
 
         Return value:
@@ -927,14 +924,13 @@ function enterprise_factory_site.Pickup_ASrv(...)
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once the items are made
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get productionLocation
     local productionLocation = productionSpot.location
-    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
     local pickupData = {
@@ -955,7 +951,7 @@ function enterprise_factory_site.Pickup_ASrv(...)
         task        = "role_alchemist.Pickup_Task",
         taskData    = pickupData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 
     -- end
     return nil

@@ -121,18 +121,26 @@ end
 function Callback:call(...)
     -- get & check input from description
     local checkSuccess, resultData = InputChecker.Check([[
-        This function executes the callback with predefined callback data and data supplied to this method.
+        This method executes the callback with predefined callback data and the supplied data.
 
         Return value:
-            nil
+            ?                       - (?) return value of callback function
 
         Parameters:
             resultData              + (table) with second argument to supply to callback function, typically the return data of the task function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Callback:doCallback: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("Callback:call: Invalid input") return nil end
 
     -- call method
     return MethodExecutor.CallModuleMethod(self._moduleName, self._methodName, { self._data, resultData })
+end
+
+function Callback.ErrorCall(callback)
+    -- check for callback
+    if not Callback.IsOfType(callback) then return nil end
+
+    -- call method
+    return callback:call({success = false})
 end
 
 return Callback

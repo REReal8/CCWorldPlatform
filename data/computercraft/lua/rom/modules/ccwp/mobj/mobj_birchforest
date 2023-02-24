@@ -12,7 +12,7 @@ local BirchForest = {
 local corelog = require "corelog"
 local coremove = require "coremove"
 
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 
 local Block = require "obj_block"
@@ -201,7 +201,7 @@ end
 
 function BirchForest:provideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, provideItems, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
@@ -220,16 +220,15 @@ function BirchForest:provideItemsTo_ASrv(...)
                 storageLocator              + (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (string) name of function to call once service is ready
-            callbackData                    + (table) data to supply to callback function
+            callback                        + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- loop on items
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
+        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- check for birchlog or sapling
         local localStorageLocator = nil
@@ -238,7 +237,7 @@ function BirchForest:provideItemsTo_ASrv(...)
         elseif itemName == "minecraft:birch_sapling" then
             localStorageLocator = self:getLocalSaplingsLocator()
         else
-            corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return MethodExecutor.DoCallback(callback, callbackData, {success = false})
+            corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
         if not localStorageLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
 
@@ -254,7 +253,7 @@ function BirchForest:provideItemsTo_ASrv(...)
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }
 --            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
-            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+            enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
         else
             -- construct new itemsLocator for this forest
             local enterprise_forestry = require "enterprise_forestry"
@@ -320,7 +319,7 @@ function BirchForest:provideItemsTo_ASrv(...)
 
             -- start project
 --            corelog.WriteToLog(">Harvesting "..itemCount.." "..itemName.."'s from Forest")
-            enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+            enterprise_projects.StartProject_ASrv(projectServiceData, callback)
         end
     end
 end

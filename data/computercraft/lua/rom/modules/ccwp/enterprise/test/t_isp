@@ -1,6 +1,9 @@
 local t_isp = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
+
+local Callback = require "obj_callback"
 
 local URL = require "obj_url"
 
@@ -27,8 +30,11 @@ local storageQueryURI = storageURI.."/site=2/outputchest=4/"..queryPartURI
 local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
 local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
 
-local callbackFunction = "t_main.Func1_Callback"
-local callbackData = {"some callback data"}
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = {"some callback data"},
+})
 
 function t_isp.T_TransferItemsFromTo_Chests()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between chests:")
@@ -103,7 +109,7 @@ function t_isp.T_TransferItemsFromTo_Chests()
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_isp.T_ISPUsingProject()
@@ -142,7 +148,7 @@ function t_isp.T_ISPUsingProject()
     }
 
     -- call test method
-    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_isp.T_AddItemsLocators()

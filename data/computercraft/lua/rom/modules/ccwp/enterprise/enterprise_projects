@@ -4,6 +4,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 local MethodExecutor = require "method_executor"
 
 local db = {
@@ -31,7 +32,7 @@ local db = {
 
 function enterprise_projects.StartProject_ASrv(...)
     -- get & check input from description
-    local checkSuccess, projectDef, projectData, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, projectDef, projectData, callback = InputChecker.Check([[
         This async public service starts a project.
 
         Return value:
@@ -46,10 +47,9 @@ function enterprise_projects.StartProject_ASrv(...)
             serviceData         - (table) data for this service
                 projectDef      + (table) definition of the project
                 projectData     + (table) input data to the project
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set metaData defaults  ToDo: consider doing with CheckInput
     if type(projectDef.returnData) ~= "table" then projectDef.returnData = {} end
@@ -57,8 +57,7 @@ function enterprise_projects.StartProject_ASrv(...)
     -- data of the project
     local project   = {
         projectDef          = projectDef,
-        callbackFunction    = callback,
-        callbackData        = callbackData,
+        callback            = callback,
 
         projectId           = coreutils.NewId(),
 
@@ -253,7 +252,9 @@ local function EndProject(internalProjectData)
 
     -- we are done, do the callback
     corelog.WriteToProjectsLog("Calling callback function", project.projectId)
-    MethodExecutor.DoCallback(project.callbackFunction, project.callbackData, projectResults)
+    local callback = Callback:new(project.callback)
+    if not callback then corelog.Error("enterprise_projects.EndProject: Invalid callback for project "..project.projectId) return end
+    callback:call(projectResults)
 
     -- forget about this project
     corelog.WriteToProjectsLog("Ended", project.projectId)
@@ -345,12 +346,15 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining ASrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
 
         --
-        local callback          = "enterprise_projects.NextProjectStep"
-        local callbackData      = internalProjectData
+        local callback = Callback:new({
+            _moduleName     = "enterprise_projects",
+            _methodName     = "NextProjectStep",
+            _data           = internalProjectData,
+        })
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." async module service", projectId)
-        MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback, callbackData)
+        MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback)
     elseif stepType == "SSrv" then
         -- get & check input from description
         local checkSuccess, moduleName, serviceName = InputChecker.Check([[
@@ -388,12 +392,15 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef) TerminateProject(internalProjectData) return nil end
 
         --
-        local callback          = "enterprise_projects.NextProjectStep"
-        local callbackData      = internalProjectData
+        local callback = Callback:new({
+            _moduleName     = "enterprise_projects",
+            _methodName     = "NextProjectStep",
+            _data           = internalProjectData,
+        })
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." async obj service", projectId)
-        MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback, callbackData)
+        MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback)
     elseif stepType == "SOSrv" then
         -- get & check input from description
         local checkSuccess, className, serviceName, objStep, objKeyDef = InputChecker.Check([[

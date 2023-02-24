@@ -3,7 +3,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_storage_silo = require "enterprise_storage_silo"
@@ -218,7 +218,7 @@ end
 
 function enterprise_storage.BuildAndStartNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, siteData, type, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, siteData, type, callback = InputChecker.Check([[
         This public function (service) builds a new storage site and starts it.
 
         Return value:
@@ -231,10 +231,9 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         Parameters:
             siteData        + (table) data about this site, like type and layout
                 type        + (string) storage type
-            callback        + (string) function name to call once the site is build and started
-            callbackData    + (table, "") function data to supply to callback
+            callback        + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- what kind of storage is this?
     if type == 'silo' then
@@ -271,15 +270,15 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         }
 
         -- start project
-        enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
-    else corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Don't know how to build and start a site of type "..type) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    else corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Don't know how to build and start a site of type "..type) return Callback.ErrorCall(callback) end
 
     -- nothing to return
 end
 
 function enterprise_storage.BuildNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, siteData, type, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, siteData, type, callback = InputChecker.Check([[
         This public function (service) builds a new site.
 
         Async service return value (to callback):
@@ -289,15 +288,14 @@ function enterprise_storage.BuildNewSite_ASrv(...)
         Parameters:
             siteData        + (table) data about this site, like type and layout
                 type        + (string) storage type
-            callback        + (string) function name to call once the site is build
-            callbackData    + (table, "") function data to supply to callback
+            callback        + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_storage.BuildNewSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_storage.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- what kind of storage is this?
     if type == 'silo' then
-        enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback, callbackData)
-    else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback)
+    else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return Callback.ErrorCall(callback) end
 end
 
 -- enterprise_storage.StartNewSite_SSrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})

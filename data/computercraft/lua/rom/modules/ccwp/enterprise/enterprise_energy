@@ -6,7 +6,7 @@ local coredht = require "coredht"
 local role_fuel_worker = require "role_fuel_worker"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 
 local enterprise_projects = require "enterprise_projects"
 
@@ -45,7 +45,7 @@ end
 
 local function Refuel_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId, fuelItems, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleId, fuelItems, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service (re)fuels a turtle from fuelItems.
 
         Return value:
@@ -61,10 +61,9 @@ local function Refuel_ASrv(...)
                 fuelItems                   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
                 ingredientsSupplierLocator  + (URL) locating where ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (string) name of function to call once service is ready
-            callbackData                    + (table) data to supply to callback function
+            callback                        + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project service data
     local enterprise_turtle = require "enterprise_turtle"
@@ -119,12 +118,12 @@ local function Refuel_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_energy.ProvideFuelTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId, fuelAmount, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleId, fuelAmount, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service provides fuel to a turtle.
 
         Return value:
@@ -140,10 +139,9 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
                 fuelAmount                  + (number) fuel amount to provide to turtle
                 ingredientsSupplierLocator  + (URL) locating where the fuel ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (string) name of function to call once service is ready
-            callbackData                    + (table) data to supply to callback function
+            callback                        + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_energy.ProvideFuelTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine fuelItemsNeed
     local fuelItemsNeed = FuelItemsForFuel(fuelAmount)
@@ -156,7 +154,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") with "..fuelAmount.." fuel *")
-    Refuel_ASrv(refuelServiceData, callback, callbackData)
+    Refuel_ASrv(refuelServiceData, callback)
 end
 
 function enterprise_energy.GetFuelNeed_Refuel_Att()

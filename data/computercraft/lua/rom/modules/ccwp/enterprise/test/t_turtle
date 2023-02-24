@@ -1,6 +1,9 @@
 local t_turtle = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
+
+local Callback = require "obj_callback"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_energy = require "enterprise_energy"
@@ -19,8 +22,11 @@ local itemsQuery = {
     ["minecraft:torch"]     = 5,
 }
 
-local callbackFunction = "t_main.Func1_Callback"
-local callbackData = {"some callback data"}
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = {"some callback data"},
+})
 local level0 = 0
 
 function t_turtle.T_TransferItemsFromTo_Turtles()
@@ -34,8 +40,8 @@ function t_turtle.T_TransferItemsFromTo_Turtles()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_isp.TransferItemsFromTo_ASrv(transferData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..", ...)")
+    enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
 end
 
 function t_turtle.T_Can_ProvideItems()

@@ -5,7 +5,7 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -42,7 +42,7 @@ local db = {
 
 function enterprise_assignmentboard.DoAssignment_ASrv(...)
     -- get & check input from description
-    local checkSuccess, metaData, task, taskData, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, metaData, task, taskData, callback = InputChecker.Check([[
         This async public service posts an Assignment for execution via the enterprise.
 
         The Assignment is not necessarily directly executed. It is added to the list of assignments in the
@@ -61,10 +61,9 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
                 metaData            + (table) with metadata on the Task (used in the the assignment selection proces (e.g. the fuel needs of the task))
                 task                + (string) name of the the Task function to execute
                 taskData            + (table) data to supply to Task function to be able to perform the task
-            callback                + (string) name of function to call once service (assignment) is ready
-            callbackData            + (table) data to supply to callback function
+            callback                + (Callback) to call once service (assignment) is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set metaData defaults  ToDo: consider doing with CheckInput
     metaData.startTime      = metaData.startTime    or coreutils.UniversalTime()    --> tijd wanneer de assignment uitgevoerd moet worden, zal niet starten voor deze tijd
@@ -86,8 +85,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         metaData                = metaData,
         taskFunction            = task,
         taskData                = taskData,
-        callbackFunction        = callback,
-        callbackData            = callbackData,
+        callback                = callback,
     }
 
     -- log assignment

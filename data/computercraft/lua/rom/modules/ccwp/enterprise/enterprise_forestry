@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
 
@@ -37,7 +37,7 @@ local db = {
 
 function enterprise_forestry.AddNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, forestLevel, nTrees, materialsHostLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, baseLocation, forestLevel, nTrees, materialsHostLocator, callback = InputChecker.Check([[
         This async public service builds a new forest site and ensures it's ready for use.
 
         Return value:
@@ -54,13 +54,12 @@ function enterprise_forestry.AddNewSite_ASrv(...)
                 forestLevel             + (number) level of the site
                 nTrees                  + (number) number of initial trees
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table, {}) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check nTrees == 1  -- ToDo: remove this restriction
-    if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return Callback.ErrorCall(callback) end
 
     -- create new forest
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
@@ -150,12 +149,12 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_forestry.UpgradeSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsHostLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsHostLocator, callback = InputChecker.Check([[
         This private async service upgrades a forest site from the current configuration (i.e. level, # trees, ...) to a new configuration.
 
         Note: downgrading a forest is not supported.
@@ -173,18 +172,17 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 targetLevel             + (number) with forest level to upgrade to
                 targetNTrees            + (number) number of trees to upgrade forest to
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get forest
     local forest = enterprise_forestry.GetForest(forestLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- check not downgrading
     local startingLevel = forest:getLevel()
-    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading forest level (from "..startingLevel.." to "..targetLevel..") not supported") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading forest level (from "..startingLevel.." to "..targetLevel..") not supported") return Callback.ErrorCall(callback) end
 
     -- determine projectSteps and projectData
     local projectSteps = { }
@@ -206,12 +204,12 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         local targetBaseLayer = forest:getBaseLayer(targetLevel)
         local startingBaseLayer = forest:getBaseLayer(startingLevel)
         local transformLayer = startingBaseLayer:transformToLayer(targetBaseLayer)
-        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No base transformLayer") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No base transformLayer") return Callback.ErrorCall(callback) end
         local baseColOffset, baseRowOffset, baseBuildLayer = transformLayer:buildData()
         projectData.baseBuildLayer = baseBuildLayer
 
         transformLayer = startingTreeLayer:transformToLayer(targetTreeLayer)
-        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No tree transformLayer") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if not transformLayer then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: No tree transformLayer") return Callback.ErrorCall(callback) end
         local treeColOffset, treeRowOffset, treeBuildLayer = transformLayer:buildData()
         projectData.treeBuildLayer = treeBuildLayer
 
@@ -333,12 +331,12 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
 
     -- start project
     corelog.WriteToLog(">Upgrading forest "..forestLocator:getURI().." from level "..startingLevel.." to "..targetLevel.." and from "..startingNTrees.." to "..targetNTrees.." trees")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_forestry.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
@@ -359,14 +357,13 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
                 storageLocator              + (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (string) name of function to call once service is ready
-            callbackData                    + (table) data to supply to callback function
+            callback                        + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get forest
     local forest = enterprise_forestry.GetForest(itemsLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(forest) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- have forest provide items
     local provideItems = itemsLocator:getQuery()
@@ -375,7 +372,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
         storageLocator              = storageLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,
         assignmentsPriorityKey      = assignmentsPriorityKey,
-    }, callback, callbackData)
+    }, callback)
 end
 
 function enterprise_forestry.Can_ProvideItems_QSrv(...)
@@ -510,7 +507,7 @@ end
 
 function enterprise_forestry.BuildForestTree_ASrv(...)
     -- get & check input from description
-    local checkSuccess, treeBaseLocation, treeLayer, materialsHostLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, treeBaseLocation, treeLayer, materialsHostLocator, callback = InputChecker.Check([[
         This private async service extends the forest with 1 tree
 
         Return value:
@@ -525,10 +522,9 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
                 treeBaseLocation        + (table) location of the base (lower left corner) of a forest tree (layer)
                 treeLayer               + (LayerRectangle) tree layer to build
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- let construction enterprise build the tree
     local buildData = {
@@ -539,7 +535,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
         materialsHostLocator = materialsHostLocator,
     }
     corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
-    enterprise_construction.BuildLayer_ASrv(buildData, callback, callbackData)
+    enterprise_construction.BuildLayer_ASrv(buildData, callback)
 end
 
 function enterprise_forestry.UpdateForest_SSrv(...)

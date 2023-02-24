@@ -1,6 +1,9 @@
 local t_chests = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
+
+local Callback = require "obj_callback"
 
 local T_Chest = require "test.t_mobj_chest"
 
@@ -20,8 +23,11 @@ local multipleStacksItemsQuery = {
     ["minecraft:torch"]     = 1,
 }
 
-local callbackFunction = "t_main.Func1_Callback"
-local callbackData = {"some callback data"}
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = { },
+})
 
 function t_chests.T_DeleteChests()
     -- prepare test
@@ -79,7 +85,7 @@ function t_chests.T_RegisterAndUpdateChest()
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_chests.GetRegisterAndUpdateChestProjectDef()
@@ -115,7 +121,7 @@ function t_chests.T_UpdateChestRecord1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(serviceData)..", , )")
-    enterprise_chests.UpdateChestRecord_ASrv(serviceData, callbackFunction, callbackData)
+    enterprise_chests.UpdateChestRecord_ASrv(serviceData, callback)
 end
 
 function t_chests.T_RegisterChest1()
@@ -128,7 +134,7 @@ function t_chests.T_RegisterChest1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.RegisterChest_SSrv("..textutils.serialize(chestData)..")")
-    local result = enterprise_chests.RegisterChest_SSrv(chestData, callbackFunction, callbackData)
+    local result = enterprise_chests.RegisterChest_SSrv(chestData, callback)
     corelog.WriteToLog("  result="..textutils.serialize(result))
     if result.success then
         chestLocator1 = result.chestLocator
@@ -144,7 +150,7 @@ function t_chests.T_DelistChest1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.DelistChest_ASrv("..textutils.serialize(chestData1)..")")
-    enterprise_chests.DelistChest_ASrv(chestData1, callbackFunction, callbackData)
+    enterprise_chests.DelistChest_ASrv(chestData1, callback)
 end
 
 function t_chests.T_GetItemsIntoTurtle1()
@@ -156,8 +162,8 @@ function t_chests.T_GetItemsIntoTurtle1()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle_ASrv("..textutils.serialize(transferData)..",..)")
+    enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callback)
 end
 
 function t_chests.T_PutItemsFromTurtle1()
@@ -171,8 +177,8 @@ function t_chests.T_PutItemsFromTurtle1()
     }
 
     -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle_ASrv("..textutils.serialize(transferData)..","..callbackFunction..","..textutils.serialize(callbackData)..")")
-    enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callbackFunction, callbackData)
+    corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle_ASrv("..textutils.serialize(transferData)..",...)")
+    enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callback)
 end
 
 return t_chests

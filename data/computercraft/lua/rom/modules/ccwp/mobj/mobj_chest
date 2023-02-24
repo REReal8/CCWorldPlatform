@@ -11,7 +11,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 
 local Inventory = require "obj_inventory"
 
@@ -219,7 +219,7 @@ end
 
 function Chest:updateChestRecord_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, callback = InputChecker.Check([[
         This async private service updates (fetches) the inventory from a Chest.
 
         Return value:
@@ -232,10 +232,9 @@ function Chest:updateChestRecord_AOSrv(...)
 
         Parameters:
             serviceData         - (table) data about the service
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table, {}) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- ToDo: consider if we can do this without a project
 
@@ -271,12 +270,12 @@ function Chest:updateChestRecord_AOSrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Chest:getItemsIntoTurtle_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, items, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, items, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async private service fetches items from the Chest into the inventory of a turtle.
 
         Return value:
@@ -292,10 +291,9 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
             serviceData                 - (table) data about the service
                 items                   + (table) items to be fetched
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table, {}) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest:getItemsIntoTurtle_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local taskData = {
@@ -341,12 +339,12 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Chest:putItemsFromTurtle_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, turtleItemsLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleItemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async private service puts items from a the inventory of a turtle into the Chest.
 
         Return value:
@@ -361,15 +359,14 @@ function Chest:putItemsFromTurtle_AOSrv(...)
             serviceData                 - (table) data about the service
                 turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table, {}) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check source is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
-    if not serviceResults.success then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("Chest:putItemsFromTurtle_AOSrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- ToDo: consider if we can do this without a project
 
@@ -409,7 +406,7 @@ function Chest:putItemsFromTurtle_AOSrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 return Chest

@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
 
@@ -212,7 +212,7 @@ end
 
 function enterprise_turtle.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, itemsLocator, storageLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
@@ -233,14 +233,13 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
                 storageLocator              + (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (string) name of function to call once service is ready
-            callbackData                    + (table) data to supply to callback function
+            callback                        + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- transfer using TransferItemsFromTo_ASrv
     local transferData = {
@@ -249,7 +248,7 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
 --    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Turtle")
-    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
 end
 
 function enterprise_turtle.Can_ProvideItems_QSrv(...)
@@ -424,7 +423,7 @@ end
 
 function enterprise_turtle.GetItemsIntoTurtle_ASrv(...)
     -- get & check input from description
-    local checkSuccess, sourceItemsLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, sourceItemsLocator, callback = InputChecker.Check([[
         This async public service ensures items are gathered in the Storage pplier and transferred to the inventory of a turtle.
 
         Return value:
@@ -441,21 +440,20 @@ function enterprise_turtle.GetItemsIntoTurtle_ASrv(...)
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL should specify this host (i.e. a turtle) where the items are located)
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check source is for this enterprise
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = sourceItemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtle source URL (="..sourceItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtle source URL (="..sourceItemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- check turtle id's
     local currentTurtleId = os.getComputerID()
     local sourceTurtleId = sourceItemsLocator:getPort()
     if sourceTurtleId and currentTurtleId ~= sourceTurtleId then
         corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Get items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).")
-        return MethodExecutor.DoCallback(callback, callbackData, {success = false})
+        return Callback.ErrorCall(callback)
     end
 
     -- do the (virtual) transfer
@@ -465,18 +463,18 @@ function enterprise_turtle.GetItemsIntoTurtle_ASrv(...)
     local sourceQuery = sourceItemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(sourceQuery) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemCount of wrong type = "..type(itemCount)..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return Callback.ErrorCall(callback) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: itemCount of wrong type = "..type(itemCount)..".") return Callback.ErrorCall(callback) end
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.WriteToLog("enterprise_turtle.GetItemsIntoTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false})
+            corelog.WriteToLog("enterprise_turtle.GetItemsIntoTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return Callback.ErrorCall(callback)
         end
     end
 
     -- create output turtleItemsLocator
     local turtleItemsLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = currentTurtleId}).turtleLocator
-    if turtleItemsLocator == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocator created.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if turtleItemsLocator == nil then corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(sourceQuery)
 
     -- end
@@ -484,12 +482,12 @@ function enterprise_turtle.GetItemsIntoTurtle_ASrv(...)
         success             = true,
         turtleItemsLocator = turtleItemsLocator,
     }
-    return MethodExecutor.DoCallback(callback, callbackData, result)
+    return callback:call(result)
 end
 
 function enterprise_turtle.PutItemsFromTurtle_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleItemsLocator, destinationHostLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleItemsLocator, destinationHostLocator, callback = InputChecker.Check([[
         This async public service ensures items are transferred from the inventory of a turtle towards the Storage.
 
         A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
@@ -509,38 +507,37 @@ function enterprise_turtle.PutItemsFromTurtle_ASrv(...)
                 turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 destinationHostLocator  + (URL) stating where the items need to be transferred to (i.e. a turtle in this host)
                 assignmentsPriorityKey  - (string) priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check source is a turtle
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleItemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source URL (="..turtleItemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- check destination is for this enterprise (i.e. a turtle)
     serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = destinationHostLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationHostLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid destination URL (="..destinationHostLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- check turtle id's
     local sourceTurtleId = turtleItemsLocator:getPort()
-    if sourceTurtleId == nil then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source input (i.e., no turtle id).") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if sourceTurtleId == nil then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: Invalid turtle source input (i.e., no turtle id).") return Callback.ErrorCall(callback) end
     local currentTurtleId = os.getComputerID()
     if currentTurtleId ~= sourceTurtleId then
         corelog.Error("enterprise_turtle.GetItemsIntoTurtle_ASrv: Put items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).")
-        return MethodExecutor.DoCallback(callback, callbackData, {success = false})
+        return Callback.ErrorCall(callback)
     end
 
     -- do the (virtual) transfer, i.e. check if source = current = destination turtle has the items in it's inventory
     local sourceQuery = turtleItemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
     local inventory = coreinventory.GetInventoryDetail()
     for itemName, itemCount in pairs(sourceQuery) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemCount of wrong type = "..type(itemCount)..".") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemName of wrong type = "..type(itemName)..".") return Callback.ErrorCall(callback) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: itemCount of wrong type = "..type(itemCount)..".") return Callback.ErrorCall(callback) end
 
         local inventoryCount = inventory.items[itemName]
         if inventoryCount == nil or inventoryCount < itemCount then
-            corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false})
+            corelog.Error("enterprise_turtle.PutItemsFromTurtle_ASrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").") return Callback.ErrorCall(callback)
         end
     end
     local destinationItemsLocator = URL:new(turtleItemsLocator)
@@ -550,7 +547,7 @@ function enterprise_turtle.PutItemsFromTurtle_ASrv(...)
         success                     = true,
         destinationItemsLocator     = destinationItemsLocator,
     }
-    return MethodExecutor.DoCallback(callback, callbackData, result)
+    return callback:call(result)
 end
 
 --    _                 _    __                  _   _
@@ -581,13 +578,16 @@ function enterprise_turtle.TriggerRefuelIfNeeded(turtleId, fuelLevel)
 
             assignmentsPriorityKey      = priorityKey,
         }
-        local callback = "enterprise_turtle.Fuel_Callback"
-        local callbackData = {
-            turtleId = turtleId,
-        }
+        local callback = Callback:new({
+            _moduleName     = "enterprise_turtle",
+            _methodName     = "Fuel_Callback",
+            _data           = {
+                turtleId = turtleId,
+            },
+        })
 
         -- call service
-        enterprise_energy.ProvideFuelTo_ASrv(serviceData, callback, callbackData)
+        enterprise_energy.ProvideFuelTo_ASrv(serviceData, callback)
     end
 end
 
@@ -610,10 +610,10 @@ function enterprise_turtle.GetFuelLevels_Att()
     return fuelLevels
 end
 
-function enterprise_turtle.Fuel_Callback(callbackData, serviceResults)
+function enterprise_turtle.Fuel_Callback(turtleData, serviceResults)
     -- check input
-    if type(callbackData) ~= "table" then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid callbackData") return {success = false} end
-    local turtleId = callbackData.turtleId
+    if type(turtleData) ~= "table" then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid turtleData") return {success = false} end
+    local turtleId = turtleData.turtleId
     if type(turtleId) ~= "number" then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid turtleId") return {success = false} end
 
     -- check correct turtle

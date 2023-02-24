@@ -5,7 +5,7 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local URL = require "obj_url"
 local Inventory = require "obj_inventory"
 
@@ -95,7 +95,7 @@ end
 
 function enterprise_chests.DelistChest_ASrv(...)
     -- get & check input from description
-    local checkSuccess, chestLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, chestLocator, callback = InputChecker.Check([[
         This async public service delists ("removes") a chest from the enterprise. Delisting implies
             - the chest is immediatly no longer available for new business (e.g. adding/ removing items)
             - wait for all active work on chest to be ended
@@ -113,14 +113,13 @@ function enterprise_chests.DelistChest_ASrv(...)
         Parameters:
             serviceData         - (table) data about the service
                 chestLocator    + (URL) locating the chest
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table, {}) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get the chest
     local chest = enterprise_chests.GetChest(chestLocator)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- stop doing business for this chest
     -- ToDo: implement
@@ -133,12 +132,12 @@ function enterprise_chests.DelistChest_ASrv(...)
     enterprise_chests.RemoveChest(chestLocator)
 
     -- do callback
-    MethodExecutor.DoCallback(callback, callbackData, {success = true})
+    callback:call({success = true})
 end
 
 function enterprise_chests.UpdateChestRecord_ASrv(...)
     -- get & check input from description
-    local checkSuccess, chestLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, chestLocator, callback = InputChecker.Check([[
         This async public service brings the records of a chest up-to-date by fetching information and (re)setting the chest records.
 
         Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
@@ -154,14 +153,13 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
         Parameters:
             serviceData         - (table) data about the service
                 chestLocator    + (URL) locating the chest
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table, {}) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get chest
     local chest = enterprise_chests.GetChest(chestLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Chest "..chestLocator:getURI().." not found.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Chest "..chestLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local updateChestRecordsProjectDef = {
@@ -190,7 +188,7 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
 
     -- start project
     corelog.WriteToLog(">Updating records for chest "..chest:getId()..".")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_chests.GetHostLocator_Att()
@@ -266,7 +264,7 @@ end
 
 function enterprise_chests.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, itemsLocator, storageLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
@@ -287,14 +285,13 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
                 storageLocator              + (URL) locating the Storage where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (string) name of function to call once service is ready
-            callbackData                    + (table, {}) data to supply to callback function
+            callback                        + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsChestURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not serviceResults.success then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- transfer using TransferItemsFromTo_ASrv
     local transferData = {
@@ -303,7 +300,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Chest")
-    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback, callbackData)
+    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
 end
 
 function enterprise_chests.Can_ProvideItems_QSrv(...)
@@ -441,7 +438,7 @@ end
 
 function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
     -- get & check input from description
-    local checkSuccess, sourceItemsLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, sourceItemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service ensures items are gathered in the Storage and transferred to the inventory of a turtle.
 
         Return value:
@@ -458,14 +455,13 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
                                             (the "query" component of the URL specifies the items to be transferred)
                                             (the "host" component of the URL should specify this host (i.e. a chest) where the items are located)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table, {}) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get chest
     local chest = enterprise_chests.GetChest(sourceItemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Chest "..sourceItemsLocator:getURI().." not found.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsIntoTurtle_ASrv: Chest "..sourceItemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local getItemsIntoTurtleProjectDef = {
@@ -500,12 +496,12 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Getting "..sourceItemsLocator:getQueryURI().." from chest "..id.." into a turtle.")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_chests.PutItemsFromTurtle_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleItemsLocator, destinationHostLocator, assignmentsPriorityKey, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, turtleItemsLocator, destinationHostLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service ensures items are transferred from the inventory of a turtle towards the Storage.
 
         A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
@@ -525,14 +521,13 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
                 turtleItemsLocator      + (URL) stating a specific turtle and the items in it's inventory that need to be put
                 destinationHostLocator  + (URL) stating where the items need to be transferred to (i.e. a chest in this host)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (string) name of function to call once service is ready
-            callbackData                + (table, {}) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get chest
     local chest = enterprise_chests.GetChest(destinationHostLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Chest "..destinationHostLocator:getURI().." not found.") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.PutItemsFromTurtle_ASrv: Chest "..destinationHostLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- set (expected) destinationItemsLocator
     local destinationItemsLocator = URL:new(destinationHostLocator)
@@ -572,7 +567,7 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocator:getURI().." into chest "..projectData.id..".")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_chests.GetNumberOfChests_Att()

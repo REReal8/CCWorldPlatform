@@ -1,6 +1,9 @@
 local t_construction = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
+
+local Callback = require "obj_callback"
 
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -79,11 +82,14 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
         layer = testBuildLayer1,
         materialsHostLocator = enterprise_turtle.GetHostLocator_Att()
     }
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
+    local callback = Callback:new({
+        _moduleName     = "t_main",
+        _methodName     = "Func1_Callback",
+        _data           = {"some callback data"},
+    })
 
-    corelog.WriteToLog("T_construction calling BuildLayer_ASrv("..textutils.serialise(buildData)..", "..callbackFunction..")")
-    enterprise_construction.BuildLayer_ASrv(buildData, callbackFunction, callbackData)
+    corelog.WriteToLog("T_construction calling BuildLayer_ASrv("..textutils.serialise(buildData)..", ...)")
+    enterprise_construction.BuildLayer_ASrv(buildData, callback)
 end
 
 function t_construction.T_BuildLayer_ASrv_FromChest()
@@ -142,9 +148,12 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
     }
 
     -- start project
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
-    enterprise_projects.StartProject_ASrv(projectServiceData, callbackFunction, callbackData)
+    local callback = Callback:new({
+        _moduleName     = "t_main",
+        _methodName     = "Func1_Callback",
+        _data           = {"some callback data"},
+    })
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_construction.T_BuildBlueprint_ASrv()
@@ -166,12 +175,15 @@ function t_construction.T_BuildBlueprint_ASrv()
         blueprint               = testBlueprint1,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
+    local callback = Callback:new({
+        _moduleName     = "t_main",
+        _methodName     = "Func1_Callback",
+        _data           = {"some callback data"},
+    })
 
     -- test
---    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", "..callbackFunction..")")
-    enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callbackFunction, callbackData)
+--    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", ...)")
+    enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback)
 
     -- cleanup test
 end

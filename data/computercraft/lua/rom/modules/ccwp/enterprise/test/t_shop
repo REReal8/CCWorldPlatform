@@ -1,5 +1,8 @@
 local t_shop = {}
+
 local corelog = require "corelog"
+
+local Callback = require "obj_callback"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_shop = require "enterprise_shop"
@@ -10,41 +13,38 @@ function t_shop.T_All()
     t_shop.T_DelistSuppliers()
 end
 
-function t_shop.T_OrderMultipleItems()
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = {"some callback data"},
+})
 
+function t_shop.T_OrderMultipleItems()
     enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:furnace"]   = 1,
             ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
         },
         storageLocator  = enterprise_turtle.GetHostLocator_Att(),
-    }, callbackFunction, callbackData)
+    }, callback)
 end
 
 function t_shop.T_OrderCharcoal()
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
-
     enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:charcoal"]  = 3,
         },
         storageLocator  = enterprise_turtle.GetHostLocator_Att(),
-    }, callbackFunction, callbackData)
+    }, callback)
 end
 
 function t_shop.T_OrderTorch()
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
-
     enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:torch"]  = 4,
         },
         storageLocator  = enterprise_turtle.GetHostLocator_Att(),
-    }, callbackFunction, callbackData)
+    }, callback)
 end
 
 function t_shop.T_RegisterSupplier()

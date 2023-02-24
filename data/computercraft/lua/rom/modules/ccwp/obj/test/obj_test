@@ -8,7 +8,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
@@ -160,7 +160,7 @@ end
 
 function TestObj:Test_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, testArg, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, testArg, callback = InputChecker.Check([[
         This public async service executes an assignment with a callback function and callback data.
 
         Return value:
@@ -174,10 +174,9 @@ function TestObj:Test_AOSrv(...)
         Parameters:
             serviceData         - (table) data about the service
                 testArg         + (number) as a test argument
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestObj:Test_AOSrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("TestObj:Test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- verify true object
     assert(TestObj.IsOfType(self), "TestObj:Test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
@@ -201,7 +200,7 @@ function TestObj:Test_AOSrv(...)
         task        = "role_test.Func2_Task",
         taskData    = taskData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 return TestObj

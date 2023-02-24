@@ -2,9 +2,6 @@ local T_Callback = {}
 
 local corelog = require "corelog"
 
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
-
 local Callback = require "obj_callback"
 
 function T_Callback.T_All()

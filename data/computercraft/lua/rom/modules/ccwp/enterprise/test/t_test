@@ -1,5 +1,8 @@
 local t_test = {}
+
 local corelog = require "corelog"
+
+local Callback = require "obj_callback"
 
 local enterprise_test = require "test.enterprise_test"
 
@@ -32,11 +35,14 @@ end
 function t_test.T_Test_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_test.Test_ASrv() test")
-    local callbackFunction = "t_test.Test_ASrv_Callback"
-    local callbackData = { [0] = callbackTestValue}
+    local callback = Callback:new({
+        _moduleName     = "t_test",
+        _methodName     = "Test_ASrv_Callback",
+        _data           = { [0] = callbackTestValue},
+    })
 
     -- test
-    enterprise_test.Test_ASrv(testData, callbackFunction, callbackData)
+    enterprise_test.Test_ASrv(testData, callback)
 end
 
 function t_test.Test_ASrv_Callback(callbackData, serviceResults)

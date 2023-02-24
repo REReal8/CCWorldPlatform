@@ -3,7 +3,8 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 local coremove = require "coremove"
 
-local MethodExecutor = require "method_executor"
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 
 local URL = require "obj_url"
 local Block = require "obj_block"
@@ -37,8 +38,11 @@ end
 
 function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
     -- variables
-    local callback = "enterprise_assignmentboard.Dummy_Callback"
-    local callbackData = {}
+    local callback = Callback:new({
+        _moduleName     = "enterprise_assignmentboard",
+        _methodName     = "Dummy_Callback",
+        _data           = { },
+    })
     local assignmentMeta        = {
         startTime       = 0,
         location        = coremove.CopyLocation(location),
@@ -57,7 +61,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
         task        = "role_storage_silo_worker.ItemsDelivered_Task",
         taskData    = assignmentArguments,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 function ItemPresent(site, itemName)
@@ -205,25 +209,20 @@ local function GetSiloL0_blueprint(siteData)
     return blueprint
 end
 
-function enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback, callbackData)
-    --[[
+function enterprise_storage_silo.BuildNewSite_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, siteData, materialsHostLocator, callback = InputChecker.Check([[
         This public function (service) builds a new silo.
 
         Return value:
             nil
 
         Parameters:
-            siteData                    - (table) data about this silo, like type and layout
-                materialsHostLocator    - (URL) locating the host of the building materials
-            callback                    - (string) function name to call once the site is build
-            callbackData                - (table) function data to supply to callback
-    ]]
-
-    -- check input
-    if type(siteData) ~= "table" or type(siteData.location) ~= "table" or type(siteData.type) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid siteData input') return nil end
-    if type(siteData.materialsHostLocator) ~= "table" then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid materialsHostLocator") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-    local materialsHostLocator = URL:new(siteData.materialsHostLocator)
-    if type(callback) ~= "string" then corelog.Error('enterprise_storage_silo.BuildNewSite_ASrv: Invalid callback function') return nil end
+            siteData                    + (table) data about this silo, like type and layout
+                materialsHostLocator    + (URL) locating the host of the building materials
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage_silo.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- let construction enterprise build the silo
     local blueprintBuildData = {
@@ -232,7 +231,7 @@ function enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback, callbackD
         materialsHostLocator    = materialsHostLocator,
     }
     corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint, { compact = true }))
-    enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback, callbackData)
+    enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback)
 end
 
 function enterprise_storage_silo.StartNewSite_SSrv(siteData)
@@ -315,8 +314,11 @@ function FindSiteByTopChest(site, location)
 end
 
 function CheckIntegrity(site)
-    local callback = "enterprise_assignmentboard.Dummy_Callback"
-    local callbackData = {}
+    local callback = Callback:new({
+        _moduleName     = "enterprise_assignmentboard",
+        _methodName     = "Dummy_Callback",
+        _data           = { },
+    })
 
     -- meta about the assignment, for the selection procedure
     local assignmentMeta        = {
@@ -338,7 +340,7 @@ function CheckIntegrity(site)
         task        = "role_storage_silo_worker.CheckIntegrity_Task",
         taskData    = assignmentArguments,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 --    _           _ _     _               _   _                                 _     _                       _       _

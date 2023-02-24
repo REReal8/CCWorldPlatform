@@ -2,6 +2,7 @@ local T_MethodExecutor = {}
 
 local corelog = require "corelog"
 
+local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
@@ -53,17 +54,6 @@ function T_MethodExecutor.T_CallModuleMethod()
     moduleRegistry:delistModule("myModule")
 end
 
-function T_MethodExecutor.T_DoCallback()
-    -- test DoCallback
-    corelog.WriteToLog("# Test DoCallback")
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
-    local result = {"some task result"}
-
-    corelog.WriteToLog("T_coreutils_DoCallback calling DoCallback("..callbackFunction..", "..textutils.serialize(callbackData)..", "..textutils.serialize(result)..")")
-    MethodExecutor.DoCallback(callbackFunction, callbackData, result)
-end
-
 local testValue = 20
 
 function T_MethodExecutor.T_DoSyncService()
@@ -112,11 +102,14 @@ function T_MethodExecutor.T_DoASyncService()
     local serviceData = {
         testArg = testValue,
     }
-    local callback = "T_MethodExecutor.DoASyncService_Callback"
-    local callbackData = { [0] = callbackTestValue}
+    local callback = Callback:new({
+        _moduleName     = "T_MethodExecutor",
+        _methodName     = "DoASyncService_Callback",
+        _data           = { [0] = callbackTestValue},
+    })
 
     -- test
-    MethodExecutor.DoASyncService(moduleName, serviceName, serviceData, callback, callbackData)
+    MethodExecutor.DoASyncService(moduleName, serviceName, serviceData, callback)
 end
 
 function T_MethodExecutor.DoASyncService_Callback(callbackData, serviceResults)
@@ -142,11 +135,14 @@ function T_MethodExecutor.T_DoASyncObjService()
     local serviceData = {
         testArg = testValue,
     }
-    local callback = "T_MethodExecutor.DoASyncObjService_Callback"
-    local callbackData = { [0] = callbackTestValue}
+    local callback = Callback:new({
+        _moduleName     = "T_MethodExecutor",
+        _methodName     = "DoASyncObjService_Callback",
+        _data           = { [0] = callbackTestValue},
+    })
 
     -- test
-    MethodExecutor.DoASyncObjService(className, objData, serviceName, serviceData, callback, callbackData)
+    MethodExecutor.DoASyncObjService(className, objData, serviceName, serviceData, callback)
 end
 
 function T_MethodExecutor.DoASyncObjService_Callback(callbackData, serviceResults)

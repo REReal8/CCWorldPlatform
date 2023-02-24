@@ -1,6 +1,9 @@
 local t_factory = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
+
+local Callback = require "obj_callback"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_factory = require "enterprise_factory"
@@ -13,9 +16,13 @@ local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
 local baseLocationV2 = baseLocationV1
 
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = {"some callback data"},
+})
+
 function t_factory.T_ProvideItemsTo_Craft()
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
     local itemsLocator = enterprise_factory.GetHostLocator_Att()
     local items = { ["minecraft:birch_planks"] = 12 }
     itemsLocator:setQuery(items)
@@ -24,12 +31,10 @@ function t_factory.T_ProvideItemsTo_Craft()
         itemsLocator                = itemsLocator,
         ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         storageLocator              = enterprise_turtle.GetHostLocator_Att(),
-    }, callbackFunction, callbackData)
+    }, callback)
 end
 
 function t_factory.T_ProvideItemsTo_Smelt()
-    local callbackFunction = "t_main.Func1_Callback"
-    local callbackData = {"some callback data"}
     local itemsLocator = enterprise_factory.GetHostLocator_Att()
     local items = { ["minecraft:charcoal"] = 3 }
     itemsLocator:setQuery(items)
@@ -38,7 +43,7 @@ function t_factory.T_ProvideItemsTo_Smelt()
         itemsLocator                = itemsLocator,
         ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         storageLocator              = enterprise_turtle.GetHostLocator_Att(),
-    }, callbackFunction, callbackData)
+    }, callback)
 end
 
 function t_factory.T_GetFuelNeed_Production_Att()
@@ -63,7 +68,7 @@ function t_factory.T_BuildAndStartNewV1Site()
         siteVersion             = "v1",
         upgrade                 = false,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory.T_BuildAndStartNewV2Site()
@@ -72,7 +77,7 @@ function t_factory.T_BuildAndStartNewV2Site()
         siteVersion             = "v2",
         upgrade                 = true,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory._StopAndDismantleV1Site()
@@ -80,7 +85,7 @@ function t_factory._StopAndDismantleV1Site()
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory.T_BuildNewV0Site()
@@ -89,7 +94,7 @@ function t_factory.T_BuildNewV0Site()
         siteVersion             = "v0",
         upgrade                 = false,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory.T_StartNewV0Site()
@@ -103,7 +108,7 @@ function t_factory.StartNewSite(baseLocation, version)
         baseLocation        = baseLocation,
         siteVersion         = version,
         siteAlreadyBuild    = true
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory.T_DismantleV0Site()
@@ -116,7 +121,7 @@ function DismantleV0Site(baseLocation)
         siteVersion             = "v0",
         siteStopped             = true,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory.T_StopV0Site()
@@ -126,7 +131,7 @@ end
 function t_factory.StopSite(baseLocation)
     enterprise_factory.StopSite_ASrv({
         baseLocation    = baseLocation
-    }, "t_main.Func1_Callback", {"some callback data"})
+    }, callback)
 end
 
 function t_factory.T_DeleteSites()

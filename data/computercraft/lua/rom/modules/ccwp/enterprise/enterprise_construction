@@ -2,7 +2,7 @@ local enterprise_construction = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 
 local role_builder = require "role_builder"
@@ -26,7 +26,7 @@ local enterprise_turtle
 
 function enterprise_construction.BuildBlueprint_ASrv(...)
     -- get & check input from description
-    local checkSuccess, blueprintStartpoint, blueprint, materialsHostLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, blueprintStartpoint, blueprint, materialsHostLocator, callback = InputChecker.Check([[
         This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
@@ -42,10 +42,9 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                     layerList           - (table) layer to build
                     escapeSequence      - (table) escapeSequence of blueprint
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once the blueprint is build
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- construct assignment metadata
     local taskData = {
@@ -65,7 +64,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
             task        = taskFunctionName,
             taskData    = taskData,
         }
-        return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+        return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
@@ -115,12 +114,12 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Building blueprint at "..textutils.serialise(blueprintStartpoint))
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_construction.BuildLayer_ASrv(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsHostLocator, callback, callbackData = InputChecker.Check([[
+    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsHostLocator, callback = InputChecker.Check([[
         This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
 
         Return value:
@@ -136,10 +135,9 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
                 layer                   + (LayerRectangle) layer to build
                 materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (string) name of function to call once the layer is build
-            callbackData                + (table) data to supply to callback function
+            callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
+    if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get assignment metadata
     local taskData = {
@@ -161,7 +159,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
             task        = taskFunctionName,
             taskData    = taskData,
         }
-        return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+        return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
     -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
@@ -215,7 +213,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Building layer at "..textutils.serialise(startpoint))
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback, callbackData)
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 --    _                 _    __                  _   _

@@ -4,7 +4,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
@@ -43,13 +43,13 @@ end
 
 function enterprise_test.Test_ASrv(...)
     -- get & check input from description
-    local checkSuccess, testArg, callback, callbackData = InputChecker.Check([[
-        This public async service executes an assignment with a callback function and callback data.
+    local checkSuccess, testArg, callback = InputChecker.Check([[
+        This public async service executes an assignment with a Callback.
 
         Return value:
             nil
 
-        Async service return value (to callback):
+        Async service return value (to Callback):
                                 - (table)
                 success         - (boolean) whether the service executed successfully
                 input           - (?) the test input argument
@@ -57,12 +57,9 @@ function enterprise_test.Test_ASrv(...)
         Parameters:
             serviceData         - (table) data about the service
                 testArg         + (number) as a test argument
-            callback            + (string) name of function to call once service is ready
-            callbackData        + (table) data to supply to callback function
+            callback            + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_test.Test_ASrv: Invalid input") return MethodExecutor.DoCallback(callback, callbackData, {success = false}) end
-
---    corelog.WriteToLog(">calling enterprise_test.Test_ASrv("..textutils.serialize(serviceData)..", "..callback..", "..textutils.serialize(callbackData)..")")
+    if not checkSuccess then corelog.Error("enterprise_test.Test_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create assignment arguments
     local metaData = {
@@ -82,7 +79,7 @@ function enterprise_test.Test_ASrv(...)
         task        = "role_test.Func1_Task",
         taskData    = taskData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback, callbackData)
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 return enterprise_test
