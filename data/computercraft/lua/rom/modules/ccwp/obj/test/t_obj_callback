@@ -6,6 +6,7 @@ local Callback = require "obj_callback"
 
 function T_Callback.T_All()
     T_Callback.T_call()
+    T_Callback.T_ErrorCall()
 end
 
 local moduleName1 = "T_Callback"
@@ -26,9 +27,9 @@ function T_Callback.T_call()
     })
 
     -- test
-    callback:call(resultData1)
-
-    -- cleanup test
+    local callResult = callback:call(resultData1)
+    local expectedCallResult = true
+    assert(callResult == expectedCallResult, "gotten callResult(="..tostring(callResult)..") not the same as expected(="..tostring(expectedCallResult)..")")
 end
 
 function T_Callback.Call_Callback(callbackData, resultData)
@@ -37,6 +38,40 @@ function T_Callback.Call_Callback(callbackData, resultData)
     assert(resultData == resultData1, "gotten resultData(="..textutils.serialise(resultData, compact)..") not the same as expected(="..textutils.serialise(resultData1, compact)..")")
 
     -- cleanup test
+
+    return true
+end
+
+function T_Callback.T_ErrorCall()
+    -- prepare test
+    corelog.WriteToLog("* Callback.ErrorCall() tests")
+    local callback = Callback:new({
+        _moduleName     = moduleName1,
+        _methodName     = "ErrorCall_Callback",
+        _data           = data1,
+    })
+
+    -- test no callback returns nil
+    local callResult = callback.ErrorCall(nil)
+    local expectedCallResult = nil
+    assert(callResult == expectedCallResult, "gotten callResult(="..tostring(callResult)..") not the same as expected(="..tostring(expectedCallResult)..")")
+
+    -- test callback
+    callResult = callback.ErrorCall(callback)
+    expectedCallResult = true
+    assert(callResult == expectedCallResult, "gotten callResult(="..tostring(callResult)..") not the same as expected(="..tostring(expectedCallResult)..")")
+end
+
+function T_Callback.ErrorCall_Callback(callbackData, resultData)
+    -- test (cont)
+    assert(callbackData == data1, "gotten callbackData(="..textutils.serialise(callbackData, compact)..") not the same as expected(="..textutils.serialise(data1, compact)..")")
+    local expectedSuccess = false
+    assert(type(resultData) == "table", "gotten resultData(="..textutils.serialise(resultData, compact)..") not a table")
+    assert(resultData.success == expectedSuccess, "gotten resultData.success(="..tostring(resultData.success)..") not the same as expected(="..tostring(expectedSuccess)..")")
+
+    -- cleanup test
+
+    return true
 end
 
 return T_Callback
