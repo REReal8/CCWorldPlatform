@@ -30,6 +30,8 @@ function T_Callback.T_call()
     local callResult = callback:call(resultData1)
     local expectedCallResult = true
     assert(callResult == expectedCallResult, "gotten callResult(="..tostring(callResult)..") not the same as expected(="..tostring(expectedCallResult)..")")
+
+    -- cleanup test
 end
 
 function T_Callback.Call_Callback(callbackData, resultData)
@@ -37,8 +39,7 @@ function T_Callback.Call_Callback(callbackData, resultData)
     assert(callbackData == data1, "gotten callbackData(="..textutils.serialise(callbackData, compact)..") not the same as expected(="..textutils.serialise(data1, compact)..")")
     assert(resultData == resultData1, "gotten resultData(="..textutils.serialise(resultData, compact)..") not the same as expected(="..textutils.serialise(resultData1, compact)..")")
 
-    -- cleanup test
-
+    -- end
     return true
 end
 
@@ -60,6 +61,8 @@ function T_Callback.T_ErrorCall()
     callResult = callback.ErrorCall(callback)
     expectedCallResult = true
     assert(callResult == expectedCallResult, "gotten callResult(="..tostring(callResult)..") not the same as expected(="..tostring(expectedCallResult)..")")
+
+    -- cleanup test
 end
 
 function T_Callback.ErrorCall_Callback(callbackData, resultData)
@@ -69,8 +72,7 @@ function T_Callback.ErrorCall_Callback(callbackData, resultData)
     assert(type(resultData) == "table", "gotten resultData(="..textutils.serialise(resultData, compact)..") not a table")
     assert(resultData.success == expectedSuccess, "gotten resultData.success(="..tostring(resultData.success)..") not the same as expected(="..tostring(expectedSuccess)..")")
 
-    -- cleanup test
-
+    -- end
     return true
 end
 
