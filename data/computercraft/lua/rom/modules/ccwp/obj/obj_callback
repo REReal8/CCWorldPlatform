@@ -1,4 +1,4 @@
-local CallDef = require "obj_calldef"
+local CallDef = require "obj_call_def"
 
 local Callback = CallDef:new()
 
