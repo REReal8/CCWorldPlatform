@@ -162,7 +162,7 @@ function coremove.Forward(c, force)
 		end
 	end
 
-	-- done succesfully
+	-- done successfully
 	return true
 end
 

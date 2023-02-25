@@ -123,7 +123,7 @@ function enterprise_factory_site.StopSite_ASrv(...)
 
         Async immediatly return value (to callback):
                                 - (table)
-                success         - (boolean) when the site was succesfully stopped
+                success         - (boolean) when the site was successfully stopped
 
         Parameters:
             serviceData         - (table) data about the site

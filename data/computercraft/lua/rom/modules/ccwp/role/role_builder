@@ -74,7 +74,7 @@ function role_builder.BuildBlueprint_Task(...)
         This Task builds a blueprint.
 
         Return value:
-                                        - (table) {success = true} if the blueprint was succesfully build
+                                        - (table) {success = true} if the blueprint was successfully build
 
         Parameters:
             buildData                   - (table) data about the blueprint
@@ -159,7 +159,7 @@ function role_builder.BuildLayer_Task(...)
         This Task builds a rectangular layer in the x,y plane.
 
         Return value:
-                                        - (table) {success = true} if the layer was succesfully build
+                                        - (table) {success = true} if the layer was successfully build
 
         Parameters:
             buildData                   - (table) data about the layer

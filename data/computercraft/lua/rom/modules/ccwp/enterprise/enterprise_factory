@@ -460,7 +460,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
 
         Async service return value (to Callback):
                                         - (table)
-                success                 - (boolean) whether the site was succesfully build and is ready for use.
+                success                 - (boolean) whether the site was successfully build and is ready for use.
 
         Parameters:
             serviceData                 + (table) data about this site
@@ -528,7 +528,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
 
         Async service return value (to Callback):
                                 - (table)
-                success         - (boolean) whether the site was succesfully build
+                success         - (boolean) whether the site was successfully build
 
         Parameters:
             serviceData                 + (table) data about this service
@@ -579,7 +579,7 @@ function enterprise_factory.StartNewSite_SSrv(...)
                 siteAlreadyBuild    + (boolean) confirmation that the site was already physically build
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid input") return {success = false} end
-    if not siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) succesfully build => we will not start it") return {success = false} end
+    if not siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) successfully build => we will not start it") return {success = false} end
 
     -- get site start data
     local siteStartData = nil
@@ -612,7 +612,7 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
 
         Async service return value (to Callback):
                                 - (table)
-                success         - (boolean) whether the site was succesfully stopped and dismantled.
+                success         - (boolean) whether the site was successfully stopped and dismantled.
 
         Parameters:
             serviceData                 + (table) data about this service
@@ -661,7 +661,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
 
         Async service return value (to Callback):
                                         - (table)
-                success                 - (boolean) whether the site was succesfully dismantled
+                success                 - (boolean) whether the site was successfully dismantled
 
         Parameters:
             serviceData                 + (table) data about this service
@@ -708,7 +708,7 @@ function enterprise_factory.StopSite_ASrv(...)
 
         Async service return value (to Callback):
                                 - (table)
-                success         - (boolean) when the site was succesfully stopped
+                success         - (boolean) when the site was successfully stopped
 
         Parameters:
             serviceData         + (table) data about this service

@@ -100,7 +100,7 @@ function role_chests_worker.FetchChestSlotsInventory_Task(...)
 
         Return value:
                                 - (table)
-                success         - (boolean) when the inventory was succesfully retrieved
+                success         - (boolean) when the inventory was successfully retrieved
                 slots           - (table) the slots inventory of a chest
 
         Parameters:
@@ -250,7 +250,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
 
         Return value:
                                 - (table)
-                success         - (boolean) whether the items were succesfully fetched
+                success         - (boolean) whether the items were successfully fetched
                 slots           - (table) the slots inventory of the chest (after the items have been removed)
                 turtleId        - (number) id of the turtle that has items in it's inventory
                 itemResultQuery - (table) items retrieved into turtle
@@ -388,7 +388,7 @@ function role_chests_worker.PutItemsFromTurtleIntoChest_Task(...)
 
         Return value:
                                 - (table)
-                success         - (boolean) whether the items were succesfully put
+                success         - (boolean) whether the items were successfully put
                 slots           - (table) the slots inventory of the chest (after the items have been put)
 
         Parameters:
