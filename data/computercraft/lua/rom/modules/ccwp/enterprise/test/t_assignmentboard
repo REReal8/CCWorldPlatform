@@ -3,12 +3,15 @@ local t_assignmentboard = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
+local Callback = require "obj_callback"
+
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
 function t_assignmentboard.T_All()
     t_assignmentboard.T_MetaDataConditionsMet()
     t_assignmentboard.T_BestCandidate()
 --    t_assignmentboard.T_GetStatistics_Att() -- ToDo: fix side-effects of this test (now all currently present (test) assignments are deleted)
+    t_assignmentboard.T_DoAssignment_ASrv()
 end
 
 local compact = { compact = true }
@@ -248,6 +251,54 @@ function t_assignmentboard.T_GetStatistics_Att()
     expectedFuelNeed = 0
 --    corelog.WriteToLog("   "..maxFuelNeed_Travel.." maxFuelNeed_Travel")
     assert(maxFuelNeed_Travel == expectedFuelNeed, "gotten maxFuelNeed_Travel(="..maxFuelNeed_Travel..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
+
+local testValue = 20
+local callbackTestValue = "some callback data"
+
+function t_assignmentboard.T_DoAssignment_ASrv()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_assignmentboard.DoAssignment_ASrv() tests")
+
+    -- create assignment arguments
+    local metaData = {
+        startTime = coreutils.UniversalTime(),
+        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        needTool = false,
+        needTurtle = false,
+        fuelNeeded = 0
+    }
+    local taskData = {
+        arg1 = testValue
+    }
+    local callback = Callback:new({
+        _moduleName     = "t_assignmentboard",
+        _methodName     = "DoAssignment_ASrv_Callback",
+        _data           = { [0] = callbackTestValue},
+    })
+    local assignmentServiceData = {
+        metaData    = metaData,
+        task        = "role_test.Func1_Task",
+        taskData    = taskData,
+    }
+
+    -- test
+    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+
+    -- cleanup test
+end
+
+function t_assignmentboard.DoAssignment_ASrv_Callback(callbackData, taskResults)
+    -- test (cont)
+    assert(taskResults.success, "failed executing async service")
+    local arg1 = taskResults.input
+    local expectedArg1 = testValue
+    assert(arg1 == expectedArg1, "gotten arg1(="..arg1..") not the same as expected(="..expectedArg1..")")
+    local callbackValue = callbackData[0]
+    local expectedCallbackValue = callbackTestValue
+    assert(callbackValue == expectedCallbackValue, "gotten callbackValue(="..(callbackValue or "nil")..") not the same as expected(="..expectedCallbackValue..")")
 
     -- cleanup test
 end
