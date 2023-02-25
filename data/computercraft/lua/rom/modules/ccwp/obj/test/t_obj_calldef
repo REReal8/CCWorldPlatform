@@ -1,0 +1,146 @@
+local T_CallDef = {}
+
+local corelog = require "corelog"
+
+local CallDef = require "obj_callback"
+
+function T_CallDef.T_All()
+    T_CallDef.T_new()
+    T_CallDef.T_IsOfType()
+    T_CallDef.T_isSame()
+    T_CallDef.T_copy()
+end
+
+local moduleName1 = "T_CallDef"
+local moduleName2 = "moduleName2"
+local methodName1 = "Call_Callback"
+local methodName2 = "methodName2"
+local data1 = {"some callback data"}
+local data2 = {"some other callback data"}
+
+local callback1 = CallDef:new({
+    _moduleName     = moduleName1,
+    _methodName     = methodName1,
+    _data           = data1,
+})
+
+local compact = { compact = true }
+
+function T_CallDef.T_new()
+    -- prepare test
+    corelog.WriteToLog("* CallDef:new() tests")
+
+    -- test full
+    local callback = CallDef:new({
+        _moduleName     = moduleName1,
+        _methodName     = methodName1,
+        _data           = data1,
+    })
+    assert(callback:getModuleName() == moduleName1, "gotten getModuleName(="..callback:getModuleName()..") not the same as expected(="..moduleName1..")")
+    assert(callback:getMethodName() == methodName1, "gotten getMethodName(="..callback:getMethodName()..") not the same as expected(="..methodName1..")")
+    local data = callback:getData()
+    assert(data == data1, "gotten getData(="..textutils.serialise(callback:getData(), compact)..") not the same as expected(="..textutils.serialise(data1, compact)..")")
+
+    -- test default
+    callback = CallDef:new()
+    assert(callback:getModuleName() == "", "gotten getModuleName(="..(callback:getModuleName() or "nil")..") not the same as expected(='')")
+    assert(callback:getMethodName() == "", "gotten getMethodName(="..(callback:getMethodName() or "nil")..") not the same as expected(='')")
+    data = callback:getData()
+    assert(type(data) == "table" and next(data) == nil , "gotten getData(="..textutils.serialise(callback:getData(), compact)..") not the same as expected(={})")
+
+    -- cleanup test
+end
+
+function T_CallDef.T_IsOfType()
+    -- prepare test
+    corelog.WriteToLog("* CallDef.IsOfType() tests")
+    local callback2 = CallDef:new({
+        _moduleName     = moduleName1,
+        _methodName     = methodName1,
+        _data           = data1,
+    })
+
+    -- test valid
+    local isOfType = CallDef.IsOfType(callback2)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = CallDef.IsOfType("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test invalid moduleName
+    callback2._moduleName = 999
+    isOfType = CallDef.IsOfType(callback2)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    callback2:setModuleName(moduleName1)
+
+    -- test invalid methodName
+    callback2._methodName = 999
+    isOfType = CallDef.IsOfType(callback2)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    callback2:setMethodName(methodName1)
+
+    -- test invalid data
+    callback2._data = 1000
+    isOfType = CallDef.IsOfType(callback2)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    callback2:setData(data1)
+
+    -- cleanup test
+end
+
+function T_CallDef.T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* CallDef:isSame() tests")
+    local callback2 = CallDef:new({
+        _moduleName     = moduleName1,
+        _methodName     = methodName1,
+        _data           = data1,
+    })
+
+    -- test same
+    local isSame = callback1:isSame(callback2)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different moduleName
+    callback2:setModuleName(moduleName2)
+    isSame = callback1:isSame(callback2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    callback2:setModuleName(moduleName1)
+
+    -- test different methodName
+    callback2:setMethodName(methodName2)
+    isSame = callback1:isSame(callback2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    callback2:setMethodName(methodName1)
+
+    -- test different data
+    callback2:setData(data2)
+    isSame = callback1:isSame(callback2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    callback2:setData(data1)
+
+    -- cleanup test
+end
+
+function T_CallDef.T_copy()
+    -- prepare test
+    corelog.WriteToLog("* CallDef:copy() tests")
+
+    -- test
+    local copy = callback1:copy()
+    assert(copy:isSame(callback1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(callback1, compact)..")")
+
+    -- cleanup test
+end
+
+return T_CallDef

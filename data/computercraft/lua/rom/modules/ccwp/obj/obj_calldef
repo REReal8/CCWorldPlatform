@@ -1,0 +1,120 @@
+local CallDef = {
+    _moduleName  = "",
+    _methodName  = "",
+    _data  = {},
+}
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+
+--[[
+    This file implements the class CallDef.
+
+    A CallDef defines the function call of a Method of a Module, including a table with possible method arguments.
+--]]
+
+--                _     _ _         __                  _   _
+--               | |   | (_)       / _|                | | (_)
+--    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--   | |
+--   |_|
+
+function CallDef:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a CallDef from table.
+
+        Parameters:
+            o                       + (table, {}) table with object fields
+                _moduleName         - (string, "") name of module to call
+                _methodName         - (string, "") name of method to call
+                _data               - (table, {}) with arguments to pass to method call
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("CallDef:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function CallDef:getModuleName()
+    return self._moduleName
+end
+
+function CallDef:setModuleName(moduleName)
+    self._moduleName = moduleName
+end
+
+function CallDef:getMethodName()
+    return self._methodName
+end
+
+function CallDef:setMethodName(methodName)
+    self._methodName = methodName
+end
+
+function CallDef:getData()
+    return self._data
+end
+
+function CallDef:setData(data)
+    self._data = data
+end
+
+function CallDef.HasFieldsOfType(callback)
+    -- check
+    if type(callback) ~= "table" then return false end
+    if type(callback._moduleName) ~= "string" then return false end
+    if type(callback._methodName) ~= "string" then return false end
+    if type(callback._data) ~= "table" then return false end
+
+    -- end
+    return true
+end
+
+function CallDef.HasMethodsOfType(callback)
+    -- check
+    if not callback.new then return false end
+
+    -- end
+    return true
+end
+
+function CallDef.IsOfType(callback)
+    -- check
+    local isOfType = CallDef.HasFieldsOfType(callback) and CallDef.HasMethodsOfType(callback)
+
+    -- end
+    return isOfType
+end
+
+function CallDef:isSame(callback)
+    -- check input
+    if not CallDef.IsOfType(callback) then return false end
+
+    -- check same
+    local isSame = self._moduleName == callback._moduleName and self._methodName == callback._methodName
+    isSame = isSame and self._data == callback._data -- ToDo: note: now an identity check. consider checking elements
+
+    -- end
+    return isSame
+end
+
+function CallDef:copy()
+    local copy = CallDef:new({
+        _moduleName  = self._moduleName,
+        _methodName  = self._methodName,
+        _data  = self._data, -- ToDo: note: now an identity copy. consider copying elements
+    })
+
+    return copy
+end
+
+return CallDef
