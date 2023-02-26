@@ -231,6 +231,7 @@ end
 local function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+    local projectId = internalProjectData.projectId
     local projectResults = {}
 
     -- create the projectResult
@@ -238,22 +239,22 @@ local function EndProject(internalProjectData)
         -- get sourceStepData
         local sourceStep = fieldDef.sourceStep
         local sourceStepData = project.outputs[ sourceStep ]
-        if type(sourceStepData) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid sourceStepData for field "..fieldDef.keyDef) break end
+        if type(sourceStepData) ~= "table" then corelog.Warning("enterprise_projects.EndProject: Invalid sourceStepData for field "..fieldDef.keyDef.." of project"..projectId) break end
 
         -- get fieldValue
         local fieldValue = GetFieldValueFromDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
-        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid fieldValue field "..fieldDef.keyDef) break end
+        if type(fieldValue) == "nil" then corelog.Error("enterprise_projects.EndProject: Invalid fieldValue field "..fieldDef.keyDef.." of project"..projectId) break end
 
         -- add the requested field
         local setSuccess = SetDataFieldUsingKeyDef(projectResults, fieldDef.keyDef, fieldValue)
-        if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting resultData field "..fieldDef.keyDef) break end
+        if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting resultData field "..fieldDef.keyDef.." of project"..projectId) break end
     end
     corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResults), project.projectId)
 
     -- we are done, do the callback
     corelog.WriteToProjectsLog("Calling callback function", project.projectId)
     local callback = Callback:new(project.callback)
-    if not callback then corelog.Error("enterprise_projects.EndProject: Invalid callback for project "..project.projectId) return end
+    if not callback then corelog.Error("enterprise_projects.EndProject: Invalid callback for project "..projectId) return false end
     local projectEndCallBackResult = callback:call(projectResults)
 
     -- forget about this project
@@ -275,21 +276,22 @@ local function TerminateProject(internalProjectData)
 end
 
 local function GetStepData(project, stepDataDef)
+    local projectId = project.projectId
     local stepData = {}
     for iField, fieldDef in ipairs(stepDataDef) do
         -- get sourceStepData
         local sourceStep = fieldDef.sourceStep
         local sourceStepData = project.outputs[ sourceStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.GetStepData: Invalid sourceStepData for field "..fieldDef.keyDef) return nil end
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.GetStepData: Invalid sourceStepData for field "..fieldDef.keyDef.." of project"..projectId) return nil end
 
         -- get fieldValue
         local fieldValue = GetFieldValueFromDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
         if type(fieldValue) == "nil" then
-            if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.GetStepData: FieldValue for field "..fieldDef.keyDef.." = nil") end
+            if fieldDef.keyDef ~= "assignmentsPriorityKey" then corelog.Warning("enterprise_projects.GetStepData: FieldValue for field "..fieldDef.keyDef.." = nil of project"..projectId) end
         else
             -- add field
             local setSuccess = SetDataFieldUsingKeyDef(stepData, fieldDef.keyDef, fieldValue)
-            if not setSuccess then corelog.Error("enterprise_projects.GetStepData: Failed setting stepData for field "..fieldDef.keyDef) return nil end
+            if not setSuccess then corelog.Error("enterprise_projects.GetStepData: Failed setting stepData for field "..fieldDef.keyDef.." of project"..projectId) return nil end
         end
     end
 
@@ -305,8 +307,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
     -- check results of the previous step
     local previousStep = project.currentStep
-    if type(stepResults) ~= "table" then corelog.Warning("enterprise_projects.NextProjectStep: no stepResults from step "..previousStep.."") stepResults = {} end
-    if previousStep > 0 and not stepResults.success then corelog.Warning("enterprise_projects.NextProjectStep: step "..previousStep.." did not return success!") end
+    if type(stepResults) ~= "table" then corelog.Warning("enterprise_projects.NextProjectStep: no stepResults from step "..previousStep.." of project"..projectId) stepResults = {} end
+    if previousStep > 0 and not stepResults.success then corelog.Warning("enterprise_projects.NextProjectStep: step "..previousStep.." of project"..projectId.." did not return success!") end
     -- ToDo: consider TerminateProject in both of above cases
 
     -- save the results of the previous step
@@ -329,13 +331,13 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
     -- get stepType & stepTypeDef
     local stepType = step.stepType
-    if type(stepType) ~= "string" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepType "..type(stepType).." for step "..currentStep) TerminateProject(internalProjectData) return nil end
+    if type(stepType) ~= "string" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepType "..type(stepType).." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
     local stepTypeDef = step.stepTypeDef
-    if type(stepTypeDef) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepTypeDef "..type(stepTypeDef).." for step "..currentStep) TerminateProject(internalProjectData) return nil end
+    if type(stepTypeDef) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid stepTypeDef "..type(stepTypeDef).." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
     -- prepare stepData
     local stepData = GetStepData(project, step.stepDataDef)
-    if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep) TerminateProject(internalProjectData) return nil end
+    if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
     -- select and do stepType
     if stepType == "ASrv" then
@@ -346,7 +348,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
                     moduleName          + (string)
                     serviceName         + (string)
         --]], stepTypeDef)
-        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining ASrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining ASrv stepTypeDef fields for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         --
         local callback = Callback:new({
@@ -368,7 +370,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
                     moduleName          + (string)
                     serviceName         + (string)
         --]], stepTypeDef)
-        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SSrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SSrv stepTypeDef fields for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- do service, keep the results
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync module service", projectId)
@@ -386,15 +388,15 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
                     objStep             + (number)
                     objKeyDef           + (string)
         --]], stepTypeDef)
-        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SASrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining AOSrv stepTypeDef fields for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- get sourceStepData
         local sourceStepData = project.outputs[ objStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for obj of step "..currentStep) TerminateProject(internalProjectData) return nil end
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for obj of step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- get objData
         local objData = GetFieldValueFromDataUsingKeyDef(sourceStepData, objKeyDef)
-        if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef) TerminateProject(internalProjectData) return nil end
+        if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         --
         local callback = Callback:new({
@@ -418,15 +420,15 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
                     objStep             + (number)
                     objKeyDef           + (string)
         --]], stepTypeDef)
-        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SOSrv stepTypeDef fields for step "..currentStep) TerminateProject(internalProjectData) return nil end
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining SOSrv stepTypeDef fields for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- get sourceStepData
         local sourceStepData = project.outputs[ objStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for obj of step "..currentStep) TerminateProject(internalProjectData) return nil end
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for obj of step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- get objData
         local objData = GetFieldValueFromDataUsingKeyDef(sourceStepData, objKeyDef)
-        if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef) TerminateProject(internalProjectData) return nil end
+        if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- do service, keep the results
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync obj service", projectId)
@@ -435,7 +437,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- next step
         return enterprise_projects.NextProjectStep(internalProjectData, results)
     else
-        corelog.Error("enterprise_projects.NextProjectStep: Unkown stepType "..stepType.." for step "..currentStep) TerminateProject(internalProjectData) return nil
+        corelog.Error("enterprise_projects.NextProjectStep: Unkown stepType "..stepType.." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil
     end
 end
 
