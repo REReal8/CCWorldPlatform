@@ -119,7 +119,7 @@ function enterprise_factory_site.StopSite_ASrv(...)
           - remove the site from the factory
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async immediatly return value (to callback):
                                 - (table)
@@ -362,7 +362,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -489,7 +489,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 --    _                 _    __                  _   _
@@ -796,7 +796,7 @@ function enterprise_factory_site.CraftItem_ASrv(...)
         This async sewrvice should craft items at the productionSpot.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -840,10 +840,7 @@ function enterprise_factory_site.CraftItem_ASrv(...)
         task        = "role_alchemist.Craft_Task",
         taskData    = craftData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-
-    -- end
-    return nil
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 function enterprise_factory_site.SmeltItem_ASrv(...)
@@ -852,7 +849,7 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
         This async service should smelt items at the productionSpot.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -898,10 +895,7 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
         task        = "role_alchemist.Smelt_Task",
         taskData    = smeltData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-
-    -- end
-    return nil
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 function enterprise_factory_site.Pickup_ASrv(...)
@@ -910,7 +904,7 @@ function enterprise_factory_site.Pickup_ASrv(...)
         This async service should pickup the results from a previous smelt step.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -951,10 +945,7 @@ function enterprise_factory_site.Pickup_ASrv(...)
         task        = "role_alchemist.Pickup_Task",
         taskData    = pickupData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
-
-    -- end
-    return nil
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 return enterprise_factory_site

@@ -42,7 +42,7 @@ function t_test.T_Test_ASrv()
     })
 
     -- test
-    enterprise_test.Test_ASrv(testData, callback)
+    return enterprise_test.Test_ASrv(testData, callback)
 end
 
 function t_test.Test_ASrv_Callback(callbackData, serviceResults)

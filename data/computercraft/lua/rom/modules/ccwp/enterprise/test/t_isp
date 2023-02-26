@@ -109,7 +109,7 @@ function t_isp.T_TransferItemsFromTo_Chests()
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_isp.T_ISPUsingProject()
@@ -148,7 +148,7 @@ function t_isp.T_ISPUsingProject()
     }
 
     -- call test method
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_isp.T_AddItemsLocators()

@@ -27,7 +27,7 @@ function t_factory.T_ProvideItemsTo_Craft()
     local items = { ["minecraft:birch_planks"] = 12 }
     itemsLocator:setQuery(items)
 
-    enterprise_factory.ProvideItemsTo_ASrv({
+    return enterprise_factory.ProvideItemsTo_ASrv({
         itemsLocator                = itemsLocator,
         ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         storageLocator              = enterprise_turtle.GetHostLocator_Att(),
@@ -39,7 +39,7 @@ function t_factory.T_ProvideItemsTo_Smelt()
     local items = { ["minecraft:charcoal"] = 3 }
     itemsLocator:setQuery(items)
 
-    enterprise_factory.ProvideItemsTo_ASrv({
+    return enterprise_factory.ProvideItemsTo_ASrv({
         itemsLocator                = itemsLocator,
         ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         storageLocator              = enterprise_turtle.GetHostLocator_Att(),
@@ -63,7 +63,7 @@ function t_factory.T_GetFuelNeed_Production_Att()
 end
 
 function t_factory.T_BuildAndStartNewV1Site()
-    enterprise_factory.BuildAndStartNewSite_ASrv({
+    return enterprise_factory.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         upgrade                 = false,
@@ -72,7 +72,7 @@ function t_factory.T_BuildAndStartNewV1Site()
 end
 
 function t_factory.T_BuildAndStartNewV2Site()
-    enterprise_factory.BuildAndStartNewSite_ASrv({
+    return enterprise_factory.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV2,
         siteVersion             = "v2",
         upgrade                 = true,
@@ -81,7 +81,7 @@ function t_factory.T_BuildAndStartNewV2Site()
 end
 
 function t_factory._StopAndDismantleV1Site()
-    enterprise_factory.StopAndDismantleSite_ASrv({
+    return enterprise_factory.StopAndDismantleSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
@@ -89,7 +89,7 @@ function t_factory._StopAndDismantleV1Site()
 end
 
 function t_factory.T_BuildNewV0Site()
-    enterprise_factory.BuildNewSite_ASrv({
+    return enterprise_factory.BuildNewSite_ASrv({
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
         upgrade                 = false,
@@ -104,7 +104,7 @@ end
 function t_factory.StartNewSite(baseLocation, version)
     version = version or "v0"
 
-    enterprise_factory.StartNewSite_SSrv({
+    return enterprise_factory.StartNewSite_SSrv({
         baseLocation        = baseLocation,
         siteVersion         = version,
         siteAlreadyBuild    = true
@@ -116,7 +116,7 @@ function t_factory.T_DismantleV0Site()
 end
 
 function DismantleV0Site(baseLocation)
-    enterprise_factory.DismantleSite_ASrv({
+    return enterprise_factory.DismantleSite_ASrv({
         baseLocation            = baseLocation,
         siteVersion             = "v0",
         siteStopped             = true,
@@ -129,7 +129,7 @@ function t_factory.T_StopV0Site()
 end
 
 function t_factory.StopSite(baseLocation)
-    enterprise_factory.StopSite_ASrv({
+    return enterprise_factory.StopSite_ASrv({
         baseLocation    = baseLocation
     }, callback)
 end

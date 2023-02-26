@@ -20,7 +20,7 @@ local callback = Callback:new({
 })
 
 function t_shop.T_OrderMultipleItems()
-    enterprise_shop.OrderItems_ASrv({
+    return enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:furnace"]   = 1,
             ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
@@ -30,7 +30,7 @@ function t_shop.T_OrderMultipleItems()
 end
 
 function t_shop.T_OrderCharcoal()
-    enterprise_shop.OrderItems_ASrv({
+    return enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:charcoal"]  = 3,
         },
@@ -39,7 +39,7 @@ function t_shop.T_OrderCharcoal()
 end
 
 function t_shop.T_OrderTorch()
-    enterprise_shop.OrderItems_ASrv({
+    return enterprise_shop.OrderItems_ASrv({
         orderItems = {
             ["minecraft:torch"]  = 4,
         },

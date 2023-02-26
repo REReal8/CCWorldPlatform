@@ -216,7 +216,7 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -427,7 +427,7 @@ function enterprise_turtle.GetItemsIntoTurtle_ASrv(...)
         This async public service ensures items are gathered in the Storage pplier and transferred to the inventory of a turtle.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -493,7 +493,7 @@ function enterprise_turtle.PutItemsFromTurtle_ASrv(...)
         A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)

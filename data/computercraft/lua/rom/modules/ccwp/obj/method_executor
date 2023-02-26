@@ -53,7 +53,7 @@ function MethodExecutor.DoASyncService(...)
         This function executes an async service method of a module.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
             results                     - (?) service function return value
@@ -75,8 +75,8 @@ function MethodExecutor.DoASyncObjService(...)
     local checkSuccess, className, objData, serviceName, serviceData, callback = InputChecker.Check([[
         This function executes an async service method of an obj.
 
-     Return value:
-            nil
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
             results                     - (?) service function return value

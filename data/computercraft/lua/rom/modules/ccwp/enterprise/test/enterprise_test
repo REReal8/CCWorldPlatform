@@ -47,7 +47,7 @@ function enterprise_test.Test_ASrv(...)
         This public async service executes an assignment with a Callback.
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -79,7 +79,7 @@ function enterprise_test.Test_ASrv(...)
         task        = "role_test.Func1_Task",
         taskData    = taskData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 return enterprise_test

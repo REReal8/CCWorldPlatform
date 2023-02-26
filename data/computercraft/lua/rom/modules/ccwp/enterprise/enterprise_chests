@@ -104,7 +104,7 @@ function enterprise_chests.DelistChest_ASrv(...)
         Note that the chest (and it's possibly remaining items) are not removed from the world.
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -132,7 +132,7 @@ function enterprise_chests.DelistChest_ASrv(...)
     enterprise_chests.RemoveChest(chestLocator)
 
     -- do callback
-    callback:call({success = true})
+    return callback:call({success = true})
 end
 
 function enterprise_chests.UpdateChestRecord_ASrv(...)
@@ -144,7 +144,7 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
         typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the chest records could have been corrupted.
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -188,7 +188,7 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
 
     -- start project
     corelog.WriteToLog(">Updating records for chest "..chest:getId()..".")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_chests.GetHostLocator_Att()
@@ -268,7 +268,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -442,7 +442,7 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
         This async public service ensures items are gathered in the Storage and transferred to the inventory of a turtle.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -496,7 +496,7 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Getting "..sourceItemsLocator:getQueryURI().." from chest "..id.." into a turtle.")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_chests.PutItemsFromTurtle_ASrv(...)
@@ -507,7 +507,7 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
         A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -567,7 +567,7 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Putting items from turtle URL "..turtleItemsLocator:getURI().." into chest "..projectData.id..".")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_chests.GetNumberOfChests_Att()

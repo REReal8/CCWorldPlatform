@@ -30,7 +30,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table) {success = true} if the blueprint was successfully build
@@ -114,7 +114,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Building blueprint at "..textutils.serialise(blueprintStartpoint))
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_construction.BuildLayer_ASrv(...)
@@ -123,7 +123,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
         This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table) {success = true} if the layer was successfully build
@@ -213,7 +213,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Building layer at "..textutils.serialise(startpoint))
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 --    _                 _    __                  _   _

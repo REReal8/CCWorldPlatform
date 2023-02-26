@@ -41,7 +41,7 @@ end
 
 function Callback.ErrorCall(callback)
     -- check for callback
-    if not Callback.IsOfType(callback) then return nil end
+    if not Callback.IsOfType(callback) then corelog.Warning("Callback.ErrorCall: Invalid callback (type="..type(callback)..")") return nil end
 
     -- call method
     return callback:call({success = false})

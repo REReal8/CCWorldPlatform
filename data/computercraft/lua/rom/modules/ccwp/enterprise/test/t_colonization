@@ -17,7 +17,7 @@ function t_colonization.T_CreateNewWorld()
     local serviceData = {}
 
     corelog.WriteToLog("T_enterpise_colonization calling CreateNewWorld_ASrv("..textutils.serialize(serviceData)..", ...)")
-    enterprise_colonization.CreateNewWorld_ASrv(serviceData, callback)
+    return enterprise_colonization.CreateNewWorld_ASrv(serviceData, callback)
 end
 
 return t_colonization

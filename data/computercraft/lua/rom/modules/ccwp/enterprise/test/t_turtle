@@ -41,7 +41,7 @@ function t_turtle.T_TransferItemsFromTo_Turtles()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..", ...)")
-    enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
+    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
 end
 
 function t_turtle.T_Can_ProvideItems()

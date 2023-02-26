@@ -164,7 +164,7 @@ function TestObj:Test_AOSrv(...)
         This public async service executes an assignment with a callback function and callback data.
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -200,7 +200,7 @@ function TestObj:Test_AOSrv(...)
         task        = "role_test.Func2_Task",
         taskData    = taskData,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 return TestObj

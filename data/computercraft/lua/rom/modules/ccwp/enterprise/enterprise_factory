@@ -122,7 +122,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
         Finally it delivers the created items to the requested Storage.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -148,6 +148,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
     if not serviceResults.success then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- loop on items
+    local scheduleResult = true
     local provideItems = itemsLocator:getQuery()
     for itemName, itemCount in pairs(provideItems) do
         -- check
@@ -230,8 +231,11 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
 
         -- start project
 --        corelog.WriteToLog(">Producing "..itemCount.." "..itemName.."'s in Factory")
-        enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+        scheduleResult = scheduleResult and enterprise_projects.StartProject_ASrv(projectServiceData, callback)
     end
+
+    -- end
+    return scheduleResult
 end
 
 function enterprise_factory.Can_ProvideItems_QSrv(...)
@@ -456,7 +460,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
         This async public service builds a new factory site and ensures it's ready for use.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -515,7 +519,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
 
     -- start project
 --    corelog.WriteToLog(">Building and starting factory site version "..siteVersion.." at "..textutils.serialise(baseLocation))
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_factory.BuildNewSite_ASrv(...)
@@ -524,11 +528,11 @@ function enterprise_factory.BuildNewSite_ASrv(...)
         This async public service builds a new factory site.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                - (table)
-                success         - (boolean) whether the site was successfully build
+                                        - (table)
+                success                 - (boolean) whether the site was successfully build
 
         Parameters:
             serviceData                 + (table) data about this service
@@ -560,7 +564,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
     else
         corelog.WriteToLog(">Building factory site version "..siteVersion.." at "..textutils.serialise(baseLocation, { compact = true }))
     end
-    enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
+    return enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
 end
 
 function enterprise_factory.StartNewSite_SSrv(...)
@@ -608,7 +612,7 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
         This async public service stops and dismantles a site.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -647,7 +651,7 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
 
     -- start project
     corelog.WriteToLog(">Stopping and dismantling factory site version "..siteVersion)
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_factory.DismantleSite_ASrv(...)
@@ -657,7 +661,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
         Possibly part of the world is restored to a neutral (e.g. flat) state.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -692,7 +696,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
     siteDismantleBuildData.materialsHostLocator = materialsHostLocator
 
     -- let construction enterprise dismantle the site
-    enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback)
+    return enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback)
 end
 
 function enterprise_factory.StopSite_ASrv(...)
@@ -704,7 +708,7 @@ function enterprise_factory.StopSite_ASrv(...)
           - remove the site from the factory
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -718,7 +722,7 @@ function enterprise_factory.StopSite_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- pass on the request to site file
-    enterprise_factory_site.StopSite_ASrv(serviceData, callback)
+    return enterprise_factory_site.StopSite_ASrv(serviceData, callback)
 end
 
 function enterprise_factory.GetHostLocator_Att()

@@ -89,7 +89,7 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
     })
 
     corelog.WriteToLog("T_construction calling BuildLayer_ASrv("..textutils.serialise(buildData)..", ...)")
-    enterprise_construction.BuildLayer_ASrv(buildData, callback)
+    return enterprise_construction.BuildLayer_ASrv(buildData, callback)
 end
 
 function t_construction.T_BuildLayer_ASrv_FromChest()
@@ -153,7 +153,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
         _methodName     = "Func1_Callback",
         _data           = {"some callback data"},
     })
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_construction.T_BuildBlueprint_ASrv()

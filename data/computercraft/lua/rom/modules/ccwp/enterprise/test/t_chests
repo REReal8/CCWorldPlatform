@@ -85,7 +85,7 @@ function t_chests.T_RegisterAndUpdateChest()
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function t_chests.GetRegisterAndUpdateChestProjectDef()
@@ -121,7 +121,7 @@ function t_chests.T_UpdateChestRecord1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(serviceData)..", , )")
-    enterprise_chests.UpdateChestRecord_ASrv(serviceData, callback)
+    return enterprise_chests.UpdateChestRecord_ASrv(serviceData, callback)
 end
 
 function t_chests.T_RegisterChest1()
@@ -150,7 +150,7 @@ function t_chests.T_DelistChest1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.DelistChest_ASrv("..textutils.serialize(chestData1)..")")
-    enterprise_chests.DelistChest_ASrv(chestData1, callback)
+    return enterprise_chests.DelistChest_ASrv(chestData1, callback)
 end
 
 function t_chests.T_GetItemsIntoTurtle1()
@@ -163,7 +163,7 @@ function t_chests.T_GetItemsIntoTurtle1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle_ASrv("..textutils.serialize(transferData)..",..)")
-    enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callback)
+    return enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callback)
 end
 
 function t_chests.T_PutItemsFromTurtle1()
@@ -178,7 +178,7 @@ function t_chests.T_PutItemsFromTurtle1()
 
     -- call test method
     corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle_ASrv("..textutils.serialize(transferData)..",...)")
-    enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callback)
+    return enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callback)
 end
 
 return t_chests

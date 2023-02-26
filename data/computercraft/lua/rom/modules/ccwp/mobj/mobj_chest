@@ -223,7 +223,7 @@ function Chest:updateChestRecord_AOSrv(...)
         This async private service updates (fetches) the inventory from a Chest.
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -270,7 +270,7 @@ function Chest:updateChestRecord_AOSrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Chest:getItemsIntoTurtle_AOSrv(...)
@@ -279,7 +279,7 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
         This async private service fetches items from the Chest into the inventory of a turtle.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -339,7 +339,7 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Chest:putItemsFromTurtle_AOSrv(...)
@@ -348,7 +348,7 @@ function Chest:putItemsFromTurtle_AOSrv(...)
         This async private service puts items from a the inventory of a turtle into the Chest.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -406,7 +406,7 @@ function Chest:putItemsFromTurtle_AOSrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 return Chest

@@ -49,7 +49,7 @@ local function Refuel_ASrv(...)
         This public async service (re)fuels a turtle from fuelItems.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -118,7 +118,7 @@ local function Refuel_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_energy.ProvideFuelTo_ASrv(...)
@@ -127,7 +127,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
         This public async service provides fuel to a turtle.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -154,7 +154,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") with "..fuelAmount.." fuel *")
-    Refuel_ASrv(refuelServiceData, callback)
+    return Refuel_ASrv(refuelServiceData, callback)
 end
 
 function enterprise_energy.GetFuelNeed_Refuel_Att()

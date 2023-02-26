@@ -53,7 +53,7 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
         This async public Supplier service provides multiple instances of a specific to the requested Storage.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -159,7 +159,7 @@ function enterprise_isp.TransferItemsFromTo_ASrv(...)
             PutItemsFromTurtle_ASrv
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -233,10 +233,7 @@ function enterprise_isp.TransferItemsFromTo_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-
-    -- end
-    return nil
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_isp.NeedsTo_TransferItems_SSrv(...)

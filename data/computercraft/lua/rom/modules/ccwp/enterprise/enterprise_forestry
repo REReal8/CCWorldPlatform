@@ -41,7 +41,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         This async public service builds a new forest site and ensures it's ready for use.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -149,7 +149,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_forestry.UpgradeSite_ASrv(...)
@@ -160,7 +160,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         Note: downgrading a forest is not supported.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -331,7 +331,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
 
     -- start project
     corelog.WriteToLog(">Upgrading forest "..forestLocator:getURI().." from level "..startingLevel.." to "..targetLevel.." and from "..startingNTrees.." to "..targetNTrees.." trees")
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_forestry.ProvideItemsTo_ASrv(...)
@@ -340,7 +340,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
         This async public Supplier service provides specific items to a Storage.
 
         Return value:
-            nil
+                                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                             - (table)
@@ -367,7 +367,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
 
     -- have forest provide items
     local provideItems = itemsLocator:getQuery()
-    forest:provideItemsTo_ASrv({
+    return forest:provideItemsTo_ASrv({
         provideItems                = provideItems,
         storageLocator              = storageLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,
@@ -511,7 +511,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
         This private async service extends the forest with 1 tree
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                         - (table)
@@ -535,7 +535,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
         materialsHostLocator = materialsHostLocator,
     }
     corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
-    enterprise_construction.BuildLayer_ASrv(buildData, callback)
+    return enterprise_construction.BuildLayer_ASrv(buildData, callback)
 end
 
 function enterprise_forestry.UpdateForest_SSrv(...)

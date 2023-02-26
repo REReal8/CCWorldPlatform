@@ -48,7 +48,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -244,7 +244,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     }
 
     -- start project
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 local function GetHostLocator_Att()

@@ -6,7 +6,6 @@ local coremove = require "coremove"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 
-local URL = require "obj_url"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -61,7 +60,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
         task        = "role_storage_silo_worker.ItemsDelivered_Task",
         taskData    = assignmentArguments,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 function ItemPresent(site, itemName)
@@ -215,7 +214,7 @@ function enterprise_storage_silo.BuildNewSite_ASrv(...)
         This public function (service) builds a new silo.
 
         Return value:
-            nil
+                                        - (boolean) whether the service was scheduled successfully
 
         Parameters:
             siteData                    + (table) data about this silo, like type and layout
@@ -231,7 +230,7 @@ function enterprise_storage_silo.BuildNewSite_ASrv(...)
         materialsHostLocator    = materialsHostLocator,
     }
     corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint, { compact = true }))
-    enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback)
+    return enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback)
 end
 
 function enterprise_storage_silo.StartNewSite_SSrv(siteData)
@@ -295,6 +294,9 @@ function enterprise_storage_silo.StartNewSite_SSrv(siteData)
 
     -- save the dht
     coredht.SaveData(sites, db.dhtRoot, db.dhtSites)
+
+    -- end
+    return {success = true}
 end
 
 function FindSiteByTopChest(site, location)
@@ -340,7 +342,7 @@ function CheckIntegrity(site)
         task        = "role_storage_silo_worker.CheckIntegrity_Task",
         taskData    = assignmentArguments,
     }
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
 --    _           _ _     _               _   _                                 _     _                       _       _

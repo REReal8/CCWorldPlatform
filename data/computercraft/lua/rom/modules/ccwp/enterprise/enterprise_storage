@@ -222,7 +222,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         This public function (service) builds a new storage site and starts it.
 
         Return value:
-            nil
+                            - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                             - (table)
@@ -270,10 +270,8 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         }
 
         -- start project
-        enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+        return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
     else corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Don't know how to build and start a site of type "..type) return Callback.ErrorCall(callback) end
-
-    -- nothing to return
 end
 
 function enterprise_storage.BuildNewSite_ASrv(...)
@@ -294,7 +292,7 @@ function enterprise_storage.BuildNewSite_ASrv(...)
 
     -- what kind of storage is this?
     if type == 'silo' then
-        enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback)
+        return enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback)
     else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return Callback.ErrorCall(callback) end
 end
 
@@ -323,11 +321,8 @@ function enterprise_storage.StartNewSite_SSrv(...)
     end
 
     -- what kind of storage is this?
-    if siteData.type == 'silo' then enterprise_storage_silo.StartNewSite_SSrv(siteData)
+    if siteData.type == 'silo' then return enterprise_storage_silo.StartNewSite_SSrv(siteData)
     else corelog.Error("enterprise_storage.StartNewSite_SSrv: Don't know how to start a site of type "..type) return {success = false} end
-
-    -- end
-    return {success = true}
 end
 
 --    _                 _    __                  _   _
