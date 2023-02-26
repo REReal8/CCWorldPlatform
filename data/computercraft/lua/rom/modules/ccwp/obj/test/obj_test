@@ -14,7 +14,7 @@ local TaskCall = require "obj_task_call"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
 --[[
-    This file implements the class TestObj.
+    This module implements the class TestObj.
 
     A TestObj object can be used for testing object related functionality.
 --]]

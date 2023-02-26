@@ -8,7 +8,7 @@ local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 
 --[[
-    This file implements the class Callback.
+    This module implements the class Callback.
 
     A Callback defines a callback function and (minimum) callback data.
 --]]

@@ -8,7 +8,7 @@ local URL = {
 local corelog = require "corelog"
 
 --[[
-    This file implements the class URL.
+    This module implements the class URL.
 
     A URL object represents an CCWorldPlatform URL. See https://github.com/REReal8/CCWorldPlatform/wiki/Uniform-Resource-Locators for more on URL's.
 --]]

@@ -7,7 +7,7 @@ local Block = {
 local corelog = require "corelog"
 
 --[[
-    This file implements the class Block.
+    This module implements the class Block.
 
     A Block object represents a single block in the minecraft world.
 --]]

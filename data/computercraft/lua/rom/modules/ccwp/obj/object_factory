@@ -3,7 +3,7 @@ local ObjectFactory = {
 }
 
 --[[
-    This file implements the class ObjectFactory.
+    This module implements the class ObjectFactory.
 
     The ObjectFactory object is a singleton representing a factory for creating (and obtaining) obj's based on a registered class.
 

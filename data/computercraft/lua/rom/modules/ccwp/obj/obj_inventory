@@ -8,7 +8,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 
 --[[
-    This file implements the class Inventory.
+    This module implements the class Inventory.
 
     A Inventory object represents an inventory in the minecraft world.
 --]]

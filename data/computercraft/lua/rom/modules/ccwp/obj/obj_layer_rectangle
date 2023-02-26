@@ -9,7 +9,7 @@ local InputChecker = require "input_checker"
 local Block = require "obj_block"
 
 --[[
-    This file implements the class LayerRectangle.
+    This module implements the class LayerRectangle.
 
     A LayerRectangle object represents a rectangular layer in the minecraft world.
 --]]

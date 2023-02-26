@@ -9,7 +9,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 
 --[[
-    This file implements the class CallDef.
+    This module implements the class CallDef.
 
     A CallDef defines the function call of a Method of a Module, including a table with possible method arguments.
 --]]

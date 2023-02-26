@@ -5,7 +5,7 @@ local TaskCall = CallDef:new()
 local MethodExecutor = require "method_executor"
 
 --[[
-    This file implements the class TaskCall.
+    This module implements the class TaskCall.
 
     A TaskCall defines the call to a task function including the taskData.
 
