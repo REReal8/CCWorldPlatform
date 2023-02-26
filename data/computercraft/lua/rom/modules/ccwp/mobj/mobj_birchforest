@@ -13,6 +13,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 
 local Block = require "obj_block"
@@ -279,9 +280,8 @@ function BirchForest:provideItemsTo_ASrv(...)
                     -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
                     --          (or will this be part of harvestForest?)
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                        { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "harvestForest_Task" },
                         { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
-                        { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "harvestForestTaskData" },
+                        { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
                     }},
                     -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
                     --          (or will this be part of harvestForest?)
@@ -307,9 +307,8 @@ function BirchForest:provideItemsTo_ASrv(...)
                 ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
                 storageLocator              = storageLocator:copy(),
 
-                harvestForest_Task          = "role_forester.HarvestForest_Task",
-                harvestForestTaskData       = harvestForestTaskData,
                 harvestForestMetaData       = role_forester.HarvestForest_MetaData(harvestForestTaskData),
+                harvestForestTaskCall       = TaskCall:new({ _moduleName = "role_forester", _methodName = "HarvestForest_Task", _data = harvestForestTaskData, }),
 
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }

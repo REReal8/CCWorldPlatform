@@ -7,7 +7,12 @@ local MethodExecutor = require "method_executor"
 --[[
     This file implements the class TaskCall.
 
-    A TaskCall defines the call to a task function including the task data.
+    A TaskCall defines the call to a task function including the taskData.
+
+    A task function should take one argument
+        taskData                - (table) data to supply to task function to be able to perform the task
+    and return
+        taskResult              - (table) return data of the task function
 --]]
 
 --                _     _ _         __                  _   _
@@ -24,10 +29,9 @@ function TaskCall:call()
         This method executes the task with predefined task data.
 
         Return value:
-            ?                       - (?) return value of task function
+                                    - (table) return data of task function
 
         Parameters:
-            resultData              + (table) with second argument to supply to callback function, typically the return data of the task function
     ]]
 
     -- call method

@@ -5,6 +5,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
@@ -62,6 +63,9 @@ function enterprise_test.Test_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_test.Test_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create assignment arguments
+    local taskData = {
+        arg1 = testArg
+    }
     local metaData = {
         startTime = coreutils.UniversalTime(),
         location = {x= 0, y= 0, z= 1, dx=0, dy=1},
@@ -69,15 +73,11 @@ function enterprise_test.Test_ASrv(...)
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskData = {
-        arg1 = testArg
-    }
 
     -- do assignment
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "role_test.Func1_Task",
-        taskData    = taskData,
+        taskCall    = TaskCall:new({ _moduleName = "role_test", _methodName = "Func1_Task", _data = taskData, }),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end

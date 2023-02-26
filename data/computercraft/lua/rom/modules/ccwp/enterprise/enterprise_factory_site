@@ -7,6 +7,7 @@ local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 local URL = require "obj_url"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -837,8 +838,7 @@ function enterprise_factory_site.CraftItem_ASrv(...)
 --    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "role_alchemist.Craft_Task",
-        taskData    = craftData,
+        taskCall    = TaskCall:new({ _moduleName = "role_alchemist", _methodName = "Craft_Task", _data = craftData, }),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
@@ -892,8 +892,7 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
 --    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "role_alchemist.Smelt_Task",
-        taskData    = smeltData,
+        taskCall    = TaskCall:new({ _moduleName = "role_alchemist", _methodName = "Smelt_Task", _data = smeltData, }),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
@@ -942,8 +941,7 @@ function enterprise_factory_site.Pickup_ASrv(...)
 --    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "role_alchemist.Pickup_Task",
-        taskData    = pickupData,
+        taskCall    = TaskCall:new({ _moduleName = "role_alchemist", _methodName = "Pickup_Task", _data = pickupData, }),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end

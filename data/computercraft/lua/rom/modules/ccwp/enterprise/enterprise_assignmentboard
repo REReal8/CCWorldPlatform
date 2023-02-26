@@ -42,27 +42,23 @@ local db = {
 
 function enterprise_assignmentboard.DoAssignment_ASrv(...)
     -- get & check input from description
-    local checkSuccess, metaData, task, taskData, callback = InputChecker.Check([[
+    local checkSuccess, metaData, taskCall, callback = InputChecker.Check([[
         This async public service posts an Assignment for execution via the enterprise.
 
         The Assignment is not necessarily directly executed. It is added to the list of assignments in the
         enterprise and serviced via it's services for eventual execution.
 
-        A task function takes one parameter
-            taskData                - (table) data to supply to task function to be able to perform the task
-        and return
-            taskResult              - (table) with return data of the task function
         Return value:
                                     - (boolean) whether the assignment was scheduled successfully
 
         Async service return value (to Callback):
-            task result             - (table) results of the task function
+                                    - (table) results of the task function
+                success             - (boolean) whether the task executed successfully
 
         Parameters:
             serviceData             - (table) data for this service
                 metaData            + (table) with metadata on the Task (used in the the assignment selection proces (e.g. the fuel needs of the task))
-                task                + (string) name of the the Task function to execute
-                taskData            + (table) data to supply to Task function to be able to perform the task
+                taskCall            + (TaskCall) to call to execute the assignment
             callback                + (Callback) to call once service (assignment) is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.DoAssignment_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -85,8 +81,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         applications            = {},
 
         metaData                = metaData,
-        taskFunction            = task,
-        taskData                = taskData,
+        taskCall                = taskCall,
         callback                = callback,
     }
 

@@ -3,6 +3,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 
 local role_builder = require "role_builder"
@@ -55,14 +56,13 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- check if materials needed
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
-    local taskFunctionName = "role_builder.BuildBlueprint_Task"
+    local taskCall = TaskCall:new({ _moduleName = "role_builder", _methodName = "BuildBlueprint_Task", _data = taskData, })
     if next(materialsNeeded) == nil then
         -- directly do assignment
 --        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
         local assignmentServiceData = {
             metaData    = metaData,
-            task        = taskFunctionName,
-            taskData    = taskData,
+            taskCall    = taskCall,
         }
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
@@ -84,10 +84,9 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "taskFunctionName" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "metaData.needTurtleId"      , sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
-                { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "taskData" },
+                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
@@ -103,9 +102,8 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         materialsLocalHostLocator   = materialsLocalHostLocator:copy(),
         ingredientsSupplierLocator  = materialsHostLocator:copy(),
 
-        taskFunctionName            = taskFunctionName,
         metaData                    = metaData,
-        taskData                    = taskData,
+        taskCall                    = taskCall,
     }
     local projectServiceData = {
         projectDef  = buildBlueprintProjectDef,
@@ -150,14 +148,13 @@ function enterprise_construction.BuildLayer_ASrv(...)
 
     -- check if materials needed
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
-    local taskFunctionName = "role_builder.BuildLayer_Task"
+    local taskCall = TaskCall:new({ _moduleName = "role_builder", _methodName = "BuildLayer_Task", _data = taskData, })
     if next(materialsNeeded) == nil then
         -- directly do assignment
 --        corelog.WriteToLog(">Building (zero materials) layer at "..textutils.serialise(startpoint))
         local assignmentServiceData = {
             metaData    = metaData,
-            task        = taskFunctionName,
-            taskData    = taskData,
+            taskCall    = taskCall,
         }
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
@@ -183,10 +180,9 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "taskFunctionName" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "metaData.needTurtleId"      , sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
-                { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "taskData" },
+                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
@@ -202,9 +198,8 @@ function enterprise_construction.BuildLayer_ASrv(...)
         materialsLocalHostLocator   = materialsLocalHostLocator:copy(),
         ingredientsSupplierLocator  = materialsHostLocator:copy(),
 
-        taskFunctionName            = taskFunctionName,
         metaData                    = metaData,
-        taskData                    = taskData,
+        taskCall                    = taskCall,
     }
     local projectServiceData = {
         projectDef  = buildRectangularPatternProjectDef,

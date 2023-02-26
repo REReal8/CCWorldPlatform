@@ -5,6 +5,7 @@ local coredht = require "coredht"
 local coremove = require "coremove"
 
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
 
@@ -90,9 +91,8 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         -- add build tree step
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "plantFirstSapling_Task" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingMetaData" },
-                { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingTaskData" },
+                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingTaskCall" },
             }}
         )
 
@@ -101,9 +101,8 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         local plantFirstSaplingTaskData =  {
             startLocation               = coremove.CopyLocation(firstTreeLocation),
         }
-        projectData.plantFirstSaplingTaskData   = plantFirstSaplingTaskData
         projectData.plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData)
-        projectData.plantFirstSapling_Task      = "role_forester.PlantFirstSapling_Task"
+        projectData.plantFirstSaplingTaskCall   = TaskCall:new({ _moduleName = "role_forester", _methodName = "PlantFirstSapling_Task", _data = plantFirstSaplingTaskData, })
     else
         -- add build tree step
         table.insert(projectSteps,

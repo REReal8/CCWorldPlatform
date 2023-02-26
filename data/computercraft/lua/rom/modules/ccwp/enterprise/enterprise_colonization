@@ -6,6 +6,7 @@ local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 local URL = require "obj_url"
 
 local role_settler = require "role_settler"
@@ -78,7 +79,10 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- construct arguments
     local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
     local forestLocation            = {x= 0, y= 0, z= 1, dx=0, dy=1}
-    local primaryTaskData =  {
+    local initialiseCoordinatesTaskData =  {
+        startLocation               = coremove.CopyLocation(startLocation),
+    }
+    local collectCobbleStoneTaskData =  {
         startLocation               = coremove.CopyLocation(startLocation),
     }
 
@@ -87,11 +91,10 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local settleData = {
         materialsHostLocator        = enterprise_shop.GetHostLocator_Att(),
 
-        primaryTaskData             = primaryTaskData,
         startLocation               = coremove.CopyLocation(startLocation),
 
-        initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(primaryTaskData),
-        initialiseCoordinates_Task  = "role_settler.InitialiseCoordinates_Task",
+        initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
+        initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
 
         ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_Att(), -- ToDo: somehow pass this to enterprise_energy
 
@@ -113,8 +116,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         energyL2                    = 2,
         energyL3                    = 3,
 
-        collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(primaryTaskData),
-        collectCobbleStone_Task     = "role_settler.CollectCobbleStone_Task",
+        collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(collectCobbleStoneTaskData),
+        collectCobbleStoneTaskCall  = TaskCall:new({ _moduleName = "role_settler", _methodName = "CollectCobbleStone_Task", _data = collectCobbleStoneTaskData, }),
 
         factoryLocation             = coremove.CopyLocation(factoryLocation),
         factoryVersion1             = "v1",
@@ -136,9 +139,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL0" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "initialiseCoordinates_Task" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesMetaData" },
-                { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "primaryTaskData" },
+                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesTaskCall" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
@@ -170,9 +172,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "collectCobbleStone_Task" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
-                { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "primaryTaskData" },
+                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneTaskCall" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },

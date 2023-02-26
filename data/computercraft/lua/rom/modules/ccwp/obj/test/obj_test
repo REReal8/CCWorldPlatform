@@ -9,6 +9,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
@@ -182,6 +183,10 @@ function TestObj:Test_AOSrv(...)
     assert(TestObj.IsOfType(self), "TestObj:Test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- create assignment arguments
+    local taskData = {
+        input = testArg,
+        selfObj = self,
+    }
     local metaData = {
         startTime = coreutils.UniversalTime(),
         location = {x= 0, y= 0, z= 1, dx=0, dy=1},
@@ -189,16 +194,11 @@ function TestObj:Test_AOSrv(...)
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskData = {
-        input = testArg,
-        selfObj = self,
-    }
 
     -- do assignment
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "role_test.Func2_Task",
-        taskData    = taskData,
+        taskCall    = TaskCall:new({ _moduleName = "role_test", _methodName = "Func2_Task", _data = taskData, }),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end

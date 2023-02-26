@@ -12,6 +12,7 @@ local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 
 local Inventory = require "obj_inventory"
 
@@ -246,16 +247,14 @@ function Chest:updateChestRecord_AOSrv(...)
     local projectData = {
         chest           = self:copy(),
 
-        task            = "role_chests_worker.FetchChestSlotsInventory_Task",
         metaData        = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
-        taskData        = taskData,
+        taskCall        = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "FetchChestSlotsInventory_Task", _data = taskData, }),
     }
     local projectDef = {
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                   , sourceStep = 0, sourceKeyDef = "task" },
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "taskData"               , sourceStep = 0, sourceKeyDef = "taskData" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
         },
         returnData  = {
@@ -306,16 +305,14 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
     local projectData = {
         chest           = self:copy(),
 
-        task            = "role_chests_worker.FetchItemsFromChestIntoTurtle_Task",
         metaData        = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
-        taskData        = taskData,
+        taskCall        = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "FetchItemsFromChestIntoTurtle_Task", _data = taskData, }),
     }
     local projectDef = {
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                   , sourceStep = 0, sourceKeyDef = "task" },
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "taskData"               , sourceStep = 0, sourceKeyDef = "taskData" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetItemsLocator_SSrv" }, stepDataDef = {
                 { keyDef = "turtleId"               , sourceStep = 1, sourceKeyDef = "turtleId" },
@@ -382,16 +379,14 @@ function Chest:putItemsFromTurtle_AOSrv(...)
     local projectData = {
         chest           = self:copy(),
 
-        task            = "role_chests_worker.PutItemsFromTurtleIntoChest_Task",
         metaData        = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
-        taskData        = taskData,
+        taskCall        = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "PutItemsFromTurtleIntoChest_Task", _data = taskData, }),
     }
     local projectDef = {
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                   , sourceStep = 0, sourceKeyDef = "task" },
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "taskData"               , sourceStep = 0, sourceKeyDef = "taskData" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
         },
         returnData  = {

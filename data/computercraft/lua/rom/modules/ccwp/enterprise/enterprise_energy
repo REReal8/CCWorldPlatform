@@ -7,6 +7,7 @@ local role_fuel_worker = require "role_fuel_worker"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 
 local enterprise_projects = require "enterprise_projects"
 
@@ -86,9 +87,8 @@ local function Refuel_ASrv(...)
                 { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "task"                       , sourceStep = 0, sourceKeyDef = "refuel_Task" },
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "refuelMetaData" },
-                { keyDef = "taskData"                   , sourceStep = 0, sourceKeyDef = "refuelTaskData" },
+                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "refuelTaskCall" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
@@ -106,9 +106,8 @@ local function Refuel_ASrv(...)
         turtleToRefuelLocator       = turtleToRefuelLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,
 
-        refuel_Task                 = "role_fuel_worker.Refuel_Task",
         refuelMetaData              = role_fuel_worker.Refuel_MetaData(refuelTaskData),
-        refuelTaskData              = refuelTaskData,
+        refuelTaskCall              = TaskCall:new({ _moduleName = "role_fuel_worker", _methodName = "Refuel_Task", _data = refuelTaskData, }),
 
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
