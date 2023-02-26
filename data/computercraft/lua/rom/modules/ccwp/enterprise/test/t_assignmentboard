@@ -4,6 +4,7 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
+local TaskCall = require "obj_task_call"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
@@ -263,6 +264,9 @@ function t_assignmentboard.T_DoAssignment_ASrv()
     corelog.WriteToLog("* enterprise_assignmentboard.DoAssignment_ASrv() tests")
 
     -- create assignment arguments
+    local taskData = {
+        arg1 = testValue
+    }
     local metaData = {
         startTime = coreutils.UniversalTime(),
         location = {x= 0, y= 0, z= 1, dx=0, dy=1},
@@ -270,9 +274,7 @@ function t_assignmentboard.T_DoAssignment_ASrv()
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskData = {
-        arg1 = testValue
-    }
+    local taskCall = TaskCall:new({ _moduleName = "role_test", _methodName = "Func1_Task", _data = taskData, })
     local callback = Callback:new({
         _moduleName     = "t_assignmentboard",
         _methodName     = "DoAssignment_ASrv_Callback",
@@ -280,12 +282,12 @@ function t_assignmentboard.T_DoAssignment_ASrv()
     })
     local assignmentServiceData = {
         metaData    = metaData,
-        task        = "role_test.Func1_Task",
-        taskData    = taskData,
+        taskCall    = taskCall,
     }
 
     -- test
-    enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    local result = enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    assert(result == true, "failed scheduling assignment")
 
     -- cleanup test
 end

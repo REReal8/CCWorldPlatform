@@ -52,6 +52,8 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
             taskData                - (table) data to supply to task function to be able to perform the task
         and return
             taskResult              - (table) with return data of the task function
+        Return value:
+                                    - (boolean) whether the assignment was scheduled successfully
 
         Async service return value (to Callback):
             task result             - (table) results of the task function
@@ -136,6 +138,9 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
 
     -- store assignment
     coredht.SaveData(assignment, db.dhtRoot, db.dhtList, assignmentId)
+
+    -- end
+    return true -- note: this implies scheduling the assignment was succesfull, it will be executed once it is pickedup by a turtle
 end
 
 function enterprise_assignmentboard.GetStatistics_Att()

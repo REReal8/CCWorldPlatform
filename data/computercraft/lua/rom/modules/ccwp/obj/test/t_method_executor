@@ -109,7 +109,8 @@ function T_MethodExecutor.T_DoASyncService()
     })
 
     -- test
-    MethodExecutor.DoASyncService(moduleName, serviceName, serviceData, callback)
+    local result = MethodExecutor.DoASyncService(moduleName, serviceName, serviceData, callback)
+    assert(result == true, "failed scheduling ASync Service")
 end
 
 function T_MethodExecutor.DoASyncService_Callback(callbackData, serviceResults)
@@ -142,7 +143,8 @@ function T_MethodExecutor.T_DoASyncObjService()
     })
 
     -- test
-    MethodExecutor.DoASyncObjService(className, objData, serviceName, serviceData, callback)
+    local result = MethodExecutor.DoASyncObjService(className, objData, serviceName, serviceData, callback)
+    assert(result == true, "failed scheduling ASync Obj Service")
 end
 
 function T_MethodExecutor.DoASyncObjService_Callback(callbackData, serviceResults)

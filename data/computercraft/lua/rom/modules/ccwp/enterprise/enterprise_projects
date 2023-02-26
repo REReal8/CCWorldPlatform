@@ -36,7 +36,7 @@ function enterprise_projects.StartProject_ASrv(...)
         This async public service starts a project.
 
         Return value:
-            nil
+                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                 - (table)
@@ -71,7 +71,7 @@ function enterprise_projects.StartProject_ASrv(...)
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 
     -- let's start
-    enterprise_projects.NextProjectStep({projectId = project.projectId}, projectData) -- the input projectData is interpreted as the result of virtual step 0
+    return enterprise_projects.NextProjectStep({projectId = project.projectId}, projectData) -- the input projectData is interpreted as the result of virtual step 0
 end
 
 function enterprise_projects.AreAllTrue_QSrv(serviceData)
@@ -254,11 +254,14 @@ local function EndProject(internalProjectData)
     corelog.WriteToProjectsLog("Calling callback function", project.projectId)
     local callback = Callback:new(project.callback)
     if not callback then corelog.Error("enterprise_projects.EndProject: Invalid callback for project "..project.projectId) return end
-    callback:call(projectResults)
+    local projectEndCallBackResult = callback:call(projectResults)
 
     -- forget about this project
     corelog.WriteToProjectsLog("Ended", project.projectId)
     coredht.SaveData(nil, db.dhtRoot, internalProjectData.projectId)
+
+    -- end
+    return projectEndCallBackResult
 end
 
 local function TerminateProject(internalProjectData)
@@ -268,7 +271,7 @@ local function TerminateProject(internalProjectData)
     corelog.WriteToProjectsLog("Warning!: Early Termination", project.projectId)
     corelog.Error("Early Termination of project "..project.projectId)
 
-    EndProject(internalProjectData)
+    return EndProject(internalProjectData)
 end
 
 local function GetStepData(project, stepDataDef)
@@ -312,7 +315,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     project.outputs[ previousStep ] = stepResults
 
     -- was this the last step?
-    if #project.projectDef.steps == previousStep then EndProject(internalProjectData) return nil end
+    if #project.projectDef.steps == previousStep then return EndProject(internalProjectData) end
 
     -- next step
     project.currentStep = previousStep + 1
@@ -354,7 +357,9 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." async module service", projectId)
-        MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback)
+        local scheduledCorrectly = MethodExecutor.DoASyncService(moduleName, serviceName, stepData, callback)
+        if scheduledCorrectly ~= true then corelog.Error("enterprise_projects.NextProjectStep: Failed scheduling ("..type(scheduledCorrectly)..") ASrv service "..moduleName.."."..serviceName.." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+        return scheduledCorrectly
     elseif stepType == "SSrv" then
         -- get & check input from description
         local checkSuccess, moduleName, serviceName = InputChecker.Check([[
@@ -370,7 +375,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         local results = MethodExecutor.DoSyncService(moduleName, serviceName, stepData)
 
         -- next step
-        enterprise_projects.NextProjectStep(internalProjectData, results)
+        return enterprise_projects.NextProjectStep(internalProjectData, results)
     elseif stepType == "AOSrv" then
         -- get & check input from description
         local checkSuccess, className, serviceName, objStep, objKeyDef = InputChecker.Check([[
@@ -400,7 +405,9 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." async obj service", projectId)
-        MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback)
+        local scheduledCorrectly = MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback)
+        if scheduledCorrectly ~= true then corelog.Error("enterprise_projects.NextProjectStep: Failed scheduling ("..type(scheduledCorrectly)..") AOSrv service "..className..":"..serviceName.." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+        return scheduledCorrectly
     elseif stepType == "SOSrv" then
         -- get & check input from description
         local checkSuccess, className, serviceName, objStep, objKeyDef = InputChecker.Check([[
@@ -426,7 +433,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         local results = MethodExecutor.DoSyncObjService(className, objData, serviceName, stepData)
 
         -- next step
-        enterprise_projects.NextProjectStep(internalProjectData, results)
+        return enterprise_projects.NextProjectStep(internalProjectData, results)
     else
         corelog.Error("enterprise_projects.NextProjectStep: Unkown stepType "..stepType.." for step "..currentStep) TerminateProject(internalProjectData) return nil
     end
