@@ -209,16 +209,16 @@ end
 function ExecuteObjTest(t)
 	-- forward call with options
 	local options	= {
-		{key = "r", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ModuleRegistry"}},
+		{key = "m", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ModuleRegistry"}},
 		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
 		{key = "d", desc = "CallDef", 			func = ExecuteObjTest, param = {filename = "T_CallDef"}},
 		{key = "c", desc = "Callback", 			func = ExecuteObjTest, param = {filename = "T_Callback"}},
 		{key = "t", desc = "TaskCall", 			func = ExecuteObjTest, param = {filename = "T_TaskCall"}},
 		{key = "e", desc = "MethodExecutor", 	func = ExecuteObjTest, param = {filename = "T_MethodExecutor"}},
-		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
-		{key = "l", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
-		{key = "i", desc = "Inventory",			func = ExecuteObjTest, param = {filename = "T_Inventory"}},
 		{key = "u", desc = "URL", 				func = ExecuteObjTest, param = {filename = "T_URL"}},
+		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
+		{key = "r", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
+		{key = "i", desc = "Inventory",			func = ExecuteObjTest, param = {filename = "T_Inventory"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "obj", options, ExecuteMObjTest)
