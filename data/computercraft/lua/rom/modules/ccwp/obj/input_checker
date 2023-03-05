@@ -95,7 +95,7 @@ function InputChecker.Check(description, ...)
                         end
                     end
                 end
-                if not correctArgumentType then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType) result = false end
+                if not correctArgumentType then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType.." (type="..type(argument)..")") result = false end
 
                 -- is deze gewenst om terug te geven?
                 if needed == '+' then table.insert(returns, argument) end
