@@ -1,7 +1,7 @@
 local corelog = {}
 local coreevent = require "coreevent"
 local coreassignment
-local coreutils
+local coreutils = require "coreutils"
 
 local db	= {
 	logfile			  = "/log/log.txt",
@@ -15,8 +15,6 @@ local monitorLeft	= nil
 local monitorRight	= nil
 
 function corelog.Init()
-	coreutils = coreutils or require "coreutils"
-
 	-- place markers in the logfile
 	corelog.WriteToLog("--- starting up ---", "overwrite")
 	corelog.WriteToAssignmentLog("--- starting up assignments ---", nil, "overwrite")

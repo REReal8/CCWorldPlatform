@@ -1,6 +1,6 @@
 local coreutils = {}
 local coreevent = require "coreevent"
-local corelog = require "corelog"
+local corelog
 
 local db	= {
 	dbFilename  	= "/db/coreutils.lua",
@@ -10,6 +10,8 @@ local db	= {
 
 -- laatste serial uit de file lezen?
 function coreutils.Init()
+	corelog = corelog or require "corelog"
+
 	-- read from file
 	local dbFile = coreutils.ReadTableFromFile(db.dbFilename)
 
