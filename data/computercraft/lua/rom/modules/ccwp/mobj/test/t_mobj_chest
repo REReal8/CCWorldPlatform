@@ -5,6 +5,7 @@ local coremove = require "coremove"
 
 local role_fuel_worker = require "role_fuel_worker"
 
+local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 
 local Chest = require "mobj_chest"
@@ -20,7 +21,7 @@ function T_Chest.T_All()
     T_Chest.T_can_ProvideItems_QSrv()
 end
 
-local location1 = {x= 0, y= 0, z= 1, dx=0, dy=1}
+local location1 = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
 local accessDirection1 = "top"
 local inventory1 = Inventory:new() -- ToDo: add elements
 
@@ -113,7 +114,7 @@ function T_Chest.T_isSame()
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different _location
-    chest._location = {x= 100, y= 0, z= 100, dx=0, dy=1}
+    chest._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
     isSame = chest1:isSame(chest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
@@ -156,7 +157,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SSrv()
         ["minecraft:birch_log"]  = 5,
     }
     local storageLocator = enterprise_turtle.GetHostLocator_Att()
-    local storageLocation = coremove.GetLocation()
+    local storageLocation = Location:new(coremove.GetLocation())
 
     -- test
     local needsTo_Provide = chest:needsTo_ProvideItemsTo_SSrv({

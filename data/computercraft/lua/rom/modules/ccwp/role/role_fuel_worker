@@ -1,8 +1,10 @@
 local role_fuel_worker = {}
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coremove = require "coremove"
 local coreinventory = require "coreinventory"
+
+local Location = require "obj_location"
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -104,10 +106,10 @@ end
 
 function role_fuel_worker.NeededFuelToFrom(endLocation, startLocation)
     -- check input
-    if type(endLocation) ~= "table" then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return nil end
-    if type(startLocation) ~= "table" then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return nil end
+    if not Location.IsOfType(endLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return 9999 end
+    if not Location.IsOfType(startLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return 9999 end
 
-    return coremove.BlockDistance(startLocation, endLocation)
+    return startLocation:blockDistanceTo(endLocation)
 end
 
 --    _                 _    __                  _   _

@@ -22,7 +22,7 @@ local db = {
 --   | |
 --   |_|
 
--- print(textutils.serialize(enterprise_storage.StoreItems({itemList={{itemName="minecraft:charcoal", itemCount=12, stackSize="64"}}, location={x=0, y=0, z= 1, dx=0, dy=1}})))
+-- print(textutils.serialize(enterprise_storage.StoreItems({itemList={{itemName="minecraft:charcoal", itemCount=12, stackSize="64"}}, location={_x=0, _y=0, _z= 1, _dx=0, _dy=1}})))
 function StoreItems(argumentTable) -- itemList, location
 --[[
     This public function is for storing items. It does not care if there is space, all items are accepted
@@ -296,7 +296,7 @@ function enterprise_storage.BuildNewSite_ASrv(...)
     else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return Callback.ErrorCall(callback) end
 end
 
--- enterprise_storage.StartNewSite_SSrv({location={x=12, y=12, z= 1, dx=0, dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
+-- enterprise_storage.StartNewSite_SSrv({location={_x=12, _y=12, _z= 1, _dx=0, _dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
 function enterprise_storage.StartNewSite_SSrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type = InputChecker.Check([[

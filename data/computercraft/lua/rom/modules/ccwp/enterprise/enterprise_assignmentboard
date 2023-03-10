@@ -2,10 +2,10 @@ local enterprise_assignmentboard = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+local Location = require "obj_location"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -94,18 +94,18 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     local location = metaData.location
     if location then
         -- min
-        local minLocation = statistics.minLocation
-        local newMinLocation = coremove.MinLocation(minLocation, location)
-        if not coremove.IsSameLocation(minLocation, newMinLocation) then
+        local minLocation = Location:new(statistics.minLocation)
+        local newMinLocation = minLocation:minLocation(location)
+        if not minLocation:isSame(newMinLocation) then
             -- set new value
             statistics.minLocation = newMinLocation
             statisticsChanged = true
         end
 
         -- max
-        local maxLocation = statistics.maxLocation
-        local newMaxLocation = coremove.MaxLocation(maxLocation, location)
-        if not coremove.IsSameLocation(maxLocation, newMaxLocation) then
+        local maxLocation = Location:new(statistics.maxLocation)
+        local newMaxLocation = maxLocation:maxLocation(location)
+        if not maxLocation:isSame(newMaxLocation) then
             -- set new value
             statistics.maxLocation = newMaxLocation
             statisticsChanged = true
@@ -312,8 +312,8 @@ end
 local function ResetStatistics()
     coredht.SaveData({
         maxFuelNeed_Assignment  = 0,
-        minLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
-        maxLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1},
+        minLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
+        maxLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
         maxFuelNeed_Travel      = 0,
     }, db.dhtRoot, db.dhtStatistics)
 end
@@ -416,8 +416,9 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
         -- check enough fuel for assignment
         local fuelNeeded = metaData.fuelNeeded
         if metaData.location then -- optionally include traveling to assignment location from current location
+            local metaDataLocation = Location:new(metaData.location) -- ToDo: consider doing elsewhere
             local location = turtleResume.location
-            fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaData.location, location)
+            fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaDataLocation, location)
         end
         if fuelNeeded > 0 then
             -- check fuel available

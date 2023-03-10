@@ -1,10 +1,12 @@
 local role_builder = {}
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
+local Location = require "obj_location"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -20,7 +22,7 @@ local role_fuel_worker = require "role_fuel_worker"
 function role_builder.BuildBlueprint_MetaData(buildData)
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(buildData.blueprintStartpoint),
+        location = buildData.blueprintStartpoint:copy(),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0,
@@ -28,14 +30,14 @@ function role_builder.BuildBlueprint_MetaData(buildData)
     }
 
     -- loop on layers
-    local lastLocation = coremove.CopyLocation(buildData.blueprintStartpoint)
+    local lastLocation = buildData.blueprintStartpoint:copy()
     for i, buildLayer in ipairs(buildData.blueprint.layerList) do
         -- determine buildData for this layer
         local layerBuildData = {
-            startpoint              = coremove.GetRelativeLocation(buildLayer.startpoint,
-                                                                buildData.blueprintStartpoint.x,
-                                                                buildData.blueprintStartpoint.y,
-                                                                buildData.blueprintStartpoint.z),
+            startpoint              = buildLayer.startpoint:getRelativeLocation(
+                                                                buildData.blueprintStartpoint:getX(),
+                                                                buildData.blueprintStartpoint:getY(),
+                                                                buildData.blueprintStartpoint:getZ()),
             buildFromAbove          = buildLayer.buildFromAbove,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
@@ -46,7 +48,7 @@ function role_builder.BuildBlueprint_MetaData(buildData)
 
         -- determine startLocation (correcting for buildFromAbove)
         local deltaZ = 1 if not layerBuildData.buildFromAbove then deltaZ = -1 end
-        local startLocation = coremove.GetRelativeLocation(layerBuildData.startpoint, 0, 0, deltaZ)
+        local startLocation = layerBuildData.startpoint:getRelativeLocation(0, 0, deltaZ)
 
         -- update blueprint metadata
         metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
@@ -55,7 +57,7 @@ function role_builder.BuildBlueprint_MetaData(buildData)
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
         end
 
-        lastLocation = coremove.GetRelativeLocation(buildLayer.startpoint, layerBuildData.layer:getNColumns(), layerBuildData.layer:getNRows(), deltaZ)
+        lastLocation = buildLayer.startpoint:getRelativeLocation(layerBuildData.layer:getNColumns(), layerBuildData.layer:getNRows(), deltaZ)
     end
 
     -- update metadata with escapeSequence (if present)
@@ -78,7 +80,7 @@ function role_builder.BuildBlueprint_Task(...)
 
         Parameters:
             buildData                   - (table) data about the blueprint
-                blueprintStartpoint     + (table) top lower left coordinate to start building the blueprint
+                blueprintStartpoint     + (Location) top lower left coordinate to start building the blueprint
                 blueprint               - (table) blueprint to build
                     layerList           + (table) layer to build
                     escapeSequence      + (table) escapeSequence of blueprint
@@ -88,11 +90,12 @@ function role_builder.BuildBlueprint_Task(...)
     -- loop on layers
     for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
+        local startpoint = Location:new(buildLayer.startpoint)
         local layerBuildData = {
-            startpoint              = coremove.GetRelativeLocation(buildLayer.startpoint,
-                                                                   blueprintStartpoint.x,
-                                                                   blueprintStartpoint.y,
-                                                                   blueprintStartpoint.z),
+            startpoint              = startpoint:getRelativeLocation(
+                                                                   blueprintStartpoint:getX(),
+                                                                   blueprintStartpoint:getY(),
+                                                                   blueprintStartpoint:getZ()),
             buildFromAbove          = buildLayer.buildFromAbove,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
@@ -108,10 +111,11 @@ function role_builder.BuildBlueprint_Task(...)
 
     -- perform escape sequence
     for i, escapeLocation in ipairs(escapeSequence) do
-        coremove.GoTo(coremove.GetRelativeLocation(blueprintStartpoint,
-                                                   escapeLocation.x,
-                                                   escapeLocation.y,
-                                                   escapeLocation.z))
+        escapeLocation = Location:new(escapeLocation)
+        coremove.GoTo(blueprintStartpoint:getRelativeLocation(
+                                                   escapeLocation:getX(),
+                                                   escapeLocation:getY(),
+                                                   escapeLocation:getZ()))
     end
 
     return {success = true}
@@ -127,7 +131,7 @@ function role_builder.BuildLayer_MetaData(...)
 
         Parameters:
             buildData                   - (table) data about the layer
-                startpoint              + (table) lower left coordinate to start building the layer
+                startpoint              + (Location) lower left coordinate to start building the layer
                 buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
                 replacePresentObjects   - (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
@@ -140,7 +144,7 @@ function role_builder.BuildLayer_MetaData(...)
 
     -- determine startLocation (correcting for buildFromAbove)
     local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
-    local startLocation = coremove.GetRelativeLocation(startpoint, 0, 0, deltaZ)
+    local startLocation = startpoint:getRelativeLocation(0, 0, deltaZ)
 
     -- return metadata
     return {
@@ -163,7 +167,7 @@ function role_builder.BuildLayer_Task(...)
 
         Parameters:
             buildData                   - (table) data about the layer
-                startpoint              + (table) lower left coordinate to start building the layer
+                startpoint              + (Location) lower left coordinate to start building the layer
                 buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
                 replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
@@ -193,7 +197,7 @@ function role_builder.BuildLayer_Task(...)
     end
 
     -- go to starting location
-    coremove.GoTo(coremove.GetRelativeLocation(startpoint, 0, 0, deltaZ), false)
+    coremove.GoTo(startpoint:getRelativeLocation(0, 0, deltaZ), false)
 
     -- walk along columns
     for col=1, layer:getNColumns() do
@@ -208,7 +212,7 @@ function role_builder.BuildLayer_Task(...)
             -- go to location
             local x = col - 1
             local y = row - 1
-            coremove.MoveTo(coremove.GetRelativeLocation(startpoint, x, y, deltaZ), true)
+            coremove.MoveTo(startpoint:getRelativeLocation(x, y, deltaZ), true)
 
             -- get block
             local block = layer:getBlock(col, row)
@@ -219,7 +223,7 @@ function role_builder.BuildLayer_Task(...)
                 -- optionally turn in specific direction
                 if block:getDx() ~= nil or block:getDy() ~= nil then
                     -- turn in the right direction
-                    coremove.TurnTo({dx = block:getDx(), dy = block:getDy()})
+                    coremove.TurnTo({_dx = block:getDx(), _dy = block:getDy()})
                 end
 
                 -- check current block present

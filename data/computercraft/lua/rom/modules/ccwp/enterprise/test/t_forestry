@@ -1,9 +1,10 @@
 local t_forestry = {}
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
+
+local Location = require "obj_location"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 
@@ -54,7 +55,7 @@ local levelm1 = -1
 local level0 = 0
 local level1 = 1
 local level2 = 2
-local location = {x= 0, y= 0, z= 1, dx=0, dy=1}
+local location = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
 local nTrees1 = 1
 local nTrees2 = 2
 local nTrees3 = 3
@@ -78,7 +79,7 @@ function AddNewSite_ASrv(level, nTrees)
 
     -- test
     enterprise_forestry.AddNewSite_ASrv({
-        baseLocation            = coremove.CopyLocation(location),
+        baseLocation            = location:copy(),
         forestLevel             = level,
         nTrees                  = nTrees,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
@@ -146,7 +147,7 @@ function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted, extr
     -- prepare test
     corelog.WriteToLog("# UpgradeSite_ASrv (L"..levelStart..",trees"..treesStart..") => (L"..levelWanted..",trees"..treesWanted..") test")
     enterprise_forestry.AddNewSite_ASrv({
-        baseLocation            = coremove.CopyLocation(location),
+        baseLocation            = location:copy(),
         forestLevel             = levelStart,
         nTrees                  = treesStart,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),

@@ -1,9 +1,10 @@
 local t_chests = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
+
+local Location = require "obj_location"
 
 local T_Chest = require "test.t_mobj_chest"
 
@@ -16,8 +17,8 @@ function t_chests.T_All()
     t_chests.T_SaveGetAndRemoveChest()
 end
 
-local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
-local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
+local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local testStartLocation2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
 local multipleStacksItemsQuery = {
     ["minecraft:birch_log"] = 80,
     ["minecraft:torch"]     = 1,
@@ -76,7 +77,7 @@ function t_chests.T_RegisterAndUpdateChest()
 
     -- create project
     local projectData = {
-        chestLocation        = coremove.GetRelativeLocation(testStartLocation2, 2, 5, 0),
+        chestLocation        = testStartLocation2:getRelativeLocation(2, 5, 0),
         chestAccessDirection = "back"
     }
     local projectServiceData = {
@@ -128,7 +129,7 @@ function t_chests.T_RegisterChest1()
     corelog.WriteToLog("* Test RegisterChest_SSrv 1:")
     -- create chest data
     local chestData  = {
-        location        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
+        location        = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
     }
 

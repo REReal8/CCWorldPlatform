@@ -5,6 +5,8 @@ local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 
+local Location = require "obj_location"
+
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_factory = require "enterprise_factory"
 
@@ -12,9 +14,9 @@ function t_factory.T_All()
     t_factory.T_GetFuelNeed_Production_Att()
 end
 
-local baseLocationV0 = {x=6, y= 0, z= 1, dx=0, dy=1}
-local baseLocationV1 = {x=12, y= 0, z= 1, dx=0, dy=1}
-local baseLocationV2 = baseLocationV1
+local baseLocationV0 = Location:new({_x=6, _y= 0, _z= 1, _dx=0, _dy=1})
+local baseLocationV1 = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
+local baseLocationV2 = baseLocationV1:copy()
 
 local callback = Callback:new({
     _moduleName     = "t_main",
@@ -50,7 +52,7 @@ function t_factory.T_GetFuelNeed_Production_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_factory.GetFuelNeed_Production_Att() tests")
     local items = { ["minecraft:birch_planks"] = 4 }
-    local location = coremove.GetLocation()
+    local location = Location:new(coremove.GetLocation())
     t_factory.StartNewSite(location)
 
     -- test

@@ -33,7 +33,7 @@ function role_alchemist.Craft_MetaData(craftData)
     -- return metadata
     return {
         startTime   = coreutils.UniversalTime(),
-        location    = coremove.CopyLocation(workingLocation),
+        location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
         fuelNeeded  = fuelNeeded,
@@ -196,7 +196,7 @@ function role_alchemist.Craft_Task(craftData)
                         itemCount       - (number) number it items to put in slot
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) of items to produce
-                workingLocation         - (table) world location to do the crafting
+                workingLocation         - (Location) world location to do the crafting
     ]]
 
     -- check input
@@ -264,7 +264,7 @@ function role_alchemist.Smelt_MetaData(smeltData)
     -- return metadata
     return {
         startTime   = coreutils.UniversalTime(),
-        location    = coremove.CopyLocation(workingLocation),
+        location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
         fuelNeeded  = fuelNeeded,
@@ -311,7 +311,7 @@ function role_alchemist.Smelt_Task(smeltData)
                     itemName            - (string) name of smelting ingredient to use
                     yield               - (number) of items produced by recipe
                 productItemCount        - (number) of items to produce
-                workingLocation         - (table) world location to do the smelting (in front of the furnance)
+                workingLocation         - (Location) world location to do the smelting (in front of the furnance)
                 fuelItemName            - (string) name of fuel item to use
                 fuelItemCount           - (number) of fuel items to use
     ]]
@@ -384,7 +384,7 @@ function role_alchemist.Pickup_MetaData(pickupData)
     -- return metadata
     return {
         startTime   = coreutils.UniversalTime(),
-        location    = coremove.CopyLocation(workingLocation),
+        location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
         fuelNeeded  = fuelNeeded,
@@ -407,7 +407,7 @@ function role_alchemist.Pickup_Task(pickupData)
             smeltData                   - (table) data about the smelting task
                 productItemName         - (string) name of item to produce
                 productItemCount        - (number) of items to produce
-                workingLocation         - (table) world location to do the smelting (in front of the furnance)
+                workingLocation         - (Location) world location to do the smelting (in front of the furnance)
     ]]
 
     -- check input

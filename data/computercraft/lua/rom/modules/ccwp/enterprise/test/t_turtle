@@ -5,6 +5,8 @@ local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 
+local Location = require "obj_location"
+
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
@@ -65,7 +67,7 @@ function t_turtle.T_GetFuelLevels_Att()
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
-    local location = coremove.GetLocation()
+    local location = Location:new(coremove.GetLocation())
     t_factory.StartNewSite(location)
 
     local energyParameters = enterprise_energy.GetParameters()

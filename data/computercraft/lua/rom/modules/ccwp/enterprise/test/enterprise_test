@@ -7,6 +7,8 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 
+local Location = require "obj_location"
+
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 
 --[[
@@ -68,7 +70,7 @@ function enterprise_test.Test_ASrv(...)
     }
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = {x= 0, y= 0, z= 1, dx=0, dy=1},
+        location = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1}),
         needTool = false,
         needTurtle = false,
         fuelNeeded = 0

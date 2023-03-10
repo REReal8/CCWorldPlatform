@@ -7,6 +7,7 @@ local coreinventory = require "coreinventory"
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
+local Location = require "obj_location"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -73,7 +74,7 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     if turtle then
         turtleResume = {
             turtleId        = turtleId,
-            location        = coremove.GetLocation(),
+            location        = Location:new(coremove.GetLocation()),
             fuelLevel       = fuelLevel,
             axePresent      = coreinventory.Equip("minecraft:diamond_pickaxe"), -- ToDo: consider only checking not actually equiping
             inventoryItems  = coreinventory.GetInventoryDetail().items,
@@ -363,7 +364,7 @@ function enterprise_turtle.GetItemsLocations_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                locations           - (table) with locations of the different items
+                locations           - (table) with Location's of the different items
 
         Parameters:
             serviceData             - (table) data about this service
@@ -381,7 +382,7 @@ function enterprise_turtle.GetItemsLocations_SSrv(...)
     -- end
     return {
         success     = true,
-        locations   = { coremove.CopyLocation(location) },
+        locations   = { location:copy() },
     }
 end
 
@@ -393,7 +394,7 @@ function enterprise_turtle.GetStorageLocation_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                location            - (table) location of the Storage
+                location            - (Location) location of the Storage
 
         Parameters:
             serviceData             - (table) data about this service
@@ -412,12 +413,12 @@ function enterprise_turtle.GetStorageLocation_SSrv(...)
     if storageLocatorTurtleId and currentTurtleId ~= storageLocatorTurtleId then corelog.Error("enterprise_turtle.GetStorageLocation_SSrv: Getting Storage location in one (id="..storageLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
-    local location = coremove.GetLocation()
+    local location = Location:new(coremove.GetLocation())
 
     -- end
     return {
         success     = true,
-        location    = coremove.CopyLocation(location),
+        location    = location:copy(),
     }
 end
 

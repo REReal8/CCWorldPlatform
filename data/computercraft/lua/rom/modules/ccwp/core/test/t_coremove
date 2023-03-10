@@ -5,45 +5,45 @@ local coremove = require "coremove"
 
 function t_coremove.T_GoHome()
     coremove.GoTo({
-        x	= 0,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
+        _x	= 0,
+        _y	= 0,
+        _z	= 1,
+        _dx	= 0,
+        _dy	= 1,
     })
 end
 
 function t_coremove.T_GoToLeftHome()
     coremove.GoTo({
-        x	= -24,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
+        _x  = -24,
+        _y	= 0,
+        _z	= 1,
+        _dx	= 0,
+        _dy	= 1,
     })
 end
 
 function t_coremove.T_GoToRightHome()
     coremove.GoTo({
-        x	= 24,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
+        _x	= 24,
+        _y	= 0,
+        _z	= 1,
+        _dx	= 0,
+        _dy	= 1,
     })
 end
 
 function t_coremove.T_GoStart()
-    coremove.GoTo({x= 3, y= 2, z= 1, dx=0, dy=1})
+    coremove.GoTo({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
 end
 
 function t_coremove.T_Reset()
     coremove.SetLocation({
-        x	= 0,
-        y	= 0,
-        z	= 1,
-        dx	= 0,
-        dy	= 1,
+        _x	= 0,
+        _y	= 0,
+        _z	= 1,
+        _dx	= 0,
+        _dy	= 1,
     })
 end
 

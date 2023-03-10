@@ -7,7 +7,7 @@ local coreinventory = require "coreinventory"
 function role_forester.PlantFirstSapling_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.startLocation),
+        location = taskData.startLocation:copy(),
         needTool = false,
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition the settler starts without fuel
@@ -84,7 +84,7 @@ function role_forester.HarvestForest_MetaData(taskData)
     -- end
     return {
         startTime   = coreutils.UniversalTime(),
-        location    = coremove.CopyLocation(firstTreeLocation),
+        location    = firstTreeLocation:copy(),
         needTool    = true,
         needTurtle  = true,
         fuelNeeded  = fuelNeed,

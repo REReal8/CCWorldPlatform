@@ -2,7 +2,6 @@ local enterprise_chests = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
@@ -66,7 +65,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
 
         Parameters:
             chestData               - (table) data to the chest
-                location            + (table) location of the chest
+                location            + (Location) location of the chest
                 accessDirection     + (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid input") return {success = false} end
@@ -75,7 +74,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
     local chest = Chest:new({
         _id             = coreutils.NewId(),
 
-        _location       = coremove.CopyLocation(location),
+        _location       = location:copy(),
         _accessDirection= accessDirection,
 
         _inventory      = Inventory:new(), -- assumed to be empty
@@ -380,7 +379,7 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                locations           - (table) with locations of the different items
+                locations           - (table) with Location's of the different items
 
         Parameters:
             serviceData             - (table) data about this service
@@ -400,7 +399,7 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
     -- end
     return {
         success     = true,
-        locations   = { coremove.CopyLocation(location) },
+        locations   = { location:copy() },
     }
 end
 
@@ -413,7 +412,7 @@ function enterprise_chests.GetStorageLocation_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                location            - (table) location of the Storage
+                location            - (Location) location of the Storage
 
         Parameters:
             serviceData             - (table) data about this service
@@ -432,7 +431,7 @@ function enterprise_chests.GetStorageLocation_SSrv(...)
     -- end
     return {
         success     = true,
-        location    = coremove.CopyLocation(location),
+        location    = location:copy(),
     }
 end
 

@@ -3,12 +3,13 @@ local enterprise_factory_site = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local URL = require "obj_url"
+local Location = require "obj_location"
+
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -61,7 +62,7 @@ function enterprise_factory_site.StartNewSite(...)
         Parameters:
             siteStartData           - (table) data about the site to start,
                 version             + (string) version string of the site
-                baseLocation        + (table) world location of the base (lower left corner) of this site
+                baseLocation        + (Location) world location of the base (lower left corner) of this site
                 inputLocators       + (table) with inputLocator's of this site
                 outputLocators      + (table) with outputLocator's of this site
                 craftingSpots       + (table) craftingSpot's of this site
@@ -75,7 +76,7 @@ function enterprise_factory_site.StartNewSite(...)
         siteId          = coreutils.NewId(), -- ToDo consider using an internal (to the factory) counter. This might make use in an URL easier.
 
         baseLocation    = baseLocation,
---        entryLocation   = coremove.GetRelativeLocation(siteData.location, 3, 3, 1), -- ToDo: consider adding and using (before moving to workingLocation)
+--        entryLocation   = siteData.location:getRelativeLocation(3, 3, 1), -- ToDo: consider adding and using (before moving to workingLocation)
 
         inputLocators   = inputLocators,
         outputLocators  = outputLocators,
@@ -102,8 +103,9 @@ local function FindSiteByLocation(baseLocation)
 
     -- loop on sites
     for k, site in pairs(sites) do
+        local siteBaseLocation = Location:new(site.baseLocation)
         -- is this the one?
-        if coremove.IsSameLocation(site.baseLocation, baseLocation) then
+        if siteBaseLocation:isSame(baseLocation) then
             return site
         end
     end
@@ -128,7 +130,7 @@ function enterprise_factory_site.StopSite_ASrv(...)
 
         Parameters:
             serviceData         - (table) data about the site
-                baseLocation    + (table) world location of the base (lower left corner) of the site
+                baseLocation    + (Location) world location of the base (lower left corner) of the site
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory_site.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -167,6 +169,21 @@ local function GetAvailableLocator(locators)
     return nil
 end
 
+local function ProductionSpot_New(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a ProductionSpot from table.
+
+        Parameters:
+            o						+ (table, {}) table with object fields
+                location		    - (Location) world location of spot
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
+
+    -- end
+    return o
+end
+
 local function GetAvailableCraftSpot(site)
     -- check input
     if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid site") return nil end
@@ -176,7 +193,7 @@ local function GetAvailableCraftSpot(site)
         -- ToDo: consider checking availability
 
         -- take first
-        return spot
+        return ProductionSpot_New(spot)
     end
 
     -- end
@@ -192,11 +209,40 @@ local function GetAvailableSmeltSpot(site)
         -- ToDo: consider checking availability
 
         -- take first
-        return spot
+        return ProductionSpot_New(spot)
     end
 
     -- end
     return nil
+end
+
+local function ProductionSpot_HasFieldsOfType(o)
+    -- check
+    if type(o) ~= "table" then return false end
+    if not Location.IsOfType(o.location) then return false end
+
+    -- end
+    return true
+end
+
+local function ProductionSpot_IsOfType(o)
+    -- check
+    local isOfType = ProductionSpot_HasFieldsOfType(o) -- and ProductionSpot_HasMethodsOfType(o)
+
+    -- end
+    return isOfType
+end
+
+function enterprise_factory_site.ProductionSpot_Copy(o)
+    -- check input
+    if not ProductionSpot_IsOfType(o) then corelog.Error("ProductionSpot:copy: Invalid input") return nil end
+
+    -- copy
+    local copy = {
+        location = o.location:copy(),
+    }
+
+    return copy
 end
 
 function enterprise_factory_site.GetAvailableSiteData(...)
@@ -248,7 +294,7 @@ function enterprise_factory_site.GetAvailableSiteData(...)
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = coreutils.DeepCopy(craftSpot),
+                            productionSpot      = enterprise_factory_site.ProductionSpot_Copy(craftSpot),
                             productionMethod    = "craft",
                             productionRecipe    = coreutils.DeepCopy(craftRecipe),
                         })
@@ -264,7 +310,7 @@ function enterprise_factory_site.GetAvailableSiteData(...)
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = coreutils.DeepCopy(smeltSpot),
+                            productionSpot      = enterprise_factory_site.ProductionSpot_Copy(smeltSpot),
                             productionMethod    = "smelt",
                             productionRecipe    = coreutils.DeepCopy(smeltRecipe),
                         })
@@ -324,7 +370,7 @@ function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
                 localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
                 productionMethod        + (string) production method to use
                 productionSpot          - (table) production spot
-                    location            + (table) location of production spot
+                    location            + (Location) location of production spot
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
@@ -531,7 +577,7 @@ end
 function enterprise_factory_site.GetV0SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
     }
 
     -- construct blueprint
@@ -543,7 +589,7 @@ function enterprise_factory_site.GetV0SiteBuildData(serviceData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
+        blueprintStartpoint = serviceData.baseLocation:copy(),
         blueprint = blueprint
     }
 
@@ -553,7 +599,7 @@ end
 function enterprise_factory_site.GetV0SiteDismantleBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z= -1}, buildFromAbove = true, layer = ShaftRestore_layer()},
+        { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = ShaftRestore_layer()},
     }
 
     -- construct blueprint
@@ -565,7 +611,7 @@ function enterprise_factory_site.GetV0SiteDismantleBuildData(serviceData)
 
     -- construct build data
     local siteDismantleBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
+        blueprintStartpoint = serviceData.baseLocation:copy(),
         blueprint = blueprint
     }
 
@@ -580,7 +626,7 @@ function enterprise_factory_site.GetV0SiteStartData(serviceData)
     local startData = {
         version = serviceData.siteVersion,
 
-        baseLocation = coremove.CopyLocation(baseLocation),
+        baseLocation = baseLocation:copy(),
 
         inputLocators = {
             enterprise_turtle.GetHostLocator_Att(),
@@ -590,7 +636,7 @@ function enterprise_factory_site.GetV0SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 0, 0, 0) },
+            { location = baseLocation:getRelativeLocation(0, 0, 0) },
         },
         smeltingSpots = {},
     }
@@ -632,23 +678,23 @@ end
 function enterprise_factory_site.GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, layer = Shaft_layer()},
-        { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()},
-        { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, layer = FurnanceL1_layer()},
-        { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -2}), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()},
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -3}), buildFromAbove = false, layer = FurnanceL1_layer()},
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -5}), buildFromAbove = true, layer = Shaft_layer()},
     }
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
-            { x= 3, y= 3, z=  1},
+            Location:new({ _x= 3, _y= 3, _z=  1}),
         }
     }
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
+        blueprintStartpoint = serviceData.baseLocation:copy(),
         blueprint = blueprint
     }
 
@@ -663,7 +709,7 @@ function enterprise_factory_site.GetV1SiteStartData(serviceData)
     local startData = {
         version = serviceData.siteVersion,
 
-        baseLocation = coremove.CopyLocation(baseLocation),
+        baseLocation = baseLocation:copy(),
 
         inputLocators = {
             enterprise_turtle.GetHostLocator_Att(),
@@ -673,10 +719,10 @@ function enterprise_factory_site.GetV1SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -4) },
+            { location = baseLocation:getRelativeLocation(3, 3, -4) },
         },
         smeltingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -3) },
+            { location = baseLocation:getRelativeLocation(3, 3, -3) },
         },
     }
 
@@ -725,26 +771,26 @@ function enterprise_factory_site.GetV2SiteBuildData(serviceData)
 
     -- construct layer list
     local layerList = {
-        { startpoint = { x= 0, y= 0, z= 0}, buildFromAbove = true, layer = TopLayerL2_layer()},
+        { startpoint = Location:new({ _x= 0, _y= 0, _z= 0}), buildFromAbove = true, layer = TopLayerL2_layer()},
     }
     if not onlyUpgrade then
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = true, layer = Shaft_layer()})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -2}, buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
-        table.insert(layerList, { startpoint = { x= 3, y= 3, z= -3}, buildFromAbove = false, layer = FurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -2}), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -3}), buildFromAbove = false, layer = FurnanceL1_layer()})
     end
-    table.insert(layerList, { startpoint = { x= 3, y= 3, z= -5}, buildFromAbove = true, layer = StorageChestL2_layer()})
+    table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -5}), buildFromAbove = true, layer = StorageChestL2_layer()})
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
-            { x= 3, y= 3, z= 1},
+            Location:new({ _x= 3, _y= 3, _z= 1}),
         }
     }
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = coremove.CopyLocation(serviceData.baseLocation),
+        blueprintStartpoint = serviceData.baseLocation:copy(),
         blueprint = blueprint
     }
 
@@ -757,13 +803,13 @@ function enterprise_factory_site.GetV2SiteStartData(serviceData)
 
     -- register input chest
     local inputChestLocator = enterprise_chests.RegisterChest_SSrv({
-        location        = coremove.GetRelativeLocation(baseLocation, 2, 5, 0),
+        location        = baseLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
     }).chestLocator
 
     -- register output chest
     local outputChestLocator = enterprise_chests.RegisterChest_SSrv({
-        location        = coremove.GetRelativeLocation(baseLocation, 4, 5, 0),
+        location        = baseLocation:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
     }).chestLocator
 
@@ -781,10 +827,10 @@ function enterprise_factory_site.GetV2SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -4) },
+            { location = baseLocation:getRelativeLocation(3, 3, -4) },
         },
         smeltingSpots = {
-            { location = coremove.GetRelativeLocation(baseLocation, 3, 3, -3) },
+            { location = baseLocation:getRelativeLocation(3, 3, -3) },
         },
     }
 
@@ -793,7 +839,7 @@ end
 
 function enterprise_factory_site.CraftItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleInputItemsLocator, productionLocation, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async sewrvice should craft items at the productionSpot.
 
         Return value:
@@ -807,7 +853,8 @@ function enterprise_factory_site.CraftItem_ASrv(...)
         Parameters:
             serviceData                 - (table) data for the service
                 turtleInputItemsLocator + (URL) locating the production ingredients in the turtle that should do the crafting
-                productionSpot          + (table) production spot
+                productionSpot          - (table) production spot
+                    location            + (Location) production location
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) crafting recipe
@@ -816,17 +863,13 @@ function enterprise_factory_site.CraftItem_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get productionLocation
-    local productionLocation = productionSpot.location
-    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return Callback.ErrorCall(callback) end
-
     -- gather assignment data
     local craftData = {
         productItemName = productItemName,
         productItemCount= productItemCount,
 
         recipe          = productionRecipe,
-        workingLocation = coremove.CopyLocation(productionLocation),
+        workingLocation = productionLocation:copy(),
 
         priorityKey     = assignmentsPriorityKey,
     }
@@ -845,7 +888,7 @@ end
 
 function enterprise_factory_site.SmeltItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleInputItemsLocator, productionLocation, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should smelt items at the productionSpot.
 
         Return value:
@@ -859,7 +902,8 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
         Parameters:
             serviceData                 - (table) data for the service
                 turtleInputItemsLocator + (URL) locating the production ingredients in the turtle that should do the crafting
-                productionSpot          + (table) production spot
+                productionSpot          - (table) production spot
+                    location            + (Location) production location
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) smelting recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -867,16 +911,12 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get productionLocation
-    local productionLocation = productionSpot.location
-    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid productionLocation") return Callback.ErrorCall(callback) end
-
     -- gather assignment data
     local smeltData = {
         productItemCount= productItemCount,
         recipe          = productionRecipe,
 
-        workingLocation = coremove.CopyLocation(productionLocation),
+        workingLocation = productionLocation:copy(),
 
         -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         fuelItemName    = "minecraft:birch_planks",
@@ -899,7 +939,7 @@ end
 
 function enterprise_factory_site.Pickup_ASrv(...)
     -- get & check input from description
-    local checkSuccess, pickUpTime, productionSpot, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, pickUpTime, productionLocation, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should pickup the results from a previous smelt step.
 
         Return value:
@@ -913,7 +953,8 @@ function enterprise_factory_site.Pickup_ASrv(...)
         Parameters:
             serviceData                 - (table) data for the service
                 pickUpTime              + (number) the time after which the pickup should be done
-                productionSpot          + (table) production spot
+                productionSpot          - (table) production spot
+                    location            + (Location) production location
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -921,16 +962,12 @@ function enterprise_factory_site.Pickup_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get productionLocation
-    local productionLocation = productionSpot.location
-    if type(productionLocation) ~= "table" then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid productionLocation") return Callback.ErrorCall(callback) end
-
     -- gather assignment data
     local pickupData = {
         productItemName = productItemName,
         productItemCount= productItemCount,
 
-        workingLocation = coremove.CopyLocation(productionLocation),
+        workingLocation = productionLocation:copy(),
 
         priorityKey     = assignmentsPriorityKey,
     }

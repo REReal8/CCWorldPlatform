@@ -2,17 +2,11 @@ local enterprise_factory = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
-local corejob = require "corejob" -- ToDo: remove dependency on old code
-local coretask = require "coretask" -- ToDo: remove dependency on old code
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local URL = require "obj_url"
 
-local role_alchemist = require "role_alchemist" -- ToDo: remove dependency on old code
-
-local enterprise = require "enterprise" -- ToDo: remove dependency on old code
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle
@@ -337,19 +331,19 @@ function enterprise_factory.GetSiteLocation_Att(...)
         Parameters:
             items   + (table) items to produce
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.GetSiteLocation_Att: Invalid input") return {x=9999, y=9999, z= 9999, dx=0, dy=1} end
+    if not checkSuccess then corelog.Error("enterprise_factory.GetSiteLocation_Att: Invalid input") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- check there are sites
-    if enterprise_factory.GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.GetSiteLocation_Att: Not sites administered by Factory") return {x=0, y=0, z= 0, dx=0, dy=1}  end
+    if enterprise_factory.GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.GetSiteLocation_Att: Not sites administered by Factory") return {_x=0, _y=0, _z= 0, _dx=0, _dy=1}  end
 
     -- check for recipe to provide items
     local itemName, itemCount = next(items, nil)
     local recipe = db.recipes[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {x=9999, y=9999, z= 9999, dx=0, dy=1} end
+    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- select a suitable site
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {x=9999, y=9999, z= 9999, dx=0, dy=1} end
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
     local location = siteProduceItemData.productionSpot.location
 
     return location
@@ -422,7 +416,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
             localInputItemsLocator  = localInputItemsLocator,
             localOutputLocator      = siteProduceItemData.localOutputLocator:copy(),
             productionMethod        = siteProduceItemData.productionMethod,
-            productionSpot          = coreutils.DeepCopy(siteProduceItemData.productionSpot),
+            productionSpot          = enterprise_factory_site.ProductionSpot_Copy(siteProduceItemData.productionSpot),
         }
         serviceResults = enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
@@ -468,7 +462,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
 
         Parameters:
             serviceData                 + (table) data about this site
-                baseLocation            - (table) world location of the base (lower left corner) of this site
+                baseLocation            - (Location) world location of the base (lower left corner) of this site
                 siteVersion             - (string) version string of the site
                 upgrade                 + (boolean, false) if site should (only) be updated from a previous version
                 materialsHostLocator    - (URL) locating the host of the building materials
@@ -536,7 +530,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
 
         Parameters:
             serviceData                 + (table) data about this service
-                baseLocation            + (table) world location of the base (lower left corner) of this site
+                baseLocation            + (Location) world location of the base (lower left corner) of this site
                 siteVersion             + (string) version string of the site
                 upgrade                 + (boolean, false) if site should (only) be updated from a previous version
                 materialsHostLocator    + (URL) locating the host of the building materials
@@ -578,7 +572,7 @@ function enterprise_factory.StartNewSite_SSrv(...)
 
         Parameters:
             serviceData             + (table) data about this service
-                baseLocation        - (table) world location of the base (lower left corner) of this site
+                baseLocation        - (Location) world location of the base (lower left corner) of this site
                 siteVersion         + (string) version string of the site
                 siteAlreadyBuild    + (boolean) confirmation that the site was already physically build
     --]], table.unpack(arg))
@@ -620,7 +614,7 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
 
         Parameters:
             serviceData                 + (table) data about this service
-                baseLocation            - (table) world location of the base (lower left corner) of this site
+                baseLocation            - (Location) world location of the base (lower left corner) of this site
                 siteVersion             + (string) version string of the site
                 materialsHostLocator    - (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
@@ -669,7 +663,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
 
         Parameters:
             serviceData                 + (table) data about this service
-                baseLocation            - (table) world location of the base (lower left corner) of the site
+                baseLocation            - (Location) world location of the base (lower left corner) of the site
                 siteVersion             + (string) version string of the site
                 siteStopped             + (boolean) confirmation that the site was already stopped
                 materialsHostLocator    + (URL) locating the host of the building materials
@@ -716,7 +710,7 @@ function enterprise_factory.StopSite_ASrv(...)
 
         Parameters:
             serviceData         + (table) data about this service
-                baseLocation    - (table) world location of the base (lower left corner) of the site
+                baseLocation    - (Location) world location of the base (lower left corner) of the site
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end

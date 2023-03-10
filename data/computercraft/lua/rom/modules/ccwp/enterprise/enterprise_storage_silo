@@ -1,12 +1,12 @@
 local enterprise_storage_silo = {}
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 
+local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -45,7 +45,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
     })
     local assignmentMeta        = {
         startTime       = 0,
-        location        = coremove.CopyLocation(location),
+        location        = location:copy(),
         needTool        = false,
         needTurtle      = true,
         fuelNeeded      = 100
@@ -112,7 +112,7 @@ function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
     -- part 2: make an assignment for the actual pickup
     local assignmentMeta        = {
         startTime       = 0,
-        location        = coremove.CopyLocation(site.entryLocation),
+        location        = site.entryLocation:copy(),
         needTool        = false,
         needTurtle      = true,
         fuelNeeded      = 100
@@ -120,7 +120,7 @@ function RetrieveItems(sitesIndex, itemList, callback, callbackArgs)
     local assignmentArguments   = {
         sitesIndex      = sitesIndex,
         itemList        = itemList,
-        dropLocation    = coremove.CopyLocation(location),
+        dropLocation    = location:copy(),
     }
 
     -- now we need to get some work done, time for a new assignment
@@ -189,18 +189,18 @@ local function GetSiloL0_blueprint(siteData)
     -- construct layer list
     if siteData.topChests ~= 2 then corelog.Warning("enterprise_storage_silo.GetSiloL0_blueprint: Not yet implemented for other (="..siteData.topChests..") than 2 top chests") end
     local layerList = {
-        { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use siteData.topChests
-        { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove = false, layer = Shaft_layer()},
+        { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use siteData.topChests
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = false, layer = Shaft_layer()},
     }
     for i=1, siteData.layers, 1 do
-        table.insert(layerList, { startpoint = { x= 2, y= 2, z= -1-i}, buildFromAbove = false, layer = Chest_layer()})
+        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = Chest_layer()})
     end
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
-            { x= 3, y= 3, z=  1},
+            Location:new({ _x= 3, _y= 3, _z=  1}),
         }
     }
 
@@ -209,7 +209,7 @@ end
 
 function enterprise_storage_silo.BuildNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, siteData, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, siteData, location, materialsHostLocator, callback = InputChecker.Check([[
         This public function (service) builds a new silo.
 
         Return value:
@@ -217,6 +217,7 @@ function enterprise_storage_silo.BuildNewSite_ASrv(...)
 
         Parameters:
             siteData                    + (table) data about this silo, like type and layout
+                location                + (Location) location to build
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -224,7 +225,7 @@ function enterprise_storage_silo.BuildNewSite_ASrv(...)
 
     -- let construction enterprise build the silo
     local blueprintBuildData = {
-        blueprintStartpoint     = coremove.CopyLocation(siteData.location),
+        blueprintStartpoint     = location:copy(),
         blueprint               = GetSiloL0_blueprint(siteData),
         materialsHostLocator    = materialsHostLocator,
     }
@@ -232,48 +233,57 @@ function enterprise_storage_silo.BuildNewSite_ASrv(...)
     return enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback)
 end
 
-function enterprise_storage_silo.StartNewSite_SSrv(siteData)
+function enterprise_storage_silo.StartNewSite_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, location, siloType, topChests, layers = InputChecker.Check([[
+        This public function (service) starts a new Silo.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Parameters:
+            siteData                    - (table) data about this silo, like type and layout
+                location                + (Location) location of site
+                siloType                + (string, "basic") silo type
+                topChests               + (number, 2) # of top chests
+                layers                  + (number, 2) # of layers
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage_silo.StartNewSite_SSrv: Invalid input") return {success = false} end
+
     -- variables
     local site  = {
         type            = "silo",
-        location        = siteData.location,
-        entryLocation   = coremove.GetRelativeLocation(siteData.location, 3, 3, 0),
+        location        = location,
+        entryLocation   = location:getRelativeLocation(3, 3, 0),
         topChests       = {},
         storageChests   = {},
 
         sitesIndex      = 0,    -- set later
     }
 
-    -- check input, use default
-    siteData.siloType = siteData.siloType or "basic"
-
     -- what kind of new silo is this?
-    if siteData.siloType == "basic" then
+    if siloType == "basic" then
         corelog.WriteToLog(">Starting silo at "..textutils.serialise(site.location, { compact = true }))
 
-        -- defaults to input
-        siteData.topChests  = siteData.topChests    or 2
-        siteData.layers     = siteData.layers       or 2
-
         -- add our top chests, depending how many we have
-        if siteData.topChests >= 1 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 2, 5, 0), chestIndex=1}) end
-        if siteData.topChests >= 2 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 4, 5, 0), chestIndex=2}) end
-        if siteData.topChests >= 3 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 5, 4, 0), chestIndex=3}) end
-        if siteData.topChests >= 4 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 5, 2, 0), chestIndex=4}) end
-        if siteData.topChests >= 5 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 4, 1, 0), chestIndex=5}) end
-        if siteData.topChests >= 6 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 2, 1, 0), chestIndex=6}) end
-        if siteData.topChests >= 7 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 1, 2, 0), chestIndex=7}) end
-        if siteData.topChests >= 8 then table.insert(site.topChests, {status="free", location=coremove.GetRelativeLocation(siteData.location, 1, 4, 0), chestIndex=8}) end
+        if topChests >= 1 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(2, 5, 0), chestIndex=1}) end
+        if topChests >= 2 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(4, 5, 0), chestIndex=2}) end
+        if topChests >= 3 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(5, 4, 0), chestIndex=3}) end
+        if topChests >= 4 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(5, 2, 0), chestIndex=4}) end
+        if topChests >= 5 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(4, 1, 0), chestIndex=5}) end
+        if topChests >= 6 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(2, 1, 0), chestIndex=6}) end
+        if topChests >= 7 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(1, 2, 0), chestIndex=7}) end
+        if topChests >= 8 then table.insert(site.topChests, {status="free", location=location:getRelativeLocation(1, 4, 0), chestIndex=8}) end
 
         -- loop the layers
-        for i=1, siteData.layers, 1 do
+        for i=1, layers, 1 do
 
             -- do the floor
-            local shaft = coremove.GetRelativeLocation(site.entryLocation, 0, 0, -1 - i)
-            table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0,  1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
-            table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  1,  0), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
-            table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft,  0, -1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
-            table.insert(site.storageChests, {status="free", itemName=nil, location=coremove.GetDivergentDirection(shaft, -1,  0), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
+            local shaft = site.entryLocation:getRelativeLocation(0, 0, -1 - i)
+            table.insert(site.storageChests, {status="free", itemName=nil, location=shaft:getDivergentDirection( 0,  1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
+            table.insert(site.storageChests, {status="free", itemName=nil, location=shaft:getDivergentDirection( 1,  0), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
+            table.insert(site.storageChests, {status="free", itemName=nil, location=shaft:getDivergentDirection( 0, -1), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
+            table.insert(site.storageChests, {status="free", itemName=nil, location=shaft:getDivergentDirection(-1,  0), actual=0, virtual=0, stackSize=0, chestIndex=#site.storageChests+1})
         end
 
         -- reserve the first chest for charcoal
@@ -307,7 +317,7 @@ function FindSiteByTopChest(site, location)
     for i, topChest in ipairs(site.topChests) do
 
         -- this the one?
-        if coremove.IsSameLocation(location, topChest.location) then return topChest end
+        if location:isSame(topChest.location) then return topChest end
     end
 
     -- still here? Then we have found no match
@@ -324,7 +334,7 @@ function CheckIntegrity(site)
     -- meta about the assignment, for the selection procedure
     local assignmentMeta        = {
         startTime       = 0,
-        location        = coremove.CopyLocation(site.entryLocation),
+        location        = site.entryLocation:copy(),
         needTool        = false,
         needTurtle      = true,
         fuelNeeded      = 100

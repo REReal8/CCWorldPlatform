@@ -301,7 +301,7 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                locations           - (table) with locations of the different items
+                locations           - (table) with Location's of the different items
 
         Parameters:
             serviceData             + (table) data about this service
@@ -332,7 +332,7 @@ function enterprise_isp.GetStorageLocation_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                location            - (table) location of the Storage
+                location            - (Location) location of the Storage
 
         Parameters:
             serviceData             + (table) data about this service

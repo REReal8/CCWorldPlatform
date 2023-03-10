@@ -17,13 +17,13 @@ end
 local resource = {
     aNumber     = 10,
     aString     = "top",
-    aTable      = {x= -10, y= 0, z= 1, dx=0, dy=1},
+    aTable      = {_x= -10, _y= 0, _z= 1, _dx=0, _dy=1},
 }
 local uri = "ccwprp://resource/id=10/subid=7"
 local resource2 = {
     aNumber     = 20,
     aString     = "down",
-    aTable      = {x= -20, y= 0, z= 1, dx=0, dy=1},
+    aTable      = {_x= -20, _y= 0, _z= 1, _dx=0, _dy=1},
 }
 local uriWithPort = "ccwprp://resource:23/id=20/subid=77"
 

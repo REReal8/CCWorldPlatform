@@ -2,6 +2,8 @@ local T_BirchForest = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
+local Location = require "obj_location"
+
 local BirchForest = require "mobj_birchforest"
 
 local role_forester = require "role_forester"
@@ -19,10 +21,10 @@ function T_BirchForest.T_All()
 end
 
 local level0 = 0
-local location1 = {x= 0, y= 0, z= 1, dx=0, dy=1}
+local location1 = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
 local nTrees = 1
 local level2 = 1
-local location2 = {x= 6, y= 12, z= 1, dx=0, dy=1}
+local location2 = Location:new({_x= 6, _y= 12, _z= 1, _dx=0, _dy=1})
 local nTrees2 = 2
 local localLogsLocator
 local localSaplingsLocator

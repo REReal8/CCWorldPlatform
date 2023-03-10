@@ -1,8 +1,13 @@
 local role_settler = {}
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
+
+local InputChecker = require "input_checker"
+
+local Location = require "obj_location"
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -14,11 +19,11 @@ local coreinventory = require "coreinventory"
 --   |_|
 
 function role_settler.InitialiseCoordinates_MetaData(taskData)
-    local location = coremove.GetLocation() --> use the current location for proper bootstrapping
+    local location = Location:new(coremove.GetLocation()) --> use the current location for proper bootstrapping
 
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(location),
+        location = location:copy(),
         needTool = false,
         needTurtle = true,
         fuelNeeded = 0,                         --> per definition the settler starts without fuel
@@ -26,8 +31,9 @@ function role_settler.InitialiseCoordinates_MetaData(taskData)
     }
 end
 
-function role_settler.InitialiseCoordinates_Task(taskData)
-     --[[
+function role_settler.InitialiseCoordinates_Task(...)
+    -- get & check input from description
+    local checkSuccess, startLocation = InputChecker.Check([[
         This Task function does the first settling step: initialise starting world coordinates.
 
         Return value:
@@ -36,14 +42,11 @@ function role_settler.InitialiseCoordinates_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
-                startLocation           - (table) locaton where first steps are to be taken
-    ]]
-
-    -- check input
-    if type(taskData) ~= "table" or type(taskData.startLocation) ~= "table" then corelog.Error("role_settler.InitialiseCoordinates_Task: taskData not valid") return {success = false} end
+                startLocation           + (Location) locaton where first steps are to be taken
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_settler:InitialiseCoordinates_Task: Invalid input") return {success = false} end
 
     -- coordinaten stelsel goed zetten
-    local startLocation = taskData.startLocation
     coremove.SetLocation(startLocation)
 
     -- end
@@ -53,7 +56,7 @@ end
 function role_settler.CollectCobbleStone_MetaData(taskData)
     return {
         startTime = coreutils.UniversalTime(),
-        location = coremove.CopyLocation(taskData.startLocation),
+        location = taskData.startLocation:copy(),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
@@ -62,11 +65,20 @@ function role_settler.CollectCobbleStone_MetaData(taskData)
     }
 end
 
-function role_settler.CollectCobbleStone_Task(taskData)
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_settler.CollectCobbleStone_Task: Invalid taskData") return {success = false} end
-    local startLocation = taskData.startLocation
-    if type(startLocation) ~= "table" then corelog.Error("role_settler.CollectCobbleStone_Task: Invalid startLocation") return {success = false} end
+function role_settler.CollectCobbleStone_Task(...)
+    -- get & check input from description
+    local checkSuccess, startLocation = InputChecker.Check([[
+        This Task function collects sufficient cobblestone to build the first furnace.
+
+        Return value:
+            task result                 - (table)
+                success                 - (boolean) whether the task was succesfull
+
+        Parameters:
+            taskData                    - (table) data about the task
+                startLocation           + (Location) locaton where the task should start
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_settler:CollectCobbleStone_Task: Invalid input") return {success = false} end
 
     -- move to the workingLocation
     coremove.GoTo(startLocation)
@@ -93,7 +105,7 @@ function role_settler.CollectCobbleStone_Task(taskData)
     end
 
     -- restore our crafting spot
-    coremove.MoveTo({z = startLocation.z - 1})
+    coremove.MoveTo({_z = startLocation:getZ() - 1})
     if coreinventory.SelectItem("minecraft:dirt") or coreinventory.SelectItem("minecraft:cobblestone") then turtle.placeDown() end
 
     -- end

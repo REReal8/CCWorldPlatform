@@ -1,11 +1,11 @@
 local t_isp = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 
 local URL = require "obj_url"
+local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_projects = require "enterprise_projects"
@@ -17,8 +17,8 @@ function t_isp.T_All()
     t_isp.T_AddItemsLocators()
 end
 
-local testStartLocation  = {x= -6, y= 0, z= 1, dx=0, dy=1}
-local testStartLocation2  = {x= -6, y= 6, z= 1, dx=0, dy=1}
+local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local testStartLocation2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
 local itemsQuery = {
     ["minecraft:birch_log"] = 3,
     ["minecraft:torch"]     = 5,
@@ -91,7 +91,7 @@ function t_isp.T_TransferItemsFromTo_Chests()
             -- chest 1
             projectDef1     = t_chests.GetRegisterAndUpdateChestProjectDef(),
             projectData1    = {
-                chestLocation        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
+                chestLocation        = testStartLocation:getRelativeLocation(2, 5, 0),
                 chestAccessDirection = "top",
             },
 
@@ -101,7 +101,7 @@ function t_isp.T_TransferItemsFromTo_Chests()
             -- chest 2
             projectDef2     = t_chests.GetRegisterAndUpdateChestProjectDef(),
             projectData2    = {
-                chestLocation        = coremove.GetRelativeLocation(testStartLocation2, 2, 5, 0),
+                chestLocation        = testStartLocation2:getRelativeLocation(2, 5, 0),
                 chestAccessDirection = "back",
             },
 

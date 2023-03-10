@@ -10,12 +10,12 @@ local BirchForest = {
 }
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 
+local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -48,7 +48,7 @@ function BirchForest:new(...)
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the forest
                 _level                  - (number) level of the forest
-                _location               - (table) base location of the forest
+                _location               - (Location) base location of the forest
                 _nTrees                 - (number) # trees in the forest
                 _localLogsLocator       - (URL) locating the local Supplier of logs (e.g. a chest)
                 _localSaplingsLocator   - (URL) locating the local Supplier of saplings (e.g. a chest)
@@ -84,7 +84,7 @@ end
 
 function BirchForest:setLocation(location)
     -- check input
-    if type(location) ~= "table" then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
+    if not Location.IsOfType(location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
 
     self._location = location
 end
@@ -139,37 +139,18 @@ function BirchForest:getTreeLayer(level)
 end
 
 function BirchForest:copy()
-    local forestCopy = BirchForest:new({
+    local copy = BirchForest:new({
         _id                     = self._id,
         _level                  = self._level,
 
-        _location               = coremove.CopyLocation(self._location),
+        _location               = self._location:copy(),
         _nTrees                 = self._nTrees,
 
         _localLogsLocator       = self._localLogsLocator:copy(),
         _localSaplingsLocator   = self._localSaplingsLocator:copy(),
     })
 
-    return forestCopy
-end
-
-function BirchForest:sameId(forest)
-    return self:getId() == forest:getId()
-end
-
-function BirchForest:sameLevel(forest)
-    return self:getLevel() == forest:getLevel()
-end
-
-function BirchForest:sameLocation(forest)
-    local loc1 = self:getLocation()
-    local loc2 = forest:getLocation()
-
-    return coremove.IsSameLocation(loc1, loc2) and coremove.IsSameDirection(loc1, loc2)
-end
-
-function BirchForest:sameNTrees(forest)
-    return self:getNTrees() == forest:getNTrees()
+    return copy
 end
 
 function BirchForest:getFuelNeed_Harvest_Att()
@@ -442,7 +423,7 @@ end
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 function BirchForest:getFirstTreeLocation()
-    return coremove.GetRelativeLocation(self:getLocation(), 3, 2, 0)
+    return self:getLocation():getRelativeLocation(3, 2, 0)
 end
 
 function Tree_layerLm1()

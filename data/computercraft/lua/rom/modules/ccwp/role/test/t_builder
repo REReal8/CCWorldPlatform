@@ -1,8 +1,8 @@
 local t_builder = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
+local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -14,7 +14,7 @@ function t_builder.T_All()
     t_builder.T_BuildBlueprint_MetaData()
 end
 
-local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
+local testStartLocation     = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 
 local size_x1 = 4
 local size_y1 = 6
@@ -65,8 +65,8 @@ function t_builder.T_BuildLayer_MetaData()
     -- test
     local metaData = role_builder.BuildLayer_MetaData(buildData)
     local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
-    local expectedLocation = coremove.GetRelativeLocation(testStartLocation, 0, 0, deltaZ)
-    assert(coremove.IsSameLocation(metaData.location, expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    local expectedLocation = testStartLocation:getRelativeLocation(0, 0, deltaZ)
+    assert(metaData.location:isSame(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
     local expectedFuelNeeded = size_x1*size_y1 - 1
@@ -82,19 +82,19 @@ function t_builder.T_BuildBlueprint_MetaData()
     corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
     local testBlueprint = {
         layerList = {
-            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, layer = testBuildLayer1:copy()},
-            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, layer = testBuildLayer2:copy()},
+            { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove  = true, layer = testBuildLayer1:copy()},
+            { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove  = false, layer = testBuildLayer2:copy()},
         },
         escapeSequence = {
-            { x= 3, y= 3, z=  1},
+            Location:new({ _x= 3, _y= 3, _z=  1}),
         }
     }
-    local blueprintBuildData = {blueprintStartpoint = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0), blueprint = testBlueprint}
+    local blueprintBuildData = {blueprintStartpoint = testStartLocation:getRelativeLocation(6, 0, 0), blueprint = testBlueprint}
 
     -- test
     local metaData = role_builder.BuildBlueprint_MetaData(blueprintBuildData)
-    local expectedLocation = coremove.GetRelativeLocation(testStartLocation, 6, 0, 0)
-    assert(coremove.IsSameLocation(metaData.location, expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    local expectedLocation = testStartLocation:getRelativeLocation(6, 0, 0)
+    assert(metaData.location:isSame(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
     local expectedFuelNeeded = 47

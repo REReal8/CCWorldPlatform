@@ -1,4 +1,5 @@
 local role_storage_silo_worker = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
 local coredht = require "coredht"
@@ -27,7 +28,7 @@ function role_storage_silo_worker.ItemsDelivered_Task(data)
     local topChest  = site.topChests[ data.topChestIndex ]
 
     -- go to the pickup point
-    coremove.MoveTo(coremove.GetRelativeLocationUp(topChest.location, 1))
+    coremove.MoveTo(topChest.location:getRelativeLocationUp(1))
 
     -- get all items from the chest
     turtle.select(1)
@@ -162,7 +163,7 @@ function role_storage_silo_worker.RetrieveItems_Task(data)
     end
 
     -- time to drop our stuff
-    coremove.MoveTo(coremove.GetRelativeLocationUp(dropLocation, 1))
+    coremove.MoveTo(dropLocation:getRelativeLocationUp(1))
     local cargoList = coreinventory.DropAllItems("down")
 
     -- done

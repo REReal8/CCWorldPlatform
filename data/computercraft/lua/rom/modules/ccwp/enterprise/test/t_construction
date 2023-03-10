@@ -1,10 +1,10 @@
 local t_construction = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 
+local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -14,8 +14,8 @@ local enterprise_construction = require "enterprise_construction"
 
 local t_chests = require "test.t_chests"
 
-local testStartLocation     = {x= -6, y= 0, z= 1, dx=0, dy=1}
-local testStartLocation2    = coremove.GetRelativeLocation(testStartLocation, 0, 6, 0)
+local testStartLocation     = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
 
 local testBuildLayer1 = LayerRectangle:new({
     _codeArray  = {
@@ -136,7 +136,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
             -- chest
             projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
             projectData = {
-                chestLocation        = coremove.GetRelativeLocation(testStartLocation, 2, 5, 0),
+                chestLocation        = testStartLocation:getRelativeLocation(2, 5, 0),
                 chestAccessDirection = "top",
             },
 
@@ -161,17 +161,17 @@ function t_construction.T_BuildBlueprint_ASrv()
     corelog.WriteToLog("* BuildBlueprint_ASrv test")
     local testBlueprint1 = {
         layerList = {
-            { startpoint = { x= 0, y= 0, z=  0}, buildFromAbove  = true, layer = testBuildLayer3:copy()},
-            { startpoint = { x= 3, y= 3, z= -1}, buildFromAbove  = false, layer = testBuildLayer4:copy()},
-            { startpoint = { x= 2, y= 2, z= -2}, buildFromAbove  = false, layer = testBuildLayer2:copy()},
-            { startpoint = { x= 2, y= 2, z= -3}, buildFromAbove  = false, layer = testBuildLayer2:copy()}
+            { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove  = true, layer = testBuildLayer3:copy()},
+            { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove  = false, layer = testBuildLayer4:copy()},
+            { startpoint = Location:new({ _x= 2, _y= 2, _z= -2}), buildFromAbove  = false, layer = testBuildLayer2:copy()},
+            { startpoint = Location:new({ _x= 2, _y= 2, _z= -3}), buildFromAbove  = false, layer = testBuildLayer2:copy()}
         },
         escapeSequence = {
-            { x= 3, y= 3, z=  1},
+            Location:new({ _x= 3, _y= 3, _z=  1}),
         }
     }
     local blueprintBuildData = {
-        blueprintStartpoint     = coremove.GetRelativeLocation(testStartLocation, 0, 12, 0),
+        blueprintStartpoint     = testStartLocation:getRelativeLocation(0, 12, 0),
         blueprint               = testBlueprint1,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
     }

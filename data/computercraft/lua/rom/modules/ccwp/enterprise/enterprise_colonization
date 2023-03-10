@@ -2,12 +2,12 @@ local enterprise_colonization = {}
 
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local URL = require "obj_url"
+local Location = require "obj_location"
 
 local role_settler = require "role_settler"
 
@@ -44,9 +44,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 one birchSapling
             It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
 
-            The function also defines the coordinate system by assuming the turtle starts at the location {x= 3, y= 2, z= 1, dx=0, dy=1}. This
+            The function also defines the coordinate system by assuming the turtle starts at the Location {_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}. This
             allows for the initial forest that is build to fit in the 6x6 grid that is used in layers with the lower left coordinate of the base
-            of that forest being location {x= 0, y= 0, z= 1, dx=0, dy=1}
+            of that forest being Location {_x= 0, _y= 0, _z= 1, _dx=0, _dy=1}
 
         Return value:
                                 - (boolean) whether the service was scheduled successfully
@@ -77,21 +77,21 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_factory.GetHostLocator_Att()})
 
     -- construct arguments
-    local startLocation             = {x= 3, y= 2, z= 1, dx=0, dy=1}
-    local forestLocation            = {x= 0, y= 0, z= 1, dx=0, dy=1}
+    local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
+    local forestLocation            = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
     local initialiseCoordinatesTaskData =  {
-        startLocation               = coremove.CopyLocation(startLocation),
+        startLocation               = startLocation:copy(),
     }
     local collectCobbleStoneTaskData =  {
-        startLocation               = coremove.CopyLocation(startLocation),
+        startLocation               = startLocation:copy(),
     }
 
-    local factoryLocation           = {x=12, y= 0, z= 1, dx=0, dy=1}
+    local factoryLocation           = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
     local nTreeswanted = 6
     local settleData = {
         materialsHostLocator        = enterprise_shop.GetHostLocator_Att(),
 
-        startLocation               = coremove.CopyLocation(startLocation),
+        startLocation               = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
@@ -101,7 +101,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         factoryVersion0             = "v0",
         upgradeFalse                = false,
 
-        forestLocation              = coremove.CopyLocation(forestLocation),
+        forestLocation              = forestLocation:copy(),
         forestLm1                   = -1,
         forestFirstTree             = 1,
 
@@ -119,13 +119,13 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(collectCobbleStoneTaskData),
         collectCobbleStoneTaskCall  = TaskCall:new({ _moduleName = "role_settler", _methodName = "CollectCobbleStone_Task", _data = collectCobbleStoneTaskData, }),
 
-        factoryLocation             = coremove.CopyLocation(factoryLocation),
+        factoryLocation             = factoryLocation:copy(),
         factoryVersion1             = "v1",
 
         factoryVersion2             = "v2",
         upgradeToV2                 = true,
 
-        siloLocation                = {x=12, y=12, z= 1, dx=0, dy=1},
+        siloLocation                = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
         type                        = "silo",
         siloType                    = "basic",
         topChests                   = 2,

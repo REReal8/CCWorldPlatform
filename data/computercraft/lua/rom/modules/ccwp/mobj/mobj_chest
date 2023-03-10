@@ -8,12 +8,12 @@ local Chest = {
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 
+local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 
 local role_fuel_worker = require "role_fuel_worker"
@@ -49,7 +49,7 @@ function Chest:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the Chest
-                _location               - (table) location of the Chest
+                _location               - (Location) location of the Chest
                 _accessDirection        - (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 _inventory              - (Inventory) inventory of Chest
     ]], table.unpack(arg))
@@ -83,7 +83,7 @@ function Chest.HasFieldsOfType(chest)
     -- check
     if type(chest) ~= "table" then return false end
     if type(chest._id) ~= "string" then return false end
-    if (type(chest._location) ~= "nil" and type(chest._location) ~= "table") then return false end
+    if not Location.IsOfType(chest._location) then return false end
     if type(chest._accessDirection) ~= "string" then return false end
     if not Inventory.IsOfType(chest._inventory) then return false end
 
@@ -113,7 +113,7 @@ function Chest:isSame(chest)
 
     -- check same object
     local isSame =  self._id == chest._id
-                and coremove.IsSameLocation(self._location, chest._location)
+                and self._location:isSame(chest._location)
                 and self._accessDirection == chest._accessDirection
                 and self._inventory:isSame(chest._inventory)
 
@@ -125,9 +125,9 @@ function Chest:copy()
     local copy = Chest:new({
         _id             = self._id,
 
-        _location       = coremove.CopyLocation(self._location),
+        _location       = self._location:copy(),
         _accessDirection= self._accessDirection,
-        _inventory      = self._inventory:copy()
+        _inventory      = self._inventory:copy(),
     })
 
     return copy
@@ -241,7 +241,7 @@ function Chest:updateChestRecord_AOSrv(...)
 
     -- create project definition
     local taskData = {
-        location = coremove.CopyLocation(self:getLocation()),
+        location = self:getLocation():copy(),
         accessDirection = self:getAccessDirection(),
     }
     local projectData = {
@@ -296,7 +296,7 @@ function Chest:getItemsIntoTurtle_AOSrv(...)
 
     -- create project definition
     local taskData = {
-        location        = coremove.CopyLocation(self:getLocation()),
+        location        = self:getLocation():copy(),
         accessDirection = self:getAccessDirection(),
         itemsQuery      = items,
 
@@ -371,7 +371,7 @@ function Chest:putItemsFromTurtle_AOSrv(...)
     local taskData = {
         turtleId        = turtleItemsLocator:getPort(),
         itemsQuery      = coreutils.DeepCopy(turtleItemsLocator:getQuery()),
-        location        = coremove.CopyLocation(self:getLocation()),
+        location        = self:getLocation():copy(),
         accessDirection = self:getAccessDirection(),
 
         priorityKey     = assignmentsPriorityKey,

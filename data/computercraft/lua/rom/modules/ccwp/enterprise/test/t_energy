@@ -1,6 +1,9 @@
 local t_energy = {}
+
 local corelog = require "corelog"
 local coremove = require "coremove"
+
+local Location = require "obj_location"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 
@@ -30,12 +33,12 @@ end
 function t_energy.T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetFuelNeed_Refuel_Att() tests")
-    local turtleLocation = coremove.GetLocation()
-    local forestLocation = coremove.GetRelativeLocation(turtleLocation, -3, -2, 0)
+    local turtleLocation = Location:new(coremove.GetLocation())
+    local forestLocation = turtleLocation:getRelativeLocation(-3, -2, 0)
     local forest = T_BirchForest.CreateForest(levelm1, forestLocation) if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
-    local factoryLocation1 = coremove.CopyLocation(turtleLocation)
+    local factoryLocation1 = turtleLocation:copy()
     t_factory.StartNewSite(factoryLocation1)
 
     local energyParameters = enterprise_energy.GetParameters()
@@ -74,7 +77,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     forest:setLevel(level2)
     forest:setNTrees(3*6)
     forestLocator = enterprise_forestry.SaveForest(forest)
-    local factoryLocation2 = coremove.GetRelativeLocation(forestLocation, 12, 0, 0)
+    local factoryLocation2 = forestLocation:getRelativeLocation(12, 0, 0)
     t_factory.StartNewSite(factoryLocation2)
     level = level3
 
@@ -97,8 +100,8 @@ function t_energy.T_GetRefuelAmount_Att()
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local forestLocator = enterprise_forestry.SaveForest(forest)
 
-    local turtleLocation = coremove.GetLocation()
-    local factoryLocation1 = coremove.CopyLocation(turtleLocation)
+    local turtleLocation = Location:new(coremove.GetLocation())
+    local factoryLocation1 = turtleLocation:copy()
     t_factory.StartNewSite(factoryLocation1)
 
     local energyParameters = enterprise_energy.GetParameters()

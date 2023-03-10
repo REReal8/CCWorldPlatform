@@ -2,7 +2,6 @@ local enterprise_forestry = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
@@ -51,7 +50,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about this site
-                baseLocation            + (table) world location of the base (lower left corner) of this site
+                baseLocation            + (Location) world location of the base (lower left corner) of this site
                 forestLevel             + (number) level of the site
                 nTrees                  + (number) number of initial trees
                 materialsHostLocator    + (URL) locating the host of the building materials
@@ -68,7 +67,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         _id                     = coreutils.NewId(),
         _level                  = forestLevel,
 
-        _location               = coremove.CopyLocation(baseLocation),
+        _location               = baseLocation:copy(),
         _nTrees                 = 0,
 
         _localLogsLocator       = enterprise_turtle.GetHostLocator_Att(),
@@ -97,9 +96,9 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         )
 
         -- add step data
-        local firstTreeLocation         = coremove.GetRelativeLocation(baseLocation, 3, 2, 0)
+        local firstTreeLocation         = baseLocation:getRelativeLocation(3, 2, 0)
         local plantFirstSaplingTaskData =  {
-            startLocation               = coremove.CopyLocation(firstTreeLocation),
+            startLocation               = firstTreeLocation:copy(),
         }
         projectData.plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData)
         projectData.plantFirstSaplingTaskCall   = TaskCall:new({ _moduleName = "role_forester", _methodName = "PlantFirstSapling_Task", _data = plantFirstSaplingTaskData, })
@@ -114,7 +113,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         )
 
         -- add step data
-        local treeBaseLocation  = coremove.CopyLocation(baseLocation)
+        local treeBaseLocation  = baseLocation:copy()
         local targetBaseLayer = forest:getBaseLayer(forestLevel)
         projectData.materialsHostLocator        = materialsHostLocator
         projectData.treeBaseLocation            = treeBaseLocation
@@ -233,7 +232,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                     -- add build tree step
                 iStep = iStep + 1
                 local iStepStr = tostring(iStep)
-                local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
+                local treeBaseLocation = forest:getLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
                 local treeBaseLocationStr = "treeBaseLocation"..iStepStr
                 table.insert(projectSteps,
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
@@ -273,7 +272,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             -- add build tree step
             iStep = iStep + 1
             local iStepStr = tostring(iStep)
-            local treeBaseLocation = coremove.GetRelativeLocation(forest:getLocation(), 0, 6 * (iTree - 1), 0)
+            local treeBaseLocation = forest:getLocation():getRelativeLocation(0, 6 * (iTree - 1), 0)
             local treeBaseLocationStr = "treeBaseLocation"..iStepStr
             table.insert(projectSteps,
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
@@ -518,7 +517,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
 
         Parameters:
             serviceData                 - (table) data about this service
-                treeBaseLocation        + (table) location of the base (lower left corner) of a forest tree (layer)
+                treeBaseLocation        + (Location) location of the base (lower left corner) of a forest tree (layer)
                 treeLayer               + (LayerRectangle) tree layer to build
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
@@ -527,7 +526,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
 
     -- let construction enterprise build the tree
     local buildData = {
-        startpoint = coremove.CopyLocation(treeBaseLocation),
+        startpoint = treeBaseLocation:copy(),
         buildFromAbove = true,
         replacePresentObjects = false,
         layer = treeLayer,
