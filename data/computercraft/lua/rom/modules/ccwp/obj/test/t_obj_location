@@ -15,6 +15,7 @@ function T_Location.T_All()
     T_Location.T_reset()
     T_Location.T_minLocation()
     T_Location.T_maxLocation()
+    T_Location.T_getRelativeLocation()
 end
 
 local x0 = 0
@@ -34,6 +35,15 @@ local dx2 = -1
 local dy2 = 0
 
 local compact = { compact = true }
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--
+--
 
 function T_Location.T_new()
     -- prepare test
@@ -202,6 +212,15 @@ function T_Location.T_copy()
     -- cleanup test
 end
 
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
 function T_Location.T_reset()
     -- prepare test
     corelog.WriteToLog("* Location:reset() tests")
@@ -244,16 +263,16 @@ function T_Location.T_minLocation()
 
     -- test
     local minLocation = location1:minLocation(location2)
-    local minX = math.min(x1, x2)
-    local minY = math.min(y1, y2)
-    local minZ = math.min(z1, z2)
-    local minDx = math.min(dx1, dx2)
-    local minDy = math.min(dy1, dy2)
-    assert(minLocation:getX() == minX, "gotten getX(="..minLocation:getX()..") not the same as expected(="..minX..")")
-    assert(minLocation:getY() == minY, "gotten getY(="..minLocation:getY()..") not the same as expected(="..minY..")")
-    assert(minLocation:getZ() == minZ, "gotten getY(="..minLocation:getZ()..") not the same as expected(="..minZ..")")
-    assert(minLocation:getDX() == minDx, "gotten getDX(="..minLocation:getDX()..") not the same as expected(="..minDx..")")
-    assert(minLocation:getDY() == minDy, "gotten getDY(="..minLocation:getDY()..") not the same as expected(="..minDy..")")
+    local expectedX = math.min(x1, x2)
+    local expectedY = math.min(y1, y2)
+    local expectedZ = math.min(z1, z2)
+    local expectedDx = math.min(dx1, dx2)
+    local expectedDy = math.min(dy1, dy2)
+    assert(minLocation:getX() == expectedX, "gotten getX(="..minLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(minLocation:getY() == expectedY, "gotten getY(="..minLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(minLocation:getZ() == expectedZ, "gotten getY(="..minLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(minLocation:getDX() == expectedDx, "gotten getDX(="..minLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(minLocation:getDY() == expectedDy, "gotten getDY(="..minLocation:getDY()..") not the same as expected(="..expectedDy..")")
 
     -- cleanup test
 end
@@ -278,18 +297,49 @@ function T_Location.T_maxLocation()
 
     -- test
     local maxLocation = location1:maxLocation(location2)
-    local maxX = math.max(x1, x2)
-    local maxY = math.max(y1, y2)
-    local maxZ = math.max(z1, z2)
-    local maxDx = math.max(dx1, dx2)
-    local maxDy = math.max(dy1, dy2)
-    assert(maxLocation:getX() == maxX, "gotten getX(="..maxLocation:getX()..") not the same as expected(="..maxX..")")
-    assert(maxLocation:getY() == maxY, "gotten getY(="..maxLocation:getY()..") not the same as expected(="..maxY..")")
-    assert(maxLocation:getZ() == maxZ, "gotten getY(="..maxLocation:getZ()..") not the same as expected(="..maxZ..")")
-    assert(maxLocation:getDX() == maxDx, "gotten getDX(="..maxLocation:getDX()..") not the same as expected(="..maxDx..")")
-    assert(maxLocation:getDY() == maxDy, "gotten getDY(="..maxLocation:getDY()..") not the same as expected(="..maxDy..")")
+    local expectedX = math.max(x1, x2)
+    local expectedY = math.max(y1, y2)
+    local expectedZ = math.max(z1, z2)
+    local expectedDx = math.max(dx1, dx2)
+    local expectedDy = math.max(dy1, dy2)
+    assert(maxLocation:getX() == expectedX, "gotten getX(="..maxLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(maxLocation:getY() == expectedY, "gotten getY(="..maxLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(maxLocation:getZ() == expectedZ, "gotten getY(="..maxLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(maxLocation:getDX() == expectedDx, "gotten getDX(="..maxLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(maxLocation:getDY() == expectedDy, "gotten getDY(="..maxLocation:getDY()..") not the same as expected(="..expectedDy..")")
 
     -- cleanup test
 end
+
+function T_Location.T_getRelativeLocation()
+    -- prepare test
+    corelog.WriteToLog("* Location:getRelativeLocation() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+
+    -- test
+    local addX = 105
+    local addY = 15
+    local addZ = 5
+    local relativeLocation = location1:getRelativeLocation(addX, addY, addZ)
+    local expectedX = x1 + addX
+    local expectedY = y1 + addY
+    local expectedZ = z1 + addZ
+    local expectedDx = dx1
+    local expectedDy = dx2
+    assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(relativeLocation:getDX() == expectedDx, "gotten getDX(="..relativeLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(relativeLocation:getDY() == expectedDy, "gotten getDY(="..relativeLocation:getDY()..") not the same as expected(="..expectedDy..")")
+
+    -- cleanup test
+end
+
 
 return T_Location
