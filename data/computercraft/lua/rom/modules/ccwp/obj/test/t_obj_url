@@ -41,6 +41,7 @@ function T_URL.T_All()
     T_URL.T_SettersFromURI()
     T_URL.T_NewFromURI()
     T_URL.T_IsOfType()
+    T_URL.T_isSame()
     T_URL.T_SameURLComponents()
 end
 
@@ -251,6 +252,58 @@ function T_URL.T_IsOfType()
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     url._query = query
+
+    -- cleanup test
+end
+
+function T_URL.T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* URL:isSame() tests")
+    local url1 = URL:new({
+        _host = host,
+        _port = port,
+        _path = path,
+        _query = query,
+    })
+    local url2 = URL:new({
+        _host = host,
+        _port = port,
+        _path = path,
+        _query = query,
+    })
+
+    -- test same
+    local isSame = url1:isSame(url2)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different _host
+    url2:setHost(host2)
+    isSame = url1:isSame(url2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    url2:setHost(host)
+
+    -- test different _port
+    url2:setPort(port2)
+    isSame = url1:isSame(url2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    url2:setPort(port)
+
+    -- test different _path
+    url2:setPath(path2)
+    isSame = url1:isSame(url2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    url2:setPath(path)
+
+    -- test different _query
+    url2:setQuery(query2)
+    isSame = url1:isSame(url2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    url2:setQuery(query)
 
     -- cleanup test
 end

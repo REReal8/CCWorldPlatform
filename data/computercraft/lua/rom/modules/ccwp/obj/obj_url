@@ -282,6 +282,16 @@ function URL.IsOfType(url)
     return isOfType
 end
 
+function URL:isSame(url)
+    -- check input
+    if not URL.IsOfType(url) then return false end
+
+    -- check same object
+    local isSame = self:getURI() == url:getURI()
+
+    -- end
+    return isSame
+end
 
 function URL:copy()
     local uri = self:getURI()
