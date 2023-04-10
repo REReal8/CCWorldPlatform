@@ -89,6 +89,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     corelog.WriteToAssignmentLog("Add new: "..textutils.serialize(assignment), assignmentId)
 
     -- check for new locations
+    -- ToDo: consider introducing Statistics object with Location objects in it. Than have it saved and gotten as a Resource similair to how this is e.g. done for a BirchForest.
     local statistics = enterprise_assignmentboard.GetStatistics_Att()
     local statisticsChanged = false
     local location = metaData.location
