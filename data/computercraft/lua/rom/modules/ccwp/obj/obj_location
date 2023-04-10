@@ -120,7 +120,7 @@ end
 
 function Location:hasSamePosition(o)
     -- check same
-    return self._x  == o._x  and self._y  == o._y  and self._z == o._z
+    return self._x == o._x and self._y == o._y and self._z == o._z
 end
 
 function Location:hasSameDirection(o)
@@ -133,7 +133,7 @@ function Location:isSame(o)
     if not Location.IsOfType(o) then return false end
 
     -- check same
-    local isSame = self._x == o._x and self._y == o._y and self._z == o._z and self._dx == o._dx and self._dy == o._dy
+    local isSame = self:hasSamePosition(o) and self:hasSameDirection(o)
 
     -- end
     return isSame
