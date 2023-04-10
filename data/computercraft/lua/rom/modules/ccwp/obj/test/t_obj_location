@@ -9,17 +9,24 @@ function T_Location.T_All()
     T_Location.T_IsOfType()
     T_Location.T_isSame()
     T_Location.T_copy()
+
+    T_Location.T_reset()
 end
 
+local x0 = 0
+local y0 = 0
+local z0 = 0
+local dx0 = 0
+local dy0 = 1
 local x1 = 1
-local x2 = 2
 local y1 = 10
-local y2 = 20
 local z1 = -10
-local z2 = -20
 local dx1 = 0
+local dy1 = -1
+local x2 = 2
+local y2 = 20
+local z2 = -20
 local dx2 = -1
-local dy1 = 1
 local dy2 = 0
 
 local compact = { compact = true }
@@ -187,6 +194,28 @@ function T_Location.T_copy()
     -- test
     local copy = location1:copy()
     assert(copy:isSame(location1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_Location.T_reset()
+    -- prepare test
+    corelog.WriteToLog("* Location:reset() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+
+    -- test
+    location1:reset()
+    assert(location1:getX() == x0, "gotten getX(="..location1:getX()..") not the same as expected(="..x0..")")
+    assert(location1:getY() == y0, "gotten getY(="..location1:getY()..") not the same as expected(="..y0..")")
+    assert(location1:getZ() == z0, "gotten getY(="..location1:getZ()..") not the same as expected(="..z0..")")
+    assert(location1:getDX() == dx0, "gotten getDX(="..location1:getDX()..") not the same as expected(="..dx0..")")
+    assert(location1:getDY() == dy0, "gotten getDY(="..location1:getDY()..") not the same as expected(="..dy0..")")
 
     -- cleanup test
 end
