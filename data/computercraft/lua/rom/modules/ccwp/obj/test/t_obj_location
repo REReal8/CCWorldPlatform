@@ -21,6 +21,7 @@ function T_Location.T_All()
     T_Location.T_getRelativeLocationDown()
     T_Location.T_getRelativeLocationLeft()
     T_Location.T_getRelativeLocationRight()
+    T_Location.T_blockDistanceTo()
 end
 
 local x0 = 0
@@ -524,6 +525,32 @@ function T_Location.T_getRelativeLocationRight()
     assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
     assert(relativeLocation:getDX() == expectedDx, "gotten getDX(="..relativeLocation:getDX()..") not the same as expected(="..expectedDx..")")
     assert(relativeLocation:getDY() == expectedDy, "gotten getDY(="..relativeLocation:getDY()..") not the same as expected(="..expectedDy..")")
+
+    -- cleanup test
+end
+
+function T_Location.T_blockDistanceTo()
+    -- prepare test
+    corelog.WriteToLog("* Location:blockDistanceTo() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+    local location2 = Location:new({
+        _x  = x2,
+        _y  = y2,
+        _z  = z2,
+        _dx = dx2,
+        _dy = dy2,
+    })
+
+    -- test
+    local blockDistance = location1:blockDistanceTo(location2)
+    local expectedBlockDistance = math.abs(x2 - x1) + math.abs(y2 - y1) + math.abs(z2 - z1)
+    assert(blockDistance == expectedBlockDistance, "gotten blockDistanceTo(="..blockDistance..") not the same as expected(="..expectedBlockDistance..")")
 
     -- cleanup test
 end
