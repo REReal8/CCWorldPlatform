@@ -13,14 +13,12 @@ local corelog = require "corelog"
     A URL object represents an CCWorldPlatform URL. See https://github.com/REReal8/CCWorldPlatform/wiki/Uniform-Resource-Locators for more on URL's.
 --]]
 
---                _     _ _         __                  _   _
---               | |   | (_)       / _|                | | (_)
---    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---   | |
---   |_|
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 function URL:new(o)
     --[[
@@ -103,7 +101,7 @@ end
 
 -- aUrl.setPortURI(":1")
 local portPattern = ":%d+"
-function URL:setPortURI (pURI)
+function URL:setPortURI(pURI)
     -- check input
     if type(pURI) ~= "string" then corelog.Error("URL:setPortURI: invalid port URI type: "..type(pURI)) return end
 
@@ -256,11 +254,49 @@ function URL:setURI(fullURI)
     self:setQueryURI(queryURI)
 end
 
+function URL.HasFieldsOfType(url)
+    -- check
+    if type(url) ~= "table" then return false end
+    if type(url._host) ~= "string" then return false end
+    if type(url._port) ~= "nil" and type(url._port) ~= "number" then return false end
+    if type(url._path) ~= "string" then return false end
+    if type(url._query) ~= "table" then return false end
+
+    -- end
+    return true
+end
+
+function URL.HasMethodsOfType(url)
+    -- check
+    if not url.new then return false end
+
+    -- end
+    return true
+end
+
+function URL.IsOfType(url)
+    -- check
+    local isOfType = URL.HasFieldsOfType(url) and URL.HasMethodsOfType(url)
+
+    -- end
+    return isOfType
+end
+
+
 function URL:copy()
     local uri = self:getURI()
 
     return URL:newFromURI(uri)
 end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
 
 function URL:sameHost(url)
     return self:getHostURI() == url:getHostURI()
@@ -281,12 +317,5 @@ end
 function URL:sameQuery(url)
     return self:getQueryURI() == url:getQueryURI()
 end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
 return URL

@@ -40,6 +40,7 @@ function T_URL.T_All()
     T_URL.T_Setters()
     T_URL.T_SettersFromURI()
     T_URL.T_NewFromURI()
+    T_URL.T_IsOfType()
     T_URL.T_SameURLComponents()
 end
 
@@ -199,6 +200,57 @@ function T_URL.T_NewFromURI()
     local newURI4=schemeURI..hostURI..portURI..pathURI
     local fromURI_URL4 = URL:newFromURI(newURI4)
     AssertWithURIs(fromURI_URL4, hostURI, portURI, pathURI, "")
+
+    -- cleanup test
+end
+
+function T_URL.T_IsOfType()
+    -- prepare test
+    corelog.WriteToLog("* URL.IsOfType() tests")
+    local url = URL:new({
+        _host = host,
+        _port = port,
+        _path = path,
+        _query = query,
+    })
+
+    -- test valid
+    local isOfType = URL.IsOfType(url)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = URL.IsOfType("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test invalid _host
+    url._host = 20
+    isOfType = URL.IsOfType(url)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    url._host = host
+
+    -- test invalid _port
+    url._port = "a string"
+    isOfType = URL.IsOfType(url)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    url._port = port
+
+    -- test invalid _path
+    url._path = 20
+    isOfType = URL.IsOfType(url)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    url._path = path
+
+    -- test invalid _query
+    url._query = "a string"
+    isOfType = URL.IsOfType(url)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    url._query = query
 
     -- cleanup test
 end
