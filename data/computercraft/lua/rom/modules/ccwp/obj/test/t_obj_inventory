@@ -5,6 +5,7 @@ local corelog = require "corelog"
 local Inventory = require "obj_inventory"
 
 function T_Inventory.T_All()
+    -- helper functions
     T_Inventory.T_IsItemTable()
     T_Inventory.T_IsSameItemTable()
     T_Inventory.T_ItemTableCopy()
@@ -13,10 +14,13 @@ function T_Inventory.T_All()
     T_Inventory.T_IsSameSlotTable()
     T_Inventory.T_SlotTableCopy()
 
+    -- base methods
     T_Inventory.T_new()
     T_Inventory.T_IsOfType()
     T_Inventory.T_isSame()
     T_Inventory.T_copy()
+
+    -- specific methods
     T_Inventory.T_isEmpty()
     T_Inventory.T_getItemTable()
     T_Inventory.T_hasItems()
@@ -39,6 +43,15 @@ local itemTable2 = {
 }
 
 local compact = { compact = true }
+
+--    _          _                    __                  _   _
+--   | |        | |                  / _|                | | (_)
+--   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--                | |
+--                |_|
 
 function T_Inventory.T_IsItemTable()
     -- prepare test
@@ -176,6 +189,13 @@ function T_Inventory.T_SlotTableCopy()
     -- cleanup test
 end
 
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
 local inventory1 = Inventory:new({
     _slotTable  = slotTable1,
 })
@@ -256,6 +276,15 @@ function T_Inventory.T_copy()
 
     -- cleanup test
 end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
 
 function T_Inventory.T_isEmpty()
     -- prepare test

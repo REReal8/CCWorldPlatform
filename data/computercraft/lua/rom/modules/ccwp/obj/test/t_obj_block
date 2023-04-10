@@ -7,15 +7,19 @@ local InputChecker = require "input_checker"
 local Block = require "obj_block"
 
 function T_Block.T_All()
+    -- base methods
     T_Block.T_new()
     T_Block.T_IsOfType()
     T_Block.T_isSame()
     T_Block.T_copy()
+
+    -- specific methods
     T_Block.T_isMinecraftItem()
     T_Block.T_isAnyBlock()
     T_Block.T_isNoneBlock()
     T_Block.T_ParseWithCheckInput()
 
+    -- helper functions
     T_Block.T_IsBlockList()
     T_Block.T_IsSameBlockList()
     T_Block.T_BlockListCopy()
@@ -37,6 +41,13 @@ local block1 = Block:new({
 })
 
 local compact = { compact = true }
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 function T_Block.T_new()
     -- prepare test
@@ -165,6 +176,15 @@ function T_Block.T_copy()
     -- cleanup test
 end
 
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
 function T_Block.T_isMinecraftItem()
     -- prepare test
     corelog.WriteToLog("* Block:isMinecraftItem() tests")
@@ -259,6 +279,15 @@ function T_Block.T_ParseWithCheckInput()
 
     -- cleanup test
 end
+
+--    _          _                    __                  _   _
+--   | |        | |                  / _|                | | (_)
+--   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--                | |
+--                |_|
 
 function T_Block.T_IsBlockList()
     -- prepare test
