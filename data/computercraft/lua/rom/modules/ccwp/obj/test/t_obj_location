@@ -19,6 +19,8 @@ function T_Location.T_All()
     T_Location.T_getRelativeLocationFront()
     T_Location.T_getRelativeLocationUp()
     T_Location.T_getRelativeLocationDown()
+    T_Location.T_getRelativeLocationLeft()
+    T_Location.T_getRelativeLocationRight()
 end
 
 local x0 = 0
@@ -334,7 +336,7 @@ function T_Location.T_getRelativeLocation()
     local expectedY = y1 + addY
     local expectedZ = z1 + addZ
     local expectedDx = dx1
-    local expectedDy = dx2
+    local expectedDy = dy1
     assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
     assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
     assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
@@ -362,7 +364,7 @@ function T_Location.T_getRelativeLocationFront()
     local expectedY = y1 + steps * dy1
     local expectedZ = z1
     local expectedDx = dx1
-    local expectedDy = dx2
+    local expectedDy = dy1
     assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
     assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
     assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
@@ -404,7 +406,7 @@ function T_Location.T_getRelativeLocationUp()
     local expectedY = y1
     local expectedZ = z1 + steps
     local expectedDx = dx1
-    local expectedDy = dx2
+    local expectedDy = dy1
     assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
     assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
     assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
@@ -425,14 +427,98 @@ function T_Location.T_getRelativeLocationDown()
         _dy = dy1,
     })
 
-    -- test up 2
+    -- test down 2
     local steps = 2
     local relativeLocation = location1:getRelativeLocationDown(steps)
     local expectedX = x1
     local expectedY = y1
     local expectedZ = z1 - steps
     local expectedDx = dx1
-    local expectedDy = dx2
+    local expectedDy = dy1
+    assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(relativeLocation:getDX() == expectedDx, "gotten getDX(="..relativeLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(relativeLocation:getDY() == expectedDy, "gotten getDY(="..relativeLocation:getDY()..") not the same as expected(="..expectedDy..")")
+
+    -- cleanup test
+end
+
+function T_Location.T_getRelativeLocationLeft()
+    -- prepare test
+    corelog.WriteToLog("* Location:getRelativeLocationLeft() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+
+    -- test left 1
+    local steps = 1
+    local relativeLocation = location1:getRelativeLocationLeft(steps)
+    local expectedX = x1
+    local expectedY = y1
+    local expectedZ = z1
+    local expectedDx = -dy1
+    local expectedDy = dx1
+    assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(relativeLocation:getDX() == expectedDx, "gotten getDX(="..relativeLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(relativeLocation:getDY() == expectedDy, "gotten getDY(="..relativeLocation:getDY()..") not the same as expected(="..expectedDy..")")
+
+    -- test left 3
+    steps = 3
+    relativeLocation = location1:getRelativeLocationLeft(steps)
+    expectedX = x1
+    expectedY = y1
+    expectedZ = z1
+    expectedDx = dy1
+    expectedDy = -dx1
+    assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(relativeLocation:getDX() == expectedDx, "gotten getDX(="..relativeLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(relativeLocation:getDY() == expectedDy, "gotten getDY(="..relativeLocation:getDY()..") not the same as expected(="..expectedDy..")")
+
+    -- cleanup test
+end
+
+function T_Location.T_getRelativeLocationRight()
+    -- prepare test
+    corelog.WriteToLog("* Location:getRelativeLocationRight() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+
+    -- test right 1
+    local steps = 1
+    local relativeLocation = location1:getRelativeLocationRight(steps)
+    local expectedX = x1
+    local expectedY = y1
+    local expectedZ = z1
+    local expectedDx = dy1
+    local expectedDy = -dx1
+    assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
+    assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
+    assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
+    assert(relativeLocation:getDX() == expectedDx, "gotten getDX(="..relativeLocation:getDX()..") not the same as expected(="..expectedDx..")")
+    assert(relativeLocation:getDY() == expectedDy, "gotten getDY(="..relativeLocation:getDY()..") not the same as expected(="..expectedDy..")")
+
+    -- test right 2
+    steps = 2
+    relativeLocation = location1:getRelativeLocationRight(steps)
+    expectedX = x1
+    expectedY = y1
+    expectedZ = z1
+    expectedDx = -dx1
+    expectedDy = -dy1
     assert(relativeLocation:getX() == expectedX, "gotten getX(="..relativeLocation:getX()..") not the same as expected(="..expectedX..")")
     assert(relativeLocation:getY() == expectedY, "gotten getY(="..relativeLocation:getY()..") not the same as expected(="..expectedY..")")
     assert(relativeLocation:getZ() == expectedZ, "gotten getY(="..relativeLocation:getZ()..") not the same as expected(="..expectedZ..")")
