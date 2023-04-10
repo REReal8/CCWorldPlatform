@@ -5,12 +5,16 @@ local corelog = require "corelog"
 local Location = require "obj_location"
 
 function T_Location.T_All()
+    -- base methods
     T_Location.T_new()
     T_Location.T_IsOfType()
     T_Location.T_isSame()
     T_Location.T_copy()
 
+    -- specific methods
     T_Location.T_reset()
+    T_Location.T_minLocation()
+    T_Location.T_maxLocation()
 end
 
 local x0 = 0
@@ -216,6 +220,74 @@ function T_Location.T_reset()
     assert(location1:getZ() == z0, "gotten getY(="..location1:getZ()..") not the same as expected(="..z0..")")
     assert(location1:getDX() == dx0, "gotten getDX(="..location1:getDX()..") not the same as expected(="..dx0..")")
     assert(location1:getDY() == dy0, "gotten getDY(="..location1:getDY()..") not the same as expected(="..dy0..")")
+
+    -- cleanup test
+end
+
+function T_Location.T_minLocation()
+    -- prepare test
+    corelog.WriteToLog("* Location:minLocation() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+    local location2 = Location:new({
+        _x  = x2,
+        _y  = y2,
+        _z  = z2,
+        _dx = dx2,
+        _dy = dy2,
+    })
+
+    -- test
+    local minLocation = location1:minLocation(location2)
+    local minX = math.min(x1, x2)
+    local minY = math.min(y1, y2)
+    local minZ = math.min(z1, z2)
+    local minDx = math.min(dx1, dx2)
+    local minDy = math.min(dy1, dy2)
+    assert(minLocation:getX() == minX, "gotten getX(="..minLocation:getX()..") not the same as expected(="..minX..")")
+    assert(minLocation:getY() == minY, "gotten getY(="..minLocation:getY()..") not the same as expected(="..minY..")")
+    assert(minLocation:getZ() == minZ, "gotten getY(="..minLocation:getZ()..") not the same as expected(="..minZ..")")
+    assert(minLocation:getDX() == minDx, "gotten getDX(="..minLocation:getDX()..") not the same as expected(="..minDx..")")
+    assert(minLocation:getDY() == minDy, "gotten getDY(="..minLocation:getDY()..") not the same as expected(="..minDy..")")
+
+    -- cleanup test
+end
+
+function T_Location.T_maxLocation()
+    -- prepare test
+    corelog.WriteToLog("* Location:maxLocation() tests")
+    local location1 = Location:new({
+        _x  = x1,
+        _y  = y1,
+        _z  = z1,
+        _dx = dx1,
+        _dy = dy1,
+    })
+    local location2 = Location:new({
+        _x  = x2,
+        _y  = y2,
+        _z  = z2,
+        _dx = dx2,
+        _dy = dy2,
+    })
+
+    -- test
+    local maxLocation = location1:maxLocation(location2)
+    local maxX = math.max(x1, x2)
+    local maxY = math.max(y1, y2)
+    local maxZ = math.max(z1, z2)
+    local maxDx = math.max(dx1, dx2)
+    local maxDy = math.max(dy1, dy2)
+    assert(maxLocation:getX() == maxX, "gotten getX(="..maxLocation:getX()..") not the same as expected(="..maxX..")")
+    assert(maxLocation:getY() == maxY, "gotten getY(="..maxLocation:getY()..") not the same as expected(="..maxY..")")
+    assert(maxLocation:getZ() == maxZ, "gotten getY(="..maxLocation:getZ()..") not the same as expected(="..maxZ..")")
+    assert(maxLocation:getDX() == maxDx, "gotten getDX(="..maxLocation:getDX()..") not the same as expected(="..maxDx..")")
+    assert(maxLocation:getDY() == maxDy, "gotten getDY(="..maxLocation:getDY()..") not the same as expected(="..maxDy..")")
 
     -- cleanup test
 end
