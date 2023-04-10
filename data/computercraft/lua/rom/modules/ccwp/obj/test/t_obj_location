@@ -88,8 +88,8 @@ function T_Location.T_IsOfType()
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     location2:setY(y1)
 
-    -- test invalid y
-    location2._x = "a string"
+    -- test invalid z
+    location2._z = "a string"
     isOfType = Location.IsOfType(location2)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
