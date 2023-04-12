@@ -334,8 +334,8 @@ end
 
 function enterprise_forestry.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public Supplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -343,8 +343,8 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
@@ -352,7 +352,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -367,7 +367,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
     local provideItems = itemsLocator:getQuery()
     return forest:provideItemsTo_ASrv({
         provideItems                = provideItems,
-        storageLocator              = storageLocator,
+        itemDepotLocator            = itemDepotLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }, callback)
@@ -406,8 +406,8 @@ end
 
 function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -420,7 +420,7 @@ function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
@@ -433,7 +433,7 @@ function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
     local provideItems = itemsLocator:getQuery()
     local needs = forest:needsTo_ProvideItemsTo_SSrv({
         provideItems    = provideItems,
-        storageLocator  = storageLocator,
+        itemDepotLocator= itemDepotLocator,
     })
 
     -- end

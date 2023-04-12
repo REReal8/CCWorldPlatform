@@ -16,25 +16,25 @@ local enterprise_projects = require "enterprise_projects"
     those items.
 
     For an enterprise to be a Supplier it needs to implement the following services:
-        ProvideItemsTo_ASrv         - providing multiple instances of a specific item to a Storage destination.
+        ProvideItemsTo_ASrv         - providing multiple instances of a specific item to an ItemDepot destination.
         Can_ProvideItems_QSrv       - answers the question whether the Supplier can provide specific items.
-        NeedsTo_ProvideItemsTo_SSrv - return the needs for the Supplier to provide specific items to a Storage.
+        NeedsTo_ProvideItemsTo_SSrv - return the needs for the Supplier to provide specific items to an ItemDepot.
 
-    For an enterprise to be a Storage it needs to implement the following services:
-        GetItemsLocations_SSrv      - provides the current world locations of different items in a Storage.
-        GetStorageLocation_SSrv     - provides the world location of a Storage.
-        GetItemsIntoTurtle_ASrv     - ensuring items are gathered in the Storage and transferred to the inventory of a turtle.
-        PutItemsFromTurtle_ASrv     - ensuring items are transferred from the inventory of a turtle to the Storage.
+    For an enterprise to be an ItemDepot it needs to implement the following services:
+        GetItemsLocations_SSrv      - provides the current world locations of different items in an ItemDepot.
+        GetItemDepotLocation_SSrv   - provides the world location of an ItemDepot.
+        GetItemsIntoTurtle_ASrv     - ensuring items are gathered in the ItemDepot and transferred to the inventory of a turtle.
+        PutItemsFromTurtle_ASrv     - ensuring items are transferred from the inventory of a turtle to the ItemDepot.
 
-    Furthermore most Suppliers and Storages should implement the additional attribute
+    Furthermore most Suppliers and ItemDepots should implement the additional attribute
         GetHostLocator_Att          - locating this enterprise
 
-    The ISP offers generic Supplier and Storage services by relaying them to the underlying Supplier or Storage based on the "base" component of URL's. The interface
-    of the corresponding ISP services is the same. Hence, one could see the ISP as a Supplier and Storage itself.
+    The ISP offers generic Supplier and ItemDepot services by relaying them to the underlying Supplier or ItemDepot based on the "base" component of URL's. The interface
+    of the corresponding ISP services is the same. Hence, one could see the ISP as a Supplier and ItemDepot itself.
 
     The ISP provides the following additional public services
-        TransferItemsFromTo_ASrv    - transferring items from one Storage to another.
-        NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one Storage to another.
+        TransferItemsFromTo_ASrv    - transferring items from one ItemDepot to another.
+        NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one ItemDepot to another.
         AddItemsLocators_SSrv       - adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
 --]]
 
@@ -50,7 +50,7 @@ local enterprise_projects = require "enterprise_projects"
 function enterprise_isp.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemsLocator, callback = InputChecker.Check([[
-        This async public Supplier service provides multiple instances of a specific to the requested Storage.
+        This async public Supplier service provides multiple instances of a specific to the requested ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -58,8 +58,8 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
@@ -67,7 +67,7 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              - (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            - (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      - (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -117,7 +117,7 @@ end
 function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
-        This sync public service returns the needs for a Supplier to provide specific items to a Storage.
+        This sync public service returns the needs for a Supplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -130,7 +130,7 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              - (URL) locating the Storage where the items need to be delivered to
+                itemDepotLocator            - (URL) locating the ItemDepot where the items need to be delivered to
 
                 ingredientsSupplierLocator  - (URL) optionally locating another Supplier where needed ingredient items for the Supplier could be retrieved
     --]], table.unpack(arg))
@@ -151,10 +151,10 @@ end
 
 function enterprise_isp.TransferItemsFromTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, sourceItemsLocator, destinationStorageLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public service relays the transfer of items from one Storage to another.
+    local checkSuccess, sourceItemsLocator, destinationItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public service relays the transfer of items from one ItemDepot to another.
 
-        This service is implemented using the following underlying Storage services
+        This service is implemented using the following underlying ItemDepot services
             GetItemsIntoTurtle_ASrv
             PutItemsFromTurtle_ASrv
 
@@ -164,51 +164,51 @@ function enterprise_isp.TransferItemsFromTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed successfully
-                destinationItemsLocator     - (URL) stating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to destinationStorageLocator, and
+                destinationItemsLocator     - (URL) stating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to destinationItemDepotLocator, and
                                                 the "query" should be equal to the "query" component of the sourceItemsLocator)
 
         Parameters:
             transferData                    - (table) data about the transfer
                 sourceItemsLocator          + (URL) locating the items that need transfer
                                                 (the "query" component of the URL specifies the items to be transferred)
-                                                (the "host" component of the URL specifies the Storage where the items are located)
-                destinationStorageLocator   + (URL) locating the Storage that needs to be transferred to
+                                                (the "host" component of the URL specifies the ItemDepot where the items are located)
+                destinationItemDepotLocator + (URL) locating the ItemDepot that needs to be transferred to
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get source Storage
-    local serviceResults = GetStorageName_SSrv( { storageLocator = sourceItemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..sourceItemsLocator:getURI()..".") return Callback.ErrorCall(callback) end
-    local sourceStorageName = serviceResults.enterpriseName
+    -- get source ItemDepot
+    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = sourceItemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining itemDepotName for "..sourceItemsLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    local sourceItemDepotName = serviceResults.enterpriseName
 
-    -- get target Storage
-    serviceResults = GetStorageName_SSrv( { storageLocator = destinationStorageLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining storageName for "..destinationStorageLocator:getURI()..".") return Callback.ErrorCall(callback) end
-    local destinationStorageName = serviceResults.enterpriseName
+    -- get target ItemDepot
+    serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = destinationItemDepotLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining itemDepotName for "..destinationItemDepotLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    local destinationItemDepotName = serviceResults.enterpriseName
 
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
     if next(transferItems) == nil then
-        corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationStorageLocator:getURI()..").")
+        corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationItemDepotLocator:getURI()..").")
         return callback:call({
             success                 = true,
-            destinationItemsLocator = destinationStorageLocator:copy()
+            destinationItemsLocator = destinationItemDepotLocator:copy()
         })
     end
 
     -- create project definition
     local transferItemsProjectDef = {
         steps   = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = sourceStorageName, serviceName = "GetItemsIntoTurtle_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = sourceItemDepotName, serviceName = "GetItemsIntoTurtle_ASrv" }, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "sourceItemsLocator" },
                 { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = destinationStorageName, serviceName = "PutItemsFromTurtle_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = destinationItemDepotName, serviceName = "PutItemsFromTurtle_ASrv" }, stepDataDef = {
                 { keyDef = "turtleItemsLocator"         , sourceStep = 1, sourceKeyDef = "turtleItemsLocator" },
-                { keyDef = "destinationHostLocator"     , sourceStep = 0, sourceKeyDef = "destinationStorageLocator" },
+                { keyDef = "destinationHostLocator"     , sourceStep = 0, sourceKeyDef = "destinationItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
@@ -223,7 +223,7 @@ function enterprise_isp.TransferItemsFromTo_ASrv(...)
     }
     local projectData = {
         sourceItemsLocator          = sourceItemsLocator,
-        destinationStorageLocator   = destinationStorageLocator,
+        destinationItemDepotLocator = destinationItemDepotLocator,
 
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
@@ -238,12 +238,12 @@ end
 
 function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     -- get & check input from description
-    local checkSuccess, sourceItemsLocator, destinationStorageLocator = InputChecker.Check([[
-        This sync public service returns the (fuel) needs for the transfer of items from one Storage to another.
+    local checkSuccess, sourceItemsLocator, destinationItemDepotLocator = InputChecker.Check([[
+        This sync public service returns the (fuel) needs for the transfer of items from one ItemDepot to another.
 
-        This service is implemented using the following underlying Storage services
+        This service is implemented using the following underlying ItemDepot services
             GetItemsLocations_SSrv
-            GetStorageLocation_SSrv
+            GetItemDepotLocation_SSrv
 
         Return value:
                                             - (table)
@@ -254,15 +254,15 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
             transferData                    - (table) data about the transfer
                 sourceItemsLocator          + (URL) locating the items that need transfer
                                                 (the "query" component of the URL specifies the items to be transferred)
-                                                (the "host" component of the URL specifies the Storage where the items are located)
-                destinationStorageLocator   + (URL) locating the Storage that needs to be transferred to
+                                                (the "host" component of the URL specifies the ItemDepot where the items are located)
+                destinationItemDepotLocator + (URL) locating the ItemDepot that needs to be transferred to
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: Invalid input") return {success = false} end
 
     -- check there are actual items to transfer
     local transferItems = sourceItemsLocator:getQuery()
     if next(transferItems) == nil then
-        corelog.Warning("enterprise_isp.NeedsTo_TransferItems_SSrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationStorageLocator:getURI()..").")
+        corelog.Warning("enterprise_isp.NeedsTo_TransferItems_SSrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationItemDepotLocator:getURI()..").")
         return {
             success     = true,
             fuelNeed    = 0,
@@ -275,15 +275,15 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     local itemsLocations = serviceResults.locations
 
     -- determine destinationLocation
-    serviceResults = enterprise_isp.GetStorageLocation_SSrv({ storageLocator = destinationStorageLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: failed obtaining location for Storage "..destinationStorageLocator:getURI()..".") return {success = false} end
-    local storageLocation = serviceResults.location
+    serviceResults = enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = destinationItemDepotLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_TransferItems_SSrv: failed obtaining location for ItemDepot "..destinationItemDepotLocator:getURI()..".") return {success = false} end
+    local itemDepotLocation = serviceResults.location
 
     -- determine fuelNeed
     local fuelNeed = 0
     for i, itemlocation in ipairs(itemsLocations) do
         -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        fuelNeed = fuelNeed + role_fuel_worker.NeededFuelToFrom(storageLocation, itemlocation)
+        fuelNeed = fuelNeed + role_fuel_worker.NeededFuelToFrom(itemDepotLocation, itemlocation)
     end
 
     -- end
@@ -296,7 +296,7 @@ end
 function enterprise_isp.GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
-        This sync public service provides the current world locations of different items in a Storage.
+        This sync public service provides the current world locations of different items in an ItemDepot.
 
         Return value:
                                     - (table)
@@ -306,49 +306,49 @@ function enterprise_isp.GetItemsLocations_SSrv(...)
         Parameters:
             serviceData             + (table) data about this service
                 itemsLocator        + (URL) locating the items for which to get the location
-                                        (the "base" component of the URL specifies the Storage that provides the items)
+                                        (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
-    -- get Storage
-    local serviceResults = GetStorageName_SSrv( { storageLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: failed obtaining storageName for "..itemsLocator:getURI()..".") return {success = false} end
-    local storageName = serviceResults.enterpriseName
+    -- get ItemDepot
+    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.GetItemsLocations_SSrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
+    local itemDepotName = serviceResults.enterpriseName
 
-    -- call method on Storage
+    -- call method on ItemDepot
     local serviceName = "GetItemsLocations_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(storageName, serviceName, serviceData)
+    serviceResults = MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
 
     -- end
     return serviceResults
 end
 
-function enterprise_isp.GetStorageLocation_SSrv(...)
+function enterprise_isp.GetItemDepotLocation_SSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, storageLocator = InputChecker.Check([[
-        This sync public service provides the world location of a Storage.
+    local checkSuccess, serviceData, itemDepotLocator = InputChecker.Check([[
+        This sync public service provides the world location of an ItemDepot.
 
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                location            - (Location) location of the Storage
+                location            - (Location) location of the ItemDepot
 
         Parameters:
             serviceData             + (table) data about this service
-                storageLocator      + (URL) locating the Storage for which to get the location
-                                        (the "base" component of the URL should specify a Storage enterprise)
+                itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
+                                        (the "base" component of the URL should specify an ItemDepot enterprise)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
-    -- get Storage
-    local serviceResults = GetStorageName_SSrv( { storageLocator = storageLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.GetStorageLocation_SSrv: failed obtaining storageName for "..storageLocator:getURI()..".") return {success = false} end
-    local storageName = serviceResults.enterpriseName
+    -- get ItemDepot
+    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemDepotLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.GetItemDepotLocation_SSrv: failed obtaining itemDepotName for "..itemDepotLocator:getURI()..".") return {success = false} end
+    local itemDepotName = serviceResults.enterpriseName
 
-    -- call method on Storage
-    local serviceName = "GetStorageLocation_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(storageName, serviceName, serviceData)
+    -- call method on ItemDepot
+    local serviceName = "GetItemDepotLocation_SSrv"
+    serviceResults = MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
 
     -- end
     return serviceResults
@@ -489,30 +489,30 @@ function GetSupplierName_SSrv(...)
     }
 end
 
-function GetStorageName_SSrv(...)
+function GetItemDepotName_SSrv(...)
     -- get & check input from description
-    local checkSuccess, storageLocator = InputChecker.Check([[
-        This sync private service provides the (enterprise) name of a Storage.
+    local checkSuccess, itemDepotLocator = InputChecker.Check([[
+        This sync private service provides the (enterprise) name of an ItemDepot.
 
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                enterpriseName      - (string) with (enterprise) name of the Storage
+                enterpriseName      - (string) with (enterprise) name of the ItemDepot
 
         Parameters:
             serviceData             - (table) data about this service
-                storageLocator      + (URL) locating the Storage
-                                        (the "base" component of the URL should specify a Storage enterprise)
+                itemDepotLocator    + (URL) locating the ItemDepot
+                                        (the "base" component of the URL should specify an ItemDepot enterprise)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.GetStorageName_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Invalid input") return {success = false} end
 
-    -- determine Storage name
-    local host = storageLocator:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetStorageName_SSrv: storageHost of wrong type = "..type(host)..".") return {success = false} end
+    -- determine ItemDepot name
+    local host = itemDepotLocator:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
     local enterpriseName = nil
         if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
     elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
-    else corelog.Error("enterprise_isp.GetStorageName_SSrv: Not implemented for "..host .." host.") return {success = false} end
+    else corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Not implemented for "..host .." host.") return {success = false} end
 
     -- end
     return {

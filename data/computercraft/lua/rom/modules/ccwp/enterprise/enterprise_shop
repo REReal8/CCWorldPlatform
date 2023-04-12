@@ -18,15 +18,15 @@ local db = {
     The Shop is an enterprise that offers services for ordering items.
 
     The Shop provides the following services
-        OrderItems_ASrv             - procure items and having them delivered at a Storage
+        OrderItems_ASrv             - procure items and having them delivered at an ItemDepot
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
     The Shop implements it's services by using services of Supplier enterprises.
 
     For an enterprise to be a Supplier it needs to implement the following services:
-        ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at a Storage
+        ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at an ItemDepot
         Can_ProvideItems_QSrv       - whether the Supplier can provide specific items
-        NeedsTo_ProvideItemsTo_SSrv - returning the needs for the Supplier to provide specific items to a Storage
+        NeedsTo_ProvideItemsTo_SSrv - returning the needs for the Supplier to provide specific items to an ItemDepot
 
     The Shop is also a Supplier, hence it also implements these services.
 
@@ -50,7 +50,7 @@ local db = {
 
 function enterprise_shop.OrderItems_ASrv(...)
     -- get & check input from description
-    local checkSuccess, orderItems, storageLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, orderItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         With this async public service items can be ordered at the Shop. This services tries to procure each of the ordered items.
         The Shop ensures the items are delivered to the requested destination.
 
@@ -60,14 +60,14 @@ function enterprise_shop.OrderItems_ASrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                             the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                 - (table) data for the service
                 orderItems              + (table) with one or more ordered items (formatted as an array of [itemName] = itemCount key-value pairs)
-                storageLocator          + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator        + (URL) locating the ItemDepot where the items need to be provided to
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -81,7 +81,7 @@ function enterprise_shop.OrderItems_ASrv(...)
     -- call ProvideItemsTo_ASrv
     local serviceData = {
         itemsLocator                = itemsLocator,
-        storageLocator              = storageLocator,
+        itemDepotLocator            = itemDepotLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
@@ -115,8 +115,8 @@ end
 
 function enterprise_shop.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public Supplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -124,8 +124,8 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
@@ -133,7 +133,7 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -164,7 +164,7 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "ProcureItem_ASrv" }, stepDataDef = {
                 { keyDef = "item"                       , sourceStep = 0, sourceKeyDef = procureItem },
-                { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "storageLocator" },
+                { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
@@ -182,8 +182,8 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
     end
 
     -- set remaining projectData
-    projectData.storageLocator = storageLocator
-    -- ToDo: consider first locally gathering the ordered items and sending them in one go to the storageLocator if all off them are obtained.
+    projectData.itemDepotLocator = itemDepotLocator
+    -- ToDo: consider first locally gathering the ordered items and sending them in one go to the itemDepotLocator if all off them are obtained.
     projectData.ingredientsSupplierLocator = ingredientsSupplierLocator
     projectData.assignmentsPriorityKey = assignmentsPriorityKey
 
@@ -312,8 +312,8 @@ end
 
 function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator = InputChecker.Check([[
-        This sync public service returns the needs for a Supplier to provide specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator = InputChecker.Check([[
+        This sync public service returns the needs for a Supplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -326,7 +326,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be delivered to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be delivered to
                 ingredientsSupplierLocator  + (URL) optionally locating another Supplier where needed ingredient items for the Supplier could be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
@@ -352,7 +352,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
         -- get provide needs
         local itemServiceData = {
             itemsLocator                = itemLocator,
-            storageLocator              = storageLocator,
+            itemDepotLocator            = itemDepotLocator,
             ingredientsSupplierLocator  = ingredientsSupplierLocator,
         }
         local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
@@ -484,7 +484,7 @@ end
 
 function enterprise_shop.ProcureItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, item, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, item, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async private service procures items ordered at the Shop. The services first tries to obtain the item from a Supplier.
         If the items are not available from a Supplier it will attempt to have them produced by a Producer. The service
         ensures the items are delivered to the requested destination.
@@ -495,14 +495,14 @@ function enterprise_shop.ProcureItem_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed successfully
-                destinationItemsLocator     - (URL) stating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) stating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                     - (table) data for the service
                 item                        + (table) with one item (formatted as [itemName] = itemCount key-value pair) to procure
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -521,7 +521,7 @@ function enterprise_shop.ProcureItem_ASrv(...)
     local itemServiceData = {
         itemsLocator                = itemLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,
-        storageLocator              = storageLocator:copy(),
+        itemDepotLocator            = itemDepotLocator:copy(),
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     return enterprise_isp.ProvideItemsTo_ASrv(itemServiceData, callback)

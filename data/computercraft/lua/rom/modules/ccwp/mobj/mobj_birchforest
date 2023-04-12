@@ -188,8 +188,8 @@ end
 
 function BirchForest:provideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to a Storage.
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public Supplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -197,14 +197,14 @@ function BirchForest:provideItemsTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
             serviceData                     - (table) data for the service
                 provideItems                + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -219,28 +219,28 @@ function BirchForest:provideItemsTo_ASrv(...)
         if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- check for birchlog or sapling
-        local localStorageLocator = nil
+        local localitemDepotLocator = nil
         if itemName == "minecraft:birch_log" then
-            localStorageLocator = self:getLocalLogsLocator()
+            localitemDepotLocator = self:getLocalLogsLocator()
         elseif itemName == "minecraft:birch_sapling" then
-            localStorageLocator = self:getLocalSaplingsLocator()
+            localitemDepotLocator = self:getLocalSaplingsLocator()
         else
             corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
-        if not localStorageLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localSupplierLocator (type="..type(localStorageLocator)..")") return {success = false} end
+        if not localitemDepotLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localitemDepotLocator (type="..type(localitemDepotLocator)..")") return {success = false} end
 
-        -- check items already available in localStorageLocator
-        local localItemsLocator = localStorageLocator:copy()
+        -- check items already available in localitemDepotLocator
+        local localItemsLocator = localitemDepotLocator:copy()
         local item = { [itemName] = itemCount }
         localItemsLocator:setQuery(item)
         if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
             -- yes: return the items
             local transferData = {
                 sourceItemsLocator          = localItemsLocator,
-                destinationStorageLocator   = storageLocator,
+                destinationItemDepotLocator = itemDepotLocator,
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }
---            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local Storage in Forest")
+--            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local ItemDepot in Forest")
             scheduleResult = scheduleResult and enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
         else
             -- construct new itemsLocator for this forest
@@ -274,7 +274,7 @@ function BirchForest:provideItemsTo_ASrv(...)
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = { -- note: recursive call
                         { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "itemsLocator" },
-                        { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "storageLocator" },
+                        { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                         { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
                         { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
@@ -291,7 +291,7 @@ function BirchForest:provideItemsTo_ASrv(...)
             local projectData = {
                 itemsLocator                = itemsLocator,
                 ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
-                storageLocator              = storageLocator:copy(),
+                itemDepotLocator            = itemDepotLocator:copy(),
 
                 harvestForestMetaData       = role_forester.HarvestForest_MetaData(harvestForestTaskData),
                 harvestForestTaskCall       = TaskCall:new({ _moduleName = "role_forester", _methodName = "HarvestForest_Task", _data = harvestForestTaskData, }),
@@ -349,8 +349,8 @@ end
 
 function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, storageLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+    local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -361,7 +361,7 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
         Parameters:
             serviceData                     - (table) data to the query
                 provideItems                + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
@@ -401,7 +401,7 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
         localSupplierItemsLocator:setQuery(items)
         local transferData = {
             sourceItemsLocator          = localSupplierItemsLocator,
-            destinationStorageLocator   = storageLocator,
+            destinationItemDepotLocator = itemDepotLocator,
         }
         local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
         if not serviceResults.success then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end

@@ -26,7 +26,7 @@ function URL:new(o)
 
         Parameters:
                                 - (table) table with
-                host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "storage")
+                host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "item-depot")
                 port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
                 path                - [optional] (string) defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
                 query               - [optional] (table) of key-value pairs with (item) query segments
@@ -71,7 +71,7 @@ function URL:setHost(h)
 end
 
 local hostPattern = "[%a%_]+"
--- aUrl.setHostURI("storage")
+-- aUrl.setHostURI("item-depot")
 function URL:setHostURI(hURI)
     -- check input
     if type(hURI) ~= "string" then corelog.Error("URL:setHost: invalid host URI type: "..type(hURI)) return end

@@ -73,14 +73,14 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- set local output location
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- create project service data
     local buildBlueprintProjectDef = {
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
-                { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "materialsLocalHostLocator" },
+                { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
@@ -99,7 +99,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     }
     local projectData = {
         materialsItemsLocator       = materialsItemsLocator:copy(),
-        materialsLocalHostLocator   = materialsLocalHostLocator:copy(),
+        itemDepotLocator            = itemDepotLocator:copy(),
         ingredientsSupplierLocator  = materialsHostLocator:copy(),
 
         metaData                    = metaData,
@@ -166,17 +166,17 @@ function enterprise_construction.BuildLayer_ASrv(...)
     -- set local output location
     -- note:    Because BuildLayer_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle
     --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of)
-    --          the TransferItemsFromTo_ASrv service to find that out. Because of below statement the resulting destinationItemsLocator return value
+    --          the service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local materialsLocalHostLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- create project service data
     local buildRectangularPatternProjectDef = {
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
-                { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "materialsLocalHostLocator" },
+                { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
@@ -195,7 +195,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
     }
     local projectData = {
         materialsItemsLocator       = materialsItemsLocator:copy(),
-        materialsLocalHostLocator   = materialsLocalHostLocator:copy(),
+        itemDepotLocator            = itemDepotLocator:copy(),
         ingredientsSupplierLocator  = materialsHostLocator:copy(),
 
         metaData                    = metaData,

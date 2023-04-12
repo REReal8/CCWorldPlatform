@@ -28,7 +28,7 @@ local db = {
         GetItemsLocator_SSrv    - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
 
-    Furthermore, the enterprise functions as both a Supplier and a Storage for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    Furthermore, the enterprise functions as both a Supplier and an ItemDepot for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     It also provides the following attributes
         GetHostLocator_Att     - locating this enterprise
@@ -263,8 +263,8 @@ end
 
 function enterprise_chests.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public Supplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -272,8 +272,8 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
@@ -281,7 +281,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -295,7 +295,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
     -- transfer using TransferItemsFromTo_ASrv
     local transferData = {
         sourceItemsLocator          = itemsLocator,
-        destinationStorageLocator   = storageLocator,
+        destinationItemDepotLocator = itemDepotLocator,
         assignmentsPriorityKey      = assignmentsPriorityKey,
     }
     corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Chest")
@@ -335,8 +335,8 @@ end
 
 function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -349,7 +349,7 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
 
                 ingredientsSupplierLocator  - (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
@@ -357,13 +357,13 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- get chest
     local chest = enterprise_chests.GetChest(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..storageLocator:getURI().." not found.") return {success = false} end
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
     local needs = chest:needsTo_ProvideItemsTo_SSrv({
         provideItems    = provideItems,
-        storageLocator  = storageLocator,
+        itemDepotLocator= itemDepotLocator,
     })
 
     -- end
@@ -374,7 +374,7 @@ end
 function enterprise_chests.GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public service provides the current world locations of different items in a Storage.
+        This sync public service provides the current world locations of different items in an ItemDepot.
 
         Return value:
                                     - (table)
@@ -384,7 +384,7 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
         Parameters:
             serviceData             - (table) data about this service
                 itemsLocator        + (URL) locating the items for which to get the location
-                                        (the "base" component of the URL specifies the Storage that provides the items)
+                                        (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Invalid input") return {success = false} end
@@ -404,26 +404,26 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
 end
 
 -- ToDo: consider getting from/ moving to Chest
-function enterprise_chests.GetStorageLocation_SSrv(...)
+function enterprise_chests.GetItemDepotLocation_SSrv(...)
     -- get & check input from description
-    local checkSuccess, storageLocator = InputChecker.Check([[
-        This sync public service provides the world location of a Storage.
+    local checkSuccess, itemDepotLocator = InputChecker.Check([[
+        This sync public service provides the world location of an ItemDepot.
 
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                location            - (Location) location of the Storage
+                location            - (Location) location of the ItemDepot
 
         Parameters:
             serviceData             - (table) data about this service
-                storageLocator      + (URL) locating the Storage for which to get the location
-                                        (the "base" component of the URL should specify this Storage enterprise)
+                itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
+                                        (the "base" component of the URL should specify this ItemDepot enterprise)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
     -- get chest
-    local chest = enterprise_chests.GetChest(storageLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetStorageLocation_SSrv: Chest "..storageLocator:getURI().." not found.") return {success = false} end
+    local chest = enterprise_chests.GetChest(itemDepotLocator)
+    if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
     -- get location
     local location = chest:getLocation()
@@ -438,7 +438,7 @@ end
 function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
     -- get & check input from description
     local checkSuccess, sourceItemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public service ensures items are gathered in the Storage and transferred to the inventory of a turtle.
+        This async public service ensures items are gathered in the ItemDepot and transferred to the inventory of a turtle.
 
         Return value:
                                         - (boolean) whether the service was scheduled successfully
@@ -502,9 +502,9 @@ end
 function enterprise_chests.PutItemsFromTurtle_ASrv(...)
     -- get & check input from description
     local checkSuccess, turtleItemsLocator, destinationHostLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public service ensures items are transferred from the inventory of a turtle towards the Storage.
+        This async public service ensures items are transferred from the inventory of a turtle towards the ItemDepot.
 
-        A Storage should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
         Return value:
                                         - (boolean) whether the service was scheduled successfully
@@ -512,7 +512,7 @@ function enterprise_chests.PutItemsFromTurtle_ASrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final Storage and the items that where transferred to it
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where transferred to it
                                             (upon service succes the "host" component of this URL should be equal to destinationHostLocator,
                                             the "path" should be a specific chest, and the "query" should be equal to the "query" component of the turtleItemsLocator)
 

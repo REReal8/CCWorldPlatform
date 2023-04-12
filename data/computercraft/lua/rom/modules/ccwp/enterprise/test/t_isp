@@ -24,9 +24,9 @@ local itemsQuery = {
     ["minecraft:torch"]     = 5,
 }
 
-local storageURI = "ccwprp://storage"
+local itemDepotURI = "ccwprp://item-depot"
 local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
-local storageQueryURI = storageURI.."/site=2/outputchest=4/"..queryPartURI
+local itemDepotQueryURI = itemDepotURI.."/site=2/outputchest=4/"..queryPartURI
 local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
 local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
 
@@ -59,7 +59,7 @@ function t_isp.T_TransferItemsFromTo_Chests()
             -- TransferItemsFromTo_ASrv
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , sourceStep = 2, sourceKeyDef = "itemsLocator" },
-                { keyDef = "destinationStorageLocator"  , sourceStep = 3, sourceKeyDef = "chestLocator" },
+                { keyDef = "destinationItemDepotLocator", sourceStep = 3, sourceKeyDef = "chestLocator" },
             }},
 
             -- cleanup
@@ -115,23 +115,23 @@ end
 function t_isp.T_ISPUsingProject()
     -- create project definition
     local projectData = {
-        sourceItemsLocator = URL:newFromURI(storageQueryURI),
+        sourceItemsLocator = URL:newFromURI(itemDepotQueryURI),
         localInputHostLocator = URL:newFromURI(factoryInputChestURI),
         localOutputItemsLocation = URL:newFromURI(factoryOutputChestURI),
-        destinationStorageLocator = URL:newFromURI(storageURI)
+        destinationItemDepotLocator = URL:newFromURI(itemDepotURI)
      }
     local aTypicalServiceUsingItemsProjectDef = {
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "sourceItemsLocator" },
-                { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "localInputHostLocator" },
+                { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "localInputHostLocator" },
             }},
 
             -- other services (that e.g. could require items in a turtle's iventory) to implement the typical service
 
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
                 { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localOutputItemsLocation" },
-                { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "destinationStorageLocator" },
+                { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "destinationItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },

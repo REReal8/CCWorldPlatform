@@ -173,15 +173,15 @@ function T_Chest.T_needsTo_ProvideItemsTo_SSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local storageLocator = enterprise_turtle.GetHostLocator_Att()
-    local storageLocation = Location:new(coremove.GetLocation())
+    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocation = Location:new(coremove.GetLocation())
 
     -- test
     local needsTo_Provide = chest:needsTo_ProvideItemsTo_SSrv({
         provideItems    = provideItems,
-        storageLocator  = storageLocator,
+        itemDepotLocator= itemDepotLocator,
     })
-    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(storageLocation, chest:getLocation())
+    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, chest:getLocation())
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")

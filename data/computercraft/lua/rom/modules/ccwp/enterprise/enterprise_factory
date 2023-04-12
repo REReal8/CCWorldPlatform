@@ -108,12 +108,12 @@ local db = {
 
 function enterprise_factory.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public Supplier service provides specific items to an ItemDepot.
 
         It does so by first determining recipes that can produce the items. Subsequently it retrieves the needed production ingredients.
         After that it produces the requested amount of items with the production method (i.e. crafting or smelting) corresponding to the recipes.
-        Finally it delivers the created items to the requested Storage.
+        Finally it delivers the created items to the requested ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -121,8 +121,8 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
         Async service return value (to Callback):
                                             - (table)
                 success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final Storage and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to storageLocator, and
+                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
                                                 the "query" should be equal to orderItems)
 
         Parameters:
@@ -130,7 +130,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
                 assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                        + (Callback) to call once service is ready
@@ -170,7 +170,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
             steps = {
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                     { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
-                    { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "localInputLocator" },
+                    { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "localInputLocator" },
                     { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
                     { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
@@ -186,7 +186,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
                 }},
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
                     { keyDef = "sourceItemsLocator"         , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
-                    { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "storageLocator" },
+                    { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
@@ -205,7 +205,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
             ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
 
             ingredientsItemsLocator     = ingredientsItemsLocator,
-            storageLocator              = storageLocator,
+            itemDepotLocator            = itemDepotLocator,
 
             localInputLocator           = localInputLocator,
             localOutputLocator          = localOutputLocator,
@@ -312,7 +312,7 @@ function enterprise_factory.GetFuelNeed_Production_Att(...)
     -- determine fuelNeed
     local serviceData = {
         itemsLocator                = itemsLocator,
-        storageLocator              = turtleLocator:copy(),
+        itemDepotLocator            = turtleLocator:copy(),
         ingredientsSupplierLocator  = turtleLocator:copy(),
     }
     local serviceResults = enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
@@ -351,8 +351,8 @@ end
 
 function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, storageLocator, ingredientsSupplierLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to a Storage.
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator = InputChecker.Check([[
+        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -365,7 +365,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
                 itemsLocator                + (URL) locating the items to provide
                                                 (the "base" component of the URL specifies the Supplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
-                storageLocator              + (URL) locating the Storage where the items need to be provided to
+                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
 
                 ingredientsSupplierLocator  + (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
@@ -402,7 +402,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
         local localInputLocator = URL:new(siteProduceItemData.localInputLocator)
         local serviceData = {
             itemsLocator                = ingredientsItemsLocator,
-            storageLocator              = localInputLocator,
+            itemDepotLocator            = localInputLocator,
             ingredientsSupplierLocator  = ingredientsSupplierLocator:copy(),
         }
         serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
@@ -429,7 +429,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
         localOutputItemsLocator:setQuery(items)
         serviceData = {
             sourceItemsLocator          = localOutputItemsLocator,
-            destinationStorageLocator   = storageLocator,
+            destinationItemDepotLocator = itemDepotLocator,
         }
         serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end

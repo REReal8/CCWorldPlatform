@@ -82,7 +82,7 @@ local function Refuel_ASrv(...)
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "fuelItemsLocator" },
-                { keyDef = "storageLocator"             , sourceStep = 0, sourceKeyDef = "turtleToRefuelLocator" },
+                { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "turtleToRefuelLocator" },
                 { keyDef = "ingredientsSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},

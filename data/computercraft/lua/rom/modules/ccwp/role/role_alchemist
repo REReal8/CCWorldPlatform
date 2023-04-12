@@ -98,7 +98,7 @@ local function PrepareCraftingArea(recipe, times)
            times                       - (number) of times to apply the recipe
    ]]
 
-   -- presume we can use the storage below us
+   -- presume we can use the ItemDepot below us
    local craftArea = {false, false, false, false, false, true,  true,  true,  false, true,  true,  true,  false, true,  true,  true,  }
    local sideArea  = {true,  true,  true,  true,  true,  false, false, false, true,  false, false, false, true,  false, false, false, }
 

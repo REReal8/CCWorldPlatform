@@ -152,12 +152,12 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local storageLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test
     local needsTo_Provide = forest:needsTo_ProvideItemsTo_SSrv({
         provideItems    = provideItems,
-        storageLocator  = storageLocator,
+        itemDepotLocator= itemDepotLocator,
     })
     local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees)
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")

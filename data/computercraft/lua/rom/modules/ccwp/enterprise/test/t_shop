@@ -25,7 +25,7 @@ function t_shop.T_OrderMultipleItems()
             ["minecraft:furnace"]   = 1,
             ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
         },
-        storageLocator  = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 
@@ -34,7 +34,7 @@ function t_shop.T_OrderCharcoal()
         orderItems = {
             ["minecraft:charcoal"]  = 3,
         },
-        storageLocator  = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 
@@ -43,7 +43,7 @@ function t_shop.T_OrderTorch()
         orderItems = {
             ["minecraft:torch"]  = 4,
         },
-        storageLocator  = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 

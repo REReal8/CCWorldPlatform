@@ -39,7 +39,7 @@ local db = {
     A factory site is comprised out of one or more crafting and/ or smelting spots. Furthermore a site should specify
     one or more item input and one or more item output "spots". These input/ output spots locally locate the input and output of items
     by the site. The most simple version of these input/ output "spots" are the inventory of a turtle. They however could in principle
-    also be a full fledged local storage site.
+    also be a full fledged local ItemDepot site.
 --]]
 
 --                _     _ _         __                  _   _
@@ -358,7 +358,7 @@ end
 function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionLocation = InputChecker.Check([[
-        This sync public service returns the needs for the site to produce specific items to a Storage.
+        This sync public service returns the needs for the site to produce specific items to an ItemDepot.
 
         Return value:
                                         - (table)
@@ -390,8 +390,8 @@ function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
     else corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
 
     -- fuelNeed from productionLocation to localOutputLocator
-    serviceResults =  enterprise_isp.GetStorageLocation_SSrv({ storageLocator = localOutputLocator })
-    if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for Storage "..localOutputLocator:getURI()..".") return {success = false} end
+    serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
+    if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
     local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionLocation)
 
     -- end
@@ -440,7 +440,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     local projectSteps = {
         { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
             { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
-            { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
+            { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }},
     }
@@ -504,7 +504,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     table.insert(projectSteps,
         { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
             { keyDef = "sourceItemsLocator"         , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
-            { keyDef = "destinationStorageLocator"  , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
+            { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "localOutputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }}
     )
@@ -549,7 +549,7 @@ end
 
 --[[
     A v0 site is comprised of
-    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary storage for items not needed
+    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed
     - no smelting spot
 --]]
 
@@ -647,7 +647,7 @@ end
 
 --[[
     A v1 site is comprised of
-    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary storage for items not needed.
+    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed.
     - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
 --]]
 
@@ -732,13 +732,13 @@ end
 
 --[[
     A v2 site is comprised of
-    - one crafting spot. Below the crafting spot should is a chest as a temporary storage for items not needed.
+    - one crafting spot. Below the crafting spot should is a chest as a temporary ItemDepot for items not needed.
     - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
 
     - ToDo and some additional chests of which we need to define what their exact purpose is.
 --]]
 
-local function StorageChestL2_layer()
+local function ItemDepotChestL2_layer()
     return LayerRectangle:new({
         _codeArray  = {
             ["C"]   = Block:new({ _name = "minecraft:chest" }),
@@ -779,7 +779,7 @@ function enterprise_factory_site.GetV2SiteBuildData(serviceData)
         table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -2}), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
         table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -3}), buildFromAbove = false, layer = FurnanceL1_layer()})
     end
-    table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -5}), buildFromAbove = true, layer = StorageChestL2_layer()})
+    table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -5}), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
 
     -- construct blueprint
     local blueprint = {
