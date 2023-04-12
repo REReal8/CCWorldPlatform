@@ -71,10 +71,10 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         enterprise_forestry.DeleteForests()
     end
 
-    -- add default suppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
+    -- add default ItemSuppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    enterprise_shop.RegisterItemSupplier_SSrv({supplierLocator = enterprise_turtle.GetHostLocator_Att()})
-    enterprise_shop.RegisterItemSupplier_SSrv({supplierLocator = enterprise_factory.GetHostLocator_Att()})
+    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()})
+    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_factory.GetHostLocator_Att()})
 
     -- construct arguments
     local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
@@ -155,7 +155,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "supplierLocator"            , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "itemSupplierLocator"        , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },

@@ -51,11 +51,11 @@ function t_shop.T_RegisterItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.RegisterItemSupplier_SSrv() tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
-    local supplierLocator = enterprise_turtle.GetHostLocator_Att()
-    corelog.WriteToLog("   supplierLocator="..supplierLocator:getURI())
+    local itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
+    corelog.WriteToLog("   itemSupplierLocator="..itemSupplierLocator:getURI())
 
     -- test
-    local result = enterprise_shop.RegisterItemSupplier_SSrv({ supplierLocator = supplierLocator})
+    local result = enterprise_shop.RegisterItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})
     assert(result.success == true, "RegisterItemSupplier_SSrv services failed")
     local nItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local expectedNItemSuppliers = originalNItemSuppliers + 1
@@ -68,10 +68,10 @@ function t_shop.T_DelistItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.DelistItemSupplier_SSrv tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
-    local supplierLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test
-    local result = enterprise_shop.DelistItemSupplier_SSrv({ supplierLocator = supplierLocator})
+    local result = enterprise_shop.DelistItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})
     assert(result.success == true, "DelistItemSupplier_SSrv services failed")
     local nItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local expectedNItemSuppliers = originalNItemSuppliers - 1
