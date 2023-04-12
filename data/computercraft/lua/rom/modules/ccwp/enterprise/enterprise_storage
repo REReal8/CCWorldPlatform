@@ -70,7 +70,7 @@ end
 -- enterprise_storage.ItemsDelivered({itemList = {}, location = {y = 17,x = 14,z = 1,dx = 0,dy = 1,}})
 function ItemsDelivered(argumentTable) -- itemList, location
 --[[
-    This public function notifies the storage enterprise that items have been delivered
+    This public function notifies the enterprise_storage that items have been delivered
 
     Return value:
         nil
@@ -108,7 +108,7 @@ function ItemPresent(argumentTable) -- itemName
     This public function counts how many of an item is present in the system. Unknown items return 0 (not nil)
 
     Return value:
-        integer how many of that item is present in the storage system
+        integer how many of that item is present in the enterprise_storage system
 
     Parameters:
         itemName - (string) name of the item to be counted
@@ -154,7 +154,7 @@ end
 -- print(textutils.serialize(enterprise_storage.RetrieveItems(1, {["minecraft:stick"] = 2}, "enterprise_assignmentboard.Dummy_Callback", {})))
 function RetrieveItems(argumentTable) -- sitesIndex, itemList, callback, callbackArgs
 --[[
-    This public function is retrieving items from the storage. When the requested items are not
+    This public function is retrieving items from the enterprise_storage. When the requested items are not
         all present, the function will return nil and no action will follow
 
     Return value:
@@ -190,7 +190,7 @@ end
 -- enterprise_storage.ItemsCollected({location={y = 17, x = 14, z = 1, dy = 1, dx = 0}})
 function ItemsCollected(argumentTable) -- location
 --[[
-    This public function notifies the storage enterprise that the items have been collected
+    This public function notifies the enterprise_storage that the items have been collected
 
     Return value:
         nil
@@ -219,7 +219,7 @@ end
 function enterprise_storage.BuildAndStartNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type, callback = InputChecker.Check([[
-        This public function (service) builds a new storage site and starts it.
+        This public function (service) builds a new ItemStorage site and starts it.
 
         Return value:
                             - (boolean) whether the service was scheduled successfully
@@ -230,12 +230,12 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
 
         Parameters:
             siteData        + (table) data about this site, like type and layout
-                type        + (string) storage type
+                type        + (string) ItemStorage type
             callback        + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- what kind of storage is this?
+    -- what kind of ItemStorage is this?
     if type == 'silo' then
         -- create project definition
         local buildAndStartNewSiteProjecDef = {
@@ -285,12 +285,12 @@ function enterprise_storage.BuildNewSite_ASrv(...)
 
         Parameters:
             siteData        + (table) data about this site, like type and layout
-                type        + (string) storage type
+                type        + (string) ItemStorage type
             callback        + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- what kind of storage is this?
+    -- what kind of ItemStorage is this?
     if type == 'silo' then
         return enterprise_storage_silo.BuildNewSite_ASrv(siteData, callback)
     else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return Callback.ErrorCall(callback) end
@@ -300,7 +300,7 @@ end
 function enterprise_storage.StartNewSite_SSrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type = InputChecker.Check([[
-        This public function to notify the (enterprise) storage that a new site is ready for use and should be started.
+        This public function to notify the enterprise_storage that a new site is ready for use and should be started.
 
         Return value:
                             - (table)
@@ -308,7 +308,7 @@ function enterprise_storage.StartNewSite_SSrv(...)
 
         Parameters:
             siteData        + (table) data about this site, like type and layout
-                type        + (string) storage type
+                type        + (string) ItemStorage type
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.StartNewSite_SSrv: Invalid input") return {success = false} end
 
@@ -320,7 +320,7 @@ function enterprise_storage.StartNewSite_SSrv(...)
         coredht.SaveData({}, db.dhtRoot, db.dhtSites)
     end
 
-    -- what kind of storage is this?
+    -- what kind of ItemStorage is this?
     if siteData.type == 'silo' then return enterprise_storage_silo.StartNewSite_SSrv(siteData)
     else corelog.Error("enterprise_storage.StartNewSite_SSrv: Don't know how to start a site of type "..type) return {success = false} end
 end
