@@ -26,7 +26,7 @@ local enterprise_projects = require "enterprise_projects"
         GetItemsIntoTurtle_ASrv     - ensuring items are gathered in the ItemDepot and transferred to the inventory of a turtle.
         PutItemsFromTurtle_ASrv     - ensuring items are transferred from the inventory of a turtle to the ItemDepot.
 
-    Furthermore most Suppliers and ItemDepots should implement the additional attribute
+    Furthermore most ItemSuppliers and ItemDepots should implement the additional attribute
         GetHostLocator_Att          - locating this enterprise
 
     The ISP offers generic ItemSupplier and ItemDepot services by relaying them to the underlying ItemSupplier or ItemDepot based on the "base" component of URL's. The interface
@@ -75,7 +75,7 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get ItemSupplier
-    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
+    local serviceResults = GetItemSupplierName_SSrv( { supplierLocator = itemsLocator })
     if not serviceResults.success then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return Callback.ErrorCall(callback) end
     local supplierName = serviceResults.enterpriseName
 
@@ -102,7 +102,7 @@ function enterprise_isp.Can_ProvideItems_QSrv(...)
     if not checkSuccess then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- get ItemSupplier
-    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
+    local serviceResults = GetItemSupplierName_SSrv( { supplierLocator = itemsLocator })
     if not serviceResults.success then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return {success = false} end
     local supplierName = serviceResults.enterpriseName
 
@@ -137,7 +137,7 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- get ItemSupplier
-    local serviceResults = GetSupplierName_SSrv( { supplierLocator = itemsLocator })
+    local serviceResults = GetItemSupplierName_SSrv( { supplierLocator = itemsLocator })
     if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: failed obtaining supplierName for "..itemsLocator:getURI()..".") return {success = false} end
     local supplierName = serviceResults.enterpriseName
 
@@ -454,7 +454,7 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function GetSupplierName_SSrv(...)
+function GetItemSupplierName_SSrv(...)
     -- get & check input from description
     local checkSuccess, supplierLocator = InputChecker.Check([[
         This sync private service provides the (enterprise) name of an ItemSupplier.
@@ -469,18 +469,18 @@ function GetSupplierName_SSrv(...)
                 supplierLocator     + (URL) locating the ItemSupplier
                                         (the "base" component of the URL should specify an ItemSupplier enterprise)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.GetSupplierName_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: Invalid input") return {success = false} end
 
     -- determine enterpriseName
     local host = supplierLocator:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetSupplierName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
     local enterpriseName = nil
         if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
     elseif host == "enterprise_forestry"then enterpriseName = "enterprise_forestry"
     elseif host == "enterprise_factory" then enterpriseName = "enterprise_factory"
     elseif host == "enterprise_shop"    then enterpriseName = "enterprise_shop"
     elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
-    else corelog.Error("enterprise_isp.GetSupplierName_SSrv: Not implemented for "..host .." host.") return {success = false} end
+    else corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: Not implemented for "..host .." host.") return {success = false} end
 
     -- end
     return {

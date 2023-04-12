@@ -219,18 +219,18 @@ function BirchForest:provideItemsTo_ASrv(...)
         if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- check for birchlog or sapling
-        local localitemDepotLocator = nil
+        local localItemSupplierLocator = nil
         if itemName == "minecraft:birch_log" then
-            localitemDepotLocator = self:getLocalLogsLocator()
+            localItemSupplierLocator = self:getLocalLogsLocator()
         elseif itemName == "minecraft:birch_sapling" then
-            localitemDepotLocator = self:getLocalSaplingsLocator()
+            localItemSupplierLocator = self:getLocalSaplingsLocator()
         else
             corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
-        if not localitemDepotLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localitemDepotLocator (type="..type(localitemDepotLocator)..")") return {success = false} end
+        if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return {success = false} end
 
-        -- check items already available in localitemDepotLocator
-        local localItemsLocator = localitemDepotLocator:copy()
+        -- check items already available in localItemSupplierLocator
+        local localItemsLocator = localItemSupplierLocator:copy()
         local item = { [itemName] = itemCount }
         localItemsLocator:setQuery(item)
         if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
@@ -240,14 +240,14 @@ function BirchForest:provideItemsTo_ASrv(...)
                 destinationItemDepotLocator = itemDepotLocator,
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }
---            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local ItemDepot in Forest")
+--            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local ItemSupplier in Forest")
             scheduleResult = scheduleResult and enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
         else
             -- construct new itemsLocator for this forest
             local enterprise_forestry = require "enterprise_forestry"
             local forestLocator = enterprise_forestry.GetForestLocator(self:getId())
             local itemsLocator = forestLocator:copy()
-            itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localSupplierLocator
+            itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
 
             -- construct taskData
             local harvestForestTaskData = {
@@ -263,13 +263,13 @@ function BirchForest:provideItemsTo_ASrv(...)
             -- create project service data
             local projectDef = {
                 steps = {
-                    -- ToDo: consider retrieving birchSapling from it's local localSupplierLocator
+                    -- ToDo: consider retrieving birchSapling from it's local localItemSupplierLocator
                     --          (or will this be part of harvestForest?)
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                         { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
                         { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
                     }},
-                    -- ToDo: consider storing the harvested goods in the local localSupplierLocator's for birch_log and birchSapling
+                    -- ToDo: consider storing the harvested goods in the local localItemSupplierLocator's for birch_log and birchSapling
                     --          (or will this be part of harvestForest?)
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = { -- note: recursive call
@@ -377,18 +377,18 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
 
         -- check for birchlog or sapling
         local itemPerRound = 1
-        local localSupplierLocator = nil
+        local localItemSupplierLocator = nil
         if itemName == "minecraft:birch_log" then
             itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
-            localSupplierLocator = self:getLocalLogsLocator()
+            localItemSupplierLocator = self:getLocalLogsLocator()
         elseif itemName == "minecraft:birch_sapling" then
             itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
             -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
-            localSupplierLocator = self:getLocalSaplingsLocator()
+            localItemSupplierLocator = self:getLocalSaplingsLocator()
         else
             corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false}
         end
-        if not localSupplierLocator then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid localSupplierLocator (type="..type(localSupplierLocator)..")") return {success = false} end
+        if not localItemSupplierLocator then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return {success = false} end
 
         -- fuelNeed per round
         local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
@@ -396,11 +396,11 @@ function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
         local fuelNeed_Rounds = nRounds * fuelPerRound
 
         -- fuelNeed transfer
-        local localSupplierItemsLocator = localSupplierLocator:copy()
+        local localItemsLocator = localItemSupplierLocator:copy()
         local items = { [itemName] = itemCount }
-        localSupplierItemsLocator:setQuery(items)
+        localItemsLocator:setQuery(items)
         local transferData = {
-            sourceItemsLocator          = localSupplierItemsLocator,
+            sourceItemsLocator          = localItemsLocator,
             destinationItemDepotLocator = itemDepotLocator,
         }
         local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)

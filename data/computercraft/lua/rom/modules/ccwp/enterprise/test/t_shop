@@ -50,16 +50,16 @@ end
 function t_shop.T_RegisterSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.RegisterSupplier_SSrv() tests")
-    local originalNSuppliers = #enterprise_shop.GetSuppliers()
+    local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local supplierLocator = enterprise_turtle.GetHostLocator_Att()
     corelog.WriteToLog("   supplierLocator="..supplierLocator:getURI())
 
     -- test
     local result = enterprise_shop.RegisterSupplier_SSrv({ supplierLocator = supplierLocator})
     assert(result.success == true, "RegisterSupplier_SSrv services failed")
-    local nSuppliers = #enterprise_shop.GetSuppliers()
-    local expectedNSuppliers = originalNSuppliers + 1
-    assert(nSuppliers == expectedNSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNSuppliers..")")
+    local nSuppliers = #enterprise_shop.GetItemSuppliers()
+    local expectedNItemSuppliers = originalNItemSuppliers + 1
+    assert(nSuppliers == expectedNItemSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
 end
@@ -67,15 +67,15 @@ end
 function t_shop.T_DelistSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.DelistSupplier_SSrv tests")
-    local originalNSuppliers = #enterprise_shop.GetSuppliers()
+    local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local supplierLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test
     local result = enterprise_shop.DelistSupplier_SSrv({ supplierLocator = supplierLocator})
     assert(result.success == true, "DelistSupplier_SSrv services failed")
-    local nSuppliers = #enterprise_shop.GetSuppliers()
-    local expectedNSuppliers = originalNSuppliers - 1
-    assert(nSuppliers == expectedNSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNSuppliers..")")
+    local nSuppliers = #enterprise_shop.GetItemSuppliers()
+    local expectedNItemSuppliers = originalNItemSuppliers - 1
+    assert(nSuppliers == expectedNItemSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
 end
@@ -86,9 +86,9 @@ function t_shop.T_DelistSuppliers()
 
     -- test
     enterprise_shop.DelistSuppliers()
-    local nSuppliers = #enterprise_shop.GetSuppliers()
-    local expectedNSuppliers = 0
-    assert(nSuppliers == expectedNSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNSuppliers..")")
+    local nSuppliers = #enterprise_shop.GetItemSuppliers()
+    local expectedNItemSuppliers = 0
+    assert(nSuppliers == expectedNItemSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 end
 
 return t_shop

@@ -223,7 +223,7 @@ local function ResetSuppliers()
     return coredht.SaveData({}, db.hostName, db.psSuppliers)
 end
 
-function enterprise_shop.GetSuppliers()
+function enterprise_shop.GetItemSuppliers()
     -- get suppliers
     local suppliers = coredht.GetData(db.hostName, db.psSuppliers)
     if not suppliers then suppliers = ResetSuppliers() end
@@ -248,10 +248,10 @@ local function GetBestSupplierLocator(item)
     -- check input
     if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid item (type="..type(item)..")") return nil end
 
-    -- get Suppliers
-    local suppliers = enterprise_shop.GetSuppliers()
+    -- get ItemSuppliers
+    local suppliers = enterprise_shop.GetItemSuppliers()
 
-    -- loop on registered Suppliers and return first
+    -- loop on registered ItemSuppliers and return first
     -- ToDo: consider selecting best ItemSupplier based on some criterium (e.g. fuelNeed)
     for i, supplierLocator in ipairs(suppliers) do
         supplierLocator = URL:new(supplierLocator)
@@ -374,7 +374,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
     return {
         success         = true,
         fuelNeed        = fuelNeed,
-        ingredientsNeed = ingredientsNeed, -- ToDo: consider allowing for non empty list to further generalise Shop into a container of Suppliers
+        ingredientsNeed = ingredientsNeed, -- ToDo: consider allowing for non empty list to further generalise Shop into a container of ItemSuppliers
     }
 end
 
@@ -395,14 +395,14 @@ function enterprise_shop.RegisterSupplier_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.RegisterSupplier_SSrv: Invalid input") return {success = false} end
 
-    -- get Suppliers
-    local suppliers = enterprise_shop.GetSuppliers()
+    -- get ItemSuppliers
+    local suppliers = enterprise_shop.GetItemSuppliers()
 
     -- register the supplier
     corelog.WriteToLog(">Registering supplier "..supplierLocator:getURI().." at the shop.")
     table.insert(suppliers, supplierLocator)
 
-    -- save Suppliers
+    -- save ItemSuppliers
     coredht.SaveData(suppliers, db.hostName, db.psSuppliers)
 
     -- end
@@ -413,7 +413,7 @@ function enterprise_shop.RegisterSupplier_SSrv(...)
 end
 
 function enterprise_shop.DelistSuppliers()
-    -- remove Suppliers
+    -- remove ItemSuppliers
     coredht.SaveData(nil, db.hostName, db.psSuppliers)
 end
 
@@ -433,8 +433,8 @@ function enterprise_shop.DelistSupplier_SSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.DelistChest_ASrv: Invalid input") return {success = false} end
 
-    -- get Suppliers
-    local suppliers = enterprise_shop.GetSuppliers()
+    -- get ItemSuppliers
+    local suppliers = enterprise_shop.GetItemSuppliers()
     local supplierFound = false
     for i, registeredSupplierLocator in ipairs(suppliers) do
         registeredSupplierLocator = URL:new(registeredSupplierLocator)
@@ -445,7 +445,7 @@ function enterprise_shop.DelistSupplier_SSrv(...)
             supplierFound = true
             table.remove(suppliers, i)
 
-            -- save Suppliers
+            -- save ItemSuppliers
             coredht.SaveData(suppliers, db.hostName, db.psSuppliers)
             break
         end
