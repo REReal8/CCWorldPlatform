@@ -8,9 +8,9 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_shop = require "enterprise_shop"
 
 function t_shop.T_All()
-    t_shop.T_RegisterSupplier()
-    t_shop.T_DelistSupplier()
-    t_shop.T_DelistSuppliers()
+    t_shop.T_RegisterItemSupplier()
+    t_shop.T_DelistItemSupplier()
+    t_shop.T_DelistItemSuppliers()
 end
 
 local callback = Callback:new({
@@ -47,48 +47,48 @@ function t_shop.T_OrderTorch()
     }, callback)
 end
 
-function t_shop.T_RegisterSupplier()
+function t_shop.T_RegisterItemSupplier()
     -- prepare test
-    corelog.WriteToLog("* enterprise_shop.RegisterSupplier_SSrv() tests")
+    corelog.WriteToLog("* enterprise_shop.RegisterItemSupplier_SSrv() tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local supplierLocator = enterprise_turtle.GetHostLocator_Att()
     corelog.WriteToLog("   supplierLocator="..supplierLocator:getURI())
 
     -- test
-    local result = enterprise_shop.RegisterSupplier_SSrv({ supplierLocator = supplierLocator})
-    assert(result.success == true, "RegisterSupplier_SSrv services failed")
-    local nSuppliers = #enterprise_shop.GetItemSuppliers()
+    local result = enterprise_shop.RegisterItemSupplier_SSrv({ supplierLocator = supplierLocator})
+    assert(result.success == true, "RegisterItemSupplier_SSrv services failed")
+    local nItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local expectedNItemSuppliers = originalNItemSuppliers + 1
-    assert(nSuppliers == expectedNItemSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
+    assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
 end
 
-function t_shop.T_DelistSupplier()
+function t_shop.T_DelistItemSupplier()
     -- prepare test
-    corelog.WriteToLog("* enterprise_shop.DelistSupplier_SSrv tests")
+    corelog.WriteToLog("* enterprise_shop.DelistItemSupplier_SSrv tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local supplierLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test
-    local result = enterprise_shop.DelistSupplier_SSrv({ supplierLocator = supplierLocator})
-    assert(result.success == true, "DelistSupplier_SSrv services failed")
-    local nSuppliers = #enterprise_shop.GetItemSuppliers()
+    local result = enterprise_shop.DelistItemSupplier_SSrv({ supplierLocator = supplierLocator})
+    assert(result.success == true, "DelistItemSupplier_SSrv services failed")
+    local nItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local expectedNItemSuppliers = originalNItemSuppliers - 1
-    assert(nSuppliers == expectedNItemSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
+    assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
     -- cleanup test
 end
 
-function t_shop.T_DelistSuppliers()
+function t_shop.T_DelistItemSuppliers()
     -- prepare test
-    corelog.WriteToLog("* enterprise_shop.DelistSuppliers tests")
+    corelog.WriteToLog("* enterprise_shop.DelistItemSuppliers tests")
 
     -- test
-    enterprise_shop.DelistSuppliers()
-    local nSuppliers = #enterprise_shop.GetItemSuppliers()
+    enterprise_shop.DelistItemSuppliers()
+    local nItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local expectedNItemSuppliers = 0
-    assert(nSuppliers == expectedNItemSuppliers, "gotten nSuppliers(="..nSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
+    assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 end
 
 return t_shop

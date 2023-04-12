@@ -73,8 +73,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- add default suppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_turtle.GetHostLocator_Att()})
-    enterprise_shop.RegisterSupplier_SSrv({supplierLocator = enterprise_factory.GetHostLocator_Att()})
+    enterprise_shop.RegisterItemSupplier_SSrv({supplierLocator = enterprise_turtle.GetHostLocator_Att()})
+    enterprise_shop.RegisterItemSupplier_SSrv({supplierLocator = enterprise_factory.GetHostLocator_Att()})
 
     -- construct arguments
     local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
@@ -154,7 +154,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "nTrees"                     , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterSupplier_SSrv" }, stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "supplierLocator"            , sourceStep = 4, sourceKeyDef = "forestLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {

@@ -11,7 +11,7 @@ local enterprise_isp = require "enterprise_isp"
 
 local db = {
     hostName        = "enterprise_shop",
-    psSuppliers     = "suppliers",
+    psItemSuppliers     = "suppliers",
 }
 
 --[[
@@ -219,20 +219,20 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-local function ResetSuppliers()
-    return coredht.SaveData({}, db.hostName, db.psSuppliers)
+local function ResetItemSuppliers()
+    return coredht.SaveData({}, db.hostName, db.psItemSuppliers)
 end
 
 function enterprise_shop.GetItemSuppliers()
     -- get suppliers
-    local suppliers = coredht.GetData(db.hostName, db.psSuppliers)
-    if not suppliers then suppliers = ResetSuppliers() end
+    local suppliers = coredht.GetData(db.hostName, db.psItemSuppliers)
+    if not suppliers then suppliers = ResetItemSuppliers() end
 
     -- end
     return suppliers
 end
 
-local function GetBestSupplierLocator(item)
+local function GetBestItemSupplierLocator(item)
     --[[
         This sync private function provides the "best" (first) ItemSupplier that can provide a specific item.
 
@@ -246,7 +246,7 @@ local function GetBestSupplierLocator(item)
     --]]
 
     -- check input
-    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestSupplierLocator: Invalid item (type="..type(item)..")") return nil end
+    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestItemSupplierLocator: Invalid item (type="..type(item)..")") return nil end
 
     -- get ItemSuppliers
     local suppliers = enterprise_shop.GetItemSuppliers()
@@ -264,7 +264,7 @@ local function GetBestSupplierLocator(item)
     end
 
     -- end
-    corelog.Warning("enterprise_shop.GetBestSupplierLocator: No ItemSupplier can provide "..textutils.serialise(item))
+    corelog.Warning("enterprise_shop.GetBestItemSupplierLocator: No ItemSupplier can provide "..textutils.serialise(item))
     return nil
 end
 
@@ -298,7 +298,7 @@ function enterprise_shop.Can_ProvideItems_QSrv(...)
         local item = { [itemName] = itemCount }
 
         -- check for an ItemSupplier to provide item
-        local supplierLocator = GetBestSupplierLocator(item)
+        local supplierLocator = GetBestItemSupplierLocator(item)
         if supplierLocator == nil then
             return {success = false}
         end
@@ -342,7 +342,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
         local item = { [itemName] = itemCount }
 
         -- get best supplierLocator
-        local supplierLocator = GetBestSupplierLocator(item)
+        local supplierLocator = GetBestItemSupplierLocator(item)
         if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- determine itemLocator
@@ -378,7 +378,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
-function enterprise_shop.RegisterSupplier_SSrv(...)
+function enterprise_shop.RegisterItemSupplier_SSrv(...)
     -- get & check input from description
     local checkSuccess, supplierLocator = InputChecker.Check([[
         This sync public service registers ("adds") an ItemSupplier to the enterprise.
@@ -393,7 +393,7 @@ function enterprise_shop.RegisterSupplier_SSrv(...)
             serviceData                 - (table) data for the service
                 supplierLocator         + (URL) locating the ItemSupplier
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.RegisterSupplier_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_shop.RegisterItemSupplier_SSrv: Invalid input") return {success = false} end
 
     -- get ItemSuppliers
     local suppliers = enterprise_shop.GetItemSuppliers()
@@ -403,7 +403,7 @@ function enterprise_shop.RegisterSupplier_SSrv(...)
     table.insert(suppliers, supplierLocator)
 
     -- save ItemSuppliers
-    coredht.SaveData(suppliers, db.hostName, db.psSuppliers)
+    coredht.SaveData(suppliers, db.hostName, db.psItemSuppliers)
 
     -- end
     local result = {
@@ -412,12 +412,12 @@ function enterprise_shop.RegisterSupplier_SSrv(...)
     return result
 end
 
-function enterprise_shop.DelistSuppliers()
+function enterprise_shop.DelistItemSuppliers()
     -- remove ItemSuppliers
-    coredht.SaveData(nil, db.hostName, db.psSuppliers)
+    coredht.SaveData(nil, db.hostName, db.psItemSuppliers)
 end
 
-function enterprise_shop.DelistSupplier_SSrv(...)
+function enterprise_shop.DelistItemSupplier_SSrv(...)
     -- get & check input from description
     local checkSuccess, supplierLocator = InputChecker.Check([[
         This sync public service delists ("removes") a supplier from the enterprise.
@@ -436,17 +436,17 @@ function enterprise_shop.DelistSupplier_SSrv(...)
     -- get ItemSuppliers
     local suppliers = enterprise_shop.GetItemSuppliers()
     local supplierFound = false
-    for i, registeredSupplierLocator in ipairs(suppliers) do
-        registeredSupplierLocator = URL:new(registeredSupplierLocator)
+    for i, registeredItemSupplierLocator in ipairs(suppliers) do
+        registeredItemSupplierLocator = URL:new(registeredItemSupplierLocator)
         -- check we found it
-        if supplierLocator:getURI() == registeredSupplierLocator:getURI() then
+        if supplierLocator:getURI() == registeredItemSupplierLocator:getURI() then
             -- remove from list
             corelog.WriteToLog(">Delisting ItemSupplier "..supplierLocator:getURI())
             supplierFound = true
             table.remove(suppliers, i)
 
             -- save ItemSuppliers
-            coredht.SaveData(suppliers, db.hostName, db.psSuppliers)
+            coredht.SaveData(suppliers, db.hostName, db.psItemSuppliers)
             break
         end
     end
@@ -510,7 +510,7 @@ function enterprise_shop.ProcureItem_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get best supplierLocator
-    local supplierLocator = GetBestSupplierLocator(item)
+    local supplierLocator = GetBestItemSupplierLocator(item)
     if supplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No supplier can provide "..textutils.serialise(item)) return Callback.ErrorCall(callback) end
 
     -- determine itemLocator
