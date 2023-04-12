@@ -168,16 +168,16 @@ function Chest:needsTo_ProvideItemsTo_SSrv(...)
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
-                                            - (table)
-                success                     - (boolean) whether the service executed correctly
-                fuelNeed                    - (number) amount of fuel needed to provide items
-                ingredientsNeed             - (table) ingredients needed to provide items
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to provide items
+                ingredientsNeed                 - (table) ingredients needed to provide items
 
         Parameters:
-            serviceData                     - (table) data to the query
-                provideItems                + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
-                itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
+            serviceData                         - (table) data to the query
+                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 

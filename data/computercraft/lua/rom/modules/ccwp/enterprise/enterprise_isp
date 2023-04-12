@@ -53,24 +53,24 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
         This async public ItemSupplier service provides multiple instances of a specific to the requested ItemDepot.
 
         Return value:
-                                            - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                            - (table)
-                success                     - (boolean) whether the service executed correctly
-                destinationItemsLocator     - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
-                                                the "query" should be equal to orderItems)
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                                                    the "query" should be equal to orderItems)
 
         Parameters:
-            serviceData                     + (table) data for the service
-                itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                (the "query" component of the URL specifies the items)
-                itemDepotLocator            - (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
-                assignmentsPriorityKey      - (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (Callback) to call once service is ready
+            serviceData                         + (table) data for the service
+                itemsLocator                    + (URL) locating the items to provide
+                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the URL specifies the items)
+                itemDepotLocator                - (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  - (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey          - (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
@@ -120,19 +120,19 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
         This sync public service returns the needs for an ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
-                                            - (table)
-                success                     - (boolean) whether the service executed correctly
-                fuelNeed                    - (number) amount of fuel needed to provide items
-                ingredientsNeed             - (table) ingredients needed to provide items
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to provide items
+                ingredientsNeed                 - (table) ingredients needed to provide items
 
         Parameters:
-            serviceData                     + (table) data to the query
-                itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                (the "query" component of the URL specifies the items)
-                itemDepotLocator            - (URL) locating the ItemDepot where the items need to be delivered to
+            serviceData                         + (table) data to the query
+                itemsLocator                    + (URL) locating the items to provide
+                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the URL specifies the items)
+                itemDepotLocator                - (URL) locating the ItemDepot where the items need to be delivered to
 
-                ingredientsSupplierLocator  - (URL) optionally locating another ItemSupplier where needed ingredient items for the ItemSupplier could be retrieved
+                ingredientsItemSupplierLocator  - (URL) optionally locating another ItemSupplier where needed ingredient items for the ItemSupplier could be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 

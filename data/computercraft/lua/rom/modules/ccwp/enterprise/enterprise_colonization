@@ -89,47 +89,47 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local factoryLocation           = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
     local nTreeswanted = 6
     local settleData = {
-        materialsHostLocator        = enterprise_shop.GetHostLocator_Att(),
+        materialsHostLocator            = enterprise_shop.GetHostLocator_Att(),
 
-        startLocation               = startLocation:copy(),
+        startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
 
-        ingredientsSupplierLocator  = enterprise_shop.GetHostLocator_Att(), -- ToDo: somehow pass this to enterprise_energy
+        ingredientsItemSupplierLocator  = enterprise_shop.GetHostLocator_Att(), -- ToDo: somehow pass this to enterprise_energy
 
-        factoryVersion0             = "v0",
-        upgradeFalse                = false,
+        factoryVersion0                 = "v0",
+        upgradeFalse                    = false,
 
-        forestLocation              = forestLocation:copy(),
-        forestLm1                   = -1,
-        forestFirstTree             = 1,
+        forestLocation                  = forestLocation:copy(),
+        forestLm1                       = -1,
+        forestFirstTree                 = 1,
 
-        forestL0                    = 0,
+        forestL0                        = 0,
 
-        forestL1                    = 1,
-        forestL2                    = 2,
-        nTreeswanted                = nTreeswanted,
+        forestL1                        = 1,
+        forestL2                        = 2,
+        nTreeswanted                    = nTreeswanted,
 
-        energyL0                    = 0,
-        energyL1                    = 1,
-        energyL2                    = 2,
-        energyL3                    = 3,
+        energyL0                        = 0,
+        energyL1                        = 1,
+        energyL2                        = 2,
+        energyL3                        = 3,
 
-        collectCobbleStoneMetaData  = role_settler.CollectCobbleStone_MetaData(collectCobbleStoneTaskData),
-        collectCobbleStoneTaskCall  = TaskCall:new({ _moduleName = "role_settler", _methodName = "CollectCobbleStone_Task", _data = collectCobbleStoneTaskData, }),
+        collectCobbleStoneMetaData      = role_settler.CollectCobbleStone_MetaData(collectCobbleStoneTaskData),
+        collectCobbleStoneTaskCall      = TaskCall:new({ _moduleName = "role_settler", _methodName = "CollectCobbleStone_Task", _data = collectCobbleStoneTaskData, }),
 
-        factoryLocation             = factoryLocation:copy(),
-        factoryVersion1             = "v1",
+        factoryLocation                 = factoryLocation:copy(),
+        factoryVersion1                 = "v1",
 
-        factoryVersion2             = "v2",
-        upgradeToV2                 = true,
+        factoryVersion2                 = "v2",
+        upgradeToV2                     = true,
 
-        siloLocation                = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
-        type                        = "silo",
-        siloType                    = "basic",
-        topChests                   = 2,
-        layers                      = 2,
+        siloLocation                    = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
+        type                            = "silo",
+        siloType                        = "basic",
+        topChests                       = 2,
+        layers                          = 2,
     }
 
     -- create project definition

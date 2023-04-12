@@ -30,9 +30,9 @@ function t_factory.T_ProvideItemsTo_Craft()
     itemsLocator:setQuery(items)
 
     return enterprise_factory.ProvideItemsTo_ASrv({
-        itemsLocator                = itemsLocator,
-        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
-        itemDepotLocator            = enterprise_turtle.GetHostLocator_Att(),
+        itemsLocator                    = itemsLocator,
+        ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 
@@ -42,9 +42,9 @@ function t_factory.T_ProvideItemsTo_Smelt()
     itemsLocator:setQuery(items)
 
     return enterprise_factory.ProvideItemsTo_ASrv({
-        itemsLocator                = itemsLocator,
-        ingredientsSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
-        itemDepotLocator            = enterprise_turtle.GetHostLocator_Att(),
+        itemsLocator                    = itemsLocator,
+        ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 
