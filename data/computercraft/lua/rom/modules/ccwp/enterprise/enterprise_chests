@@ -28,7 +28,7 @@ local db = {
         GetItemsLocator_SSrv    - provide the URL of items in a chest
         IsChestURL_QSrv         - answers the question if a URL is that of a chest
 
-    Furthermore, the enterprise functions as both a Supplier and an ItemDepot for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    Furthermore, the enterprise functions as both an ItemSupplier and an ItemDepot for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     It also provides the following attributes
         GetHostLocator_Att     - locating this enterprise
@@ -251,7 +251,7 @@ local function IsChestURL_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid input") return {success = false} end
 
-    -- check if of this Supplier
+    -- check if of this ItemSupplier
     local host = aURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
     if host == db.hostName then
@@ -264,7 +264,7 @@ end
 function enterprise_chests.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to an ItemDepot.
+        This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -279,7 +279,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
         Parameters:
             serviceData                     - (table) data for the service
                 itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
@@ -305,7 +305,7 @@ end
 function enterprise_chests.Can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public query service answers the question whether the Supplier can provide specific items.
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
                                     - (table)
@@ -314,7 +314,7 @@ function enterprise_chests.Can_ProvideItems_QSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 itemsLocator        + (URL) locating the items that need to be queried for providability
-                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
@@ -336,7 +336,7 @@ end
 function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
+        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -347,7 +347,7 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
         Parameters:
             serviceData                     - (table) data to the query
                 itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
 

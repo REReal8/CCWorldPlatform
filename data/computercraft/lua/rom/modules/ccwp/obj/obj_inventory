@@ -140,7 +140,7 @@ end
 function Inventory:hasItems(...)
     -- get & check input from description
     local checkSuccess, items = InputChecker.Check([[
-        This sync public query service answers the question whether the Supplier can provide specific items.
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
                             - (boolean) whether the answer to the question is true

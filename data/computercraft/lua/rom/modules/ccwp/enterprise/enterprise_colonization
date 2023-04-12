@@ -287,7 +287,7 @@ function IsColonizationURL_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_colonization.IsColonizationURL_QSrv: Invalid input") return {success = false} end
 
-    -- check if of this Supplier
+    -- check if of this ItemSupplier
     local host = aURL:getHost()
     if type(host) ~= "string" then corelog.Error("enterprise_colonization.IsColonizationURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
     if host == db.hostName then

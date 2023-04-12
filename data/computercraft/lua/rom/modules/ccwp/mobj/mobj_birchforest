@@ -48,8 +48,8 @@ function BirchForest:new(...)
                 _level                  - (number) level of the forest
                 _location               - (Location) base location of the forest
                 _nTrees                 - (number) # trees in the forest
-                _localLogsLocator       - (URL) locating the local Supplier of logs (e.g. a chest)
-                _localSaplingsLocator   - (URL) locating the local Supplier of saplings (e.g. a chest)
+                _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
+                _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
 
@@ -189,7 +189,7 @@ end
 function BirchForest:provideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to an ItemDepot.
+        This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -316,7 +316,7 @@ end
 function BirchForest:can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
-        This sync public query service answers the question whether the Supplier can provide specific items.
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
                                     - (table)
@@ -350,7 +350,7 @@ end
 function BirchForest:needsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
+        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)

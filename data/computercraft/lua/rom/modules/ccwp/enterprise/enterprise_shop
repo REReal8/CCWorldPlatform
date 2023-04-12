@@ -21,22 +21,22 @@ local db = {
         OrderItems_ASrv             - procure items and having them delivered at an ItemDepot
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
-    The Shop implements it's services by using services of Supplier enterprises.
+    The Shop implements it's services by using services of ItemSupplier enterprises.
 
-    For an enterprise to be a Supplier it needs to implement the following services:
+    For an enterprise to be an ItemSupplier it needs to implement the following services:
         ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at an ItemDepot
-        Can_ProvideItems_QSrv       - whether the Supplier can provide specific items
-        NeedsTo_ProvideItemsTo_SSrv - returning the needs for the Supplier to provide specific items to an ItemDepot
+        Can_ProvideItems_QSrv       - whether the ItemSupplier can provide specific items
+        NeedsTo_ProvideItemsTo_SSrv - returning the needs for the ItemSupplier to provide specific items to an ItemDepot
 
-    The Shop is also a Supplier, hence it also implements these services.
+    The Shop is also an ItemSupplier, hence it also implements these services.
 
     It also provides the following attributes
         GetHostLocator_Att          - locating this enterprise
 
-    This allows for the Shop to be passed as ingredientsSupplierLocator to a Supplier. The effect of that is that the Supplier can request
-    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from a Supplier.
+    This allows for the Shop to be passed as ingredientsSupplierLocator to an ItemSupplier. The effect of that is that the ItemSupplier can request
+    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from an ItemSupplier.
     This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided
-    by a Supplier.
+    by an ItemSupplier.
 --]]
 
 --                _     _ _         __                  _   _
@@ -116,7 +116,7 @@ end
 function enterprise_shop.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to an ItemDepot.
+        This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -131,7 +131,7 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         Parameters:
             serviceData                     - (table) data for the service
                 itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  + (URL) locating where the production ingredients can be retrieved
@@ -234,12 +234,12 @@ end
 
 local function GetBestSupplierLocator(item)
     --[[
-        This sync private function provides the "best" (first) Supplier that can provide a specific item.
+        This sync private function provides the "best" (first) ItemSupplier that can provide a specific item.
 
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                supplierLocator     - (URL) locating the best Supplier of the items
+                supplierLocator     - (URL) locating the best ItemSupplier of the items
 
         Parameters:
             item                    - (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
@@ -252,26 +252,26 @@ local function GetBestSupplierLocator(item)
     local suppliers = enterprise_shop.GetSuppliers()
 
     -- loop on registered Suppliers and return first
-    -- ToDo: consider selecting best Supplier based on some criterium (e.g. fuelNeed)
+    -- ToDo: consider selecting best ItemSupplier based on some criterium (e.g. fuelNeed)
     for i, supplierLocator in ipairs(suppliers) do
         supplierLocator = URL:new(supplierLocator)
         -- determine itemLocator
         local itemsLocator = supplierLocator:copy()
         itemsLocator:setQuery(item)
 
-        -- check Supplier can provide items
+        -- check ItemSupplier can provide items
         if enterprise_isp.Can_ProvideItems_QSrv({itemsLocator = itemsLocator }).success then return supplierLocator end
     end
 
     -- end
-    corelog.Warning("enterprise_shop.GetBestSupplierLocator: No Supplier can provide "..textutils.serialise(item))
+    corelog.Warning("enterprise_shop.GetBestSupplierLocator: No ItemSupplier can provide "..textutils.serialise(item))
     return nil
 end
 
 function enterprise_shop.Can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public query service answers the question whether the Supplier can provide specific items.
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
                                     - (table)
@@ -280,7 +280,7 @@ function enterprise_shop.Can_ProvideItems_QSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 itemsLocator        + (URL) locating the items that need to be queried for providability
-                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
@@ -297,7 +297,7 @@ function enterprise_shop.Can_ProvideItems_QSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
         local item = { [itemName] = itemCount }
 
-        -- check for a Supplier to provide item
+        -- check for an ItemSupplier to provide item
         local supplierLocator = GetBestSupplierLocator(item)
         if supplierLocator == nil then
             return {success = false}
@@ -313,7 +313,7 @@ end
 function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, ingredientsSupplierLocator = InputChecker.Check([[
-        This sync public service returns the needs for a Supplier to provide specific items to an ItemDepot.
+        This sync public service returns the needs for an ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -324,10 +324,10 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
         Parameters:
             serviceData                     - (table) data to the query
                 itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 itemDepotLocator            + (URL) locating the ItemDepot where the items need to be delivered to
-                ingredientsSupplierLocator  + (URL) optionally locating another Supplier where needed ingredient items for the Supplier could be retrieved
+                ingredientsSupplierLocator  + (URL) optionally locating another ItemSupplier where needed ingredient items for the ItemSupplier could be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
@@ -381,9 +381,9 @@ end
 function enterprise_shop.RegisterSupplier_SSrv(...)
     -- get & check input from description
     local checkSuccess, supplierLocator = InputChecker.Check([[
-        This sync public service registers ("adds") a Supplier to the enterprise.
+        This sync public service registers ("adds") an ItemSupplier to the enterprise.
 
-        Note that the Supplier should already be available in the world.
+        Note that the ItemSupplier should already be available in the world.
 
         Return value:
                                     - (table)
@@ -391,7 +391,7 @@ function enterprise_shop.RegisterSupplier_SSrv(...)
 
         Parameters:
             serviceData                 - (table) data for the service
-                supplierLocator         + (URL) locating the Supplier
+                supplierLocator         + (URL) locating the ItemSupplier
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.RegisterSupplier_SSrv: Invalid input") return {success = false} end
 
@@ -422,14 +422,14 @@ function enterprise_shop.DelistSupplier_SSrv(...)
     local checkSuccess, supplierLocator = InputChecker.Check([[
         This sync public service delists ("removes") a supplier from the enterprise.
 
-        Note that the Supplier is not removed from the world.
+        Note that the ItemSupplier is not removed from the world.
 
         Return value:
             success                 - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                 - (table) data for the service
-                supplierLocator         + (URL) locating the Supplier
+                supplierLocator         + (URL) locating the ItemSupplier
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.DelistChest_ASrv: Invalid input") return {success = false} end
 
@@ -441,7 +441,7 @@ function enterprise_shop.DelistSupplier_SSrv(...)
         -- check we found it
         if supplierLocator:getURI() == registeredSupplierLocator:getURI() then
             -- remove from list
-            corelog.WriteToLog(">Delisting Supplier "..supplierLocator:getURI())
+            corelog.WriteToLog(">Delisting ItemSupplier "..supplierLocator:getURI())
             supplierFound = true
             table.remove(suppliers, i)
 
@@ -485,8 +485,8 @@ end
 function enterprise_shop.ProcureItem_ASrv(...)
     -- get & check input from description
     local checkSuccess, item, itemDepotLocator, ingredientsSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async private service procures items ordered at the Shop. The services first tries to obtain the item from a Supplier.
-        If the items are not available from a Supplier it will attempt to have them produced by a Producer. The service
+        This async private service procures items ordered at the Shop. The services first tries to obtain the item from an ItemSupplier.
+        If the items are not available from an ItemSupplier it will attempt to have them produced by a Producer. The service
         ensures the items are delivered to the requested destination.
 
         Return value:
@@ -517,7 +517,7 @@ function enterprise_shop.ProcureItem_ASrv(...)
     local itemLocator = supplierLocator:copy()
     itemLocator:setQuery(item)
 
-    -- Have Supplier produce the item
+    -- Have ItemSupplier produce the item
     local itemServiceData = {
         itemsLocator                = itemLocator,
         ingredientsSupplierLocator  = ingredientsSupplierLocator,

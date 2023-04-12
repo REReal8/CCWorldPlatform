@@ -26,7 +26,7 @@ local enterprise_turtle
 --[[
     The Chest mobj represents a chest in the minecraft world and provides services to operate on that Chest.
 
-??    This enterprise is both a Supplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+??    This enterprise is both an ItemSupplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     The following design decisions are made
         - The actual Chest's should never be accessed directly but only via the services of this mobj.
@@ -141,7 +141,7 @@ end
 function Chest:can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
-        This sync public query service answers the question whether the Supplier can provide specific items.
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
                                     - (table)
@@ -165,7 +165,7 @@ end
 function Chest:needsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
-        This sync public service returns the needs for the Supplier to provide specific items to an ItemDepot.
+        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)

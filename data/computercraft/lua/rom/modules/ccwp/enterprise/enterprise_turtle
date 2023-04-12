@@ -26,7 +26,7 @@ local db = {
 --[[
     The Turtle enterprise provides services related to turtles.
 
-    This enterprise is both a Supplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
+    This enterprise is both an ItemSupplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
 
     Furthermore it provides the following additional services
         IsTurtleURL_QSrv       - provide if URL is of a turtle
@@ -214,7 +214,7 @@ end
 function enterprise_turtle.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public Supplier service provides specific items to an ItemDepot.
+        This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
                                             - (boolean) whether the service was scheduled successfully
@@ -229,7 +229,7 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
         Parameters:
             serviceData                     - (table) data for the service
                 itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 itemDepotLocator            + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsSupplierLocator  - (URL) locating where the production ingredients can be retrieved
@@ -255,7 +255,7 @@ end
 function enterprise_turtle.Can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public query service answers the question whether the Supplier can provide specific items.
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
                                     - (table)
@@ -264,7 +264,7 @@ function enterprise_turtle.Can_ProvideItems_QSrv(...)
         Parameters:
             serviceData             - (table) data to the query
                 itemsLocator        + (URL) locating the items that need to be queried for providability
-                                        (the "base" component of the URL specifies the Supplier that provides the items)
+                                        (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
@@ -301,7 +301,7 @@ end
 function enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
-        This sync public service returns the needs for a Supplier to provide specific items to an ItemDepot.
+        This sync public service returns the needs for an ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
                                             - (table)
@@ -312,11 +312,11 @@ function enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv(...)
         Parameters:
             serviceData                     - (table) data to the query
                 itemsLocator                + (URL) locating the items to provide
-                                                (the "base" component of the URL specifies the Supplier that provides the items)
+                                                (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                 (the "query" component of the URL specifies the items)
                 itemDepotLocator            + (URL) locating the ItemDepot where the items need to be delivered to
 
-                ingredientsSupplierLocator  - (URL) optionally locating another Supplier where needed ingredient items for the Supplier could be retrieved
+                ingredientsSupplierLocator  - (URL) optionally locating another ItemSupplier where needed ingredient items for the ItemSupplier could be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
