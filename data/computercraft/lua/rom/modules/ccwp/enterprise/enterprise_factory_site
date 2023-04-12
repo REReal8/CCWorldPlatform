@@ -169,6 +169,7 @@ local function GetAvailableLocator(locators)
     return nil
 end
 
+-- ToDo: consider making a ProductionSpot object
 local function ProductionSpot_New(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
