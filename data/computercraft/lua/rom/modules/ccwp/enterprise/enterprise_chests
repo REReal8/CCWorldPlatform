@@ -469,6 +469,7 @@ function enterprise_chests.GetItemsIntoTurtle_ASrv(...)
                 { keyDef = "items"                  , sourceStep = 0, sourceKeyDef = "items" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
+-- ToDo: consider way to automatically handle save object...
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
                 { keyDef = "chest"                  , sourceStep = 1, sourceKeyDef = "chest" },
             }},
