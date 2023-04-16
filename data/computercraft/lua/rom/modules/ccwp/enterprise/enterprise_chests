@@ -286,7 +286,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsChestURL_QSrv({ aURL = itemsLocator})
