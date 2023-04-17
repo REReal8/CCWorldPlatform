@@ -50,7 +50,7 @@ local enterprise_projects = require "enterprise_projects"
 function enterprise_isp.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemsLocator, callback = InputChecker.Check([[
-        This async public ItemSupplier service provides multiple instances of a specific to the requested ItemDepot.
+        This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
