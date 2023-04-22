@@ -288,11 +288,11 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get chest
+    -- get Chest
     local chest = enterprise_chests.GetChest(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Chest "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have chest provide items
+    -- have Chest provide items
     local provideItems = itemsLocator:getQuery()
     return chest:provideItemsTo_ASrv({
         provideItems                    = provideItems,
@@ -318,11 +318,11 @@ function enterprise_chests.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get chest
+    -- get Chest
     local chest = enterprise_chests.GetChest(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- check forest can provide items
+    -- check Chest can provide items
     local provideItems = itemsLocator:getQuery()
     local canProvide = chest:can_ProvideItems_QSrv({
         provideItems    = provideItems,
@@ -354,7 +354,7 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get chest
+    -- get Chest
     local chest = enterprise_chests.GetChest(itemsLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
