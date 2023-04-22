@@ -102,7 +102,6 @@ function enterprise_storage.BuildNewSite_ASrv(...)
     else corelog.Error("enterprise_storage.BuildNewSite_ASrv: Don't know how to build a site of type "..type) return Callback.ErrorCall(callback) end
 end
 
--- enterprise_storage.StartNewSite_SSrv({location={_x=12, _y=12, _z= 1, _dx=0, _dy=1}, type="silo", siloType="basic", topChests=2, layers=2})
 function enterprise_storage.StartNewSite_SSrv(...)
     -- get & check input from description
     local checkSuccess, siteData, type = InputChecker.Check([[
@@ -268,6 +267,88 @@ function enterprise_storage.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- end
     return {success = false}
+end
+
+function enterprise_storage.StoreItemsFrom_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
+
+        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where where stored
+                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                                            and the "query" should be equal to the "query" component of the itemsLocator)
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
+                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the URL specifies the items)
+                itemDepotLocator        + (URL) locating the ItemDepot where the items need to be stored to
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- ToDo: implement similar to enterprise_chests or enterprise_forestry
+
+    return Callback.ErrorCall(callback)
+end
+
+function enterprise_storage.Can_StoreItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator = InputChecker.Check([[
+        This sync public query service answers the question whether the ItemDepot can store specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be stored
+                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
+                                        (the "query" component of the URL specifies the items to query for)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.Can_StoreItems_QSrv: Invalid input") return {success = false} end
+
+    -- ToDo: implement
+
+    -- end
+    return {success = false}
+end
+
+function enterprise_storage.NeedsTo_StoreItemsFrom_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to provide items
+
+        Parameters:
+            serviceData                         - (table) data to the query
+                itemsLocator                    + (URL) locating the items to provide
+                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the URL specifies the items)
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.NeedsTo_StoreItemsFrom_SSrv: Invalid input") return {success = false} end
+
+    -- end
+    return {
+        fuelNeed = 100, -- ToDo: a real implementation on the specific storage
+        success = true,
+    }
 end
 
 --    _                 _    __                  _   _
