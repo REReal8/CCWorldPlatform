@@ -167,7 +167,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
     -- determine fuelNeed
     local fuelNeed = 0
     local enterpriseLevel = parameters.enterpriseLevel
-    if enterpriseLevel and enterpriseLevel > 0 then
+    if enterpriseLevel > 0 then
         -- get forest
         local forestLocator = parameters.forestLocator
         local forest = nil

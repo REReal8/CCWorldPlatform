@@ -139,8 +139,21 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     return true -- note: this implies scheduling the assignment was succesfull, it will be executed once it is pickedup by a turtle
 end
 
+local function ResetStatistics()
+    return coredht.SaveData({
+        maxFuelNeed_Assignment  = 0,
+        minLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
+        maxLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
+        maxFuelNeed_Travel      = 0,
+    }, db.dhtRoot, db.dhtStatistics)
+end
+
 function enterprise_assignmentboard.GetStatistics_Att()
-    return coredht.GetData(db.dhtRoot, db.dhtStatistics)
+    -- get statistics
+    local statistics = coredht.GetData(db.dhtRoot, db.dhtStatistics)
+    if not statistics then statistics = ResetStatistics() end
+
+    return statistics
 end
 
 local function ForgetSkipReasons()
@@ -308,15 +321,6 @@ end
 function enterprise_assignmentboard.Dummy_Callback(emptyTable)
     corelog.WriteToAssignmentLog("Dummy_Callback called")
     -- do nothing
-end
-
-local function ResetStatistics()
-    coredht.SaveData({
-        maxFuelNeed_Assignment  = 0,
-        minLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
-        maxLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
-        maxFuelNeed_Travel      = 0,
-    }, db.dhtRoot, db.dhtStatistics)
 end
 
 function enterprise_assignmentboard.Reset()
