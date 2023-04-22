@@ -193,11 +193,11 @@ function Chest:can_ProvideItems_QSrv(...)
     if not checkSuccess then corelog.Error("Chest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- check items in inventory
-    local itemsInventory = self:getInventory():hasItems(provideItems)
+    local hasItems = self:getInventory():hasItems(provideItems)
 
     -- end
     return {
-        success = itemsInventory,
+        success = hasItems,
     }
 end
 
