@@ -13,8 +13,6 @@ local coreutils = require "coreutils"
 local coremove = require "coremove"
 local coretask = require "coretask"
 
-local enterprise = require "enterprise"
-
 local db	    = {
     me				= os.getComputerID(),
     idleId			= 0,                                -- part of task...
@@ -40,8 +38,6 @@ function core.Init()
 	coreutils.Init()
 	corelog.Init()
 
-	enterprise.Init()
-
 	-- set the new status
 	coresystem.setStatus("initialized")
 end
@@ -63,8 +59,6 @@ function core.Setup()
 	coretask.Setup()
 	coreutils.Setup()
 	corelog.Setup()
-
-	enterprise.Setup()
 
 	-- set new status
 	coresystem.setStatus("ready")
