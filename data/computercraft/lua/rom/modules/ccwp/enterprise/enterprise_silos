@@ -1,6 +1,0 @@
-local db = {
-    dhtRoot     = "enterprise_silos",
-    dhtChests   = "silos",
-    hostName    = "silos",
-}
-
