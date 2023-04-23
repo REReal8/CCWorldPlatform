@@ -447,6 +447,10 @@ function enterprise_turtle.GetTurtle(...)
     local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleLocator})
     if not serviceResults.success then corelog.Error("enterprise_turtle.GetTurtle: Invalid turtleLocator (="..turtleLocator:getURI()..").") return nil end
 
+    -- ToDo: consider getting turtle from dht
+--    local turtle = coredht.GetResource(turtleLocator)
+--    if type(turtle) ~= "table" then corelog.Warning("enterprise_turtle.GetTurtle: turtle "..turtleLocator:getURI().."not found") return nil end
+
     -- check turtleId
     local currentTurtleId = os.getComputerID()
     local locatorTurtleId = turtleLocator:getPort()
