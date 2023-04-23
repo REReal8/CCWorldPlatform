@@ -9,6 +9,8 @@ local InputChecker = require "input_checker"
 local URL = require "obj_url"
 local Location = require "obj_location"
 
+local Turtle = require "mobj_turtle"
+
 local role_fuel_worker = require "role_fuel_worker"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
@@ -238,18 +240,17 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- check itemsLocator is for this enterprise
-    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
+    -- get Turtle
+    local turtle = enterprise_turtle.GetTurtle(itemsLocator)
+    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Turtle "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- transfer using TransferItemsFromTo_ASrv
-    local transferData = {
-        sourceItemsLocator          = itemsLocator,
-        destinationItemDepotLocator = itemDepotLocator,
-        assignmentsPriorityKey      = assignmentsPriorityKey,
-    }
---    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Turtle")
-    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
+    -- have Turtle provide items
+    local provideItems = itemsLocator:getQuery()
+    return turtle:provideItemsTo_ASrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_turtle.Can_ProvideItems_QSrv(...)
@@ -269,33 +270,18 @@ function enterprise_turtle.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
-    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    -- get Turtle
+    local turtle = enterprise_turtle.GetTurtle(itemsLocator)
+    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Turtle "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- select turtle
-    local currentTurtleId = os.getComputerID()
-    local itemsLocatorTurtleId = itemsLocator:getPort()
-    if itemsLocatorTurtleId and currentTurtleId ~= itemsLocatorTurtleId then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Querying items in one (id="..itemsLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
-
-    -- query turtle for items
-    local items = itemsLocator:getQuery()     -- e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3}
-    local inventory = coreinventory.GetInventoryDetail()
-    for itemName, itemCount in pairs(items) do
-        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
-
-        local inventoryCount = inventory.items[itemName]
-        if inventoryCount == nil or inventoryCount < itemCount then
---            corelog.WriteToLog("enterprise_turtle.Can_ProvideItems_QSrv: not enough (="..itemCount..") "..itemName.." items in inventory (="..(inventoryCount or 0)..").")
-            return {success = false}
-        end
-    end
+    -- check Turtle can provide items
+    local provideItems = itemsLocator:getQuery()
+    local canProvide = turtle:can_ProvideItems_QSrv({
+        provideItems    = provideItems,
+    })
 
     -- end
-    return {
-        success = true,
-    }
+    return canProvide
 end
 
 function enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv(...)
@@ -320,40 +306,58 @@ function enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get turtle location
-    local serviceResults = enterprise_turtle.GetItemsLocations_SSrv({ itemsLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location of turtle "..type(itemsLocator)..".") return {success = false} end
-    local k, turtleLocation = next(serviceResults.locations, nil)
+    -- get Turtle
+    local turtle = enterprise_turtle.GetTurtle(itemsLocator)
+    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Turtle "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- loop on items
-    local fuelNeed = 0
-    local items = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(items) do
-        -- check item
-        if type(itemName) ~= "string" then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
-
-        -- fuelNeed from turtle to itemDepotLocator
-        local serviceData = {
-            itemDepotLocator = itemDepotLocator,
-        }
-        serviceResults = enterprise_isp.GetItemDepotLocation_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..type(itemDepotLocator)..".") return {success = false} end
-        -- ToDo: consider how to handle if path isn't the shortest route, should we maybe modify things to do something like GetTravelDistanceBetween
-        local fuelNeed_FromTurtleToItemDepot = role_fuel_worker.NeededFuelToFrom(serviceResults.location, turtleLocation)
-
-        -- add fuelNeed
---        corelog.WriteToLog("T  fuelNeed_FromTurtleToItemDepot="..fuelNeed_FromTurtleToItemDepot)
-        fuelNeed = fuelNeed + fuelNeed_FromTurtleToItemDepot
-    end
+    -- determine needs
+    local provideItems = itemsLocator:getQuery()
+    local needs = turtle:needsTo_ProvideItemsTo_SSrv({
+        provideItems    = provideItems,
+        itemDepotLocator= itemDepotLocator,
+    })
 
     -- end
-    local ingredientsNeed = {}
-    return {
-        success         = true,
-        fuelNeed        = fuelNeed,
-        ingredientsNeed = ingredientsNeed,
-    }
+    return needs
+end
+
+function enterprise_turtle.StoreItemsFrom_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
+
+        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where where stored
+                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                                            and the "query" should be equal to the "query" component of the itemsLocator)
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
+                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the URL specifies the items)
+                itemDepotLocator        + (URL) locating the ItemDepot where the items need to be stored to
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- get turtle
+    local turtle = enterprise_turtle.GetTurtle(itemDepotLocator)
+    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Turtle "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
+    -- have turtle store items
+    return turtle:storeItemsFrom_ASrv({
+        itemsLocator                    = itemsLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_turtle.GetItemsLocations_SSrv(...)
@@ -557,6 +561,38 @@ end
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+
+function enterprise_turtle.GetTurtle(...)
+    -- get & check input from description
+    local checkSuccess, turtleLocator = InputChecker.Check([[
+        This function gets a Turtle based on a itemsLocator.
+
+        Return value:
+            turtle              - (Turtle) the Turtle object
+
+        Parameters:
+            turtleLocator       + (URL) locating the turtle
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_turtle.GetTurtle: Invalid input") return nil end
+
+    -- check itemsLocator is for this enterprise
+    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleLocator})
+    if not serviceResults.success then corelog.Error("enterprise_turtle.GetTurtle: Invalid turtleLocator (="..turtleLocator:getURI()..").") return nil end
+
+    -- check turtleId
+    local currentTurtleId = os.getComputerID()
+    local locatorTurtleId = turtleLocator:getPort()
+    if locatorTurtleId and currentTurtleId ~= locatorTurtleId then corelog.Error("enterprise_turtle.GetTurtle: Getting Turtle in one (id="..locatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return nil end
+
+    -- create turtle on the fly (for now)
+    local turtle = {
+        _id     = currentTurtleId,
+    }
+    turtle = Turtle:new(turtle)
+
+    -- end
+    return turtle
+end
 
 function enterprise_turtle.TriggerRefuelIfNeeded(turtleId, fuelLevel)
     -- get fuelLevels
