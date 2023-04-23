@@ -230,6 +230,8 @@ function Chest:provideItemsTo_ASrv(...)
         projectData = projectData,
     }
 
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
     enterprise_chests = enterprise_chests or require "enterprise_chests"
     }
 end
