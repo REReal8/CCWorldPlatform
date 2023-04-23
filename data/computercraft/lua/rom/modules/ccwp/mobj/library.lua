@@ -9,6 +9,7 @@ function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
+    objectFactory:registerClass("Test", require "mobj_turtle")
     objectFactory:registerClass("Chest", require "mobj_chest")
     objectFactory:registerClass("BirchForest", require "mobj_birchforest")
 
@@ -18,6 +19,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("Chest", "mobj_chest") -- ToDo: refactor Chest to no longer need to register it also as a module
 
     -- register library modules test modules
+    moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
 

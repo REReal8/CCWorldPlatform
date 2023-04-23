@@ -1,0 +1,271 @@
+local T_Turtle = {}
+local corelog = require "corelog"
+local coreutils = require "coreutils"
+local coremove = require "coremove"
+
+local role_fuel_worker = require "role_fuel_worker"
+
+local Callback = require "obj_callback"
+local Location = require "obj_location"
+local Inventory = require "obj_inventory"
+local URL = require "obj_url"
+
+local Turtle = require "mobj_turtle"
+
+local T_Chest = require "test.t_mobj_chest"
+
+local enterprise_turtle = require "enterprise_turtle"
+local enterprise_chests = require "enterprise_chests"
+
+function T_Turtle.T_All()
+    -- base methods
+    T_Turtle.T_Getters()
+    T_Turtle.T_IsOfType()
+    T_Turtle.T_isSame()
+    T_Turtle.T_copy()
+
+    -- service methods
+--    T_Turtle.T_needsTo_ProvideItemsTo_SSrv()
+--    T_Turtle.T_can_ProvideItems_QSrv()
+end
+
+local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
+local accessDirection1 = "top"
+
+local compact = { compact = true }
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function T_Turtle.T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* Turtle getter tests")
+    local id = 111
+    local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+
+    -- test
+    assert(objTurtle:getId() == id, "gotten id(="..objTurtle:getId()..") not the same as expected(="..id..")")
+--    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
+--    assert(objTurtle:getInventory():isSame(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
+
+    -- cleanup test
+end
+
+function T_Turtle.CreateTurtle(id)
+    -- check input
+    id = id or os.getComputerID()
+
+    -- create Turtle object
+    local turtle = Turtle:new({
+        _id                     = id,
+    })
+
+    -- end
+    return turtle
+end
+
+function T_Turtle.T_IsOfType()
+    -- prepare test
+    corelog.WriteToLog("* Turtle.IsOfType() tests")
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+
+    -- test valid
+    local isOfType = Turtle.IsOfType(objTurtle)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = Turtle.IsOfType("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- cleanup test
+end
+
+function T_Turtle.T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* Turtle:isSame() tests")
+    local id = 333
+    local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+
+    -- test same
+    local objTurtle2 = T_Turtle.CreateTurtle(id)
+    local isSame = objTurtle2:isSame(objTurtle)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- cleanup test
+end
+
+function T_Turtle.T_copy()
+    -- prepare test
+    corelog.WriteToLog("* Turtle:copy() tests")
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+
+    -- test
+    local copy = objTurtle:copy()
+    assert(copy:isSame(objTurtle), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objTurtle, compact)..")")
+
+    -- cleanup test
+end
+
+--                        _                           _   _               _
+--                       (_)                         | | | |             | |
+--    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+local function provideItemsTo_ASrv_Test(itemDepotLocator, toStr)
+    -- prepare test (cont)
+    corelog.WriteToLog("* Turtle:provideItemsTo_ASrv() test (to "..toStr..")")
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getId()}).turtleLocator
+
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+    }
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback = Callback:new({
+        _moduleName     = "T_Turtle",
+        _methodName     = "provideItemsTo_ASrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+            ["itemDepotLocator"]                = itemDepotLocator,
+        },
+    })
+
+    -- test
+    local scheduleResult = objTurtle:provideItemsTo_ASrv({
+        provideItems    = provideItems,
+        itemDepotLocator= itemDepotLocator,
+    }, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_Turtle.T_provideItemsTo_ASrv_Turtle()
+    -- prepare test
+    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    itemDepotLocator:setPort(os.getComputerID())
+
+    -- test
+    provideItemsTo_ASrv_Test(itemDepotLocator, "Turtle")
+end
+
+function T_Turtle.T_provideItemsTo_ASrv_Chest()
+    -- prepare test
+    local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
+    local itemDepotLocator = enterprise_chests.SaveChest(chest2)
+
+    -- test
+    provideItemsTo_ASrv_Test(itemDepotLocator, "Chest")
+end
+
+function T_Turtle.provideItemsTo_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    local itemDepotLocator = callbackData["itemDepotLocator"]
+    if enterprise_chests.IsChestURL_QSrv({ aURL = itemDepotLocator}).success then
+        enterprise_chests.RemoveChest(itemDepotLocator)
+    end
+
+    -- end
+    return true
+end
+
+local function storeItemsFrom_ASrv_Test(itemsLocator, toStr)
+    -- prepare test (cont)
+    corelog.WriteToLog("* Turtle:storeItemsFrom_ASrv() test (to "..toStr..")")
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getId()}).turtleLocator
+
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+    }
+    itemsLocator:setQuery(provideItems)
+
+    local expectedDestinationItemsLocator = turtleLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback = Callback:new({
+        _moduleName     = "T_Turtle",
+        _methodName     = "storeItemsFrom_ASrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+            ["itemsLocator"]                    = itemsLocator:copy(),
+        },
+    })
+
+    -- test
+    local scheduleResult = objTurtle:storeItemsFrom_ASrv({
+        itemsLocator    = itemsLocator,
+    }, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_Turtle.T_storeItemsFrom_ASrv_Turtle()
+    -- prepare test
+    local itemsLocator = enterprise_turtle.GetHostLocator_Att()
+    itemsLocator:setPort(os.getComputerID())
+
+    -- test
+    storeItemsFrom_ASrv_Test(itemsLocator, "Turtle")
+end
+
+function T_Turtle.T_storeItemsFrom_ASrv_Chest()
+    -- prepare test
+    local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
+    local itemsLocator = enterprise_chests.SaveChest(chest2)
+
+    -- test
+    storeItemsFrom_ASrv_Test(itemsLocator, "Chest")
+end
+
+function T_Turtle.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    local itemsLocator = callbackData["itemsLocator"]
+    if enterprise_chests.IsChestURL_QSrv({ aURL = itemsLocator}).success then
+        enterprise_chests.RemoveChest(itemsLocator)
+    end
+
+    -- end
+    return true
+end
+
+function T_Turtle.T_needsTo_ProvideItemsTo_SSrv()
+    -- ToDo: consider implementing later similair to Chest tests. Not left out because Turtle inventory dependends on... well the Turtle
+    -- prepare test
+
+    -- test
+
+    -- cleanup test
+end
+
+function T_Turtle.T_can_ProvideItems_QSrv()
+    -- ToDo: consider implementing later similair to Chest tests. Not left out because Turtle inventory dependends on... well the Turtle
+    -- prepare test
+
+    -- test
+
+    -- cleanup test
+end
+
+return T_Turtle
