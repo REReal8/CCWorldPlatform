@@ -101,6 +101,7 @@ function t_main.T_ResetWorld()
     enterprise_chests.DeleteChests()
     enterprise_shop.DelistItemSuppliers()
     enterprise_forestry.DeleteForests()
+    os.reboot()
 end
 
 function t_main.Func1_Callback(callbackData, taskResult)
