@@ -596,7 +596,7 @@ end
 function enterprise_chests.GetChest(...)
     -- get & check input from description
     local checkSuccess, chestLocator = InputChecker.Check([[
-        This private function gets a Chest based on a chestLocator.
+        This function gets a Chest based on a chestLocator.
 
         Return value:
             chest               - (Chest) the Chest object
