@@ -27,8 +27,6 @@ local enterprise_chests
 --[[
     The Chest mobj represents a chest in the minecraft world and provides services to operate on that Chest.
 
-??    This enterprise is both an ItemSupplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv, GetItemsIntoTurtle_ASrv and PutItemsFromTurtle_ASrv).
-
     The following design decisions are made
         - The actual Chest's should never be accessed directly but only via the services of this mobj.
 --]]
