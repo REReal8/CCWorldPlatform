@@ -33,7 +33,6 @@ local enterprise_projects = require "enterprise_projects"
     of the corresponding ISP services is the same. Hence, one could see the ISP as an ItemSupplier and ItemDepot itself.
 
     The ISP provides the following additional public services
-        TransferItemsFromTo_ASrv    - transferring items from one ItemDepot to another.
         NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one ItemDepot to another.
         AddItemsLocators_SSrv       - adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
 --]]
@@ -149,7 +148,6 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
     return serviceResults
 end
 
-function enterprise_isp.TransferItemsFromTo_ASrv(...)
 function enterprise_isp.StoreItemsFrom_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemDepotLocator, callback = InputChecker.Check([[
@@ -186,92 +184,6 @@ function enterprise_isp.StoreItemsFrom_ASrv(...)
     -- call method on ItemDepot
     local serviceName = "StoreItemsFrom_ASrv"
     return MethodExecutor.DoASyncService(itemDepotName, serviceName, serviceData, callback)
-end
-
-    -- get & check input from description
-    local checkSuccess, sourceItemsLocator, destinationItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public service relays the transfer of items from one ItemDepot to another.
-
-        This service is implemented using the following underlying ItemDepot services
-            GetItemsIntoTurtle_ASrv
-            PutItemsFromTurtle_ASrv
-
-        Return value:
-                                            - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                            - (table)
-                success                     - (boolean) whether the service executed successfully
-                destinationItemsLocator     - (URL) stating the final ItemDepot and the items that where transferred to it
-                                                (upon service succes the "host" component of this URL should be equal to destinationItemDepotLocator, and
-                                                the "query" should be equal to the "query" component of the sourceItemsLocator)
-
-        Parameters:
-            transferData                    - (table) data about the transfer
-                sourceItemsLocator          + (URL) locating the items that need transfer
-                                                (the "query" component of the URL specifies the items to be transferred)
-                                                (the "host" component of the URL specifies the ItemDepot where the items are located)
-                destinationItemDepotLocator + (URL) locating the ItemDepot that needs to be transferred to
-                assignmentsPriorityKey      + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                        + (Callback) to call once service is ready
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get source ItemDepot
-    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = sourceItemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining itemDepotName for "..sourceItemsLocator:getURI()..".") return Callback.ErrorCall(callback) end
-    local sourceItemDepotName = serviceResults.enterpriseName
-
-    -- get target ItemDepot
-    serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = destinationItemDepotLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.TransferItemsFromTo_ASrv: failed obtaining itemDepotName for "..destinationItemDepotLocator:getURI()..".") return Callback.ErrorCall(callback) end
-    local destinationItemDepotName = serviceResults.enterpriseName
-
-    -- check there are actual items to transfer
-    local transferItems = sourceItemsLocator:getQuery()
-    if next(transferItems) == nil then
-        corelog.Warning("enterprise_isp.TransferItemsFromTo_ASrv: There are 0 items to transfer (from "..sourceItemsLocator:getURI().." to "..destinationItemDepotLocator:getURI()..").")
-        return callback:call({
-            success                 = true,
-            destinationItemsLocator = destinationItemDepotLocator:copy()
-        })
-    end
-
-    -- create project definition
-    local transferItemsProjectDef = {
-        steps   = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = sourceItemDepotName, serviceName = "GetItemsIntoTurtle_ASrv" }, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "sourceItemsLocator" },
-                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = destinationItemDepotName, serviceName = "PutItemsFromTurtle_ASrv" }, stepDataDef = {
-                { keyDef = "turtleItemsLocator"         , sourceStep = 1, sourceKeyDef = "turtleItemsLocator" },
-                { keyDef = "destinationHostLocator"     , sourceStep = 0, sourceKeyDef = "destinationItemDepotLocator" },
-                { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
-            { keyDef = "destinationItemsLocator"        , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
-        }
-    }
-    local projectData = {
-        sourceItemsLocator          = sourceItemsLocator,
-        destinationItemDepotLocator = destinationItemDepotLocator,
-
-        assignmentsPriorityKey      = assignmentsPriorityKey,
-    }
-    local projectServiceData = {
-        projectDef  = transferItemsProjectDef,
-        projectData = projectData,
-    }
-
-    -- start project
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
