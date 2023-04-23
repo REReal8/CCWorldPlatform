@@ -105,12 +105,15 @@ end
 
 function t_main.Func1_Callback(callbackData, taskResult)
 --    corelog.WriteToLog("  doing t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
+    return true
 end
 
 function t_main.GoHomeCallBack(callbackData, taskResult)
     corelog.WriteToLog("  doing t_main.GoHomeCallBack("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     t_coremove.T_GoHome()
+
+    return true
 end
 
 return t_main
