@@ -236,7 +236,7 @@ function enterprise_chests.GetItemsLocator_SSrv(...)
     return result
 end
 
-local function IsChestURL_QSrv(...)
+function enterprise_chests.IsChestURL_QSrv(...)
     -- get & check input from description
     local checkSuccess, aURL = InputChecker.Check([[
         This sync public service answers the question if a URL is that of a Chest.
@@ -607,12 +607,12 @@ function enterprise_chests.GetChest(...)
     if not checkSuccess then corelog.Error("enterprise_chests.GetChest: Invalid input") return nil end
 
     -- check chestLocator is for this enterprise
-    local serviceResults = IsChestURL_QSrv({ aURL = chestLocator})
+    local serviceResults = enterprise_chests.IsChestURL_QSrv({ aURL = chestLocator})
     if not serviceResults.success then corelog.Error("enterprise_chests.GetChest: Invalid chestLocator (="..chestLocator:getURI()..").") return nil end
 
     -- chest ophalen
     local chest = coredht.GetResource(chestLocator)
-    if type(chest) ~= "table" then corelog.Warning("enterprise_chests.GetChest: chest "..chestLocator:getURI().."not found") return nil end
+    if type(chest) ~= "table" then corelog.Warning("enterprise_chests.GetChest: chest "..chestLocator:getURI().." not found") return nil end
     chest = Chest:new(chest)
 
     -- end
@@ -723,7 +723,7 @@ function enterprise_chests.RemoveChest(...)
             nil
 
         Parameters:
-            chestLocator        + (table) the chest object
+            chestLocator        + (URL) the chest object
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RemoveChest: Invalid input") return nil end
 
