@@ -4,7 +4,6 @@ local corelog = require "corelog"
 
 local Callback = require "obj_callback"
 
-local URL = require "obj_url"
 local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
@@ -20,7 +19,7 @@ end
 local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local testStartLocation2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
 local itemsQuery = {
-    ["minecraft:birch_log"] = 3,
+    ["minecraft:birch_log"] = 1,
     ["minecraft:torch"]     = 5,
 }
 
@@ -29,6 +28,22 @@ local callback = Callback:new({
     _methodName     = "Func1_Callback",
     _data           = {"some callback data"},
 })
+
+function t_isp.T_TransferItemsFromTo_Turtles()
+    corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
+
+    -- create transferData
+    local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
+    local destinationItemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    local transferData = {
+        sourceItemsLocator          = sourceItemsLocator,
+        destinationItemDepotLocator = destinationItemDepotLocator,
+    }
+
+    -- call test method
+    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..", ...)")
+    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
+end
 
 function t_isp.T_TransferItemsFromTo_Chests()
     corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between chests:")

@@ -3,8 +3,6 @@ local t_turtle = {}
 local corelog = require "corelog"
 local coremove = require "coremove"
 
-local Callback = require "obj_callback"
-
 local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
@@ -24,27 +22,7 @@ local itemsQuery = {
     ["minecraft:torch"]     = 5,
 }
 
-local callback = Callback:new({
-    _moduleName     = "t_main",
-    _methodName     = "Func1_Callback",
-    _data           = {"some callback data"},
-})
 local level0 = 0
-
-function t_turtle.T_TransferItemsFromTo_Turtles()
-    corelog.WriteToLog("* Test TransferItemsFromTo_ASrv between turtles:")
-    -- create transferData
-    local sourceItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
-    local destinationItemDepotLocator = enterprise_turtle.GetHostLocator_Att()
-    local transferData = {
-        sourceItemsLocator          = sourceItemsLocator,
-        destinationItemDepotLocator = destinationItemDepotLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.TransferItemsFromTo_ASrv("..textutils.serialize(transferData)..", ...)")
-    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
-end
 
 function t_turtle.T_Can_ProvideItems()
     corelog.WriteToLog("* Test Can_ProvideItems_QSrv for turtles:")
