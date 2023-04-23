@@ -261,8 +261,6 @@ function Chest:storeItemsFrom_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:storeItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    corelog.WriteToLog("!NEW Chest:storeItemsFrom_ASrv called")
-
     -- set (expected) destinationItemsLocator
     enterprise_chests = enterprise_chests or require "enterprise_chests"
     local destinationItemsLocator = enterprise_chests.GetChestLocator(self:getId())
