@@ -24,12 +24,6 @@ local itemsQuery = {
     ["minecraft:torch"]     = 5,
 }
 
-local itemDepotURI = "ccwprp://item-depot"
-local queryPartURI = "?minecraft:birch_log=1&minecraft:torch=5"
-local itemDepotQueryURI = itemDepotURI.."/site=2/outputchest=4/"..queryPartURI
-local factoryInputChestURI = "ccwprp://factory/site=3/inputchest=2"
-local factoryOutputChestURI = "ccwprp://factory/site=3/ouputchest=1"
-
 local callback = Callback:new({
     _moduleName     = "t_main",
     _methodName     = "Func1_Callback",
@@ -109,45 +103,6 @@ function t_isp.T_TransferItemsFromTo_Chests()
     }
 
     -- start project
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-end
-
-function t_isp.T_ISPUsingProject()
-    -- create project definition
-    local projectData = {
-        sourceItemsLocator = URL:newFromURI(itemDepotQueryURI),
-        localInputHostLocator = URL:newFromURI(factoryInputChestURI),
-        localOutputItemsLocation = URL:newFromURI(factoryOutputChestURI),
-        destinationItemDepotLocator = URL:newFromURI(itemDepotURI)
-     }
-    local aTypicalServiceUsingItemsProjectDef = {
-        steps   = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "sourceItemsLocator" },
-                { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "localInputHostLocator" },
-            }},
-
-            -- other services (that e.g. could require items in a turtle's iventory) to implement the typical service
-
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
-                { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localOutputItemsLocation" },
-                { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "destinationItemDepotLocator" },
-            }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "successN"                   , sourceStep = 2 --[[ likely higher]], sourceKeyDef = "success" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"                        , sourceStep = 3 --[[ likely higher]], sourceKeyDef = "success" },
-        }
-    }
-    local projectServiceData = {
-        projectDef  = aTypicalServiceUsingItemsProjectDef,
-        projectData = projectData,
-    }
-
-    -- call test method
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
