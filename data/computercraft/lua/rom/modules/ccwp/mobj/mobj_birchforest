@@ -234,14 +234,14 @@ function BirchForest:provideItemsTo_ASrv(...)
         local item = { [itemName] = itemCount }
         localItemsLocator:setQuery(item)
         if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
-            -- yes: return the items
-            local transferData = {
-                sourceItemsLocator          = localItemsLocator,
-                destinationItemDepotLocator = itemDepotLocator,
+            -- yes: store items from local ItemSupplier to requested ItemDepot
+            local serviceData = {
+                itemsLocator                = localItemsLocator,
+                itemDepotLocator            = itemDepotLocator,
                 assignmentsPriorityKey      = assignmentsPriorityKey,
             }
---            corelog.WriteToLog(">Procuring "..itemCount.." "..itemName.."'s from local ItemSupplier in Forest")
-            scheduleResult = scheduleResult and enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
+--            corelog.WriteToLog(">Storing "..localItemsLocator:getURI().." from local ItemSupplier in Forest")
+            scheduleResult = scheduleResult and enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
         else
             -- construct new itemsLocator for this forest
             local enterprise_forestry = require "enterprise_forestry"

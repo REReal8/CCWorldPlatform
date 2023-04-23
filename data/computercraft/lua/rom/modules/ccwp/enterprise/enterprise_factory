@@ -184,9 +184,9 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
                     { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
-                    { keyDef = "sourceItemsLocator"             , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
-                    { keyDef = "destinationItemDepotLocator"    , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)

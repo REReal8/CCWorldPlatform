@@ -438,9 +438,9 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
 
     -- determine production steps
     local projectSteps = {
-        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
-            { keyDef = "sourceItemsLocator"         , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
-            { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
+        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
+            { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }},
     }
@@ -502,9 +502,9 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
 
     -- add remaining steps
     table.insert(projectSteps,
-        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "TransferItemsFromTo_ASrv" }, stepDataDef = {
-            { keyDef = "sourceItemsLocator"         , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
-            { keyDef = "destinationItemDepotLocator", sourceStep = 0, sourceKeyDef = "localOutputLocator" },
+        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
+            { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }}
     )
