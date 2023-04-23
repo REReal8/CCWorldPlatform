@@ -275,7 +275,7 @@ function enterprise_assignmentboard.AssignmentSelectionProcedure(assignmentId) -
     local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
 
     -- see if this assignment is still open
-    if assignment.status == "open" then
+    if type(assignment) == "table" and assignment.status == "open" then
         --
         local applications = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "applications")
 
