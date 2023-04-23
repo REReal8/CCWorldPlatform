@@ -271,6 +271,7 @@ local function TerminateProject(internalProjectData)
 
     corelog.WriteToProjectsLog("Warning!: Early Termination", project.projectId)
     corelog.Error("Early Termination of project "..project.projectId)
+    corelog.Error("   internalProjectData="..textutils.serialize(project))
 
     return EndProject(internalProjectData)
 end
@@ -282,7 +283,7 @@ local function GetStepData(project, stepDataDef)
         -- get sourceStepData
         local sourceStep = fieldDef.sourceStep
         local sourceStepData = project.outputs[ sourceStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.GetStepData: Invalid sourceStepData for field "..fieldDef.keyDef.." of project"..projectId) return nil end
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.GetStepData: Invalid sourceStepData ("..type(sourceStepData)..") for field "..fieldDef.keyDef.." of project"..projectId) return nil end
 
         -- get fieldValue
         local fieldValue = GetFieldValueFromDataUsingKeyDef(sourceStepData, fieldDef.sourceKeyDef)
