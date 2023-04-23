@@ -163,18 +163,75 @@ function Chest:provideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:provideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- transfer using TransferItemsFromTo_ASrv
-    -- ToDo: consider directly implementing transfer here using FetchItemsFromChestIntoTurtle_Task
-    enterprise_chests = enterprise_chests or require "enterprise_chests"
-    local itemsLocator = enterprise_chests.GetChestLocator(self:getId())
-    itemsLocator:setQuery(provideItems)
-    local transferData = {
-        sourceItemsLocator          = itemsLocator,
-        destinationItemDepotLocator = itemDepotLocator,
-        assignmentsPriorityKey      = assignmentsPriorityKey,
+    -- check if ItemDepot is a turtle
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemDepotLocator})
+    local turtleId = -1
+    if serviceResults.success then
+        local port = itemDepotLocator:getPort()
+--        corelog.Warning("Chest:provideItemsTo_ASrv: Providing to a turtle itemDepotLocator (="..itemDepotLocator:getURI()..").")
+        turtleId = port
+    end
+
+    -- create project definition
+    local taskData = {
+        location        = self:getLocation():copy(),
+        accessDirection = self:getAccessDirection(),
+        itemsQuery      = provideItems,
+
+        turtleId        = turtleId,
+        priorityKey     = assignmentsPriorityKey,
     }
-    corelog.WriteToLog(">Transfer "..itemsLocator:getURI().." from Chest")
-    return enterprise_isp.TransferItemsFromTo_ASrv(transferData, callback)
+    local projectData = {
+        chest                   = self:copy(),
+
+        metaData                = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
+        taskCall                = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "FetchItemsFromChestIntoTurtle_Task", _data = taskData, }),
+
+        itemDepotLocator        = itemDepotLocator,
+        assignmentsPriorityKey  = assignmentsPriorityKey,
+    }
+    local projectDef = {
+        steps   = {
+            -- put items from chest
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
+            }},
+            -- save chest
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
+                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
+                { keyDef = "chest._inventory"       , sourceStep = 1, sourceKeyDef = "inventory" },
+            }},
+            -- store items to ItemDepot
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetItemsLocator_SSrv" }, stepDataDef = {
+                { keyDef = "turtleId"               , sourceStep = 1, sourceKeyDef = "turtleId" },
+                { keyDef = "itemsQuery"             , sourceStep = 1, sourceKeyDef = "itemResultQuery" },
+            }},
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"           , sourceStep = 3, sourceKeyDef = "itemsLocator" },
+                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
+                { keyDef = "success3"               , sourceStep = 3, sourceKeyDef = "success" },
+                { keyDef = "success4"               , sourceStep = 4, sourceKeyDef = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    enterprise_chests = enterprise_chests or require "enterprise_chests"
+    }
 end
 
 function Chest:can_ProvideItems_QSrv(...)

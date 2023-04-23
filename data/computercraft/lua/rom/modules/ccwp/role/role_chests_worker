@@ -138,7 +138,7 @@ end
 
 function role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(...)
     -- get & check input from description
-    local checkSuccess, location, accessDirection, priorityKey = InputChecker.Check([[
+    local checkSuccess, turtleId, location, accessDirection, priorityKey = InputChecker.Check([[
         This function returns the MetaData for FetchItemsFromChestIntoTurtle_Task.
 
         Return value:
@@ -146,6 +146,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(...)
 
         Parameters:
             taskData            - (table) data about the task
+                turtleId        + (number, -1) optional id of the turtle that should get the items
                 location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 itemsQuery      - (table) which items to be fetched
@@ -158,12 +159,19 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(...)
     if not workingLocation then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Failed to determine workingLocation") return {} end
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
+    -- check if specific turtle is needed
+    local needTurtleId = nil
+    if (turtleId >= 0) then
+        needTurtleId = turtleId
+    end
+
     -- return metadata
     return {
         startTime   = coreutils.UniversalTime(),
         location    = workingLocation:copy(),
         needTool    = false,
         needTurtle  = true,
+        needTurtleId= needTurtleId,
         fuelNeeded  = fuelNeeded,
         itemsNeeded = {},
 
@@ -259,6 +267,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
 
         Parameters:
             taskData            - (table) data about the task
+                turtleId        - (number, -1) optional id of the turtle that should get the items
                 location        + (Location) location of the chest
                 accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 itemsQuery      + (table) which items to be fetched
