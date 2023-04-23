@@ -106,7 +106,8 @@ function t_main.T_ResetWorld()
     os.sleep(0.25)
 
     -- time to reboot
-    os.reboot()
+    -- ToDo: figure out why changes are often still not saved to disk
+--    os.reboot()
 end
 
 function t_main.Func1_Callback(callbackData, taskResult)
