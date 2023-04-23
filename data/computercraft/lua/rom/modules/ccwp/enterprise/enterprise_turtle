@@ -11,10 +11,7 @@ local Location = require "obj_location"
 
 local Turtle = require "mobj_turtle"
 
-local role_fuel_worker = require "role_fuel_worker"
-
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
-local enterprise_isp = require "enterprise_isp"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 

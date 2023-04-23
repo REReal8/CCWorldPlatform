@@ -11,7 +11,6 @@ local Inventory = require "obj_inventory"
 local Chest = require "mobj_chest"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_isp = require "enterprise_isp"
 
 local db = {
     hostName    = "enterprise_chests",
