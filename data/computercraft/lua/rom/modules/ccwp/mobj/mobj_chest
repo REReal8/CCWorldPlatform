@@ -232,8 +232,102 @@ function Chest:provideItemsTo_ASrv(...)
 
     -- start project
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
+function Chest:storeItemsFrom_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
+
+        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where stored
+                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                                            and the "query" should be equal to the "query" component of the itemsLocator)
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
+                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the URL specifies the items)
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Chest:storeItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    corelog.WriteToLog("!NEW Chest:storeItemsFrom_ASrv called")
+
+    -- set (expected) destinationItemsLocator
     enterprise_chests = enterprise_chests or require "enterprise_chests"
+    local destinationItemsLocator = enterprise_chests.GetChestLocator(self:getId())
+    destinationItemsLocator:setQuery(coreutils.DeepCopy(itemsLocator:getQuery()))
+
+    -- create project definition
+    local taskData = {
+        turtleId        = -1,
+        itemsQuery      = coreutils.DeepCopy(itemsLocator:getQuery()),
+        location        = self:getLocation():copy(),
+        accessDirection = self:getAccessDirection(),
+
+        priorityKey     = assignmentsPriorityKey,
     }
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local projectData = {
+        chest                   = self:copy(),
+
+        metaData                = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
+        taskCall                = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "PutItemsFromTurtleIntoChest_Task", _data = taskData, }),
+
+        itemsLocator            = itemsLocator,
+        turtleLocator           = enterprise_turtle.GetHostLocator_Att(),
+
+        destinationItemsLocator = destinationItemsLocator,
+    }
+    local projectDef = {
+        steps   = {
+            -- get items into a turtle
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
+                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "turtleLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- put items into chest
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
+                { keyDef = "metaData.needTurtleId"  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" },
+                { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
+                { keyDef = "taskCall._data.turtleId", sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" },
+            }},
+            -- save chest
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
+                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
+                { keyDef = "chest._inventory"       , sourceStep = 2, sourceKeyDef = "inventory" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
+                { keyDef = "success3"               , sourceStep = 3, sourceKeyDef = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , sourceStep = 4, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 0, sourceKeyDef = "destinationItemsLocator" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Store "..itemsLocator:getURI().." from Chest")
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Chest:can_ProvideItems_QSrv(...)
