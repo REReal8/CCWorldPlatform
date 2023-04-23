@@ -154,32 +154,4 @@ function t_chests.T_DelistChest1()
     return enterprise_chests.DelistChest_ASrv(chestData1, callback)
 end
 
-function t_chests.T_GetItemsIntoTurtle1()
-    corelog.WriteToLog("* Test GetItemsIntoTurtle_ASrv for chests:")
-    -- create transferData
-    local sourceItemsLocator = enterprise_chests.GetItemsLocator_SSrv({chestLocator = chestLocator1, itemsQuery = multipleStacksItemsQuery}).itemsLocator
-    local transferData = {
-        sourceItemsLocator =  sourceItemsLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.GetItemsIntoTurtle_ASrv("..textutils.serialize(transferData)..",..)")
-    return enterprise_chests.GetItemsIntoTurtle_ASrv(transferData, callback)
-end
-
-function t_chests.T_PutItemsFromTurtle1()
-    corelog.WriteToLog("* Test PutItemsFromTurtle_ASrv for chests:")
-    -- create transferData
-    local turtleItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = multipleStacksItemsQuery }).itemsLocator
-    local destinationHostLocator = chestLocator1
-    local transferData = {
-        turtleItemsLocator     = turtleItemsLocator,
-        destinationHostLocator = destinationHostLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.PutItemsFromTurtle_ASrv("..textutils.serialize(transferData)..",...)")
-    return enterprise_chests.PutItemsFromTurtle_ASrv(transferData, callback)
-end
-
 return t_chests

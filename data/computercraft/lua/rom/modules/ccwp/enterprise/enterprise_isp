@@ -23,8 +23,6 @@ local enterprise_projects = require "enterprise_projects"
     For an enterprise to be an ItemDepot it needs to implement the following services:
         GetItemsLocations_SSrv      - provides the current world locations of different items in an ItemDepot.
         GetItemDepotLocation_SSrv   - provides the world location of an ItemDepot.
-        GetItemsIntoTurtle_ASrv     - ensuring items are gathered in the ItemDepot and transferred to the inventory of a turtle.
-        PutItemsFromTurtle_ASrv     - ensuring items are transferred from the inventory of a turtle to the ItemDepot.
 
     Furthermore most ItemSuppliers and ItemDepots should implement the additional attribute
         GetHostLocator_Att          - locating this enterprise
