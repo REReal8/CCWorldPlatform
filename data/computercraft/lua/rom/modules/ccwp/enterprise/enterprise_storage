@@ -144,8 +144,9 @@ function enterprise_storage.RegisterStorage_SSrv(...)
 
         Parameters:
             storageData             - (table) data to the storage
-                location            + (Location) location of the storage
-    --]], table.unpack(arg))
+            type                    + (stromg) type of the storage (e.g. "storage:silo")
+            location                + (Location) location of the storage
+            --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.RegisterStorage_SSrv: Invalid input") return {success = false} end
 
     -- ToDo:
