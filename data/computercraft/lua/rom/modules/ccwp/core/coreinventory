@@ -233,11 +233,28 @@ function coreinventory.DropAll(itemName, direction)
     end
 end
 
-function coreinventory.Equip(itemName)
+function coreinventory.CanEquip(itemName)
+
+    -- might just already be equiped or maybe in the inventory
+    return db.left == itemName or db.right == itemName or coreinventory.CountItem(itemName) > 0
+
+end
+
+function coreinventory.Equip(itemName, requestedSide)
     local slot = nil
 
-    -- already equiped?
-    if db.right == itemName then return true end
+    -- ultimate debug, who is calling us?
+    -- corelog.WriteToLog("--- Equip traceback ---")
+    -- corelog.WriteToLog(debug.traceback())
+
+    -- rightt side is default
+    requestedSide = requestedSide or 'right'
+
+    -- more dubug
+    corelog.WriteToLog("coreinventory.Equip: ("..(itemName or '')..","..(requestedSide or '')..")")
+
+    -- already equiped? might be the wrong side but we don't care about that
+    if db.left == itemName or db.right == itemName then return true end
 
     -- find empty spot (remove current equiped to the right when we have an empty spot)
     if coreinventory.GetEmptySlot() then
@@ -246,20 +263,24 @@ function coreinventory.Equip(itemName)
         slot = turtle.getSelectedSlot()
 
         -- remove item on the right side (modem on the left) if there is anything equiped ofcourse
-        turtle.equipRight()
+        if requestedSide == 'left'  then turtle.equipLeft()
+                                    else turtle.equipRight()
+        end
     end
 
     -- find the requested item
     if coreinventory.SelectItem(itemName) then
 
         -- remember this
-        db.right    = itemName
+        db[requestedSide] = itemName
 
        	-- write to disk
         coreutils.WriteToFile(db.dbFilename, db, "overwrite")
 
         -- great!
-        return turtle.equipRight()
+        if requestedSide == 'left'  then return turtle.equipLeft()
+                                    else return turtle.equipRight()
+        end
     else
 
         -- message to the log
@@ -268,7 +289,9 @@ function coreinventory.Equip(itemName)
         -- not found, restore
         if slot then
             turtle.select(slot)
-            turtle.equipRight()
+            if requestedSide == 'left'  then turtle.equipLeft()
+                                        else turtle.equipRight()
+            end
         end
 
         -- done
