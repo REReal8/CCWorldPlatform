@@ -75,7 +75,7 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
             turtleId        = turtleId,
             location        = Location:new(coremove.GetLocation()),
             fuelLevel       = fuelLevel,
-            axePresent      = coreinventory.Equip("minecraft:diamond_pickaxe"), -- ToDo: consider only checking not actually equiping
+            axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
             inventoryItems  = coreinventory.GetInventoryDetail().items,
         }
     end
