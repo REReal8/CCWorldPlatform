@@ -249,11 +249,9 @@ function coreinventory.Equip(itemName)
         turtle.equipRight()
     end
 
-    -- find the crafting table
-    coreinventory.SelectItem(itemName)
+    -- find the requested item
+    if coreinventory.SelectItem(itemName) then
 
-    -- did we found one?
-    if coreinventory.GetItemDetail() then -- ToDo: shouldn't a slot be passed to GetItemDetail() ?
         -- remember this
         db.right    = itemName
 
@@ -263,6 +261,8 @@ function coreinventory.Equip(itemName)
         -- great!
         return turtle.equipRight()
     else
+
+        -- message to the log
         corelog.Warning("coreinventory.Equip: Could not find "..itemName.." => not equiped")
 
         -- not found, restore
