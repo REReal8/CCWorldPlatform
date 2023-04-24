@@ -39,8 +39,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
             The turtle should already have (either equiped or in it's inventory)
                 one modem
-                one axe
-                one crafting station
+                one diamon axe
+                one crafting table
                 one birchSapling
             It is not necessary for the turtle to have any energy. The turtle will start by placing the sapling in front of itself.
 
@@ -61,6 +61,10 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             callback            + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- ToDo: Controle of aan de voorwaarden is voldaan, modem, axe, crafting table, birch sappling
+
+    -- ToDo: instelling van de 3,2,1 coordianten bij start, lijkt nu niet meer te werken
 
     -- ensure enterprise has a key in the dht
     if coredht.GetData(db.dhtRoot) == nil then
