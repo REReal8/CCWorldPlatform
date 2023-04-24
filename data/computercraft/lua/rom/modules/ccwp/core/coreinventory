@@ -243,15 +243,11 @@ end
 function coreinventory.Equip(itemName, requestedSide)
     local slot = nil
 
-    -- ultimate debug, who is calling us?
-    -- corelog.WriteToLog("--- Equip traceback ---")
-    -- corelog.WriteToLog(debug.traceback())
-
     -- rightt side is default
     requestedSide = requestedSide or 'right'
 
     -- more dubug
-    corelog.WriteToLog("coreinventory.Equip: ("..(itemName or '')..","..(requestedSide or '')..")")
+    --corelog.WriteToLog("coreinventory.Equip: ("..(itemName or '')..","..(requestedSide or '')..")")
 
     -- already equiped? might be the wrong side but we don't care about that
     if db.left == itemName or db.right == itemName then return true end
