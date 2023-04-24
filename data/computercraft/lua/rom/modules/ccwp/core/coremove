@@ -1,4 +1,5 @@
 local coremove = {}
+local coreinventory = require "coreinventory"
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coretask = require "coretask"
@@ -135,19 +136,29 @@ function coremove.Forward(c, force)
 		local success	= turtle.forward()
 
 		-- if it did not work, attack the space in front of us
-		while not success and force do
+		if not success and force then
 
-			-- do our magic
-			turtle.dig()
-			turtle.attack()
-			sleep(0.1)
+			-- dimond pickaxe gebruiken
+			if coreinventory.CanEquip("minecraft:diamond_pickaxe") or coreinventory.CanEquip("minecraft:diamond_sword") then
 
-			-- update how often we tried so far
-			tries = tries + 1
-			if tries > 50 then print("Error: can't move forward.") return false end
+				-- net zo lang proberen totdat het wel lukt
+				while not success do
 
-			-- retry
-			success = turtle.forward()
+					-- do our magic
+					coreinventory.Equip("minecraft:diamond_pickaxe")
+					turtle.dig()
+--					coreinventory.Equip("minecraft:diamond_sword")
+					turtle.attack()
+					sleep(0.1)
+
+					-- update how often we tried so far
+					tries = tries + 1
+					if tries > 50 then print("Error: can't move forward.") return false end
+
+					-- retry
+					success = turtle.forward()
+				end
+			end
 		end
 
 		-- did we move?
