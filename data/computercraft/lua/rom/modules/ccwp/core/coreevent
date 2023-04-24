@@ -57,10 +57,10 @@ function ActivateModem()
 		turtle.equipLeft()
 
 		-- any modem present?
-		if coreinventory.SelectItem("computercraft:wireless_modem_normal") then
+		if coreinventory.CanEquip("computercraft:wireless_modem_normal") then
 
 			-- great, equip it
-			turtle.equipLeft()
+			coreinventory.Equip("computercraft:wireless_modem_normal", "left")
 
 			-- go for the modem again
 			modem = peripheral.find("modem")
