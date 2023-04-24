@@ -13,6 +13,7 @@ function library.Setup()
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("t_coremove", "test.t_coremove")
     moduleRegistry:requireAndRegisterModule("t_coredht", "test.t_coredht")
+    moduleRegistry:requireAndRegisterModule("t_coreinventory", "test.t_coreinventory")
 
     -- do other stuff
 end

@@ -1,0 +1,11 @@
+local t_coreinventory = {}
+
+local corelog = require "corelog"
+local coreinventory = require "coreinventory"
+
+function t_coreinventory.T_Equip()
+    coreinventory.Equip("minecraft:crafting_table")
+    coreinventory.Equip("minecraft:diamond_pickaxe")
+end
+
+return t_coreinventory

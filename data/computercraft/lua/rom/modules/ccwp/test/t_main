@@ -6,6 +6,7 @@ local coreassignment = require "coreassignment"
 
 local t_coredht = require "test.t_coredht"
 local t_coremove = require "test.t_coremove"
+local t_coreinventory = require "test.t_coreinventory"
 
 local t_alchemist = require "test.t_alchemist"
 local t_builder = require "test.t_builder"
