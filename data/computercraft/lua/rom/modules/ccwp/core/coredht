@@ -296,10 +296,10 @@ function coredht.SaveResource(...)
     return resource
 end
 
-function coredht.RemoveResource(...)
+function coredht.DeleteResource(...)
     -- get & check input from description
     local checkSuccess, resourceLocator = InputChecker.Check([[
-        This function removes a Resource from the dht using a URL.
+        This function deletes a Resource from the dht using a URL.
 
         Return value:
             nil
@@ -307,7 +307,7 @@ function coredht.RemoveResource(...)
         Parameters:
             resourceLocator         + (URL) locator of the Resource
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("coredht.RemoveResource: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("coredht.DeleteResource: Invalid input") return nil end
 
     -- get URL components
     local hostURI = resourceLocator:getHostURI()

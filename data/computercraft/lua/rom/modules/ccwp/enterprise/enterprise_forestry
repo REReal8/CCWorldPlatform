@@ -626,7 +626,7 @@ function enterprise_forestry.RemoveForest(...)
 
     -- remove record
     corelog.WriteToLog(">removing forest "..forestLocator:getURI())
-    coredht.RemoveResource(forestLocator)
+    coredht.DeleteResource(forestLocator)
 end
 
 local function GetHostLocator_Att()

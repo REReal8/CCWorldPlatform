@@ -8,10 +8,10 @@ local URL = require "obj_url"
 function t_coredht.T_All()
     t_coredht.T_SaveResource()
     t_coredht.T_GetResource()
-    t_coredht.T_RemoveResource()
+    t_coredht.T_DeleteResource()
     t_coredht.T_SaveResourceWithPort()
     t_coredht.T_GetResourceWithPort()
-    t_coredht.T_RemoveResourceWithPort()
+    t_coredht.T_DeleteResourceWithPort()
 end
 
 local resource = {
@@ -91,26 +91,26 @@ function t_coredht.T_GetResourceWithPort()
     -- cleanup test
 end
 
-function t_coredht.T_RemoveResource()
+function t_coredht.T_DeleteResource()
     -- prepare test
-    corelog.WriteToLog("* coredht.RemoveResource tests")
+    corelog.WriteToLog("* coredht.DeleteResource tests")
     local resourceLocator = URL:newFromURI(uri)
 
     -- test
-    coredht.RemoveResource(resourceLocator)
+    coredht.DeleteResource(resourceLocator)
     local resourceGotten = coredht.GetResource(resourceLocator)
     assert(resourceGotten == nil, "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not nil")
 
     -- cleanup test
 end
 
-function t_coredht.T_RemoveResourceWithPort()
+function t_coredht.T_DeleteResourceWithPort()
     -- prepare test
-    corelog.WriteToLog("* coredht.RemoveResource (with port) tests")
+    corelog.WriteToLog("* coredht.DeleteResource (with port) tests")
     local resourceLocator = URL:newFromURI(uriWithPort)
 
     -- test
-    coredht.RemoveResource(resourceLocator)
+    coredht.DeleteResource(resourceLocator)
     local resourceGotten = coredht.GetResource(resourceLocator)
     assert(resourceGotten == nil, "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not nil")
 

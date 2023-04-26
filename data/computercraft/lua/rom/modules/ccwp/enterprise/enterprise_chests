@@ -632,7 +632,7 @@ function enterprise_chests.RemoveChest(...)
 
     -- remove record
     corelog.WriteToLog(">removing chest "..chestLocator:getURI())
-    coredht.RemoveResource(chestLocator)
+    coredht.DeleteResource(chestLocator)
 end
 
 return enterprise_chests
