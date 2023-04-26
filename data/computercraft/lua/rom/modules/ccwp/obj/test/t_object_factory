@@ -2,8 +2,6 @@ local T_ObjectFactory = {}
 
 local corelog = require "corelog"
 
-local URL = require "obj_url"
-
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
@@ -11,6 +9,7 @@ function T_ObjectFactory.T_All()
     -- base methods
 
     -- specific methods
+    T_ObjectFactory.T_registerClass()
     T_ObjectFactory.T_create()
 end
 
@@ -30,27 +29,66 @@ end
 --       | |
 --       |_|
 
+local TestClass = {
+    _aField = ""
+}
+
+function TestClass:new(o)
+    o = o or {}
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+local InvalidTestClass = {
+    _aField = ""
+}
+
+function T_ObjectFactory.T_registerClass()
+    -- prepare test
+    corelog.WriteToLog("* ObjectFactory:registerClass() tests")
+
+    -- test valid
+    local className = "TestClass"
+    local isRegistered = objectFactory:registerClass(className, TestClass)
+    assert(isRegistered, "Failed to register class "..className)
+    isRegistered = objectFactory:isRegistered(className)
+    assert(isRegistered, "Class "..className.." not registered")
+    objectFactory:delistClass(className)
+    isRegistered = objectFactory:isRegistered(className)
+    assert(not isRegistered, "Class "..className.." still registered")
+
+    -- test invalid (no new)
+    className = "InvalidTestClass"
+    isRegistered = objectFactory:registerClass(className, InvalidTestClass)
+    assert(not isRegistered, "Class "..className.." got incorrectly registered")
+    isRegistered = objectFactory:isRegistered(className)
+    assert(not isRegistered, "Class "..className.." incorrectly registered")
+
+    -- cleanup test
+end
+
 function T_ObjectFactory.T_create()
     -- prepare test
     corelog.WriteToLog("* ObjectFactory:create() tests")
-    objectFactory:registerClass("t_URL", URL)
+    objectFactory:registerClass("TestClass", TestClass)
 
     -- test valid
-    local objType1 = "t_URL"
+    local className = "TestClass"
     local objTable1 = { } -- default
-    local obj1 = objectFactory:create(objType1, objTable1)
-    assert(obj1, "Failed to create object of type " .. objType1)
-    assert(type(obj1) == "table" and obj1.__index == URL, "Failed to create object of type "..objType1)
+    local obj1 = objectFactory:create(className, objTable1)
+    assert(obj1, "Failed to create object of type " .. className)
+    assert(type(obj1) == "table" and obj1.__index == TestClass, "Failed to create object of type "..className)
 --    corelog.WriteToLog(" obj1="..obj1:getURI())
 
     -- test invalid
-    local objType2 = "InvalidType"
+    className = "InvalidType"
     local objTable2 = { "some field" }
-    local obj2 = objectFactory:create(objType2, objTable2)
-    assert(not obj2, "Unexpectedly created object of type " .. objType2)
+    local obj2 = objectFactory:create(className, objTable2)
+    assert(not obj2, "Unexpectedly created object of type " .. className)
 
     -- cleanup test
-    objectFactory:delistClass("t_URL")
+    objectFactory:delistClass(className)
 end
 
 return T_ObjectFactory

@@ -47,7 +47,11 @@ function ObjectFactory:create(className, objectFieldsTable)
 end
 
 function ObjectFactory:registerClass(className, class)
-    self.classes[className] = class
+    if class.new then
+        self.classes[className] = class
+    end
+
+    return self:isRegistered(className)
 end
 
 function ObjectFactory:isRegistered(className)
