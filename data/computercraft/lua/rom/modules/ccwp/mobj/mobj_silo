@@ -262,6 +262,9 @@ function Silo:Load(siloId)
     -- set class info
     setmetatable(siloData, self)
     self.__index = self
+
+    -- done
+    return siloData
 end
 
 return Silo

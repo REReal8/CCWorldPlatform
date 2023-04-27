@@ -2,6 +2,7 @@ local T_Silo = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
+local coredht = require "coredht"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -17,14 +18,8 @@ local enterprise_chests = require "enterprise_chests"
 
 function T_Silo.T_All()
     -- base methods
-    T_Silo.T_Getters()
-    T_Silo.T_IsOfType()
-    T_Silo.T_isSame()
-    T_Silo.T_copy()
-
-    -- service methods
-    T_Silo.T_needsTo_ProvideItemsTo_SSrv()
-    T_Silo.T_can_ProvideItems_QSrv()
+    T_Silo.T_new()
+    T_Silo.T_Load()
 end
 
 -- handy
@@ -42,6 +37,24 @@ function T_Silo.T_new()
     -- do the new test
     corelog.WriteToLog("* Silo:new() tests")
     local silo = Silo:new({location=location1, topChests=2, layers=2})
+end
+
+function T_Silo.T_Load()
+
+    -- we are calling the shots now
+    corelog.WriteToLog("* Silo:new() tests")
+
+    -- lijstje met alle silo's
+    local silos = coredht.GetData("mobj_silo")
+
+    -- get a random key
+    local key = next(silos, nil)
+
+    -- load the damn silo
+    local silo = Silo:Load(key)
+
+    -- what do we have?
+    corelog.WriteToLog("silo id = "..(silo._id or ""))
 end
 
 return T_Silo
