@@ -5,6 +5,8 @@ local corelog = require "corelog"
 local URL = require "obj_url"
 local Host = require "obj_host"
 
+local TestObj = require "test.obj_test"
+
 function T_Host.T_All()
     -- base methods
     T_Host.T_new()
@@ -16,6 +18,8 @@ function T_Host.T_All()
     T_Host.T_getHostLocator()
     T_Host.T_getResourceLocator()
     T_Host.T_get_save_delete_Resource()
+    T_Host.T_saveObject()
+    T_Host.T_getObject()
 
     -- helper functions
 end
@@ -196,6 +200,49 @@ function T_Host.T_get_save_delete_Resource()
     assert(not resourceGotten, "unexpected resource(="..textutils.serialize(resourceGotten, compact)..") obtained (i.e. not nil)")
 
     -- cleanup test
+end
+
+local testObject = TestObj:new({
+    _field1 = "field1",
+    _field2 = 4,
+})
+
+function T_Host.T_saveObject()
+    -- prepare test
+    corelog.WriteToLog("* Host:saveObject tests")
+
+    -- test save object with no id
+    local className = "TestObj"
+    local objectLocator = host1:saveObject(testObject, className)
+    local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    host1:deleteResource(objectLocator)
+    assert(not host1:getResource(objectLocator), "resource not deleted")
+
+    -- test save object with id
+    local objectId = "35"
+    objectLocator = host1:saveObject(testObject, className, objectId)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
+    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    host1:deleteResource(objectLocator)
+    assert(not host1:getResource(objectLocator), "resource not deleted")
+
+    -- cleanup test
+end
+
+function T_Host.T_getObject()
+    -- prepare test
+    corelog.WriteToLog("* Host:getObject tests")
+    local className = "TestObj"
+    local objectLocator = host1:saveObject(testObject, className)
+
+    -- test get object
+    local object = host1:getObject(objectLocator)
+    assert(object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+
+    -- cleanup test
+    host1:deleteResource(objectLocator)
+    assert(not host1:getResource(objectLocator), "resource not deleted")
 end
 
 return T_Host
