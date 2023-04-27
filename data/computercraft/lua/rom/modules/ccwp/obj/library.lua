@@ -2,7 +2,7 @@ local library = {}
 
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/obj/?"
+    package.path = package.path..";/rom/modules/ccwp/obj/?"..";/rom/modules/ccwp/obj/?.lua"
 end
 
 function library.Setup()
@@ -12,6 +12,7 @@ function library.Setup()
     objectFactory:registerClass("Callback", require "obj_callback")
     objectFactory:registerClass("TaskCall", require "obj_task_call")
     objectFactory:registerClass("URL", require "obj_url")
+    objectFactory:registerClass("Host", require "obj_host")
     objectFactory:registerClass("Location", require "obj_location")
     objectFactory:registerClass("Block", require "obj_block")
     objectFactory:registerClass("LayerRectangle", require "obj_layer_rectangle")
@@ -29,6 +30,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_TaskCall", "test.t_obj_task_call")
     moduleRegistry:requireAndRegisterModule("T_MethodExecutor", "test.t_method_executor")
     moduleRegistry:requireAndRegisterModule("T_URL", "test.t_obj_url")
+    moduleRegistry:requireAndRegisterModule("T_Host", "test.t_obj_host")
     moduleRegistry:requireAndRegisterModule("T_Location", "test.t_obj_location")
     moduleRegistry:requireAndRegisterModule("T_Block", "test.t_obj_block")
     moduleRegistry:requireAndRegisterModule("T_LayerRectangle", "test.t_obj_layer_rectangle")

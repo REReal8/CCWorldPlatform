@@ -217,6 +217,7 @@ function ExecuteObjTest(t)
 		{key = "t", desc = "TaskCall", 			func = ExecuteObjTest, param = {filename = "T_TaskCall"}},
 		{key = "e", desc = "MethodExecutor", 	func = ExecuteObjTest, param = {filename = "T_MethodExecutor"}},
 		{key = "u", desc = "URL", 				func = ExecuteObjTest, param = {filename = "T_URL"}},
+		{key = "h", desc = "Host", 				func = ExecuteObjTest, param = {filename = "T_Host"}},
 		{key = "l", desc = "Location",			func = ExecuteObjTest, param = {filename = "T_Location"}},
 		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
 		{key = "r", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
