@@ -14,10 +14,7 @@ local Silo = {
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-<<<<<<< Updated upstream
 local coredht = require "coredht"
-=======
->>>>>>> Stashed changes
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
@@ -241,10 +238,6 @@ end
 local dthSiloRoot   = "mobj_silo"
 
 function Silo:Save()
-<<<<<<< Updated upstream
-    
-=======
->>>>>>> Stashed changes
     -- we need a valid zelf
     if type(self) ~= "table" or type(self._id) ~= "string" then return false end
 
@@ -252,7 +245,6 @@ function Silo:Save()
     coredht.SaveData(self, dthSiloRoot, self._id)
 end
 
-<<<<<<< Updated upstream
 function Silo:Load(siloId)
 
     -- reload self as default
@@ -267,18 +259,6 @@ function Silo:Load(siloId)
     -- set class info
     setmetatable(siloData, self)
     self.__index = self
-=======
-function Silo:Load()
-
-    -- we need a valid zelf
-    if type(self) ~= "table" or type(self._id) ~= "string" then return false end
-
-    -- load this shit
-
-
-
-
->>>>>>> Stashed changes
 end
 
 return Silo
