@@ -244,23 +244,31 @@ function Silo:Save()
     coredht.SaveData(self, dthSiloRoot, self._id)
 end
 
+function Silo:reload()
+    -- just load the damn fucker, use our own id
+    self:load(self._id)
+end
+
 function Silo:load(siloId)
-
-    -- reload self as default
-    siloId = siloId or self._id
-
-    -- we need a valid zelf
+    -- we need a valid id to work
     if type(siloId) ~= "string" then return false end
 
     -- load this shit
     local siloData = coredht.GetData(dthSiloRoot, siloId)
 
-    -- set class info
-    setmetatable(siloData, self)
-    self.__index = self
+    -- check our result
+    if type(siloData) == "table" then
 
-    -- done
-    return siloData
+        -- set class info
+        setmetatable(siloData, self)
+        self.__index = self
+
+        -- done
+        return siloData
+    else
+        -- found nothing gives nothing
+        return nil
+    end
 end
 
 function Silo:Delete()
