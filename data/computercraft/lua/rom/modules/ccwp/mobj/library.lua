@@ -9,9 +9,10 @@ function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
-    objectFactory:registerClass("Test", require "mobj_turtle")
-    objectFactory:registerClass("Chest", require "mobj_chest")
-    objectFactory:registerClass("BirchForest", require "mobj_birchforest")
+    objectFactory:registerClass("Test",         require "mobj_turtle")
+    objectFactory:registerClass("Chest",        require "mobj_chest")
+    objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
+    objectFactory:registerClass("Silo",         require "mobj_silo")
 
     -- register library modules
     local ModuleRegistry = require "module_registry"
@@ -22,6 +23,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
+    moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
 
     -- do other stuff
 end

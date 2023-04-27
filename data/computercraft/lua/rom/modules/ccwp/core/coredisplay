@@ -233,6 +233,7 @@ function ExecuteMObjTest(t)
 		{key = "t", desc = "Turtle",			func = ExecuteMObjTest, param = {filename = "T_Turtle"}},
 		{key = "c", desc = "Chest",				func = ExecuteMObjTest, param = {filename = "T_Chest"}},
 		{key = "f", desc = "BirchForest",		func = ExecuteMObjTest, param = {filename = "T_BirchForest"}},
+		{key = "s", desc = "Silo",				func = ExecuteMObjTest, param = {filename = "T_Silo"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "mobj", options, ExecuteMObjTest)
