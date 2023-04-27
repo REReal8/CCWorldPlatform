@@ -2,6 +2,7 @@ local T_Host = {}
 
 local corelog = require "corelog"
 
+local URL = require "obj_url"
 local Host = require "obj_host"
 
 function T_Host.T_All()
@@ -12,6 +13,9 @@ function T_Host.T_All()
     T_Host.T_copy()
 
     -- specific methods
+    T_Host.T_getHostLocator()
+    T_Host.T_getResourceLocator()
+    T_Host.T_get_save_delete_Resource()
 
     -- helper functions
 end
@@ -113,5 +117,85 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+local resource = {
+    aNumber     = 10,
+    aString     = "top",
+    aTable      = {_x= -10, _y= 0, _z= 1, _dx=0, _dy=1},
+}
+
+local resourcePath1 = "/resource/id=10/subid=7"
+
+local function SameATable(aTable1, aTable2)
+    if aTable1 == nil and aTable2 == nil then return true end
+    if aTable1 == nil or aTable2 == nil then return false end
+
+    return aTable1.x == aTable2.x and aTable1.y == aTable2.y and aTable1.z == aTable2.z and aTable1.dx == aTable2.dx and aTable1.dy == aTable2.dy
+end
+
+local function SameResource(res1, res2)
+    if res1 == nil and res2 == nil then return true end
+    if res1 == nil or res2 == nil then return false end
+
+    return res1.aNumber == res2.aNumber and res1.aString == res2.aString and SameATable(res1.aTable, res2.aTable)
+end
+
+function T_Host.T_getHostLocator()
+    -- prepare test
+    corelog.WriteToLog("* Host:getHostLocator() tests")
+
+    -- test
+    local hostLocator = host1:getHostLocator()
+    local expectedLocator = URL:new()
+    expectedLocator:setHost(hostName)
+    assert(hostLocator:isSame(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+
+    -- cleanup test
+end
+
+function T_Host.T_getResourceLocator()
+    -- prepare test
+    corelog.WriteToLog("* Host:getResourceLocator(...) tests")
+
+    -- test
+    local resourceLocator = host1:getResourceLocator(resourcePath1)
+    local expectedLocator = URL:new()
+    expectedLocator:setHost(hostName)
+    expectedLocator:setPath(resourcePath1)
+    assert(resourceLocator:isSame(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+
+    -- cleanup test
+end
+
+function T_Host.T_get_save_delete_Resource()
+    -- prepare test
+    corelog.WriteToLog("* Host:getResource, saveResource, deleteResource tests")
+    local resourceLocator = host1:getResourceLocator(resourcePath1)
+
+    -- test getResource (not yet present)
+    local resourceGotten = host1:getResource(resourceLocator)
+    assert(not resourceGotten, "unexpected resource(="..textutils.serialize(resourceGotten, compact)..") obtained (i.e. not nil)")
+
+    -- test save
+    resourceLocator = host1:saveResource(resource, resourcePath1)
+    local expectedLocator = URL:new()
+    expectedLocator:setHost(hostName)
+    expectedLocator:setPath(resourcePath1)
+    assert(resourceLocator:isSame(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+
+    -- test getResource (now present)
+    resourceGotten = host1:getResource(resourceLocator)
+    assert(SameResource(resource, resourceGotten), "gotten resource(="..textutils.serialize(resourceGotten, compact)..") not the same as expected(="..textutils.serialize(resource, compact)..")")
+
+    -- test delete
+    local deleteSuccess = host1:deleteResource(resourceLocator)
+    assert(deleteSuccess, "delete not succesfull")
+
+    -- test getResource (no longer present)
+    resourceGotten = host1:getResource(resourceLocator)
+    assert(not resourceGotten, "unexpected resource(="..textutils.serialize(resourceGotten, compact)..") obtained (i.e. not nil)")
+
+    -- cleanup test
+end
 
 return T_Host
