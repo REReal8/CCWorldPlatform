@@ -5,8 +5,8 @@ local Silo = {
     _location               = nil,
     _entryLocation          = nil,
 
-    _dropLocation           = nil,
-    _pickupLocation         = nil,
+    _dropLocation           = 0,
+    _pickupLocation         = 0,
 
     _topChests              = nil,
     _storageChests          = nil,
@@ -29,11 +29,14 @@ local role_chests_worker = require "role_chests_worker"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
-local enterprise_chests
+local enterprise_chests = require "enterprise_chests"
+
+-- usefull
+local dthSiloRoot   = "mobj_silo"
+
+
 
 --[[
-    The Silo mobj represents a chest in the minecraft world and provides services to operate on that Silo.
-
     The following design decisions are made
         - The actual Silo's should never be accessed directly but only via the services of this mobj.
 --]]
@@ -51,16 +54,16 @@ function Silo:new(...)
         Construct a Silo.
 
         Parameters:
-        siteData                    - (table) data about this silo, like type and layout
-            location                + (Location) location of site
-            topChests               + (number, 2) # of top chests
-            layers                  + (number, 2) # of layers
+            siteData                    - (table) data about this silo, like type and layout
+                location                + (Location) location of site
+                topChests               + (number, 2) # of top chests
+                layers                  + (number, 2) # of layers
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
 
     -- main var
     local siteData  = {
-        _id             = coreutils.getId(),
+        _id             = coreutils.NewId(),
 
         -- might be userfull later
         _version        = 1,
@@ -70,8 +73,8 @@ function Silo:new(...)
         _entryLocation  = location:getRelativeLocation(3, 3, 0),
 
         -- pickup and drop
-        _dropLocation   = nil,
-        _pickupLocation = nil,
+        _dropLocation   = 0,
+        _pickupLocation = 0,
 
         -- chests
         _topChests      = {},
@@ -92,8 +95,8 @@ function Silo:new(...)
     if topChests >= 8 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(1, 4, 0), accessDirection = "top"}).chestLocator}) end
 
     -- set the defaults (basic setup)
-    if topChests >= 1 then siteData._dropLocation   = topChests[1] end
-    if topChests >= 2 then siteData._pickupLocation = topChests[2] end
+    if topChests >= 1 then siteData._dropLocation   = 1 end
+    if topChests >= 2 then siteData._pickupLocation = 2 end
 
     -- loop the layers
     for i=1, layers, 1 do
@@ -109,6 +112,9 @@ function Silo:new(...)
     -- set class info
     setmetatable(siteData, self)
     self.__index = self
+
+    -- better save this shit
+    siteData:Save()
 
     -- end
     return siteData
@@ -186,7 +192,7 @@ end
 
 function Silo:getDropLocation()
     -- easy
-    return self._dropLocation
+    return self._topChests[self._dropLocation]
 end
 
 function Silo:VerifyReadyToDrop_QSrv(itemList)
@@ -211,7 +217,7 @@ end
 
 function Silo:getPickupLocation()
     -- easy
-    return self._pickupLocation
+    return self._topChests[self._pickupLocation]
 end
 
 function Silo:ItemsAvailable_QSrv(itemList)
@@ -233,9 +239,6 @@ function Silo:MessageItemPickedup_SSrv(itemList)
     -- useless return
     return "Thanks you for your message"
 end
-
--- usefull
-local dthSiloRoot   = "mobj_silo"
 
 function Silo:Save()
     -- we need a valid zelf
