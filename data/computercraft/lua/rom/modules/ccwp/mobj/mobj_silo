@@ -272,12 +272,18 @@ function Silo:load(siloId)
 end
 
 function Silo:Delete()
+    -- for debugging only
     corelog.WriteToLog("Oh no, someone is deleting a silo!!!")
 
     -- Why would you ever want to delete such a magnificent structure. Only written for testing purposes
     for i, chestLocator in ipairs(self._topChests) do enterprise_chests.RemoveChest(chestLocator) end
     for i, chestLocator in ipairs(self._storageChests) do enterprise_chests.RemoveChest(chestLocator) end
+
+    -- remove from the data storage
     coredht.SaveData(nil, dthSiloRoot, self._id)
+
+    -- we no longer exist
+    self._id = nil
 end
 
 return Silo
