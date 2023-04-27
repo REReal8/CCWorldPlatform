@@ -85,14 +85,14 @@ function Silo:new(...)
     corelog.WriteToLog(">Starting silo at "..textutils.serialise(location, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(2, 5, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 2 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(4, 5, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 3 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(5, 4, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 4 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(5, 2, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 5 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(4, 1, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 6 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(2, 1, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 7 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(1, 2, 0), accessDirection = "top"}).chestLocator}) end
-    if topChests >= 8 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({llocation=location:getRelativeLocation(1, 4, 0), accessDirection = "top"}).chestLocator}) end
+    if topChests >= 1 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 2 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 5, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 3 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 4, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 4 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 2, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 5 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 1, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 6 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 1, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 7 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 2, 0), accessDirection="top"}).chestLocator}) end
+    if topChests >= 8 then table.insert(siteData._topChests, {chest=enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 4, 0), accessDirection="top"}).chestLocator}) end
 
     -- set the defaults (basic setup)
     if topChests >= 1 then siteData._dropLocation   = 1 end
