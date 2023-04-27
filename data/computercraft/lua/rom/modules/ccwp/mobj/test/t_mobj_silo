@@ -44,6 +44,10 @@ function T_Silo.T_Load()
     -- we are calling the shots now
     corelog.WriteToLog("* Silo:new() tests")
 
+    -- zeker weten dat er een silo is om mee te werken
+    local newSilo = Silo:new({location=location1, topChests=2, layers=2})
+    corelog.WriteToLog("newSilo._id = "..(newSilo._id or ""))
+
     -- lijstje met alle silo's
     local silos = coredht.GetData("mobj_silo")
 
@@ -51,10 +55,13 @@ function T_Silo.T_Load()
     local key = next(silos, nil)
 
     -- load the damn silo
-    local silo = Silo:Load(key)
+    local silo = Silo:load(key)
 
     -- what do we have?
     corelog.WriteToLog("silo id = "..(silo._id or ""))
+
+    -- might as well delete this new silo before things become messy
+    if type(newSilo) == "table" then newSilo:Delete() end
 end
 
 return T_Silo

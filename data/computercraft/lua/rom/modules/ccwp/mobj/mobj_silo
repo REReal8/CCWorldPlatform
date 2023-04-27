@@ -120,10 +120,6 @@ function Silo:new(...)
     return siteData
 end
 
-function Silo:load(id)
-    return self
-end
-
 function Silo:getId()
     return self._id
 end
@@ -248,7 +244,7 @@ function Silo:Save()
     coredht.SaveData(self, dthSiloRoot, self._id)
 end
 
-function Silo:Load(siloId)
+function Silo:load(siloId)
 
     -- reload self as default
     siloId = siloId or self._id
@@ -265,6 +261,15 @@ function Silo:Load(siloId)
 
     -- done
     return siloData
+end
+
+function Silo:Delete()
+    corelog.WriteToLog("Oh no, someone is deleting a silo!!!")
+
+    -- Why would you ever want to delete such a magnificent structure. Only written for testing purposes
+    for i, chestLocator in ipairs(self._topChests) do enterprise_chests.RemoveChest(chestLocator) end
+    for i, chestLocator in ipairs(self._storageChests) do enterprise_chests.RemoveChest(chestLocator) end
+    coredht.SaveData(nil, dthSiloRoot, self._id)
 end
 
 return Silo
