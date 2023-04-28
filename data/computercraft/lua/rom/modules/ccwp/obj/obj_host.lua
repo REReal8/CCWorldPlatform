@@ -416,4 +416,116 @@ function Host:saveObject(...)
     return objectLocator
 end
 
+local function GetObjectsPath(...)
+    -- get & check input from description
+    local checkSuccess, className = InputChecker.Check([[
+        This method provides the objectsPath of objects in the Host with class className.
+
+        Return value:
+            objectsPath             - (string) locating the objects within the Host
+
+        Parameters:
+            className               + (string) with the name of the class of the object
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.GetObjectsPath: Invalid input") return nil end
+
+    -- check className not empty
+    if className == "" then corelog.Error("Host.GetObjectsPath: classname is empty") return nil end
+
+    -- determince objectsPath
+    local objectsPath = "/objects/class="..className
+
+    -- end
+    return objectsPath
+end
+
+-- ToDo: investigate if this method can be made private (as it's not envisioned to be used outside of module)
+function Host:getObjects(...)
+    -- get & check input from description
+    local checkSuccess, className = InputChecker.Check([[
+        This (private) method retrieves all the objects in the Host with class className.
+
+        Return value:
+            objects                 - (table) with the objects
+
+        Parameters:
+            className               + (string) with the name of the class of the objects
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:getObjects: Invalid input") return nil end
+
+    -- get objectsPath
+    local objectsPath = GetObjectsPath(className)
+    if not objectsPath then corelog.Error("Host:getObjects: Failed obtainng objectsPath") return nil end
+
+    -- get objectsLocator
+    local objectsLocator = self:getResourceLocator(objectsPath)
+
+    -- get objects
+    local objects = self:getResource(objectsLocator)
+    if not objects then
+        -- (re)set objects
+        self:saveResource({}, objectsPath)
+
+        -- retrieve again
+        objects = self:getResource(objectsLocator)
+        if not objects then corelog.Error("Host:getObjects: Failed (re)setting objects") return nil end
+    end
+
+    -- end
+    return objects
+end
+
+function Host:getNumberOfObjects(...)
+    -- get & check input from description
+    local checkSuccess, className = InputChecker.Check([[
+        This method returns the number of objects in the Host with class className.
+
+        Return value:
+                                    - (number) of objects of class className hosted by the Host.
+
+        Parameters:
+            className               + (string) with the name of the class of the objects
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:getNumberOfObjects: Invalid input") return nil end
+
+    -- get objects
+    local objects = self:getObjects(className)
+    if not objects then corelog.Error("Host:getNumberOfObjects: Failed obtaining objects of class "..className) return nil end
+
+    -- loop on forests
+    local count = 0
+    for k, forest in pairs(objects) do
+        count = count + 1
+    end
+
+    return count
+end
+
+function Host:deleteObjects(...)
+    -- get & check input from description
+    local checkSuccess, className = InputChecker.Check([[
+        This method deletes all the objects in the Host with class className.
+
+        Return value:
+
+        Parameters:
+            className               + (string) with the name of the class of the objects
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:deleteObjects: Invalid input") return nil end
+
+    -- get objects
+    local objects = self:getObjects(className)
+    if not objects then corelog.Error("Host:deleteObjects: Failed obtaining objects of class "..className) return nil end
+
+    -- delete all objects
+--    corelog.Warning("All objects of class "..className.." are being deleted!")
+    for id, object in pairs(objects) do
+        -- get locator
+        local objectLocator = self:getObjectLocator(object, className)
+
+        -- delete
+        self:deleteResource(objectLocator)
+    end
+end
+
 return Host

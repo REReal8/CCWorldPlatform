@@ -22,6 +22,8 @@ function T_Host.T_All()
     T_Host.T_getObjectLocator()
     T_Host.T_saveObject()
     T_Host.T_getObject()
+    T_Host.T_getNumberOfObjects()
+    T_Host.T_deleteObjects()
 
     -- helper functions
 end
@@ -208,11 +210,11 @@ local testObject = TestObj:new({
     _field1 = "field1",
     _field2 = 4,
 })
+local className = "TestObj"
 
 function T_Host.T_getObjectLocator()
     -- prepare test
     corelog.WriteToLog("* Host:getObjectLocator tests")
-    local className = "TestObj"
     local objectId = coreutils.NewId()
 
     -- test with supplying className and id
@@ -241,7 +243,6 @@ end
 function T_Host.T_saveObject()
     -- prepare test
     corelog.WriteToLog("* Host:saveObject tests")
-    local className = "TestObj"
     local objectId = coreutils.NewId()
 
     -- test with supplying className and id
@@ -278,7 +279,6 @@ end
 function T_Host.T_getObject()
     -- prepare test
     corelog.WriteToLog("* Host:getObject tests")
-    local className = "TestObj"
     local objectLocator = host1:saveObject(testObject, className)
 
     -- test get object
@@ -288,6 +288,37 @@ function T_Host.T_getObject()
     -- cleanup test
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
+end
+
+function T_Host.T_getNumberOfObjects()
+    -- prepare test
+    corelog.WriteToLog("* Host:getNumberOfObjects tests")
+    local originalNObjects = host1:getNumberOfObjects(className)
+    local objectId = coreutils.NewId()
+
+    -- test
+    local objectLocator = host1:saveObject(testObject, className, objectId) -- add an extra object
+    local nObjects = host1:getNumberOfObjects(className)
+    local expectedNObjects = originalNObjects + 1
+    assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
+
+    -- cleanup test
+    host1:deleteResource(objectLocator)
+    nObjects = host1:getNumberOfObjects(className)
+    assert(nObjects == originalNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..originalNObjects..")")
+end
+
+function T_Host.T_deleteObjects()
+    -- prepare test
+    corelog.WriteToLog("* Host:deleteObjects tests")
+
+    -- test
+    host1:deleteObjects(className)
+    local nObjects = host1:getNumberOfObjects(className)
+    local expectedNObjects = 0
+    assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
+
+    -- cleanup test
 end
 
 return T_Host
