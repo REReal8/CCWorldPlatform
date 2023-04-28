@@ -156,7 +156,7 @@ end
 
 function enterprise_storage.DelistStorage_ASrv(...)
     -- get & check input from description
-    local checkSuccess, chestLocator, callback = InputChecker.Check([[
+    local checkSuccess, storageLocator, callback = InputChecker.Check([[
         This async public service delists ("removes") a storage from the enterprise. Delisting implies
             - the storage is immediatly no longer available for new business (e.g. adding/ removing items)
             - wait for all active work on storage to be ended
@@ -177,10 +177,6 @@ function enterprise_storage.DelistStorage_ASrv(...)
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.DelistStorage_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get the chest
-    local chest = enterprise_storage.GetChest(chestLocator)
-    if type(chest) ~="table" then corelog.Error("enterprise_storage.DelistStorage_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- ToDo
 
