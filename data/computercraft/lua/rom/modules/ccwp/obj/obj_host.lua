@@ -307,7 +307,7 @@ local function GetResourcePath(...)
         If the object has a getId() method the objectId argument can be set to "".
 
         Return value:
-            resourcePath           - (string) locating the Resource within the Host
+            resourcePath            - (string) locating the Resource within the Host
 
         Parameters:
             object                  + (table) the object
