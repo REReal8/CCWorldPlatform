@@ -177,7 +177,7 @@ local function provideItemsTo_ASrv_Test(itemDepotLocator, toStr)
     corelog.WriteToLog("* Chest:provideItemsTo_ASrv() test (to "..toStr..")")
     local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = enterprise_chests.GetChestLocator(chest:getId())
+    local chestLocator = enterprise_chests:getObjectLocator(chest)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -214,7 +214,7 @@ end
 function T_Chest.T_provideItemsTo_ASrv_Chest()
     -- prepare test
     local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
-    local itemDepotLocator = enterprise_chests.SaveChest(chest2)
+    local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
     provideItemsTo_ASrv_Test(itemDepotLocator, "Chest")
@@ -230,10 +230,10 @@ function T_Chest.provideItemsTo_ASrv_Callback(callbackData, serviceResults)
 
     -- cleanup test
     local chestLocator = callbackData["chestLocator"]
-    enterprise_chests.RemoveChest(chestLocator)
+    enterprise_chests:deleteResource(chestLocator)
     local itemDepotLocator = callbackData["itemDepotLocator"]
     if enterprise_chests.IsChestURL_QSrv({ aURL = itemDepotLocator}).success then
-        enterprise_chests.RemoveChest(itemDepotLocator)
+        enterprise_chests:deleteResource(itemDepotLocator)
     end
 
     -- end
@@ -245,7 +245,7 @@ local function storeItemsFrom_ASrv_Test(itemsLocator, toStr)
     corelog.WriteToLog("* Chest:storeItemsFrom_ASrv() test (to "..toStr..")")
     local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = enterprise_chests.GetChestLocator(chest:getId())
+    local chestLocator = enterprise_chests:getObjectLocator(chest)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -283,7 +283,7 @@ end
 function T_Chest.T_storeItemsFrom_ASrv_Chest()
     -- prepare test
     local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
-    local itemsLocator = enterprise_chests.SaveChest(chest2)
+    local itemsLocator = enterprise_chests:saveObject(chest2)
 
     -- test
     storeItemsFrom_ASrv_Test(itemsLocator, "Chest")
@@ -299,10 +299,10 @@ function T_Chest.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
 
     -- cleanup test
     local chestLocator = callbackData["chestLocator"]
-    enterprise_chests.RemoveChest(chestLocator)
+    enterprise_chests:deleteResource(chestLocator)
     local itemsLocator = callbackData["itemsLocator"]
     if enterprise_chests.IsChestURL_QSrv({ aURL = itemsLocator}).success then
-        enterprise_chests.RemoveChest(itemsLocator)
+        enterprise_chests:deleteResource(itemsLocator)
     end
 
     -- end

@@ -265,7 +265,7 @@ function Chest:storeItemsFrom_ASrv(...)
 
     -- set (expected) destinationItemsLocator
     enterprise_chests = enterprise_chests or require "enterprise_chests"
-    local destinationItemsLocator = enterprise_chests.GetChestLocator(self:getId())
+    local destinationItemsLocator = enterprise_chests:getObjectLocator(self)
     destinationItemsLocator:setQuery(coreutils.DeepCopy(itemsLocator:getQuery()))
 
     -- create project definition

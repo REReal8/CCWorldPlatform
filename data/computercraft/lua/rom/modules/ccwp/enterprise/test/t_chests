@@ -6,71 +6,20 @@ local Callback = require "obj_callback"
 
 local Location = require "obj_location"
 
-local T_Chest = require "test.t_mobj_chest"
-
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_chests = require "enterprise_chests"
 
 function t_chests.T_All()
-    t_chests.T_DeleteChests()
-    t_chests.T_SaveGetAndRemoveChest()
 end
 
 local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local testStartLocation2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
-local multipleStacksItemsQuery = {
-    ["minecraft:birch_log"] = 80,
-    ["minecraft:torch"]     = 1,
-}
 
 local callback = Callback:new({
     _moduleName     = "t_main",
     _methodName     = "Func1_Callback",
     _data           = { },
 })
-
-function t_chests.T_DeleteChests()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_chests.DeleteChests test")
-
-    -- test
-    enterprise_chests.DeleteChests()
-    local nChests = enterprise_chests.GetNumberOfChests_Att()
-    local expectedNChests = 0
-    assert(nChests == expectedNChests, "gotten nChests(="..nChests..") not the same as expected(="..expectedNChests..")")
-
-    -- cleanup test
-end
-
-function t_chests.T_SaveGetAndRemoveChest()
-    -- prepare test
-    local chest = T_Chest.CreateChest() if not chest then corelog.Error("failed obtaining Chest") return end
-    local originalNChests = enterprise_chests.GetNumberOfChests_Att()
-
-    -- SaveChest test
-    corelog.WriteToLog("* enterprise_chests.SaveChest test")
-    local chestLocator = enterprise_chests.SaveChest(chest)
-    local nChests = enterprise_chests.GetNumberOfChests_Att()
-    local expectedNChests = originalNChests + 1
-    assert(nChests == expectedNChests, "gotten nChests(="..nChests..") not the same as expected(="..expectedNChests..")")
-
-    -- GetChest test
-    corelog.WriteToLog("* enterprise_chests.GetChest test")
-    local chestGotton = enterprise_chests.GetChest(chestLocator)
-    local isSame = chestGotton:isSame(chest)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-
-    -- RemoveChest test
-    corelog.WriteToLog("* enterprise_chests.RemoveChest test")
-    enterprise_chests.RemoveChest(chestLocator)
-    nChests = enterprise_chests.GetNumberOfChests_Att()
-    expectedNChests = originalNChests
-    assert(nChests == expectedNChests, "gotten nChests(="..nChests..") not the same as expected(="..expectedNChests..")")
-
-    -- cleanup test
-end
 
 function t_chests.T_RegisterAndUpdateChest()
     corelog.WriteToLog("* Test Register and Update chest")

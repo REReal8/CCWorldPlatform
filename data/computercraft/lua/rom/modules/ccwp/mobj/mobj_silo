@@ -280,8 +280,8 @@ function Silo:Delete()
     corelog.WriteToLog("Oh no, someone is deleting a silo!!!")
 
     -- Why would you ever want to delete such a magnificent structure. Only written for testing purposes
-    for i, chestLocator in ipairs(self._topChests) do enterprise_chests.RemoveChest(chestLocator) end
-    for i, chestLocator in ipairs(self._storageChests) do enterprise_chests.RemoveChest(chestLocator) end
+    for i, chestLocator in ipairs(self._topChests) do enterprise_chests:deleteResource(chestLocator) end
+    for i, chestLocator in ipairs(self._storageChests) do enterprise_chests:deleteResource(chestLocator) end
 
     -- remove from the data storage
     coredht.SaveData(nil, dthSiloRoot, self._id)

@@ -104,7 +104,7 @@ function t_main.T_ResetWorld()
     enterprise_energy.ResetParameters()
     enterprise_factory.DeleteSites()
     enterprise_turtle.Reset()
-    enterprise_chests.DeleteChests()
+    enterprise_chests:deleteObjects("Chest")
     enterprise_shop.DelistItemSuppliers()
     enterprise_forestry:deleteObjects("BirchForest")
 
