@@ -243,6 +243,7 @@ function Host:deleteResource(...)
     else
         savedResource = coredht.SaveData(nil, hostURI, portURI, table.unpack(pathSegments))
     end
+    -- ToDo: consider also deleting pathSegments remainders from dht when there are no longer resources present in the path
 
     -- end
     return savedResource == nil
