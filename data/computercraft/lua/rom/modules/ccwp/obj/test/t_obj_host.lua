@@ -1,5 +1,6 @@
 local T_Host = {}
 
+local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local URL = require "obj_url"
@@ -210,18 +211,32 @@ local testObject = TestObj:new({
 function T_Host.T_saveObject()
     -- prepare test
     corelog.WriteToLog("* Host:saveObject tests")
-
-    -- test save object with no id
     local className = "TestObj"
-    local objectLocator = host1:saveObject(testObject, className)
-    local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    local objectId = coreutils.NewId()
+
+    -- test save object with supplying className and id
+    local objectLocator = host1:saveObject(testObject, className, objectId)
+    local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
-    -- test save object with id
-    local objectId = "35"
-    objectLocator = host1:saveObject(testObject, className, objectId)
+    -- test save object without supplying id
+    objectLocator = host1:saveObject(testObject, className)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    host1:deleteResource(objectLocator)
+    assert(not host1:getResource(objectLocator), "resource not deleted")
+
+    -- test save object without supplying className (but object has getClassName method) and id
+    objectLocator = host1:saveObject(testObject)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    host1:deleteResource(objectLocator)
+    assert(not host1:getResource(objectLocator), "resource not deleted")
+
+    -- test save object without supplying className (but object has getClassName method) but with id
+    objectLocator = host1:saveObject(testObject, "", objectId)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)

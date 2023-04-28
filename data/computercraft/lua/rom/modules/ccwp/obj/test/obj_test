@@ -37,6 +37,10 @@ function TestObj:new(o)
     return o
 end
 
+function TestObj:getClassName()
+    return "TestObj"
+end
+
 function TestObj:getField1()
     return self._field1
 end
