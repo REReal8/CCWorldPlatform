@@ -357,6 +357,36 @@ local function GetResourcePath(...)
     return resourcePath
 end
 
+function Host:getObjectLocator(...)
+    -- get & check input from description
+    local checkSuccess, object, className, objectId = InputChecker.Check([[
+        This method provides the objectLocator of an object using a className and objectId argument.
+
+        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getId() method the objectId argument can be set to "".
+
+        Return value:
+            objectLocator           - (URL) locating the object
+
+        Parameters:
+            object                  + (table) the object
+            className               + (string, "") with the name of the class of the object
+            objectId                + (string, "") with the optional id of the object
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:getObjectLocator: Invalid input") return nil end
+
+    -- get resourcePath
+    local resourcePath = GetResourcePath(object, className, objectId)
+    if not resourcePath then corelog.Error("Host:getObjectLocator: Failed obtainng resourcePath") return nil end
+
+    -- get objectLocator
+    local objectLocator = self:getResourceLocator(resourcePath)
+    if not objectLocator then corelog.Error("Host:getObjectLocator: Failed obtainng objectLocator") return nil end
+
+    -- end
+    return objectLocator
+end
+
 function Host:saveObject(...)
     -- get & check input from description
     local checkSuccess, object, className, objectId = InputChecker.Check([[
