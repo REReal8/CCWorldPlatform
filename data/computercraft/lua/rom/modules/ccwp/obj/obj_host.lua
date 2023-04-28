@@ -301,13 +301,13 @@ end
 local function GetObjectPath(...)
     -- get & check input from description
     local checkSuccess, object, className, objectId = InputChecker.Check([[
-        This method provides the objectPath of an object using a className and objectId argument.
+        This method provides the objectPath of an object in the Host with class className and id objectId.
 
         If the object has a getClassName() method the className argument can set to "".
         If the object has a getId() method the objectId argument can be set to "".
 
         Return value:
-            resourcePath            - (string) locating the Resource within the Host
+            resourcePath            - (string) locating the object within the Host
 
         Parameters:
             object                  + (table) the object
