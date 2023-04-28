@@ -15,6 +15,7 @@ local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 
+local Host = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -248,8 +249,8 @@ function BirchForest:provideItemsTo_ASrv(...)
             scheduleResult = scheduleResult and enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
         else
             -- construct new itemsLocator for this forest
-            local enterprise_forestry = require "enterprise_forestry"
-            local forestLocator = enterprise_forestry.GetForestLocator(self:getId())
+            local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_ASrv: host not found") return Callback.ErrorCall(callback) end
+            local forestLocator = host:getObjectLocator(self)
             local itemsLocator = forestLocator:copy()
             itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
 

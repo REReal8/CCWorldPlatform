@@ -6,49 +6,10 @@ local MethodExecutor = require "method_executor"
 
 local Location = require "obj_location"
 
-local T_BirchForest = require "test.t_mobj_birchforest"
-
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_forestry = require "enterprise_forestry"
 
 function t_forestry.T_All()
-    t_forestry.T_DeleteForests()
-    t_forestry.T_SaveAndRemoveForest()
-end
-
-function t_forestry.T_DeleteForests()
-    -- prepare test
-    corelog.WriteToLog("* DeleteForests test")
-
-    -- test
-    enterprise_forestry.DeleteForests()
-    local nForests = enterprise_forestry.GetNumberOfForests_Att()
-    local expectedNForests = 0
-    assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
-
-    -- cleanup test
-end
-
-function t_forestry.T_SaveAndRemoveForest()
-    -- prepare test
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local originalNForests = enterprise_forestry.GetNumberOfForests_Att()
-
-    -- SaveForest test
-    corelog.WriteToLog("* SaveForest test")
-    local forestLocator = enterprise_forestry.SaveForest(forest)
-    local nForests = enterprise_forestry.GetNumberOfForests_Att()
-    local expectedNForests = originalNForests + 1
-    assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
-
-    -- RemoveForest test
-    corelog.WriteToLog("* RemoveForest test")
-    enterprise_forestry.RemoveForest(forestLocator)
-    nForests = enterprise_forestry.GetNumberOfForests_Att()
-    expectedNForests = originalNForests
-    assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
-
-    -- cleanup test
 end
 
 local levelm1 = -1
@@ -75,7 +36,7 @@ end
 function AddNewSite_ASrv(level, nTrees)
     -- prepare test
     corelog.WriteToLog("# AddNewSite_ASrv (L"..level..",trees"..nTrees..") test")
-    local originalNForests = enterprise_forestry.GetNumberOfForests_Att()
+    local originalNForests = enterprise_forestry:getNumberOfObjects("BirchForest")
 
     -- test
     enterprise_forestry.AddNewSite_ASrv({
@@ -91,12 +52,12 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     assert(serviceResults.success, "failed adding forest")
     local forestLocator = serviceResults.forestLocator
     assert(forestLocator ~= nil, "failed obtaining forestLocator")
-    local nForests = enterprise_forestry.GetNumberOfForests_Att()
+    local nForests = enterprise_forestry:getNumberOfObjects("BirchForest")
     local expectedNForests = callbackData.originalNForests + 1
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- cleanup test
-    enterprise_forestry.RemoveForest(forestLocator)
+    enterprise_forestry:deleteResource(forestLocator)
 end
 
 function t_forestry.T_UpgradeSite_ASrv_Levelm1_Level0Trees1()
@@ -198,14 +159,14 @@ function UpgradeSite_ASrv_TestCallback(...)
 
     -- test result
     assert(serviceSuccess, "failed upgrading forest")
-    local forest = enterprise_forestry.GetForest(forestLocator)
+    local forest = enterprise_forestry:getObject(forestLocator)
     assert(forest:getLevel() == levelWanted, "gotten level(="..forest:getLevel()..") not the same as expected(="..levelWanted..")")
     assert(forest:getNTrees() == treesWanted, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..treesWanted..")")
 
     -- extraCallback?
     if extraCallbackName == "" then
         -- cleanup test
-        enterprise_forestry.RemoveForest(forestLocator)
+        enterprise_forestry:deleteResource(forestLocator)
     else
         -- call extraCallback
         extraCallbackData.forestLocator = forestLocator

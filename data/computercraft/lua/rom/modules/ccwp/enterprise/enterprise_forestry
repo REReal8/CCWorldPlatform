@@ -1,13 +1,15 @@
-local enterprise_forestry = {}
+local Host = require "obj_host"
+
+local enterprise_forestry = Host:new({
+    _hostName   = "enterprise_forestry",
+})
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
-local URL = require "obj_url"
 
 local role_forester = require "role_forester"
 
@@ -16,12 +18,6 @@ local BirchForest = require "mobj_birchforest"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_construction = require "enterprise_construction"
-
-local db = {
-    hostName    = "enterprise_forestry",
-    psForests   = "forests",
-    psBirches   = "birch",
-}
 
 --[[
     The forestry enterprise provides services for building and using forest production sites.
@@ -77,7 +73,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
     -- save the forest
     corelog.WriteToLog(">Adding forest "..forest:getId()..".")
-    local forestLocator = enterprise_forestry.SaveForest(forest)
+    local forestLocator = enterprise_forestry:saveObject(forest)
 
     -- create projectDef and projectData
     local projectData = {
@@ -176,7 +172,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get forest
-    local forest = enterprise_forestry.GetForest(forestLocator)
+    local forest = enterprise_forestry:getObject(forestLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- check not downgrading
@@ -361,7 +357,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get forest
-    local forest = enterprise_forestry.GetForest(itemsLocator)
+    local forest = enterprise_forestry:getObject(itemsLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- have forest provide items
@@ -392,7 +388,7 @@ function enterprise_forestry.Can_ProvideItems_QSrv(...)
     if not checkSuccess then corelog.Error("enterprise_forestry.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- get forest
-    local forest = enterprise_forestry.GetForest(itemsLocator)
+    local forest = enterprise_forestry:getObject(itemsLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_forestry.Can_ProvideItems_QSrv: Failed retrieving forest = "..itemsLocator:getURI()) return {success = false} end
 
     -- check forest can provide items
@@ -427,7 +423,7 @@ function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- get forest
-    local forest = enterprise_forestry.GetForest(itemsLocator)
+    local forest = enterprise_forestry:getObject(itemsLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv: Failed retrieving forest = "..itemsLocator:getURI()) return {success = false} end
 
     -- determine needs
@@ -439,62 +435,6 @@ function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- end
     return needs
-end
-
-function enterprise_forestry.GetForest(...)
-    -- get & check input from description
-    local checkSuccess, forestLocator = InputChecker.Check([[
-        This private function gets a forest based on a forestLocator.
-
-        Return value:
-            forest              - (table) the forest object
-
-        Parameters:
-            forestLocator       + (URL) locating the forest
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.GetForest: Invalid input") return nil end
-
-    -- check forestLocator is for this enterprise
-    local serviceResults = enterprise_forestry.IsForestURL_QSrv({ aURL = forestLocator})
-    if not serviceResults.success then corelog.Error("enterprise_forestry.GetForest: Invalid forestLocator (="..forestLocator:getURI()..").") return nil end
-
-    -- object ophalen
-    local forest = coredht.GetResource(forestLocator)
-    if type(forest) ~= "table" then corelog.Warning("enterprise_forestry.GetForest: forest "..forestLocator:getURI().." not found") return nil end
-    forest = BirchForest:new(forest)
-
-    -- end
-    return forest
-end
-
-local function ResetForests()
-    return coredht.SaveData({}, db.hostName, db.psForests, db.psBirches)
-end
-
-local function GetForests()
-    -- get forests
-    local forests = coredht.GetData(db.hostName, db.psForests, db.psBirches)
-    if not forests then forests = ResetForests() end
-
-    -- end
-    return forests
-end
-
-function enterprise_forestry.GetNumberOfForests_Att()
-    --[[
-        enterprise attribute: number of forests administered by the enterprise.
-    --]]
-
-    -- get forests
-    local forests = GetForests()
-
-    -- loop on forests
-    local count = 0
-    for k, forest in pairs(forests) do
-        count = count + 1
-    end
-
-    return count
 end
 
 --    _                 _    __                  _   _
@@ -556,7 +496,7 @@ function enterprise_forestry.UpdateForest_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_forestry.UpdateForest_SSrv: Invalid input") return {success = false} end
 
     -- get forest
-    local forest = enterprise_forestry.GetForest(forestLocator)
+    local forest = enterprise_forestry:getObject(forestLocator)
     if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpdateForest_SSrv: Failed retrieving forest = "..forestLocator:getURI()) return {success = false} end
 
     -- set forest information
@@ -564,7 +504,7 @@ function enterprise_forestry.UpdateForest_SSrv(...)
     forest:setNTrees(nTrees)
 
     -- save forest data
-    forestLocator = enterprise_forestry.SaveForest(forest)
+    forestLocator = enterprise_forestry:saveObject(forest)
 
     -- end
     corelog.WriteToLog(">Updated forest (level="..forestLevel..", nTrees="..nTrees..")")
@@ -572,126 +512,6 @@ function enterprise_forestry.UpdateForest_SSrv(...)
         success         = true,
         forestLocator   = forestLocator,
     }
-end
-
-function enterprise_forestry.SaveForest(...)
-    -- get & check input from description
-    local checkSuccess, forest = InputChecker.Check([[
-        This private function saves a forest to the dht.
-
-        Return value:
-            forestLocator       - (URL) locating the forest
-
-        Parameters:
-            forest              + (BirchForest) the forest object
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.SaveForest: Invalid input") return nil end
-
-    -- get locator
-    local forestLocator = enterprise_forestry.GetForestLocator(forest:getId())
-
-    -- save record
-    coredht.SaveResource(forest, forestLocator)
-
-    -- end
-    return forestLocator
-end
-
-function enterprise_forestry.DeleteForests()
-    -- get forests
-    local forests = GetForests()
-
-    -- remove all
---    corelog.Warning("All forests are being deleted!")
-    for id, forest in pairs(forests) do
-        -- get locator
-        local forestLocator = enterprise_forestry.GetForestLocator(forest._id)
-
-        -- remove
-        enterprise_forestry.RemoveForest(forestLocator)
-    end
-end
-
-function enterprise_forestry.RemoveForest(...)
-    -- get & check input from description
-    local checkSuccess, forestLocator = InputChecker.Check([[
-        This private function removes a forest from the dht.
-
-        Return value:
-            nil
-
-        Parameters:
-            forestLocator       + (URL) locating the forest
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.RemoveForest: Invalid input") return nil end
-
-    -- remove record
-    corelog.WriteToLog(">removing forest "..forestLocator:getURI())
-    coredht.DeleteResource(forestLocator)
-end
-
-local function GetHostLocator_Att()
-    --[[
-        Attribute locating this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = URL:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
-function enterprise_forestry.IsForestURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = InputChecker.Check([[
-        This sync public service answers the question if a URL is that of a Forest.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (URL) that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.IsForestURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of this ItemSupplier
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_forestry.IsForestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
-end
-
-function enterprise_forestry.GetForestLocator(...)
-    -- get & check input from description
-    local checkSuccess, id = InputChecker.Check([[
-        This private function provides the URL of a forest based on it's (internal) id.
-
-        Return value:
-            forestLocator           - (URL) locating the forest
-
-        Parameters:
-            id                      + (string) with the id of the forest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.GetForestLocator: Invalid input") return nil end
-
-    -- construct URL
-    local forestLocator = GetHostLocator_Att()
-    local path = "/"..db.psForests.."/"..db.psBirches.."/id="..id
-    forestLocator:setPath(path)
-
-    -- end
-    return forestLocator
 end
 
 return enterprise_forestry

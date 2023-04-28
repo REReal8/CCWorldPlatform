@@ -36,7 +36,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     local turtleLocation = Location:new(coremove.GetLocation())
     local forestLocation = turtleLocation:getRelativeLocation(-3, -2, 0)
     local forest = T_BirchForest.CreateForest(levelm1, forestLocation) if not forest then corelog.Error("failed obtaining forest") return end
-    local forestLocator = enterprise_forestry.SaveForest(forest)
+    local forestLocator = enterprise_forestry:saveObject(forest)
 
     local factoryLocation1 = turtleLocation:copy()
     t_factory.StartNewSite(factoryLocation1)
@@ -63,7 +63,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     -- test L2
     forest:setLevel(level0)
-    forestLocator = enterprise_forestry.SaveForest(forest)
+    forestLocator = enterprise_forestry:saveObject(forest)
     level = level2
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator })
@@ -76,7 +76,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- test L3
     forest:setLevel(level2)
     forest:setNTrees(3*6)
-    forestLocator = enterprise_forestry.SaveForest(forest)
+    forestLocator = enterprise_forestry:saveObject(forest)
     local factoryLocation2 = forestLocation:getRelativeLocation(12, 0, 0)
     t_factory.StartNewSite(factoryLocation2)
     level = level3
@@ -91,14 +91,14 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
     t_factory.StopSite(factoryLocation2)
 
-    enterprise_forestry.RemoveForest(forestLocator)
+    enterprise_forestry:deleteResource(forestLocator)
 end
 
 function t_energy.T_GetRefuelAmount_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetRefuelAmount_Att() tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local forestLocator = enterprise_forestry.SaveForest(forest)
+    local forestLocator = enterprise_forestry:saveObject(forest)
 
     local turtleLocation = Location:new(coremove.GetLocation())
     local factoryLocation1 = turtleLocation:copy()
@@ -141,7 +141,7 @@ function t_energy.T_GetRefuelAmount_Att()
 
     t_factory.StopSite(factoryLocation1)
 
-    enterprise_forestry.RemoveForest(forestLocator)
+    enterprise_forestry:deleteResource(forestLocator)
 end
 
 return t_energy

@@ -6,10 +6,12 @@ local corelog = require "corelog"
 local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
-local URL = require "obj_url"
-
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+
+local URL = require "obj_url"
 
 --[[
     This module implements the Host class.
@@ -33,6 +35,10 @@ local objectFactory = ObjectFactory:getInstance()
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function Host.GetHost(hostName)
+    return moduleRegistry:getModule(hostName)
+end
 
 function Host:new(...)
     -- get & check input from description

@@ -6,6 +6,7 @@ local coredht = require "coredht"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+
 local URL = require "obj_url"
 local Location = require "obj_location"
 
@@ -71,8 +72,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         -- create the entry
         coredht.SaveData({}, db.dhtRoot)
 
-        -- reset forest
-        enterprise_forestry.DeleteForests()
+        -- delete BirchForest's
+        enterprise_forestry:deleteObjects("BirchForest")
     end
 
     -- add default ItemSuppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry

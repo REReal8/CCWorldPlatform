@@ -172,7 +172,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         local forestLocator = parameters.forestLocator
         local forest = nil
         local enterprise_forestry = require "enterprise_forestry"
-        forest = enterprise_forestry.GetForest(forestLocator)
+        forest = enterprise_forestry:getObject(forestLocator)
         if type(forest) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: forest "..forestLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
         -- determine fuelNeed by forest

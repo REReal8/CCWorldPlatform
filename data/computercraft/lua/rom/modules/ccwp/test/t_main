@@ -6,7 +6,6 @@ local coreassignment = require "coreassignment"
 
 local t_coredht = require "test.t_coredht"
 local t_coremove = require "test.t_coremove"
-local t_coreinventory = require "test.t_coreinventory"
 
 local t_alchemist = require "test.t_alchemist"
 local t_builder = require "test.t_builder"
@@ -107,7 +106,7 @@ function t_main.T_ResetWorld()
     enterprise_turtle.Reset()
     enterprise_chests.DeleteChests()
     enterprise_shop.DelistItemSuppliers()
-    enterprise_forestry.DeleteForests()
+    enterprise_forestry:deleteObjects("BirchForest")
 
     -- give the system some time to save changes to disk
     os.sleep(0.25)
