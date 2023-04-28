@@ -214,28 +214,28 @@ function T_Host.T_saveObject()
     local className = "TestObj"
     local objectId = coreutils.NewId()
 
-    -- test save object with supplying className and id
+    -- test with supplying className and id
     local objectLocator = host1:saveObject(testObject, className, objectId)
     local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
-    -- test save object without supplying id
+    -- test without supplying id
     objectLocator = host1:saveObject(testObject, className)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
     assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
-    -- test save object without supplying className (but object has getClassName method) and id
+    -- test without supplying className (but object has getClassName method) and id
     objectLocator = host1:saveObject(testObject)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
     assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
-    -- test save object without supplying className (but object has getClassName method) but with id
+    -- test without supplying className (but object has getClassName method) but with id
     objectLocator = host1:saveObject(testObject, "", objectId)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
