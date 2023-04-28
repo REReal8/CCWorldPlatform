@@ -45,9 +45,11 @@ function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
+    local className = "Chest"
     local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
 
     -- test
+    assert(chest:getClassName() == className, "gotten className(="..chest:getClassName()..") not the same as expected(="..className..")")
     assert(chest:getId() == id, "gotten id(="..chest:getId()..") not the same as expected(="..id..")")
     assert(chest:getLocation() == location1, "gotten getLocation(="..textutils.serialize(chest:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(chest:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..chest:getAccessDirection()..") not the same as expected(="..accessDirection1..")")

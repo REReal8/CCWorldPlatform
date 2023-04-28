@@ -120,6 +120,10 @@ function Silo:new(...)
     return siteData
 end
 
+function Silo:getClassName()
+    return "Silo"
+end
+
 function Silo:getId()
     return self._id
 end

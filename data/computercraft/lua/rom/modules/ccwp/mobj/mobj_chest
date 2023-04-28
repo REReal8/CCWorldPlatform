@@ -60,6 +60,10 @@ function Chest:new(...)
     return o
 end
 
+function Chest:getClassName()
+    return "Chest"
+end
+
 function Chest:getId()
     return self._id
 end

@@ -46,9 +46,11 @@ function T_Turtle.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Turtle getter tests")
     local id = 111
+    local className = "Turtle"
     local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
 
     -- test
+    assert(objTurtle:getClassName() == className, "gotten className(="..objTurtle:getClassName()..") not the same as expected(="..className..")")
     assert(objTurtle:getId() == id, "gotten id(="..objTurtle:getId()..") not the same as expected(="..id..")")
 --    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
 --    assert(objTurtle:getInventory():isSame(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")

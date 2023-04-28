@@ -61,6 +61,10 @@ function BirchForest:new(...)
     return o
 end
 
+function BirchForest:getClassName()
+    return "BirchForest"
+end
+
 function BirchForest:getId()
     return self._id
 end

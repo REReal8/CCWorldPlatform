@@ -43,9 +43,11 @@ function T_BirchForest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* BirchForest getter tests")
     local id = coreutils.NewId()
+    local className = "BirchForest"
     local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
+    assert(forest:getClassName() == className, "gotten className(="..forest:getClassName()..") not the same as expected(="..className..")")
     assert(forest:getId() == id, "gotten id(="..forest:getId()..") not the same as expected(="..id..")")
     assert(forest:getLevel() == level0, "gotten level(="..forest:getLevel()..") not the same as expected(="..level0..")")
     assert(forest:getLocation() == location1, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location1)..")")

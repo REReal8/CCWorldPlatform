@@ -47,6 +47,10 @@ function Turtle:new(...)
     return o
 end
 
+function Turtle:getClassName()
+    return "Turtle"
+end
+
 function Turtle:getId()
     return self._id
 end
