@@ -298,6 +298,65 @@ function Host:getObject(...)
     return object
 end
 
+local function GetResourcePath(...)
+    -- get & check input from description
+    local checkSuccess, object, className, objectId = InputChecker.Check([[
+        This method provides the resourcePath of an object using a className and objectId argument.
+
+        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getId() method the objectId argument can be set to "".
+
+        Return value:
+            resourcePath           - (string) locating the Resource within the Host
+
+        Parameters:
+            object                  + (table) the object
+            className               + (string, "") with the name of the class of the object
+            objectId                + (string, "") with the optional id of the object
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.GetResourcePath: Invalid input") return nil end
+
+    -- determince resourcePath
+    local resourcePath = "/objects"
+
+    -- optionally add className to resourcePath
+    if className == "" then
+        -- attempt to get className from object
+        if object.getClassName then
+            local name = object:getClassName()
+            if type(name) == "string" then
+                className = name
+            else
+                corelog.Warning("Host.GetResourcePath: object:getClassName() did not return(type="..type(name)..") a string")
+            end
+        else
+            corelog.Warning("Host.GetResourcePath: object:getClassName() does not exist. Also not provided. => couldn't determine className")
+        end
+    end
+    if className ~= "" then
+        resourcePath = resourcePath.."/class="..className
+    end
+
+    -- optionally add objectId to resourcePath
+    if objectId == "" then
+        -- attempt to get objectId from object
+        if object.getId then
+            local id = object:getId()
+            if type(id) == "string" then
+                objectId = id
+            else
+                corelog.Warning("Host.GetResourcePath: object:getId() did not return(type="..type(id)..") a string")
+            end
+        end
+    end
+    if objectId ~= "" then
+        resourcePath = resourcePath.."/id="..objectId
+    end
+
+    -- end
+    return resourcePath
+end
+
 function Host:saveObject(...)
     -- get & check input from description
     local checkSuccess, object, className, objectId = InputChecker.Check([[
@@ -314,44 +373,11 @@ function Host:saveObject(...)
             className               + (string, "") with the name of the class of the object
             objectId                + (string, "") with the optional id of the object
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("ObjectsContext:saveObject: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("Host:saveObject: Invalid input") return nil end
 
-    -- determince resourcePath
-    local resourcePath = "/objects"
-
-    -- optionally add className to resourcePath
-    if className == "" then
-        -- attempt to get className from object
-        if object.getClassName then
-            local name = object:getClassName()
-            if type(name) == "string" then
-                className = name
-            else
-                corelog.Warning("ObjectsContext:saveObject: object:getClassName() did not return(type="..type(name)..") a string")
-            end
-        else
-            corelog.Warning("ObjectsContext:saveObject: object:getClassName() does not exist. Also not provided. => couldn't determine className")
-        end
-    end
-    if className ~= "" then
-        resourcePath = resourcePath.."/class="..className
-    end
-
-    -- optionally add objectId to resourcePath
-    if objectId == "" then
-        -- attempt to get objectId from object
-        if object.getId then
-            local id = object:getId()
-            if type(id) == "string" then
-                objectId = id
-            else
-                corelog.Warning("ObjectsContext:saveObject: object:getId() did not return(type="..type(id)..") a string")
-            end
-        end
-    end
-    if objectId ~= "" then
-        resourcePath = resourcePath.."/id="..objectId
-    end
+    -- get resourcePath
+    local resourcePath = GetResourcePath(object, className, objectId)
+    if not resourcePath then corelog.Error("Host:saveObject: Failed obtainng resourcePath") return nil end
 
     -- save resource
     local objectLocator = self:saveResource(object, resourcePath)
