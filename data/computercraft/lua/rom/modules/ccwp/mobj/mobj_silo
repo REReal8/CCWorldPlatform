@@ -61,6 +61,10 @@ function Silo:new(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
 
+    -- better safe then sorry, maybe flexible one day
+    location:setDX(0)
+    location:setDY(1)
+
     -- main var
     local siteData  = {
         _id             = coreutils.NewId(),
