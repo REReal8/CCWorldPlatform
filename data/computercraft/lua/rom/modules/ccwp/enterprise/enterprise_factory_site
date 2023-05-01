@@ -99,7 +99,7 @@ local function FindSiteByLocation(baseLocation)
     local sites = coredht.GetData(db.hostName, db.psSites)
 
     -- check if we have any site
-    if type(sites) ~= "table" then corelog.Warning("enterprise_factory.FindSiteByLocation: no sites present") return nil end
+    if type(sites) ~= "table" then corelog.Warning("enterprise_factory_site.FindSiteByLocation: no sites present") return nil end
 
     -- loop on sites
     for k, site in pairs(sites) do
