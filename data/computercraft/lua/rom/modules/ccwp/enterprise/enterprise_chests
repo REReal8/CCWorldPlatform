@@ -18,7 +18,6 @@ local enterprise_projects = require "enterprise_projects"
 
 local db = {
     hostName    = "enterprise_chests",
-    psChests    = "chests"
 }
 
 --[[
