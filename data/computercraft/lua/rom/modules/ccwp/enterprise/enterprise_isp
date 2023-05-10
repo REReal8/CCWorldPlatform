@@ -425,7 +425,7 @@ function GetItemSupplierName_SSrv(...)
     local enterpriseName = nil
         if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
     elseif host == "enterprise_forestry"then enterpriseName = "enterprise_forestry"
-    elseif host == "enterprise_factory" then enterpriseName = "enterprise_factory"
+    elseif host == "enterprise_manufacturing" then enterpriseName = "enterprise_manufacturing"
     elseif host == "enterprise_shop"    then enterpriseName = "enterprise_shop"
     elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
     else corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: Not implemented for "..host .." host.") return {success = false} end

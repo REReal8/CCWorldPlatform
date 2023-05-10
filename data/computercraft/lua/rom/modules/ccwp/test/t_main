@@ -32,7 +32,7 @@ local T_Silo = require "test.t_mobj_silo"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_energy = require "enterprise_energy"
-local enterprise_factory = require "enterprise_factory"
+local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
@@ -44,7 +44,7 @@ local t_projects = require "test.t_projects"
 local t_isp = require "test.t_isp"
 local t_energy = require "test.t_energy"
 local t_chests = require "test.t_chests"
-local t_factory = require "test.t_factory"
+local t_manufacturing = require "test.t_manufacturing"
 local t_forestry = require "test.t_forestry"
 local t_shop = require "test.t_shop"
 local t_turtle = require "test.t_turtle"
@@ -89,7 +89,7 @@ function t_main.T_All()
     t_projects.T_All()
     t_isp.T_All()
     t_forestry.T_All()
-    t_factory.T_All()
+    t_manufacturing.T_All()
     t_energy.T_All()
     t_chests.T_All()
     t_shop.T_All()
@@ -102,7 +102,7 @@ function t_main.T_ResetWorld()
     enterprise_assignmentboard.Reset()
     enterprise_projects.DeleteProjects()
     enterprise_energy.ResetParameters()
-    enterprise_factory.DeleteSites()
+    enterprise_manufacturing.DeleteSites()
     enterprise_turtle.Reset()
     enterprise_chests:deleteObjects("Chest")
     enterprise_shop.DelistItemSuppliers()

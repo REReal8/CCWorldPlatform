@@ -13,7 +13,7 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
 
-local t_factory = require "test.t_factory"
+local t_manufacturing = require "test.t_manufacturing"
 
 function t_storage.T_BuildAndStartNewSite_ASrv()
     -- prepare test
@@ -22,7 +22,7 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local location = Location:new(coremove.GetLocation())
-    t_factory.StartNewSite(location)
+    t_manufacturing.StartNewSite(location)
 
     local callback = Callback:new({
         _moduleName     = "t_storage",
@@ -45,7 +45,7 @@ function t_storage.Cleanup_Callback(callbackData, taskResult)
     corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     -- cleanup test
-    t_factory.StopSite(callbackData.location)
+    t_manufacturing.StopSite(callbackData.location)
 
     enterprise_forestry:deleteResource(callbackData.forestLocator)
 end

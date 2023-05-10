@@ -10,7 +10,7 @@ local T_BirchForest = require "test.t_mobj_birchforest"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
 
-local t_factory = require "test.t_factory"
+local t_manufacturing = require "test.t_manufacturing"
 
 function t_energy.T_All()
     t_energy.T_GetFuelNeed_Refuel_Att()
@@ -39,7 +39,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local factoryLocation1 = turtleLocation:copy()
-    t_factory.StartNewSite(factoryLocation1)
+    t_manufacturing.StartNewSite(factoryLocation1)
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -71,14 +71,14 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     expectedFuelNeed = 89
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level.." not the same as expected(="..expectedFuelNeed..")")
 
-    t_factory.StopSite(factoryLocation1)
+    t_manufacturing.StopSite(factoryLocation1)
 
     -- test L3
     forest:setLevel(level2)
     forest:setNTrees(3*6)
     forestLocator = enterprise_forestry:saveObject(forest)
     local factoryLocation2 = forestLocation:getRelativeLocation(12, 0, 0)
-    t_factory.StartNewSite(factoryLocation2)
+    t_manufacturing.StartNewSite(factoryLocation2)
     level = level3
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator })
@@ -89,7 +89,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
 
-    t_factory.StopSite(factoryLocation2)
+    t_manufacturing.StopSite(factoryLocation2)
 
     enterprise_forestry:deleteResource(forestLocator)
 end
@@ -102,7 +102,7 @@ function t_energy.T_GetRefuelAmount_Att()
 
     local turtleLocation = Location:new(coremove.GetLocation())
     local factoryLocation1 = turtleLocation:copy()
-    t_factory.StartNewSite(factoryLocation1)
+    t_manufacturing.StartNewSite(factoryLocation1)
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -139,7 +139,7 @@ function t_energy.T_GetRefuelAmount_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator })
 
-    t_factory.StopSite(factoryLocation1)
+    t_manufacturing.StopSite(factoryLocation1)
 
     enterprise_forestry:deleteResource(forestLocator)
 end

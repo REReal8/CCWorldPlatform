@@ -23,7 +23,7 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_chests = require "enterprise_chests"
 
 local db = {
-    hostName    = "enterprise_factory",
+    hostName    = "enterprise_manufacturing",
     psSites     = "sites",
 }
 

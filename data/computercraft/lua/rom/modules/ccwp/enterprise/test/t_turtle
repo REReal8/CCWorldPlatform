@@ -10,7 +10,7 @@ local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_isp = require "enterprise_isp"
 
-local t_factory = require "test.t_factory"
+local t_manufacturing = require "test.t_manufacturing"
 local T_BirchForest = require "test.t_mobj_birchforest"
 
 function t_turtle.T_All()
@@ -46,7 +46,7 @@ function t_turtle.T_GetFuelLevels_Att()
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local location = Location:new(coremove.GetLocation())
-    t_factory.StartNewSite(location)
+    t_manufacturing.StartNewSite(location)
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -63,7 +63,7 @@ function t_turtle.T_GetFuelLevels_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
 
-    t_factory.StopSite(location)
+    t_manufacturing.StopSite(location)
 
     enterprise_forestry:deleteResource(forestLocator)
 end

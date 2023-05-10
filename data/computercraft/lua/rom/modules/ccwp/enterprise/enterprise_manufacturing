@@ -1,4 +1,4 @@
-local enterprise_factory = {}
+local enterprise_manufacturing = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
@@ -15,7 +15,7 @@ local enterprise_factory_site = require "enterprise_factory_site"
 local enterprise_construction = require "enterprise_construction"
 
 local db = {
-    hostName    = "enterprise_factory",
+    hostName    = "enterprise_manufacturing",
     psSites     = "sites",
 
     -- turtle slots
@@ -80,21 +80,16 @@ local db = {
     }
 }
 
--- ToDo: consider renaming to enterprise_factories
-
 --[[
-    The Factory is an enterprise that offers services to produce items based on recipes.
+    The manufacturing enterprise offers services to produce items based on recipes.
 
-    The Factory is a Producer, hence it provides the mandatory services and functions for a Producer (like e.g. ProvideItemsTo_ASrv).
+    This enterprise is an ItemSupplier, hence it provides the mandatory services and functions for an ItemSupplier (like e.g. ProvideItemsTo_ASrv).
 
     There are (currently) two recipe types for producing items.
         The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
         The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
 
-    It also provides the following attributes
-        GetHostLocator_Att     - locating this enterprise
-
-    The Factory is comprised out of one or more factory sites. It uses the production services of the factory sites to produce the items.
+    The enterprise is comprised out of one or more factory sites. It uses the production services of the Factory's to produce the items.
 --]]
 
 --                _     _ _         __                  _   _
@@ -106,7 +101,7 @@ local db = {
 --   | |
 --   |_|
 
-function enterprise_factory.ProvideItemsTo_ASrv(...)
+function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
@@ -135,27 +130,27 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
+    if not serviceResults.success then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- loop on items
     local scheduleResult = true
     local provideItems = itemsLocator:getQuery()
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- select recipe to produce item
         local recipe = db.recipes[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
+        if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
         -- select a suitable site
         local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
-        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
+        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
 
         -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with itemsNeeded)
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
@@ -232,7 +227,7 @@ function enterprise_factory.ProvideItemsTo_ASrv(...)
     return scheduleResult
 end
 
-function enterprise_factory.Can_ProvideItems_QSrv(...)
+function enterprise_manufacturing.Can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
         This sync public query service answers the question whether the ItemSupplier can provide specific items.
@@ -247,17 +242,17 @@ function enterprise_factory.Can_ProvideItems_QSrv(...)
                                         (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    if not serviceResults.success then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- loop on items
     local items = itemsLocator:getQuery()
     for itemName, itemCount in pairs(items) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_factory.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
 
         -- check for recipe to produce itemName
         local recipe = db.recipes[ itemName ]
@@ -272,7 +267,7 @@ function enterprise_factory.Can_ProvideItems_QSrv(...)
     }
 end
 
-function enterprise_factory.GetNumberOfSites_Att()
+function enterprise_manufacturing.GetNumberOfSites_Att()
     --[[
         Factory attribute: number of factory sites administered by the enterprise.
     --]]
@@ -289,7 +284,7 @@ function enterprise_factory.GetNumberOfSites_Att()
     return count
 end
 
-function enterprise_factory.GetFuelNeed_Production_Att(...)
+function enterprise_manufacturing.GetFuelNeed_Production_Att(...)
     -- get & check input from description
     local checkSuccess, items = InputChecker.Check([[
         Factory attribute for the current fuelNeed for producing items. (i.e. it returns the fuelNeed for producing the items
@@ -298,13 +293,13 @@ function enterprise_factory.GetFuelNeed_Production_Att(...)
         Parameters:
             items   + (table) items to produce
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.GetFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.GetFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- check there are sites
-    if enterprise_factory.GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.GetFuelNeed_Production_Att: Not sites administered by Factory") return 0 end
+    if enterprise_manufacturing.GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_manufacturing.GetFuelNeed_Production_Att: Not sites administered by Factory") return 0 end
 
     -- create locators
-    local itemsLocator = enterprise_factory.GetHostLocator_Att()
+    local itemsLocator = enterprise_manufacturing.GetHostLocator_Att()
     itemsLocator:setQuery(items)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleLocator = enterprise_turtle.GetHostLocator_Att()
@@ -315,15 +310,15 @@ function enterprise_factory.GetFuelNeed_Production_Att(...)
         itemDepotLocator                = turtleLocator:copy(),
         ingredientsItemSupplierLocator  = turtleLocator:copy(),
     }
-    local serviceResults = enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-    if not serviceResults.success then corelog.Error("enterprise_factory.GetFuelNeed_Production_Att: failed obtaining fuel need for production.") return enterprise_energy.GetLargeFuelAmount_Att() end
+    local serviceResults = enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(serviceData)
+    if not serviceResults.success then corelog.Error("enterprise_manufacturing.GetFuelNeed_Production_Att: failed obtaining fuel need for production.") return enterprise_energy.GetLargeFuelAmount_Att() end
     local fuelNeed = serviceResults.fuelNeed
 
     -- end
     return fuelNeed
 end
 
-function enterprise_factory.GetSiteLocation_Att(...)
+function enterprise_manufacturing.GetSiteLocation_Att(...)
     -- get & check input from description
     local checkSuccess, items = InputChecker.Check([[
         Factory attribute for the location of the current available site for producing items.
@@ -331,25 +326,25 @@ function enterprise_factory.GetSiteLocation_Att(...)
         Parameters:
             items   + (table) items to produce
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.GetSiteLocation_Att: Invalid input") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Invalid input") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- check there are sites
-    if enterprise_factory.GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_factory.GetSiteLocation_Att: Not sites administered by Factory") return {_x=0, _y=0, _z= 0, _dx=0, _dy=1}  end
+    if enterprise_manufacturing.GetNumberOfSites_Att() < 1 then corelog.Warning("enterprise_manufacturing.GetSiteLocation_Att: Not sites administered by Factory") return {_x=0, _y=0, _z= 0, _dx=0, _dy=1}  end
 
     -- check for recipe to provide items
     local itemName, itemCount = next(items, nil)
     local recipe = db.recipes[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_factory.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- select a suitable site
     local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
     local location = siteProduceItemData.productionSpot.location
 
     return location
 end
 
-function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
+function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
@@ -369,11 +364,11 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
 
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- check itemsLocator is for this enterprise
     local serviceResults = IsFactoryURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- loop on items
     local fuelNeed = 0
@@ -381,20 +376,20 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
     local supplyItems = itemsLocator:getQuery()
     for itemName, itemCount in pairs(supplyItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
 
         -- check for recipe to provide itemName
         local recipe = db.recipes[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
+        if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
 
         -- select a suitable site
         local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
-        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
+        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
         local itemIngredientsNeed = siteProduceItemData.itemsNeeded
-        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
+        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
 
         -- fuelNeed ingredients
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
@@ -406,7 +401,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
         }
         serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
+        if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
         local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
 
         -- fuelNeed production
@@ -419,7 +414,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
             productionSpot          = enterprise_factory_site.ProductionSpot_Copy(siteProduceItemData.productionSpot),
         }
         serviceResults = enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
+        if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
         local fuelNeed_SiteProduction = serviceResults.fuelNeed
 
         -- fuelNeed output transfer
@@ -432,7 +427,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
             destinationItemDepotLocator = itemDepotLocator,
         }
         serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_factory.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
         local fuelNeed_ProductsSupply = serviceResults.fuelNeed
 
         -- add fuelNeed
@@ -448,7 +443,7 @@ function enterprise_factory.NeedsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
-function enterprise_factory.BuildAndStartNewSite_ASrv(...)
+function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, upgrade, callback = InputChecker.Check([[
         This async public service builds a new factory site and ensures it's ready for use.
@@ -468,13 +463,13 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
                 materialsHostLocator    - (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine projectSteps
     local projectSteps = { }
     local iStep = 0
     table.insert(projectSteps,
-        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "BuildNewSite_ASrv" }, stepDataDef = {
+        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildNewSite_ASrv" }, stepDataDef = {
             { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
             { keyDef = "siteVersion"            , sourceStep = 0, sourceKeyDef = "siteVersion" },
             { keyDef = "upgrade"                , sourceStep = 0, sourceKeyDef = "upgrade" },
@@ -484,14 +479,14 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
     iStep = iStep + 1
     if upgrade then
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "StopSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"       , sourceStep = 0, sourceKeyDef = "baseLocation" },
             }}
         )
         iStep = iStep + 1
     end
     table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
+        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
             { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
             { keyDef = "siteVersion"            , sourceStep = 0, sourceKeyDef = "siteVersion" },
             { keyDef = "siteAlreadyBuild"       , sourceStep = iStep, sourceKeyDef = "success" }
@@ -516,7 +511,7 @@ function enterprise_factory.BuildAndStartNewSite_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function enterprise_factory.BuildNewSite_ASrv(...)
+function enterprise_manufacturing.BuildNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, baseLocation, siteVersion, upgrade, materialsHostLocator, callback = InputChecker.Check([[
         This async public service builds a new factory site.
@@ -536,7 +531,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get site build data
     local siteBuildData = nil
@@ -547,7 +542,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
     elseif siteVersion == "v2" then
         siteBuildData = enterprise_factory_site.GetV2SiteBuildData(serviceData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
+        corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
         return Callback.ErrorCall(callback)
     end
     siteBuildData.materialsHostLocator = materialsHostLocator
@@ -561,7 +556,7 @@ function enterprise_factory.BuildNewSite_ASrv(...)
     return enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
 end
 
-function enterprise_factory.StartNewSite_SSrv(...)
+function enterprise_manufacturing.StartNewSite_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, siteVersion, siteAlreadyBuild = InputChecker.Check([[
         This sync public service ensures a new site is ready for use.
@@ -576,8 +571,8 @@ function enterprise_factory.StartNewSite_SSrv(...)
                 siteVersion         + (string) version string of the site
                 siteAlreadyBuild    + (boolean) confirmation that the site was already physically build
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.StartNewSite_SSrv: Invalid input") return {success = false} end
-    if not siteAlreadyBuild then corelog.Warning("enterprise_factory.StartNewSite_SSrv: Site not (yet) successfully build => we will not start it") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Invalid input") return {success = false} end
+    if not siteAlreadyBuild then corelog.Warning("enterprise_manufacturing.StartNewSite_SSrv: Site not (yet) successfully build => we will not start it") return {success = false} end
 
     -- get site start data
     local siteStartData = nil
@@ -588,19 +583,19 @@ function enterprise_factory.StartNewSite_SSrv(...)
     elseif siteVersion == "v2" then
         siteStartData = enterprise_factory_site.GetV2SiteStartData(serviceData)
     else
-        corelog.Error("enterprise_factory.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
+        corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
         return {success = false}
     end
 
     -- start new site
     local newSiteId = enterprise_factory_site.StartNewSite(siteStartData)
-    if type(newSiteId) ~= "string" then corelog.Error('enterprise_factory.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
+    if type(newSiteId) ~= "string" then corelog.Error('enterprise_manufacturing.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
 
     -- end
     return {success = true}
 end
 
-function enterprise_factory.StopAndDismantleSite_ASrv(...)
+function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, siteVersion, callback = InputChecker.Check([[
         This async public service stops and dismantles a site.
@@ -619,15 +614,15 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
                 materialsHostLocator    - (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.StopAndDismantleSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.StopAndDismantleSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local stopAndDismantleSiteProjectDef = {
         steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "StopSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
             }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "DismantleSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "DismantleSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
                 { keyDef = "siteVersion"            , sourceStep = 0, sourceKeyDef = "siteVersion" },
                 { keyDef = "siteStopped"            , sourceStep = 1, sourceKeyDef = "success" },
@@ -648,7 +643,7 @@ function enterprise_factory.StopAndDismantleSite_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function enterprise_factory.DismantleSite_ASrv(...)
+function enterprise_manufacturing.DismantleSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, siteVersion, siteStopped, materialsHostLocator, callback = InputChecker.Check([[
         This async public service dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
@@ -669,10 +664,10 @@ function enterprise_factory.DismantleSite_ASrv(...)
                 materialsHostLocator    + (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.DismantleSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.DismantleSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check input
-    if not siteStopped then corelog.Warning("enterprise_factory.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return Callback.ErrorCall(callback) end
+    if not siteStopped then corelog.Warning("enterprise_manufacturing.DismantleSite_ASrv: Site not (yet) stopped => we will not dismantle it") return Callback.ErrorCall(callback) end
 
     -- get site dismantal data
     local siteDismantleBuildData = nil
@@ -684,7 +679,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
 --    elseif siteVersion == "v2" then
 --        siteDismantleBuildData = enterprise_factory_site.GetV2SiteDismantleBuildData(serviceData)
     else
-        corelog.Error("enterprise_factory.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteVersion)
+        corelog.Error("enterprise_manufacturing.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteVersion)
         return Callback.ErrorCall(callback)
     end
     siteDismantleBuildData.materialsHostLocator = materialsHostLocator
@@ -693,7 +688,7 @@ function enterprise_factory.DismantleSite_ASrv(...)
     return enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback)
 end
 
-function enterprise_factory.StopSite_ASrv(...)
+function enterprise_manufacturing.StopSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, callback = InputChecker.Check([[
         This async public service stops a factory site. Stopping implies
@@ -713,13 +708,13 @@ function enterprise_factory.StopSite_ASrv(...)
                 baseLocation    - (Location) world location of the base (lower left corner) of the site
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- pass on the request to site file
     return enterprise_factory_site.StopSite_ASrv(serviceData, callback)
 end
 
-function enterprise_factory.GetHostLocator_Att()
+function enterprise_manufacturing.GetHostLocator_Att()
     --[[
         Attribute locating this enterprise.
 
@@ -757,13 +752,13 @@ function IsFactoryURL_QSrv(queryData)
     --]]
 
     -- check input
-    if type(queryData) ~= "table" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid queryData") return {success = false} end
+    if type(queryData) ~= "table" then corelog.Error("enterprise_manufacturing.IsFactoryURL_QSrv: Invalid queryData") return {success = false} end
     local aURL = URL:new(queryData.aURL)
-    if type(aURL) ~= "table" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid aURL") return {success = false} end
+    if type(aURL) ~= "table" then corelog.Error("enterprise_manufacturing.IsFactoryURL_QSrv: Invalid aURL") return {success = false} end
 
     -- check if of this ItemSupplier
     local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_factory.IsFactoryURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
+    if type(host) ~= "string" then corelog.Error("enterprise_manufacturing.IsFactoryURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
     if host == db.hostName then
         return {success = true}
     else
@@ -771,7 +766,7 @@ function IsFactoryURL_QSrv(queryData)
     end
 end
 
-function enterprise_factory.DeleteSites()
+function enterprise_manufacturing.DeleteSites()
     --[[
         This function deletes all sites from the factory. Currently this is intended for debugging purposes only.
 
@@ -820,14 +815,14 @@ function DeleteSite(siteId)
     --]]
 
     -- check our input
-    if type(siteId) ~= "string" then corelog.Error('enterprise_factory.DeleteSite: Invalid siteId') return {success = false} end
+    if type(siteId) ~= "string" then corelog.Error('enterprise_manufacturing.DeleteSite: Invalid siteId') return {success = false} end
 
     -- remove site
-    corelog.Warning('enterprise_factory.DeleteSite: Removing site '..siteId.." without doing anything with the data, structure and items present")
+    corelog.Warning('enterprise_manufacturing.DeleteSite: Removing site '..siteId.." without doing anything with the data, structure and items present")
     coredht.SaveData(nil, db.hostName, db.psSites, siteId)
 
     -- end
     return {success = true}
 end
 
-return enterprise_factory
+return enterprise_manufacturing

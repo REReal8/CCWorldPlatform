@@ -1,4 +1,4 @@
-local t_factory = {}
+local t_manufacturing = {}
 
 local corelog = require "corelog"
 local coremove = require "coremove"
@@ -8,10 +8,10 @@ local Callback = require "obj_callback"
 local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
-local enterprise_factory = require "enterprise_factory"
+local enterprise_manufacturing = require "enterprise_manufacturing"
 
-function t_factory.T_All()
-    t_factory.T_GetFuelNeed_Production_Att()
+function t_manufacturing.T_All()
+    t_manufacturing.T_GetFuelNeed_Production_Att()
 end
 
 local baseLocationV0 = Location:new({_x=6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -24,48 +24,48 @@ local callback = Callback:new({
     _data           = {"some callback data"},
 })
 
-function t_factory.T_ProvideItemsTo_Craft()
-    local itemsLocator = enterprise_factory.GetHostLocator_Att()
+function t_manufacturing.T_ProvideItemsTo_Craft()
+    local itemsLocator = enterprise_manufacturing.GetHostLocator_Att()
     local items = { ["minecraft:birch_planks"] = 12 }
     itemsLocator:setQuery(items)
 
-    return enterprise_factory.ProvideItemsTo_ASrv({
+    return enterprise_manufacturing.ProvideItemsTo_ASrv({
         itemsLocator                    = itemsLocator,
         ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 
-function t_factory.T_ProvideItemsTo_Smelt()
-    local itemsLocator = enterprise_factory.GetHostLocator_Att()
+function t_manufacturing.T_ProvideItemsTo_Smelt()
+    local itemsLocator = enterprise_manufacturing.GetHostLocator_Att()
     local items = { ["minecraft:charcoal"] = 3 }
     itemsLocator:setQuery(items)
 
-    return enterprise_factory.ProvideItemsTo_ASrv({
+    return enterprise_manufacturing.ProvideItemsTo_ASrv({
         itemsLocator                    = itemsLocator,
         ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
 end
 
-function t_factory.T_GetFuelNeed_Production_Att()
+function t_manufacturing.T_GetFuelNeed_Production_Att()
     -- prepare test
-    corelog.WriteToLog("* enterprise_factory.GetFuelNeed_Production_Att() tests")
+    corelog.WriteToLog("* enterprise_manufacturing.GetFuelNeed_Production_Att() tests")
     local items = { ["minecraft:birch_planks"] = 4 }
     local location = Location:new(coremove.GetLocation())
-    t_factory.StartNewSite(location)
+    t_manufacturing.StartNewSite(location)
 
     -- test
-    local fuelNeed = enterprise_factory.GetFuelNeed_Production_Att(items)
+    local fuelNeed = enterprise_manufacturing.GetFuelNeed_Production_Att(items)
     local expectedFuelNeed = 0
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
-    t_factory.StopSite(location)
+    t_manufacturing.StopSite(location)
 end
 
-function t_factory.T_BuildAndStartNewV1Site()
-    return enterprise_factory.BuildAndStartNewSite_ASrv({
+function t_manufacturing.T_BuildAndStartNewV1Site()
+    return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         upgrade                 = false,
@@ -73,8 +73,8 @@ function t_factory.T_BuildAndStartNewV1Site()
     }, callback)
 end
 
-function t_factory.T_BuildAndStartNewV2Site()
-    return enterprise_factory.BuildAndStartNewSite_ASrv({
+function t_manufacturing.T_BuildAndStartNewV2Site()
+    return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV2,
         siteVersion             = "v2",
         upgrade                 = true,
@@ -82,16 +82,16 @@ function t_factory.T_BuildAndStartNewV2Site()
     }, callback)
 end
 
-function t_factory._StopAndDismantleV1Site()
-    return enterprise_factory.StopAndDismantleSite_ASrv({
+function t_manufacturing._StopAndDismantleV1Site()
+    return enterprise_manufacturing.StopAndDismantleSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, callback)
 end
 
-function t_factory.T_BuildNewV0Site()
-    return enterprise_factory.BuildNewSite_ASrv({
+function t_manufacturing.T_BuildNewV0Site()
+    return enterprise_manufacturing.BuildNewSite_ASrv({
         baseLocation            = baseLocationV0,
         siteVersion             = "v0",
         upgrade                 = false,
@@ -99,26 +99,26 @@ function t_factory.T_BuildNewV0Site()
     }, callback)
 end
 
-function t_factory.T_StartNewV0Site()
-    t_factory.StartNewSite(baseLocationV0)
+function t_manufacturing.T_StartNewV0Site()
+    t_manufacturing.StartNewSite(baseLocationV0)
 end
 
-function t_factory.StartNewSite(baseLocation, version)
+function t_manufacturing.StartNewSite(baseLocation, version)
     version = version or "v0"
 
-    return enterprise_factory.StartNewSite_SSrv({
+    return enterprise_manufacturing.StartNewSite_SSrv({
         baseLocation        = baseLocation,
         siteVersion         = version,
         siteAlreadyBuild    = true
     }, callback)
 end
 
-function t_factory.T_DismantleV0Site()
+function t_manufacturing.T_DismantleV0Site()
     DismantleV0Site(baseLocationV0)
 end
 
 function DismantleV0Site(baseLocation)
-    return enterprise_factory.DismantleSite_ASrv({
+    return enterprise_manufacturing.DismantleSite_ASrv({
         baseLocation            = baseLocation,
         siteVersion             = "v0",
         siteStopped             = true,
@@ -126,18 +126,18 @@ function DismantleV0Site(baseLocation)
     }, callback)
 end
 
-function t_factory.T_StopV0Site()
-    t_factory.StopSite(baseLocationV0)
+function t_manufacturing.T_StopV0Site()
+    t_manufacturing.StopSite(baseLocationV0)
 end
 
-function t_factory.StopSite(baseLocation)
-    return enterprise_factory.StopSite_ASrv({
+function t_manufacturing.StopSite(baseLocation)
+    return enterprise_manufacturing.StopSite_ASrv({
         baseLocation    = baseLocation
     }, callback)
 end
 
-function t_factory.T_DeleteSites()
-    enterprise_factory.DeleteSites()
+function t_manufacturing.T_DeleteSites()
+    enterprise_manufacturing.DeleteSites()
 end
 
-return t_factory
+return t_manufacturing

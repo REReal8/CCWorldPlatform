@@ -15,7 +15,7 @@ local role_settler = require "role_settler"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_forestry = require "enterprise_forestry"
-local enterprise_factory = require "enterprise_factory"
+local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_shop = require "enterprise_shop"
 
 local db = {
@@ -79,7 +79,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- add default ItemSuppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()})
-    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_factory.GetHostLocator_Att()})
+    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_manufacturing.GetHostLocator_Att()})
 
     -- construct arguments
     local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
@@ -147,7 +147,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesMetaData" },
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesTaskCall" },
             }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
@@ -180,13 +180,13 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneTaskCall" },
             }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion1" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "StopAndDismantleSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopAndDismantleSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
@@ -203,7 +203,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion2" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeToV2" },
