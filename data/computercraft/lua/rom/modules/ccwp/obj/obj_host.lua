@@ -150,6 +150,29 @@ function Host:getHostLocator()
     return hostURL
 end
 
+function Host:isLocatorFromHost(...)
+    -- get & check input from description
+    local checkSuccess, locator = InputChecker.Check([[
+        This method answers the question if a locator is from this Host.
+
+        Return value:
+                                    - (boolean) whether the locator is from this host
+
+        Parameters:
+            locator                 + (URL) that needs to be queried
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:isLocatorFromHost: Invalid input") return false end
+
+    -- check if of this Host
+    local hostField = locator:getHost()
+    if type(hostField) ~= "string" then corelog.Error("Host:isLocatorFromHost: Invalid host field in locator (="..locator:getURI()..").") return false end
+    if hostField == self:getHostName() then
+        return true
+    else
+        return false
+    end
+end
+
 function Host:getResourceLocator(...)
     -- get & check input from description
     local checkSuccess, resourcePath = InputChecker.Check([[

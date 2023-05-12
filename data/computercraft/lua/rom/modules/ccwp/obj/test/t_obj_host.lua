@@ -20,6 +20,7 @@ function T_Host.T_All()
 
     -- specific methods
     T_Host.T_getHostLocator()
+    T_Host.T_isLocatorFromHost()
     T_Host.T_getResourceLocator()
     T_Host.T_get_save_delete_Resource()
     T_Host.T_getObjectLocator()
@@ -190,6 +191,27 @@ function T_Host.T_getHostLocator()
     local expectedLocator = URL:new()
     expectedLocator:setHost(hostName)
     assert(hostLocator:isSame(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+
+    -- cleanup test
+end
+
+function T_Host.T_isLocatorFromHost()
+    -- prepare test
+    corelog.WriteToLog("* Host:isLocatorFromHost() tests")
+    local hostLocator = host1:getHostLocator()
+
+    -- test
+    local isFromHost = host1:isLocatorFromHost(hostLocator)
+    local expectedIsFromHost = true
+    assert(isFromHost == expectedIsFromHost, "gotten isLocatorFromHost(="..tostring(isFromHost)..") not the same as expected(="..tostring(expectedIsFromHost)..")")
+
+    -- test other host
+    local otherHost = Host:new({
+        _hostName   = hostName2,
+    })
+    isFromHost = otherHost:isLocatorFromHost(hostLocator)
+    expectedIsFromHost = false
+    assert(isFromHost == expectedIsFromHost, "gotten isLocatorFromHost(="..tostring(isFromHost)..") not the same as expected(="..tostring(expectedIsFromHost)..")")
 
     -- cleanup test
 end
