@@ -36,10 +36,6 @@ local URL = require "obj_url"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Host.GetHost(hostName)
-    return moduleRegistry:getModule(hostName)
-end
-
 function Host:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -105,6 +101,27 @@ function Host:copy()
     })
 
     return copy
+end
+
+function Host.GetHost(...)
+    -- get & check input from description
+    local checkSuccess, hostName = InputChecker.Check([[
+        This method retrieves a Host from a hostName.
+
+        Return value:
+            host                    - (Host) with the Host
+
+        Parameters:
+            hostName                + (string) with hostName of the Host
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.GetHost: Invalid input") return nil end
+
+    -- get Host
+    local host = moduleRegistry:getModule(hostName)
+    if not Host.IsOfType(host) then corelog.Warning("Host.GetHost: No Host registered with hostName="..hostName) return nil end
+
+    -- end
+    return host
 end
 
 --                        _  __ _                       _   _               _
