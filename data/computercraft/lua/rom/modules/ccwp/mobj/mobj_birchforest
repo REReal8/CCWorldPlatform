@@ -15,6 +15,7 @@ local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 
+local URL = require "obj_url"
 local Host = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
@@ -107,22 +108,22 @@ function BirchForest:getLocalLogsLocator()
     return self._localLogsLocator
 end
 
-function BirchForest:setLocalLogsLocator(localLogsLocator)
+function BirchForest:setLocalLogsLocator(localLocator)
     -- check input
-    if type(localLogsLocator) ~= "table" then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLogsLocator "..type(localLogsLocator)) return end
+    if not URL.IsOfType(localLocator) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
 
-    self._localLogsLocator = localLogsLocator
+    self._localLogsLocator = localLocator
 end
 
 function BirchForest:getLocalSaplingsLocator()
     return self._localSaplingsLocator
 end
 
-function BirchForest:setLocalSaplingsLocator(localSaplingsLocator)
+function BirchForest:setLocalSaplingsLocator(localLocator)
     -- check input
-    if type(localSaplingsLocator) ~= "table" then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLogsLocator "..type(localSaplingsLocator)) return end
+    if not URL.IsOfType(localLocator) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
 
-    self._localSaplingsLocator = localSaplingsLocator
+    self._localSaplingsLocator = localLocator
 end
 
 function BirchForest:getBaseLayer(level)
