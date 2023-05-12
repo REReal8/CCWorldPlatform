@@ -232,7 +232,7 @@ function T_Chest.provideItemsTo_ASrv_Callback(callbackData, serviceResults)
     local chestLocator = callbackData["chestLocator"]
     enterprise_chests:deleteResource(chestLocator)
     local itemDepotLocator = callbackData["itemDepotLocator"]
-    if enterprise_chests.IsChestURL_QSrv({ aURL = itemDepotLocator}).success then
+    if enterprise_chests:isLocatorFromHost(itemDepotLocator) then
         enterprise_chests:deleteResource(itemDepotLocator)
     end
 
@@ -301,7 +301,7 @@ function T_Chest.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
     local chestLocator = callbackData["chestLocator"]
     enterprise_chests:deleteResource(chestLocator)
     local itemsLocator = callbackData["itemsLocator"]
-    if enterprise_chests.IsChestURL_QSrv({ aURL = itemsLocator}).success then
+    if enterprise_chests:isLocatorFromHost(itemsLocator) then
         enterprise_chests:deleteResource(itemsLocator)
     end
 

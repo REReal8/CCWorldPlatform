@@ -86,8 +86,8 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local localLogsLocator2 = enterprise_chests.GetHostLocator_Att()
-    local localSaplingsLocator2 = enterprise_chests.GetHostLocator_Att()
+    local localLogsLocator2 = enterprise_chests:getHostLocator()
+    local localSaplingsLocator2 = enterprise_chests:getHostLocator()
 
     -- test
     forest:setLevel(level2)

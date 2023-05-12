@@ -9,16 +9,11 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local URL = require "obj_url"
 local Inventory = require "obj_inventory"
 
 local Chest = require "mobj_chest"
 
 local enterprise_projects = require "enterprise_projects"
-
-local db = {
-    hostName    = "enterprise_chests",
-}
 
 --[[
     The chests enterprise provides services to perform operation on chests.
@@ -28,12 +23,8 @@ local db = {
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
         GetItemsLocator_SSrv    - provide the URL of items in a chest
-        IsChestURL_QSrv         - answers the question if a URL is that of a chest
 
     Furthermore, the enterprise functions as both an ItemSupplier and an ItemDepot for chests, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv).
-
-    It also provides the following attributes
-        GetHostLocator_Att     - locating this enterprise
 
     The enterprise does not provide services to build/ dismantle chests. This should be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them.
@@ -192,23 +183,6 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function enterprise_chests.GetHostLocator_Att()
-    --[[
-        Attribute locating this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = URL:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
 function enterprise_chests.GetItemsLocator_SSrv(...)
     -- get & check input from description
     local checkSuccess, chestLocator, itemsQuery = InputChecker.Check([[
@@ -236,31 +210,6 @@ function enterprise_chests.GetItemsLocator_SSrv(...)
         itemsLocator = itemsLocator,
     }
     return result
-end
-
-function enterprise_chests.IsChestURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = InputChecker.Check([[
-        This sync public service answers the question if a URL is that of a Chest.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (URL) that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of this ItemSupplier
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_chests.IsChestURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
 end
 
 function enterprise_chests.ProvideItemsTo_ASrv(...)

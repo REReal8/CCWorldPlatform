@@ -179,7 +179,7 @@ function T_Turtle.provideItemsTo_ASrv_Callback(callbackData, serviceResults)
 
     -- cleanup test
     local itemDepotLocator = callbackData["itemDepotLocator"]
-    if enterprise_chests.IsChestURL_QSrv({ aURL = itemDepotLocator}).success then
+    if enterprise_chests:isLocatorFromHost(itemDepotLocator) then
         enterprise_chests:deleteResource(itemDepotLocator)
     end
 
@@ -244,7 +244,7 @@ function T_Turtle.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
 
     -- cleanup test
     local itemsLocator = callbackData["itemsLocator"]
-    if enterprise_chests.IsChestURL_QSrv({ aURL = itemsLocator}).success then
+    if enterprise_chests:isLocatorFromHost(itemsLocator) then
         enterprise_chests:deleteResource(itemsLocator)
     end
 
