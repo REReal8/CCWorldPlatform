@@ -438,7 +438,7 @@ function Host:saveObject(...)
     local checkSuccess, object, className, objectId = InputChecker.Check([[
         This method saves an object to the Host using a className and objectId argument.
 
-        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getClassName() method the className argument can be set to "".
         If the object has a getId() method the objectId argument can be set to "".
 
         Return value:
@@ -453,7 +453,7 @@ function Host:saveObject(...)
 
     -- get objectPath
     local objectPath = GetObjectPath(object, className, objectId)
-    if not objectPath then corelog.Error("Host:saveObject: Failed obtainng objectPath") return nil end
+    if not objectPath then corelog.Error("Host:saveObject: Failed obtaining objectPath") return nil end
 
     -- save resource
     local objectLocator = self:saveResource(object, objectPath)
