@@ -13,8 +13,6 @@ local Inventory = require "obj_inventory"
 
 local Chest = require "mobj_chest"
 
-local enterprise_projects = require "enterprise_projects"
-
 --[[
     The chests enterprise provides services to perform operation on chests.
 
