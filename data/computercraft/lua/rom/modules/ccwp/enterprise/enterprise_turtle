@@ -273,7 +273,7 @@ function enterprise_turtle.Can_ProvideItems_QSrv(...)
 
     -- check Turtle can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = turtle:can_ProvideItems_QSrv({
+    local canProvide = turtle:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 

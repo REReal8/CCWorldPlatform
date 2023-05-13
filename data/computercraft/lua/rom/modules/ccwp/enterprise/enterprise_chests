@@ -247,7 +247,7 @@ function enterprise_chests.Can_ProvideItems_QSrv(...)
 
     -- check Chest can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = chest:can_ProvideItems_QSrv({
+    local canProvide = chest:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 

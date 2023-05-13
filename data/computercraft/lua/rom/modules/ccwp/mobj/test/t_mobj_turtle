@@ -26,7 +26,7 @@ function T_Turtle.T_All()
 
     -- service methods
 --    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
---    T_Turtle.T_can_ProvideItems_QSrv()
+--    T_Turtle.T_can_ProvideItems_QOSrv()
 end
 
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -261,7 +261,7 @@ function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
     -- cleanup test
 end
 
-function T_Turtle.T_can_ProvideItems_QSrv()
+function T_Turtle.T_can_ProvideItems_QOSrv()
     -- ToDo: consider implementing later similair to Chest tests. Not left out because Turtle inventory dependends on... well the Turtle
     -- prepare test
 

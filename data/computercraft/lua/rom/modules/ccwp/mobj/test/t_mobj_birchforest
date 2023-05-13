@@ -20,7 +20,7 @@ function T_BirchForest.T_All()
     T_BirchForest.T_getFuelNeed_Harvest_Att()
     T_BirchForest.T_getFuelNeedExtraTree_Att()
     T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
-    T_BirchForest.T_can_ProvideItems_QSrv()
+    T_BirchForest.T_can_ProvideItems_QOSrv()
 end
 
 local level0 = 0
@@ -169,26 +169,26 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     -- cleanup test
 end
 
-function T_BirchForest.T_can_ProvideItems_QSrv()
+function T_BirchForest.T_can_ProvideItems_QOSrv()
     -- prepare test
-    corelog.WriteToLog("* BirchForest:can_ProvideItems_QSrv() tests")
+    corelog.WriteToLog("* BirchForest:can_ProvideItems_QOSrv() tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
 
     -- test
     local itemName = "minecraft:birch_log"
     local itemCount = 20
-    local serviceResults = forest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+    local serviceResults = forest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:birch_sapling"
     itemCount = 2
-    serviceResults = forest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
-    assert(serviceResults.success, "can_ProvideItems_QSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+    serviceResults = forest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:dirt"
     itemCount = 10
-    serviceResults = forest:can_ProvideItems_QSrv({ provideItems = { [itemName] = itemCount} })
-    assert(not serviceResults.success, "can_ProvideItems_QSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+    serviceResults = forest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
 end

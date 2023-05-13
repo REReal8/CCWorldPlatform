@@ -393,7 +393,7 @@ function enterprise_forestry.Can_ProvideItems_QSrv(...)
 
     -- check forest can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = forest:can_ProvideItems_QSrv({
+    local canProvide = forest:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 

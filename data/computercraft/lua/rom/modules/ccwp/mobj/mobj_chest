@@ -338,7 +338,7 @@ function Chest:storeItemsFrom_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function Chest:can_ProvideItems_QSrv(...)
+function Chest:can_ProvideItems_QOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
         This sync public query service answers the question whether the ItemSupplier can provide specific items.
@@ -351,7 +351,7 @@ function Chest:can_ProvideItems_QSrv(...)
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:can_ProvideItems_QSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("Chest:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- check items in inventory
     local hasItems = self:getInventory():hasItems(provideItems)
