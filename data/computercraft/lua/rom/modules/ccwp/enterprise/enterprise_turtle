@@ -309,7 +309,7 @@ function enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = turtle:needsTo_ProvideItemsTo_SSrv({
+    local needs = turtle:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })

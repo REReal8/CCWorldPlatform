@@ -23,7 +23,7 @@ function T_Chest.T_All()
     T_Chest.T_copy()
 
     -- service methods
-    T_Chest.T_needsTo_ProvideItemsTo_SSrv()
+    T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     T_Chest.T_can_ProvideItems_QSrv()
 end
 
@@ -309,9 +309,9 @@ function T_Chest.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
     return true
 end
 
-function T_Chest.T_needsTo_ProvideItemsTo_SSrv()
+function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SSrv() tests")
+    corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
     local chest = T_Chest.CreateChest() if not chest then corelog.Error("failed obtaining chest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -320,12 +320,12 @@ function T_Chest.T_needsTo_ProvideItemsTo_SSrv()
     local itemDepotLocation = Location:new(coremove.GetLocation())
 
     -- test
-    local needsTo_Provide = chest:needsTo_ProvideItemsTo_SSrv({
+    local needsTo_Provide = chest:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
     local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, chest:getLocation())
-    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
+    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
 

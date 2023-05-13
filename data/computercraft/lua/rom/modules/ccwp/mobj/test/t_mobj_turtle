@@ -25,7 +25,7 @@ function T_Turtle.T_All()
     T_Turtle.T_copy()
 
     -- service methods
---    T_Turtle.T_needsTo_ProvideItemsTo_SSrv()
+--    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 --    T_Turtle.T_can_ProvideItems_QSrv()
 end
 
@@ -252,7 +252,7 @@ function T_Turtle.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
     return true
 end
 
-function T_Turtle.T_needsTo_ProvideItemsTo_SSrv()
+function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
     -- ToDo: consider implementing later similair to Chest tests. Not left out because Turtle inventory dependends on... well the Turtle
     -- prepare test
 

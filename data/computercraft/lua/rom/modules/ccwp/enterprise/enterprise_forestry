@@ -428,7 +428,7 @@ function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = forest:needsTo_ProvideItemsTo_SSrv({
+    local needs = forest:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })

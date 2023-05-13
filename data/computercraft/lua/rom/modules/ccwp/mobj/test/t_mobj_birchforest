@@ -19,7 +19,7 @@ function T_BirchForest.T_All()
     -- service methods
     T_BirchForest.T_getFuelNeed_Harvest_Att()
     T_BirchForest.T_getFuelNeedExtraTree_Att()
-    T_BirchForest.T_needsTo_ProvideItemsTo_SSrv()
+    T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     T_BirchForest.T_can_ProvideItems_QSrv()
 end
 
@@ -147,9 +147,9 @@ function T_BirchForest.T_getFuelNeedExtraTree_Att()
     -- cleanup test
 end
 
-function T_BirchForest.T_needsTo_ProvideItemsTo_SSrv()
+function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* BirchForest:needsTo_ProvideItemsTo_SSrv() tests")
+    corelog.WriteToLog("* BirchForest:needsTo_ProvideItemsTo_SOSrv() tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -157,12 +157,12 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SSrv()
     local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test
-    local needsTo_Provide = forest:needsTo_ProvideItemsTo_SSrv({
+    local needsTo_Provide = forest:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
     local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees)
-    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SSrv failed")
+    assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
 
