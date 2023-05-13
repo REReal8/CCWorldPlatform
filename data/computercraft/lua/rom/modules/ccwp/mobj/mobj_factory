@@ -1,4 +1,4 @@
-local enterprise_factory_site = {}
+local mobj_factory = {}
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -27,8 +27,6 @@ local db = {
     psSites     = "sites",
 }
 
--- ToDo: consider renaming and refactoring to mobj_factory
-
 --[[
     A factory site is a site (?sub enterprise) that offers production services to a factory.
 
@@ -51,7 +49,7 @@ local db = {
 --   | |
 --   |_|
 
-function enterprise_factory_site.StartNewSite(...)
+function mobj_factory.StartNewSite(...)
     -- get & check input from description
     local checkSuccess, version, baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots = InputChecker.Check([[
         This function should make the site available for production.
@@ -68,7 +66,7 @@ function enterprise_factory_site.StartNewSite(...)
                 craftingSpots       + (table) craftingSpot's of this site
                 smeltingSpots       + (table) craftingSpot's of this site
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.StartNewSite: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("mobj_factory.StartNewSite: Invalid input") return nil end
 
     -- variables
     local site = {
@@ -99,7 +97,7 @@ local function FindSiteByLocation(baseLocation)
     local sites = coredht.GetData(db.hostName, db.psSites)
 
     -- check if we have any site
-    if type(sites) ~= "table" then corelog.Warning("enterprise_factory_site.FindSiteByLocation: no sites present") return nil end
+    if type(sites) ~= "table" then corelog.Warning("mobj_factory.FindSiteByLocation: no sites present") return nil end
 
     -- loop on sites
     for k, site in pairs(sites) do
@@ -113,7 +111,7 @@ local function FindSiteByLocation(baseLocation)
     return nil
 end
 
-function enterprise_factory_site.StopSite_ASrv(...)
+function mobj_factory.StopSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, baseLocation, callback = InputChecker.Check([[
         This async public function stops a factory site. Stopping implies
@@ -133,11 +131,11 @@ function enterprise_factory_site.StopSite_ASrv(...)
                 baseLocation    + (Location) world location of the base (lower left corner) of the site
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("mobj_factory.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- find the site
     local site = FindSiteByLocation(baseLocation)
-    if type(site) ~="table" then corelog.Error("enterprise_factory_site.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return Callback.ErrorCall(callback) end
+    if type(site) ~="table" then corelog.Error("mobj_factory.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return Callback.ErrorCall(callback) end
 
     -- stop doing business for this site
     -- ToDo: implement
@@ -146,7 +144,7 @@ function enterprise_factory_site.StopSite_ASrv(...)
     -- ToDo: implement
 
     -- remove site from factory
-    corelog.WriteToLog("  enterprise_factory_site.StopSite_ASrv: Removing site "..site.siteId)
+    corelog.WriteToLog("  mobj_factory.StopSite_ASrv: Removing site "..site.siteId)
     coredht.SaveData(nil, db.hostName, db.psSites, site.siteId)
 
     -- do callback
@@ -155,7 +153,7 @@ end
 
 local function GetAvailableLocator(locators)
     -- check input
-    if type(locators) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableLocator: Invalid locators") return nil end
+    if type(locators) ~="table" then corelog.Error("mobj_factory.GetAvailableLocator: Invalid locators") return nil end
 
     -- find first available locator
     for i, locator in ipairs(locators) do
@@ -187,7 +185,7 @@ end
 
 local function GetAvailableCraftSpot(site)
     -- check input
-    if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableCraftSpot: Invalid site") return nil end
+    if type(site) ~="table" then corelog.Error("mobj_factory.GetAvailableCraftSpot: Invalid site") return nil end
 
     -- find first available spot
     for i, spot in ipairs(site.craftingSpots) do
@@ -203,7 +201,7 @@ end
 
 local function GetAvailableSmeltSpot(site)
     -- check input
-    if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableSmeltSpot: Invalid site") return nil end
+    if type(site) ~="table" then corelog.Error("mobj_factory.GetAvailableSmeltSpot: Invalid site") return nil end
 
     -- find first available spot
     for i, spot in ipairs(site.smeltingSpots) do
@@ -234,7 +232,7 @@ local function ProductionSpot_IsOfType(o)
     return isOfType
 end
 
-function enterprise_factory_site.ProductionSpot_Copy(o)
+function mobj_factory.ProductionSpot_Copy(o)
     -- check input
     if not ProductionSpot_IsOfType(o) then corelog.Error("ProductionSpot:copy: Invalid input") return nil end
 
@@ -246,7 +244,7 @@ function enterprise_factory_site.ProductionSpot_Copy(o)
     return copy
 end
 
-function enterprise_factory_site.GetAvailableSiteData(...)
+function mobj_factory.GetAvailableSiteData(...)
     -- get & check input from description
     local checkSuccess, recipe, productItemCount = InputChecker.Check([[
         This public method finds and selects a suitable factory site for producing items from a recipe.
@@ -258,11 +256,11 @@ function enterprise_factory_site.GetAvailableSiteData(...)
             recipe                      + (table) item base recipe (including possibly both a crafting as smelting recipe)
             productItemCount            + (number) amount of items to produce
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("mobj_factory.GetAvailableSiteData: Invalid input") return nil end
 
     -- sites ophalen
     local sites = coredht.GetData(db.hostName, db.psSites)
-    if type(sites) ~= "table" then corelog.Warning("enterprise_factory_site.GetAvailableSiteData: no sites present") return nil end
+    if type(sites) ~= "table" then corelog.Warning("mobj_factory.GetAvailableSiteData: no sites present") return nil end
 
     -- ..
     local craftRecipe = recipe.crafting
@@ -273,19 +271,19 @@ function enterprise_factory_site.GetAvailableSiteData(...)
     }
     for k, site in pairs(sites) do
         -- check
-        if type(site) ~="table" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid site") return nil end
+        if type(site) ~="table" then corelog.Error("mobj_factory.GetAvailableSiteData: Invalid site") return nil end
         local siteId = site.siteId
-        if type(siteId) ~="string" then corelog.Error("enterprise_factory_site.GetAvailableSiteData: Invalid siteId") return nil end
+        if type(siteId) ~="string" then corelog.Error("mobj_factory.GetAvailableSiteData: Invalid siteId") return nil end
 
         -- get available inputLocator
         local inputLocator = URL:new(GetAvailableLocator(site.inputLocators))
         if inputLocator == nil then
-            corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available inputLocator in site "..siteId)
+            corelog.Warning("mobj_factory.GetAvailableSiteData: No available inputLocator in site "..siteId)
         else
             -- get available outputLocator
             local outputLocator = URL:new(GetAvailableLocator(site.outputLocators))
             if outputLocator == nil then
-                corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available outputLocator in site "..siteId)
+                corelog.Warning("mobj_factory.GetAvailableSiteData: No available outputLocator in site "..siteId)
             else
                 -- check it can craft recipe
                 if craftRecipe ~= nil then
@@ -295,12 +293,12 @@ function enterprise_factory_site.GetAvailableSiteData(...)
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = enterprise_factory_site.ProductionSpot_Copy(craftSpot),
+                            productionSpot      = mobj_factory.ProductionSpot_Copy(craftSpot),
                             productionMethod    = "craft",
                             productionRecipe    = coreutils.DeepCopy(craftRecipe),
                         })
                     else
-                        corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available crafting spot in site "..siteId)
+                        corelog.Warning("mobj_factory.GetAvailableSiteData: No available crafting spot in site "..siteId)
                     end
                 end
 
@@ -311,12 +309,12 @@ function enterprise_factory_site.GetAvailableSiteData(...)
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = enterprise_factory_site.ProductionSpot_Copy(smeltSpot),
+                            productionSpot      = mobj_factory.ProductionSpot_Copy(smeltSpot),
                             productionMethod    = "smelt",
                             productionRecipe    = coreutils.DeepCopy(smeltRecipe),
                         })
                     else
-                        corelog.Warning("enterprise_factory_site.GetAvailableSiteData: No available smelting spot in site "..siteId)
+                        corelog.Warning("mobj_factory.GetAvailableSiteData: No available smelting spot in site "..siteId)
                     end
                 end
             end
@@ -331,7 +329,7 @@ function enterprise_factory_site.GetAvailableSiteData(...)
         break
         -- ToDo: consider finding best site based on some selection criterium
     end
-    if selectedProduceItemData == nil then corelog.Warning("enterprise_factory_site.GetAvailableSiteData: no site available") return nil end
+    if selectedProduceItemData == nil then corelog.Warning("mobj_factory.GetAvailableSiteData: no site available") return nil end
 
     -- mark productionSpot as unavailable
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
@@ -349,13 +347,13 @@ function enterprise_factory_site.GetAvailableSiteData(...)
         local fuelItemCount = productItemCount
 
         selectedProduceItemData.itemsNeeded = coreutils.DeepCopy(role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount))
-    else corelog.Error("enterprise_factory_site.GetAvailableSiteData: Production with method "..productionMethod.." not implemented.") return nil end
+    else corelog.Error("mobj_factory.GetAvailableSiteData: Production with method "..productionMethod.." not implemented.") return nil end
 
     -- end
     return selectedProduceItemData
 end
 
-function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
+function mobj_factory.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionLocation = InputChecker.Check([[
         This sync public service returns the needs for the site to produce specific items to an ItemDepot.
@@ -373,11 +371,11 @@ function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
                 productionSpot          - (table) production spot
                     location            + (Location) location of production spot
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("mobj_factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
     -- fuelNeed from localInputItemsLocator to productionLocation
     local serviceResults = enterprise_isp.GetItemsLocations_SSrv({ itemsLocator = localInputItemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
+    if not serviceResults.success then corelog.Error("mobj_factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
     local fuelNeed_ToProductionlocation = 0
     for i, location in ipairs(serviceResults.locations) do
         fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionLocation, location)
@@ -387,11 +385,11 @@ function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
     local fuelNeed_Production = 0
     if productionMethod == "craft" then fuelNeed_Production = 0 -- craft
     elseif productionMethod == "smelt" then fuelNeed_Production = 4 + 4 -- smelt + pickup
-    else corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
+    else corelog.Error("mobj_factory.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
 
     -- fuelNeed from productionLocation to localOutputLocator
     serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
-    if not serviceResults.success then corelog.Error("enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
+    if not serviceResults.success then corelog.Error("mobj_factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
     local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionLocation)
 
     -- end
@@ -403,7 +401,7 @@ function enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(...)
     }
 end
 
-function enterprise_factory_site.ProduceItem_ASrv(...)
+function mobj_factory.ProduceItem_ASrv(...)
     -- get & check input from description
     local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
@@ -431,7 +429,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("mobj_factory.ProduceItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
     local turtleInputLocator = enterprise_turtle.GetHostLocator_Att()
@@ -451,7 +449,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     if productionMethod == "craft" then
         -- add crafting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "CraftItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "CraftItem_ASrv" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
@@ -470,7 +468,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
     elseif productionMethod == "smelt" then
         -- add smelting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
@@ -481,7 +479,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
 
         -- add pickup step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "Pickup_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "Pickup_ASrv" }, stepDataDef = {
                 { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
@@ -498,7 +496,7 @@ function enterprise_factory_site.ProduceItem_ASrv(...)
             { keyDef = "success4"                   , sourceStep = 4, sourceKeyDef = "success" },
         }}
         extraStep = 1
-    else corelog.Error("enterprise_factory_site.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return Callback.ErrorCall(callback) end
+    else corelog.Error("mobj_factory.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return Callback.ErrorCall(callback) end
 
     -- add remaining steps
     table.insert(projectSteps,
@@ -575,7 +573,7 @@ local function ShaftRestore_layer()
     })
 end
 
-function enterprise_factory_site.GetV0SiteBuildData(serviceData)
+function mobj_factory.GetV0SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
         { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
@@ -597,7 +595,7 @@ function enterprise_factory_site.GetV0SiteBuildData(serviceData)
     return siteBuildData
 end
 
-function enterprise_factory_site.GetV0SiteDismantleBuildData(serviceData)
+function mobj_factory.GetV0SiteDismantleBuildData(serviceData)
     -- construct layer list
     local layerList = {
         { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = ShaftRestore_layer()},
@@ -619,7 +617,7 @@ function enterprise_factory_site.GetV0SiteDismantleBuildData(serviceData)
     return siteDismantleBuildData
 end
 
-function enterprise_factory_site.GetV0SiteStartData(serviceData)
+function mobj_factory.GetV0SiteStartData(serviceData)
     --
     local baseLocation = serviceData.baseLocation
 
@@ -676,7 +674,7 @@ local function FurnanceL1_layer()
     })
 end
 
-function enterprise_factory_site.GetV1SiteBuildData(serviceData)
+function mobj_factory.GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
         { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
@@ -702,7 +700,7 @@ function enterprise_factory_site.GetV1SiteBuildData(serviceData)
     return siteBuildData
 end
 
-function enterprise_factory_site.GetV1SiteStartData(serviceData)
+function mobj_factory.GetV1SiteStartData(serviceData)
     --
     local baseLocation = serviceData.baseLocation
 
@@ -767,7 +765,7 @@ local function TopLayerL2_layer()
     })
 end
 
-function enterprise_factory_site.GetV2SiteBuildData(serviceData)
+function mobj_factory.GetV2SiteBuildData(serviceData)
     local onlyUpgrade = serviceData.upgrade
 
     -- construct layer list
@@ -798,7 +796,7 @@ function enterprise_factory_site.GetV2SiteBuildData(serviceData)
     return siteBuildData
 end
 
-function enterprise_factory_site.GetV2SiteStartData(serviceData)
+function mobj_factory.GetV2SiteStartData(serviceData)
     --
     local baseLocation = serviceData.baseLocation
 
@@ -838,7 +836,7 @@ function enterprise_factory_site.GetV2SiteStartData(serviceData)
     return startData
 end
 
-function enterprise_factory_site.CraftItem_ASrv(...)
+function mobj_factory.CraftItem_ASrv(...)
     -- get & check input from description
     local checkSuccess, turtleInputItemsLocator, productionLocation, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async sewrvice should craft items at the productionSpot.
@@ -862,7 +860,7 @@ function enterprise_factory_site.CraftItem_ASrv(...)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.CraftItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("mobj_factory.CraftItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
     local craftData = {
@@ -887,7 +885,7 @@ function enterprise_factory_site.CraftItem_ASrv(...)
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
-function enterprise_factory_site.SmeltItem_ASrv(...)
+function mobj_factory.SmeltItem_ASrv(...)
     -- get & check input from description
     local checkSuccess, turtleInputItemsLocator, productionLocation, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should smelt items at the productionSpot.
@@ -910,7 +908,7 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.SmeltItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("mobj_factory.SmeltItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
     local smeltData = {
@@ -938,7 +936,7 @@ function enterprise_factory_site.SmeltItem_ASrv(...)
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
-function enterprise_factory_site.Pickup_ASrv(...)
+function mobj_factory.Pickup_ASrv(...)
     -- get & check input from description
     local checkSuccess, pickUpTime, productionLocation, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should pickup the results from a previous smelt step.
@@ -961,7 +959,7 @@ function enterprise_factory_site.Pickup_ASrv(...)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_factory_site.Pickup_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("mobj_factory.Pickup_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- gather assignment data
     local pickupData = {
@@ -984,4 +982,4 @@ function enterprise_factory_site.Pickup_ASrv(...)
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 
-return enterprise_factory_site
+return mobj_factory

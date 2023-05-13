@@ -11,7 +11,7 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle
 local enterprise_energy = require "enterprise_energy"
-local enterprise_factory_site = require "enterprise_factory_site"
+local mobj_factory = require "mobj_factory"
 local enterprise_construction = require "enterprise_construction"
 
 local db = {
@@ -149,7 +149,7 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
         -- select a suitable site
-        local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
+        local siteProduceItemData = mobj_factory.GetAvailableSiteData(recipe, itemCount)
         if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
 
         -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with itemsNeeded)
@@ -169,7 +169,7 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_factory_site", serviceName = "ProduceItem_ASrv" }, stepDataDef = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "ProduceItem_ASrv" }, stepDataDef = {
                     { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
                     { keyDef = "productionMethod"               , sourceStep = 0, sourceKeyDef = "productionMethod" },
@@ -337,7 +337,7 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
     if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- select a suitable site
-    local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
+    local siteProduceItemData = mobj_factory.GetAvailableSiteData(recipe, itemCount)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
     local location = siteProduceItemData.productionSpot.location
 
@@ -384,7 +384,7 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
 
         -- select a suitable site
-        local siteProduceItemData = enterprise_factory_site.GetAvailableSiteData(recipe, itemCount)
+        local siteProduceItemData = mobj_factory.GetAvailableSiteData(recipe, itemCount)
         if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
@@ -411,9 +411,9 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
             localInputItemsLocator  = localInputItemsLocator,
             localOutputLocator      = siteProduceItemData.localOutputLocator:copy(),
             productionMethod        = siteProduceItemData.productionMethod,
-            productionSpot          = enterprise_factory_site.ProductionSpot_Copy(siteProduceItemData.productionSpot),
+            productionSpot          = mobj_factory.ProductionSpot_Copy(siteProduceItemData.productionSpot),
         }
-        serviceResults = enterprise_factory_site.NeedsTo_ProvideItemsTo_SSrv(serviceData)
+        serviceResults = mobj_factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
         local fuelNeed_SiteProduction = serviceResults.fuelNeed
 
@@ -536,11 +536,11 @@ function enterprise_manufacturing.BuildNewSite_ASrv(...)
     -- get site build data
     local siteBuildData = nil
     if siteVersion == "v0" then
-        siteBuildData = enterprise_factory_site.GetV0SiteBuildData(serviceData)
+        siteBuildData = mobj_factory.GetV0SiteBuildData(serviceData)
     elseif siteVersion == "v1" then
-        siteBuildData = enterprise_factory_site.GetV1SiteBuildData(serviceData)
+        siteBuildData = mobj_factory.GetV1SiteBuildData(serviceData)
     elseif siteVersion == "v2" then
-        siteBuildData = enterprise_factory_site.GetV2SiteBuildData(serviceData)
+        siteBuildData = mobj_factory.GetV2SiteBuildData(serviceData)
     else
         corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
         return Callback.ErrorCall(callback)
@@ -577,18 +577,18 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
     -- get site start data
     local siteStartData = nil
     if siteVersion == "v0" then
-        siteStartData = enterprise_factory_site.GetV0SiteStartData(serviceData)
+        siteStartData = mobj_factory.GetV0SiteStartData(serviceData)
     elseif siteVersion == "v1" then
-        siteStartData = enterprise_factory_site.GetV1SiteStartData(serviceData)
+        siteStartData = mobj_factory.GetV1SiteStartData(serviceData)
     elseif siteVersion == "v2" then
-        siteStartData = enterprise_factory_site.GetV2SiteStartData(serviceData)
+        siteStartData = mobj_factory.GetV2SiteStartData(serviceData)
     else
         corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
         return {success = false}
     end
 
     -- start new site
-    local newSiteId = enterprise_factory_site.StartNewSite(siteStartData)
+    local newSiteId = mobj_factory.StartNewSite(siteStartData)
     if type(newSiteId) ~= "string" then corelog.Error('enterprise_manufacturing.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
 
     -- end
@@ -672,12 +672,12 @@ function enterprise_manufacturing.DismantleSite_ASrv(...)
     -- get site dismantal data
     local siteDismantleBuildData = nil
     if siteVersion == "v0" then
-        siteDismantleBuildData = enterprise_factory_site.GetV0SiteDismantleBuildData(serviceData)
+        siteDismantleBuildData = mobj_factory.GetV0SiteDismantleBuildData(serviceData)
 -- ToDo implement for v1 and v2
 --    elseif siteVersion == "v1" then
---        siteDismantleBuildData = enterprise_factory_site.GetV1SiteDismantleBuildData(serviceData)
+--        siteDismantleBuildData = mobj_factory.GetV1SiteDismantleBuildData(serviceData)
 --    elseif siteVersion == "v2" then
---        siteDismantleBuildData = enterprise_factory_site.GetV2SiteDismantleBuildData(serviceData)
+--        siteDismantleBuildData = mobj_factory.GetV2SiteDismantleBuildData(serviceData)
     else
         corelog.Error("enterprise_manufacturing.DismantleSite_ASrv: Don't know how to dismantle a factory site of version "..siteVersion)
         return Callback.ErrorCall(callback)
@@ -711,7 +711,7 @@ function enterprise_manufacturing.StopSite_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- pass on the request to site file
-    return enterprise_factory_site.StopSite_ASrv(serviceData, callback)
+    return mobj_factory.StopSite_ASrv(serviceData, callback)
 end
 
 function enterprise_manufacturing.GetHostLocator_Att()
