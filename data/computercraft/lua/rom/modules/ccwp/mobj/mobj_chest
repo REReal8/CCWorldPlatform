@@ -185,6 +185,8 @@ function Chest:provideItemsTo_ASrv(...)
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
+        hostName                = "enterprise_chests",
+        className               = "Chest",
         chest                   = self:copy(),
 
         metaData                = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
@@ -201,9 +203,11 @@ function Chest:provideItemsTo_ASrv(...)
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             -- save chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
-                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "chest._inventory"       , sourceStep = 1, sourceKeyDef = "inventory" },
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+                { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
+                { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
+                { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
             }},
             -- store items to ItemDepot
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetItemsLocator_SSrv" }, stepDataDef = {
@@ -279,6 +283,8 @@ function Chest:storeItemsFrom_ASrv(...)
     }
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local projectData = {
+        hostName                = "enterprise_chests",
+        className               = "Chest",
         chest                   = self:copy(),
 
         metaData                = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
@@ -305,9 +311,11 @@ function Chest:storeItemsFrom_ASrv(...)
                 { keyDef = "taskCall._data.turtleId", sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" },
             }},
             -- save chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
-                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "chest._inventory"       , sourceStep = 2, sourceKeyDef = "inventory" },
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+                { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
+                { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
+                { keyDef = "objectTable._inventory" , sourceStep = 2, sourceKeyDef = "inventory" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
@@ -434,6 +442,8 @@ function Chest:updateChestRecord_AOSrv(...)
         accessDirection = self:getAccessDirection(),
     }
     local projectData = {
+        hostName        = "enterprise_chests",
+        className       = "Chest",
         chest           = self:copy(),
 
         metaData        = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
@@ -446,9 +456,11 @@ function Chest:updateChestRecord_AOSrv(...)
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             -- save chest
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
-                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "chest._inventory"       , sourceStep = 1, sourceKeyDef = "inventory" },
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
+                { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
+                { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
+                { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
