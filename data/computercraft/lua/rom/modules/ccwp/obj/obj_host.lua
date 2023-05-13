@@ -462,6 +462,7 @@ function Host:saveObject(...)
     return objectLocator
 end
 
+-- ToDo: consider if it's better to make this a method of a Host object (instead of the global function we have now)
 function Host.SaveObject_SSrv(...)
     -- get & check input from description
     local checkSuccess, hostName, className, objectTable = InputChecker.Check([[
