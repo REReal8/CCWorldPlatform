@@ -409,7 +409,10 @@ end
 function Chest:updateChestRecord_AOSrv(...)
     -- get & check input from description
     local checkSuccess, callback = InputChecker.Check([[
-        This async private service updates (fetches) the inventory from a Chest.
+        This async service brings the records of the chest up-to-date by fetching information and (re)setting the chest records.
+
+        Using this method should normally not be needed as the records should be kept up-to-date by the various enterprise services. It could
+        typically be used for development purposes or, if for some reason (e.g. after a turtle crash), the chest records could have been corrupted.
 
         Return value:
                                 - (boolean) whether the service was scheduled successfully
@@ -424,8 +427,6 @@ function Chest:updateChestRecord_AOSrv(...)
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:updateChestRecord_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- ToDo: consider if we can do this without a project
 
     -- create project definition
     local taskData = {
@@ -444,11 +445,18 @@ function Chest:updateChestRecord_AOSrv(...)
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
+            -- save chest
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
+                { keyDef = "chest"                  , sourceStep = 0, sourceKeyDef = "chest" },
+                { keyDef = "chest._inventory"       , sourceStep = 1, sourceKeyDef = "inventory" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
+            }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 1, sourceKeyDef = "success" },
-            { keyDef = "chest"                      , sourceStep = 0, sourceKeyDef = "chest" },
-            { keyDef = "chest._inventory"           , sourceStep = 1, sourceKeyDef = "inventory" },
+            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

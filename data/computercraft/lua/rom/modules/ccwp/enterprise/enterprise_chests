@@ -153,34 +153,8 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
     local chest = enterprise_chests:getObject(chestLocator)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.UpdateChestRecord_ASrv: Chest "..chestLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- create project definition
-    local updateChestRecordsProjectDef = {
-        steps   = {
-            { stepType = "AOSrv", stepTypeDef = { className = "Chest", serviceName = "updateChestRecord_AOSrv", objStep = 0, objKeyDef = "chest" }, stepDataDef = {
-            }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveChest_SSrv" }, stepDataDef = {
-                { keyDef = "chest"      , sourceStep = 1, sourceKeyDef = "chest" },
-            }},
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"   , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"   , sourceStep = 2, sourceKeyDef = "success" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"        , sourceStep = 3, sourceKeyDef = "success" },
-        }
-    }
-    local projectData = {
-        chest       = chest:copy(),
-    }
-    local projectServiceData = {
-        projectDef  = updateChestRecordsProjectDef,
-        projectData = projectData,
-    }
-
-    -- start project
-    corelog.WriteToLog(">Updating records for chest "..chest:getId()..".")
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    -- have chest update it's records
+    return chest:updateChestRecord_AOSrv({}, callback)
 end
 
 function enterprise_chests.GetItemsLocator_SSrv(...)
