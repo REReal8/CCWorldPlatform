@@ -436,7 +436,7 @@ end
 function Host:saveObject(...)
     -- get & check input from description
     local checkSuccess, object, className, objectId = InputChecker.Check([[
-        This method saves an object to the Host using a className and objectId argument.
+        This method saves an object in the Host using a className and objectId argument.
 
         If the object has a getClassName() method the className argument can be set to "".
         If the object has a getId() method the objectId argument can be set to "".
