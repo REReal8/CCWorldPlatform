@@ -357,4 +357,38 @@ function T_Chest.T_can_ProvideItems_QSrv()
     -- cleanup test
 end
 
+function T_Chest.T_updateChestRecord_AOSrv()
+    -- prepare test
+    corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
+    local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining chest") return end
+    local chestLocator = enterprise_chests:getObjectLocator(chest)
+
+    local callback = Callback:new({
+        _moduleName     = "T_Chest",
+        _methodName     = "updateChestRecord_AOSrv_Callback",
+        _data           = {
+            ["chestLocator"]                    = chestLocator,
+        },
+    })
+
+
+    -- test
+    local scheduleResult = chest:updateChestRecord_AOSrv({}, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_Chest.updateChestRecord_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    local chestLocator = callbackData["chestLocator"]
+    local updatedChest = enterprise_chests:getObject(chestLocator)
+    assert (updatedChest, "Chest not saved")
+
+    -- cleanup test
+    enterprise_chests:deleteResource(chestLocator)
+
+    -- end
+    return true
+end
+
 return T_Chest

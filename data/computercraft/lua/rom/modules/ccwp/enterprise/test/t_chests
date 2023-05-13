@@ -62,18 +62,6 @@ end
 
 local chestLocator1 = nil
 
-function t_chests.T_UpdateChestRecord1()
-    corelog.WriteToLog("* Test UpdateChestRecord_ASrv 1")
-    -- create chest data
-    local serviceData = {
-        chestLocator = chestLocator1,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.UpdateChestRecord_ASrv("..textutils.serialize(serviceData)..", , )")
-    return enterprise_chests.UpdateChestRecord_ASrv(serviceData, callback)
-end
-
 function t_chests.T_RegisterChest1()
     corelog.WriteToLog("* Test RegisterChest_SSrv 1:")
     -- create chest data
