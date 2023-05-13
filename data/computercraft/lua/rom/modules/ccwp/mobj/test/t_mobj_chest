@@ -172,9 +172,9 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-local function provideItemsTo_ASrv_Test(itemDepotLocator, toStr)
+local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
-    corelog.WriteToLog("* Chest:provideItemsTo_ASrv() test (to "..toStr..")")
+    corelog.WriteToLog("* Chest:provideItemsTo_AOSrv() test (to "..toStr..")")
     local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(chest)
@@ -186,7 +186,7 @@ local function provideItemsTo_ASrv_Test(itemDepotLocator, toStr)
     expectedDestinationItemsLocator:setQuery(provideItems)
     local callback = Callback:new({
         _moduleName     = "T_Chest",
-        _methodName     = "provideItemsTo_ASrv_Callback",
+        _methodName     = "provideItemsTo_AOSrv_Callback",
         _data           = {
             ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
             ["chestLocator"]                    = chestLocator,
@@ -195,32 +195,32 @@ local function provideItemsTo_ASrv_Test(itemDepotLocator, toStr)
     })
 
     -- test
-    local scheduleResult = chest:provideItemsTo_ASrv({
+    local scheduleResult = chest:provideItemsTo_AOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
 end
 
-function T_Chest.T_provideItemsTo_ASrv_Turtle()
+function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
     local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
     itemDepotLocator:setPort(os.getComputerID())
 
     -- test
-    provideItemsTo_ASrv_Test(itemDepotLocator, "Turtle")
+    provideItemsTo_AOSrv_Test(itemDepotLocator, "Turtle")
 end
 
-function T_Chest.T_provideItemsTo_ASrv_Chest()
+function T_Chest.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
     local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
     local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
-    provideItemsTo_ASrv_Test(itemDepotLocator, "Chest")
+    provideItemsTo_AOSrv_Test(itemDepotLocator, "Chest")
 end
 
-function T_Chest.provideItemsTo_ASrv_Callback(callbackData, serviceResults)
+function T_Chest.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
 

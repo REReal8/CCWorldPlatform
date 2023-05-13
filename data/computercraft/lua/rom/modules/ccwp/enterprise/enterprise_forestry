@@ -362,7 +362,7 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
 
     -- have forest provide items
     local provideItems = itemsLocator:getQuery()
-    return forest:provideItemsTo_ASrv({
+    return forest:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,

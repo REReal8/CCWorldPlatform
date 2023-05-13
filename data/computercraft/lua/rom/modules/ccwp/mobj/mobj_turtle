@@ -129,7 +129,7 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Turtle:provideItemsTo_ASrv(...)
+function Turtle:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
@@ -151,16 +151,16 @@ function Turtle:provideItemsTo_ASrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Turtle:provideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check items available in inventory
     local hasItems = self:getInventory():hasItems(provideItems)
-    if not hasItems then corelog.Error("Turtle:provideItemsTo_ASrv: provideItems(="..textutils.serialise(provideItems)..") not (all) available in Turtle") return Callback.ErrorCall(callback) end
+    if not hasItems then corelog.Error("Turtle:provideItemsTo_AOSrv: provideItems(="..textutils.serialise(provideItems)..") not (all) available in Turtle") return Callback.ErrorCall(callback) end
 
     -- create turtleItemsLocator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleItemsLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getId()}).turtleLocator
-    if turtleItemsLocator == nil then corelog.Error("Turtle:provideItemsTo_ASrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
+    if turtleItemsLocator == nil then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
     -- store items from this turtle to ItemDepot

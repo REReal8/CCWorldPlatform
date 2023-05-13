@@ -192,7 +192,7 @@ function BirchForest:getFuelNeedExtraTree_Att()
     return fuelNeed_OneTreeExtra - fuelNeed_Current
 end
 
-function BirchForest:provideItemsTo_ASrv(...)
+function BirchForest:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
@@ -215,14 +215,14 @@ function BirchForest:provideItemsTo_ASrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- loop on items
     local scheduleResult = true
     for itemName, itemCount in pairs(provideItems) do
         -- check
-        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
-        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
+        if type(itemName) ~= "string" then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
+        if type(itemCount) ~= "number" then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- check for birchlog or sapling
         local localItemSupplierLocator = nil
@@ -231,9 +231,9 @@ function BirchForest:provideItemsTo_ASrv(...)
         elseif itemName == "minecraft:birch_sapling" then
             localItemSupplierLocator = self:getLocalSaplingsLocator()
         else
-            corelog.Error("BirchForest:provideItemsTo_ASrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
+            corelog.Error("BirchForest:provideItemsTo_AOSrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
-        if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_ASrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return {success = false} end
+        if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return {success = false} end
 
         -- check items already available in localItemSupplierLocator
         local localItemsLocator = localItemSupplierLocator:copy()
@@ -250,7 +250,7 @@ function BirchForest:provideItemsTo_ASrv(...)
             scheduleResult = scheduleResult and enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
         else
             -- construct new itemsLocator for this forest
-            local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_ASrv: host not found") return Callback.ErrorCall(callback) end
+            local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
             local forestLocator = host:getObjectLocator(self)
             local itemsLocator = forestLocator:copy()
             itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator

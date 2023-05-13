@@ -217,7 +217,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
 
     -- have Chest provide items
     local provideItems = itemsLocator:getQuery()
-    return chest:provideItemsTo_ASrv({
+    return chest:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,

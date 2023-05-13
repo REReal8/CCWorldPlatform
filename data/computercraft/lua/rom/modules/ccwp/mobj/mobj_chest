@@ -141,7 +141,7 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Chest:provideItemsTo_ASrv(...)
+function Chest:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
@@ -163,7 +163,7 @@ function Chest:provideItemsTo_ASrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:provideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("Chest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check if ItemDepot is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
@@ -171,7 +171,7 @@ function Chest:provideItemsTo_ASrv(...)
     local turtleId = -1
     if serviceResults.success then
         local port = itemDepotLocator:getPort()
---        corelog.Warning("Chest:provideItemsTo_ASrv: Providing to a turtle itemDepotLocator (="..itemDepotLocator:getURI()..").")
+--        corelog.Warning("Chest:provideItemsTo_AOSrv: Providing to a turtle itemDepotLocator (="..itemDepotLocator:getURI()..").")
         turtleId = port
     end
 
