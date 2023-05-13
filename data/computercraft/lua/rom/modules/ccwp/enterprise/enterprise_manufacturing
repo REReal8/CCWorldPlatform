@@ -587,9 +587,27 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
         return {success = false}
     end
 
-    -- start new site
-    local newSiteId = mobj_factory.StartNewSite(siteStartData)
-    if type(newSiteId) ~= "string" then corelog.Error('enterprise_manufacturing.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
+    -- create new Factory
+    local factory = {
+        version         = siteStartData.version,
+        siteId          = coreutils.NewId(),
+
+        baseLocation    = siteStartData.baseLocation,
+--        entryLocation   = siteStartData.location:getRelativeLocation(3, 3, 1), -- ToDo: consider adding and using (before moving to workingLocation)
+
+        inputLocators   = siteStartData.inputLocators,
+        outputLocators  = siteStartData.outputLocators,
+
+        craftingSpots   =  siteStartData.craftingSpots,
+        smeltingSpots   =  siteStartData.smeltingSpots,
+    }
+
+    -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)
+
+    -- save the Factory
+    corelog.WriteToLog(">Adding Factory "..factory.siteId..".")
+    coredht.SaveData(factory, db.hostName, db.psSites, factory.siteId)
+    if type(factory.siteId) ~= "string" then corelog.Error('enterprise_manufacturing.StartNewSite_SSrv: Failed starting site from start data '..textutils.serialize(siteStartData)) return {success = false} end
 
     -- end
     return {success = true}
