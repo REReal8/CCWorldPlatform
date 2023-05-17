@@ -1,0 +1,87 @@
+local Obj = {
+}
+
+local corelog = require "corelog"
+
+--[[
+    This module implements the class ("interface") Obj.
+
+    It is typically used as base class for more advanced objects.
+--]]
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+
+--    _          _                    __                  _   _
+--   | |        | |                  / _|                | | (_)
+--   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--                | |
+--                |_|
+
+function Obj.ObjArray_IsOfType(objArray, class)
+    --[[
+        This function checks if all objects in an array are of type 'class'
+    ]]
+
+    -- check table
+    if type(objArray) ~= "table" then return false end
+
+    -- check elements
+    for i, obj in ipairs(objArray) do
+        if not class.IsOfType(obj) then return false end
+    end
+
+    -- end
+    return true
+end
+
+function Obj.ObjArray_IsSame(objArrayA, objArrayB)
+    --[[
+        This function checks if two arrays of objects are the same. The objects should also be in the same order in the array.
+    ]]
+
+    -- check input
+--    if not Obj.ObjArray_IsOfType(objArrayA, class) or not Obj.ObjArray_IsOfType(objArrayB, class) then return false end
+    if type(objArrayA) ~= "table" or type(objArrayB) ~= "table" then return false end
+
+    -- check same size
+    if table.getn(objArrayA) ~= table.getn(objArrayB) then return false end
+
+    -- check same elements
+    for i, objA in ipairs(objArrayA) do
+        -- check same obj
+        local objB = objArrayB[i]
+        if not objA:isSame(objB) then return false end
+    end
+
+    -- end
+	return true
+end
+
+function Obj.ObjArray_Copy(objArray)
+    --[[
+        This function creates a copy of an array of objects.
+    ]]
+
+    -- check input
+    if type(objArray) ~= "table" then corelog.Error("Obj.ObjArray_Copy: invalid objArray: "..type(objArray)) return nil end
+
+    local copy = {}
+    -- copy elements
+    for i, obj in ipairs(objArray) do
+        copy[i] = obj:copy()
+    end
+
+    -- end
+	return copy
+end
+
+return Obj

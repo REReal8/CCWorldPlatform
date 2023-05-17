@@ -1,9 +1,22 @@
-local Factory = {}
+local Factory = {
+    _id             = "",
+
+--    _version        = "",
+
+    _baseLocation   = nil,
+
+    _inputLocators  = {},
+    _outputLocators = {},
+
+    _craftingSpots  = {},
+    _smeltingSpots  = {},
+}
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
 
+local Obj = require "Obj"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
@@ -39,6 +52,121 @@ local db = {
     The most simple version of these input/ output "spots" are the inventory of a turtle. They however could in principle
     also be a full fledged local ItemDepot site.
 --]]
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function Factory:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Factory.
+
+        Parameters:
+            o                           + (table, {}) table with object fields
+                _id                     - (string) id of the Factory
+                _baseLocation           - (Location) location of the Factory
+                _inputLocators          - (table) with input locators
+                _outputLocators         - (table) with output locators
+                _craftingSpots          - (table) with crafting spots
+                _smeltingSpots          - (table) with smelting spots
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function Factory:getClassName()
+    return "Factory"
+end
+
+function Factory:getId()
+    return self._id
+end
+
+function Factory:getBaseLocation()
+    return self._baseLocation
+end
+
+function Factory:getInputLocators()
+    return self._inputLocators
+end
+
+function Factory:getOutputLocators()
+    return self._outputLocators
+end
+
+function Factory:getCraftingSpots()
+    return self._craftingSpots
+end
+
+function Factory:getSmeltingSpots()
+    return self._smeltingSpots
+end
+
+function Factory.HasFieldsOfType(obj)
+    -- check
+    if type(obj) ~= "table" then return false end
+    if type(obj._id) ~= "string" then return false end
+    if not Location.IsOfType(obj._baseLocation) then return false end
+    if not Obj.ObjArray_IsOfType(obj._inputLocators, URL) then return false end
+    if not Obj.ObjArray_IsOfType(obj._outputLocators, URL) then return false end
+
+    -- end
+    return true
+end
+
+function Factory.HasMethodsOfType(obj)
+    -- check
+    if not obj.new then return false end
+
+    -- end
+    return true
+end
+
+function Factory.IsOfType(obj)
+    -- check
+    local isOfType = Factory.HasFieldsOfType(obj) and Factory.HasMethodsOfType(obj)
+
+    -- end
+    return isOfType
+end
+
+function Factory:isSame(obj)
+    -- check input
+    if not Factory.IsOfType(obj) then return false end
+
+    -- check same object
+    local isSame =  self._id == obj._id
+                and self._baseLocation:isSame(obj._baseLocation)
+                and Obj.ObjArray_IsSame(self._inputLocators, obj._inputLocators)
+                and Obj.ObjArray_IsSame(self._outputLocators, obj._outputLocators)
+
+    -- end
+    return isSame
+end
+
+function Factory:copy()
+    -- create copy
+    local copy = Factory:new({
+        _id             = self._id,
+
+        _baseLocation   = self._baseLocation:copy(),
+        _inputLocators  = Obj.ObjArray_Copy(self._inputLocators),
+        _outputLocators = Obj.ObjArray_Copy(self._outputLocators),
+    })
+
+    -- end
+    return copy
+end
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
