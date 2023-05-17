@@ -58,7 +58,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     -- check nTrees == 1  -- ToDo: remove this restriction
     if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return Callback.ErrorCall(callback) end
 
-    -- create new forest
+    -- create new BirchForest
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local forest = BirchForest:new({
         _id                     = coreutils.NewId(),
@@ -71,9 +71,10 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         _localSaplingsLocator   = enterprise_turtle.GetHostLocator_Att(),
     })
 
-    -- save the forest
+    -- save the BirchForest
     corelog.WriteToLog(">Adding forest "..forest:getId()..".")
     local forestLocator = enterprise_forestry:saveObject(forest)
+    if not forestLocator then corelog.Error("enterprise_chests.RegisterChest_SSrv: Failed adding BirchForest") return Callback.ErrorCall(callback) end
 
     -- create projectDef and projectData
     local projectData = {

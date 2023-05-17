@@ -61,7 +61,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid input") return {success = false} end
 
-    -- create new chest
+    -- create new Chest
     local chest = Chest:new({
         _id             = coreutils.NewId(),
 
@@ -71,9 +71,10 @@ function enterprise_chests.RegisterChest_SSrv(...)
         _inventory      = Inventory:new(), -- assumed to be empty
     })
 
-    -- save the chest
+    -- save the Chest
     corelog.WriteToLog(">Registering chest "..chest:getId()..".")
     local chestLocator = enterprise_chests:saveObject(chest)
+    if not chestLocator then corelog.Error("enterprise_chests.RegisterChest_SSrv: Failed registering Chest") return {success = false} end
 
     -- end
     local result = {
