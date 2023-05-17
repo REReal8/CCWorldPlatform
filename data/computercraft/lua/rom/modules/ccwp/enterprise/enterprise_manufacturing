@@ -7,6 +7,8 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local URL = require "obj_url"
 
+local ProductionSpot = require "mobj_production_spot"
+
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle
@@ -339,7 +341,7 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
     -- select a suitable site
     local siteProduceItemData = mobj_factory.GetAvailableSiteData(recipe, itemCount)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
-    local location = siteProduceItemData.productionSpot.location
+    local location = siteProduceItemData.productionSpot:getLocation()
 
     return location
 end
@@ -411,7 +413,7 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
             localInputItemsLocator  = localInputItemsLocator,
             localOutputLocator      = siteProduceItemData.localOutputLocator:copy(),
             productionMethod        = siteProduceItemData.productionMethod,
-            productionSpot          = mobj_factory.ProductionSpot_Copy(siteProduceItemData.productionSpot),
+            productionSpot          = ProductionSpot:new(siteProduceItemData.productionSpot),
         }
         serviceResults = mobj_factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
@@ -598,8 +600,8 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
         inputLocators   = siteStartData.inputLocators,
         outputLocators  = siteStartData.outputLocators,
 
-        craftingSpots   =  siteStartData.craftingSpots,
-        smeltingSpots   =  siteStartData.smeltingSpots,
+        craftingSpots   = siteStartData.craftingSpots,
+        smeltingSpots   = siteStartData.smeltingSpots,
     }
 
     -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)

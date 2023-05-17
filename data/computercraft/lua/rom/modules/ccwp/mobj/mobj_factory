@@ -22,9 +22,10 @@ local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local URL = require "obj_url"
 local Location = require "obj_location"
-
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
+
+local ProductionSpot = require "mobj_production_spot"
 
 local role_alchemist = require "role_alchemist"
 local role_fuel_worker = require "role_fuel_worker"
@@ -119,6 +120,8 @@ function Factory.HasFieldsOfType(obj)
     if not Location.IsOfType(obj._baseLocation) then return false end
     if not Obj.ObjArray_IsOfType(obj._inputLocators, URL) then return false end
     if not Obj.ObjArray_IsOfType(obj._outputLocators, URL) then return false end
+    if not Obj.ObjArray_IsOfType(obj._craftingSpots, ProductionSpot) then return false end
+    if not Obj.ObjArray_IsOfType(obj._smeltingSpots, ProductionSpot) then return false end
 
     -- end
     return true
@@ -149,6 +152,8 @@ function Factory:isSame(obj)
                 and self._baseLocation:isSame(obj._baseLocation)
                 and Obj.ObjArray_IsSame(self._inputLocators, obj._inputLocators)
                 and Obj.ObjArray_IsSame(self._outputLocators, obj._outputLocators)
+                and Obj.ObjArray_IsSame(self._craftingSpots, obj._craftingSpots)
+                and Obj.ObjArray_IsSame(self._smeltingSpots, obj._smeltingSpots)
 
     -- end
     return isSame
@@ -162,6 +167,8 @@ function Factory:copy()
         _baseLocation   = self._baseLocation:copy(),
         _inputLocators  = Obj.ObjArray_Copy(self._inputLocators),
         _outputLocators = Obj.ObjArray_Copy(self._outputLocators),
+        _craftingSpots  = Obj.ObjArray_Copy(self._craftingSpots),
+        _smeltingSpots  = Obj.ObjArray_Copy(self._smeltingSpots),
     })
 
     -- end
@@ -252,22 +259,6 @@ local function GetAvailableLocator(locators)
     return nil
 end
 
--- ToDo: consider making a ProductionSpot object
-local function ProductionSpot_New(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a ProductionSpot from table.
-
-        Parameters:
-            o						+ (table, {}) table with object fields
-                location		    - (Location) world location of spot
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
-
-    -- end
-    return o
-end
-
 local function GetAvailableCraftSpot(site)
     -- check input
     if type(site) ~="table" then corelog.Error("Factory.GetAvailableCraftSpot: Invalid site") return nil end
@@ -277,7 +268,7 @@ local function GetAvailableCraftSpot(site)
         -- ToDo: consider checking availability
 
         -- take first
-        return ProductionSpot_New(spot)
+        return ProductionSpot:new(spot)
     end
 
     -- end
@@ -293,40 +284,11 @@ local function GetAvailableSmeltSpot(site)
         -- ToDo: consider checking availability
 
         -- take first
-        return ProductionSpot_New(spot)
+        return ProductionSpot:new(spot)
     end
 
     -- end
     return nil
-end
-
-local function ProductionSpot_HasFieldsOfType(o)
-    -- check
-    if type(o) ~= "table" then return false end
-    if not Location.IsOfType(o.location) then return false end
-
-    -- end
-    return true
-end
-
-local function ProductionSpot_IsOfType(o)
-    -- check
-    local isOfType = ProductionSpot_HasFieldsOfType(o) -- and ProductionSpot_HasMethodsOfType(o)
-
-    -- end
-    return isOfType
-end
-
-function Factory.ProductionSpot_Copy(o)
-    -- check input
-    if not ProductionSpot_IsOfType(o) then corelog.Error("ProductionSpot:copy: Invalid input") return nil end
-
-    -- copy
-    local copy = {
-        location = o.location:copy(),
-    }
-
-    return copy
 end
 
 function Factory.GetAvailableSiteData(...)
@@ -378,7 +340,7 @@ function Factory.GetAvailableSiteData(...)
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = Factory.ProductionSpot_Copy(craftSpot),
+                            productionSpot      = craftSpot:copy(),
                             productionMethod    = "craft",
                             productionRecipe    = coreutils.DeepCopy(craftRecipe),
                         })
@@ -394,7 +356,7 @@ function Factory.GetAvailableSiteData(...)
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = Factory.ProductionSpot_Copy(smeltSpot),
+                            productionSpot      = smeltSpot:copy(),
                             productionMethod    = "smelt",
                             productionRecipe    = coreutils.DeepCopy(smeltRecipe),
                         })
@@ -440,7 +402,7 @@ end
 
 function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionLocation = InputChecker.Check([[
+    local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionSpot = InputChecker.Check([[
         This sync public service returns the needs for the site to produce specific items to an ItemDepot.
 
         Return value:
@@ -453,17 +415,16 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
                 localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
                 localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
                 productionMethod        + (string) production method to use
-                productionSpot          - (table) production spot
-                    location            + (Location) location of production spot
+                productionSpot          + (ProductionSpot) production spot
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- fuelNeed from localInputItemsLocator to productionLocation
+    -- fuelNeed from localInputItemsLocator to productionSpot
     local serviceResults = enterprise_isp.GetItemsLocations_SSrv({ itemsLocator = localInputItemsLocator })
     if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
     local fuelNeed_ToProductionlocation = 0
     for i, location in ipairs(serviceResults.locations) do
-        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionLocation, location)
+        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionSpot:getLocation(), location)
     end
 
     -- fuelNeed for production
@@ -472,10 +433,10 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     elseif productionMethod == "smelt" then fuelNeed_Production = 4 + 4 -- smelt + pickup
     else corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
 
-    -- fuelNeed from productionLocation to localOutputLocator
+    -- fuelNeed from productionSpot to localOutputLocator
     serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
     if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
-    local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionLocation)
+    local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionSpot:getLocation())
 
     -- end
 --    corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
@@ -507,7 +468,7 @@ function Factory.ProduceItem_ASrv(...)
                 localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
                 localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
                 productionMethod        + (string) production method to use
-                productionSpot          + (table) production spot
+                productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) production recipe
@@ -720,7 +681,7 @@ function Factory.GetV0SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = baseLocation:getRelativeLocation(0, 0, 0) },
+            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(0, 0, 0) }),
         },
         smeltingSpots = {},
     }
@@ -803,10 +764,10 @@ function Factory.GetV1SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = baseLocation:getRelativeLocation(3, 3, -4) },
+            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -4) }),
         },
         smeltingSpots = {
-            { location = baseLocation:getRelativeLocation(3, 3, -3) },
+            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -3) }),
         },
     }
 
@@ -911,10 +872,10 @@ function Factory.GetV2SiteStartData(serviceData)
         },
 
         craftingSpots = {
-            { location = baseLocation:getRelativeLocation(3, 3, -4) },
+            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -4) }),
         },
         smeltingSpots = {
-            { location = baseLocation:getRelativeLocation(3, 3, -3) },
+            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -3) }),
         },
     }
 
@@ -923,7 +884,7 @@ end
 
 function Factory.CraftItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionLocation, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async sewrvice should craft items at the productionSpot.
 
         Return value:
@@ -937,8 +898,7 @@ function Factory.CraftItem_ASrv(...)
         Parameters:
             serviceData                 - (table) data for the service
                 turtleInputItemsLocator + (URL) locating the production ingredients in the turtle that should do the crafting
-                productionSpot          - (table) production spot
-                    location            + (Location) production location
+                productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) crafting recipe
@@ -953,7 +913,7 @@ function Factory.CraftItem_ASrv(...)
         productItemCount= productItemCount,
 
         recipe          = productionRecipe,
-        workingLocation = productionLocation:copy(),
+        workingLocation = productionSpot:getLocation():copy(),
 
         priorityKey     = assignmentsPriorityKey,
     }
@@ -972,7 +932,7 @@ end
 
 function Factory.SmeltItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleInputItemsLocator, productionLocation, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleInputItemsLocator, productionSpot, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should smelt items at the productionSpot.
 
         Return value:
@@ -986,8 +946,7 @@ function Factory.SmeltItem_ASrv(...)
         Parameters:
             serviceData                 - (table) data for the service
                 turtleInputItemsLocator + (URL) locating the production ingredients in the turtle that should do the crafting
-                productionSpot          - (table) production spot
-                    location            + (Location) production location
+                productionSpot          + (ProductionSpot) production spot
                 productItemCount        + (number) amount of items to produce
                 productionRecipe        + (table) smelting recipe
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -1000,7 +959,7 @@ function Factory.SmeltItem_ASrv(...)
         productItemCount= productItemCount,
         recipe          = productionRecipe,
 
-        workingLocation = productionLocation:copy(),
+        workingLocation = productionSpot:getLocation():copy(),
 
         -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         fuelItemName    = "minecraft:birch_planks",
@@ -1023,7 +982,7 @@ end
 
 function Factory.Pickup_ASrv(...)
     -- get & check input from description
-    local checkSuccess, pickUpTime, productionLocation, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, pickUpTime, productionSpot, productItemName, productItemCount, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async service should pickup the results from a previous smelt step.
 
         Return value:
@@ -1037,8 +996,7 @@ function Factory.Pickup_ASrv(...)
         Parameters:
             serviceData                 - (table) data for the service
                 pickUpTime              + (number) the time after which the pickup should be done
-                productionSpot          - (table) production spot
-                    location            + (Location) production location
+                productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -1051,7 +1009,7 @@ function Factory.Pickup_ASrv(...)
         productItemName = productItemName,
         productItemCount= productItemCount,
 
-        workingLocation = productionLocation:copy(),
+        workingLocation = productionSpot:getLocation():copy(),
 
         priorityKey     = assignmentsPriorityKey,
     }

@@ -1,0 +1,107 @@
+local ProductionSpot = {
+    _location   = nil,
+}
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local Location = require "obj_location"
+
+--[[
+    The ProductionSpot mobj represents a production spot in the minecraft world and provides production services to operate on that ProductionSpot.
+
+    There are (currently) two production techniques for producing items.
+        The crafting technique uses a crafting table to produce an output item from a set of input items (ingredients).
+        The smelting technique uses a furnace to produce an output item from an input item (ingredient).
+--]]
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function ProductionSpot:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a ProductionSpot.
+
+        Parameters:
+            o						+ (table, {}) table with object fields
+                _location		    - (Location) world location of spot
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function ProductionSpot:getClassName()
+    return "ProductionSpot"
+end
+
+function ProductionSpot:getLocation()
+    return self._location
+end
+
+function ProductionSpot.HasFieldsOfType(obj)
+    -- check
+    if type(obj) ~= "table" then return false end
+    if not Location.IsOfType(obj._location) then return false end
+
+    -- end
+    return true
+end
+
+function ProductionSpot.HasMethodsOfType(obj)
+    -- check
+    if not obj.new then return false end
+
+    -- end
+    return true
+end
+
+function ProductionSpot.IsOfType(obj)
+    -- check
+    local isOfType = ProductionSpot.HasFieldsOfType(obj) and ProductionSpot.HasMethodsOfType(obj)
+
+    -- end
+    return isOfType
+end
+
+function ProductionSpot:isSame(obj)
+    -- check input
+    if not ProductionSpot.IsOfType(obj) then return false end
+
+    -- check same object
+    local isSame = self._location:isSame(obj._location)
+
+    -- end
+    return isSame
+end
+
+function ProductionSpot:copy()
+    -- create copy
+    local copy = ProductionSpot:new({
+        _location       = self._location:copy(),
+    })
+
+    -- end
+    return copy
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+return ProductionSpot
