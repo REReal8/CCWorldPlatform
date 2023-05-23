@@ -128,7 +128,7 @@ function T_Host.T_GetHost()
     assert(not module, "a module with name="..hostName.." already registered")
 
     -- test not registered host
-    local host = Host.GetHost(hostName)
+    local host = Host.GetHost(hostName, true)
     assert(not host, "unexpectedly got a host with hostName="..hostName)
 
     -- test registered host
@@ -144,7 +144,7 @@ function T_Host.T_GetHost()
     })
     local testObjName = "testObj"
     moduleRegistry:registerModule(testObjName, testObj)
-    host = Host.GetHost(testObjName)
+    host = Host.GetHost(testObjName, true)
     assert(not host, "unexpectedly got a 'Host' with name="..testObjName)
     moduleRegistry:delistModule(testObjName)
 

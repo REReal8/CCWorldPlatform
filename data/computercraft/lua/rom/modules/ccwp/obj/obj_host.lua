@@ -105,7 +105,7 @@ end
 
 function Host.GetHost(...)
     -- get & check input from description
-    local checkSuccess, hostName = InputChecker.Check([[
+    local checkSuccess, hostName, suppressWarning = InputChecker.Check([[
         This method retrieves a Host from a hostName.
 
         Return value:
@@ -113,12 +113,13 @@ function Host.GetHost(...)
 
         Parameters:
             hostName                + (string) with hostName of the Host
+            suppressWarning         + (boolean, false) if Warning should be suppressed
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Host.GetHost: Invalid input") return nil end
 
     -- get Host
     local host = moduleRegistry:getModule(hostName)
-    if not Host.IsOfType(host) then corelog.Warning("Host.GetHost: No Host registered with hostName="..hostName) return nil end
+    if not Host.IsOfType(host) then if not suppressWarning then corelog.Warning("Host.GetHost: No Host registered with hostName="..hostName) end return nil end
 
     -- end
     return host
