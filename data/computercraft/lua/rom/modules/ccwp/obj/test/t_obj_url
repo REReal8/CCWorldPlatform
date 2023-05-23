@@ -191,8 +191,8 @@ function T_URL.T_NewFromURI()
 
     corelog.WriteToLog("* URL from URI tests (1: no host)")
     local newURI1=schemeURI..portURI..pathURI..queryURI
-    local fromURI_URL1 = URL:newFromURI(newURI1) -- note: should fail
---    AssertWithURIs(fromURI_URL1, "", portURI, pathURI, expectedQueryURI)
+    local fromURI_URL1 = URL:newFromURI(newURI1, true)
+    AssertWithURIs(fromURI_URL1, "", "", "", "") -- note: implies failure (error)
 
     corelog.WriteToLog("* URL from URI tests (2: no port)")
     local newURI2=schemeURI..hostURI..pathURI..queryURI

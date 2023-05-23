@@ -44,10 +44,10 @@ function URL:new(...)
     return o
 end
 
-function URL:newFromURI(uri)
+function URL:newFromURI(uri, suppressError)
     local aNewURL = URL:new({})
 
-    aNewURL:setURI(uri)
+    aNewURL:setURI(uri, suppressError)
 
     return aNewURL
 end
@@ -220,12 +220,14 @@ function URL:getURI()
     return self:getSchemeURI()..self:getAuthorityURI()..self:getPathURI()..self:getQueryURI()
 end
 
-function URL:setURI(fullURI)
+function URL:setURI(fullURI, suppressError)
+    suppressError = suppressError or false
+
     -- get & set host
     local remainingURL = fullURI
     local hostURIPattern = "^"..self:getSchemeURI().."("..hostPattern..")"
     local hostURI = string.match(remainingURL, hostURIPattern)
-    if type(hostURI) ~= "string" then corelog.Error("URL:setURI: could not find mandatory host in URI: "..fullURI) return end
+    if type(hostURI) ~= "string" then if not suppressError then corelog.Error("URL:setURI: could not find mandatory host in URI: "..fullURI) end return end
 --        corelog.WriteToLog("hostURI="..(hostURI or "<nil>"))
     self:setHostURI(hostURI)
 
