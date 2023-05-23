@@ -35,7 +35,7 @@ local expectedQueryURI = "?"..itemName1.."="..itemCount1.."&"..itemName2.."="..i
 
 function T_URL.T_All()
 --    T_URL_Serializing()
-    T_URL.T_Getters()
+    T_URL.T_new()
     T_URL.T_GettersURI()
     T_URL.T_Setters()
     T_URL.T_SettersFromURI()
@@ -61,10 +61,10 @@ function T_URL.T_URL_Serializing()
     corelog.WriteToLog(" 2: aURL = "..textutils.serialize(aURL))
 end
 
-function T_URL.T_Getters()
+function T_URL.T_new()
     -- prepare test
-    corelog.WriteToLog("* URL getter tests")
-    local getterURL = URL:new({
+    corelog.WriteToLog("* URL:new() and getter tests")
+    local url = URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -72,29 +72,29 @@ function T_URL.T_Getters()
     })
 
     -- test
-    local testResult = getterURL:getScheme()
+    local testResult = url:getScheme()
     local expectedResultStr = scheme
     assert(testResult == expectedResultStr, "getScheme() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
-    testResult = getterURL:getHost()
+    testResult = url:getHost()
     expectedResultStr = host
     assert(testResult == expectedResultStr, "getHost() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
-    testResult = getterURL:getPort()
+    testResult = url:getPort()
     local expectedResultNumber = port
     assert(testResult == expectedResultNumber, "getPort() return(="..testResult..") different from expected(="..expectedResultNumber..")")
 
-    testResult = getterURL:getPath()
+    testResult = url:getPath()
     expectedResultStr = path
     assert(testResult == expectedResultStr, "getPath() return(="..testResult..") different from expected(="..expectedResultStr..")")
     local iPathSegment = 1
-    for pathSegment in getterURL:pathSegments_iter() do
+    for pathSegment in url:pathSegments_iter() do
         expectedResultStr = pathSegments[iPathSegment]
         assert(pathSegment == expectedResultStr, "pathSegment(="..pathSegment..") different from expected(="..expectedResultStr..")")
         iPathSegment = iPathSegment + 1
     end
 
-    testResult = getterURL:getQuery()
+    testResult = url:getQuery()
     local expectedResultTable = query
     assert(testResult == expectedResultTable, "getQuery() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
 
@@ -104,7 +104,7 @@ end
 function T_URL.T_GettersURI()
     -- prepare test
     corelog.WriteToLog("* URL URI getter tests")
-    local getterURL = URL:new({
+    local url = URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -112,9 +112,9 @@ function T_URL.T_GettersURI()
     })
 
     -- test
-    assert(getterURL:getSchemeURI() == schemeURI, "getSchemeURI() return(="..getterURL:getSchemeURI()..") different from expected(="..schemeURI..")")
-    AssertWithURIs(getterURL, hostURI, portURI, pathURI, queryURI)
-    assert(getterURL:getAuthorityURI() == hostURI..portURI, "getAuthorityURI() return(="..getterURL:getAuthorityURI()..") different from expected(="..hostURI..portURI..")")
+    assert(url:getSchemeURI() == schemeURI, "getSchemeURI() return(="..url:getSchemeURI()..") different from expected(="..schemeURI..")")
+    AssertWithURIs(url, hostURI, portURI, pathURI, queryURI)
+    assert(url:getAuthorityURI() == hostURI..portURI, "getAuthorityURI() return(="..url:getAuthorityURI()..") different from expected(="..hostURI..portURI..")")
 
     -- cleanup test
 end
