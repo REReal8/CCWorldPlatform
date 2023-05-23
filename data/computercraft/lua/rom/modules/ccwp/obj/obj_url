@@ -52,6 +52,10 @@ function URL:newFromURI(uri)
     return aNewURL
 end
 
+function URL:getClassName()
+    return "URL"
+end
+
 function URL:getScheme()
     return "ccwprp" -- always the same
 end
