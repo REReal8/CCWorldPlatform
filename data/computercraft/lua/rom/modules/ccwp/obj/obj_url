@@ -7,6 +7,8 @@ local URL = {
 
 local corelog = require "corelog"
 
+local InputChecker = require "input_checker"
+
 --[[
     This module implements the class URL.
 
@@ -20,27 +22,30 @@ local corelog = require "corelog"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function URL:new(o)
-    --[[
+function URL:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
         Constructs an URL object.
 
         Parameters:
-                                - (table) table with
-                host                - (string) depicting the host sub-component of the URL (e.g. "turtle", "world" or "item-depot")
-                port                - [optional] (string) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
-                path                - [optional] (string) defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
-                query               - [optional] (table) of key-value pairs with (item) query segments
-                                        (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
-    --]]
+            o				        + (table, {}) table with object fields
+                _host               - (string, "") depicting the host sub-component of the URL (e.g. "turtle", "world" or "item-depot")
+                _port               - (number, nil) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
+                _path               - (string, "") defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
+                _query              - (table, {}) of key-value pairs with (item) query segments (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("URL:new: Invalid input") return {} end
 
-    o = o or {}   -- create object if user does not provide one
+    -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- end
     return o
 end
 
 function URL:newFromURI(uri)
-    local aNewURL = URL:new()
+    local aNewURL = URL:new({})
 
     aNewURL:setURI(uri)
 

@@ -98,6 +98,13 @@ function T_URL.T_new()
     local expectedResultTable = query
     assert(testResult == expectedResultTable, "getQuery() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
 
+    -- test default
+    url = URL:new()
+    assert(url:getHost() == "", "gotten getHost(="..url:getHost()..") not the same as expected(=``)")
+    assert(type(url:getPort()) == "nil", "gotten getPort(="..(url:getPort() or "nil")..") not the same as expected(=nil)")
+    assert(url:getPath() == "", "gotten getPath(="..url:getPath()..") not the same as expected(=``)")
+    assert(url:getQueryURI() == "", "gotten getQueryURI(="..url:getQueryURI()..") not the same as expected(=``)")
+
     -- cleanup test
 end
 
