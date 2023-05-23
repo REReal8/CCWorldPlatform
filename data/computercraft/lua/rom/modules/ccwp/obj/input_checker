@@ -79,6 +79,13 @@ function InputChecker.Check(description, ...)
                     else
                         typeType = "nil"
                     end
+
+                    -- possibly change parent field to default argument
+                    if indent > 1 then
+                        if type(indenting[ indent - 1 ]) == "table" then
+                            indenting[ indent - 1 ][ parameter ] = argument
+                        else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false end
+                    end
                 end
 
                 -- voldoet het argument aan het opgegeven type?
