@@ -29,12 +29,12 @@ function Location:new(...)
         Construct a Location from table.
 
         Parameters:
-            o						+ (table, {}) table with object fields
-                _x					- (number, 0) x coordinate
-                _y					- (number, 0) y coordinate
-                _z					- (number, 0) z coordinate
-                _dx					- (number, 0) x direction (either -1,0,1)
-                _dy					- (number, 1) y direction (either -1,0,1)
+            o                       + (table, {}) table with object fields
+                _x                  - (number, 0) x coordinate
+                _y                  - (number, 0) y coordinate
+                _z                  - (number, 0) z coordinate
+                _dx                 - (number, 0) x direction (either -1,0,1)
+                _dy                 - (number, 1) y direction (either -1,0,1)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Location:new: Invalid input") return {} end
 

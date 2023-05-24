@@ -28,7 +28,7 @@ function URL:new(...)
         Constructs an URL object.
 
         Parameters:
-            o				        + (table, {}) table with object fields
+            o                       + (table, {}) table with object fields
                 _host               - (string, "") depicting the host sub-component of the URL (e.g. "turtle", "world" or "item-depot")
                 _port               - (number, nil) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
                 _path               - (string, "") defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
