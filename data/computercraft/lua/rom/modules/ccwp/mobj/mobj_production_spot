@@ -28,8 +28,8 @@ function ProductionSpot:new(...)
         Construct a ProductionSpot.
 
         Parameters:
-            o						+ (table, {}) table with object fields
-                _location		    - (Location) world location of spot
+            o                       + (table, {}) table with object fields
+                _location           - (Location) world location of spot
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
 
