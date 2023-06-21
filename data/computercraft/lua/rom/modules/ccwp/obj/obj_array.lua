@@ -4,6 +4,8 @@ local ObjArray = {
 
 local corelog = require "corelog"
 
+local InputChecker = require "input_checker"
+
 local IObj = require "iobj"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
@@ -21,18 +23,25 @@ local objectFactory = ObjectFactory:getInstance()
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function ObjArray:new(o)
-    --[[
-        Constructs a ObjArray.
+function ObjArray:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Constructs an ObjArray.
 
         Parameters:
-            o                   - (table) table with
-                _objClassName   - (string) with className of objects in array (e.g. "Chest")
-    --]]
+            o                   + (table, {}) table with
+                _objClassName   - (string, "") with className of objects in array (e.g. "Chest")
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ObjArray:new: Invalid input") return nil end
 
-    o = o or {}   -- create object if user does not provide one
+    -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- transform Obj's if needed
+    o:transformObjTables()
+
+    -- end
     return o
 end
 
@@ -132,6 +141,9 @@ function ObjArray:transformObjTables()
     --[[
         Transform the objects in the array that are still objTable's into objects of type 'objClass'.
     --]]
+
+    -- check if empty
+    if table.getn(self) == 0 then return end
 
     -- get objClass
     local objClass = self:getObjClass()

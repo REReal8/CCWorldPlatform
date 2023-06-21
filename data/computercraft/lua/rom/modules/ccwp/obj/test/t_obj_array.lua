@@ -9,6 +9,7 @@ local ProductionSpot = require "mobj_production_spot"
 
 function T_ObjArray.T_All()
     -- base methods
+    T_ObjArray.T_new()
     T_ObjArray.T_IsOfType()
     T_ObjArray.T_isSame()
     T_ObjArray.T_copy()
@@ -37,6 +38,33 @@ local testObj2 = TestObj:new({
     _field1 = "field1_2",
     _field2 = 2,
 })
+
+function T_ObjArray.T_new()
+    -- prepare test
+    corelog.WriteToLog("* ObjArray:new() tests")
+
+    -- test full
+    local objArray = ObjArray:new({
+        _objClassName   = objClassName1,
+
+        testObj1,
+        testObj2,
+    }) if not objArray then corelog.Warning("objArray unexpectedly nil") return end
+    assert(objArray:getObjClassName() == objClassName1, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..objClassName1..")")
+    local expectedNElements = 2
+    assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
+    assert(objArray[1]:isSame(testObj1), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray[2]:isSame(testObj2), "obj 2 in objArray(="..textutils.serialise(objArray[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+
+    -- test default
+    objArray = ObjArray:new() if not objArray then return end
+    local defaultName = ""
+    assert(objArray:getObjClassName() == defaultName, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..defaultName..")")
+    expectedNElements = 0
+    assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
+
+    -- cleanup test
+end
 
 function T_ObjArray.T_IsOfType()
     -- prepare test
@@ -77,16 +105,15 @@ function T_ObjArray.T_IsOfType()
     -- cleanup test
 end
 
-local objArray1 = ObjArray:new({
-    _objClassName   = objClassName1,
-
-    testObj1,
-    testObj2,
-})
-
 function T_ObjArray.T_isSame()
     -- prepare test
     corelog.WriteToLog("* ObjArray:isSame() tests")
+    local objArray1 = ObjArray:new({
+        _objClassName   = objClassName1,
+
+        testObj1,
+        testObj2,
+    }) if not objArray1 then corelog.Warning("objArray1 unexpectedly nil") return end
     local objArray2 = ObjArray:new({
         _objClassName   = objClassName1,
 
@@ -121,6 +148,12 @@ end
 function T_ObjArray.T_copy()
     -- prepare test
     corelog.WriteToLog("* ObjArray:copy() tests")
+    local objArray1 = ObjArray:new({
+        _objClassName   = objClassName1,
+
+        testObj1,
+        testObj2,
+    }) if not objArray1 then corelog.Warning("objArray1 unexpectedly nil") return end
 
     -- test
     local copy = objArray1:copy()
@@ -143,7 +176,7 @@ function T_ObjArray.T_transformObjTables()
     corelog.WriteToLog("* ObjArray:transformObjTables() tests")
     local objArray2 = ObjArray:new({
         _objClassName   = objClassName1,
-    })
+    }) if not objArray2 then corelog.Warning("objArray2 unexpectedly nil") return end
     local testObj1Table = {
         _field1 = "field1_1",
         _field2 = 1,
@@ -198,6 +231,36 @@ function T_ObjArray.T_transformObjTables()
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
     objArray2[2] = nil
+
+    -- cleanup test
+end
+
+function T_ObjArray.T_new_transformsObjTables()
+    -- prepare test
+    corelog.WriteToLog("* ObjArray:new() transforms objTables tests")
+    local testObj1Table = {
+        _field1 = "field1_1",
+        _field2 = 1,
+    }
+    local testObj2Table = {
+        _field1 = "field1_2",
+        _field2 = 2,
+    }
+
+    -- test new transforms objTables
+    local objArray = ObjArray:new({
+        _objClassName   = objClassName1,
+
+        testObj1Table,
+        testObj2Table,
+    })
+    if not objArray then return end
+    assert(objArray:getObjClassName() == objClassName1, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..objClassName1..")")
+    local expectedNElements = 2
+    assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
+    local objClass = objArray:getObjClass()
+    assert(objClass.IsOfType(objArray[1]), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
+    assert(objClass.IsOfType(objArray[2]), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
 
     -- cleanup test
 end
