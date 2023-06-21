@@ -36,6 +36,10 @@ function Block:new(o)
     return o
 end
 
+function Block:getClassName()
+    return "Block"
+end
+
 function Block:getDx()
     return self._dx
 end
@@ -69,40 +73,40 @@ function Block:setName(name)
     self._name = name
 end
 
-function Block.HasFieldsOfType(block)
+function Block.HasFieldsOfType(obj)
     -- check
-    if type(block) ~= "table" then return false end
-    if type(block._name) ~= "string" then return false end
-    if (type(block._dx) ~= "nil" and type(block._dx) ~= "number") or (type(block._dy) ~= "nil" and type(block._dy) ~= "number") then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._name) ~= "string" then return false end
+    if (type(obj._dx) ~= "nil" and type(obj._dx) ~= "number") or (type(obj._dy) ~= "nil" and type(obj._dy) ~= "number") then return false end
 
     -- end
     return true
 end
 
-function Block.HasMethodsOfType(block)
+function Block.HasClassNameOfType(obj)
     -- check
-    if not block.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Block:getClassName() then return false end
 
     -- end
     return true
 end
 
-function Block.IsOfType(block)
+function Block.IsOfType(obj)
     -- check
-    local isOfType = Block.HasFieldsOfType(block) and Block.HasMethodsOfType(block)
+    local isOfType = Block.HasFieldsOfType(obj) and Block.HasClassNameOfType(obj)
 
     -- end
     return isOfType
 end
 
-function Block:isSame(block)
+function Block:isSame(obj)
     -- check input
-    if not Block.IsOfType(block) then return false end
+    if not Block.IsOfType(obj) then return false end
 
-    -- check same block
-    local isSame = self._name == block._name
+    -- check same object
+    local isSame = self._name == obj._name
     if self._dx ~= nil and self._dy ~= nil then
-        isSame = isSame and self._dx == block._dx and self._dy == block._dy
+        isSame = isSame and self._dx == obj._dx and self._dy == obj._dy
     end
 
     -- end
@@ -219,7 +223,7 @@ function Block.BlockListTransform(blockList)
     -- copy elements
     for i, block in ipairs(blockList) do
         if Block.HasFieldsOfType(block) then
-            if Block.HasMethodsOfType(block) then
+            if Block.HasClassNameOfType(block) then
                 blockListTransform[i] = block -- already a Block
             else
                 blockListTransform[i] = Block:new(block) -- transform

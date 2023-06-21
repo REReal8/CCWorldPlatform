@@ -92,9 +92,9 @@ function Chest.HasFieldsOfType(obj)
     return true
 end
 
-function Chest.HasMethodsOfType(obj)
+function Chest.HasClassNameOfType(obj)
     -- check
-    if not obj.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Chest:getClassName() then return false end
 
     -- end
     return true
@@ -102,7 +102,7 @@ end
 
 function Chest.IsOfType(obj)
     -- check
-    local isOfType = Chest.HasFieldsOfType(obj) and Chest.HasMethodsOfType(obj)
+    local isOfType = Chest.HasFieldsOfType(obj) and Chest.HasClassNameOfType(obj)
 
     -- end
     return isOfType

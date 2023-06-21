@@ -136,40 +136,40 @@ function Silo:getLocation()
     return self._location
 end
 
-function Silo.HasFieldsOfType(chest)
+function Silo.HasFieldsOfType(obj)
     -- check
-    if type(chest) ~= "table" then return false end
-    if type(chest._id) ~= "string" then return false end
-    if not Location.IsOfType(chest._location) then return false end
-    if type(chest._accessDirection) ~= "string" then return false end
-    if not Inventory.IsOfType(chest._inventory) then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._id) ~= "string" then return false end
+    if not Location.IsOfType(obj._location) then return false end
+    if type(obj._accessDirection) ~= "string" then return false end
+    if not Inventory.IsOfType(obj._inventory) then return false end
 
     -- end
     return true
 end
 
-function Silo.HasMethodsOfType(chest)
+function Silo.HasClassNameOfType(obj)
     -- check
-    if not chest.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Silo:getClassName() then return false end
 
     -- end
     return true
 end
 
-function Silo.IsOfType(chest)
+function Silo.IsOfType(obj)
     -- check
-    return Silo.HasFieldsOfType(chest) and Silo.HasMethodsOfType(chest)
+    return Silo.HasFieldsOfType(obj) and Silo.HasClassNameOfType(obj)
 end
 
-function Silo:isSame(chest)
+function Silo:isSame(obj)
     -- check input
-    if not Silo.IsOfType(chest) then return false end
+    if not Silo.IsOfType(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == chest._id
-                and self._location:isSame(chest._location)
-                and self._accessDirection == chest._accessDirection
-                and self._inventory:isSame(chest._inventory)
+    local isSame =  self._id == obj._id
+                and self._location:isSame(obj._location)
+                and self._accessDirection == obj._accessDirection
+                and self._inventory:isSame(obj._inventory)
 
     -- end
     return isSame

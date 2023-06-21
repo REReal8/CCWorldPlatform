@@ -46,6 +46,10 @@ function Location:new(...)
     return o
 end
 
+function Location:getClassName()
+    return "Location"
+end
+
 function Location:getX()
     return self._x
 end
@@ -88,51 +92,51 @@ function Location:setDY(dy)
     self._dy = dy
 end
 
-function Location.HasFieldsOfType(o)
+function Location.HasFieldsOfType(obj)
     -- check
-    if type(o) ~= "table" then return false end
-    if type(o._x) ~= "number" then return false end
-    if type(o._y) ~= "number" then return false end
-    if type(o._z) ~= "number" then return false end
-    if type(o._dx) ~= "number" then return false end
-    if type(o._dy) ~= "number" then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._x) ~= "number" then return false end
+    if type(obj._y) ~= "number" then return false end
+    if type(obj._z) ~= "number" then return false end
+    if type(obj._dx) ~= "number" then return false end
+    if type(obj._dy) ~= "number" then return false end
 
     -- end
     return true
 end
 
-function Location.HasMethodsOfType(o)
+function Location.HasClassNameOfType(obj)
     -- check
-    if not o.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Location:getClassName() then return false end
 
     -- end
     return true
 end
 
-function Location.IsOfType(o)
+function Location.IsOfType(obj)
     -- check
-    local isOfType = Location.HasFieldsOfType(o) and Location.HasMethodsOfType(o)
+    local isOfType = Location.HasFieldsOfType(obj) and Location.HasClassNameOfType(obj)
 
     -- end
     return isOfType
 end
 
-function Location:hasSamePosition(o)
+function Location:hasSamePosition(obj)
     -- check same
-    return self._x == o._x and self._y == o._y and self._z == o._z
+    return self._x == obj._x and self._y == obj._y and self._z == obj._z
 end
 
-function Location:hasSameDirection(o)
+function Location:hasSameDirection(obj)
     -- check same
-    return self._dx == o._dx and self._dy == o._dy
+    return self._dx == obj._dx and self._dy == obj._dy
 end
 
-function Location:isSame(o)
+function Location:isSame(obj)
     -- check input
-    if not Location.IsOfType(o) then return false end
+    if not Location.IsOfType(obj) then return false end
 
-    -- check same
-    local isSame = self:hasSamePosition(o) and self:hasSameDirection(o)
+    -- check same object
+    local isSame = self:hasSamePosition(obj) and self:hasSameDirection(obj)
 
     -- end
     return isSame

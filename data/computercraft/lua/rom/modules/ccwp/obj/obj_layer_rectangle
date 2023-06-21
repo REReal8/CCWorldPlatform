@@ -48,6 +48,10 @@ function LayerRectangle:new(...)
     return o
 end
 
+function LayerRectangle:getClassName()
+    return "LayerRectangle"
+end
+
 function LayerRectangle:getCode(iColumn, iRow)
     -- check
     if iColumn < 1 or iColumn > self:getNColumns() then corelog.Error("LayerRectangle:getCode: iColumn(="..iColumn..") not within range i.e. between 1 and "..self:getNColumns()) return "" end
@@ -94,22 +98,38 @@ function LayerRectangle:setCodeArray(codeArray)
     self._codeArray = codeArray -- note: no deep copy
 end
 
-function LayerRectangle.IsOfType(layer)
+function LayerRectangle.HasFieldsOfType(obj)
     -- check
-    if type(layer) ~= "table" then return false end
-    if not LayerRectangle.IsCodeArray(layer._codeArray) or not LayerRectangle.IsCodeMap(layer._codeMap) then return false end
-    if not layer.new then corelog.Warning("obj_layer_rectangle.IsOfType: default methods seem not to have been inherited") return false end
+    if type(obj) ~= "table" then return false end
+    if not LayerRectangle.IsCodeArray(obj._codeArray) or not LayerRectangle.IsCodeMap(obj._codeMap) then return false end
 
+    -- end
     return true
 end
 
-function LayerRectangle:isSame(layer)
-    -- check input
-    if not LayerRectangle.IsOfType(layer) then return false end
+function LayerRectangle.HasClassNameOfType(obj)
+    -- check
+    if not obj.getClassName or obj:getClassName() ~= LayerRectangle:getClassName() then return false end
 
-    -- check same rectangle
-    local isSame =  LayerRectangle.IsSameCodeArray(self._codeArray, layer._codeArray) and
-                    LayerRectangle.IsSameCodeMap(self._codeMap, layer._codeMap)
+    -- end
+    return true
+end
+
+function LayerRectangle.IsOfType(obj)
+    -- check
+    local isOfType = LayerRectangle.HasFieldsOfType(obj) and LayerRectangle.HasClassNameOfType(obj)
+
+    -- end
+    return isOfType
+end
+
+function LayerRectangle:isSame(obj)
+    -- check input
+    if not LayerRectangle.IsOfType(obj) then return false end
+
+    -- check same object
+    local isSame =  LayerRectangle.IsSameCodeArray(self._codeArray, obj._codeArray) and
+                    LayerRectangle.IsSameCodeMap(self._codeMap, obj._codeMap)
 
     -- end
     return isSame
@@ -496,7 +516,7 @@ function LayerRectangle.TransformToCodeArray(...)
     -- copy elements
     for code, block in pairs(codeArray) do
         if Block.HasFieldsOfType(block) then
-            if Block.HasMethodsOfType(block) then
+            if Block.HasClassNameOfType(block) then
                 codeArrayTransform[code] = block -- already a Block
             else
                 codeArrayTransform[code] = Block:new(block) -- transform

@@ -265,40 +265,40 @@ function URL:setURI(fullURI, suppressError)
     self:setQueryURI(queryURI)
 end
 
-function URL.HasFieldsOfType(url)
+function URL.HasFieldsOfType(obj)
     -- check
-    if type(url) ~= "table" then return false end
-    if type(url._host) ~= "string" then return false end
-    if type(url._port) ~= "nil" and type(url._port) ~= "number" then return false end
-    if type(url._path) ~= "string" then return false end
-    if type(url._query) ~= "table" then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._host) ~= "string" then return false end
+    if type(obj._port) ~= "nil" and type(obj._port) ~= "number" then return false end
+    if type(obj._path) ~= "string" then return false end
+    if type(obj._query) ~= "table" then return false end
 
     -- end
     return true
 end
 
-function URL.HasMethodsOfType(url)
+function URL.HasClassNameOfType(obj)
     -- check
-    if not url.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= URL:getClassName() then return false end
 
     -- end
     return true
 end
 
-function URL.IsOfType(url)
+function URL.IsOfType(obj)
     -- check
-    local isOfType = URL.HasFieldsOfType(url) and URL.HasMethodsOfType(url)
+    local isOfType = URL.HasFieldsOfType(obj) and URL.HasClassNameOfType(obj)
 
     -- end
     return isOfType
 end
 
-function URL:isSame(url)
+function URL:isSame(obj)
     -- check input
-    if not URL.IsOfType(url) then return false end
+    if not URL.IsOfType(obj) then return false end
 
     -- check same object
-    local isSame = self:getURI() == url:getURI()
+    local isSame = self:getURI() == obj:getURI()
 
     -- end
     return isSame

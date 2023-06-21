@@ -55,6 +55,10 @@ function Host:new(...)
     return o
 end
 
+function Host:getClassName()
+    return "Host"
+end
+
 function Host:getHostName()
     return self._hostName
 end
@@ -68,9 +72,9 @@ function Host.HasFieldsOfType(obj)
     return true
 end
 
-function Host.HasMethodsOfType(obj)
+function Host.HasClassNameOfType(obj)
     -- check
-    if not obj.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Host:getClassName() then return false end
 
     -- end
     return true
@@ -78,7 +82,7 @@ end
 
 function Host.IsOfType(obj)
     -- check
-    local isOfType = Host.HasFieldsOfType(obj) and Host.HasMethodsOfType(obj)
+    local isOfType = Host.HasFieldsOfType(obj) and Host.HasClassNameOfType(obj)
 
     -- end
     return isOfType
