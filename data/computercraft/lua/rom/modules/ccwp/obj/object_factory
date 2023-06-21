@@ -38,7 +38,7 @@ end
 function ObjectFactory:create(className, objectFieldsTable)
 --    local corelog = require "corelog"
 --    corelog.WriteToLog("about to create "..className.." with "..textutils.serialise(objectFieldsTable))
-    local class = self.classes[className]
+    local class = self:getClass(className)
     if class then
         return class:new(objectFieldsTable)
     else
@@ -54,8 +54,12 @@ function ObjectFactory:registerClass(className, class)
     return self:isRegistered(className)
 end
 
+function ObjectFactory:getClass(className)
+    return self.classes[className]
+end
+
 function ObjectFactory:isRegistered(className)
-    return self.classes[className] ~= nil
+    return self:getClass(className) ~= nil
 end
 
 function ObjectFactory:delistClass(className)
