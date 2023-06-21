@@ -127,9 +127,9 @@ function Factory.HasFieldsOfType(obj)
     return true
 end
 
-function Factory.HasMethodsOfType(obj)
+function Factory.HasClassNameOfType(obj)
     -- check
-    if not obj.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Factory:getClassName() then return false end
 
     -- end
     return true
@@ -137,7 +137,7 @@ end
 
 function Factory.IsOfType(obj)
     -- check
-    local isOfType = Factory.HasFieldsOfType(obj) and Factory.HasMethodsOfType(obj)
+    local isOfType = Factory.HasFieldsOfType(obj) and Factory.HasClassNameOfType(obj)
 
     -- end
     return isOfType
@@ -175,14 +175,14 @@ function Factory:copy()
     return copy
 end
 
---                _     _ _         __                  _   _
---               | |   | (_)       / _|                | | (_)
---    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---   | |
---   |_|
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
 
 local function FindSiteByLocation(baseLocation)
     -- sites ophalen

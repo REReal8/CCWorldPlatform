@@ -58,9 +58,9 @@ function ProductionSpot.HasFieldsOfType(obj)
     return true
 end
 
-function ProductionSpot.HasMethodsOfType(obj)
+function ProductionSpot.HasClassNameOfType(obj)
     -- check
-    if not obj.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= ProductionSpot:getClassName() then return false end
 
     -- end
     return true
@@ -68,7 +68,7 @@ end
 
 function ProductionSpot.IsOfType(obj)
     -- check
-    local isOfType = ProductionSpot.HasFieldsOfType(obj) and ProductionSpot.HasMethodsOfType(obj)
+    local isOfType = ProductionSpot.HasFieldsOfType(obj) and ProductionSpot.HasClassNameOfType(obj)
 
     -- end
     return isOfType
