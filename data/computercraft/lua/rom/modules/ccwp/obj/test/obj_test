@@ -74,40 +74,40 @@ function TestObj:setField3(fieldValue)
     self._field3 = fieldValue
 end
 
-function TestObj.HasFieldsOfType(testObj)
+function TestObj.HasFieldsOfType(obj)
     -- check
-    if type(testObj) ~= "table" then return false end
-    if type(testObj._field1) ~= "string" then return false end
-    if type(testObj._field2) ~= "number" or (type(testObj._field3) ~= "nil" and type(testObj._field3) ~= "number") then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._field1) ~= "string" then return false end
+    if type(obj._field2) ~= "number" or (type(obj._field3) ~= "nil" and type(obj._field3) ~= "number") then return false end
 
     -- end
     return true
 end
 
-function TestObj.HasMethodsOfType(testObj)
+function TestObj.HasClassNameOfType(obj)
     -- check
-    if not testObj.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= TestObj:getClassName() then return false end
 
     -- end
     return true
 end
 
-function TestObj.IsOfType(testObj)
+function TestObj.IsOfType(obj)
     -- check
-    local isOfType = TestObj.HasFieldsOfType(testObj) and TestObj.HasMethodsOfType(testObj)
+    local isOfType = TestObj.HasFieldsOfType(obj) and TestObj.HasClassNameOfType(obj)
 
     -- end
     return isOfType
 end
 
-function TestObj:isSame(testObj)
+function TestObj:isSame(obj)
     -- check input
-    if not TestObj.IsOfType(testObj) then return false end
+    if not TestObj.IsOfType(obj) then return false end
 
     -- check same
-    local isSame = self._field1 == testObj._field1 and self._field2 == testObj._field2
+    local isSame = self._field1 == obj._field1 and self._field2 == obj._field2
     if self._field3 ~= nil then
-        isSame = isSame and self._field3 == testObj._field3
+        isSame = isSame and self._field3 == obj._field3
     end
 
     -- end

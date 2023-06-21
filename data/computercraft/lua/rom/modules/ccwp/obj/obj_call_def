@@ -42,6 +42,10 @@ function CallDef:new(...)
     return o
 end
 
+function CallDef:getClassName()
+    return "CallDef"
+end
+
 function CallDef:getModuleName()
     return self._moduleName
 end
@@ -66,40 +70,40 @@ function CallDef:setData(data)
     self._data = data
 end
 
-function CallDef.HasFieldsOfType(callback)
+function CallDef.HasFieldsOfType(obj)
     -- check
-    if type(callback) ~= "table" then return false end
-    if type(callback._moduleName) ~= "string" then return false end
-    if type(callback._methodName) ~= "string" then return false end
-    if type(callback._data) ~= "table" then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._moduleName) ~= "string" then return false end
+    if type(obj._methodName) ~= "string" then return false end
+    if type(obj._data) ~= "table" then return false end
 
     -- end
     return true
 end
 
-function CallDef.HasMethodsOfType(callback)
+function CallDef.HasClassNameOfType(obj)
     -- check
-    if not callback.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= CallDef:getClassName() then return false end
 
     -- end
     return true
 end
 
-function CallDef.IsOfType(callback)
+function CallDef.IsOfType(obj)
     -- check
-    local isOfType = CallDef.HasFieldsOfType(callback) and CallDef.HasMethodsOfType(callback)
+    local isOfType = CallDef.HasFieldsOfType(obj) and CallDef.HasClassNameOfType(obj)
 
     -- end
     return isOfType
 end
 
-function CallDef:isSame(callback)
+function CallDef:isSame(obj)
     -- check input
-    if not CallDef.IsOfType(callback) then return false end
+    if not CallDef.IsOfType(obj) then return false end
 
     -- check same
-    local isSame = self._moduleName == callback._moduleName and self._methodName == callback._methodName
-    isSame = isSame and self._data == callback._data -- ToDo: note: now an identity check. consider checking elements
+    local isSame = self._moduleName == obj._moduleName and self._methodName == obj._methodName
+    isSame = isSame and self._data == obj._data -- ToDo: note: now an identity check. consider checking elements
 
     -- end
     return isSame

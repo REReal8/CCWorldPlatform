@@ -87,9 +87,9 @@ function Turtle.HasFieldsOfType(obj)
     return true
 end
 
-function Turtle.HasMethodsOfType(obj)
+function Turtle.HasClassNameOfType(obj)
     -- check
-    if not obj.new then return false end
+    if not obj.getClassName or obj:getClassName() ~= Turtle:getClassName() then return false end
 
     -- end
     return true
@@ -97,7 +97,7 @@ end
 
 function Turtle.IsOfType(obj)
     -- check
-    local isOfType = Turtle.HasFieldsOfType(obj) and Turtle.HasMethodsOfType(obj)
+    local isOfType = Turtle.HasFieldsOfType(obj) and Turtle.HasClassNameOfType(obj)
 
     -- end
     return isOfType
