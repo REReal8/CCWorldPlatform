@@ -2,7 +2,7 @@ local library = {}
 
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/mobj/?"
+    package.path = package.path..";/rom/modules/ccwp/mobj/?;/rom/modules/ccwp/mobj/?.lua"
 end
 
 function library.Setup()
@@ -24,6 +24,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
+    moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
 
