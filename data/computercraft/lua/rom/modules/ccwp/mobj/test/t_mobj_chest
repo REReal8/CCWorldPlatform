@@ -60,14 +60,14 @@ function T_Chest.T_Getters()
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
     local className = "Chest"
-    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test
-    assert(chest:getClassName() == className, "gotten className(="..chest:getClassName()..") not the same as expected(="..className..")")
-    assert(chest:getId() == id, "gotten id(="..chest:getId()..") not the same as expected(="..id..")")
-    assert(chest:getLocation() == location1, "gotten getLocation(="..textutils.serialize(chest:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
-    assert(chest:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..chest:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
-    assert(chest:getInventory():isSame(inventory1), "gotten getInventory(="..textutils.serialize(chest:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
+    assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
+    assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
+    assert(obj:getLocation() == location1, "gotten getLocation(="..textutils.serialize(obj:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(obj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..obj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
+    assert(obj:getInventory():isSame(inventory1), "gotten getInventory(="..textutils.serialize(obj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
 
     -- cleanup test
 end
@@ -80,7 +80,7 @@ function T_Chest.CreateChest(location, accessDirection, inventory, id)
     inventory = inventory or inventory1
 
     -- create Chest object
-    local chest = Chest:new({
+    local obj = Chest:new({
         _id                     = id,
 
         _location               = location,
@@ -89,16 +89,16 @@ function T_Chest.CreateChest(location, accessDirection, inventory, id)
     })
 
     -- end
-    return chest
+    return obj
 end
 
 function T_Chest.T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* Chest.IsOfType() tests")
-    local chest = T_Chest.CreateChest() if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test valid
-    local isOfType = Chest.IsOfType(chest)
+    local isOfType = Chest.IsOfType(obj)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
@@ -108,25 +108,25 @@ function T_Chest.T_IsOfType()
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
     -- test invalid _location
-    chest._location = "a string"
-    isOfType = Chest.IsOfType(chest)
+    obj._location = "a string"
+    isOfType = Chest.IsOfType(obj)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    chest._location = location1
+    obj._location = location1
 
     -- test invalid _accessDirection
-    chest._accessDirection = 20
-    isOfType = Chest.IsOfType(chest)
+    obj._accessDirection = 20
+    isOfType = Chest.IsOfType(obj)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    chest._accessDirection = accessDirection1
+    obj._accessDirection = accessDirection1
 
     -- test invalid _inventory
-    chest._inventory = 20
-    isOfType = Chest.IsOfType(chest)
+    obj._inventory = 20
+    isOfType = Chest.IsOfType(obj)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    chest._inventory = inventory1
+    obj._inventory = inventory1
 
     -- cleanup test
 end
@@ -135,34 +135,34 @@ function T_Chest.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Chest:isSame() tests")
     local id = coreutils.NewId()
-    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test same
-    local chest1 = T_Chest.CreateChest(location1, accessDirection1, inventory1, id)
-    local isSame = chest1:isSame(chest)
+    local obj1 = T_Chest.CreateChest(location1, accessDirection1, inventory1, id)
+    local isSame = obj1:isSame(obj)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different _location
-    chest._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
-    isSame = chest1:isSame(chest)
+    obj._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
+    isSame = obj1:isSame(obj)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    chest._location = location1
+    obj._location = location1
 
     -- test different _accessDirection
-    chest._accessDirection = "bottom"
-    isSame = chest1:isSame(chest)
+    obj._accessDirection = "bottom"
+    isSame = obj1:isSame(obj)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    chest._accessDirection = accessDirection1
+    obj._accessDirection = accessDirection1
 
     -- test different _itemsInventory
-    chest._inventory = { "ToDo: add some elements here" } -- ToDo
-    isSame = chest1:isSame(chest)
+    obj._inventory = { "ToDo: add some elements here" } -- ToDo
+    isSame = obj1:isSame(obj)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    chest._inventory = inventory1
+    obj._inventory = inventory1
 
     -- cleanup test
 end
@@ -170,11 +170,11 @@ end
 function T_Chest.T_copy()
     -- prepare test
     corelog.WriteToLog("* Chest:copy() tests")
-    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory1) if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test
-    local copy = chest:copy()
-    assert(copy:isSame(chest), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(chest, compact)..")")
+    local copy = obj:copy()
+    assert(copy:isSame(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
 
     -- cleanup test
 end
@@ -189,9 +189,9 @@ end
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:provideItemsTo_AOSrv() test (to "..toStr..")")
-    local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = enterprise_chests:getObjectLocator(chest)
+    local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -209,7 +209,7 @@ local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     })
 
     -- test
-    local scheduleResult = chest:provideItemsTo_AOSrv({
+    local scheduleResult = obj:provideItemsTo_AOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     }, callback)
@@ -227,8 +227,8 @@ end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining Chest 2") return end
-    local itemDepotLocator = enterprise_chests:saveObject(chest2)
+    local obj2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
+    local itemDepotLocator = enterprise_chests:saveObject(obj2)
 
     -- test
     provideItemsTo_AOSrv_Test(itemDepotLocator, "Chest")
@@ -257,9 +257,9 @@ end
 local function storeItemsFrom_ASrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:storeItemsFrom_ASrv() test (to "..toStr..")")
-    local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = enterprise_chests:getObjectLocator(chest)
+    local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -279,7 +279,7 @@ local function storeItemsFrom_ASrv_Test(itemsLocator, toStr)
     })
 
     -- test
-    local scheduleResult = chest:storeItemsFrom_ASrv({
+    local scheduleResult = obj:storeItemsFrom_ASrv({
         itemsLocator    = itemsLocator,
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
@@ -296,8 +296,8 @@ end
 
 function T_Chest.T_storeItemsFrom_ASrv_Chest()
     -- prepare test
-    local chest2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining Chest 2") return end
-    local itemsLocator = enterprise_chests:saveObject(chest2)
+    local obj2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
+    local itemsLocator = enterprise_chests:saveObject(obj2)
 
     -- test
     storeItemsFrom_ASrv_Test(itemsLocator, "Chest")
@@ -326,7 +326,7 @@ end
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local chest = T_Chest.CreateChest() if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -334,11 +334,11 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local itemDepotLocation = Location:new(coremove.GetLocation())
 
     -- test
-    local needsTo_Provide = chest:needsTo_ProvideItemsTo_SOSrv({
+    local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
-    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, chest:getLocation())
+    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, obj:getLocation())
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
@@ -354,18 +354,18 @@ function T_Chest.T_can_ProvideItems_QOSrv()
             { name = "minecraft:dirt", count = 20 },
         }
     })
-    local chest = T_Chest.CreateChest(location1, accessDirection1, inventory) if not chest then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test can
     local itemName = "minecraft:dirt"
     local itemCount = 10
-    local serviceResults = chest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     -- test can not
     itemName = "minecraft:furnace"
     itemCount = 1
-    serviceResults = chest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
@@ -374,8 +374,8 @@ end
 function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local chest = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not chest then corelog.Error("failed obtaining Chest") return end
-    local chestLocator = enterprise_chests:getObjectLocator(chest)
+    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local callback = Callback:new({
         _moduleName     = "T_Chest",
@@ -387,7 +387,7 @@ function T_Chest.T_updateChestRecord_AOSrv()
 
 
     -- test
-    local scheduleResult = chest:updateChestRecord_AOSrv({}, callback)
+    local scheduleResult = obj:updateChestRecord_AOSrv({}, callback)
     assert(scheduleResult == true, "failed to schedule async service")
 end
 
