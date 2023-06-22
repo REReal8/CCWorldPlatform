@@ -73,18 +73,13 @@ function InputChecker.Check(description, ...)
                 end
 
                 -- wellicht default toepassen
+                local argumentChanged = false
                 if argument == nil and defaultPresent then
                     if theDefault ~= nil then
                         argument = theDefault
+                        argumentChanged = true
                     else
                         typeType = "nil"
-                    end
-
-                    -- possibly change parent field to default argument
-                    if indent > 1 then
-                        if type(indenting[ indent - 1 ]) == "table" then
-                            indenting[ indent - 1 ][ parameter ] = argument
-                        else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false end
                     end
                 end
 
@@ -97,12 +92,20 @@ function InputChecker.Check(description, ...)
                         local object = objectFactory:create(typeType, argument)
                         if object then
                             argument = object
+                            argumentChanged = true
                         else
                             correctArgumentType = false
                         end
                     end
                 end
                 if not correctArgumentType then corelog.Error(callingFunctionStr..": argument '"..parameter.."' not a "..typeType.." (type="..type(argument)..")") result = false end
+
+                -- possibly change parent field to changed argument
+                if argumentChanged and (indent > 1) then
+                    if type(indenting[ indent - 1 ]) == "table" then
+                        indenting[ indent - 1 ][ parameter ] = argument
+                    else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false end
+                end
 
                 -- is deze gewenst om terug te geven?
                 if needed == '+' then table.insert(returns, argument) end
