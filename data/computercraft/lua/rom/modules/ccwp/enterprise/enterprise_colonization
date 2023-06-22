@@ -79,7 +79,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- add default ItemSuppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()})
-    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_manufacturing.GetHostLocator_Att()})
+    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_manufacturing:getHostLocator()})
 
     -- construct arguments
     local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})

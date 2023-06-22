@@ -14,7 +14,6 @@ local Factory = {
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local Obj = require "obj"
 local InputChecker = require "input_checker"
@@ -35,11 +34,7 @@ local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_chests = require "enterprise_chests"
-
-local db = {
-    hostName    = "enterprise_manufacturing",
-    psSites     = "sites",
-}
+local enterprise_manufacturing
 
 --[[
     The Factory mobj represents a factory in the minecraft world and provides (production) services to operate on that Factory.
@@ -80,6 +75,12 @@ function Factory:new(...)
     -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- transform array's of objectTable's to array's of objects
+    o._inputLocators = Obj.TransformToObjArray(o._inputLocators, URL)
+    o._outputLocators = Obj.TransformToObjArray(o._outputLocators, URL)
+    o._craftingSpots = Obj.TransformToObjArray(o._craftingSpots, ProductionSpot)
+    o._smeltingSpots = Obj.TransformToObjArray(o._smeltingSpots, ProductionSpot)
 
     -- end
     return o
@@ -186,15 +187,20 @@ end
 
 local function FindSiteByLocation(baseLocation)
     -- sites ophalen
-    local sites = coredht.GetData(db.hostName, db.psSites)
+    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+    local sites = enterprise_manufacturing:getObjects("Factory")
 
     -- check if we have any site
     if type(sites) ~= "table" then corelog.Warning("Factory.FindSiteByLocation: no sites present") return nil end
 
     -- loop on sites
     for k, site in pairs(sites) do
-        local siteBaseLocation = Location:new(site.baseLocation)
+        -- convert to object
+        site = Factory:new(site)
+        if not Factory.IsOfType(site) then corelog.Error("Factory.FindSiteByLocation: Invalid site") return nil end
+
         -- is this the one?
+        local siteBaseLocation = site:getBaseLocation()
         if siteBaseLocation:isSame(baseLocation) then
             return site
         end
@@ -235,9 +241,13 @@ function Factory.StopSite_ASrv(...)
     -- wait for active work done
     -- ToDo: implement
 
-    -- remove site from factory
-    corelog.WriteToLog("  Factory.StopSite_ASrv: Removing site "..site.siteId)
-    coredht.SaveData(nil, db.hostName, db.psSites, site.siteId)
+    -- get locator
+    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+    local objectLocator = enterprise_manufacturing:getObjectLocator(site)
+
+    -- remove site from enterprise
+    corelog.WriteToLog("  Factory.StopSite_ASrv: Removing site "..site:getId())
+    enterprise_manufacturing:deleteResource(objectLocator)
 
     -- do callback
     return callback:call({success = true})
@@ -264,7 +274,7 @@ local function GetAvailableCraftSpot(site)
     if type(site) ~="table" then corelog.Error("Factory.GetAvailableCraftSpot: Invalid site") return nil end
 
     -- find first available spot
-    for i, spot in ipairs(site.craftingSpots) do
+    for i, spot in ipairs(site:getCraftingSpots()) do
         -- ToDo: consider checking availability
 
         -- take first
@@ -280,7 +290,7 @@ local function GetAvailableSmeltSpot(site)
     if type(site) ~="table" then corelog.Error("Factory.GetAvailableSmeltSpot: Invalid site") return nil end
 
     -- find first available spot
-    for i, spot in ipairs(site.smeltingSpots) do
+    for i, spot in ipairs(site:getSmeltingSpots()) do
         -- ToDo: consider checking availability
 
         -- take first
@@ -306,7 +316,8 @@ function Factory.GetAvailableSiteData(...)
     if not checkSuccess then corelog.Error("Factory.GetAvailableSiteData: Invalid input") return nil end
 
     -- sites ophalen
-    local sites = coredht.GetData(db.hostName, db.psSites)
+    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+    local sites = enterprise_manufacturing:getObjects("Factory")
     if type(sites) ~= "table" then corelog.Warning("Factory.GetAvailableSiteData: no sites present") return nil end
 
     -- ..
@@ -317,20 +328,19 @@ function Factory.GetAvailableSiteData(...)
     local availableSitesInfo = {
     }
     for k, site in pairs(sites) do
-        -- check
-        if type(site) ~="table" then corelog.Error("Factory.GetAvailableSiteData: Invalid site") return nil end
-        local siteId = site.siteId
-        if type(siteId) ~="string" then corelog.Error("Factory.GetAvailableSiteData: Invalid siteId") return nil end
+        -- convert to object
+        site = Factory:new(site)
+        if not Factory.IsOfType(site) then corelog.Error("Factory.GetAvailableSiteData: Invalid site") return nil end
 
         -- get available inputLocator
-        local inputLocator = URL:new(GetAvailableLocator(site.inputLocators))
+        local inputLocator = URL:new(GetAvailableLocator(site:getInputLocators()))
         if inputLocator == nil then
-            corelog.Warning("Factory.GetAvailableSiteData: No available inputLocator in site "..siteId)
+            corelog.Warning("Factory.GetAvailableSiteData: No available inputLocator in site "..site:getId())
         else
             -- get available outputLocator
-            local outputLocator = URL:new(GetAvailableLocator(site.outputLocators))
+            local outputLocator = URL:new(GetAvailableLocator(site:getOutputLocators()))
             if outputLocator == nil then
-                corelog.Warning("Factory.GetAvailableSiteData: No available outputLocator in site "..siteId)
+                corelog.Warning("Factory.GetAvailableSiteData: No available outputLocator in site "..site:getId())
             else
                 -- check it can craft recipe
                 if craftRecipe ~= nil then
@@ -345,7 +355,7 @@ function Factory.GetAvailableSiteData(...)
                             productionRecipe    = coreutils.DeepCopy(craftRecipe),
                         })
                     else
-                        corelog.Warning("Factory.GetAvailableSiteData: No available crafting spot in site "..siteId)
+                        corelog.Warning("Factory.GetAvailableSiteData: No available crafting spot in site "..site:getId())
                     end
                 end
 
@@ -361,7 +371,7 @@ function Factory.GetAvailableSiteData(...)
                             productionRecipe    = coreutils.DeepCopy(smeltRecipe),
                         })
                     else
-                        corelog.Warning("Factory.GetAvailableSiteData: No available smelting spot in site "..siteId)
+                        corelog.Warning("Factory.GetAvailableSiteData: No available smelting spot in site "..site:getId())
                     end
                 end
             end
@@ -495,7 +505,7 @@ function Factory.ProduceItem_ASrv(...)
     if productionMethod == "craft" then
         -- add crafting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "CraftItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "CraftItem_ASrv" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
@@ -514,7 +524,7 @@ function Factory.ProduceItem_ASrv(...)
     elseif productionMethod == "smelt" then
         -- add smelting step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
                 { keyDef = "turtleInputItemsLocator", sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
@@ -525,7 +535,7 @@ function Factory.ProduceItem_ASrv(...)
 
         -- add pickup step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "mobj_factory", serviceName = "Pickup_ASrv" }, stepDataDef = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "Pickup_ASrv" }, stepDataDef = {
                 { keyDef = "pickUpTime"             , sourceStep = 2, sourceKeyDef = "smeltReadyTime" },
                 { keyDef = "productionSpot"         , sourceStep = 0, sourceKeyDef = "productionSpot" },
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },

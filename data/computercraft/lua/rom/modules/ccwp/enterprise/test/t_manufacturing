@@ -25,7 +25,7 @@ local callback = Callback:new({
 })
 
 function t_manufacturing.T_ProvideItemsTo_Craft()
-    local itemsLocator = enterprise_manufacturing.GetHostLocator_Att()
+    local itemsLocator = enterprise_manufacturing:getHostLocator()
     local items = { ["minecraft:birch_planks"] = 12 }
     itemsLocator:setQuery(items)
 
@@ -37,7 +37,7 @@ function t_manufacturing.T_ProvideItemsTo_Craft()
 end
 
 function t_manufacturing.T_ProvideItemsTo_Smelt()
-    local itemsLocator = enterprise_manufacturing.GetHostLocator_Att()
+    local itemsLocator = enterprise_manufacturing:getHostLocator()
     local items = { ["minecraft:charcoal"] = 3 }
     itemsLocator:setQuery(items)
 
@@ -137,7 +137,7 @@ function t_manufacturing.StopSite(baseLocation)
 end
 
 function t_manufacturing.T_DeleteSites()
-    enterprise_manufacturing.DeleteSites()
+    enterprise_manufacturing:deleteObjects("Factory")
 end
 
 return t_manufacturing

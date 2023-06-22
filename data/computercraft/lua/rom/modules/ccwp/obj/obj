@@ -3,6 +3,8 @@ local Obj = {
 
 local corelog = require "corelog"
 
+local IObj = require "iobj"
+
 --[[
     This module implements the class ("interface") Obj.
 
@@ -82,6 +84,45 @@ function Obj.ObjArray_Copy(objArray)
 
     -- end
 	return copy
+end
+
+function Obj.TransformToObjArray(objTableArray, class)
+    --[[
+        Transform an array with objTable's into an array of objects of type 'class'.
+
+        Parameters:
+            objTableArray       + (table) array with object tables
+            class               + (Obj) class of objects to create
+    --]]
+
+    -- check input
+    if type(objTableArray) ~= "table" then corelog.Error("Obj.TransformToObjArray: invalid objArray: "..type(objTableArray)) return nil end
+    if not IObj.ImplementsInterface(class) then corelog.Error("Obj.TransformToObjArray: invalid class="..textutils.serialize(class)) return nil end
+
+    local objArray = {}
+    -- transform objectTable's
+    for i, objTable in ipairs(objTableArray) do
+        -- transform into obj if needed
+        local obj = nil
+        if class.IsOfType(objTable) then
+            obj = objTable -- already an object of type 'class'
+        else
+            obj = class:new(objTable) -- transform
+        end
+
+        -- check obj obtained
+        if class.IsOfType(obj) then
+            -- add to array
+            objArray[i] = obj
+        else
+            local className = "class"
+            if class.getClassName then className = class:getClassName() end
+            corelog.Warning("Obj.TransformToObjArray: failed transforming objTable(="..textutils.serialize(objTable)..") to a "..className.." object => skipped")
+        end
+    end
+
+    -- end
+	return objArray
 end
 
 return Obj

@@ -186,7 +186,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
 
         -- check there is a factory
         local enterprise_manufacturing = require "enterprise_manufacturing"
-        local aFactoryExists = enterprise_manufacturing.GetNumberOfSites_Att() > 0
+        local aFactoryExists = enterprise_manufacturing:getNumberOfObjects("Factory") > 0
         if not aFactoryExists then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: not factory found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
         -- determine fuelNeed by factory
