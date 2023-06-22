@@ -18,7 +18,7 @@ function library.Setup()
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
-    moduleRegistry:requireAndRegisterModule("Chest", "mobj_chest") -- ToDo: refactor Chest to no longer need to register it also as a module
+    moduleRegistry:requireAndRegisterModule("Chest", "mobj_chest") -- ToDo: refactor Chest to no longer need to register it also as a module (already done?)
     moduleRegistry:requireAndRegisterModule("mobj_factory")
 
     -- register library modules test modules
