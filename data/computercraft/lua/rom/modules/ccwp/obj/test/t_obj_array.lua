@@ -2,6 +2,7 @@ local T_ObjArray = {}
 
 local corelog = require "corelog"
 
+local IObj = require "iobj"
 local ObjArray = require "obj_array"
 
 local TestObj = require "test.obj_test"
@@ -9,6 +10,7 @@ local ProductionSpot = require "mobj_production_spot"
 
 function T_ObjArray.T_All()
     -- base methods
+    T_ObjArray.T_ImplementsIObj()
     T_ObjArray.T_new()
     T_ObjArray.T_IsOfType()
     T_ObjArray.T_isSame()
@@ -38,6 +40,18 @@ local testObj2 = TestObj:new({
     _field1 = "field1_2",
     _field2 = 2,
 })
+
+function T_ObjArray.T_ImplementsIObj()
+    -- prepare test
+    corelog.WriteToLog("* ObjArray IObj interface test")
+    local obj = ObjArray:new() if not obj then corelog.Error("failed obtaining ObjArray") return end
+
+    -- test
+    local implementsInterface = IObj.ImplementsInterface(obj)
+    assert(implementsInterface, "ObjArray class does not (fully) implement IObj interface")
+
+    -- cleanup test
+end
 
 function T_ObjArray.T_new()
     -- prepare test
