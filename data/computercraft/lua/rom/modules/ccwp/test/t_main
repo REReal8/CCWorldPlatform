@@ -25,10 +25,11 @@ local T_Block = require "test.t_obj_block"
 local T_LayerRectangle = require "test.t_obj_layer_rectangle"
 local T_Inventory = require "test.t_obj_inventory"
 
-local T_Turtle = require "test.t_mobj_turtle"
-local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
+local T_Chest = require "test.t_mobj_chest"
+local T_ProductionSpot = require "test.t_mobj_production_spot"
 local T_Silo = require "test.t_mobj_silo"
+local T_Turtle = require "test.t_mobj_turtle"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_projects = require "enterprise_projects"
@@ -80,10 +81,11 @@ function t_main.T_All()
     T_Inventory.T_All()
 
     -- mobj tests
-    T_Turtle.T_All()
-    T_Chest.T_All()
     T_BirchForest.T_All()
+    T_Chest.T_All()
+    T_ProductionSpot.T_All()
     T_Silo.T_All()
+    T_Turtle.T_All()
 
     -- enterprise tests
     t_test.T_All()

@@ -22,10 +22,11 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("mobj_factory")
 
     -- register library modules test modules
-    moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
-    moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
+    moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
+    moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
+    moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
 
     -- do other stuff
 end
