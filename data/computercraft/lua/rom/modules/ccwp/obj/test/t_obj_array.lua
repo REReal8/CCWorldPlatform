@@ -5,7 +5,6 @@ local corelog = require "corelog"
 local IObj = require "iobj"
 local ObjArray = require "obj_array"
 local TestObj = require "test.obj_test"
-local ProductionSpot = require "mobj_production_spot"
 local Location = require "obj_location"
 
 function T_ObjArray.T_All()
@@ -19,8 +18,6 @@ function T_ObjArray.T_All()
     -- specific methods
     T_ObjArray.T_transformObjTables()
     T_ObjArray.T_new_transformsObjTables()
-
-    T_ObjArray.T_TransformToObjArray()
 end
 
 local compact = { compact = true }
@@ -290,33 +287,6 @@ function T_ObjArray.T_new_transformsObjTables()
     local objClass = objArray:getObjClass()
     assert(objClass.IsOfType(objArray[1]), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
     assert(objClass.IsOfType(objArray[2]), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
-
-    -- cleanup test
-end
-
-local Obj = require "obj"
-
-function T_ObjArray.T_TransformToObjArray()
-    -- prepare test
-    corelog.WriteToLog("* Obj.TransformToObjArray() tests")
---    corelog.WriteToLog("T_TTOA 0")
-    local class2 = ProductionSpot
-    local objTable1 = ProductionSpot:new({
-        _location = { _dy = 1, _dx = 0, _z = 1, _y = 2, _x = 3, }
-    })
-    local objTable2 = ProductionSpot:new({
-        _location = { _dy = 1, _dx = 0, _z = 1, _y = 2, _x = 3, }
-    })
-    local objTableArray = {
-        objTable1,
-        objTable2,
-    }
-
-    -- test
---    corelog.WriteToLog("T_TTOA 1")
-    local objArray = Obj.TransformToObjArray(objTableArray, class2)
-    assert(Obj.ObjArray_IsOfType(objArray, ProductionSpot), "gotten objArray(="..textutils.serialize(objArray)..") not an ObjArray with "..class2:getClassName().." type objects")
---    corelog.WriteToLog("T_TTOA 2")
 
     -- cleanup test
 end

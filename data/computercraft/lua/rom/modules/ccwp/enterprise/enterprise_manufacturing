@@ -573,7 +573,7 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
 
     -- create new Factory
     local factory = Factory:new({
-        _version        = siteStartData.version,
+--        _version        = siteStartData.version,
         _id             = coreutils.NewId(),
 
         _baseLocation   = siteStartData.baseLocation,

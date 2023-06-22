@@ -3,6 +3,7 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local IObj = require "iobj"
+local ObjArray = require "obj_array"
 local Location = require "obj_location"
 
 local ProductionSpot = require "mobj_production_spot"
@@ -45,13 +46,15 @@ end
 
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local inputLocator1 = enterprise_turtle.GetHostLocator_Att()
-local inputLocators1 = { inputLocator1, }
+local locatorClassName = "URL"
+local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
 local outputLocator1 = enterprise_turtle.GetHostLocator_Att()
-local outputLocators1 = { outputLocator1, }
+local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
+local productionSpotClassName = "ProductionSpot"
 local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4) })
-local craftingSpots1 = { craftingSpot1, }
+local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
 local smeltingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -3) })
-local smeltingSpots1 = { smeltingSpot1, }
+local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
 
 function T_Factory.T_new()
     -- prepare test

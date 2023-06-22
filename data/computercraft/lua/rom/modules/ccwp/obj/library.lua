@@ -9,7 +9,6 @@ function library.Setup()
     -- register library classes
     local ObjectFactory = require "object_factory"
     local objectFactory = ObjectFactory:getInstance()
-    objectFactory:registerClass("Obj", require "obj")
     objectFactory:registerClass("ObjArray", require "obj_array")
     objectFactory:registerClass("Callback", require "obj_callback")
     objectFactory:registerClass("TaskCall", require "obj_task_call")

@@ -15,7 +15,7 @@ local Factory = {
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
-local Obj = require "obj"
+local ObjArray = require "obj_array"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
@@ -65,22 +65,16 @@ function Factory:new(...)
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the Factory
                 _baseLocation           - (Location) location of the Factory
-                _inputLocators          - (table) with input locators
-                _outputLocators         - (table) with output locators
-                _craftingSpots          - (table) with crafting spots
-                _smeltingSpots          - (table) with smelting spots
+                _inputLocators          - (ObjArray) with input locators
+                _outputLocators         - (ObjArray) with output locators
+                _craftingSpots          - (ObjArray) with crafting spots
+                _smeltingSpots          - (ObjArray) with smelting spots
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory:new: Invalid input") return {} end
 
     -- set class info
     setmetatable(o, self)
     self.__index = self
-
-    -- transform array's of objectTable's to array's of objects
-    o._inputLocators = Obj.TransformToObjArray(o._inputLocators, URL)
-    o._outputLocators = Obj.TransformToObjArray(o._outputLocators, URL)
-    o._craftingSpots = Obj.TransformToObjArray(o._craftingSpots, ProductionSpot)
-    o._smeltingSpots = Obj.TransformToObjArray(o._smeltingSpots, ProductionSpot)
 
     -- end
     return o
@@ -119,10 +113,10 @@ function Factory.HasFieldsOfType(obj)
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
     if not Location.IsOfType(obj._baseLocation) then return false end
-    if not Obj.ObjArray_IsOfType(obj._inputLocators, URL) then return false end
-    if not Obj.ObjArray_IsOfType(obj._outputLocators, URL) then return false end
-    if not Obj.ObjArray_IsOfType(obj._craftingSpots, ProductionSpot) then return false end
-    if not Obj.ObjArray_IsOfType(obj._smeltingSpots, ProductionSpot) then return false end
+    if not ObjArray.IsOfType(obj._inputLocators) then return false end
+    if not ObjArray.IsOfType(obj._outputLocators) then return false end
+    if not ObjArray.IsOfType(obj._craftingSpots) then return false end
+    if not ObjArray.IsOfType(obj._smeltingSpots) then return false end
 
     -- end
     return true
@@ -151,10 +145,10 @@ function Factory:isSame(obj)
     -- check same object
     local isSame =  self._id == obj._id
                 and self._baseLocation:isSame(obj._baseLocation)
-                and Obj.ObjArray_IsSame(self._inputLocators, obj._inputLocators)
-                and Obj.ObjArray_IsSame(self._outputLocators, obj._outputLocators)
-                and Obj.ObjArray_IsSame(self._craftingSpots, obj._craftingSpots)
-                and Obj.ObjArray_IsSame(self._smeltingSpots, obj._smeltingSpots)
+                and self._inputLocators:isSame(obj._inputLocators)
+                and self._outputLocators:isSame(obj._outputLocators)
+                and self._craftingSpots:isSame(obj._craftingSpots)
+                and self._smeltingSpots:isSame(obj._smeltingSpots)
 
     -- end
     return isSame
@@ -166,10 +160,10 @@ function Factory:copy()
         _id             = self._id,
 
         _baseLocation   = self._baseLocation:copy(),
-        _inputLocators  = Obj.ObjArray_Copy(self._inputLocators),
-        _outputLocators = Obj.ObjArray_Copy(self._outputLocators),
-        _craftingSpots  = Obj.ObjArray_Copy(self._craftingSpots),
-        _smeltingSpots  = Obj.ObjArray_Copy(self._smeltingSpots),
+        _inputLocators  = self._inputLocators:copy(),
+        _outputLocators = self._outputLocators:copy(),
+        _craftingSpots  = self._craftingSpots:copy(),
+        _smeltingSpots  = self._smeltingSpots:copy(),
     })
 
     -- end
@@ -673,6 +667,9 @@ function Factory.GetV0SiteDismantleBuildData(serviceData)
     return siteDismantleBuildData
 end
 
+local locatorClassName = "URL"
+local productionSpotClassName = "ProductionSpot"
+
 function Factory.GetV0SiteStartData(serviceData)
     --
     local baseLocation = serviceData.baseLocation
@@ -683,17 +680,25 @@ function Factory.GetV0SiteStartData(serviceData)
 
         baseLocation = baseLocation:copy(),
 
-        inputLocators = {
-            enterprise_turtle.GetHostLocator_Att(),
-        },
-        outputLocators = {
-            enterprise_turtle.GetHostLocator_Att(),
-        },
+        inputLocators = ObjArray:new({
+            _objClassName = locatorClassName,
 
-        craftingSpots = {
+            enterprise_turtle.GetHostLocator_Att(),
+        }),
+        outputLocators = ObjArray:new({
+            _objClassName = locatorClassName,
+
+            enterprise_turtle.GetHostLocator_Att(),
+        }),
+
+        craftingSpots = ObjArray:new({
+            _objClassName = productionSpotClassName,
+
             ProductionSpot:new({ _location = baseLocation:getRelativeLocation(0, 0, 0) }),
-        },
-        smeltingSpots = {},
+        }),
+        smeltingSpots = ObjArray:new({
+            _objClassName = productionSpotClassName,
+        }),
     }
 
     return startData
@@ -766,19 +771,27 @@ function Factory.GetV1SiteStartData(serviceData)
 
         baseLocation = baseLocation:copy(),
 
-        inputLocators = {
-            enterprise_turtle.GetHostLocator_Att(),
-        },
-        outputLocators = {
-            enterprise_turtle.GetHostLocator_Att(),
-        },
+        inputLocators = ObjArray:new({
+            _objClassName = locatorClassName,
 
-        craftingSpots = {
+            enterprise_turtle.GetHostLocator_Att(),
+        }),
+        outputLocators = ObjArray:new({
+            _objClassName = locatorClassName,
+
+            enterprise_turtle.GetHostLocator_Att(),
+        }),
+
+        craftingSpots = ObjArray:new({
+            _objClassName = productionSpotClassName,
+
             ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -4) }),
-        },
-        smeltingSpots = {
+        }),
+        smeltingSpots = ObjArray:new({
+            _objClassName = productionSpotClassName,
+
             ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -3) }),
-        },
+        }),
     }
 
     return startData
@@ -874,19 +887,27 @@ function Factory.GetV2SiteStartData(serviceData)
 
         baseLocation = baseLocation,
 
-        inputLocators = {
-            inputChestLocator,
-        },
-        outputLocators = {
-            outputChestLocator,
-        },
+        inputLocators = ObjArray:new({
+            _objClassName = locatorClassName,
 
-        craftingSpots = {
+            inputChestLocator,
+        }),
+        outputLocators = ObjArray:new({
+            _objClassName = locatorClassName,
+
+            outputChestLocator,
+        }),
+
+        craftingSpots = ObjArray:new({
+            _objClassName = productionSpotClassName,
+
             ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -4) }),
-        },
-        smeltingSpots = {
+        }),
+        smeltingSpots = ObjArray:new({
+            _objClassName = productionSpotClassName,
+
             ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -3) }),
-        },
+        }),
     }
 
     return startData
