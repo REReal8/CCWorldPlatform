@@ -37,6 +37,9 @@ function ProductionSpot:new(...)
     setmetatable(o, self)
     self.__index = self
 
+    -- check
+    if not ProductionSpot.HasFieldsOfType(o) then corelog.Warning("ProductionSpot:new: o(="..textutils.serialize(o)..") does not have all ProductionSpot fields") end
+
     -- end
     return o
 end
