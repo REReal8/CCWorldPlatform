@@ -63,6 +63,7 @@ function IObj.ImplementsInterface(obj)
     -- check
     if not obj.new then return false end
     if not obj.getClassName then return false end
+    if not obj.IsOfType then return false end
     if not obj.isSame then return false end
     if not obj.copy then return false end
 

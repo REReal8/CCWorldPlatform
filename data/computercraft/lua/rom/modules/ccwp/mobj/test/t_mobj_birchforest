@@ -2,6 +2,7 @@ local T_BirchForest = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
+local IObj = require "iobj"
 local Location = require "obj_location"
 
 local BirchForest = require "mobj_birchforest"
@@ -13,8 +14,12 @@ local enterprise_chests = require "enterprise_chests"
 
 function T_BirchForest.T_All()
     -- base methods
+    T_BirchForest.T_ImplementsIObj()
     T_BirchForest.T_Getters()
     T_BirchForest.T_Setters()
+    T_BirchForest.T_IsOfType()
+    T_BirchForest.T_isSame()
+    T_BirchForest.T_copy()
 
     -- service methods
     T_BirchForest.T_getFuelNeed_Harvest_Att()
@@ -39,12 +44,24 @@ local localSaplingsLocator
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function T_BirchForest.T_ImplementsIObj()
+    -- prepare test
+    corelog.WriteToLog("* BirchForest IObj interface test")
+    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("failed obtaining BirchForest") return end
+
+    -- test
+    local implementsInterface = IObj.ImplementsInterface(obj)
+    assert(implementsInterface, "BirchForest class does not (fully) implement IObj interface")
+
+    -- cleanup test
+end
+
 function T_BirchForest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* BirchForest getter tests")
     local id = coreutils.NewId()
     local className = "BirchForest"
-    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining BirchForest") return end
 
     -- test
     assert(forest:getClassName() == className, "gotten className(="..forest:getClassName()..") not the same as expected(="..className..")")
@@ -85,7 +102,7 @@ end
 function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
     local localLogsLocator2 = enterprise_chests:getHostLocator()
     local localSaplingsLocator2 = enterprise_chests:getHostLocator()
 
@@ -100,6 +117,124 @@ function T_BirchForest.T_Setters()
     assert(forest:getLocalLogsLocator() == localLogsLocator2, "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator2:getURI()..")")
     forest:setLocalSaplingsLocator(localSaplingsLocator2)
     assert(forest:getLocalSaplingsLocator() == localSaplingsLocator2, "gotten localLogsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator2:getURI()..")")
+
+    -- cleanup test
+end
+
+function T_BirchForest.T_IsOfType()
+    -- prepare test
+    corelog.WriteToLog("* BirchForest.IsOfType() tests")
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
+
+    -- test valid
+    local isOfType = BirchForest.IsOfType(forest)
+    local expectedIsOfType = true
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test different object
+    isOfType = BirchForest.IsOfType("a atring")
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+
+    -- test invalid _level
+    forest._level = "a string"
+    isOfType = BirchForest.IsOfType(forest)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    forest._level = level0
+
+    -- test invalid _location
+    forest._location = "a string"
+    isOfType = BirchForest.IsOfType(forest)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    forest._location = location1
+
+    -- test invalid _nTrees
+    forest._nTrees = "a string"
+    isOfType = BirchForest.IsOfType(forest)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    forest._nTrees = level0
+
+    -- test invalid _localLogsLocator
+    forest._localLogsLocator = "a string"
+    isOfType = BirchForest.IsOfType(forest)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- test invalid _localSaplingsLocator
+    forest._localSaplingsLocator = "a string"
+    isOfType = BirchForest.IsOfType(forest)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    forest._localSaplingsLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- cleanup test
+end
+
+
+local compact = { compact = true }
+
+function T_BirchForest.T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* BirchForest:isSame() tests")
+    local id = coreutils.NewId()
+    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining BirchForest") return end
+
+    -- test same
+    local forest1 = T_BirchForest.CreateForest(level0, location1, id)
+    local isSame = forest1:isSame(forest)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different _level
+    forest._level = level2
+    isSame = forest1:isSame(forest)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    forest._level = level0
+
+    -- test different _location
+    forest._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
+    isSame = forest1:isSame(forest)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    forest._location = location1
+
+    -- test different _nTrees
+    forest._nTrees = nTrees + 1
+    isSame = forest1:isSame(forest)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    forest._nTrees = nTrees
+
+    -- test different _localLogsLocator
+    forest._localLogsLocator = enterprise_chests:getHostLocator()
+    isSame = forest1:isSame(forest)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- test different _localSaplingsLocator
+    forest._localSaplingsLocator = enterprise_chests:getHostLocator()
+    isSame = forest1:isSame(forest)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    forest._localSaplingsLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- cleanup test
+end
+
+function T_BirchForest.T_copy()
+    -- prepare test
+    corelog.WriteToLog("* BirchForest:copy() tests")
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
+
+    -- test
+    local copy = forest:copy()
+    assert(copy:isSame(forest), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(forest, compact)..")")
 
     -- cleanup test
 end

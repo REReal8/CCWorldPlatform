@@ -1,13 +1,9 @@
 local T_Turtle = {}
 local corelog = require "corelog"
-local coreutils = require "coreutils"
-local coremove = require "coremove"
 
-local role_fuel_worker = require "role_fuel_worker"
-
+local IObj = require "iobj"
 local Callback = require "obj_callback"
 local Location = require "obj_location"
-local Inventory = require "obj_inventory"
 local URL = require "obj_url"
 
 local Turtle = require "mobj_turtle"
@@ -19,6 +15,7 @@ local enterprise_chests = require "enterprise_chests"
 
 function T_Turtle.T_All()
     -- base methods
+    T_Turtle.T_ImplementsIObj()
     T_Turtle.T_Getters()
     T_Turtle.T_IsOfType()
     T_Turtle.T_isSame()
@@ -29,9 +26,7 @@ function T_Turtle.T_All()
 --    T_Turtle.T_can_ProvideItems_QOSrv()
 end
 
-local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
-local accessDirection1 = "top"
 
 local compact = { compact = true }
 
@@ -41,6 +36,18 @@ local compact = { compact = true }
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function T_Turtle.T_ImplementsIObj()
+    -- prepare test
+    corelog.WriteToLog("* Turtle IObj interface test")
+    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("failed obtaining Turtle") return end
+
+    -- test
+    local implementsInterface = IObj.ImplementsInterface(obj)
+    assert(implementsInterface, "Turtle class does not (fully) implement IObj interface")
+
+    -- cleanup test
+end
 
 function T_Turtle.T_Getters()
     -- prepare test

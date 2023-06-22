@@ -142,6 +142,52 @@ function BirchForest:getTreeLayer(level)
     else                    corelog.Error("BirchForest:getTreeLayer: Don't know layer for level "..level) return nil end
 end
 
+function BirchForest.HasFieldsOfType(obj)
+    -- check
+    if type(obj) ~= "table" then return false end
+    if type(obj._id) ~= "string" then return false end
+    if type(obj._level) ~= "number" then return false end
+    if not Location.IsOfType(obj._location) then return false end
+    if type(obj._nTrees) ~= "number" then return false end
+    if not URL.IsOfType(obj._localLogsLocator) then return false end
+    if not URL.IsOfType(obj._localSaplingsLocator) then return false end
+
+    -- end
+    return true
+end
+
+function BirchForest.HasClassNameOfType(obj)
+    -- check
+    if not obj.getClassName or obj:getClassName() ~= BirchForest:getClassName() then return false end
+
+    -- end
+    return true
+end
+
+function BirchForest.IsOfType(obj)
+    -- check
+    local isOfType = BirchForest.HasFieldsOfType(obj) and BirchForest.HasClassNameOfType(obj)
+
+    -- end
+    return isOfType
+end
+
+function BirchForest:isSame(obj)
+    -- check input
+    if not BirchForest.IsOfType(obj) then return false end
+
+    -- check same object
+    local isSame =  self._id == obj._id
+                and self._level == obj._level
+                and self._location:isSame(obj._location)
+                and self._nTrees == obj._nTrees
+                and self._localLogsLocator:isSame(obj._localLogsLocator)
+                and self._localSaplingsLocator:isSame(obj._localSaplingsLocator)
+
+    -- end
+    return isSame
+end
+
 function BirchForest:copy()
     local copy = BirchForest:new({
         _id                     = self._id,
