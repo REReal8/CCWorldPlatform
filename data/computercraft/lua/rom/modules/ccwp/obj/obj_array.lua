@@ -55,7 +55,7 @@ end
 
 function ObjArray:getObjClass()
     local objClass = objectFactory:getClass(self._objClassName)
-    if not objClass then corelog.Error("ObjArray:getObjClass(): failed obtaining class "..self._objClassName.." from objectFactory") end
+    if not objClass then corelog.Error("ObjArray:getObjClass(): failed obtaining class "..self._objClassName.." from objectFactory (did we forget to set _objClassName?)") end
 
     return objClass
 end
@@ -137,35 +137,48 @@ end
 --       | |
 --       |_|
 
-function ObjArray:transformObjTables()
+function ObjArray:transformObjTables(suppressWarning)
     --[[
         Transform the objects in the array that are still objTable's into objects of type 'objClass'.
+
+        Parameters:
+            suppressWarning         + (boolean, false) if Warning should be suppressed
     --]]
+    suppressWarning = suppressWarning or false
 
     -- check if empty
     if table.getn(self) == 0 then return end
 
     -- get objClass
+    local objClassName = self:getObjClassName()
     local objClass = self:getObjClass()
-    if not objClass then corelog.Error("ObjArray:transformObjTables(): failed obtaining objClass "..self:getObjClassName()) return end
-    if not IObj.ImplementsInterface(objClass) then corelog.Error("ObjArray:transformObjTables(): objClass "..self:getObjClassName().." does not implement IObj interface") return end
+    if not objClass then corelog.Error("ObjArray:transformObjTables(): failed obtaining objClass "..objClassName) return end
+    if not IObj.ImplementsInterface(objClass) then corelog.Error("ObjArray:transformObjTables(): objClass "..objClassName.." does not implement IObj interface") return end
 
     -- transform objectTable's
+    local nrSkipped = 0
     for i, objTable in ipairs(self) do
-        -- transform into obj if needed
+        -- check if objTable already an Obj
         local obj = nil
-        if objClass.IsOfType(objTable) then
-            obj = objTable -- already an object of type 'class'
+        if IObj.ImplementsInterface(objTable) then
+            -- check Obj of correct type
+            if objClassName == objTable:getClassName() then
+                obj = objTable -- already an object of type 'class'
+            else
+                if not suppressWarning then corelog.Warning("ObjArray:transformObjTables(): objTable class (="..objTable:getClassName()..") different from objClassName(="..objClassName..")") end
+            end
         else
             obj = objClass:new(objTable) -- transform
         end
 
+        -- add/ change in self array
+        self[i] = nil
+        self[i-nrSkipped] = obj
+
         -- check obj obtained
-        if objClass.IsOfType(obj) then
-            -- add/ change in self array
-            self[i] = obj
-        else
-            corelog.Warning("ObjArray:transformObjTables(): failed transforming objTable(="..textutils.serialize(objTable)..") to a "..self:getObjClassName().." object => skipped")
+        if not obj then
+            if not suppressWarning then corelog.Warning("ObjArray:transformObjTables(): failed transforming objTable(="..textutils.serialize(objTable)..") to a "..objClassName.." object => skipped") end
+            nrSkipped = nrSkipped + 1
         end
     end
 end

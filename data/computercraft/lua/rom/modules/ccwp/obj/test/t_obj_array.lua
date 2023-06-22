@@ -4,9 +4,9 @@ local corelog = require "corelog"
 
 local IObj = require "iobj"
 local ObjArray = require "obj_array"
-
 local TestObj = require "test.obj_test"
 local ProductionSpot = require "mobj_production_spot"
+local Location = require "obj_location"
 
 function T_ObjArray.T_All()
     -- base methods
@@ -41,6 +41,7 @@ local testObj2 = TestObj:new({
     _field1 = "field1_2",
     _field2 = 2,
 })
+local wrongTestObj1 = Location:new()
 
 function T_ObjArray.T_ImplementsIObj()
     -- prepare test
@@ -109,9 +110,7 @@ function T_ObjArray.T_IsOfType()
     objArray2._objClassName = objClassName1
 
     -- test Obj's of wrong type
-    local testObj3 = testObj1:copy()
-    testObj3.getClassName = function () return "WrongTestObj" end -- note: short hand way to mimic a different type using prototyping
-    objArray2[3] = testObj3
+    objArray2[3] = wrongTestObj1
     isOfType = ObjArray.IsOfType(objArray2)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
@@ -149,7 +148,7 @@ function T_ObjArray.T_isSame()
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     objArray2._objClassName = objClassName1
 
-    -- test different objects
+    -- test different # objects
     local testObj3 = testObj1:copy()
     objArray2[3] = testObj3
     isSame = objArray1:isSame(objArray2)
@@ -207,10 +206,25 @@ function T_ObjArray.T_transformObjTables()
     objArray2[1] = testObj1
     objArray2[2] = testObj2
     objArray2:transformObjTables()
+    local expectedNElements = 2
+    assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
     objArray2[2] = nil
+
+    -- test different class Obj skipped
+    objArray2[1] = testObj1
+    objArray2[2] = wrongTestObj1
+    objArray2[3] = testObj2
+    objArray2:transformObjTables(true)
+    expectedNElements = 2
+    assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
+    assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    objArray2[1] = nil
+    objArray2[2] = nil
+    objArray2[3] = nil
 
     -- test only ObjTables
     objArray2[1] = testObj1Table
