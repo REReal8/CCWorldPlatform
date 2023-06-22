@@ -18,8 +18,9 @@ function T_ObjArray.T_All()
 
     -- specific methods
     T_ObjArray.T_transformObjTables()
+    T_ObjArray.T_new_transformsObjTables()
 
-    T_ObjArray.T_TransformToObjArray()
+--    T_ObjArray.T_TransformToObjArray()
 end
 
 local compact = { compact = true }
