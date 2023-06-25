@@ -693,9 +693,32 @@ function enterprise_manufacturing.DismantleSite_ASrv(...)
     return enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback)
 end
 
+local function FindSiteByLocation(baseLocation)
+    -- sites ophalen
+    local sites = enterprise_manufacturing:getObjects("Factory")
+
+    -- check if we have any site
+    if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.FindSiteByLocation: no sites present") return nil end
+
+    -- loop on sites
+    for k, site in pairs(sites) do
+        -- convert to object
+        site = Factory:new(site)
+        if not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.FindSiteByLocation: Invalid site") return nil end
+
+        -- is this the one?
+        local siteBaseLocation = site:getBaseLocation()
+        if siteBaseLocation:isSame(baseLocation) then
+            return site
+        end
+    end
+
+    return nil
+end
+
 function enterprise_manufacturing.StopSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, callback = InputChecker.Check([[
+    local checkSuccess, baseLocation, callback = InputChecker.Check([[
         This async public service stops a factory site. Stopping implies
           - the site is immediatly no longer available for new business
           - wait for all active work (production) on site to be ended
@@ -709,14 +732,31 @@ function enterprise_manufacturing.StopSite_ASrv(...)
                 success         - (boolean) when the site was successfully stopped
 
         Parameters:
-            serviceData         + (table) data about this service
-                baseLocation    - (Location) world location of the base (lower left corner) of the site
+            serviceData         - (table) data about this service
+                baseLocation    + (Location) world location of the base (lower left corner) of the site
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- pass on the request to site file
-    return Factory.StopSite_ASrv(serviceData, callback)
+    -- find the site
+    local site = FindSiteByLocation(baseLocation)
+    if type(site) ~="table" then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return Callback.ErrorCall(callback) end
+
+    -- stop doing business for this site
+    -- ToDo: implement
+
+    -- wait for active work done
+    -- ToDo: implement
+
+    -- get locator
+    local objectLocator = enterprise_manufacturing:getObjectLocator(site)
+
+    -- remove site from enterprise
+    corelog.WriteToLog("  enterprise_manufacturing.StopSite_ASrv: Removing site "..site:getId())
+    enterprise_manufacturing:deleteResource(objectLocator)
+
+    -- do callback
+    return callback:call({success = true})
 end
 
 return enterprise_manufacturing
