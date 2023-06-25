@@ -718,6 +718,7 @@ local function FindSiteByLocation(baseLocation)
     return nil
 end
 
+--ToDo: consider providing siteLocator (obtained from StartSite_ASrv) instead of baseLocation => FindSiteByLocation obsolete
 function enterprise_manufacturing.StopSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, baseLocation, callback = InputChecker.Check([[
