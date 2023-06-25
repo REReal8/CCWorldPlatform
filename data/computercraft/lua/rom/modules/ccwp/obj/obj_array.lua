@@ -120,7 +120,6 @@ function ObjArray:copy()
     })
 
     -- copy elements
-    -- ToDo: consider if this can and should be done by new method somehow...
     for i, obj in ipairs(self) do
         copy[i] = obj:copy()
     end
