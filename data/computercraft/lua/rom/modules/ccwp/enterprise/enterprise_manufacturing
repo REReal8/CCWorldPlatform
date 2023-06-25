@@ -740,7 +740,7 @@ function enterprise_manufacturing.StopSite_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- find the site
+    -- get the site
     local site = FindSiteByLocation(baseLocation)
     if type(site) ~="table" then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return Callback.ErrorCall(callback) end
 
@@ -754,7 +754,7 @@ function enterprise_manufacturing.StopSite_ASrv(...)
     local objectLocator = enterprise_manufacturing:getObjectLocator(site)
 
     -- remove site from enterprise
-    corelog.WriteToLog("  enterprise_manufacturing.StopSite_ASrv: Removing site "..site:getId())
+    corelog.WriteToLog(">Removing site "..site:getId())
     enterprise_manufacturing:deleteResource(objectLocator)
 
     -- do callback
