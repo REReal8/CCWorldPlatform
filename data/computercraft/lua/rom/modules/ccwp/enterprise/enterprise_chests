@@ -191,7 +191,7 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
         This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
-                                            - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
                                                 - (table)
