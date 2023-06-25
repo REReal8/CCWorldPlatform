@@ -437,6 +437,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
         Async service return value (to Callback):
                                         - (table)
                 success                 - (boolean) whether the site was successfully build and is ready for use.
+                siteLocator             - (URL) locating the created site (in this enterprise)
 
         Parameters:
             serviceData                 + (table) data about this site
@@ -482,6 +483,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
         steps = projectSteps,
         returnData  = {
             { keyDef = "success"                , sourceStep = iStep, sourceKeyDef = "success" },
+            { keyDef = "siteLocator"            , sourceStep = iStep, sourceKeyDef = "siteLocator" },
         }
     }
     local projectServiceData = {
