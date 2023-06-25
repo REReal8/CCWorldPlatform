@@ -119,7 +119,7 @@ function enterprise_chests.DelistChest_ASrv(...)
     -- ToDo: implement
 
     -- remove site from enteprise
-    corelog.WriteToLog(">Delisting chest "..chest:getId())
+    corelog.WriteToLog(">Delisting Chest "..chest:getId())
     enterprise_chests:deleteResource(chestLocator)
 
     -- do callback
