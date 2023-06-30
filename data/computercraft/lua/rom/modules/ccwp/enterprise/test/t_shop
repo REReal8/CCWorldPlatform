@@ -3,14 +3,20 @@ local t_shop = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
+local Location = require "obj_location"
+
+local T_Chest = require "test.t_mobj_chest"
 
 local enterprise_turtle = require "enterprise_turtle"
+local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
 
 function t_shop.T_All()
+    -- specific methods
     t_shop.T_RegisterItemSupplier()
     t_shop.T_DelistItemSupplier()
     t_shop.T_DelistItemSuppliers()
+    t_shop.T_BestItemSupplier()
 end
 
 local callback = Callback:new({
@@ -89,6 +95,40 @@ function t_shop.T_DelistItemSuppliers()
     local nItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local expectedNItemSuppliers = 0
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
+end
+
+local compact = { compact = true }
+
+function t_shop.T_BestItemSupplier()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_shop.BestItemSupplier() tests")
+    local item = {
+        ["minecraft:birch_log"]  = 5,
+    }
+    local ingredientsItemSupplierLocator = enterprise_shop.GetHostLocator_Att()
+    local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
+    local chest = T_Chest.CreateChest(location1) if not chest then corelog.Error("failed obtaining Chest") return end
+    local itemDepotLocator = enterprise_chests:saveObject(chest)
+
+    -- test lowest fuelNeed
+    local closeLocation = location1:getRelativeLocation(1, 1, 0)
+    chest = T_Chest.CreateChest(closeLocation) if not chest then corelog.Error("failed obtaining Chest") return end
+    local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
+    local result = enterprise_shop.RegisterItemSupplier_SSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "RegisterItemSupplier_SSrv services failed")
+
+    local farLocation = location1:getRelativeLocation(99999, 1, 0)
+    chest = T_Chest.CreateChest(farLocation) if not chest then corelog.Error("failed obtaining Chest") return end
+    local farItemSupplierLocator = enterprise_chests:saveObject(chest)
+    result = enterprise_shop.RegisterItemSupplier_SSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "RegisterItemSupplier_SSrv services failed")
+
+    local bestItemSupplierLocator = enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, farItemSupplierLocator, closeItemSupplierLocator)
+    local expectedItemSupplierLocator = closeItemSupplierLocator
+    assert(bestItemSupplierLocator:isSame(expectedItemSupplierLocator), "gotten BestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
+
+    -- cleanup test
+    enterprise_chests:deleteResource(itemDepotLocator)
+    enterprise_chests:deleteResource(closeItemSupplierLocator)
+    enterprise_chests:deleteResource(farItemSupplierLocator)
 end
 
 return t_shop

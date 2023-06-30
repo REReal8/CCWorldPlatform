@@ -232,27 +232,85 @@ function enterprise_shop.GetItemSuppliers()
     return itemSuppliers
 end
 
-local function GetBestItemSupplierLocator(item)
+function enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, itemSupplierLocator1, itemSupplierLocator2)
     --[[
-        This sync private function provides the "best" (first) ItemSupplier that can provide a specific item.
+        This function returns the best ItemSupplier of two ItemSupplier's for a specific item.
 
         Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                itemSupplierLocator - (URL) locating the best ItemSupplier of the items
+            itemSupplierLocator                 - (URL) locating the best ItemSupplier of the items
 
         Parameters:
-            item                    - (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+            serviceData                         - (table) data to the query
+                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
+                itemSupplierLocator1            + (URL) locating the 1st ItemSupplier
+                itemSupplierLocator2            + (URL) locating the 2nd ItemSupplier
     --]]
 
     -- check input
-    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestItemSupplierLocator: Invalid item (type="..type(item)..")") return nil end
+    if not itemSupplierLocator1 then
+        return itemSupplierLocator2
+    end
+    if not itemSupplierLocator2 then
+        return itemSupplierLocator1
+    end
+
+    -- get needs 1
+    local itemLocator1 = itemSupplierLocator1:copy()
+    itemLocator1:setQuery(item)
+    local itemServiceData = {
+        itemsLocator                    = itemLocator1,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    }
+    local serviceResults1 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
+    if not serviceResults1.success then corelog.Error("enterprise_shop.BestItemSupplier: Failed obtaining needs for itemLocator1(="..textutils.serialise(itemLocator1)..")") return nil end
+
+    -- get needs 2
+    local itemLocator2 = itemSupplierLocator2:copy()
+    itemLocator2:setQuery(item)
+    itemServiceData = {
+        itemsLocator                    = itemLocator2,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    }
+    local serviceResults2 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
+    if not serviceResults2.success then corelog.Error("enterprise_shop.BestItemSupplier: Failed obtaining needs for itemLocator2(="..textutils.serialise(itemLocator2)..")") return nil end
+
+    -- check lowest fuelNeed
+    local fuelNeed1 = serviceResults1.fuelNeed
+    local fuelNeed2 = serviceResults2.fuelNeed
+    if fuelNeed1 < fuelNeed2 then
+        return itemSupplierLocator1
+    elseif fuelNeed2 < fuelNeed1 then
+        return itemSupplierLocator2
+    else -- both are equal w.r.t. this condition
+    end
+
+    -- check ingredientsNeed
+    -- ToDo implement
+
+    -- nothing else distinquishes the candidates => take first
+    return itemSupplierLocator1
+end
+
+local function GetCanProvideItemSuppliers(item)
+    --[[
+        This private function returns the ItemSupplier's that can provide a specific item.
+
+        Return value:
+            availableItemSupplierLocators   - (table) with locators of ItemSupplier's that can provide the item.
+
+        Parameters:
+            item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+    --]]
 
     -- get ItemSuppliers
     local itemSuppliers = enterprise_shop.GetItemSuppliers()
 
-    -- loop on registered ItemSuppliers and return first
-    -- ToDo: consider selecting best ItemSupplier based on some criterium (e.g. fuelNeed)
+    -- select ItemSuppliers than can provide items
+    local canProvideItemSupplierLocators = {}
     for i, itemSupplierLocator in ipairs(itemSuppliers) do
         itemSupplierLocator = URL:new(itemSupplierLocator)
         -- determine itemLocator
@@ -260,12 +318,43 @@ local function GetBestItemSupplierLocator(item)
         itemsLocator:setQuery(item)
 
         -- check ItemSupplier can provide items
-        if enterprise_isp.Can_ProvideItems_QSrv({itemsLocator = itemsLocator }).success then return itemSupplierLocator end
+        if enterprise_isp.Can_ProvideItems_QSrv({itemsLocator = itemsLocator }).success then
+            table.insert(canProvideItemSupplierLocators, itemSupplierLocator)
+        end
     end
 
     -- end
-    corelog.Warning("enterprise_shop.GetBestItemSupplierLocator: No ItemSupplier can provide "..textutils.serialise(item))
-    return nil
+    return canProvideItemSupplierLocators
+end
+
+local function GetBestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator)
+    --[[
+        This private function provides the "best" ItemSupplier that can provide a specific item to an ItemDepot.
+
+        Return value:
+            itemSupplierLocator             - (URL) locating the best ItemSupplier of the items
+
+        Parameters:
+            item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
+            itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+            ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
+    --]]
+
+    -- check input
+    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestItemSupplier: Invalid item (type="..type(item)..")") return nil end
+
+    -- select ItemSuppliers than can provide items
+    local canProvideItemSupplierLocators = GetCanProvideItemSuppliers(item)
+
+    -- select best ItemSupplier
+    local bestItemSupplierLocator = nil
+    for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
+        bestItemSupplierLocator = enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
+    end
+    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop.GetBestItemSupplier: No ItemSupplier can provide "..textutils.serialise(item)) return nil end
+
+    -- end
+    return bestItemSupplierLocator
 end
 
 function enterprise_shop.Can_ProvideItems_QSrv(...)
@@ -298,8 +387,8 @@ function enterprise_shop.Can_ProvideItems_QSrv(...)
         local item = { [itemName] = itemCount }
 
         -- check for an ItemSupplier to provide item
-        local itemSupplierLocator = GetBestItemSupplierLocator(item)
-        if itemSupplierLocator == nil then
+        local canProvideItemSupplierLocators = GetCanProvideItemSuppliers(item)
+        if table.getn(canProvideItemSupplierLocators) < 1 then
             return {success = false}
         end
     end
@@ -342,7 +431,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
         local item = { [itemName] = itemCount }
 
         -- get best itemSupplierLocator
-        local itemSupplierLocator = GetBestItemSupplierLocator(item)
+        local itemSupplierLocator = GetBestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator)
         if itemSupplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No itemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- determine itemLocator
@@ -510,7 +599,7 @@ function enterprise_shop.ProcureItem_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get best itemSupplierLocator
-    local itemSupplierLocator = GetBestItemSupplierLocator(item)
+    local itemSupplierLocator = GetBestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator)
     if itemSupplierLocator == nil then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No itemSupplier can provide "..textutils.serialise(item)) return Callback.ErrorCall(callback) end
 
     -- determine itemLocator
