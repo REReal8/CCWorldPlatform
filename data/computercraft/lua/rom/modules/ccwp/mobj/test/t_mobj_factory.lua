@@ -27,6 +27,7 @@ function T_Factory.T_All()
     T_Factory.T_getAvailableSmeltSpot()
 
     -- service methods
+    T_Factory.T_can_ProvideItems_QOSrv()
 end
 
 local compact = { compact = true }
@@ -296,5 +297,31 @@ end
 --   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function T_Factory.T_can_ProvideItems_QOSrv()
+    -- prepare test
+    corelog.WriteToLog("* Factory:can_ProvideItems_QOSrv() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test can (craft)
+    local itemName = "minecraft:birch_planks"
+    local itemCount = 10
+    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    -- test can (smelt)
+    itemName = "minecraft:charcoal"
+    itemCount = 5
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
+
+    -- test can not
+    itemName = "anItemAFactoryCanNotProduce"
+    itemCount = 2
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
+
+    -- cleanup test
+end
 
 return T_Factory
