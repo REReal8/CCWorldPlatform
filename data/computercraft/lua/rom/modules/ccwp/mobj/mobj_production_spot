@@ -1,5 +1,6 @@
 local ProductionSpot = {
-    _location   = nil,
+    _location       = nil,
+    _isCraftingSpot = true,
 }
 
 local corelog = require "corelog"
@@ -30,6 +31,7 @@ function ProductionSpot:new(...)
         Parameters:
             o                       + (table, {}) table with object fields
                 _location           - (Location) world location of spot
+                _isCraftingSpot     - (boolean) if it is a crafting spot
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
 
@@ -52,10 +54,15 @@ function ProductionSpot:getLocation()
     return self._location
 end
 
+function ProductionSpot:isCraftingSpot()
+    return self._isCraftingSpot
+end
+
 function ProductionSpot.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if not Location.IsOfType(obj._location) then return false end
+    if type(obj._isCraftingSpot) ~= "boolean" then return false end
 
     -- end
     return true
@@ -82,7 +89,8 @@ function ProductionSpot:isSame(obj)
     if not ProductionSpot.IsOfType(obj) then return false end
 
     -- check same object
-    local isSame = self._location:isSame(obj._location)
+    local isSame =  self._location:isSame(obj._location)
+                and self._isCraftingSpot == obj._isCraftingSpot
 
     -- end
     return isSame
@@ -92,6 +100,7 @@ function ProductionSpot:copy()
     -- create copy
     local copy = ProductionSpot:new({
         _location       = self._location:copy(),
+        _isCraftingSpot = self._isCraftingSpot,
     })
 
     -- end

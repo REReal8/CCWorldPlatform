@@ -18,9 +18,11 @@ function T_ProductionSpot.T_All()
 end
 
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
-
+local isCraftingSpot1 = true
+local isCraftingSpot2 = false
 local obj1 = ProductionSpot:new({
-    _location   = location1,
+    _location       = location1,
+    _isCraftingSpot = isCraftingSpot1,
 })
 
 local compact = { compact = true }
@@ -36,7 +38,8 @@ function T_ProductionSpot.T_ImplementsIObj()
     -- prepare test
     corelog.WriteToLog("* ProductionSpot IObj interface test")
     local obj = ProductionSpot:new({
-        _location   = location1,
+        _location       = location1,
+        _isCraftingSpot = isCraftingSpot1,
     }) if not obj then corelog.Error("failed obtaining ProductionSpot") return end
 
     -- test
@@ -52,9 +55,11 @@ function T_ProductionSpot.T_new()
 
     -- test
     local obj = ProductionSpot:new({
-        _location   = location1,
+        _location       = location1,
+        _isCraftingSpot = isCraftingSpot1,
     })
     assert(location1:isSame(obj:getLocation()), "gotten getLocation(="..textutils.serialise(obj:getLocation(), compact)..") not the same as expected(="..textutils.serialise(location1, compact)..")")
+    assert(isCraftingSpot1 == obj:isCraftingSpot(), "gotten isCraftingSpot(="..textutils.serialise(obj:isCraftingSpot(), compact)..") not the same as expected(="..textutils.serialise(isCraftingSpot1, compact)..")")
 
     -- cleanup test
 end
@@ -63,7 +68,8 @@ function T_ProductionSpot.T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* ProductionSpot.IsOfType() tests")
     local obj2 = ProductionSpot:new({
-        _location   = location1,
+        _location       = location1,
+        _isCraftingSpot = isCraftingSpot1,
     })
 
     -- test valid
@@ -83,6 +89,14 @@ function T_ProductionSpot.T_IsOfType()
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
     obj2._location = location1
 
+    -- test invalid _isCraftingSpot
+    obj2._isCraftingSpot = "a string"
+    isOfType = ProductionSpot.IsOfType(obj2)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    obj2._isCraftingSpot = isCraftingSpot1
+
+
     -- cleanup test
 end
 
@@ -90,7 +104,8 @@ function T_ProductionSpot.T_isSame()
     -- prepare test
     corelog.WriteToLog("* ProductionSpot:isSame() tests")
     local obj2 = ProductionSpot:new({
-        _location   = location1,
+        _location       = location1,
+        _isCraftingSpot = isCraftingSpot1,
     })
 
     -- test same
@@ -104,6 +119,13 @@ function T_ProductionSpot.T_isSame()
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     obj2._location = location1
+
+    -- test different _isCraftingSpot
+    obj2._isCraftingSpot = isCraftingSpot2
+    isSame = obj1:isSame(obj2)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    obj2._isCraftingSpot = isCraftingSpot1
 
     -- cleanup test
 end

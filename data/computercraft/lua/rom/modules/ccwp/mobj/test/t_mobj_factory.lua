@@ -58,9 +58,9 @@ local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLoc
 local outputLocator1 = enterprise_turtle.GetHostLocator_Att()
 local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
-local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4) })
+local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
 local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
-local smeltingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -3) })
+local smeltingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
 local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
 
 function T_Factory.T_new()
@@ -173,9 +173,9 @@ function T_Factory.T_isSame()
     local inputLocators2 = { inputLocator2, }
     local outputLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be an actual Chest
     local outputLocators2 = { outputLocator2, }
-    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4) })
+    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = { craftingSpot2, }
-    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3) })
+    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
     local smeltingSpots2 = { smeltingSpot2, }
 
     -- test same
