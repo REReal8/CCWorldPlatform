@@ -179,13 +179,21 @@ end
 --       | |
 --       |_|
 
-local function GetAvailableLocator(locators)
-    -- check input
-    if type(locators) ~="table" then corelog.Error("Factory.GetAvailableLocator: Invalid locators") return nil end
-
+function Factory:getAvailableInputLocator()
     -- find first available locator
-    for i, locator in ipairs(locators) do
-        -- ToDo: consider checking availability
+    for i, locator in ipairs(self:getInputLocators()) do
+
+        -- take first
+        return locator
+    end
+
+    -- end
+    return nil
+end
+
+function Factory:getAvailableOutputLocator()
+    -- find first available locator
+    for i, locator in ipairs(self:getOutputLocators()) do
 
         -- take first
         return locator
@@ -251,12 +259,12 @@ function Factory.GetAvailableSiteData(...)
         if not Factory.IsOfType(site) then corelog.Error("Factory.GetAvailableSiteData: Invalid site") return nil end
 
         -- get available inputLocator
-        local inputLocator = URL:new(GetAvailableLocator(site:getInputLocators()))
+        local inputLocator = site:getAvailableInputLocator()
         if inputLocator == nil then
             corelog.Warning("Factory.GetAvailableSiteData: No available inputLocator in site "..site:getId())
         else
             -- get available outputLocator
-            local outputLocator = URL:new(GetAvailableLocator(site:getOutputLocators()))
+            local outputLocator = site:getAvailableOutputLocator()
             if outputLocator == nil then
                 corelog.Warning("Factory.GetAvailableSiteData: No available outputLocator in site "..site:getId())
             else

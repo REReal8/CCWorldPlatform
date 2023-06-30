@@ -21,6 +21,8 @@ function T_Factory.T_All()
     T_Factory.T_copy()
 
     -- specific methods
+    T_Factory.T_getAvailableInputLocator()
+    T_Factory.T_getAvailableOutputLocator()
     T_Factory.T_getAvailableCraftSpot()
     T_Factory.T_getAvailableSmeltSpot()
 
@@ -239,6 +241,30 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function T_Factory.T_getAvailableInputLocator()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getAvailableInputLocator() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test
+    local locator = obj:getAvailableInputLocator()
+    assert(locator:isSame(inputLocator1), "gotten getAvailableInputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(inputLocator1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_Factory.T_getAvailableOutputLocator()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getAvailableOutputLocator() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test
+    local locator = obj:getAvailableOutputLocator()
+    assert(locator:isSame(outputLocator1), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator1, compact)..")")
+
+    -- cleanup test
+end
 
 function T_Factory.T_getAvailableCraftSpot()
     -- prepare test
