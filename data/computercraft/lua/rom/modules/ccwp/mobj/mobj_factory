@@ -795,7 +795,7 @@ end
 function Factory.CraftItem_ASrv(...)
     -- get & check input from description
     local checkSuccess, turtleInputItemsLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async sewrvice should craft items at the productionSpot.
+        This async service should craft items at the ProductionSpot.
 
         Return value:
                                         - (boolean) whether the service was scheduled successfully
@@ -843,7 +843,7 @@ end
 function Factory.SmeltItem_ASrv(...)
     -- get & check input from description
     local checkSuccess, turtleInputItemsLocator, productionSpot, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async service should smelt items at the productionSpot.
+        This async service should smelt items at the ProductionSpot.
 
         Return value:
                                         - (boolean) whether the service was scheduled successfully
