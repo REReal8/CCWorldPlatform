@@ -4,9 +4,12 @@ local ProductionSpot = {
 }
 
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 local Location = require "obj_location"
+
+local role_alchemist = require "role_alchemist"
 
 --[[
     The ProductionSpot mobj represents a production spot in the minecraft world and provides production services to operate on that ProductionSpot.
@@ -115,5 +118,36 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function ProductionSpot:produceIngredientsNeeded(...)
+    -- get & check input from description
+    local checkSuccess, productionRecipe, productItemCount = InputChecker.Check([[
+        This method determines the ingredients needed to produce 'productItemCount' items with the 'productionRecipe'.
+
+        Return value:
+            ingredientsNeeded           - (table) ingredientsNeeded to produce items
+
+        Parameters:
+            productionRecipe            + (table) production recipe
+            productItemCount            + (number) amount of items to produce
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ProductionSpot:itemsNeeded: Invalid input") return nil end
+
+    -- determine ingredientsNeeded
+    local ingredientsNeeded = nil
+    if self:isCraftingSpot() then
+        ingredientsNeeded = coreutils.DeepCopy(role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount))
+    else
+        -- determine production fuel
+        -- ToDo: do this differently
+        local fuelItemName  = "minecraft:birch_planks"
+        local fuelItemCount = productItemCount
+
+        ingredientsNeeded = coreutils.DeepCopy(role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount))
+    end
+
+    -- end
+    return ingredientsNeeded
+end
 
 return ProductionSpot

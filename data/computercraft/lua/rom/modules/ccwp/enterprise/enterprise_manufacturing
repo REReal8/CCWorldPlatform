@@ -14,8 +14,6 @@ local URL = require "obj_url"
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
-local role_alchemist = require "role_alchemist"
-
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle
@@ -129,10 +127,6 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
     local sites = enterprise_manufacturing:getObjects("Factory")
     if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: no sites present") return nil end
 
-    -- ..
-    local craftRecipe = recipe.crafting
-    local smeltRecipe = recipe.smelting
-
     -- find available sites
     local availableSitesInfo = {
     }
@@ -181,19 +175,10 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
     -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
 
-    -- enhance with itemsNeeded
+    -- enhance with produceIngredientsNeeded
     local productionSpot = selectedProduceItemData.productionSpot
     local productionRecipe = selectedProduceItemData.productionRecipe
-    if productionSpot:isCraftingSpot() then
-        selectedProduceItemData.itemsNeeded = coreutils.DeepCopy(role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount))
-    else
-        -- determine production fuel
-        -- ToDo: do this differently
-        local fuelItemName  = "minecraft:birch_planks"
-        local fuelItemCount = productItemCount
-
-        selectedProduceItemData.itemsNeeded = coreutils.DeepCopy(role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount))
-    end
+    selectedProduceItemData.itemsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, productItemCount)
 
     -- end
     return selectedProduceItemData
