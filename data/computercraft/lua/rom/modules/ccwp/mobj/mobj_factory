@@ -285,7 +285,7 @@ end
 
 function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionSpot = InputChecker.Check([[
+    local checkSuccess, localInputItemsLocator, localOutputLocator, productionSpot = InputChecker.Check([[
         This sync public service returns the needs for the site to produce specific items to an ItemDepot.
 
         Return value:
@@ -297,7 +297,6 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
             serviceData                 - (table) data to the query
                 localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
                 localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
-                productionMethod        + (string) production method to use
                 productionSpot          + (ProductionSpot) production spot
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
@@ -312,9 +311,9 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- fuelNeed for production
     local fuelNeed_Production = 0
-    if productionMethod == "craft" then fuelNeed_Production = 0 -- craft
-    elseif productionMethod == "smelt" then fuelNeed_Production = 4 + 4 -- smelt + pickup
-    else corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: Production with method "..productionMethod.." not implemented.") return {success = false} end
+    if productionSpot:isCraftingSpot() then fuelNeed_Production = 0 -- craft
+    else fuelNeed_Production = 4 + 4 -- smelt + pickup
+    end
 
     -- fuelNeed from productionSpot to localOutputLocator
     serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
@@ -332,7 +331,7 @@ end
 
 function Factory.ProduceItem_ASrv(...)
     -- get & check input from description
-    local checkSuccess, localInputItemsLocator, localOutputLocator, productionMethod, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, localInputItemsLocator, localOutputLocator, productionSpot, productItemName, productItemCount, productionRecipe, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public service produces multiple instances of a specific item in a factory site. It does so by producing
         the requested amount of items with the supplied production method (i.e. crafting or smelting).
 
@@ -350,7 +349,6 @@ function Factory.ProduceItem_ASrv(...)
             serviceData                 - (table) data for the service
                 localInputItemsLocator  + (URL) locating where the production ingredients can be retrieved locally "within" the site (e.g. an input chest)
                 localOutputLocator      + (URL) locating where the produced items need to be delivered locally "within" the site (e.g. an output chest)
-                productionMethod        + (string) production method to use
                 productionSpot          + (ProductionSpot) production spot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) amount of items to produce
@@ -375,7 +373,7 @@ function Factory.ProduceItem_ASrv(...)
     -- add production steps
     local extraStep = 0
     local areAllTrueStep = nil
-    if productionMethod == "craft" then
+    if productionSpot:isCraftingSpot() then
         -- add crafting step
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "CraftItem_ASrv" }, stepDataDef = {
@@ -394,7 +392,7 @@ function Factory.ProduceItem_ASrv(...)
             { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
             { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
         }}
-    elseif productionMethod == "smelt" then
+    else
         -- add smelting step
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "SmeltItem_ASrv" }, stepDataDef = {
@@ -425,7 +423,7 @@ function Factory.ProduceItem_ASrv(...)
             { keyDef = "success4"                   , sourceStep = 4, sourceKeyDef = "success" },
         }}
         extraStep = 1
-    else corelog.Error("Factory.ProduceItem_ASrv: Production with method "..productionMethod.." not implemented.") return Callback.ErrorCall(callback) end
+    end
 
     -- add remaining steps
     table.insert(projectSteps,

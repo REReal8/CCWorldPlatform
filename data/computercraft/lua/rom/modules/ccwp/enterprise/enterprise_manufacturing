@@ -160,7 +160,6 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
                             productionSpot      = craftSpot:copy(),
-                            productionMethod    = "craft",
                             productionRecipe    = coreutils.DeepCopy(craftRecipe),
                         })
                     else
@@ -176,7 +175,6 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
                             localInputLocator   = inputLocator:copy(),
                             localOutputLocator  = outputLocator:copy(),
                             productionSpot      = smeltSpot:copy(),
-                            productionMethod    = "smelt",
                             productionRecipe    = coreutils.DeepCopy(smeltRecipe),
                         })
                     else
@@ -202,18 +200,18 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
     -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
 
     -- enhance with itemsNeeded
-    local productionMethod = selectedProduceItemData.productionMethod
+    local productionSpot = selectedProduceItemData.productionSpot
     local productionRecipe = selectedProduceItemData.productionRecipe
-    if productionMethod == "craft" then
+    if productionSpot:isCraftingSpot() then
         selectedProduceItemData.itemsNeeded = coreutils.DeepCopy(role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount))
-    elseif productionMethod == "smelt" then
+    else
         -- determine production fuel
         -- ToDo: do this differently
         local fuelItemName  = "minecraft:birch_planks"
         local fuelItemCount = productItemCount
 
         selectedProduceItemData.itemsNeeded = coreutils.DeepCopy(role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount))
-    else corelog.Error("enterprise_manufacturing.GetAvailableSiteData: Production with method "..productionMethod.." not implemented.") return nil end
+    end
 
     -- end
     return selectedProduceItemData
@@ -289,7 +287,6 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
                 { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "ProduceItem_ASrv" }, stepDataDef = {
                     { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
-                    { keyDef = "productionMethod"               , sourceStep = 0, sourceKeyDef = "productionMethod" },
                     { keyDef = "productionSpot"                 , sourceStep = 0, sourceKeyDef = "productionSpot" },
                     { keyDef = "productItemName"                , sourceStep = 0, sourceKeyDef = "itemName" },
                     { keyDef = "productItemCount"               , sourceStep = 0, sourceKeyDef = "itemCount" },
@@ -322,7 +319,6 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
             localInputLocator               = localInputLocator,
             localOutputLocator              = localOutputLocator,
 
-            productionMethod                = siteProduceItemData.productionMethod,
             productionSpot                  = siteProduceItemData.productionSpot,
             itemName                        = itemName,
             itemCount                       = itemCount,
@@ -508,7 +504,6 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         serviceData = {
             localInputItemsLocator  = localInputItemsLocator,
             localOutputLocator      = siteProduceItemData.localOutputLocator:copy(),
-            productionMethod        = siteProduceItemData.productionMethod,
             productionSpot          = ProductionSpot:new(siteProduceItemData.productionSpot),
         }
         serviceResults = Factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
