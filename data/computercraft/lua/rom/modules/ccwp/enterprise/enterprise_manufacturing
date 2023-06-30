@@ -83,6 +83,11 @@ local db = {
     }
 }
 
+-- ToDo: consider refactoring and putting this elsewhere (a recipe book?)
+function enterprise_manufacturing.GetRecipes()
+    return db.recipes
+end
+
 --[[
     The manufacturing enterprise offers services to produce items based on recipes.
 
@@ -147,7 +152,7 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- select recipe to produce item
-        local recipe = db.recipes[ itemName ]
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
         -- select a suitable site
@@ -256,7 +261,7 @@ function enterprise_manufacturing.Can_ProvideItems_QSrv(...)
         if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
 
         -- check for recipe to produce itemName
-        local recipe = db.recipes[ itemName ]
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then
             return {success = false}
         end
@@ -317,7 +322,7 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
 
     -- check for recipe to provide items
     local itemName, itemCount = next(items, nil)
-    local recipe = db.recipes[ itemName ]
+    local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
     if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- select a suitable site
@@ -363,7 +368,7 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
 
         -- check for recipe to provide itemName
-        local recipe = db.recipes[ itemName ]
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
 
         -- select a suitable site
