@@ -111,7 +111,7 @@ end
 
 function enterprise_manufacturing.GetAvailableSiteData(...)
     -- get & check input from description
-    local checkSuccess, recipe, productItemCount = InputChecker.Check([[
+    local checkSuccess, recipe = InputChecker.Check([[
         This public method finds and selects a suitable factory site for producing items from a recipe.
 
         Return value:
@@ -119,7 +119,6 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
 
         Parameters:
             recipe                      + (table) item base recipe (including possibly both a crafting as smelting recipe)
-            productItemCount            + (number) amount of items to produce
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.GetAvailableSiteData: Invalid input") return nil end
 
@@ -226,7 +225,7 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
         -- select a suitable site
-        local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe, itemCount)
+        local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe)
         if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
 
         -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
@@ -397,7 +396,7 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
     if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- select a suitable site
-    local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe, itemCount)
+    local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe)
     if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
     local location = siteProduceItemData.productionSpot:getLocation()
 
@@ -443,7 +442,7 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
 
         -- select a suitable site
-        local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe, itemCount)
+        local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe)
         if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
