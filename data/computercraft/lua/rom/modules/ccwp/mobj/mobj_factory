@@ -223,6 +223,35 @@ function Factory:getAvailableSmeltSpot()
     return nil
 end
 
+function Factory:getAvailableProductionSpot(recipe)
+    --[[
+        This method finds and selects a ProductionSpot for producing items from a recipe.
+
+        Return value:
+            productionSpot          - (ProductionSpot) available ProductionSpot for recipe
+            productionRecipe        - (table) production recipe
+
+        Parameters:
+            recipe                  + (table) item base recipe (including possibly both a crafting as smelting recipe)
+    ]]
+
+    -- check it can craft or smelt recipe
+    local productionSpot = nil
+    local productionRecipe = nil
+    if recipe.crafting then
+        productionRecipe = recipe.crafting
+        productionSpot = self:getAvailableCraftSpot()
+    elseif recipe.smelting then
+        productionRecipe = recipe.smelting
+        productionSpot = self:getAvailableSmeltSpot()
+    else
+        corelog.Error("Factory:getAvailableProductionSpot: no valid production recipe provided.")
+    end
+
+    -- end
+    return productionSpot, productionRecipe
+end
+
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
 --    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
@@ -259,16 +288,9 @@ function Factory:can_ProvideItems_QOSrv(...)
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then return {success = false} end
 
-        -- check it can craft or smelt recipe
-        local craftSpot = nil
-        if recipe.crafting then
-            craftSpot = self:getAvailableCraftSpot()
-        end
-        local smeltSpot = nil
-        if recipe.smelting then
-            smeltSpot = self:getAvailableSmeltSpot()
-        end
-        if not craftSpot and not smeltSpot then return {success = false} end
+        -- check it can produce recipe
+        local productionSpot = self:getAvailableProductionSpot(recipe)
+        if not productionSpot then return {success = false} end
 
         -- ToDo: consider how to handle production of more items than fitting a single spot
 

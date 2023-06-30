@@ -151,35 +151,17 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
             if outputLocator == nil then
                 corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available outputLocator in site "..site:getId())
             else
-                -- check it can craft recipe
-                if craftRecipe ~= nil then
-                    -- ToDo: implement production of more items than fitting a single spot
-                    local craftSpot = site:getAvailableCraftSpot()
-                    if craftSpot ~= nil then
-                        table.insert(availableSitesInfo, {
-                            localInputLocator   = inputLocator:copy(),
-                            localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = craftSpot:copy(),
-                            productionRecipe    = coreutils.DeepCopy(craftRecipe),
-                        })
-                    else
-                        corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available crafting spot in site "..site:getId())
-                    end
-                end
-
-                -- check it can smelt recipe
-                if smeltRecipe ~= nil then
-                    local smeltSpot = site:getAvailableSmeltSpot()
-                    if smeltSpot ~= nil then
-                        table.insert(availableSitesInfo, {
-                            localInputLocator   = inputLocator:copy(),
-                            localOutputLocator  = outputLocator:copy(),
-                            productionSpot      = smeltSpot:copy(),
-                            productionRecipe    = coreutils.DeepCopy(smeltRecipe),
-                        })
-                    else
-                        corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available smelting spot in site "..site:getId())
-                    end
+                -- check it can produce recipe
+                local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
+                if productionSpot then
+                    table.insert(availableSitesInfo, {
+                        localInputLocator   = inputLocator:copy(),
+                        localOutputLocator  = outputLocator:copy(),
+                        productionSpot      = productionSpot:copy(),
+                        productionRecipe    = coreutils.DeepCopy(productionRecipe),
+                    })
+                else
+                    corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available productionSpot in site "..site:getId())
                 end
             end
         end
