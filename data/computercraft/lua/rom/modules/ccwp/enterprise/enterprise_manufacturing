@@ -175,11 +175,6 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
     -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
 
-    -- enhance with produceIngredientsNeeded
-    local productionSpot = selectedProduceItemData.productionSpot
-    local productionRecipe = selectedProduceItemData.productionRecipe
-    selectedProduceItemData.itemsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, productItemCount)
-
     -- end
     return selectedProduceItemData
 end
@@ -234,9 +229,12 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe, itemCount)
         if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
 
-        -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with itemsNeeded)
+        -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
+        local productionSpot = siteProduceItemData.productionSpot
+        local productionRecipe = siteProduceItemData.productionRecipe
+        local ingredientsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(siteProduceItemData.itemsNeeded))
+        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
 
         -- retrieve site input & output locator's
         local localInputLocator = URL:new(siteProduceItemData.localInputLocator)
@@ -286,10 +284,10 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
             localInputLocator               = localInputLocator,
             localOutputLocator              = localOutputLocator,
 
-            productionSpot                  = siteProduceItemData.productionSpot,
+            productionSpot                  = productionSpot,
             itemName                        = itemName,
             itemCount                       = itemCount,
-            productionRecipe                = siteProduceItemData.productionRecipe,
+            productionRecipe                = productionRecipe,
 
             assignmentsPriorityKey          = assignmentsPriorityKey,
         }
@@ -449,7 +447,9 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
-        local itemIngredientsNeed = siteProduceItemData.itemsNeeded
+        local productionSpot = siteProduceItemData.productionSpot
+        local productionRecipe = siteProduceItemData.productionRecipe
+        local itemIngredientsNeed = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
         if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
 
         -- fuelNeed ingredients
