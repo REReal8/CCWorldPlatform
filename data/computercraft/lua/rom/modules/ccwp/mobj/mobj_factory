@@ -247,12 +247,31 @@ function Factory:can_ProvideItems_QOSrv(...)
         -- check
         if type(itemName) ~= "string" then corelog.Error("Factory:can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
 
+        -- check available inputLocator
+        local inputLocator = self:getAvailableInputLocator()
+        if not inputLocator then return {success = false} end
+
         -- check for recipe to produce itemName
         enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-        if type(recipe) ~= "table" then
-            return {success = false}
+        if type(recipe) ~= "table" then return {success = false} end
+
+        -- check it can craft or smelt recipe
+        local craftSpot = nil
+        if recipe.crafting then
+            craftSpot = self:getAvailableCraftSpot()
         end
+        local smeltSpot = nil
+        if recipe.smelting then
+            smeltSpot = self:getAvailableSmeltSpot()
+        end
+        if not craftSpot and not smeltSpot then return {success = false} end
+
+        -- ToDo: consider how to handle production of more items than fitting a single spot
+
+        -- check available inputLocator
+        local outputLocator = self:getAvailableOutputLocator()
+        if not outputLocator then return {success = false} end
     end
 
     -- end
