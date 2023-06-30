@@ -20,6 +20,10 @@ function T_Factory.T_All()
     T_Factory.T_isSame()
     T_Factory.T_copy()
 
+    -- specific methods
+    T_Factory.T_getAvailableCraftSpot()
+    T_Factory.T_getAvailableSmeltSpot()
+
     -- service methods
 end
 
@@ -223,6 +227,39 @@ function T_Factory.T_copy()
     -- test
     local copy = obj:copy()
     assert(copy:isSame(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
+
+    -- cleanup test
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+function T_Factory.T_getAvailableCraftSpot()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getAvailableCraftSpot() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test
+    local spot = obj:getAvailableCraftSpot()
+    assert(spot:isSame(craftingSpot1), "gotten getAvailableCraftSpot(="..textutils.serialise(spot, compact)..") not the same as expected(="..textutils.serialise(craftingSpot1, compact)..")")
+
+    -- cleanup test
+end
+
+function T_Factory.T_getAvailableSmeltSpot()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getAvailableSmeltSpot() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test
+    local spot = obj:getAvailableSmeltSpot()
+    assert(spot:isSame(smeltingSpot1), "gotten getAvailableSmeltSpot(="..textutils.serialise(spot, compact)..") not the same as expected(="..textutils.serialise(smeltingSpot1, compact)..")")
 
     -- cleanup test
 end

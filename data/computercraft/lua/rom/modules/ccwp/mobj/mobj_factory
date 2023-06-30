@@ -195,32 +195,24 @@ local function GetAvailableLocator(locators)
     return nil
 end
 
-local function GetAvailableCraftSpot(site)
-    -- check input
-    if type(site) ~="table" then corelog.Error("Factory.GetAvailableCraftSpot: Invalid site") return nil end
-
+function Factory:getAvailableCraftSpot()
     -- find first available spot
-    for i, spot in ipairs(site:getCraftingSpots()) do
-        -- ToDo: consider checking availability
+    for i, spot in ipairs(self:getCraftingSpots()) do
 
         -- take first
-        return ProductionSpot:new(spot)
+        return spot
     end
 
     -- end
     return nil
 end
 
-local function GetAvailableSmeltSpot(site)
-    -- check input
-    if type(site) ~="table" then corelog.Error("Factory.GetAvailableSmeltSpot: Invalid site") return nil end
-
+function Factory:getAvailableSmeltSpot()
     -- find first available spot
-    for i, spot in ipairs(site:getSmeltingSpots()) do
-        -- ToDo: consider checking availability
+    for i, spot in ipairs(self:getSmeltingSpots()) do
 
         -- take first
-        return ProductionSpot:new(spot)
+        return spot
     end
 
     -- end
@@ -271,7 +263,7 @@ function Factory.GetAvailableSiteData(...)
                 -- check it can craft recipe
                 if craftRecipe ~= nil then
                     -- ToDo: implement production of more items than fitting a single spot
-                    local craftSpot = GetAvailableCraftSpot(site)
+                    local craftSpot = site:getAvailableCraftSpot()
                     if craftSpot ~= nil then
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
@@ -287,7 +279,7 @@ function Factory.GetAvailableSiteData(...)
 
                 -- check it can smelt recipe
                 if smeltRecipe ~= nil then
-                    local smeltSpot = GetAvailableSmeltSpot(site)
+                    local smeltSpot = site:getAvailableSmeltSpot()
                     if smeltSpot ~= nil then
                         table.insert(availableSitesInfo, {
                             localInputLocator   = inputLocator:copy(),
