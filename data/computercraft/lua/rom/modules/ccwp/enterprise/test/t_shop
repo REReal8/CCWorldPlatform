@@ -58,7 +58,6 @@ function t_shop.T_RegisterItemSupplier()
     corelog.WriteToLog("* enterprise_shop.RegisterItemSupplier_SSrv() tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
     local itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
-    corelog.WriteToLog("   itemSupplierLocator="..itemSupplierLocator:getURI())
 
     -- test
     local result = enterprise_shop.RegisterItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})
