@@ -179,6 +179,7 @@ end
 function Factory:getAvailableInputLocator()
     -- find first available locator
     for i, locator in ipairs(self:getInputLocators()) do
+        -- ToDo: check actual availability
 
         -- take first
         return locator
@@ -191,6 +192,7 @@ end
 function Factory:getAvailableOutputLocator()
     -- find first available locator
     for i, locator in ipairs(self:getOutputLocators()) do
+        -- ToDo: check actual availability
 
         -- take first
         return locator
@@ -203,6 +205,7 @@ end
 function Factory:getAvailableCraftSpot()
     -- find first available spot
     for i, spot in ipairs(self:getCraftingSpots()) do
+        -- ToDo: check actual availability (make method of ProductionSpot?)
 
         -- take first
         return spot
@@ -215,6 +218,7 @@ end
 function Factory:getAvailableSmeltSpot()
     -- find first available spot
     for i, spot in ipairs(self:getSmeltingSpots()) do
+        -- ToDo: check actual availability (make method of ProductionSpot?)
 
         -- take first
         return spot
