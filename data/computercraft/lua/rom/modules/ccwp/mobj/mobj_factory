@@ -11,6 +11,7 @@ local Factory = {
 }
 
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local ObjArray = require "obj_array"
 local InputChecker = require "input_checker"
