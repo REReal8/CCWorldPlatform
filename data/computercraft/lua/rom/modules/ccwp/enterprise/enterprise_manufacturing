@@ -109,72 +109,6 @@ end
 --   | |
 --   |_|
 
-function enterprise_manufacturing.GetAvailableSite(...)
-    -- get & check input from description
-    local checkSuccess, recipe = InputChecker.Check([[
-        This public method finds and selects a suitable factory site for producing items from a recipe.
-
-        Return value:
-            site                        - (Factory) to produce item
-
-        Parameters:
-            recipe                      + (table) item base recipe (including possibly both a crafting as smelting recipe)
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_manufacturing.GetAvailableSite: Invalid input") return nil end
-
-    -- sites ophalen
-    local sites = enterprise_manufacturing:getObjects("Factory")
-    if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.GetAvailableSite: no sites present") return nil end
-
-    -- find available sites
-    local availableSitesInfo = {
-    }
-    for k, site in pairs(sites) do
-        -- convert to object
-        site = Factory:new(site)
-        if not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetAvailableSite: Invalid site") return nil end
-
-        -- get available inputLocator
-        local inputLocator = site:getAvailableInputLocator()
-        if inputLocator == nil then
-            corelog.Warning("enterprise_manufacturing.GetAvailableSite: No available inputLocator in site "..site:getId())
-        else
-            -- get available outputLocator
-            local outputLocator = site:getAvailableOutputLocator()
-            if outputLocator == nil then
-                corelog.Warning("enterprise_manufacturing.GetAvailableSite: No available outputLocator in site "..site:getId())
-            else
-                -- check it can produce recipe
-                local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
-                if productionSpot then
-                    table.insert(availableSitesInfo, {
-                        site                = site,
-                    })
-                else
-                    corelog.Warning("enterprise_manufacturing.GetAvailableSite: No available productionSpot in site "..site:getId())
-                end
-            end
-        end
-    end
-
-    -- select best site
-    local selectedProduceItemData = nil
-    for i, siteProduceItemData in ipairs(availableSitesInfo) do
-        -- for now take first
-        selectedProduceItemData = siteProduceItemData
-        break
-        -- ToDo: consider finding best site based on some selection criterium
-    end
-    if selectedProduceItemData == nil then corelog.Warning("enterprise_manufacturing.GetAvailableSite: no site available") return nil end
-
-    -- mark productionSpot as unavailable
-    -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
-    -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
-
-    -- end
-    return selectedProduceItemData.site
-end
-
 function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
@@ -234,6 +168,10 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         -- retrieve site input & output locator's
         local localInputLocator = site:getAvailableInputLocator():copy()
         local localOutputLocator = site:getAvailableOutputLocator():copy()
+
+        -- mark productionSpot as unavailable
+        -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
+        -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
 
         -- create project service data
         local projectDef = {
