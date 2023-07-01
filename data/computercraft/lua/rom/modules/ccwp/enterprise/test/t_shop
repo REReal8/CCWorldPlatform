@@ -127,7 +127,9 @@ function t_shop.T_BestItemSupplier()
 
     -- cleanup test
     enterprise_chests:deleteResource(itemDepotLocator)
+    enterprise_shop.DelistItemSupplier_SSrv({ itemSupplierLocator = closeItemSupplierLocator})
     enterprise_chests:deleteResource(closeItemSupplierLocator)
+    enterprise_shop.DelistItemSupplier_SSrv({ itemSupplierLocator = farItemSupplierLocator})
     enterprise_chests:deleteResource(farItemSupplierLocator)
 end
 
