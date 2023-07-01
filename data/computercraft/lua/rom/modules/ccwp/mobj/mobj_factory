@@ -259,6 +259,122 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Factory:provideItemsTo_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemSupplier service provides specific items to an ItemDepot.
+
+        Return value:
+                                                - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                                                    the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                         - (table) data for the service
+                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                            + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- loop on items
+    local scheduleResult = true
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("Factory:provideItemsTo_AOSrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
+        if type(itemCount) ~= "number" then corelog.Error("Factory:provideItemsTo_AOSrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
+
+        -- select recipe to produce item
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
+        if type(recipe) ~= "table" then corelog.Error("Factory:provideItemsTo_AOSrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
+
+        -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
+        local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)
+        if not productionSpot then corelog.Error("Factory:provideItemsTo_AOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return Callback.ErrorCall(callback) end
+        local ingredientsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
+        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
+        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
+
+        -- retrieve site input & output locator's
+        local localInputLocator = self:getAvailableInputLocator():copy()
+        local localOutputLocator = self:getAvailableOutputLocator():copy()
+
+        -- mark productionSpot as unavailable
+        -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
+        -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
+
+        -- create project service data
+        local projectDef = {
+            steps = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
+                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localInputLocator" },
+                    { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                }},
+                { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "ProduceItem_ASrv" }, stepDataDef = {
+                    { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                    { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
+                    { keyDef = "productionSpot"                 , sourceStep = 0, sourceKeyDef = "productionSpot" },
+                    { keyDef = "productItemName"                , sourceStep = 0, sourceKeyDef = "itemName" },
+                    { keyDef = "productItemCount"               , sourceStep = 0, sourceKeyDef = "itemCount" },
+                    { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
+                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                }},
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                }},
+                -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
+                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                    { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
+                    { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
+                    { keyDef = "success3"                       , sourceStep = 3, sourceKeyDef = "success" },
+                }},
+            },
+            returnData  = {
+                { keyDef = "success"                            , sourceStep = 4, sourceKeyDef = "success" },
+                { keyDef = "destinationItemsLocator"            , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
+            }
+        }
+        local projectData = {
+            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
+
+            ingredientsItemsLocator         = ingredientsItemsLocator,
+            itemDepotLocator                = itemDepotLocator,
+
+            localInputLocator               = localInputLocator,
+            localOutputLocator              = localOutputLocator,
+
+            productionSpot                  = productionSpot,
+            itemName                        = itemName,
+            itemCount                       = itemCount,
+            productionRecipe                = productionRecipe,
+
+            assignmentsPriorityKey          = assignmentsPriorityKey,
+        }
+        local projectServiceData = {
+            projectDef  = projectDef,
+            projectData = projectData,
+        }
+
+        -- start project
+--        corelog.WriteToLog(">Producing "..itemCount.." "..itemName.."'s in Factory")
+        scheduleResult = scheduleResult and enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    end
+
+    -- end
+    return scheduleResult
+end
+
 function Factory:can_ProvideItems_QOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
@@ -302,6 +418,94 @@ function Factory:can_ProvideItems_QOSrv(...)
     -- end
     return {
         success = true,
+    }
+end
+
+function Factory:needsTo_ProvideItemsTo_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
+        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to provide items
+                ingredientsNeed                 - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                         - (table) data to the query
+                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (URL, nil) locating where ingredients can be retrieved
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
+
+    -- loop on items
+    local fuelNeed = 0
+    local ingredientsNeed = {}
+    for itemName, itemCount in pairs(provideItems) do
+        -- check
+        if type(itemName) ~= "string" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+
+        -- check for recipe to provide itemName
+        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
+        if type(recipe) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Provider does not provide "..itemName.."'s") return {success = false} end
+
+        -- add ingredientsNeed
+        local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)
+        if not productionSpot then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return {success = false} end
+        local itemIngredientsNeed = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
+        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
+
+        -- fuelNeed ingredients
+        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
+        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
+        local localInputLocator = self:getAvailableInputLocator():copy()
+        local serviceData = {
+            itemsLocator                    = ingredientsItemsLocator,
+            itemDepotLocator                = localInputLocator,
+            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
+        }
+        local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
+        local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
+
+        -- fuelNeed production
+        local localInputItemsLocator = localInputLocator:copy()
+        localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
+        local localOutputLocator = self:getAvailableOutputLocator():copy()
+        serviceData = {
+            localInputItemsLocator  = localInputItemsLocator,
+            localOutputLocator      = localOutputLocator,
+            productionSpot          = productionSpot:copy(),
+        }
+        serviceResults = Factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for production at site") return {success = false} end
+        local fuelNeed_SiteProduction = serviceResults.fuelNeed
+
+        -- fuelNeed output transfer
+        local localOutputItemsLocator = localOutputLocator:copy()
+        local items = { [itemName] = itemCount }
+        localOutputItemsLocator:setQuery(items)
+        serviceData = {
+            sourceItemsLocator          = localOutputItemsLocator,
+            destinationItemDepotLocator = itemDepotLocator,
+        }
+        serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
+        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        local fuelNeed_ProductsSupply = serviceResults.fuelNeed
+
+        -- add fuelNeed
+--        corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)
+        fuelNeed = fuelNeed + fuelNeed_IngredientsSupply + fuelNeed_SiteProduction + fuelNeed_ProductsSupply
+    end
+
+    -- end
+    return {
+        success         = true,
+        fuelNeed        = fuelNeed,
+        ingredientsNeed = ingredientsNeed,
     }
 end
 

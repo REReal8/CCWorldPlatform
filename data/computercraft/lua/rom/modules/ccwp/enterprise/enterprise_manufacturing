@@ -9,13 +9,10 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local URL = require "obj_url"
 
-local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle
 local enterprise_energy = require "enterprise_energy"
 local enterprise_construction = require "enterprise_construction"
@@ -148,94 +145,13 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
     local site = enterprise_manufacturing.GetSite_Can_ProvideItems(provideItems)
     if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Site "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- loop on items
-    local scheduleResult = true
-    for itemName, itemCount in pairs(provideItems) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
-
-        -- select recipe to produce item
-        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
-
-        -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
-        local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
-        local ingredientsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
-        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
-
-        -- retrieve site input & output locator's
-        local localInputLocator = site:getAvailableInputLocator():copy()
-        local localOutputLocator = site:getAvailableOutputLocator():copy()
-
-        -- mark productionSpot as unavailable
-        -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
-        -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
-
-        -- create project service data
-        local projectDef = {
-            steps = {
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
-                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localInputLocator" },
-                    { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
-                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                }},
-                { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "ProduceItem_ASrv" }, stepDataDef = {
-                    { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                    { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
-                    { keyDef = "productionSpot"                 , sourceStep = 0, sourceKeyDef = "productionSpot" },
-                    { keyDef = "productItemName"                , sourceStep = 0, sourceKeyDef = "itemName" },
-                    { keyDef = "productItemCount"               , sourceStep = 0, sourceKeyDef = "itemCount" },
-                    { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
-                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                }},
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
-                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
-                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                }},
-                -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
-                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                    { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
-                    { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
-                    { keyDef = "success3"                       , sourceStep = 3, sourceKeyDef = "success" },
-                }},
-            },
-            returnData  = {
-                { keyDef = "success"                            , sourceStep = 4, sourceKeyDef = "success" },
-                { keyDef = "destinationItemsLocator"            , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
-            }
-        }
-        local projectData = {
-            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
-
-            ingredientsItemsLocator         = ingredientsItemsLocator,
-            itemDepotLocator                = itemDepotLocator,
-
-            localInputLocator               = localInputLocator,
-            localOutputLocator              = localOutputLocator,
-
-            productionSpot                  = productionSpot,
-            itemName                        = itemName,
-            itemCount                       = itemCount,
-            productionRecipe                = productionRecipe,
-
-            assignmentsPriorityKey          = assignmentsPriorityKey,
-        }
-        local projectServiceData = {
-            projectDef  = projectDef,
-            projectData = projectData,
-        }
-
-        -- start project
---        corelog.WriteToLog(">Producing "..itemCount.." "..itemName.."'s in Factory")
-        scheduleResult = scheduleResult and enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-    end
-
-    -- end
-    return scheduleResult
+    -- have Site provide items
+    return site:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_manufacturing.GetSite_Can_ProvideItems(...)
@@ -404,72 +320,15 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
     local site = enterprise_manufacturing.GetSite_Can_ProvideItems(provideItems)
     if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Site "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- loop on items
-    local fuelNeed = 0
-    local ingredientsNeed = {}
-    for itemName, itemCount in pairs(provideItems) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
-
-        -- check for recipe to provide itemName
-        local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-        if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
-
-        -- add ingredientsNeed
-        local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
-        local itemIngredientsNeed = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
-        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
-
-        -- fuelNeed ingredients
-        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
-        local localInputLocator = site:getAvailableInputLocator():copy()
-        local serviceData = {
-            itemsLocator                    = ingredientsItemsLocator,
-            itemDepotLocator                = localInputLocator,
-            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
-        }
-        local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
-        local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
-
-        -- fuelNeed production
-        local localInputItemsLocator = localInputLocator:copy()
-        localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
-        local localOutputLocator = site:getAvailableOutputLocator():copy()
-        serviceData = {
-            localInputItemsLocator  = localInputItemsLocator,
-            localOutputLocator      = localOutputLocator,
-            productionSpot          = productionSpot:copy(),
-        }
-        serviceResults = Factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
-        local fuelNeed_SiteProduction = serviceResults.fuelNeed
-
-        -- fuelNeed output transfer
-        local localOutputItemsLocator = localOutputLocator:copy()
-        local items = { [itemName] = itemCount }
-        localOutputItemsLocator:setQuery(items)
-        serviceData = {
-            sourceItemsLocator          = localOutputItemsLocator,
-            destinationItemDepotLocator = itemDepotLocator,
-        }
-        serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-        local fuelNeed_ProductsSupply = serviceResults.fuelNeed
-
-        -- add fuelNeed
---        corelog.WriteToLog("F  fuelNeed_IngredientsSupply="..fuelNeed_IngredientsSupply..", fuelNeed_SiteProduction="..fuelNeed_SiteProduction..", fuelNeed_ProductsSupply="..fuelNeed_ProductsSupply)
-        fuelNeed = fuelNeed + fuelNeed_IngredientsSupply + fuelNeed_SiteProduction + fuelNeed_ProductsSupply
-    end
+    -- determine needs
+    local needs = site:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    })
 
     -- end
-    return {
-        success         = true,
-        fuelNeed        = fuelNeed,
-        ingredientsNeed = ingredientsNeed,
-    }
+    return needs
 end
 
 function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
