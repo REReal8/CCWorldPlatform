@@ -187,6 +187,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopAndDismantleSite_ASrv" }, stepDataDef = {
+                { keyDef = "siteLocator"                , sourceStep = 3, sourceKeyDef = "siteLocator" },
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
@@ -207,6 +208,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion2" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeToV2" },
+                { keyDef = "siteLocator"                , sourceStep = 10, sourceKeyDef = "siteLocator" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {

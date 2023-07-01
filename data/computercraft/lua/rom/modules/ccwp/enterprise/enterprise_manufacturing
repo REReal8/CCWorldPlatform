@@ -349,6 +349,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
                 baseLocation            - (Location) world location of the base (lower left corner) of this site
                 siteVersion             - (string) version string of the site
                 upgrade                 + (boolean, false) if site should (only) be updated from a previous version
+                siteLocator             - (URL, nil) locating the to be upgraded site
                 materialsHostLocator    - (URL) locating the host of the building materials
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -369,7 +370,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     if upgrade then
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopSite_ASrv" }, stepDataDef = {
-                { keyDef = "baseLocation"       , sourceStep = 0, sourceKeyDef = "baseLocation" },
+                { keyDef = "siteLocator"        , sourceStep = 0, sourceKeyDef = "siteLocator" },
             }}
         )
         iStep = iStep + 1
@@ -521,6 +522,7 @@ function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
 
         Parameters:
             serviceData                 + (table) data about this service
+                siteLocator             - (URL) locating the site
                 baseLocation            - (Location) world location of the base (lower left corner) of this site
                 siteVersion             + (string) version string of the site
                 materialsHostLocator    - (URL) locating the host of the building materials
@@ -532,7 +534,7 @@ function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
     local stopAndDismantleSiteProjectDef = {
         steps = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopSite_ASrv" }, stepDataDef = {
-                { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
+                { keyDef = "siteLocator"            , sourceStep = 0, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "DismantleSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
@@ -600,33 +602,9 @@ function enterprise_manufacturing.DismantleSite_ASrv(...)
     return enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback)
 end
 
-local function FindSiteByLocation(baseLocation)
-    -- sites ophalen
-    local sites = enterprise_manufacturing:getObjects("Factory")
-
-    -- check if we have any site
-    if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.FindSiteByLocation: no sites present") return nil end
-
-    -- loop on sites
-    for k, site in pairs(sites) do
-        -- convert to object
-        site = Factory:new(site)
-        if not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.FindSiteByLocation: Invalid site") return nil end
-
-        -- is this the one?
-        local siteBaseLocation = site:getBaseLocation()
-        if siteBaseLocation:isSame(baseLocation) then
-            return site
-        end
-    end
-
-    return nil
-end
-
---ToDo: consider providing siteLocator (obtained from StartSite_ASrv) instead of baseLocation => FindSiteByLocation obsolete
 function enterprise_manufacturing.StopSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, callback = InputChecker.Check([[
+    local checkSuccess, siteLocator, callback = InputChecker.Check([[
         This async public service stops a factory site. Stopping implies
           - the site is immediatly no longer available for new business
           - wait for all active work (production) on site to be ended
@@ -641,14 +619,14 @@ function enterprise_manufacturing.StopSite_ASrv(...)
 
         Parameters:
             serviceData         - (table) data about this service
-                baseLocation    + (Location) world location of the base (lower left corner) of the site
+                siteLocator     + (URL) locating the site
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get the site
-    local site = FindSiteByLocation(baseLocation)
-    if type(site) ~="table" then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Failed retrieving factory site at location "..textutils.serialise(baseLocation)..".") return Callback.ErrorCall(callback) end
+    local site = enterprise_manufacturing:getObject(siteLocator)
+    if type(site) ~="table" then corelog.Error("enterprise_manufacturing.StopSite_ASrv: Failed retrieving site "..siteLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- stop doing business for this site
     -- ToDo: implement
@@ -656,12 +634,9 @@ function enterprise_manufacturing.StopSite_ASrv(...)
     -- wait for active work done
     -- ToDo: implement
 
-    -- get locator
-    local objectLocator = enterprise_manufacturing:getObjectLocator(site)
-
     -- remove site from enterprise
     corelog.WriteToLog(">Removing site "..site:getId())
-    enterprise_manufacturing:deleteResource(objectLocator)
+    enterprise_manufacturing:deleteResource(siteLocator)
 
     -- do callback
     return callback:call({success = true})

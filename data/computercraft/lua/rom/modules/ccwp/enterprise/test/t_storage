@@ -23,11 +23,12 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
 
     local location = Location:new(coremove.GetLocation())
     local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
+    local siteLocator = result.siteLocator
 
     local callback = Callback:new({
         _moduleName     = "t_storage",
         _methodName     = "Cleanup_Callback",
-        _data           = { forestLocator = forestLocator, location = location },
+        _data           = { forestLocator = forestLocator, siteLocator = siteLocator },
     })
 
     -- test
@@ -45,7 +46,7 @@ function t_storage.Cleanup_Callback(callbackData, taskResult)
     corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
 
     -- cleanup test
-    t_manufacturing.StopSite(callbackData.location)
+    t_manufacturing.StopSite(callbackData.siteLocator)
 
     enterprise_forestry:deleteResource(callbackData.forestLocator)
 end

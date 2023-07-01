@@ -54,7 +54,7 @@ function t_manufacturing.T_GetFuelNeed_Production_Att()
     local items = { ["minecraft:birch_planks"] = 4 }
     local location = Location:new(coremove.GetLocation())
     local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
-    local siteLocator1 = result.siteLocator
+    local siteLocator = result.siteLocator
 
     -- test
     local fuelNeed = enterprise_manufacturing.GetFuelNeed_Production_Att(items)
@@ -62,16 +62,36 @@ function t_manufacturing.T_GetFuelNeed_Production_Att()
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
 
     -- cleanup test
-    t_manufacturing.StopSite(location)
+    t_manufacturing.StopSite(siteLocator)
 end
 
 function t_manufacturing.T_BuildAndStartNewV1Site()
+    local callbackBuildAndStartNewV1Site = Callback:new({
+        _moduleName     = "t_manufacturing",
+        _methodName     = "BuildAndStartNewV1Site_CallBack",
+        _data           = {},
+    })
+
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         upgrade                 = false,
+        siteLocator             = nil,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
-    }, callback)
+    }, callbackBuildAndStartNewV1Site)
+end
+
+local siteLocatorV1
+
+function t_manufacturing.BuildAndStartNewV1Site_CallBack(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    siteLocatorV1 = serviceResults.siteLocator
+
+    -- cleanup test
+
+    -- end
+    return true
 end
 
 function t_manufacturing.T_BuildAndStartNewV2Site()
@@ -79,12 +99,14 @@ function t_manufacturing.T_BuildAndStartNewV2Site()
         baseLocation            = baseLocationV2,
         siteVersion             = "v2",
         upgrade                 = true,
+        siteLocator             = siteLocatorV1,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, callback)
 end
 
-function t_manufacturing._StopAndDismantleV1Site()
+function t_manufacturing.T_StopAndDismantleV1Site()
     return enterprise_manufacturing.StopAndDismantleSite_ASrv({
+        siteLocator             = siteLocatorV1,
         baseLocation            = baseLocationV1,
         siteVersion             = "v1",
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
@@ -100,8 +122,11 @@ function t_manufacturing.T_BuildNewV0Site()
     }, callback)
 end
 
+local siteLocatorV0
+
 function t_manufacturing.T_StartNewV0Site()
     local result = t_manufacturing.StartNewSite(baseLocationV0) if not result.success then corelog.Error("failed starting Site") return end
+    siteLocatorV0 = result.siteLocator
 end
 
 function t_manufacturing.StartNewSite(baseLocation, version)
@@ -128,12 +153,12 @@ function DismantleV0Site(baseLocation)
 end
 
 function t_manufacturing.T_StopV0Site()
-    t_manufacturing.StopSite(baseLocationV0)
+    t_manufacturing.StopSite(siteLocatorV0)
 end
 
-function t_manufacturing.StopSite(baseLocation)
+function t_manufacturing.StopSite(siteLocator)
     return enterprise_manufacturing.StopSite_ASrv({
-        baseLocation    = baseLocation
+        siteLocator     = siteLocator
     }, callback)
 end
 
