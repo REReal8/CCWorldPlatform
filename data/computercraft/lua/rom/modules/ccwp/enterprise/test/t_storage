@@ -22,7 +22,7 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local location = Location:new(coremove.GetLocation())
-    t_manufacturing.StartNewSite(location)
+    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
 
     local callback = Callback:new({
         _moduleName     = "t_storage",

@@ -53,7 +53,8 @@ function t_manufacturing.T_GetFuelNeed_Production_Att()
     corelog.WriteToLog("* enterprise_manufacturing.GetFuelNeed_Production_Att() tests")
     local items = { ["minecraft:birch_planks"] = 4 }
     local location = Location:new(coremove.GetLocation())
-    t_manufacturing.StartNewSite(location)
+    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
+    local siteLocator1 = result.siteLocator
 
     -- test
     local fuelNeed = enterprise_manufacturing.GetFuelNeed_Production_Att(items)
@@ -100,7 +101,7 @@ function t_manufacturing.T_BuildNewV0Site()
 end
 
 function t_manufacturing.T_StartNewV0Site()
-    t_manufacturing.StartNewSite(baseLocationV0)
+    local result = t_manufacturing.StartNewSite(baseLocationV0) if not result.success then corelog.Error("failed starting Site") return end
 end
 
 function t_manufacturing.StartNewSite(baseLocation, version)
@@ -110,7 +111,7 @@ function t_manufacturing.StartNewSite(baseLocation, version)
         baseLocation        = baseLocation,
         siteVersion         = version,
         siteAlreadyBuild    = true
-    }, callback)
+    })
 end
 
 function t_manufacturing.T_DismantleV0Site()

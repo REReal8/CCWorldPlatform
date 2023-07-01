@@ -39,7 +39,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local factoryLocation1 = turtleLocation:copy()
-    t_manufacturing.StartNewSite(factoryLocation1)
+    local result = t_manufacturing.StartNewSite(factoryLocation1) if not result.success then corelog.Error("failed starting Site") return end
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -78,7 +78,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     forest:setNTrees(3*6)
     forestLocator = enterprise_forestry:saveObject(forest)
     local factoryLocation2 = forestLocation:getRelativeLocation(12, 0, 0)
-    t_manufacturing.StartNewSite(factoryLocation2)
+    result = t_manufacturing.StartNewSite(factoryLocation2) if not result.success then corelog.Error("failed starting Site") return end
     level = level3
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator })
@@ -102,7 +102,7 @@ function t_energy.T_GetRefuelAmount_Att()
 
     local turtleLocation = Location:new(coremove.GetLocation())
     local factoryLocation1 = turtleLocation:copy()
-    t_manufacturing.StartNewSite(factoryLocation1)
+    local result = t_manufacturing.StartNewSite(factoryLocation1) if not result.success then corelog.Error("failed starting Site") return end
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel

@@ -46,7 +46,7 @@ function t_turtle.T_GetFuelLevels_Att()
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local location = Location:new(coremove.GetLocation())
-    t_manufacturing.StartNewSite(location)
+    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
