@@ -18,7 +18,7 @@ local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local TaskCall = require "obj_task_call"
+local ObjArray = require "obj_array"
 
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
@@ -30,6 +30,7 @@ local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
+local enterprise_storage
 
 -- usefull
 local dthSiloRoot   = "mobj_silo"
@@ -49,6 +50,32 @@ local dthSiloRoot   = "mobj_silo"
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 function Silo:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Silo.
+
+        Parameters:
+            o                           + (table) data about this silo, like type and layout
+                _id                     - (string) id of the Silo
+                _version                - (number) version of the Silo
+                _location               - (Location) location of the Silo
+                _entryLocation          - (Location) entry location of the Silo
+                _dropLocation           - (number) top chest index
+                _pickupLocation         - (number) top chest index
+                _topChests              - (ObjArray) with top chests
+                _storageChests          - (ObjArray) with storage chests
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function Silo:NewSilo(...)
     -- get & check input from description
     local checkSuccess, location, topChests, layers = InputChecker.Check([[
         Construct a Silo.
@@ -81,22 +108,26 @@ function Silo:new(...)
         _pickupLocation = 0,
 
         -- chests
-        _topChests      = {},
-        _storageChests  = {},
+        _topChests      = ObjArray:new({
+            _objClassName = "URL",
+        }),
+        _storageChests  = ObjArray:new({
+            _objClassName = "URL",
+        }),
     }
 
     -- what kind of new silo is this?
     corelog.WriteToLog(">Starting silo at "..textutils.serialise(location, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 5, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 4, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 2, 0), accessDirection="front"}).chestLocator) end
+    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}).chestLocator) end
+    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}).chestLocator) end
+    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}).chestLocator) end
+    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}).chestLocator) end
     if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}).chestLocator) end
     if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 2, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 4, 0), accessDirection="front"}).chestLocator) end
+    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}).chestLocator) end
+    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}).chestLocator) end
 
     -- set the defaults (basic setup)
     if topChests >= 1 then siteData._dropLocation   = 1 end
@@ -107,10 +138,10 @@ function Silo:new(...)
 
         -- do the floor
         local shaft = siteData._entryLocation:getRelativeLocation(0, 0, -1 - i)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0,  1), accessDirection="front"}).chestLocator)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 1,  0), accessDirection="front"}).chestLocator)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0, -1), accessDirection="front"}).chestLocator)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection(-1,  0), accessDirection="front"}).chestLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}).chestLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}).chestLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}).chestLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}).chestLocator)
     end
 
     -- set class info
@@ -118,7 +149,7 @@ function Silo:new(...)
     self.__index = self
 
     -- better save this shit
-    siteData:Save()
+--    siteData:Save()
 
     -- end
     return siteData
@@ -140,9 +171,16 @@ function Silo.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
+    if type(obj._version) ~= "number" then return false end
+
     if not Location.IsOfType(obj._location) then return false end
-    if type(obj._accessDirection) ~= "string" then return false end
-    if not Inventory.IsOfType(obj._inventory) then return false end
+    if not Location.IsOfType(obj._entryLocation) then return false end
+
+    if type(obj._dropLocation) ~= "number" then return false end
+    if type(obj._pickupLocation) ~= "number" then return false end
+
+    if not ObjArray.IsOfType(obj._topChests) then return false end
+    if not ObjArray.IsOfType(obj._storageChests) then return false end
 
     -- end
     return true
@@ -167,9 +205,16 @@ function Silo:isSame(obj)
 
     -- check same object
     local isSame =  self._id == obj._id
+                and self._version == obj._version
+
                 and self._location:isSame(obj._location)
-                and self._accessDirection == obj._accessDirection
-                and self._inventory:isSame(obj._inventory)
+                and self._entryLocation:isSame(obj._entryLocation)
+
+                and self._dropLocation == obj._dropLocation
+                and self._pickupLocation == obj._pickupLocation
+
+                and self._topChests:isSame(obj._topChests)
+                and self._storageChests:isSame(obj._storageChests)
 
     -- end
     return isSame
@@ -178,10 +223,18 @@ end
 function Silo:copy()
     local copy = Silo:new({
         _id             = self._id,
+        _version        = self._version,
 
         _location       = self._location:copy(),
-        _accessDirection= self._accessDirection,
-        _inventory      = self._inventory:copy(),
+        _entryLocation  = self._entryLocation:copy(),
+
+        -- pickup and drop
+        _dropLocation   = self._dropLocation,
+        _pickupLocation = self._pickupLocation,
+
+        -- chests
+        _topChests      = self._topChests:copy(),
+        _storageChests  = self._storageChests:copy(),
     })
 
     return copy
@@ -193,6 +246,86 @@ end
 --   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function Silo:storeItemsFrom_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
+
+        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where stored
+                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                                            and the "query" should be equal to the "query" component of the itemsLocator)
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
+                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the URL specifies the items)
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- set (expected) destinationItemsLocator
+    enterprise_storage = enterprise_storage or require "enterprise_storage"
+    local destinationItemsLocator = enterprise_storage:getObjectLocator(self)
+    destinationItemsLocator:setQuery(coreutils.DeepCopy(itemsLocator:getQuery()))
+
+    -- create project definition
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local projectData = {
+        itemsLocator            = itemsLocator,
+        dropLocator             = self:getDropLocation(),
+        assignmentsPriorityKey  = assignmentsPriorityKey,
+
+        destinationItemsLocator = destinationItemsLocator,
+
+        silo                    = self:copy(),
+    }
+    local projectDef = {
+        steps   = {
+            -- roept functie aan die goederen van pickup locati enaar silo topchest
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
+                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "dropLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- roept functie aan die goederen van topchest opslaat in de silo
+                -- roept functie aan die bepalen welke items naar welke chjests moeten
+                    -- indien geen ruimte, eerst enterprise inschakelen voor uitbreiding
+                -- per goederen type opslaan
+            { stepType = "AOSrv", stepTypeDef = { className = "Silo", serviceName = "fromTopchestIntoSilo_AOSrv", objStep = 0, objKeyDef = "silo" }, stepDataDef = {
+                { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- check for succes
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 0, sourceKeyDef = "destinationItemsLocator" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Store "..itemsLocator:getURI().." into Silo")
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
 
 function Silo:getDropLocation()
     -- easy
@@ -292,6 +425,67 @@ function Silo:Delete()
 
     -- we no longer exist
     self._id = nil
+end
+
+-- pr9ivate methods
+
+function Silo:fromTopchestIntoSilo_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        Todo betere omschrijving
+            -- roept functie aan die bepalen welke items naar welke chjests moeten
+            -- indien geen ruimte, eerst enterprise inschakelen voor uitbreiding
+            -- per goederen type opslaan
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
+                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the URL specifies the items)
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:fromTopchestIntoSilo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    corelog.WriteToLog("fromTopchestIntoSilo_AOSrv begin")
+
+    local projectData = {
+        itemsLocator            = itemsLocator,
+        chestOneLocator         = self._storageChests[1],
+        assignmentsPriorityKey  = assignmentsPriorityKey,
+    }
+    local projectDef = {
+        steps   = {
+            -- roept functie aan die goederen van pickup locati enaar silo topchest
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
+                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "chestOneLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- check for succes
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , sourceStep = 2, sourceKeyDef = "success" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">fromTopchestIntoSilo_AOSrv(...)")
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 return Silo

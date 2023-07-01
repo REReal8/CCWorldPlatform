@@ -15,6 +15,7 @@ local Silo = require "mobj_silo"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
+local enterprise_storage = require "enterprise_storage"
 
 function T_Silo.T_All()
     -- base methods
@@ -34,20 +35,21 @@ local location1  = Location:new({_x= 12, _y= 12, _z= 1, _dx=0, _dy=1})
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function T_Silo.T_new()
+function T_Silo.T_NewSilo()
 
     -- do the new test
-    corelog.WriteToLog("* Silo:new() tests")
-    local silo = Silo:new({location=location1, topChests=2, layers=2})
+    corelog.WriteToLog("* Silo:NewSilo() tests")
+    local obj = Silo:NewSilo({location=location1, topChests=2, layers=2})
+    local siloLocator = enterprise_storage:saveObject(obj)
 end
 
 function T_Silo.T_Load()
 
     -- we are calling the shots now
-    corelog.WriteToLog("* Silo:new() tests")
+    corelog.WriteToLog("* Silo:NewSilo() tests")
 
     -- zeker weten dat er een silo is om mee te werken
-    local newSilo = Silo:new({location=location1, topChests=2, layers=2})
+    local newSilo = Silo:NewSilo({location=location1, topChests=2, layers=2})
     corelog.WriteToLog("newSilo._id = "..(newSilo._id or ""))
 
     -- lijstje met alle silo's
@@ -64,6 +66,64 @@ function T_Silo.T_Load()
 
     -- might as well delete this new silo before things become messy
     if type(newSilo) == "table" then newSilo:Delete() end
+end
+
+local compact = { compact = true }
+
+function T_Silo.T_storeItemsFrom_AOSrv()
+    -- prepare test
+    corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
+    local itemsLocator = enterprise_turtle.GetHostLocator_Att()
+    itemsLocator:setPort(os.getComputerID())
+    local obj = Silo:NewSilo({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Chest") return end
+--    local siloLocator = enterprise_storage:getObjectLocator(obj)
+    local siloLocator = enterprise_storage:saveObject(obj)
+
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+        ["minecraft:birch_planks"]  = 2,
+    }
+    itemsLocator:setQuery(provideItems)
+
+    local expectedDestinationItemsLocator = siloLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback = Callback:new({
+        _moduleName     = "T_Silo",
+        _methodName     = "storeItemsFrom_ASrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+            ["siloLocator"]                     = siloLocator,
+            ["itemsLocator"]                    = itemsLocator:copy(),
+        },
+    })
+
+    -- test
+    local scheduleResult = obj:storeItemsFrom_AOSrv({
+        itemsLocator    = itemsLocator,
+    }, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+
+    -- cleanup test
+end
+
+function T_Silo.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    local siloLocator = callbackData["siloLocator"]
+    enterprise_storage:deleteResource(siloLocator)
+    local itemsLocator = callbackData["itemsLocator"]
+    if enterprise_chests:isLocatorFromHost(itemsLocator) then
+       enterprise_chests:deleteResource(itemsLocator)
+    end
+
+    -- end
+    return true
 end
 
 return T_Silo
