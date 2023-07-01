@@ -209,9 +209,13 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
     -- check itemsLocator is for this enterprise
     if not enterprise_manufacturing:isLocatorFromHost(itemsLocator) then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
+    -- get Site
+    local provideItems = itemsLocator:getQuery()
+    local site = enterprise_manufacturing.GetSite_Can_ProvideItems(provideItems)
+    if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Site "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
     -- loop on items
     local scheduleResult = true
-    local provideItems = itemsLocator:getQuery()
     for itemName, itemCount in pairs(provideItems) do
         -- check
         if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid itemName (type="..type(itemName)..")") return Callback.ErrorCall(callback) end
@@ -220,10 +224,6 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         -- select recipe to produce item
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
-
-        -- select a suitable site
-        local site = enterprise_manufacturing.GetAvailableSite(recipe)
-        if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
 
         -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
         local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
@@ -298,6 +298,39 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
 
     -- end
     return scheduleResult
+end
+
+function enterprise_manufacturing.GetSite_Can_ProvideItems(...)
+    -- get & check input from description
+    local checkSuccess, provideItems = InputChecker.Check([[
+        This public method finds and selects a suitable factory site for providing items.
+
+        Return value:
+            site                                - (Factory) to produce item
+
+        Parameters:
+            provideItems                        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.GetSite_Can_ProvideItems: Invalid input") return nil end
+
+    -- sites ophalen
+    local sites = enterprise_manufacturing:getObjects("Factory")
+    if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.GetSite_Can_ProvideItems: no sites present") return nil end
+
+    -- loop on sites
+    for k, site in pairs(sites) do
+        -- convert to object
+        site = Factory:new(site)
+        if not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetSite_Can_ProvideItems: Invalid site") return nil end
+
+        -- check can Provide
+        if site:can_ProvideItems_QOSrv({ provideItems = provideItems }) then
+            return site
+        end
+    end
+
+    -- end
+    return nil
 end
 
 function enterprise_manufacturing.Can_ProvideItems_QSrv(...)
@@ -391,9 +424,11 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
     local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
     if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
-    -- select a suitable site
-    local site = enterprise_manufacturing.GetAvailableSite(recipe)
-    if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    -- get Site
+    local site = enterprise_manufacturing.GetSite_Can_ProvideItems(items)
+    if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site found.") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+
+    -- get location
     local productionSpot = site:getAvailableProductionSpot(recipe)
     local location = productionSpot:getLocation()
 
@@ -426,11 +461,15 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
     -- check itemsLocator is for this enterprise
     if not enterprise_manufacturing:isLocatorFromHost(itemsLocator) then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
+    -- get Site
+    local provideItems = itemsLocator:getQuery()
+    local site = enterprise_manufacturing.GetSite_Can_ProvideItems(provideItems)
+    if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Site "..itemsLocator:getURI().." not found.") return {success = false} end
+
     -- loop on items
     local fuelNeed = 0
     local ingredientsNeed = {}
-    local supplyItems = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(supplyItems) do
+    for itemName, itemCount in pairs(provideItems) do
         -- check
         if type(itemName) ~= "string" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
         if type(itemCount) ~= "number" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
@@ -438,10 +477,6 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         -- check for recipe to provide itemName
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
-
-        -- select a suitable site
-        local site = enterprise_manufacturing.GetAvailableSite(recipe)
-        if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
         local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
