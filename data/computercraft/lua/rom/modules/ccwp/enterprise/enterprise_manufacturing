@@ -109,22 +109,22 @@ end
 --   | |
 --   |_|
 
-function enterprise_manufacturing.GetAvailableSiteData(...)
+function enterprise_manufacturing.GetAvailableSite(...)
     -- get & check input from description
     local checkSuccess, recipe = InputChecker.Check([[
         This public method finds and selects a suitable factory site for producing items from a recipe.
 
         Return value:
-                siteProduceItemData     - (table) (partial) productionData to produce item
+            site                        - (Factory) to produce item
 
         Parameters:
             recipe                      + (table) item base recipe (including possibly both a crafting as smelting recipe)
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_manufacturing.GetAvailableSiteData: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("enterprise_manufacturing.GetAvailableSite: Invalid input") return nil end
 
     -- sites ophalen
     local sites = enterprise_manufacturing:getObjects("Factory")
-    if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: no sites present") return nil end
+    if type(sites) ~= "table" then corelog.Warning("enterprise_manufacturing.GetAvailableSite: no sites present") return nil end
 
     -- find available sites
     local availableSitesInfo = {
@@ -132,29 +132,26 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
     for k, site in pairs(sites) do
         -- convert to object
         site = Factory:new(site)
-        if not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetAvailableSiteData: Invalid site") return nil end
+        if not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetAvailableSite: Invalid site") return nil end
 
         -- get available inputLocator
         local inputLocator = site:getAvailableInputLocator()
         if inputLocator == nil then
-            corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available inputLocator in site "..site:getId())
+            corelog.Warning("enterprise_manufacturing.GetAvailableSite: No available inputLocator in site "..site:getId())
         else
             -- get available outputLocator
             local outputLocator = site:getAvailableOutputLocator()
             if outputLocator == nil then
-                corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available outputLocator in site "..site:getId())
+                corelog.Warning("enterprise_manufacturing.GetAvailableSite: No available outputLocator in site "..site:getId())
             else
                 -- check it can produce recipe
                 local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
                 if productionSpot then
                     table.insert(availableSitesInfo, {
-                        localInputLocator   = inputLocator:copy(),
-                        localOutputLocator  = outputLocator:copy(),
-                        productionSpot      = productionSpot:copy(),
-                        productionRecipe    = coreutils.DeepCopy(productionRecipe),
+                        site                = site,
                     })
                 else
-                    corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: No available productionSpot in site "..site:getId())
+                    corelog.Warning("enterprise_manufacturing.GetAvailableSite: No available productionSpot in site "..site:getId())
                 end
             end
         end
@@ -168,14 +165,14 @@ function enterprise_manufacturing.GetAvailableSiteData(...)
         break
         -- ToDo: consider finding best site based on some selection criterium
     end
-    if selectedProduceItemData == nil then corelog.Warning("enterprise_manufacturing.GetAvailableSiteData: no site available") return nil end
+    if selectedProduceItemData == nil then corelog.Warning("enterprise_manufacturing.GetAvailableSite: no site available") return nil end
 
     -- mark productionSpot as unavailable
     -- ToDo: implement (not yet needed in current settle scenario where there is only one turtle)
     -- ToDo: consider to what extend this is also needed for localInputLocator and localOutputLocator
 
     -- end
-    return selectedProduceItemData
+    return selectedProduceItemData.site
 end
 
 function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
@@ -225,19 +222,18 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
         -- select a suitable site
-        local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe)
-        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
+        local site = enterprise_manufacturing.GetAvailableSite(recipe)
+        if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: No site available to produce "..itemCount.." "..itemName.."'s") return Callback.ErrorCall(callback) end
 
         -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
-        local productionSpot = siteProduceItemData.productionSpot
-        local productionRecipe = siteProduceItemData.productionRecipe
+        local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
         local ingredientsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
 
         -- retrieve site input & output locator's
-        local localInputLocator = URL:new(siteProduceItemData.localInputLocator)
-        local localOutputLocator = URL:new(siteProduceItemData.localOutputLocator)
+        local localInputLocator = site:getAvailableInputLocator():copy()
+        local localOutputLocator = site:getAvailableOutputLocator():copy()
 
         -- create project service data
         local projectDef = {
@@ -396,10 +392,12 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
     if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- select a suitable site
-    local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe)
-    if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
-    local location = siteProduceItemData.productionSpot:getLocation()
+    local site = enterprise_manufacturing.GetAvailableSite(recipe)
+    if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site available to produce "..itemCount.." "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    local productionSpot = site:getAvailableProductionSpot(recipe)
+    local location = productionSpot:getLocation()
 
+    -- end
     return location
 end
 
@@ -442,19 +440,18 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Provider does not provide "..itemName.."'s") return {success = false} end
 
         -- select a suitable site
-        local siteProduceItemData = enterprise_manufacturing.GetAvailableSiteData(recipe)
-        if type(siteProduceItemData) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
+        local site = enterprise_manufacturing.GetAvailableSite(recipe)
+        if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: No site available to produce "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- add ingredientsNeed
-        local productionSpot = siteProduceItemData.productionSpot
-        local productionRecipe = siteProduceItemData.productionRecipe
+        local productionSpot, productionRecipe = site:getAvailableProductionSpot(recipe)
         local itemIngredientsNeed = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
         if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
 
         -- fuelNeed ingredients
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
-        local localInputLocator = URL:new(siteProduceItemData.localInputLocator)
+        local localInputLocator = site:getAvailableInputLocator():copy()
         local serviceData = {
             itemsLocator                    = ingredientsItemsLocator,
             itemDepotLocator                = localInputLocator,
@@ -467,17 +464,17 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
         -- fuelNeed production
         local localInputItemsLocator = localInputLocator:copy()
         localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
+        local localOutputLocator = site:getAvailableOutputLocator():copy()
         serviceData = {
             localInputItemsLocator  = localInputItemsLocator,
-            localOutputLocator      = siteProduceItemData.localOutputLocator:copy(),
-            productionSpot          = ProductionSpot:new(siteProduceItemData.productionSpot),
+            localOutputLocator      = localOutputLocator,
+            productionSpot          = productionSpot:copy(),
         }
         serviceResults = Factory.NeedsTo_ProvideItemsTo_SSrv(serviceData)
         if not serviceResults.success then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for production at site") return {success = false} end
         local fuelNeed_SiteProduction = serviceResults.fuelNeed
 
         -- fuelNeed output transfer
-        local localOutputLocator = URL:new(siteProduceItemData.localOutputLocator)
         local localOutputItemsLocator = localOutputLocator:copy()
         local items = { [itemName] = itemCount }
         localOutputItemsLocator:setQuery(items)
