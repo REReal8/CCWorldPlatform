@@ -1,4 +1,9 @@
-local enterprise_storage = {}
+local Host = require "obj_host"
+
+local enterprise_storage = Host:new({
+    _hostName   = "enterprise_storage",
+})
+
 local corelog = require "corelog"
 local coredht = require "coredht"
 
