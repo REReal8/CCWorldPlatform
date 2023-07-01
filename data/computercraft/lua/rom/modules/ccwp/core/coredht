@@ -157,6 +157,9 @@ local function DoEventSaveData(subject, envelope)
         corelog.WriteToLog("DHT WARNING: Saving data from "..envelope.from.." with version "..envelope.message.version..". Current version is "..db._version)
     end
 
+    -- versie bijwerken
+    db._version = envelope.message.version
+
 	-- just save the data like a normal request from this computer
 	SaveDataToDB(envelope.message.data, table.unpack(envelope.message.arg))
 end
