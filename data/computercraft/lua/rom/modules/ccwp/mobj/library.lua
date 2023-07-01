@@ -12,6 +12,7 @@ function library.Setup()
     objectFactory:registerClass("Test",         require "mobj_turtle")
     objectFactory:registerClass("Chest",        require "mobj_chest")
     objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
+    objectFactory:registerClass("Factory",      require "mobj_factory")
     objectFactory:registerClass("ProductionSpot",   require "mobj_production_spot")
     objectFactory:registerClass("Silo",         require "mobj_silo")
 
