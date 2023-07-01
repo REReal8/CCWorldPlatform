@@ -42,7 +42,7 @@ function coreevent.Setup()
 	coretask.AddIdleHandler("event", 300, DoIdle)
 
 	-- mark the log of our new run (start a new log file)
-	coreutils.WriteToFile(db.logfile, "--- Init() --- os.getComputerID() = " .. os.getComputerID() .. " ---", "w")
+	coreutils.WriteToFile(db.logfile, "--- Init() --- os.getComputerID() = " .. os.getComputerID() .. " ---", "overwrite")
 end
 
 -- functie om de modem te initializeren
