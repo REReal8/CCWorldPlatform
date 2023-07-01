@@ -508,6 +508,7 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
     }
 end
 
+-- ToDo: retrieve baseLocation via siteLocator (+ also siteVersion?)
 function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, siteVersion, callback = InputChecker.Check([[
