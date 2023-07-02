@@ -11,7 +11,6 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 
 function t_manufacturing.T_All()
-    t_manufacturing.T_GetFuelNeed_Production_Att()
 end
 
 local baseLocationV0 = Location:new({_x=6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -46,23 +45,6 @@ function t_manufacturing.T_ProvideItemsTo_Smelt()
         ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
         itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
     }, callback)
-end
-
-function t_manufacturing.T_GetFuelNeed_Production_Att()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_manufacturing.GetFuelNeed_Production_Att() tests")
-    local items = { ["minecraft:birch_planks"] = 4 }
-    local location = Location:new(coremove.GetLocation())
-    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
-    local siteLocator = result.siteLocator
-
-    -- test
-    local fuelNeed = enterprise_manufacturing.GetFuelNeed_Production_Att(items)
-    local expectedFuelNeed = 0
-    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
-
-    -- cleanup test
-    t_manufacturing.StopSite(siteLocator)
 end
 
 function t_manufacturing.T_BuildAndStartNewV1Site()

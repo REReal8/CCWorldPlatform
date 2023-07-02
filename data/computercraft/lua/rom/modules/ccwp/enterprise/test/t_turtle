@@ -47,14 +47,15 @@ function t_turtle.T_GetFuelLevels_Att()
 
     local location = Location:new(coremove.GetLocation())
     local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
-    local siteLocator = result.siteLocator
+    local factoryLocator = result.siteLocator
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
-    local originalLocator = energyParameters.forestLocator
+    local originalForestLocator = energyParameters.forestLocator
+    local originalFactoryLocator = energyParameters.factoryLocator
 
     -- test
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator })
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level0, forestLocator = forestLocator, factoryLocator = factoryLocator })
     local fuelLevels = enterprise_turtle.GetFuelLevels_Att()
     local expectedFuelLevel_Priority = 41
     assert(fuelLevels.fuelLevel_Priority == expectedFuelLevel_Priority, "gotten fuelLevel_Priority(="..fuelLevels.fuelLevel_Priority..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Priority..")")
@@ -62,9 +63,9 @@ function t_turtle.T_GetFuelLevels_Att()
     assert(fuelLevels.fuelLevel_Assignment == expectedFuelLevel_Assignment, "gotten fuelLevel_Assignment(="..fuelLevels.fuelLevel_Assignment..") for energy enterpriseLevel "..level0.." not the same as expected(="..expectedFuelLevel_Assignment..")")
 
     -- cleanup test
-    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalLocator })
+    enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    t_manufacturing.StopSite(siteLocator)
+    t_manufacturing.StopSite(factoryLocator)
 
     enterprise_forestry:deleteResource(forestLocator)
 end

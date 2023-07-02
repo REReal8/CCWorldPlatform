@@ -168,7 +168,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
     local fuelNeed = 0
     local enterpriseLevel = parameters.enterpriseLevel
     if enterpriseLevel > 0 then
-        -- get forest
+        -- get BirchForest
         local forestLocator = parameters.forestLocator
         local forest = nil
         local enterprise_forestry = require "enterprise_forestry"
@@ -184,18 +184,20 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
             fuelNeed_ExtraTree = forest:getFuelNeedExtraTree_Att()
         end
 
-        -- check there is a factory
+        -- get Factory
+        local factoryLocator = parameters.factoryLocator
+        local factory = nil
         local enterprise_manufacturing = require "enterprise_manufacturing"
-        local aFactoryExists = enterprise_manufacturing:getNumberOfObjects("Factory") > 0
-        if not aFactoryExists then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: not factory found") return enterprise_energy.GetLargeFuelAmount_Att() end
+        factory = enterprise_manufacturing:getObject(factoryLocator)
+        if type(factory) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: factory "..factoryLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
         -- determine fuelNeed by factory
         local items = FuelItemsForFuel(1)
-        local fuelNeed_Production = enterprise_manufacturing.GetFuelNeed_Production_Att(items)
+        local fuelNeed_Production = factory:getFuelNeed_Production_Att(items)
 
         -- determine fuelNeed for traveling
         local forestLocation = forest:getLocation()
-        local factoryLocation = enterprise_manufacturing.GetSiteLocation_Att(items)
+        local factoryLocation = factory:getProductionLocation_Att(items)
         local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
 
         -- add fuelNeed
@@ -254,6 +256,7 @@ function enterprise_energy.ResetParameters()
         enterpriseLevel             = 0,
 
         forestLocator               = nil,
+        factoryLocator              = nil,
 
         fuelItemName                = "minecraft:birch_planks",
         fuelItemGain                = 15,
@@ -262,7 +265,7 @@ end
 
 function enterprise_energy.UpdateEnterprise_SSrv(...)
     -- get & check input from description
-    local checkSuccess, enterpriseLevel, forestLocator = InputChecker.Check([[
+    local checkSuccess, enterpriseLevel, forestLocator, factoryLocator = InputChecker.Check([[
         This private sync service updates the enterprise information.
 
         Return value:
@@ -272,12 +275,16 @@ function enterprise_energy.UpdateEnterprise_SSrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 enterpriseLevel         + (number) with enterprise level
-                forestLocator           + (URL, nil) locating the forest intended for raw fuel materials
+                forestLocator           + (URL, nil) locating the BirchForest intended for raw fuel materials
+                factoryLocator          + (URL, nil) locating the Factory intended for producing fuel items
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid input") return {success = false} end
 
     -- check forestLocator
     if enterpriseLevel > 0 and not forestLocator then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid forestLocator(=nil) for enterpriseLevel="..enterpriseLevel) return {success = false} end
+
+    -- check factoryLocator
+    if enterpriseLevel > 0 and not factoryLocator then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid factoryLocator(=nil) for enterpriseLevel="..enterpriseLevel) return {success = false} end
 
     -- get parameters
     local parameters = enterprise_energy.GetParameters()
@@ -285,6 +292,7 @@ function enterprise_energy.UpdateEnterprise_SSrv(...)
     -- set enterprise information
     parameters.enterpriseLevel = enterpriseLevel
     parameters.forestLocator = forestLocator
+    parameters.factoryLocator = factoryLocator
 
     -- save parameters
     coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)
