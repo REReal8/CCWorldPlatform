@@ -326,7 +326,7 @@ end
 
 function T_Inventory.T_hasItems()
     -- prepare test
-    corelog.WriteToLog("* T_Inventory:hasItems() tests")
+    corelog.WriteToLog("* Inventory:hasItems() tests")
     local inventory = Inventory:new({
         _slotTable = {
             { name = "minecraft:dirt", count = 20 },
