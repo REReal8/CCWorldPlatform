@@ -237,24 +237,12 @@ function enterprise_manufacturing.GetFuelNeed_Production_Att(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.GetFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
-    -- check there are sites
-    if enterprise_manufacturing:getNumberOfObjects("Factory") < 1 then corelog.Warning("enterprise_manufacturing.GetFuelNeed_Production_Att: Not sites administered by enterprise") return 0 end
-
-    -- create locators
-    local itemsLocator = enterprise_manufacturing:getHostLocator()
-    itemsLocator:setQuery(items)
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
+    -- get Site
+    local site = enterprise_manufacturing.GetSite_Can_ProvideItems(items)
+    if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetFuelNeed_Production_Att: No site found.") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- determine fuelNeed
-    local serviceData = {
-        itemsLocator                    = itemsLocator,
-        itemDepotLocator                = turtleLocator:copy(),
-        ingredientsItemSupplierLocator  = turtleLocator:copy(),
-    }
-    local serviceResults = enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-    if not serviceResults.success then corelog.Error("enterprise_manufacturing.GetFuelNeed_Production_Att: failed obtaining fuel need for production.") return enterprise_energy.GetLargeFuelAmount_Att() end
-    local fuelNeed = serviceResults.fuelNeed
+    local fuelNeed = site:getFuelNeed_Production_Att(items)
 
     -- end
     return fuelNeed

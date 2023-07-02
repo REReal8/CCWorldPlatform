@@ -1,6 +1,8 @@
 local T_Factory = {}
+
 local corelog = require "corelog"
 local coreutils = require "coreutils"
+local coremove = require "coremove"
 
 local IObj = require "iobj"
 local ObjArray = require "obj_array"
@@ -27,6 +29,7 @@ function T_Factory.T_All()
     T_Factory.T_getAvailableSmeltSpot()
 
     -- service methods
+    T_Factory.T_getFuelNeed_Production_Att()
     T_Factory.T_getProductionLocation_Att()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
@@ -171,13 +174,13 @@ function T_Factory.T_isSame()
     local obj = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id) if not obj then corelog.Error("failed obtaining Factory") return end
     local location2  = Location:new({_x= 100, _y= 0, _z= 100, _dx=1, _dy=0})
     local inputLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be an actual Chest
-    local inputLocators2 = { inputLocator2, }
+    local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, inputLocator2, })
     local outputLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be an actual Chest
-    local outputLocators2 = { outputLocator2, }
+    local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, outputLocator2, })
     local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
-    local craftingSpots2 = { craftingSpot2, }
+    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
     local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
-    local smeltingSpots2 = { smeltingSpot2, }
+    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
 
     -- test same
     local obj1 = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id)
@@ -298,6 +301,28 @@ end
 --   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function T_Factory.T_getFuelNeed_Production_Att()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getFuelNeed_Production_Att() tests")
+    local location2 = Location:new(coremove.GetLocation())
+    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
+    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
+    local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("failed obtaining Factory") return end
+
+--    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
+--    local siteLocator = result.siteLocator
+
+    -- test
+    local items = { ["minecraft:birch_planks"] = 4 }
+    local fuelNeed = obj:getFuelNeed_Production_Att(items)
+    local expectedFuelNeed = 20
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
 
 function T_Factory.T_getProductionLocation_Att()
     -- prepare test

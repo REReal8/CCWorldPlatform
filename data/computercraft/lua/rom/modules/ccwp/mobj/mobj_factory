@@ -31,6 +31,7 @@ local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_chests = require "enterprise_chests"
+local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing
 
 --[[
@@ -264,6 +265,34 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Factory:getFuelNeed_Production_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = InputChecker.Check([[
+        Factory attribute for the current fuelNeed for producing items. (i.e. it returns the fuelNeed for producing the items
+        assuming the ingredients are available in a turtle and the results are to be delivered to the turtle)
+
+        Parameters:
+            items   + (table) items to produce
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+    -- create locator
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- determine fuelNeed
+    local serviceResults = self:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = items,
+        itemDepotLocator                = turtleLocator:copy(),
+        ingredientsItemSupplierLocator  = turtleLocator:copy(),
+    })
+    if not serviceResults.success then corelog.Error("Factory:getFuelNeed_Production_Att: failed obtaining fuel need for production.") return enterprise_energy.GetLargeFuelAmount_Att() end
+    local fuelNeed = serviceResults.fuelNeed
+
+    -- end
+    return fuelNeed
+end
+
 function Factory:getProductionLocation_Att(...)
     -- get & check input from description
     local checkSuccess, items = InputChecker.Check([[
@@ -479,6 +508,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
 
         -- check for recipe to provide itemName
+        enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Provider does not provide "..itemName.."'s") return {success = false} end
 
