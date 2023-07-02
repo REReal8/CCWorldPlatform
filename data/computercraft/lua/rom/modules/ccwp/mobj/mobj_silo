@@ -148,9 +148,6 @@ function Silo:NewSilo(...)
     setmetatable(siteData, self)
     self.__index = self
 
-    -- better save this shit
---    siteData:Save()
-
     -- end
     return siteData
 end
@@ -427,7 +424,7 @@ function Silo:Delete()
     self._id = nil
 end
 
--- pr9ivate methods
+-- private methods
 
 function Silo:fromTopchestIntoSilo_AOSrv(...)
     -- get & check input from description
