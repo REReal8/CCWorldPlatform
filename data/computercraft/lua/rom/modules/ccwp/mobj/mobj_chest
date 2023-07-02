@@ -294,6 +294,8 @@ function Chest:storeItemsFrom_ASrv(...)
         turtleLocator           = enterprise_turtle.GetHostLocator_Att(),
 
         destinationItemsLocator = destinationItemsLocator,
+
+        assignmentsPriorityKey  = assignmentsPriorityKey,
     }
     local projectDef = {
         steps   = {
