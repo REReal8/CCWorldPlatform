@@ -139,7 +139,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- create project definition
     local createNewWorldProjectDef = {
-        steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap crreate steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
+        steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap create steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL0" },
             }},
