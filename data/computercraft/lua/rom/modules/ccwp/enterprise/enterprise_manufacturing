@@ -260,6 +260,7 @@ function enterprise_manufacturing.GetFuelNeed_Production_Att(...)
     return fuelNeed
 end
 
+-- ToDo: consider removing once enterprise_energy get's Factory siteLocator, call it directly on the site
 function enterprise_manufacturing.GetSiteLocation_Att(...)
     -- get & check input from description
     local checkSuccess, items = InputChecker.Check([[
@@ -270,21 +271,12 @@ function enterprise_manufacturing.GetSiteLocation_Att(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Invalid input") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
-    -- check there are sites
-    if enterprise_manufacturing:getNumberOfObjects("Factory") < 1 then corelog.Warning("enterprise_manufacturing.GetSiteLocation_Att: Not sites administered by enterprise") return {_x=0, _y=0, _z= 0, _dx=0, _dy=1}  end
-
-    -- check for recipe to provide items
-    local itemName, itemCount = next(items, nil)
-    local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: Provider does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
-
     -- get Site
     local site = enterprise_manufacturing.GetSite_Can_ProvideItems(items)
     if not site or not Factory.IsOfType(site) then corelog.Error("enterprise_manufacturing.GetSiteLocation_Att: No site found.") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
 
     -- get location
-    local productionSpot = site:getAvailableProductionSpot(recipe)
-    local location = productionSpot:getLocation()
+    local location = site:getProductionLocation_Att(items)
 
     -- end
     return location

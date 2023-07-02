@@ -27,6 +27,7 @@ function T_Factory.T_All()
     T_Factory.T_getAvailableSmeltSpot()
 
     -- service methods
+    T_Factory.T_getProductionLocation_Att()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
@@ -297,6 +298,28 @@ end
 --   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function T_Factory.T_getProductionLocation_Att()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getProductionLocation_Att() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test craft
+    local itemName = "minecraft:birch_planks"
+    local itemCount = 10
+    local productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
+    local expectedLocation = craftingSpot1:getLocation()
+    assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
+
+    -- test smelt
+    itemName = "minecraft:charcoal"
+    itemCount = 5
+    productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
+    expectedLocation = smeltingSpot1:getLocation()
+    assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
+
+    -- cleanup test
+end
 
 function T_Factory.T_can_ProvideItems_QOSrv()
     -- prepare test

@@ -264,6 +264,31 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Factory:getProductionLocation_Att(...)
+    -- get & check input from description
+    local checkSuccess, items = InputChecker.Check([[
+        Factory attribute for the location of the current available ProductionSpot for producing items.
+
+        Parameters:
+            items   + (table) items to produce
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:getSiteLocation_Att: Invalid input") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+
+    -- check for recipe to provide items
+    local itemName, itemCount = next(items, nil)
+    enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
+    local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
+    if type(recipe) ~= "table" then corelog.Error("Factory:getSiteLocation_Att: Factory does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+
+    -- get location
+    local productionSpot = self:getAvailableProductionSpot(recipe)
+    if not productionSpot then corelog.Error("Factory:getSiteLocation_Att: No ProductionSpot available.") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    local location = productionSpot:getLocation()
+
+    -- end
+    return location
+end
+
 function Factory:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
