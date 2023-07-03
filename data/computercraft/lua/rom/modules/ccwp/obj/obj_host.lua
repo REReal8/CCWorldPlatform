@@ -608,8 +608,11 @@ function Host:deleteObjects(...)
     -- delete all objects
 --    corelog.Warning("All objects of class "..className.." are being deleted!")
     for id, object in pairs(objects) do
+        -- convert to object
+        object = objectFactory:create(className, object)
+
         -- get locator
-        local objectLocator = self:getObjectLocator(object, className)
+        local objectLocator = self:getObjectLocator(object)
 
         -- delete
         self:deleteResource(objectLocator)
