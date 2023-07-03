@@ -5,18 +5,14 @@ local enterprise_storage = Host:new({
 })
 
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 
+local Silo = require "mobj_silo"
+
 local enterprise_projects = require "enterprise_projects"
 local enterprise_storage_silo = require "enterprise_storage_silo"
-
-local db = {
-    dhtRoot     = "enterprise_storage",
-    dhtSites    = "sites",
-}
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -38,6 +34,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         Async service return value (to Callback):
                             - (table)
                 success     - (boolean) whether the service was executed successfully
+                siteLocator - (URL) locating the created site (in this enterprise)
 
         Parameters:
             siteData        + (table) data about this site, like type and layout
@@ -54,15 +51,13 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "BuildNewSite_ASrv" }, stepDataDef = {
                     { keyDef = "location"               , sourceStep = 0, sourceKeyDef = "location" },
                     { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },
-                    { keyDef = "siloType"               , sourceStep = 0, sourceKeyDef = "siloType" },
                     { keyDef = "topChests"              , sourceStep = 0, sourceKeyDef = "topChests" },
                     { keyDef = "layers"                 , sourceStep = 0, sourceKeyDef = "layers" },
                     { keyDef = "materialsHostLocator"   , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
                 }},
                 { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
-                    { keyDef = "location"               , sourceStep = 0, sourceKeyDef = "location" },
                     { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },
-                    { keyDef = "siloType"               , sourceStep = 0, sourceKeyDef = "siloType" },
+                    { keyDef = "location"               , sourceStep = 0, sourceKeyDef = "location" },
                     { keyDef = "topChests"              , sourceStep = 0, sourceKeyDef = "topChests" },
                     { keyDef = "layers"                 , sourceStep = 0, sourceKeyDef = "layers" },
                 }},
@@ -73,6 +68,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
             },
             returnData  = {
                 { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+                { keyDef = "siteLocator"                , sourceStep = 2, sourceKeyDef = "siteLocator" },
             }
         }
         local projectServiceData = {
@@ -109,29 +105,38 @@ end
 
 function enterprise_storage.StartNewSite_SSrv(...)
     -- get & check input from description
-    local checkSuccess, siteData, type = InputChecker.Check([[
+    local checkSuccess, siteData, type, location, topChests, layers = InputChecker.Check([[
         This public function to notify the enterprise_storage that a new site is ready for use and should be started.
 
         Return value:
                             - (table)
                 success     - (boolean) whether the site is ready for business
+                siteLocator - (URL) locating the created site (in this enterprise)
 
         Parameters:
             siteData        + (table) data about this site, like type and layout
                 type        + (string) ItemStorage type
+                location    + (Location) location of site
+                topChests   + (number, 2) # of top chests
+                layers      + (number, 2) # of layers
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.StartNewSite_SSrv: Invalid input") return {success = false} end
 
-    -- just check if our enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then
-
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
-        coredht.SaveData({}, db.dhtRoot, db.dhtSites)
-    end
-
     -- what kind of ItemStorage is this?
-    if siteData.type == 'silo' then return enterprise_storage_silo.StartNewSite_SSrv(siteData)
+    if siteData.type == 'silo' then
+        local obj = Silo:NewSilo({
+            location    = location,
+            topChests   = topChests,
+            layers      = layers,
+        })
+        if not obj then corelog.Error("failed obtaining Silo") return end
+        local siteLocator = enterprise_storage:saveObject(obj)
+
+        -- end
+        return {
+            success     = true,
+            siteLocator = siteLocator,
+        }
     else corelog.Error("enterprise_storage.StartNewSite_SSrv: Don't know how to start a site of type "..type) return {success = false} end
 end
 

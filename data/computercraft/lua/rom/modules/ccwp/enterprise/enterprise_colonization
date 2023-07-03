@@ -131,7 +131,6 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
         siloLocation                    = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
         type                            = "silo",
-        siloType                        = "basic",
         topChests                       = 2,
         layers                          = 2,
     }
@@ -240,7 +239,6 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "location"                   , sourceStep = 0, sourceKeyDef = "siloLocation" },
                 { keyDef = "type"                       , sourceStep = 0, sourceKeyDef = "type" },
-                { keyDef = "siloType"                   , sourceStep = 0, sourceKeyDef = "siloType" },
                 { keyDef = "topChests"                  , sourceStep = 0, sourceKeyDef = "topChests" },
                 { keyDef = "layers"                     , sourceStep = 0, sourceKeyDef = "layers" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
