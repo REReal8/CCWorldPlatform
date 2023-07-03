@@ -8,8 +8,6 @@ local URL = require "obj_url"
 
 local role_fuel_worker = require "role_fuel_worker"
 
-local enterprise_projects = require "enterprise_projects"
-
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
     items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling
