@@ -176,7 +176,7 @@ end
 function Turtle:storeItemsFrom_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
+        This async public ItemDepot service stores items from from an ItemSupplier.
 
         An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
