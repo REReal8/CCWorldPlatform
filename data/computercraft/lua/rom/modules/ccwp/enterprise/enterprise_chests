@@ -280,7 +280,7 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
 
     -- get Obj
     local obj = enterprise_chests:getObject(itemsLocator)
-    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemDepotLocator:getURI().." not found.") return {success = false} end
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
