@@ -182,6 +182,33 @@ function enterprise_isp.StoreItemsFrom_ASrv(...)
     return MethodExecutor.DoASyncService(itemDepotName, serviceName, serviceData, callback)
 end
 
+function enterprise_isp.Can_StoreItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
+        This sync public query service answers the question whether the ItemDepot can store specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             + (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be stored
+                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
+                                        (the "query" component of the URL specifies the items to query for)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.enterprise_isp: Invalid input") return {success = false} end
+
+    -- get ItemDepot
+    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.StoreItemsFrom_ASrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
+    local itemDepotName = serviceResults.enterpriseName
+
+    -- call method on ItemDepot
+    local serviceName = "Can_StoreItems_QSrv"
+    return MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
+end
+
 function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     -- get & check input from description
     local checkSuccess, sourceItemsLocator, destinationItemDepotLocator = InputChecker.Check([[
