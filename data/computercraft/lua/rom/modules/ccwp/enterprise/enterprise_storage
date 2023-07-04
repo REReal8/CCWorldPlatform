@@ -334,7 +334,7 @@ function enterprise_storage.StoreItemsFrom_ASrv(...)
     if type(obj) ~= "table" then corelog.Error("enterprise_storage.ProvideItemsTo_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- have Obj store items
-    return obj:storeItemsFrom_ASrv({
+    return obj:storeItemsFrom_AOSrv({
         itemsLocator                    = itemsLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }, callback)

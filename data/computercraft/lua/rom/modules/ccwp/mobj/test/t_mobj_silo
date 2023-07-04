@@ -89,7 +89,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     expectedDestinationItemsLocator:setQuery(provideItems)
     local callback = Callback:new({
         _moduleName     = "T_Silo",
-        _methodName     = "storeItemsFrom_ASrv_Callback",
+        _methodName     = "storeItemsFrom_AOSrv_Callback",
         _data           = {
             ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
             ["siloLocator"]                     = siloLocator,
@@ -106,7 +106,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- cleanup test
 end
 
-function T_Silo.storeItemsFrom_ASrv_Callback(callbackData, serviceResults)
+function T_Silo.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
 

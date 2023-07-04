@@ -316,7 +316,7 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     }
 end
 
-function Chest:storeItemsFrom_ASrv(...)
+function Chest:storeItemsFrom_AOSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemDepot service stores items from from an ItemSupplier.
@@ -341,7 +341,7 @@ function Chest:storeItemsFrom_ASrv(...)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:storeItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("Chest:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set (expected) destinationItemsLocator
     enterprise_chests = enterprise_chests or require "enterprise_chests"
