@@ -357,10 +357,18 @@ function enterprise_storage.Can_StoreItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.Can_StoreItems_QSrv: Invalid input") return {success = false} end
 
-    -- ToDo: implement
+    -- get Obj
+    local obj = enterprise_storage:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_storage.Can_StoreItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
+
+    -- check Obj can store items
+    local storeItems = itemsLocator:getQuery()
+    local canStore = obj:can_StoreItems_QOSrv({
+        storeItems    = storeItems,
+    })
 
     -- end
-    return {success = false}
+    return canStore
 end
 
 function enterprise_storage.NeedsTo_StoreItemsFrom_SSrv(...)
