@@ -415,10 +415,10 @@ function Silo:can_StoreItems_QOSrv(...)
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Silo:can_StoreItems_QSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("Silo:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
     -- ToDo: implement
-    corelog.Warning("Silo:can_StoreItems_QSrv: not yet implemented")
+    corelog.Warning("Silo:can_StoreItems_QOSrv: not yet implemented")
     return {success = false}
 end
 
