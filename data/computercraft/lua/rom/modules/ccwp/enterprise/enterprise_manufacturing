@@ -137,13 +137,13 @@ function enterprise_manufacturing.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get Site
-    local site = enterprise_manufacturing:getObject(itemsLocator)
-    if type(site) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Site "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_manufacturing:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_manufacturing.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have Site provide items
+    -- have Obj provide items
     local provideItems = itemsLocator:getQuery()
-    return site:provideItemsTo_AOSrv({
+    return obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
@@ -168,13 +168,13 @@ function enterprise_manufacturing.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get Site
-    local site = enterprise_manufacturing:getObject(itemsLocator)
-    if type(site) ~= "table" then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_manufacturing:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_manufacturing.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- check Site can provide items
+    -- check Obj can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = site:can_ProvideItems_QOSrv({
+    local canProvide = obj:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 
@@ -204,13 +204,13 @@ function enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get Site
-    local site = enterprise_manufacturing:getObject(itemsLocator)
-    if type(site) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Site "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_manufacturing:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_manufacturing.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = site:needsTo_ProvideItemsTo_SOSrv({
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,

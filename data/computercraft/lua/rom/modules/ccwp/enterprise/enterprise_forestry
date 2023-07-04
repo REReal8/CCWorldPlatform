@@ -357,13 +357,13 @@ function enterprise_forestry.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get forest
-    local forest = enterprise_forestry:getObject(itemsLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Failed retrieving forest = "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_forestry:getObject(itemsLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_forestry.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have forest provide items
+    -- have Obj provide items
     local provideItems = itemsLocator:getQuery()
-    return forest:provideItemsTo_AOSrv({
+    return obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
@@ -388,13 +388,13 @@ function enterprise_forestry.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get forest
-    local forest = enterprise_forestry:getObject(itemsLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.Can_ProvideItems_QSrv: Failed retrieving forest = "..itemsLocator:getURI()) return {success = false} end
+    -- get Obj
+    local obj = enterprise_forestry:getObject(itemsLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_forestry.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- check forest can provide items
+    -- check Obj can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = forest:can_ProvideItems_QOSrv({
+    local canProvide = obj:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 
@@ -423,13 +423,13 @@ function enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get forest
-    local forest = enterprise_forestry:getObject(itemsLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv: Failed retrieving forest = "..itemsLocator:getURI()) return {success = false} end
+    -- get Obj
+    local obj = enterprise_forestry:getObject(itemsLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_forestry.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = forest:needsTo_ProvideItemsTo_SOSrv({
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })

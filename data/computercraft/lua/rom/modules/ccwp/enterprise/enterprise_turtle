@@ -237,13 +237,13 @@ function enterprise_turtle.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get Turtle
-    local turtle = enterprise_turtle.GetTurtle(itemsLocator)
-    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Turtle "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_turtle.GetTurtle(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_turtle.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have Turtle provide items
+    -- have Obj provide items
     local provideItems = itemsLocator:getQuery()
-    return turtle:provideItemsTo_AOSrv({
+    return obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
@@ -267,13 +267,13 @@ function enterprise_turtle.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get Turtle
-    local turtle = enterprise_turtle.GetTurtle(itemsLocator)
-    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Turtle "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_turtle.GetTurtle(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_turtle.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- check Turtle can provide items
+    -- check Obj can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = turtle:can_ProvideItems_QOSrv({
+    local canProvide = obj:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 
@@ -303,13 +303,13 @@ function enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get Turtle
-    local turtle = enterprise_turtle.GetTurtle(itemsLocator)
-    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Turtle "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_turtle.GetTurtle(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_turtle.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = turtle:needsTo_ProvideItemsTo_SOSrv({
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
@@ -346,12 +346,12 @@ function enterprise_turtle.StoreItemsFrom_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get turtle
-    local turtle = enterprise_turtle.GetTurtle(itemDepotLocator)
-    if type(turtle) ~= "table" then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Turtle "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_turtle.GetTurtle(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have turtle store items
-    return turtle:storeItemsFrom_ASrv({
+    -- have Obj store items
+    return obj:storeItemsFrom_ASrv({
         itemsLocator                    = itemsLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }, callback)

@@ -212,13 +212,13 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Chest "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have Chest provide items
+    -- have Obj provide items
     local provideItems = itemsLocator:getQuery()
-    return chest:provideItemsTo_AOSrv({
+    return obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
@@ -242,13 +242,13 @@ function enterprise_chests.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- check Chest can provide items
+    -- check Obj can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = chest:can_ProvideItems_QOSrv({
+    local canProvide = obj:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 
@@ -278,13 +278,13 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = chest:needsTo_ProvideItemsTo_SOSrv({
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
@@ -321,12 +321,12 @@ function enterprise_chests.StoreItemsFrom_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get chest
-    local chest = enterprise_chests:getObject(itemDepotLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Chest "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have chest store items
-    return chest:storeItemsFrom_ASrv({
+    -- have Obj store items
+    return obj:storeItemsFrom_ASrv({
         itemsLocator                    = itemsLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }, callback)
