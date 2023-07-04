@@ -247,6 +247,79 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Silo:provideItemsTo_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemSupplier service provides specific items to an ItemDepot.
+
+        Return value:
+                                                - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
+                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                                                    the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                         - (table) data for the service
+                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                            + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- ToDo: implement
+    corelog.Warning("Silo:provideItemsTo_AOSrv: not yet implemented")
+    return Callback.ErrorCall(callback)
+end
+
+function Silo:can_ProvideItems_QOSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems = InputChecker.Check([[
+        This sync public query service answers the question whether the ItemSupplier can provide specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
+
+    -- ToDo: implement
+    corelog.Warning("Silo:can_ProvideItems_QOSrv: not yet implemented")
+    return {success = false}
+end
+
+function Silo:needsTo_ProvideItemsTo_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to provide items
+                ingredientsNeed                 - (table) ingredients needed to provide items
+
+        Parameters:
+            serviceData                         - (table) data to the query
+                provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
+
+    -- ToDo: implement
+    corelog.Warning("Silo:needsTo_ProvideItemsTo_SOSrv: not yet implemented")
+    return {success = false}
+end
+
 function Silo:storeItemsFrom_AOSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[

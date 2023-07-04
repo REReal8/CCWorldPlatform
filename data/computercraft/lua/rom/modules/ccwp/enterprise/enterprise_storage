@@ -220,9 +220,17 @@ function enterprise_storage.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- ToDo: implement similar to enterprise_chests or enterprise_forestry
+    -- get Obj
+    local obj = enterprise_storage:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_storage.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    return Callback.ErrorCall(callback)
+    -- have Obj provide items
+    local provideItems = itemsLocator:getQuery()
+    return obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_storage.Can_ProvideItems_QSrv(...)
@@ -242,10 +250,18 @@ function enterprise_storage.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- ToDo: implement similar to enterprise_chests or enterprise_forestry
+    -- get Obj
+    local obj = enterprise_storage:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_storage.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
+
+    -- check Obj can provide items
+    local provideItems = itemsLocator:getQuery()
+    local canProvide = obj:can_ProvideItems_QOSrv({
+        provideItems    = provideItems,
+    })
 
     -- end
-    return {success = false}
+    return canProvide
 end
 
 function enterprise_storage.NeedsTo_ProvideItemsTo_SSrv(...)
@@ -270,10 +286,19 @@ function enterprise_storage.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- ToDo: implement similar to enterprise_chests or enterprise_forestry
+    -- get Obj
+    local obj = enterprise_storage:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_storage.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
+
+    -- determine needs
+    local provideItems = itemsLocator:getQuery()
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
+        provideItems    = provideItems,
+        itemDepotLocator= itemDepotLocator,
+    })
 
     -- end
-    return {success = false}
+    return needs
 end
 
 function enterprise_storage.StoreItemsFrom_ASrv(...)
@@ -304,9 +329,15 @@ function enterprise_storage.StoreItemsFrom_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- ToDo: implement similar to enterprise_chests or enterprise_forestry
+    -- get Obj
+    local obj = enterprise_storage:getObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_storage.ProvideItemsTo_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    return Callback.ErrorCall(callback)
+    -- have Obj store items
+    return obj:storeItemsFrom_ASrv({
+        itemsLocator                    = itemsLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_storage.Can_StoreItems_QSrv(...)
