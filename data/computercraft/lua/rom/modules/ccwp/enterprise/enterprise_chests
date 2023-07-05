@@ -57,7 +57,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
         Parameters:
             chestData               - (table) data to the chest
                 location            + (Location) location of the chest
-                accessDirection     + (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+                accessDirection     + (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid input") return {success = false} end
 
