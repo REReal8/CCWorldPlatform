@@ -67,8 +67,8 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         _location               = baseLocation:copy(),
         _nTrees                 = 0,
 
-        _localLogsLocator       = enterprise_turtle.GetHostLocator_Att(),
-        _localSaplingsLocator   = enterprise_turtle.GetHostLocator_Att(),
+        _localLogsLocator       = enterprise_turtle.GetAnyTurtleLocator(),
+        _localSaplingsLocator   = enterprise_turtle.GetAnyTurtleLocator(),
     })
 
     -- save the BirchForest

@@ -81,8 +81,8 @@ function T_BirchForest.CreateForest(level, location, id)
     level = level or level0
     location = location or location1
     id = id or coreutils.NewId()
-    localLogsLocator = localLogsLocator or enterprise_turtle.GetHostLocator_Att()
-    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetHostLocator_Att()
+    localLogsLocator = localLogsLocator or enterprise_turtle.GetAnyTurtleLocator()
+    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetAnyTurtleLocator()
 
     -- create forest object
     local forest = BirchForest:new({
@@ -170,14 +170,14 @@ function T_BirchForest.T_IsOfType()
     isOfType = BirchForest.IsOfType(forest)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- test invalid _localSaplingsLocator
     forest._localSaplingsLocator = "a string"
     isOfType = BirchForest.IsOfType(forest)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    forest._localSaplingsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- cleanup test
 end
@@ -225,14 +225,14 @@ function T_BirchForest.T_isSame()
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- test different _localSaplingsLocator
     forest._localSaplingsLocator = localSaplingsLocator2
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    forest._localSaplingsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- cleanup test
     return enterprise_chests.DelistChest_ASrv({ chestLocator = localLogsLocator2 }, callback) and enterprise_chests.DelistChest_ASrv({ chestLocator = localSaplingsLocator2 }, callback)
@@ -300,7 +300,7 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     -- test
     local needsTo_Provide = forest:needsTo_ProvideItemsTo_SOSrv({

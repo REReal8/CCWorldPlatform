@@ -58,10 +58,10 @@ function T_Factory.T_ImplementsIObj()
 end
 
 local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
-local inputLocator1 = enterprise_turtle.GetHostLocator_Att()
+local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
 local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
-local outputLocator1 = enterprise_turtle.GetHostLocator_Att()
+local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
 local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
@@ -417,9 +417,9 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     -- prepare test
     corelog.WriteToLog("* Factory:provideItemsTo_AOSrv() tests ("..productionMethod..")")
     local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
-    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
     itemDepotLocator:setPort(os.getComputerID())
-    local ingredientsItemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
+    local ingredientsItemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)

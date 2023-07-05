@@ -37,7 +37,7 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
         type                    = "silo",
         topChests               = 2,
         layers                  = 2,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
+        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 

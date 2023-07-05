@@ -278,7 +278,7 @@ function Factory:getFuelNeed_Production_Att(...)
 
     -- create locator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
+    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- determine fuelNeed
     local serviceResults = self:needsTo_ProvideItemsTo_SOSrv({
@@ -646,7 +646,7 @@ function Factory.ProduceItem_ASrv(...)
     if not checkSuccess then corelog.Error("Factory.ProduceItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
-    local turtleInputLocator = enterprise_turtle.GetHostLocator_Att()
+    local turtleInputLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- determine production steps
     local projectSteps = {
@@ -847,12 +847,12 @@ function Factory.GetV0SiteStartData(serviceData)
         inputLocators = ObjArray:new({
             _objClassName = locatorClassName,
 
-            enterprise_turtle.GetHostLocator_Att(),
+            enterprise_turtle.GetAnyTurtleLocator(),
         }),
         outputLocators = ObjArray:new({
             _objClassName = locatorClassName,
 
-            enterprise_turtle.GetHostLocator_Att(),
+            enterprise_turtle.GetAnyTurtleLocator(),
         }),
 
         craftingSpots = ObjArray:new({
@@ -938,12 +938,12 @@ function Factory.GetV1SiteStartData(serviceData)
         inputLocators = ObjArray:new({
             _objClassName = locatorClassName,
 
-            enterprise_turtle.GetHostLocator_Att(),
+            enterprise_turtle.GetAnyTurtleLocator(),
         }),
         outputLocators = ObjArray:new({
             _objClassName = locatorClassName,
 
-            enterprise_turtle.GetHostLocator_Att(),
+            enterprise_turtle.GetAnyTurtleLocator(),
         }),
 
         craftingSpots = ObjArray:new({

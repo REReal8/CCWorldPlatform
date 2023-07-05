@@ -31,9 +31,6 @@ local db = {
         IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
-
-    It also provides the following attributes
-        GetHostLocator_Att     - locating this enterprise
 --]]
 
 --                _     _ _         __                  _   _
@@ -131,7 +128,7 @@ end
 function enterprise_turtle.GetTurtleLocator_SSrv(...)
     -- get & check input from description
     local checkSuccess, turtleId = InputChecker.Check([[
-        This sync public services provides the URL of a turtle in the enterprise.
+        This sync public services provides the locator of a turtle in the enterprise based on a 'turtleId'.
 
         Return value:
                                     - (table)
@@ -145,7 +142,7 @@ function enterprise_turtle.GetTurtleLocator_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_turtle.GetTurtleLocator_SSrv: Invalid input") return {success = false} end
 
     -- construct URL
-    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
+    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator()
     turtleLocator:setPort(turtleId)
 
     -- end
@@ -154,6 +151,43 @@ function enterprise_turtle.GetTurtleLocator_SSrv(...)
         turtleLocator = turtleLocator,
     }
     return result
+end
+
+function enterprise_turtle.GetAnyTurtleLocator()
+    --[[
+        This method provides a locator of any turtle (in the enterprise), i.e. it provides a locator that can be subsituted for any turtle
+        once it is used.
+
+        Return value:
+            turtleLocator       - (URL) locating the turtle
+
+        Parameters:
+    --]]
+
+    -- construct URL
+    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
+
+    -- end
+    return turtleLocator
+end
+
+function enterprise_turtle.GetCurrentTurtleLocator()
+    --[[
+        This method provides the locator of the current turtle (in the enterprise).
+
+        Return value:
+            turtleLocator       - (URL) locating the turtle
+
+        Parameters:
+    --]]
+
+    -- construct URL
+    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local currentTurtleId = os.getComputerID()
+    turtleLocator:setPort(currentTurtleId)
+
+    -- end
+    return turtleLocator
 end
 
 function enterprise_turtle.GetItemsLocator_SSrv(...)

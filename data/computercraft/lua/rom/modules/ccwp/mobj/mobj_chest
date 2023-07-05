@@ -367,7 +367,7 @@ function Chest:storeItemsFrom_AOSrv(...)
         taskCall                = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "PutItemsFromTurtleIntoChest_Task", _data = taskData, }),
 
         itemsLocator            = itemsLocator,
-        turtleLocator           = enterprise_turtle.GetHostLocator_Att(),
+        turtleLocator           = enterprise_turtle.GetAnyTurtleLocator(),
 
         destinationItemsLocator = destinationItemsLocator,
 

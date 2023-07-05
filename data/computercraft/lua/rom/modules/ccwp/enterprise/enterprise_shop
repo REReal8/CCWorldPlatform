@@ -30,9 +30,6 @@ local db = {
 
     The Shop is also an ItemSupplier, hence it also implements these services.
 
-    It also provides the following attributes
-        GetHostLocator_Att          - locating this enterprise
-
     This allows for the Shop to be passed as ingredientsItemSupplierLocator to an ItemSupplier. The effect of that is that the ItemSupplier can request
     the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from an ItemSupplier.
     This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided

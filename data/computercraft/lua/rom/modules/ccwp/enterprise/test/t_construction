@@ -80,7 +80,7 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         layer = testBuildLayer1,
-        materialsHostLocator = enterprise_turtle.GetHostLocator_Att()
+        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",
@@ -173,7 +173,7 @@ function t_construction.T_BuildBlueprint_ASrv()
     local blueprintBuildData = {
         blueprintStartpoint     = testStartLocation:getRelativeLocation(0, 12, 0),
         blueprint               = testBlueprint1,
-        materialsHostLocator    = enterprise_turtle.GetHostLocator_Att(),
+        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",

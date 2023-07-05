@@ -31,7 +31,7 @@ function t_shop.T_OrderMultipleItems()
             ["minecraft:furnace"]   = 1,
             ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
         },
-        itemDepotLocator = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -40,7 +40,7 @@ function t_shop.T_OrderCharcoal()
         orderItems = {
             ["minecraft:charcoal"]  = 3,
         },
-        itemDepotLocator = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -49,7 +49,7 @@ function t_shop.T_OrderTorch()
         orderItems = {
             ["minecraft:torch"]  = 4,
         },
-        itemDepotLocator = enterprise_turtle.GetHostLocator_Att(),
+        itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -57,7 +57,7 @@ function t_shop.T_RegisterItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.RegisterItemSupplier_SSrv() tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
-    local itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     -- test
     local result = enterprise_shop.RegisterItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})
@@ -73,7 +73,7 @@ function t_shop.T_DelistItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.DelistItemSupplier_SSrv tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
-    local itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     -- test
     local result = enterprise_shop.DelistItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})

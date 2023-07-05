@@ -22,9 +22,6 @@ local role_fuel_worker = require "role_fuel_worker"
         GetItemsLocations_SSrv      - provides the current world locations of different items in an ItemDepot.
         GetItemDepotLocation_SSrv   - provides the world location of an ItemDepot.
 
-    Furthermore most ItemSuppliers and ItemDepots should implement the additional attribute
-        GetHostLocator_Att          - locating this enterprise
-
     The ISP offers generic ItemSupplier and ItemDepot services by relaying them to the underlying ItemSupplier or ItemDepot based on the "base" component of URL's. The interface
     of the corresponding ISP services is the same. Hence, one could see the ISP as an ItemSupplier and ItemDepot itself.
 

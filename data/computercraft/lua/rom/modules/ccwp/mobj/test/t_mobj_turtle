@@ -160,8 +160,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
-    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
-    itemDepotLocator:setPort(os.getComputerID())
+    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     -- test
     provideItemsTo_AOSrv_Test(itemDepotLocator, "Turtle")
@@ -225,8 +224,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
-    local itemsLocator = enterprise_turtle.GetHostLocator_Att()
-    itemsLocator:setPort(os.getComputerID())
+    local itemsLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     -- test
     storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")

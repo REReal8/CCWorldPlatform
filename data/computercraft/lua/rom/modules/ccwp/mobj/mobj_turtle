@@ -230,7 +230,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
         if turtleLocator == nil then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
         -- have source ItemSupplier provideItemsTo Turtle
-        local ingredientsItemSupplierLocator = enterprise_turtle.GetHostLocator_Att() -- ToDo: consider if there is a better way to supply a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)
+        local ingredientsItemSupplierLocator = itemsLocator:copy() -- note: this is intended as a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)
         local serviceData = {
             itemsLocator                = itemsLocator,
             itemDepotLocator            = turtleLocator,
