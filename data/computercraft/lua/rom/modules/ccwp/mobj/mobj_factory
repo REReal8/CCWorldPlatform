@@ -351,6 +351,7 @@ function Factory:provideItemsTo_AOSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("Factory:provideItemsTo_AOSrv: Invalid itemCount (type="..type(itemCount)..")") return Callback.ErrorCall(callback) end
 
         -- select recipe to produce item
+        enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("Factory:provideItemsTo_AOSrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
