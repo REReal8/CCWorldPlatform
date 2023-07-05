@@ -1,7 +1,6 @@
 local t_manufacturing = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 
@@ -22,30 +21,6 @@ local callback = Callback:new({
     _methodName     = "Func1_Callback",
     _data           = {"some callback data"},
 })
-
-function t_manufacturing.T_ProvideItemsTo_Craft()
-    local itemsLocator = enterprise_manufacturing:getHostLocator()
-    local items = { ["minecraft:birch_planks"] = 12 }
-    itemsLocator:setQuery(items)
-
-    return enterprise_manufacturing.ProvideItemsTo_ASrv({
-        itemsLocator                    = itemsLocator,
-        ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
-        itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
-    }, callback)
-end
-
-function t_manufacturing.T_ProvideItemsTo_Smelt()
-    local itemsLocator = enterprise_manufacturing:getHostLocator()
-    local items = { ["minecraft:charcoal"] = 3 }
-    itemsLocator:setQuery(items)
-
-    return enterprise_manufacturing.ProvideItemsTo_ASrv({
-        itemsLocator                    = itemsLocator,
-        ingredientsItemSupplierLocator  = enterprise_turtle.GetHostLocator_Att(),
-        itemDepotLocator                = enterprise_turtle.GetHostLocator_Att(),
-    }, callback)
-end
 
 function t_manufacturing.T_BuildAndStartNewV1Site()
     local callbackBuildAndStartNewV1Site = Callback:new({
@@ -121,17 +96,17 @@ function t_manufacturing.StartNewSite(baseLocation, version)
     })
 end
 
-function t_manufacturing.T_DismantleV0Site()
-    DismantleV0Site(baseLocationV0)
-end
-
-function DismantleV0Site(baseLocation)
+local function DismantleV0Site(baseLocation)
     return enterprise_manufacturing.DismantleSite_ASrv({
         baseLocation            = baseLocation,
         siteVersion             = "v0",
         siteStopped             = true,
         materialsHostLocator    = enterprise_turtle.GetHostLocator_Att()
     }, callback)
+end
+
+function t_manufacturing.T_DismantleV0Site()
+    DismantleV0Site(baseLocationV0)
 end
 
 function t_manufacturing.T_StopV0Site()

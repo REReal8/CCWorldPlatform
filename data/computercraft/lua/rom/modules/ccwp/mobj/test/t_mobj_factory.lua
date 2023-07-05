@@ -5,8 +5,10 @@ local coreutils = require "coreutils"
 local coremove = require "coremove"
 
 local IObj = require "iobj"
+local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
+local URL = require "obj_url"
 
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
@@ -55,7 +57,7 @@ function T_Factory.T_ImplementsIObj()
     -- cleanup test
 end
 
-local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
 local inputLocator1 = enterprise_turtle.GetHostLocator_Att()
 local locatorClassName = "URL"
 local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
@@ -402,6 +404,62 @@ function T_Factory.T_can_ProvideItems_QOSrv()
     obj._outputLocators = outputLocators1
 
     -- cleanup test
+end
+
+local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
+    -- prepare test
+    corelog.WriteToLog("* Factory:provideItemsTo_AOSrv() tests ("..productionMethod..")")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    itemDepotLocator:setPort(os.getComputerID())
+    local ingredientsItemSupplierLocator = enterprise_turtle.GetHostLocator_Att()
+
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback = Callback:new({
+        _moduleName     = "T_Factory",
+        _methodName     = "provideItemsTo_AOSrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        },
+    })
+
+    -- test
+    return obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    }, callback)
+end
+
+function T_Factory.T_provideItemsTo_AOSrv_Craft()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_planks"] = 12 }
+
+    -- test
+    t_provideItemsTo_AOSrv(provideItems, "Craft")
+end
+
+function T_Factory.T_ProvideItemsTo_AOSrv_Smelt()
+    -- prepare test
+    local provideItems = { ["minecraft:charcoal"] = 1 }
+
+    -- test
+    t_provideItemsTo_AOSrv(provideItems, "Smelt")
+end
+
+function T_Factory.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+
+    -- end
+    return true
 end
 
 return T_Factory
