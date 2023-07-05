@@ -1,4 +1,9 @@
-local enterprise_turtle = {}
+local Host = require "obj_host"
+
+local enterprise_turtle = Host:new({
+    _hostName   = "enterprise_turtle",
+})
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
@@ -6,7 +11,6 @@ local coreinventory = require "coreinventory"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
-local URL = require "obj_url"
 local Location = require "obj_location"
 
 local Turtle = require "mobj_turtle"
@@ -16,8 +20,6 @@ local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 
 local db = {
-    hostName    = "enterprise_turtle",
-
     fuelTurtlePriorityKey   = nil,
     fuelTurtleCallsSkippedBecausePriorityKey = 0,
 }
@@ -28,7 +30,6 @@ local db = {
     This enterprise is both an ItemSupplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv).
 
     Furthermore it provides the following additional services
-        IsTurtleURL_QSrv       - provide if URL is of a turtle
         GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
 --]]
@@ -108,23 +109,6 @@ function enterprise_turtle.Reset()
     db.fuelTurtleCallsSkippedBecausePriorityKey = 0
 end
 
-function enterprise_turtle.GetHostLocator_Att()
-    --[[
-        Attribute locating this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = URL:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
 function enterprise_turtle.GetTurtleLocator_SSrv(...)
     -- get & check input from description
     local checkSuccess, turtleId = InputChecker.Check([[
@@ -165,7 +149,7 @@ function enterprise_turtle.GetAnyTurtleLocator()
     --]]
 
     -- construct URL
-    local turtleLocator = enterprise_turtle.GetHostLocator_Att()
+    local turtleLocator = enterprise_turtle:getHostLocator()
 
     -- end
     return turtleLocator
@@ -217,31 +201,6 @@ function enterprise_turtle.GetItemsLocator_SSrv(...)
         itemsLocator = itemsLocator,
     }
     return result
-end
-
-function enterprise_turtle.IsTurtleURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = InputChecker.Check([[
-        This sync public service answers the question if a URL is that of a turtle.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (table) a URL that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.IsTurtleURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of a turtle
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_turtle.IsTurtleURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
 end
 
 function enterprise_turtle.ProvideItemsTo_ASrv(...)
@@ -439,8 +398,7 @@ function enterprise_turtle.GetItemDepotLocation_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
     -- check itemDepotLocator is for this enterprise
-    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemDepotLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
+    if not enterprise_turtle:isLocatorFromHost(itemDepotLocator)  then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
 
     -- get turtle
     local currentTurtleId = os.getComputerID()
@@ -478,8 +436,7 @@ function enterprise_turtle.GetTurtle(...)
     if not checkSuccess then corelog.Error("enterprise_turtle.GetTurtle: Invalid input") return nil end
 
     -- check itemsLocator is for this enterprise
-    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = turtleLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.GetTurtle: Invalid turtleLocator (="..turtleLocator:getURI()..").") return nil end
+    if not enterprise_turtle:isLocatorFromHost(turtleLocator) then corelog.Error("enterprise_turtle.GetTurtle: Invalid turtleLocator (="..turtleLocator:getURI()..").") return nil end
 
     -- ToDo: consider getting Turtle from host (similair to Chest and BirchForest)
 

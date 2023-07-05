@@ -167,9 +167,8 @@ function Chest:provideItemsTo_AOSrv(...)
 
     -- check if ItemDepot is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemDepotLocator})
     local turtleId = -1
-    if serviceResults.success then
+    if enterprise_turtle:isLocatorFromHost(itemDepotLocator) then
         local port = itemDepotLocator:getPort()
 --        corelog.Warning("Chest:provideItemsTo_AOSrv: Providing to a turtle itemDepotLocator (="..itemDepotLocator:getURI()..").")
         turtleId = port
