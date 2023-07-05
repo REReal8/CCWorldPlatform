@@ -103,8 +103,8 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
-    local localLogsLocator2 = enterprise_chests:getHostLocator()
-    local localSaplingsLocator2 = enterprise_chests:getHostLocator()
+    local localLogsLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be the locator of an actual Chest
+    local localSaplingsLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be the locator of an actual Chest
 
     -- test
     forest:setLevel(level2)
@@ -211,14 +211,14 @@ function T_BirchForest.T_isSame()
     forest._nTrees = nTrees
 
     -- test different _localLogsLocator
-    forest._localLogsLocator = enterprise_chests:getHostLocator()
+    forest._localLogsLocator = enterprise_chests:getHostLocator() -- note: more correct would be the locator of an actual Chest
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
 
     -- test different _localSaplingsLocator
-    forest._localSaplingsLocator = enterprise_chests:getHostLocator()
+    forest._localSaplingsLocator = enterprise_chests:getHostLocator() -- note: more correct would be the locator of an actual Chest
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
