@@ -90,7 +90,7 @@ function enterprise_chests.DelistChest_ASrv(...)
         This async public service delists ("removes") a Chest from the enterprise. Delisting implies
             - the Chest is immediatly no longer available for new business (e.g. adding/ removing items)
             - wait for all active work on Chest to be ended
-            - remove the chest Chest the enterprise
+            - remove the Chest from the enterprise
 
         Note that the Chest (and it's possibly remaining items) are not removed from the world.
 
@@ -110,7 +110,7 @@ function enterprise_chests.DelistChest_ASrv(...)
 
     -- get the Obj
     local obj = enterprise_chests:getObject(chestLocator)
-    if type(obj) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return Callback.ErrorCall(callback) end
+    if type(obj) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Obj "..chestLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- stop doing business for this Obj
     -- ToDo: implement
