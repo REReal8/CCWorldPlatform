@@ -260,7 +260,7 @@ function T_Turtle.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
 end
 
 function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
-    -- ToDo: consider implementing later similair to Chest tests. Not left out because Turtle inventory dependends on... well the Turtle
+    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
     -- prepare test
 
     -- test
@@ -269,7 +269,7 @@ function T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 end
 
 function T_Turtle.T_can_ProvideItems_QOSrv()
-    -- ToDo: consider implementing later similair to Chest tests. Not left out because Turtle inventory dependends on... well the Turtle
+    -- ToDo: consider implementing later similair to Chest tests. Now left out because Turtle inventory dependends on... well the Turtle
     -- prepare test
 
     -- test
