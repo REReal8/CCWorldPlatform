@@ -52,13 +52,15 @@ end
 function T_Turtle.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Turtle getter tests")
-    local id = 111
+    local turtleId = 111
+    local id = tostring(turtleId)
     local className = "Turtle"
     local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
 
     -- test
     assert(objTurtle:getClassName() == className, "gotten className(="..objTurtle:getClassName()..") not the same as expected(="..className..")")
-    assert(objTurtle:getId() == id, "gotten id(="..objTurtle:getId()..") not the same as expected(="..id..")")
+    assert(objTurtle:getId() == id, "gotten getId(="..objTurtle:getId()..") not the same as expected(="..id..")")
+    assert(objTurtle:getTurtleId() == turtleId, "gotten getTurtleId(="..objTurtle:getTurtleId()..") not the same as expected(="..turtleId..")")
 --    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
 --    assert(objTurtle:getInventory():isSame(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
 
@@ -67,7 +69,7 @@ end
 
 function T_Turtle.CreateTurtle(id)
     -- check input
-    id = id or os.getComputerID()
+    id = id or tostring(os.getComputerID())
 
     -- create Turtle object
     local turtle = Turtle:new({
@@ -99,7 +101,7 @@ end
 function T_Turtle.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Turtle:isSame() tests")
-    local id = 333
+    local id = "333"
     local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
 
     -- test same
@@ -134,7 +136,7 @@ local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:provideItemsTo_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getId()}).turtleLocator
+    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getTurtleId()}).turtleLocator
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -197,7 +199,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:storeItemsFrom_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getId()}).turtleLocator
+    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getTurtleId()}).turtleLocator
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,

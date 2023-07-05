@@ -321,9 +321,6 @@ function T_Factory.T_getFuelNeed_Production_Att()
     local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
     local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("failed obtaining Factory") return end
 
---    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
---    local siteLocator = result.siteLocator
-
     -- test
     local items = { ["minecraft:birch_planks"] = 4 }
     local fuelNeed = obj:getFuelNeed_Production_Att(items)
@@ -418,7 +415,6 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     corelog.WriteToLog("* Factory:provideItemsTo_AOSrv() tests ("..productionMethod..")")
     local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
     local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
-    itemDepotLocator:setPort(os.getComputerID())
     local ingredientsItemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()

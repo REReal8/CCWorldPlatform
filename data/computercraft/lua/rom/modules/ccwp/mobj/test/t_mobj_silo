@@ -74,7 +74,6 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = enterprise_turtle.GetCurrentTurtleLocator()
-    itemsLocator:setPort(os.getComputerID())
     local obj = Silo:NewSilo({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Silo") return end
 --    local siloLocator = enterprise_storage:getObjectLocator(obj)
     local siloLocator = enterprise_storage:saveObject(obj)

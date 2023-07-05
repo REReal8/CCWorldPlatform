@@ -3,6 +3,8 @@ local t_turtle = {}
 local corelog = require "corelog"
 local coremove = require "coremove"
 
+local Callback = require "obj_callback"
+
 local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
@@ -12,9 +14,19 @@ local enterprise_isp = require "enterprise_isp"
 
 local t_manufacturing = require "test.t_manufacturing"
 local T_BirchForest = require "test.t_mobj_birchforest"
+local TestObj = require "test.obj_test"
 
 function t_turtle.T_All()
 --    t_turtle.T_GetFuelLevels_Att()
+
+    -- specific methods
+    t_turtle.T_GetAnyTurtleLocator()
+    t_turtle.T_GetCurrentTurtleLocator()
+    t_turtle.T_getObject()
+
+    -- service methods
+    t_turtle.T_RegisterTurtle_SSrv()
+    t_turtle.T_DelistTurtle_ASrv()
 end
 
 local itemsQuery = {
@@ -68,6 +80,121 @@ function t_turtle.T_GetFuelLevels_Att()
     t_manufacturing.StopSite(factoryLocator)
 
     enterprise_forestry:deleteResource(forestLocator)
+end
+
+function t_turtle.T_RegisterTurtle_SSrv()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_turtle.RegisterTurtle_SSrv() tests")
+    local turtleId = os.getComputerID()
+    local objParameters = {
+        turtleId    = turtleId
+    }
+
+    -- test
+    local result = enterprise_turtle.RegisterTurtle_SSrv(objParameters)
+    assert(result.success, "failed registering Obj")
+    local objLocator = result.turtleLocator
+    assert(objLocator, "failed obtaining objLocator")
+    local obj = enterprise_turtle:getObject(objLocator)
+    assert(obj, "failed obtaining obj")
+
+    -- cleanup test
+    enterprise_turtle:deleteResource(objLocator)
+end
+
+function t_turtle.T_DelistTurtle_ASrv()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_turtle.DelistTurtle_ASrv() tests")
+    local turtleId = os.getComputerID()
+    local objParameters = {
+        turtleId    = turtleId
+    }
+    local objLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator if not objLocator then corelog.Error("failed registering Obj") return end
+    local DelistChest_ASrv_callback = Callback:new({
+        _moduleName     = "t_turtle",
+        _methodName     = "DelistTurtle_ASrv_callback",
+        _data           = {
+            ["objLocator"]                      = objLocator,
+        },
+    })
+
+    -- test
+    return enterprise_turtle.DelistTurtle_ASrv({ turtleLocator = objLocator}, DelistChest_ASrv_callback)
+end
+
+function t_turtle.DelistTurtle_ASrv_callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local objLocator = callbackData["objLocator"]
+    local objResourceTable = enterprise_turtle:getResource(objLocator)
+    assert(not objResourceTable, "Obj wasn't deleted")
+
+    -- cleanup test
+
+    -- end
+    return true
+end
+
+local compact = { compact = true }
+
+function t_turtle.T_GetAnyTurtleLocator()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_turtle.GetAnyTurtleLocator() tests")
+
+    -- test
+    local locator = enterprise_turtle.GetAnyTurtleLocator()
+    local expectedLocator = enterprise_turtle:getTurtleLocator("any")
+    assert(locator:isSame(expectedLocator), "gotten locator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
+
+    -- cleanup test
+end
+
+function t_turtle.T_GetCurrentTurtleLocator()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_turtle.GetCurrentTurtleLocator() tests")
+    local currentTurtleId = os.getComputerID()
+    local expectedLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
+    if enterprise_turtle:getResource(expectedLocator) then enterprise_turtle:deleteResource(expectedLocator) end
+    assert(not enterprise_turtle:getResource(expectedLocator), "current Turtle still registered")
+
+    -- test correct locator
+    local locator = enterprise_turtle.GetCurrentTurtleLocator()
+    assert(locator:isSame(expectedLocator), "gotten locator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
+
+    -- test registers current Turtle if not yet registered
+    assert(enterprise_turtle:getResource(locator), "Turtle not registered")
+
+    -- cleanup test
+    enterprise_turtle:deleteResource(expectedLocator)
+end
+
+function t_turtle.T_getObject()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_turtle:getObject() tests")
+    local testObject = TestObj:new({
+        _field1 = "field1",
+        _field2 = 4,
+    })
+    local className = "TestObj"
+    local objectLocator = enterprise_turtle:saveObject(testObject, className)
+    local currentTurtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local currentTurtle = enterprise_turtle:getObject(currentTurtleLocator)
+
+    -- test normal object works (similair to T_Host.T_getObject())
+    local object = enterprise_turtle:getObject(objectLocator)
+    assert(object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+
+    -- test "any turtle" provides current turtle
+    local getAnyTurtleLocator = enterprise_turtle:getTurtleLocator("any")
+    object = enterprise_turtle:getObject(getAnyTurtleLocator)
+    assert(object:isSame(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
+
+    -- cleanup test
+    enterprise_turtle:deleteResource(objectLocator)
+    assert(not enterprise_turtle:getResource(objectLocator), "resource not deleted")
+    enterprise_turtle:deleteResource(currentTurtleLocator)
+    assert(not enterprise_turtle:getResource(currentTurtleLocator), "resource not deleted")
 end
 
 return t_turtle

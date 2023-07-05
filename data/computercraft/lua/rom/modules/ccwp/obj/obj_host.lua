@@ -344,26 +344,28 @@ function Host:getObject(...)
 
     -- convert to object
     local object = objectFactory:create(className, resourceTable)
+    if not object then corelog.Error("Host:getObject: failed converting resourceTable(="..textutils.serialise(resourceTable)..") to "..className.." object for objectLocator="..objectLocator:getURI()) return nil end
 
     -- end
     return object
 end
 
-local function GetObjectPath(...)
+function Host.GetObjectPath(...)
     -- get & check input from description
-    local checkSuccess, object, className, objectId = InputChecker.Check([[
+    local checkSuccess, className, objectId, object = InputChecker.Check([[
         This method provides the objectPath of an object in the Host with class className and id objectId.
 
-        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getClassName() method the className argument can be set to "".
         If the object has a getId() method the objectId argument can be set to "".
+        If the object is not provided the className and objectId arguments are used
 
         Return value:
             resourcePath            - (string) locating the object within the Host
 
         Parameters:
-            object                  + (table) the object
             className               + (string, "") with the name of the class of the object
             objectId                + (string, "") with the optional id of the object
+            object                  + (table, nil) the object
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Host.GetObjectPath: Invalid input") return nil end
 
@@ -427,7 +429,7 @@ function Host:getObjectLocator(...)
     if not checkSuccess then corelog.Error("Host:getObjectLocator: Invalid input") return nil end
 
     -- get resourcePath
-    local objectPath = GetObjectPath(object, className, objectId)
+    local objectPath = Host.GetObjectPath(className, objectId, object)
     if not objectPath then corelog.Error("Host:getObjectLocator: Failed obtainng objectPath") return nil end
 
     -- get objectLocator
@@ -457,7 +459,7 @@ function Host:saveObject(...)
     if not checkSuccess then corelog.Error("Host:saveObject: Invalid input") return nil end
 
     -- get objectPath
-    local objectPath = GetObjectPath(object, className, objectId)
+    local objectPath = Host.GetObjectPath(className, objectId, object)
     if not objectPath then corelog.Error("Host:saveObject: Failed obtaining objectPath") return nil end
 
     -- save resource

@@ -169,9 +169,7 @@ function Chest:provideItemsTo_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleId = -1
     if enterprise_turtle:isLocatorFromHost(itemDepotLocator) then
-        local port = itemDepotLocator:getPort()
---        corelog.Warning("Chest:provideItemsTo_AOSrv: Providing to a turtle itemDepotLocator (="..itemDepotLocator:getURI()..").")
-        turtleId = port
+        turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemDepotLocator }).turtleId
     end
 
     -- create project definition
@@ -380,28 +378,33 @@ function Chest:storeItemsFrom_AOSrv(...)
                 { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "turtleLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
+            -- obtain turtleId
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
+                { keyDef = "turtleLocator"          , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+            }},
             -- put items into chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" },
+                { keyDef = "metaData.needTurtleId"  , sourceStep = 2, sourceKeyDef = "turtleId" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
-                { keyDef = "taskCall._data.turtleId", sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" },
+                { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "turtleId" },
             }},
             -- save chest
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {
                 { keyDef = "hostName"               , sourceStep = 0, sourceKeyDef = "hostName" },
                 { keyDef = "className"              , sourceStep = 0, sourceKeyDef = "className" },
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
-                { keyDef = "objectTable._inventory" , sourceStep = 2, sourceKeyDef = "inventory" },
+                { keyDef = "objectTable._inventory" , sourceStep = 3, sourceKeyDef = "inventory" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
                 { keyDef = "success3"               , sourceStep = 3, sourceKeyDef = "success" },
+                { keyDef = "success4"               , sourceStep = 4, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 4, sourceKeyDef = "success" },
+            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
             { keyDef = "destinationItemsLocator"    , sourceStep = 0, sourceKeyDef = "destinationItemsLocator" },
         }
     }

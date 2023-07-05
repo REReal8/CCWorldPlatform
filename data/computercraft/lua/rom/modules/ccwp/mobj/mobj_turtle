@@ -1,5 +1,5 @@
 local Turtle = {
-    _id = -1,
+    _id = "any",
 }
 
 local corelog = require "corelog"
@@ -35,9 +35,9 @@ function Turtle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _id                     - (number) id of the Turtle
+                _id                     - (string, "any") id of the Turtle
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
 
     -- set class info
     setmetatable(o, self)
@@ -53,6 +53,10 @@ end
 
 function Turtle:getId()
     return self._id
+end
+
+function Turtle:getTurtleId()
+    return tonumber(self:getId())
 end
 
 function Turtle:getInventory()
@@ -81,7 +85,7 @@ end
 function Turtle.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "number" then return false end
+    if type(obj._id) ~= "string" then return false end
 
     -- end
     return true
@@ -159,7 +163,7 @@ function Turtle:provideItemsTo_AOSrv(...)
 
     -- create turtleItemsLocator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleItemsLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getId()}).turtleLocator
+    local turtleItemsLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getTurtleId()}).turtleLocator
     if turtleItemsLocator == nil then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
@@ -204,7 +208,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
-        local sourceTurtleId = itemsLocator:getPort()
+        local sourceTurtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemsLocator }).turtleId if not sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining sourceTurtleId from itemsLocator="..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
         local currentTurtleId = os.getComputerID()
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
 
@@ -215,7 +219,6 @@ function Turtle:storeItemsFrom_AOSrv(...)
 
         -- determine destinationItemsLocator
         local destinationItemsLocator = itemsLocator:copy()
-        destinationItemsLocator:setPort(currentTurtleId)
 
         -- end
         local result = {
@@ -225,7 +228,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
         return callback:call(result)
     else -- source is not a turtle
         -- create turtleLocator
-        local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getId()}).turtleLocator
+        local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getTurtleId()}).turtleLocator
         if turtleLocator == nil then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
         -- have source ItemSupplier provideItemsTo Turtle

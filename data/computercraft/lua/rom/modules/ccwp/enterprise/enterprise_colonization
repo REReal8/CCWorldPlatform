@@ -58,10 +58,12 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- ToDo: instelling van de 3,2,1 coordianten bij start, lijkt nu niet meer te werken
 
-    -- register current turtle in enterprise_shop
-    -- ToDo: figure out where to register (other) turtles that get added
+    -- register current turtle
+    -- ToDo: figure out where/ how to register (other) turtles that get added
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()})
+    local currentTurtleId = os.getComputerID()
+    local currentTurtleLocator = enterprise_turtle.RegisterTurtle_SSrv({turtleId = currentTurtleId}).turtleLocator if not currentTurtleLocator then corelog.Error("failed registering Turtle in enterprise_turtle") return end
+    local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return end
 
     -- construct arguments
     local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
