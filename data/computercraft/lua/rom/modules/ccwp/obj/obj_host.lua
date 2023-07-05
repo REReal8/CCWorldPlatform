@@ -413,7 +413,7 @@ function Host:getObjectLocator(...)
     local checkSuccess, object, className, objectId = InputChecker.Check([[
         This method provides the objectLocator of an object in the Host using a className and objectId argument.
 
-        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getClassName() method the className argument can be set to "".
         If the object has a getId() method the objectId argument can be set to "".
 
         Return value:
