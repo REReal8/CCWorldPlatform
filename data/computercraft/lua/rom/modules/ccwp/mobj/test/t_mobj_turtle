@@ -13,6 +13,8 @@ local T_Chest = require "test.t_mobj_chest"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
+local t_turtle = require "test.t_turtle"
+
 function T_Turtle.T_All()
     -- base methods
     T_Turtle.T_ImplementsIObj()
@@ -162,7 +164,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
-    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     provideItemsTo_AOSrv_Test(itemDepotLocator, "Turtle")
@@ -226,7 +228,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
-    local itemsLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemsLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")

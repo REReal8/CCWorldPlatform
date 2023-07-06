@@ -13,8 +13,9 @@ local URL = require "obj_url"
 
 local Chest = require "mobj_chest"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
+
+local t_turtle = require "test.t_turtle"
 
 function T_Chest.T_All()
     -- base methods
@@ -218,7 +219,7 @@ end
 
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
-    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     provideItemsTo_AOSrv_Test(itemDepotLocator, "Turtle")
@@ -286,7 +287,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
-    local itemsLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemsLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")
@@ -328,7 +329,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local itemDepotLocation = Location:new(coremove.GetLocation())
 
     -- test

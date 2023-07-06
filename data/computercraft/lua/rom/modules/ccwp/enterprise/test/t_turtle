@@ -21,7 +21,6 @@ function t_turtle.T_All()
 
     -- specific methods
     t_turtle.T_GetAnyTurtleLocator()
-    t_turtle.T_GetCurrentTurtleLocator()
     t_turtle.T_getObject()
 
     -- service methods
@@ -150,23 +149,30 @@ function t_turtle.T_GetAnyTurtleLocator()
     -- cleanup test
 end
 
-function t_turtle.T_GetCurrentTurtleLocator()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_turtle.GetCurrentTurtleLocator() tests")
+function t_turtle.GetCurrentTurtleLocator()
+    --[[
+        This method provides the locator of the current turtle (in enterprise_turtle).
+
+        Return value:
+            turtleLocator       - (URL) locating the current turtle
+
+        Parameters:
+    --]]
+
+    -- construct URL
     local currentTurtleId = os.getComputerID()
-    local expectedLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
-    if enterprise_turtle:getResource(expectedLocator) then enterprise_turtle:deleteResource(expectedLocator) end
-    assert(not enterprise_turtle:getResource(expectedLocator), "current Turtle still registered")
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
 
-    -- test correct locator
-    local locator = enterprise_turtle.GetCurrentTurtleLocator()
-    assert(locator:isSame(expectedLocator), "gotten locator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
+    -- register current Turtle if not yet registered
+    local objResourceTable = enterprise_turtle:getResource(currentTurtleLocator)
+    if not objResourceTable then
+        local objParameters = { turtleId = currentTurtleId }
+        currentTurtleLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator
+        if not currentTurtleLocator then corelog.Error("failed registering current Turtle") return nil end
+    end
 
-    -- test registers current Turtle if not yet registered
-    assert(enterprise_turtle:getResource(locator), "Turtle not registered")
-
-    -- cleanup test
-    enterprise_turtle:deleteResource(expectedLocator)
+    -- end
+    return currentTurtleLocator
 end
 
 function t_turtle.T_getObject()
@@ -178,7 +184,7 @@ function t_turtle.T_getObject()
     })
     local className = "TestObj"
     local objectLocator = enterprise_turtle:saveObject(testObject, className)
-    local currentTurtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local currentTurtleLocator = t_turtle.GetCurrentTurtleLocator()
     local currentTurtle = enterprise_turtle:getObject(currentTurtleLocator)
 
     -- test normal object works (similair to T_Host.T_getObject())

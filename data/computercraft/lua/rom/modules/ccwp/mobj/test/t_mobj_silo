@@ -1,21 +1,17 @@
 local T_Silo = {}
 local corelog = require "corelog"
-local coreutils = require "coreutils"
-local coremove = require "coremove"
 local coredht = require "coredht"
-
-local role_fuel_worker = require "role_fuel_worker"
 
 local Callback = require "obj_callback"
 local Location = require "obj_location"
-local Inventory = require "obj_inventory"
 local URL = require "obj_url"
 
 local Silo = require "mobj_silo"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
+
+local t_turtle = require "test.t_turtle"
 
 function T_Silo.T_All()
     -- base methods
@@ -73,7 +69,7 @@ local compact = { compact = true }
 function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
-    local itemsLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemsLocator = t_turtle.GetCurrentTurtleLocator()
     local obj = Silo:NewSilo({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Silo") return end
 --    local siloLocator = enterprise_storage:getObjectLocator(obj)
     local siloLocator = enterprise_storage:saveObject(obj)

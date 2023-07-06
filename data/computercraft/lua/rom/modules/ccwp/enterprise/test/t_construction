@@ -8,11 +8,11 @@ local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_construction = require "enterprise_construction"
 
 local t_chests = require "test.t_chests"
+local t_turtle = require "test.t_turtle"
 
 local testStartLocation     = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
@@ -80,7 +80,7 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         layer = testBuildLayer1,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",
@@ -173,7 +173,7 @@ function t_construction.T_BuildBlueprint_ASrv()
     local blueprintBuildData = {
         blueprintStartpoint     = testStartLocation:getRelativeLocation(0, 12, 0),
         blueprint               = testBlueprint1,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",

@@ -9,10 +9,10 @@ local Location = require "obj_location"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
 
+local t_turtle = require "test.t_turtle"
 local t_manufacturing = require "test.t_manufacturing"
 
 function t_storage.T_BuildAndStartNewSite_ASrv()
@@ -37,7 +37,7 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
         type                    = "silo",
         topChests               = 2,
         layers                  = 2,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 

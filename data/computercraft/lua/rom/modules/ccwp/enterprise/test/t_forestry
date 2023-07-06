@@ -6,8 +6,9 @@ local MethodExecutor = require "method_executor"
 
 local Location = require "obj_location"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_forestry = require "enterprise_forestry"
+
+local t_turtle = require "test.t_turtle"
 
 function t_forestry.T_All()
 end
@@ -43,7 +44,7 @@ function AddNewSite_ASrv(level, nTrees)
         baseLocation            = location:copy(),
         forestLevel             = level,
         nTrees                  = nTrees,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
 
@@ -100,7 +101,7 @@ function ExtraCallback(...)
         forestLocator           = forestLocator:copy(),
         targetLevel             = levelWanted,
         targetNTrees            = treesWanted,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
 end
 
@@ -111,7 +112,7 @@ function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted, extr
         baseLocation            = location:copy(),
         forestLevel             = levelStart,
         nTrees                  = treesStart,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData})
 end
 
@@ -138,7 +139,7 @@ function UpgradeSite_ASrv_PrepCallback(...)
         forestLocator           = forestLocator:copy(),
         targetLevel             = levelWanted,
         targetNTrees            = treesWanted,
-        materialsHostLocator    = enterprise_turtle.GetCurrentTurtleLocator(),
+        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData })
 end
 

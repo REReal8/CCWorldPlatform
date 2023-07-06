@@ -16,6 +16,8 @@ local Factory = require "mobj_factory"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
+local t_turtle = require "test.t_turtle"
+
 function T_Factory.T_All()
     -- base methods
     T_Factory.T_ImplementsIObj()
@@ -414,8 +416,8 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     -- prepare test
     corelog.WriteToLog("* Factory:provideItemsTo_AOSrv() tests ("..productionMethod..")")
     local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
-    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
-    local ingredientsItemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)

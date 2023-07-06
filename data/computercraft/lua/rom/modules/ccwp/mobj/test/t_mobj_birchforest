@@ -13,6 +13,8 @@ local role_forester = require "role_forester"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
+local t_turtle
+
 function T_BirchForest.T_All()
     -- base methods
     T_BirchForest.T_ImplementsIObj()
@@ -300,7 +302,8 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    t_turtle = t_turtle or require "test.t_turtle"
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     local needsTo_Provide = forest:needsTo_ProvideItemsTo_SOSrv({

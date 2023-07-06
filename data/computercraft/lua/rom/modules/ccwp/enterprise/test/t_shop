@@ -7,9 +7,10 @@ local Location = require "obj_location"
 
 local T_Chest = require "test.t_mobj_chest"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
+
+local t_turtle = require "test.t_turtle"
 
 function t_shop.T_All()
     -- specific methods
@@ -31,7 +32,7 @@ function t_shop.T_OrderMultipleItems()
             ["minecraft:furnace"]   = 1,
             ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
         },
-        itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator(),
+        itemDepotLocator = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -40,7 +41,7 @@ function t_shop.T_OrderCharcoal()
         orderItems = {
             ["minecraft:charcoal"]  = 3,
         },
-        itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator(),
+        itemDepotLocator = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -49,7 +50,7 @@ function t_shop.T_OrderTorch()
         orderItems = {
             ["minecraft:torch"]  = 4,
         },
-        itemDepotLocator = enterprise_turtle.GetCurrentTurtleLocator(),
+        itemDepotLocator = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -57,7 +58,7 @@ function t_shop.T_RegisterItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.RegisterItemSupplier_SSrv() tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
-    local itemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     local result = enterprise_shop.RegisterItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})
@@ -73,7 +74,7 @@ function t_shop.T_DelistItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.DelistItemSupplier_SSrv tests")
     local originalNItemSuppliers = #enterprise_shop.GetItemSuppliers()
-    local itemSupplierLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     local result = enterprise_shop.DelistItemSupplier_SSrv({ itemSupplierLocator = itemSupplierLocator})

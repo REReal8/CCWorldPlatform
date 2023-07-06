@@ -296,32 +296,6 @@ function enterprise_turtle.GetAnyTurtleLocator()
     return enterprise_turtle:getTurtleLocator("any")
 end
 
-function enterprise_turtle.GetCurrentTurtleLocator()
-    --[[
-        This method provides the locator of the current turtle (in the enterprise).
-
-        Return value:
-            turtleLocator       - (URL) locating the current turtle
-
-        Parameters:
-    --]]
-
-    -- construct URL
-    local currentTurtleId = os.getComputerID()
-    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
-
-    -- register current Turtle if not yet registered
-    local objResourceTable = enterprise_turtle:getResource(currentTurtleLocator)
-    if not objResourceTable then
-        local objParameters = { turtleId = currentTurtleId }
-        currentTurtleLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator
-        if not currentTurtleLocator then corelog.Error("failed registering current Turtle") return nil end
-    end
-
-    -- end
-    return currentTurtleLocator
-end
-
 function enterprise_turtle.GetItemsLocator_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemsQuery = InputChecker.Check([[
