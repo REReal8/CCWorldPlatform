@@ -138,7 +138,7 @@ local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:provideItemsTo_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getTurtleId()}).turtleLocator
+    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId()))
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -201,7 +201,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:storeItemsFrom_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({ turtleId = objTurtle:getTurtleId()}).turtleLocator
+    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId()))
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,

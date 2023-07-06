@@ -192,7 +192,7 @@ function t_turtle.T_getObject()
     assert(object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- test "any turtle" provides current turtle
-    local getAnyTurtleLocator = enterprise_turtle:getTurtleLocator("any")
+    local getAnyTurtleLocator = enterprise_turtle.GetAnyTurtleLocator()
     object = enterprise_turtle:getObject(getAnyTurtleLocator)
     assert(object:isSame(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
 

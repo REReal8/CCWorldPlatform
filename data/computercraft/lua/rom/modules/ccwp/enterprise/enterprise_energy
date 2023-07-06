@@ -68,7 +68,7 @@ local function Refuel_ASrv(...)
 
     -- create project service data
     local enterprise_turtle = require "enterprise_turtle"
-    local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = turtleId}).turtleLocator
+    local turtleToRefuelLocator = enterprise_turtle:getTurtleLocator(tostring(turtleId))
     local fuelItemsLocator = ingredientsItemSupplierLocator:copy()
     fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
 --    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")

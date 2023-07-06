@@ -163,8 +163,7 @@ function Turtle:provideItemsTo_AOSrv(...)
 
     -- create turtleItemsLocator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleItemsLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getTurtleId()}).turtleLocator
-    if turtleItemsLocator == nil then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
+    local turtleItemsLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
     -- store items from this turtle to ItemDepot
@@ -228,8 +227,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
         return callback:call(result)
     else -- source is not a turtle
         -- create turtleLocator
-        local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getTurtleId()}).turtleLocator
-        if turtleLocator == nil then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
+        local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
         -- have source ItemSupplier provideItemsTo Turtle
         local ingredientsItemSupplierLocator = itemsLocator:copy() -- note: this is intended as a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)

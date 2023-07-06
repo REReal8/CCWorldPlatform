@@ -30,7 +30,6 @@ local db = {
     This enterprise is both an ItemSupplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv).
 
     Furthermore it provides the following additional services
-        GetTurtleLocator_SSrv  - provide the URL of a turtle
         GetItemsLocator_SSrv   - provide the URL of items in a turtle
 --]]
 
@@ -214,6 +213,16 @@ function enterprise_turtle:getObject(...)
 end
 
 function enterprise_turtle:getTurtleLocator(turtleIdStr)
+    --[[
+        This method provides the locator of a turtle in the enterprise based on a 'turtleIdStr'.
+
+        Return value:
+            turtleLocator           - (URL) locating the turtle
+
+        Parameters:
+            turtleIdStr             + (string) id of the turtle
+    --]]
+
     -- get resourcePath
     local objectPath = Host.GetObjectPath("Turtle", turtleIdStr)
     if not objectPath then corelog.Error("enterprise_turtle:getTurtleLocator: Failed obtaining objectPath") return nil end
@@ -224,33 +233,6 @@ function enterprise_turtle:getTurtleLocator(turtleIdStr)
 
     -- end
     return turtleLocator
-end
-
-function enterprise_turtle.GetTurtleLocator_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, turtleId = InputChecker.Check([[
-        This sync public services provides the locator of a turtle in the enterprise based on a 'turtleId'.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                turtleLocator       - (URL) locating the turtle
-
-        Parameters:
-            serviceData             - (table) data for this service
-                turtleId            + (number) id of the turtle
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.GetTurtleLocator_SSrv: Invalid input") return {success = false} end
-
-    -- construct URL
-    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(turtleId))
-
-    -- end
-    local result = {
-        success = true,
-        turtleLocator = turtleLocator,
-    }
-    return result
 end
 
 function enterprise_turtle.GetTurtleId_SSrv(...)
@@ -298,7 +280,7 @@ end
 
 function enterprise_turtle.GetItemsLocator_SSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemsQuery = InputChecker.Check([[
+    local checkSuccess, turtleId, itemsQuery = InputChecker.Check([[
         This sync public services provides the URL of the items in a turtle in the enterprise.
 
         Return value:
@@ -307,14 +289,14 @@ function enterprise_turtle.GetItemsLocator_SSrv(...)
                 itemsLocator        - (URL) locating the items in the inventory of a turtle
 
         Parameters:
-            serviceData             + (table) data for this service
-                turtleId            - (number) id of the turtle
+            serviceData             - (table) data for this service
+                turtleId            + (number) id of the turtle
                 itemsQuery          + (table) optional items to locate in turtle
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.GetItemsLocator_SSrv: Invalid input") return {success = false} end
 
     -- construct URL
-    local itemsLocator = enterprise_turtle.GetTurtleLocator_SSrv(serviceData).turtleLocator if not itemsLocator then corelog.Error("enterprise_turtle.GetItemsLocator_SSrv: failed obtaining turtleLocator") return {success = false} end
+    local itemsLocator = enterprise_turtle:getTurtleLocator(tostring(turtleId)) if not itemsLocator then corelog.Error("enterprise_turtle.GetItemsLocator_SSrv: failed obtaining turtleLocator") return {success = false} end
     itemsLocator:setQuery(itemsQuery)
 
     -- end
