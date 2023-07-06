@@ -204,7 +204,9 @@ function enterprise_turtle:getObject(...)
     if objectLocator:sameBase(enterprise_turtle.GetAnyTurtleLocator()) then
         -- convert to "current turtle"
 --        corelog.WriteToLog("convert to current Turtle")
-        objectLocator = enterprise_turtle.GetCurrentTurtleLocator()
+        local currentTurtleId = os.getComputerID()
+        local objectPath = objectLocator:getPath():gsub("any", tostring(currentTurtleId))
+        objectLocator:setPath(objectPath)
     end
 
     -- have base class Host provide the object
