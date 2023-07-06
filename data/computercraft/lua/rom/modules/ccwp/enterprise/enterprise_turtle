@@ -21,7 +21,6 @@ local enterprise_energy = require "enterprise_energy"
 
 local db = {
     fuelTurtlePriorityKey   = nil,
-    fuelTurtleCallsSkippedBecausePriorityKey = 0,
 }
 
 --[[
@@ -183,7 +182,6 @@ end
 function enterprise_turtle.Reset()
     -- reset local db
     db.fuelTurtlePriorityKey                    = nil
-    db.fuelTurtleCallsSkippedBecausePriorityKey = 0
 end
 
 function enterprise_turtle:getObject(...)
