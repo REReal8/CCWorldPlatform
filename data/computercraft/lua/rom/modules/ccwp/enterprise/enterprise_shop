@@ -21,7 +21,7 @@ local db = {
         OrderItems_ASrv             - procure items and having them delivered at an ItemDepot
         <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
 
-    The Shop implements it's services by using services of ItemSupplier enterprises.
+    The Shop implements it's services by using services of ItemSupplier's.
 
     For an enterprise to be an ItemSupplier it needs to implement the following services:
         ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at an ItemDepot
@@ -33,7 +33,7 @@ local db = {
     This allows for the Shop to be passed as ingredientsItemSupplierLocator to an ItemSupplier. The effect of that is that the ItemSupplier can request
     the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from an ItemSupplier.
     This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided
-    by an ItemSupplier.
+    by a registered ItemSupplier.
 --]]
 
 --    _                                     _   _               _
