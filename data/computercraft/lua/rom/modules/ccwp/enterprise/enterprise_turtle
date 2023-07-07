@@ -11,6 +11,9 @@ local coreinventory = require "coreinventory"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
+
 local Location = require "obj_location"
 
 local Turtle = require "mobj_turtle"
@@ -70,7 +73,22 @@ end
 --       | |
 --       |_|
 
-function enterprise_turtle.Reset()
+function enterprise_turtle:reset()
+    -- get Turtle's
+    local turtles = self:getObjects("Turtle")
+    if not turtles then corelog.Error("enterprise_turtle:reset: Failed obtaining Turtle's") return nil end
+
+    -- reset all Turtle's
+    for id, turtleObjTable in pairs(turtles) do
+        -- convert to Turtle
+        local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_turtle:reset: failed converting turtle "..id.." objTable to Turtle") return nil end
+
+        -- reset Turtle
+        turtleObj:setFuelPriorityKey("")
+
+        -- save Turtle
+        local turtleLocator = enterprise_turtle:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle:reset: failed saving turtle") return nil end
+    end
 end
 
 function enterprise_turtle:getTurtleLocator(turtleIdStr)
