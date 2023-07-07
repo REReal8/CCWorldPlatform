@@ -162,13 +162,13 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     local nextAssignment = nil
     if assignmentIdApplication then
         -- apply
-        enterprise_assignmentboard.ApplyToAssignment(assignmentIdApplication)
+        enterprise_assignmentboard.ApplyToAssignment(turtleId, assignmentIdApplication)
 
         -- wait, maybe more turtles have applied
         os.sleep(1.25)
 
         -- check who gets the assignment
-        nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(assignmentIdApplication)
+        nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(turtleId, assignmentIdApplication)
     end
 
     -- end

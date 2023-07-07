@@ -182,7 +182,7 @@ function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                assignmentId        - (number) id of found assignment (==nil if no assignment was found)
+                assignmentId        - (string) id of found assignment (==nil if no assignment was found)
 
         Parameters:
             serviceData             - (table) data for this service
@@ -251,32 +251,50 @@ function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
     end
 end
 
-function enterprise_assignmentboard.ApplyToAssignment(assignmentId) -- ToDo: make this a proper sync service
---    corelog.WriteToAssignmentLog("Running ApplyToAssignment", assignmentId)
+function enterprise_assignmentboard.ApplyToAssignment(...)
+    -- get & check input from description
+    local checkSuccess, computerId, assignmentId = InputChecker.Check([[
+        This function ensures the application of a computer 'computerId' to assignment 'assignmentId'.
 
-    -- alleen solliciteren indien de assignment open is
+        Return value:
+
+        Parameters:
+            computerId              + (number) id of computer
+            assignmentId            + (string) id of the assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.ApplyToAssignment: Invalid input") return nil end
+
+    -- only apply when the assignment is open
     if coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "status") == "open" then
-        -- wie zijn we?
-        local me = os.getComputerID()
-
-        -- onzelf (os.getComputerID()) toevoegen aan de lijst met inschrijvingen
+        -- add computer to the application list
         coredht.SaveData({
             time            = coreutils.UniversalTime(),
             dice            = math.random(),
-            applicant       = me,
-        }, db.dhtRoot, db.dhtList, assignmentId, "applications", me)
+            applicant       = computerId,
+        }, db.dhtRoot, db.dhtList, assignmentId, "applications", computerId)
     end
 end
 
-function enterprise_assignmentboard.AssignmentSelectionProcedure(assignmentId) -- ToDo: make this a proper sync service
---    corelog.WriteToAssignmentLog("Running assignmentSelectionProcedure", assignmentId)
+function enterprise_assignmentboard.AssignmentSelectionProcedure(...)
+    -- get & check input from description
+    local checkSuccess, computerId, assignmentId = InputChecker.Check([[
+        This function determines if a computer 'computerId' is selected to perform an assignment.
 
-    -- data van de assignment ophalen
+        Return value:
+            assignment              + (table) with the assignment (data) or nil if the computer was not selected
+
+        Parameters:
+            computerId              + (number) id of computer
+            assignmentId            + (string) id of the assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_assignmentboard.ApplyToAssignment: Invalid input") return nil end
+
+    -- get assignment data
     local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
 
     -- see if this assignment is still open
     if type(assignment) == "table" and assignment.status == "open" then
-        --
+        -- get applications to assignment
         local applications = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "applications")
 
         -- see who got the highest dice
@@ -289,13 +307,13 @@ function enterprise_assignmentboard.AssignmentSelectionProcedure(assignmentId) -
             end
         end
 
-        -- check if I got the highest dice
-        if highestDiceTurtle == os.getComputerID() then
+        -- check if computer got the highest dice
+        if highestDiceTurtle == computerId then
             return assignment
         end
     end
 
-    -- apparently it's not for me
+    -- apparently it's not for this computer
     return nil
 end
 
