@@ -306,6 +306,7 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     }
     local turtleId = turtleObj:getTurtleId()
     local turtleResume = nil
+    -- ToDo: consider obtaining resume from Turtle
     if turtle then
         turtleResume = {
             turtleId        = turtleId,
