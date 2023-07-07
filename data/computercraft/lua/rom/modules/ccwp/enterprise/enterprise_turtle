@@ -65,7 +65,7 @@ function enterprise_turtle.RegisterTurtle_SSrv(...)
     })
 
     -- save the Obj
-    corelog.WriteToLog(">Registering Turtle "..obj:getId()..".")
+    corelog.WriteToLog(">Registering Turtle "..obj:getId().." in enterprise_turtle.")
     local objLocator = enterprise_turtle:saveObject(obj)
     if not objLocator then corelog.Error("enterprise_turtle.RegisterTurtle_SSrv: Failed registering Obj") return {success = false} end
 
@@ -121,7 +121,7 @@ end
 
 function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId = InputChecker.Check([[
+    local checkSuccess, turtleLocator = InputChecker.Check([[
         This sync public service gets a new assignment for a turtle.
 
         Return value:
@@ -131,11 +131,15 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
 
         Parameters:
             serviceData             - (table) data for this service
-                turtleId            + (number) id of the turtle
+                turtleLocator       + (URL) locator of the turtle
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: Invalid input") return {success = false} end
 
+    -- get current Turtle
+    local turtleObj = enterprise_turtle:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
+
     -- (re)fuel turtle if needed
+    local turtleId = turtleObj:getTurtleId()
     local fuelLevel = turtle.getFuelLevel()
     enterprise_turtle.TriggerRefuelIfNeeded(turtleId, fuelLevel)
 

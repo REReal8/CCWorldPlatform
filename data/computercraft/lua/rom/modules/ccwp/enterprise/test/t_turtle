@@ -34,11 +34,12 @@ local itemsQuery = {
 }
 
 local level0 = 0
+local turtleId1 = 999999
 
 function t_turtle.T_Can_ProvideItems()
     corelog.WriteToLog("* Test Can_ProvideItems_QSrv for turtles:")
     -- create transferData
-    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = os.getComputerID(), itemsQuery = itemsQuery }).itemsLocator
+    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = turtleId1, itemsQuery = itemsQuery }).itemsLocator
     local queryData = {
         itemsLocator = itemsLocator,
     }
@@ -84,9 +85,8 @@ end
 function t_turtle.T_RegisterTurtle_SSrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_turtle.RegisterTurtle_SSrv() tests")
-    local turtleId = os.getComputerID()
     local objParameters = {
-        turtleId    = turtleId
+        turtleId    = turtleId1
     }
 
     -- test
@@ -104,9 +104,8 @@ end
 function t_turtle.T_DelistTurtle_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_turtle.DelistTurtle_ASrv() tests")
-    local turtleId = os.getComputerID()
     local objParameters = {
-        turtleId    = turtleId
+        turtleId        = turtleId1
     }
     local objLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator if not objLocator then corelog.Error("failed registering Obj") return end
     local DelistChest_ASrv_callback = Callback:new({
@@ -163,14 +162,6 @@ function t_turtle.GetCurrentTurtleLocator()
     local currentTurtleId = os.getComputerID()
     local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
 
-    -- register current Turtle if not yet registered
-    local objResourceTable = enterprise_turtle:getResource(currentTurtleLocator)
-    if not objResourceTable then
-        local objParameters = { turtleId = currentTurtleId }
-        currentTurtleLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator
-        if not currentTurtleLocator then corelog.Error("failed registering current Turtle") return nil end
-    end
-
     -- end
     return currentTurtleLocator
 end
@@ -199,8 +190,6 @@ function t_turtle.T_getObject()
     -- cleanup test
     enterprise_turtle:deleteResource(objectLocator)
     assert(not enterprise_turtle:getResource(objectLocator), "resource not deleted")
-    enterprise_turtle:deleteResource(currentTurtleLocator)
-    assert(not enterprise_turtle:getResource(currentTurtleLocator), "resource not deleted")
 end
 
 return t_turtle
