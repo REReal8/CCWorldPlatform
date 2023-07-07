@@ -136,7 +136,7 @@ local function TriggerRefuelIfNeeded(turtleObj)
 
     -- check fuelLevels
     local fuelLevel_Assignment = fuelLevels.fuelLevel_Assignment
-    if turtleFuelLevel < fuelLevel_Assignment and turtleObj.getFuelPriorityKey() == "" then
+    if turtleFuelLevel < fuelLevel_Assignment and turtleObj:getFuelPriorityKey() == "" then
         -- ensure this turtle now only starts taking new assignments with the priority key
         local priorityKey = coreutils.NewId()
         turtleObj:setFuelPriorityKey(priorityKey)
