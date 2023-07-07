@@ -73,6 +73,7 @@ local function Refuel_ASrv(...)
     fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
 --    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
     local refuelTaskData = {
+        -- ToDo: consider passing turtleLocator
         turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
 
@@ -82,7 +83,7 @@ local function Refuel_ASrv(...)
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "fuelItemsLocator" },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "turtleToRefuelLocator" },
+                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "turtleLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
@@ -103,7 +104,7 @@ local function Refuel_ASrv(...)
         fuelItems                       = coreutils.DeepCopy(fuelItems),
 
         fuelItemsLocator                = fuelItemsLocator,
-        turtleToRefuelLocator           = turtleLocator,
+        turtleLocator                   = turtleLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
 
         refuelMetaData                  = role_fuel_worker.Refuel_MetaData(refuelTaskData),
