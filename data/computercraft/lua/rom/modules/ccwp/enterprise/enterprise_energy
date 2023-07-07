@@ -46,7 +46,7 @@ end
 
 local function Refuel_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId, fuelItems, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleLocator, fuelItems, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service (re)fuels a turtle from fuelItems.
 
         Return value:
@@ -58,7 +58,7 @@ local function Refuel_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                turtleId                        + (number) id of the turtle to fuel
+                turtleLocator                   + (URL) locator of the turtle
                 fuelItems                       + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -68,7 +68,7 @@ local function Refuel_ASrv(...)
 
     -- create project service data
     local enterprise_turtle = require "enterprise_turtle"
-    local turtleToRefuelLocator = enterprise_turtle:getTurtleLocator(tostring(turtleId))
+    local turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = turtleLocator }).turtleId if not turtleId then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtleId from turtleLocator="..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
     local fuelItemsLocator = ingredientsItemSupplierLocator:copy()
     fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
 --    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
@@ -103,7 +103,7 @@ local function Refuel_ASrv(...)
         fuelItems                       = coreutils.DeepCopy(fuelItems),
 
         fuelItemsLocator                = fuelItemsLocator,
-        turtleToRefuelLocator           = turtleToRefuelLocator,
+        turtleToRefuelLocator           = turtleLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
 
         refuelMetaData                  = role_fuel_worker.Refuel_MetaData(refuelTaskData),
@@ -122,7 +122,7 @@ end
 
 function enterprise_energy.ProvideFuelTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId, fuelAmount, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleLocator, fuelAmount, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service provides fuel to a turtle.
 
         Return value:
@@ -134,7 +134,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                turtleId                        + (number) id of the turtle
+                turtleLocator                   + (URL) locator of the turtle
                 fuelAmount                      + (number) fuel amount to provide to turtle
                 ingredientsItemSupplierLocator  + (URL) locating where the fuel ingredients can be retrieved
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -147,12 +147,12 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
 
     -- (re)fuel turtle
     local refuelServiceData = {
-        turtleId                        = turtleId,
+        turtleLocator                   = turtleLocator,
         fuelItems                       = fuelItemsNeed,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }
-    corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") with "..fuelAmount.." fuel *")
+    corelog.WriteToLog("* Refuelling Turtle "..turtleLocator:getURI().." with "..fuelAmount.." fuel *")
     return Refuel_ASrv(refuelServiceData, callback)
 end
 

@@ -1,5 +1,6 @@
 local Turtle = {
-    _id = "any",
+    _id                     = "any",
+    _fuelPriorityKey        = "",
 }
 
 local corelog = require "corelog"
@@ -36,6 +37,7 @@ function Turtle:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _id                     - (string, "any") id of the Turtle
+                _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
 
@@ -57,6 +59,17 @@ end
 
 function Turtle:getTurtleId()
     return tonumber(self:getId())
+end
+
+function Turtle:getFuelPriorityKey()
+    return self._fuelPriorityKey
+end
+
+function Turtle:setFuelPriorityKey(fuelPriorityKey)
+    -- check
+    if type(fuelPriorityKey) ~= "string" then corelog.Error("LayerRectangle:setCodeArray: Invalid fuelPriorityKey(type="..type(fuelPriorityKey)..")") return end
+
+    self._fuelPriorityKey = fuelPriorityKey
 end
 
 function Turtle:getInventory()
@@ -89,6 +102,7 @@ function Turtle.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
+    if type(obj._fuelPriorityKey) ~= "string" then return false end
 
     -- end
     return true
@@ -116,6 +130,7 @@ function Turtle:isSame(obj)
 
     -- check same object
     local isSame =  self._id == obj._id
+                and self._fuelPriorityKey == obj._fuelPriorityKey
 
     -- end
     return isSame
@@ -124,6 +139,7 @@ end
 function Turtle:copy()
     local copy = Turtle:new({
         _id             = self._id,
+        _fuelPriorityKey= self._fuelPriorityKey,
     })
 
     return copy

@@ -71,7 +71,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     metaData.needTurtleId   = metaData.needTurtleId or nil      --> nil-waarde voor needTurtleId geeft aan dat turtleId geen rol speelt bij de selectie
     metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
     metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
-    metaData.priorityKey    = metaData.priorityKey  or nil      --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a turtle, it will only take assignments with that key)
+    metaData.priorityKey    = metaData.priorityKey  or ""       --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a turtle, it will only take assignments with that key)
 
     -- create assignment
     local assignmentId  = coreutils.NewId()
@@ -415,7 +415,7 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
 
     -- check priorityKeyNeeded
     local priorityKeyNeeded = assignmentFilter.priorityKeyNeeded
-    if priorityKeyNeeded then
+    if priorityKeyNeeded ~= "" then
         if metaData.priorityKey ~= priorityKeyNeeded then
             return false, "assignment does not `have`(="..(metaData.priorityKey or "nil")..") mandatory priorityKeyNeeded (="..priorityKeyNeeded..")"
         end

@@ -19,10 +19,6 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 
-local db = {
-    fuelTurtlePriorityKey   = nil,
-}
-
 --[[
     The Turtle enterprise provides services related to turtles.
 
@@ -75,8 +71,6 @@ end
 --       |_|
 
 function enterprise_turtle.Reset()
-    -- reset local db
-    db.fuelTurtlePriorityKey                    = nil
 end
 
 function enterprise_turtle:getTurtleLocator(turtleIdStr)
@@ -117,32 +111,34 @@ function enterprise_turtle.GetAnyTurtleLocator()
     return enterprise_turtle:getTurtleLocator("any")
 end
 
-function enterprise_turtle.TriggerRefuelIfNeeded(turtleId, fuelLevel)
+local function TriggerRefuelIfNeeded(turtleObj)
     -- get fuelLevels
+    local turtleFuelLevel = turtle.getFuelLevel()
     local fuelLevels = enterprise_turtle.GetFuelLevels_Att()
 
     -- check fuelLevels
     local fuelLevel_Assignment = fuelLevels.fuelLevel_Assignment
-    if fuelLevel < fuelLevel_Assignment and not db.fuelTurtlePriorityKey then
+    if turtleFuelLevel < fuelLevel_Assignment and turtleObj.getFuelPriorityKey() == "" then
         -- ensure this turtle now only starts taking new assignments with the priority key
         local priorityKey = coreutils.NewId()
-        db.fuelTurtlePriorityKey = priorityKey
+        turtleObj:setFuelPriorityKey(priorityKey)
+        local turtleLocator = enterprise_turtle:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle.TriggerRefuelIfNeeded: failed saving turtle") return end
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
         local ingredientsItemSupplierLocator = enterprise_shop.GetHostLocator_Att()
         local serviceData = {
-            turtleId                        = turtleId,
+            turtleLocator                   = turtleLocator,
             fuelAmount                      = refuelAmount,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
 
             assignmentsPriorityKey          = priorityKey,
         }
         local callback = Callback:new({
-            _moduleName     = "enterprise_turtle",
-            _methodName     = "Fuel_Callback",
-            _data           = {
-                turtleId = turtleId,
+            _moduleName         = "enterprise_turtle",
+            _methodName         = "Fuel_Callback",
+            _data               = {
+                turtleLocator   = turtleLocator,
             },
         })
 
@@ -151,18 +147,28 @@ function enterprise_turtle.TriggerRefuelIfNeeded(turtleId, fuelLevel)
     end
 end
 
-function enterprise_turtle.Fuel_Callback(turtleData, serviceResults)
-    -- check input
-    if type(turtleData) ~= "table" then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid turtleData") return {success = false} end
-    local turtleId = turtleData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid turtleId") return {success = false} end
+function enterprise_turtle.Fuel_Callback(...)
+    -- get & check input from description
+    local checkSuccess, turtleLocator = InputChecker.Check([[
+        This callback should cleanup after enterprise_energy.ProvideFuelTo_ASrv is finished
 
-    -- check correct turtle
-    local currentTurtleId = os.getComputerID()
-    if currentTurtleId ~= turtleId then corelog.Error("enterprise_turtle.Fuel_Callback: Current turtle(id="..currentTurtleId..") not equal to callback turtle(id="..turtleId..")") return {success = false} end
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the callback executed successfully
+
+        Parameters:
+            callbackData            - (table) callbackData
+                turtleLocator       + (URL) locator of the turtle
+            serviceResults          + (table) result of service that calls back
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid input") return {success = false} end
+
+    -- get Turtle
+    local turtleObj = enterprise_turtle:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_turtle.Fuel_Callback: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
 
     -- release priority key condition
-    db.fuelTurtlePriorityKey = nil
+    turtleObj:setFuelPriorityKey("")
+    turtleLocator = enterprise_turtle:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle.Fuel_Callback: failed saving turtle") return {success = false} end
 
     -- end
     return {success = true}
@@ -270,24 +276,23 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: Invalid input") return {success = false} end
 
-    -- get current Turtle
+    -- get Turtle
     local turtleObj = enterprise_turtle:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
 
     -- (re)fuel turtle if needed
-    local turtleId = turtleObj:getTurtleId()
-    local fuelLevel = turtle.getFuelLevel()
-    enterprise_turtle.TriggerRefuelIfNeeded(turtleId, fuelLevel)
+    TriggerRefuelIfNeeded(turtleObj)
 
     -- look for best next assignment
     local assignmentFilter = {
-        priorityKeyNeeded   = db.fuelTurtlePriorityKey,
+        priorityKeyNeeded   = turtleObj:getFuelPriorityKey(),
     }
+    local turtleId = turtleObj:getTurtleId()
     local turtleResume = nil
     if turtle then
         turtleResume = {
             turtleId        = turtleId,
             location        = Location:new(coremove.GetLocation()),
-            fuelLevel       = fuelLevel,
+            fuelLevel       = turtle.getFuelLevel(),
             axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
             inventoryItems  = coreinventory.GetInventoryDetail().items,
         }

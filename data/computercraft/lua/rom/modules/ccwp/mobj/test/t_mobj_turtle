@@ -28,6 +28,8 @@ function T_Turtle.T_All()
 --    T_Turtle.T_can_ProvideItems_QOSrv()
 end
 
+local fuelPriorityKey1 = ""
+local fuelPriorityKey2 = "99:111"
 local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
 
 local compact = { compact = true }
@@ -57,25 +59,28 @@ function T_Turtle.T_Getters()
     local turtleId = 111
     local id = tostring(turtleId)
     local className = "Turtle"
-    local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTurtle(id, fuelPriorityKey2) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
 
     -- test
     assert(objTurtle:getClassName() == className, "gotten className(="..objTurtle:getClassName()..") not the same as expected(="..className..")")
     assert(objTurtle:getId() == id, "gotten getId(="..objTurtle:getId()..") not the same as expected(="..id..")")
     assert(objTurtle:getTurtleId() == turtleId, "gotten getTurtleId(="..objTurtle:getTurtleId()..") not the same as expected(="..turtleId..")")
+    assert(objTurtle:getFuelPriorityKey() == fuelPriorityKey2, "gotten getFuelPriorityKey(="..objTurtle:getFuelPriorityKey() ..") not the same as expected(="..fuelPriorityKey2..")")
 --    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
 --    assert(objTurtle:getInventory():isSame(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
 
     -- cleanup test
 end
 
-function T_Turtle.CreateTurtle(id)
+function T_Turtle.CreateTurtle(id, fuelPriorityKey)
     -- check input
     id = id or tostring(os.getComputerID())
+    fuelPriorityKey = fuelPriorityKey or fuelPriorityKey1
 
     -- create Turtle object
     local turtle = Turtle:new({
         _id                     = id,
+        _fuelPriorityKey        = fuelPriorityKey,
     })
 
     -- end
@@ -85,10 +90,10 @@ end
 function T_Turtle.T_IsOfType()
     -- prepare test
     corelog.WriteToLog("* Turtle.IsOfType() tests")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("failed obtaining Turtle") return end
 
     -- test valid
-    local isOfType = Turtle.IsOfType(objTurtle)
+    local isOfType = Turtle.IsOfType(obj)
     local expectedIsOfType = true
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
@@ -97,6 +102,13 @@ function T_Turtle.T_IsOfType()
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
 
+    -- test invalid _fuelPriorityKey
+    obj._fuelPriorityKey = {" a table "}
+    isOfType = Turtle.IsOfType(obj)
+    expectedIsOfType = false
+    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    obj._fuelPriorityKey = fuelPriorityKey1
+
     -- cleanup test
 end
 
@@ -104,13 +116,20 @@ function T_Turtle.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Turtle:isSame() tests")
     local id = "333"
-    local objTurtle = T_Turtle.CreateTurtle(id) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTurtle(id) if not obj then corelog.Error("failed obtaining Turtle") return end
 
     -- test same
-    local objTurtle2 = T_Turtle.CreateTurtle(id)
-    local isSame = objTurtle2:isSame(objTurtle)
+    local obj1 = T_Turtle.CreateTurtle(id)
+    local isSame = obj1:isSame(obj)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different _fuelPriorityKey
+    obj._fuelPriorityKey = fuelPriorityKey2
+    isSame = obj1:isSame(obj)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    obj._fuelPriorityKey = fuelPriorityKey1
 
     -- cleanup test
 end
