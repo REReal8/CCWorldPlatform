@@ -1,4 +1,9 @@
-local enterprise_shop = {}
+local Host = require "obj_host"
+
+local enterprise_shop = Host:new({
+    _hostName   = "enterprise_shop",
+})
+
 local corelog = require "corelog"
 local coredht = require "coredht"
 
@@ -15,7 +20,9 @@ local db = {
 }
 
 --[[
-    The Shop is an enterprise that offers services for providing (ordering) items.
+    The enterprise_shop offers services for providing (ordering) items.
+
+    The enterprise is a Host.
 
     <It is envisioned (but not yet implemented) that a shop can also "store" (i.e. the opposite of ordering) items.>
 
@@ -41,31 +48,6 @@ local db = {
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-local function IsShopURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = InputChecker.Check([[
-        This sync public service answers the question if a URL is that of the Shop.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (table) a URL that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.IsShopURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of Shop
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_shop.IsShopURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
-end
-
 local function ResetItemSuppliers()
     return coredht.SaveData({}, db.hostName, db.psItemSuppliers)
 end
@@ -77,23 +59,6 @@ function enterprise_shop.GetItemSuppliers()
 
     -- end
     return itemSuppliers
-end
-
-function enterprise_shop.GetHostLocator_Att()
-    --[[
-        Attribute locating this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = URL:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
 end
 
 --                        _  __ _                       _   _               _
@@ -114,7 +79,7 @@ function enterprise_shop.GetShopLocator()
     --]]
 
     -- get Shop locator
-    local shopLocator = enterprise_shop.GetHostLocator_Att()
+    local shopLocator = enterprise_shop:getHostLocator()
 
     -- end
     return shopLocator
@@ -373,8 +338,7 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check itemsLocator is for this enterprise
-    local serviceResults = IsShopURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
+    if not enterprise_shop:isLocatorFromHost(itemsLocator) then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
 
     -- determine projectSteps and projectData
     local projectSteps = {}
@@ -483,8 +447,7 @@ function enterprise_shop.Can_ProvideItems_QSrv(...)
     if not checkSuccess then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
     -- check itemsLocator is for this enterprise
-    local serviceResults = IsShopURL_QSrv({ aURL = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    if not enterprise_shop:isLocatorFromHost(itemsLocator) then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
 
     -- loop on items
     local items = itemsLocator:getQuery()
