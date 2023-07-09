@@ -5,40 +5,19 @@ local enterprise_shop = Host:new({
 })
 
 local corelog = require "corelog"
-local coredht = require "coredht"
+local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local URL = require "obj_url"
 
-local enterprise_projects = require "enterprise_projects"
-local enterprise_isp = require "enterprise_isp"
+local ObjArray = require "obj_array"
 
-local db = {
-    hostName        = "enterprise_shop",
-    psItemSuppliers = "itemSuppliers",
-}
+local Shop = require "mobj_shop"
 
 --[[
     The enterprise_shop offers services for providing (ordering) items.
 
-    The enterprise is a Host.
-
-    <It is envisioned (but not yet implemented) that a shop can also "store" (i.e. the opposite of ordering) items.>
-
-    The Shop implements it's services by using services of registered ItemSupplier's.
-
-    For an enterprise to be an ItemSupplier it needs to implement the following services:
-        ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at an ItemDepot
-        Can_ProvideItems_QSrv       - whether the ItemSupplier can provide specific items
-        NeedsTo_ProvideItemsTo_SSrv - returning the needs for the ItemSupplier to provide specific items to an ItemDepot
-
-    The Shop is also an ItemSupplier, hence it also implements these services.
-
-    This allows for the Shop to be passed as ingredientsItemSupplierLocator to an ItemSupplier. The effect of that is that the ItemSupplier can request
-    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from an ItemSupplier.
-    This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided
-    by a registered ItemSupplier.
+    The enterprise is a Host. It hosts one Shop. It uses the services of the Shop to provide the items.
 --]]
 
 --    _                                     _   _               _
@@ -47,19 +26,6 @@ local db = {
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-local function ResetItemSuppliers()
-    return coredht.SaveData({}, db.hostName, db.psItemSuppliers)
-end
-
-function enterprise_shop.GetItemSuppliers()
-    -- get ItemSuppliers
-    local itemSuppliers = coredht.GetData(db.hostName, db.psItemSuppliers)
-    if not itemSuppliers then itemSuppliers = ResetItemSuppliers() end
-
-    -- end
-    return itemSuppliers
-end
 
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
@@ -70,119 +36,79 @@ end
 --       | |
 --       |_|
 
+-- ToDo: consider allowing multiple Shop's in the future, and hence do this and it's usage different.
+function enterprise_shop:getShop()
+    --[[
+        This function returns the Shop.
+
+        In the current implementation there should be only 1 Shop in the world. If none is found a new default Shop is created and saved.
+
+        Return value:
+            shop                    - (Shop) the Shop
+    --]]
+
+    -- check there is a Shop
+    local shop = nil
+    local nShops = self:getNumberOfObjects("Shop")
+    if nShops == 0 then
+        -- the Shop is not there yet => create it
+        local locatorClassName = "URL"
+        shop = Shop:new({
+            _id                     = coreutils.NewId(),
+
+            _itemSuppliersLocators  = ObjArray:new({
+                _objClassName   = locatorClassName,
+            }),
+        })
+
+        -- save it
+        local objLocator = self:saveObject(shop)
+        if not objLocator then corelog.Error("enterprise_shop:getShop: Failed saving Shop") return nil end
+    else
+        -- check exactly 1 Shop
+        if nShops ~= 1 then
+            corelog.Warning("enterprise_shop:getShop: there are "..nShops.." in the world while we expected 1.")
+        end
+
+        -- get locator of (first) Shop
+        local shops = self:getObjects("Shop")
+        if not shops then corelog.Error("enterprise_shop:getShop: Failed obtaining Shop's") return nil end
+        for k, objTable in pairs(shops) do
+            shop = Shop:new(objTable)
+            break
+        end
+    end
+
+    -- end
+    return shop
+end
+
 function enterprise_shop.GetShopLocator()
     --[[
-        This function returns the Shop locator
+        This function returns the Shop locator.
 
         Return value:
             shopLocator             - (URL) locating the Shop
     --]]
 
-    -- get Shop locator
-    local shopLocator = enterprise_shop:getHostLocator()
+    -- get Shop
+    local shop = enterprise_shop:getShop()
+
+    -- get locator
+    local shopLocator = enterprise_shop:getObjectLocator(shop)
+    if not shopLocator then corelog.Error("enterprise_shop.GetShopLocator: Failed getting shopLocator") return nil end
 
     -- end
     return shopLocator
 end
 
-function enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, itemSupplierLocator1, itemSupplierLocator2)
-    --[[
-        This function returns the best ItemSupplier of two ItemSupplier's for a specific item.
+function enterprise_shop:reset()
+    -- get Shop
+    local shop = enterprise_shop:getShop()
+    if not shop then corelog.Error("enterprise_shop:reset: Failed getting Shop") return nil end
 
-        Return value:
-            itemSupplierLocator                 - (URL) locating the best ItemSupplier of the items
-
-        Parameters:
-            serviceData                         - (table) data to the query
-                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
-                itemSupplierLocator1            + (URL) locating the 1st ItemSupplier
-                itemSupplierLocator2            + (URL) locating the 2nd ItemSupplier
-    --]]
-
-    -- check input
-    if not itemSupplierLocator1 then
-        return itemSupplierLocator2
-    end
-    if not itemSupplierLocator2 then
-        return itemSupplierLocator1
-    end
-
-    -- get needs 1
-    local itemLocator1 = itemSupplierLocator1:copy()
-    itemLocator1:setQuery(item)
-    local itemServiceData = {
-        itemsLocator                    = itemLocator1,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    }
-    local serviceResults1 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-    if not serviceResults1.success then corelog.Error("enterprise_shop.BestItemSupplier: Failed obtaining needs for itemLocator1(="..textutils.serialise(itemLocator1)..")") return nil end
-
-    -- get needs 2
-    local itemLocator2 = itemSupplierLocator2:copy()
-    itemLocator2:setQuery(item)
-    itemServiceData = {
-        itemsLocator                    = itemLocator2,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    }
-    local serviceResults2 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-    if not serviceResults2.success then corelog.Error("enterprise_shop.BestItemSupplier: Failed obtaining needs for itemLocator2(="..textutils.serialise(itemLocator2)..")") return nil end
-
-    -- check lowest fuelNeed
-    local fuelNeed1 = serviceResults1.fuelNeed
-    local fuelNeed2 = serviceResults2.fuelNeed
-    if fuelNeed1 < fuelNeed2 then
-        return itemSupplierLocator1
-    elseif fuelNeed2 < fuelNeed1 then
-        return itemSupplierLocator2
-    else -- both are equal w.r.t. this condition
-    end
-
-    -- check ingredientsNeed
-    -- ToDo implement
-
-    -- nothing else distinquishes the candidates => take first
-    return itemSupplierLocator1
-end
-
-local function GetCanProvideItemSuppliers(item)
-    --[[
-        This private function returns the ItemSupplier's that can provide a specific item.
-
-        Return value:
-            availableItemSupplierLocators   - (table) with locators of ItemSupplier's that can provide the item.
-
-        Parameters:
-            item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-    --]]
-
-    -- get ItemSuppliers
-    local itemSuppliers = enterprise_shop.GetItemSuppliers()
-
-    -- select ItemSuppliers than can provide items
-    local canProvideItemSupplierLocators = {}
-    for i, itemSupplierLocator in ipairs(itemSuppliers) do
-        itemSupplierLocator = URL:new(itemSupplierLocator)
-        -- determine itemLocator
-        local itemsLocator = itemSupplierLocator:copy()
-        itemsLocator:setQuery(item)
-
-        -- check ItemSupplier can provide items
-        if enterprise_isp.Can_ProvideItems_QSrv({itemsLocator = itemsLocator }).success then
-            table.insert(canProvideItemSupplierLocators, itemSupplierLocator)
-        end
-    end
-
-    -- end
-    return canProvideItemSupplierLocators
-end
-
-function enterprise_shop.DelistItemSuppliers()
-    -- remove ItemSuppliers
-    coredht.SaveData(nil, db.hostName, db.psItemSuppliers)
+    -- delist Suppliers
+    shop:delistAllItemSuppliers()
 end
 
 --                        _                           _   _               _
@@ -209,21 +135,15 @@ function enterprise_shop.RegisterItemSupplier_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.RegisterItemSupplier_SSrv: Invalid input") return {success = false} end
 
-    -- get ItemSuppliers
-    local itemSuppliers = enterprise_shop.GetItemSuppliers()
+    -- get Obj
+    local shopLocator = enterprise_shop.GetShopLocator()
+    local obj = enterprise_shop:getObject(shopLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_shop.RegisterItemSupplier_SSrv: Shop not found.") return {success = false} end
 
-    -- register the ItemSupplier
-    corelog.WriteToLog(">Registering ItemSupplier "..itemSupplierLocator:getURI().." at the shop.")
-    table.insert(itemSuppliers, itemSupplierLocator)
-
-    -- save ItemSuppliers
-    coredht.SaveData(itemSuppliers, db.hostName, db.psItemSuppliers)
-
-    -- end
-    local result = {
-        success = true,
-    }
-    return result
+    -- have Obj register ItemSupplier
+    return obj:registerItemSupplier_SOSrv({
+        itemSupplierLocator = itemSupplierLocator,
+    })
 end
 
 function enterprise_shop.DelistItemSupplier_SSrv(...)
@@ -240,74 +160,17 @@ function enterprise_shop.DelistItemSupplier_SSrv(...)
             serviceData             - (table) data for the service
                 itemSupplierLocator + (URL) locating the ItemSupplier
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.DelistChest_ASrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_shop.DelistItemSupplier_SSrv: Invalid input") return {success = false} end
 
-    -- get ItemSuppliers
-    local itemSuppliers = enterprise_shop.GetItemSuppliers()
-    local itemSupplierFound = false
-    for i, registeredItemSupplierLocator in ipairs(itemSuppliers) do
-        registeredItemSupplierLocator = URL:new(registeredItemSupplierLocator)
-        -- check we found it
-        if itemSupplierLocator:getURI() == registeredItemSupplierLocator:getURI() then
-            -- remove from list
-            corelog.WriteToLog(">Delisting ItemSupplier "..itemSupplierLocator:getURI())
-            itemSupplierFound = true
-            table.remove(itemSuppliers, i)
+    -- get Obj
+    local shopLocator = enterprise_shop.GetShopLocator()
+    local obj = enterprise_shop:getObject(shopLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_shop.DelistItemSupplier_SSrv: Shop not found.") return {success = false} end
 
-            -- save ItemSuppliers
-            coredht.SaveData(itemSuppliers, db.hostName, db.psItemSuppliers)
-            break
-        end
-    end
-
-    -- end
-    local result = {
-        success = itemSupplierFound,
-    }
-    return result
-end
-
-function enterprise_shop.GetBestItemLocator_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, item, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
-        This sync services determibes the "best" ItemSupplier that can provide a specific item to an ItemDepot. It returns the
-        corresponding itemLocator.
-
-        Return value:
-                                                - (table)
-                success                         - (boolean) whether the service executed correctly
-                itemLocator                     - (URL) locating the best ItemSupplier of the items
-
-        Parameters:
-            serviceData                         - (table) data for the service
-                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to provide
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.GetBestItemLocator_SSrv: Invalid input") return {success = false} end
-
-    -- check input
-    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestItemLocator_SSrv: Invalid item (type="..type(item)..")") return {success = false} end
-
-    -- select ItemSuppliers than can provide items
-    local canProvideItemSupplierLocators = GetCanProvideItemSuppliers(item)
-
-    -- select best ItemSupplier
-    local bestItemSupplierLocator = nil
-    for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
-        bestItemSupplierLocator = enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
-    end
-    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop.GetBestItemLocator_SSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
-
-    -- determine itemLocator
-    local itemLocator = bestItemSupplierLocator:copy()
-    itemLocator:setQuery(item)
-
-    -- end
-    return {
-        success             = true,
-        itemLocator         = itemLocator,
-    }
+    -- have Obj register ItemSupplier
+    return obj:delistItemSupplier_SOSrv({
+        itemSupplierLocator = itemSupplierLocator,
+    })
 end
 
 function enterprise_shop.ProvideItemsTo_ASrv(...)
@@ -337,96 +200,18 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- check itemsLocator is for this enterprise
-    if not enterprise_shop:isLocatorFromHost(itemsLocator) then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_shop:getObject(itemsLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- determine projectSteps and projectData
-    local projectSteps = {}
-    local areAllTrueStepDataDef = {}
-    local addItemLocatorsStepDataDef = {}
-    local projectData = {}
-
-    -- add project step for each of the ordered items
-    local iStep = 0
-    local orderItems = itemsLocator:getQuery()
-    -- ToDo: do this in parallel by extending enterprise_projects to handle parallel project steps.
-    for itemName, itemCount in pairs(orderItems) do
-        -- step index
-        iStep = iStep + 1
-        local iStepStr = tostring(iStep)
-
-        -- add step determining best ItemSupplier for item
-        local itemKey = "item"..iStepStr
-        table.insert(projectSteps,
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "GetBestItemLocator_SSrv" }, stepDataDef = {
-                { keyDef = "item"                           , sourceStep = 0, sourceKeyDef = itemKey },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
-                { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
-            }}
-        )
-
-        -- add step data
-        local item = { [itemName] = itemCount }
-        projectData[itemKey] = item
-
-        -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
-
-        --have best ItemSupplier provide item
-        iStep = iStep + 1
-        iStepStr = tostring(iStep)
-        table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                { keyDef = "itemsLocator"                   , sourceStep = iStep - 1, sourceKeyDef = "itemLocator" }, -- note: from itemLocator to itemsLocator as ProvideItemsTo_ASrv method could handle multiple
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
-                { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
-                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }}
-        )
-
-        -- add combine stepDataDef
-        table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , sourceStep = iStep, sourceKeyDef = "destinationItemsLocator" })
-
-        -- add success stepDataDef
-        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
-    end
-
-    -- set remaining projectData
-    projectData.itemDepotLocator = itemDepotLocator
-    -- ToDo: consider first locally gathering the ordered items and sending them in one go to the itemDepotLocator if all off them are obtained.
-    projectData.ingredientsItemSupplierLocator = ingredientsItemSupplierLocator
-    projectData.assignmentsPriorityKey = assignmentsPriorityKey
-
-    -- add combining URL's
-    iStep = iStep + 1
-    table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "AddItemsLocators_SSrv" }, stepDataDef = addItemLocatorsStepDataDef}
-    )
-    local iAddItemsLocatorStep = iStep
-
-    -- add check for all a success
-    iStep = iStep + 1
-    table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = areAllTrueStepDataDef}
-    )
-    local iAreAllTrueStep = iStep
-
-    -- create project service data
-    local projectDef = {
-        steps = projectSteps,
-        returnData  = {
-            { keyDef = "success"                , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
-            { keyDef = "destinationItemsLocator", sourceStep = iAddItemsLocatorStep, sourceKeyDef = "itemsLocator" },
-        }
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-    }
-
-    -- start project
---    corelog.WriteToLog(">Providing "..itemsLocator:getURI().."")
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    -- have Obj provide items
+    local provideItems = itemsLocator:getQuery()
+    return obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_shop.Can_ProvideItems_QSrv(...)
@@ -446,28 +231,18 @@ function enterprise_shop.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- check itemsLocator is for this enterprise
-    if not enterprise_shop:isLocatorFromHost(itemsLocator) then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Invalid itemsLocator (="..itemsLocator:getURI()..").") return {success = false} end
+    -- get Obj
+    local obj = enterprise_shop:getObject(itemsLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- loop on items
-    local items = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(items) do
-        -- check
-        if type(itemName) ~= "string" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: itemName of wrong type = "..type(itemName)..".") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.Can_ProvideItems_QSrv: itemCount of wrong type = "..type(itemCount)..".") return {success = false} end
-        local item = { [itemName] = itemCount }
-
-        -- check for an ItemSupplier to provide item
-        local canProvideItemSupplierLocators = GetCanProvideItemSuppliers(item)
-        if table.getn(canProvideItemSupplierLocators) < 1 then
-            return {success = false}
-        end
-    end
+    -- check Obj can provide items
+    local provideItems = itemsLocator:getQuery()
+    local canProvide = obj:can_ProvideItems_QOSrv({
+        provideItems    = provideItems,
+    })
 
     -- end
-    return {
-        success = true,
-    }
+    return canProvide
 end
 
 function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
@@ -491,51 +266,20 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- loop on items
-    local fuelNeed = 0
-    local ingredientsNeed = {}
-    local items = itemsLocator:getQuery()
-    for itemName, itemCount in pairs(items) do
-        -- check item
-        if type(itemName) ~= "string" then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
-        local item = { [itemName] = itemCount }
+    -- get Obj
+    local obj = enterprise_shop:getObject(itemsLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-        -- get best itemLocator
-        local itemLocator = enterprise_shop.GetBestItemLocator_SSrv({
-            item                            = item,
-            itemDepotLocator                = itemDepotLocator,
-            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
-        ).itemLocator
-        if not itemLocator then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
-
-        -- get provide needs
-        local itemServiceData = {
-            itemsLocator                    = itemLocator,
-            itemDepotLocator                = itemDepotLocator,
-            ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        }
-        local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-        if not serviceResults.success then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
-
-        -- get fuelNeed to provide
-        local fuelNeed_Provide = serviceResults.fuelNeed
-
-        -- add fuelNeed
---        corelog.WriteToLog("S  fuelNeed_Provide="..fuelNeed_Provide.." for "..itemCount.." "..itemName.."'s")
-        fuelNeed = fuelNeed + fuelNeed_Provide
-
-        -- add ingredientsNeed
-        local itemIngredientsNeed = serviceResults.ingredientsNeed
-        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
-    end
+    -- determine needs
+    local provideItems = itemsLocator:getQuery()
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    })
 
     -- end
-    return {
-        success         = true,
-        fuelNeed        = fuelNeed,
-        ingredientsNeed = ingredientsNeed, -- ToDo: consider allowing for non empty list to further generalise Shop into a container of ItemSuppliers
-    }
+    return needs
 end
 
 return enterprise_shop
