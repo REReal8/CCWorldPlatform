@@ -528,7 +528,7 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
             item                            = item,
             itemDepotLocator                = itemDepotLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
-        ).itemSupplierLocator
+        ).itemLocator
         if not itemLocator then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get provide needs
