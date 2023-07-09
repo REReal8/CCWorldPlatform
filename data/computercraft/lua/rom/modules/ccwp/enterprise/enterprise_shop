@@ -287,15 +287,16 @@ function enterprise_shop.DelistItemSupplier_SSrv(...)
     return result
 end
 
-function enterprise_shop.GetBestItemSupplier_SSrv(...)
+function enterprise_shop.GetBestItemLocator_SSrv(...)
     -- get & check input from description
     local checkSuccess, item, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
-        This sync services provides the "best" ItemSupplier that can provide a specific item to an ItemDepot.
+        This sync services determibes the "best" ItemSupplier that can provide a specific item to an ItemDepot. It returns the
+        corresponding itemLocator.
 
         Return value:
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                itemSupplierLocator             - (URL) locating the best ItemSupplier of the items
+                itemLocator                     - (URL) locating the best ItemSupplier of the items
 
         Parameters:
             serviceData                         - (table) data for the service
@@ -303,10 +304,10 @@ function enterprise_shop.GetBestItemSupplier_SSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.GetBestItemSupplier_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_shop.GetBestItemLocator_SSrv: Invalid input") return {success = false} end
 
     -- check input
-    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestItemSupplier_SSrv: Invalid item (type="..type(item)..")") return {success = false} end
+    if type(item) ~= "table" then corelog.Error("enterprise_shop.GetBestItemLocator_SSrv: Invalid item (type="..type(item)..")") return {success = false} end
 
     -- select ItemSuppliers than can provide items
     local canProvideItemSupplierLocators = GetCanProvideItemSuppliers(item)
@@ -316,12 +317,16 @@ function enterprise_shop.GetBestItemSupplier_SSrv(...)
     for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
         bestItemSupplierLocator = enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
     end
-    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop.GetBestItemSupplier_SSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
+    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop.GetBestItemLocator_SSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
+
+    -- determine itemLocator
+    local itemLocator = bestItemSupplierLocator:copy()
+    itemLocator:setQuery(item)
 
     -- end
     return {
         success             = true,
-        itemSupplierLocator = bestItemSupplierLocator,
+        itemLocator         = itemLocator,
     }
 end
 
@@ -371,20 +376,34 @@ function enterprise_shop.ProvideItemsTo_ASrv(...)
         iStep = iStep + 1
         local iStepStr = tostring(iStep)
 
-        -- add crafting step
-        local procureItem = "procureItem"..iStepStr
+        -- add step determining best ItemSupplier for item
+        local itemKey = "item"..iStepStr
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "ProcureItem_ASrv" }, stepDataDef = {
-                { keyDef = "item"                           , sourceStep = 0, sourceKeyDef = procureItem },
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "GetBestItemLocator_SSrv" }, stepDataDef = {
+                { keyDef = "item"                           , sourceStep = 0, sourceKeyDef = itemKey },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
-                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
 
         -- add step data
         local item = { [itemName] = itemCount }
-        projectData[procureItem] = item
+        projectData[itemKey] = item
+
+        -- add success stepDataDef
+        table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr  , sourceStep = iStep, sourceKeyDef = "success" })
+
+        --have best ItemSupplier provide item
+        iStep = iStep + 1
+        iStepStr = tostring(iStep)
+        table.insert(projectSteps,
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"                   , sourceStep = iStep - 1, sourceKeyDef = "itemLocator" }, -- note: from itemLocator to itemsLocator as ProvideItemsTo_ASrv method could handle multiple
+                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }}
+        )
 
         -- add combine stepDataDef
         table.insert(addItemLocatorsStepDataDef, { keyDef = "itemsLocator"..iStepStr  , sourceStep = iStep, sourceKeyDef = "destinationItemsLocator" })
@@ -504,17 +523,13 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
         local item = { [itemName] = itemCount }
 
-        -- get best itemSupplierLocator
-        local itemSupplierLocator = enterprise_shop.GetBestItemSupplier_SSrv({
+        -- get best itemLocator
+        local itemLocator = enterprise_shop.GetBestItemLocator_SSrv({
             item                            = item,
             itemDepotLocator                = itemDepotLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
         ).itemSupplierLocator
-        if not itemSupplierLocator then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No itemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
-
-        -- determine itemLocator
-        local itemLocator = itemSupplierLocator:copy()
-        itemLocator:setQuery(item)
+        if not itemLocator then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get provide needs
         local itemServiceData = {
@@ -543,55 +558,6 @@ function enterprise_shop.NeedsTo_ProvideItemsTo_SSrv(...)
         fuelNeed        = fuelNeed,
         ingredientsNeed = ingredientsNeed, -- ToDo: consider allowing for non empty list to further generalise Shop into a container of ItemSuppliers
     }
-end
-
-function enterprise_shop.ProcureItem_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, item, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async private service procures items ordered at the Shop. The services first tries to obtain the item from an ItemSupplier.
-        If the items are not available from an ItemSupplier it will attempt to have them produced by a Producer. The service
-        ensures the items are delivered to the requested destination.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-                destinationItemsLocator         - (URL) stating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
-                                                    the "query" should be equal to orderItems)
-
-        Parameters:
-            serviceData                         - (table) data for the service
-                item                            + (table) with one item (formatted as [itemName] = itemCount key-value pair) to procure
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
-                assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.ProcureItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get best itemSupplierLocator
-    local itemSupplierLocator = enterprise_shop.GetBestItemSupplier_SSrv({
-        item                            = item,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
-    ).itemSupplierLocator
-    if not itemSupplierLocator then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No itemSupplier can provide "..textutils.serialise(item)) return Callback.ErrorCall(callback) end
-
-    -- determine itemLocator
-    local itemLocator = itemSupplierLocator:copy()
-    itemLocator:setQuery(item)
-
-    -- Have ItemSupplier produce the item
-    local itemServiceData = {
-        itemsLocator                    = itemLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        itemDepotLocator                = itemDepotLocator:copy(),
-        assignmentsPriorityKey          = assignmentsPriorityKey,
-    }
-    return enterprise_isp.ProvideItemsTo_ASrv(itemServiceData, callback)
 end
 
 return enterprise_shop
