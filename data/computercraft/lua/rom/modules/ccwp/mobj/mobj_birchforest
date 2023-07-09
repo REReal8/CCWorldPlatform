@@ -53,7 +53,7 @@ function BirchForest:new(...)
                 _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
                 _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("BirchForest:new: Invalid input") return {} end
 
     -- set class info
     setmetatable(o, self)
