@@ -144,7 +144,7 @@ local function TriggerRefuelIfNeeded(turtleObj)
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
-        local ingredientsItemSupplierLocator = enterprise_shop.GetHostLocator_Att()
+        local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator()
         local serviceData = {
             turtleLocator                   = turtleLocator,
             fuelAmount                      = refuelAmount,

@@ -105,6 +105,21 @@ end
 --       | |
 --       |_|
 
+function enterprise_shop.GetShopLocator()
+    --[[
+        This function returns the Shop locator
+
+        Return value:
+            shopLocator             - (URL) locating the Shop
+    --]]
+
+    -- get Shop locator
+    local shopLocator = enterprise_shop.GetHostLocator_Att()
+
+    -- end
+    return shopLocator
+end
+
 function enterprise_shop.BestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, itemSupplierLocator1, itemSupplierLocator2)
     --[[
         This function returns the best ItemSupplier of two ItemSupplier's for a specific item.

@@ -78,14 +78,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local factoryLocation           = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
     local nTreeswanted = 6
     local settleData = {
-        materialsHostLocator            = enterprise_shop.GetHostLocator_Att(),
+        materialsHostLocator            = enterprise_shop.GetShopLocator(),
 
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
 
-        ingredientsItemSupplierLocator  = enterprise_shop.GetHostLocator_Att(), -- ToDo: somehow pass this to enterprise_energy
+        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle
 
         factoryVersion0                 = "v0",
         upgradeFalse                    = false,

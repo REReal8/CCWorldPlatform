@@ -32,10 +32,10 @@ local function ProvideItemsTo_ASrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* enterprise_shop:ProvideItemsTo_ASrv() test (of "..textutils.serialize(provideItems, compact)..")")
 --    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
-    local itemsLocator = enterprise_shop.GetHostLocator_Att()
+    local itemsLocator = enterprise_shop.GetShopLocator()
     itemsLocator:setQuery(provideItems)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
-    local ingredientsItemSupplierLocator  = enterprise_shop.GetHostLocator_Att()
+    local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator()
 --    local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
@@ -154,7 +154,7 @@ function t_shop.T_BestItemSupplier()
     local item = {
         ["minecraft:birch_log"]  = 5,
     }
-    local ingredientsItemSupplierLocator = enterprise_shop.GetHostLocator_Att()
+    local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator()
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
     local chest = T_Chest.CreateChest(location1) if not chest then corelog.Error("failed obtaining Chest") return end
     local itemDepotLocator = enterprise_chests:saveObject(chest)
