@@ -184,7 +184,6 @@ function T_BirchForest.T_IsOfType()
     -- cleanup test
 end
 
-
 local compact = { compact = true }
 
 function T_BirchForest.T_isSame()
