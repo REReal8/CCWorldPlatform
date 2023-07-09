@@ -148,8 +148,6 @@ function t_shop.T_DelistItemSuppliers()
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 end
 
-local compact = { compact = true }
-
 function t_shop.T_BestItemSupplier()
     -- prepare test
     corelog.WriteToLog("* enterprise_shop.BestItemSupplier() tests")
