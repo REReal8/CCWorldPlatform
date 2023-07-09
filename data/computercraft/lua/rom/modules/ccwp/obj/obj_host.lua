@@ -529,7 +529,6 @@ local function GetObjectsPath(...)
     return objectsPath
 end
 
--- ToDo: investigate if this method can be made private (as it's not envisioned to be used outside of module)
 function Host:getObjects(...)
     -- get & check input from description
     local checkSuccess, className = InputChecker.Check([[
@@ -582,9 +581,9 @@ function Host:getNumberOfObjects(...)
     local objects = self:getObjects(className)
     if not objects then corelog.Error("Host:getNumberOfObjects: Failed obtaining objects of class "..className) return nil end
 
-    -- loop on forests
+    -- loop on objects
     local count = 0
-    for k, forest in pairs(objects) do
+    for k, object in pairs(objects) do
         count = count + 1
     end
 
