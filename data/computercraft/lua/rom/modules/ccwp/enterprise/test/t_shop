@@ -74,7 +74,7 @@ function t_shop.provideItemsTo_ASrv_Callback(callbackData, serviceResults)
     return true
 end
 
-function t_shop.T_OrderMultipleItems()
+function t_shop.T_ProvideMultipleItems()
     -- prepare test
     local provideItems = {
         ["minecraft:furnace"]   = 1,
@@ -85,7 +85,7 @@ function t_shop.T_OrderMultipleItems()
     ProvideItemsTo_ASrv_Test(provideItems)
 end
 
-function t_shop.T_OrderCharcoal()
+function t_shop.T_ProvideCharcoal()
     -- prepare test
     local provideItems = {
         ["minecraft:charcoal"]  = 3,
@@ -95,7 +95,7 @@ function t_shop.T_OrderCharcoal()
     ProvideItemsTo_ASrv_Test(provideItems)
 end
 
-function t_shop.T_OrderTorch()
+function t_shop.T_ProvideTorch()
     -- prepare test
     local provideItems = {
         ["minecraft:torch"]  = 4,

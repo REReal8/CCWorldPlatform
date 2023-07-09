@@ -15,13 +15,11 @@ local db = {
 }
 
 --[[
-    The Shop is an enterprise that offers services for ordering items.
+    The Shop is an enterprise that offers services for providing (ordering) items.
 
-    The Shop provides the following services
-        OrderItems_ASrv             - procure items and having them delivered at an ItemDepot
-        <It is envisioned (but not yet implemented) that a shop can also take/ "purchase" items (i.e. the opposite of ordering).>
+    <It is envisioned (but not yet implemented) that a shop can also "store" (i.e. the opposite of ordering) items.>
 
-    The Shop implements it's services by using services of ItemSupplier's.
+    The Shop implements it's services by using services of registered ItemSupplier's.
 
     For an enterprise to be an ItemSupplier it needs to implement the following services:
         ProvideItemsTo_ASrv         - providing multiple instances of a specific item and having them delivered at an ItemDepot
@@ -317,46 +315,6 @@ function enterprise_shop.DelistItemSupplier_SSrv(...)
         success = itemSupplierFound,
     }
     return result
-end
-
-function enterprise_shop.OrderItems_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, orderItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        With this async public service items can be ordered at the Shop. This services tries to procure each of the ordered items.
-        The Shop ensures the items are delivered to the requested destination.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where transferred to it
-                                            (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
-                                            the "query" should be equal to orderItems)
-
-        Parameters:
-            serviceData                 - (table) data for the service
-                orderItems              + (table) with one or more ordered items (formatted as an array of [itemName] = itemCount key-value pairs)
-                itemDepotLocator        + (URL) locating the ItemDepot where the items need to be provided to
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.OrderItems_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- set ingredientsItemSupplierLocator to this enterprise
-    local ingredientsItemSupplierLocator = enterprise_shop.GetHostLocator_Att()
-    local itemsLocator = enterprise_shop.GetHostLocator_Att()
-    itemsLocator:setQuery(orderItems)
-
-    -- call ProvideItemsTo_ASrv
-    local serviceData = {
-        itemsLocator                    = itemsLocator,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        assignmentsPriorityKey          = assignmentsPriorityKey,
-    }
-    return enterprise_shop.ProvideItemsTo_ASrv(serviceData, callback)
 end
 
 function enterprise_shop.ProvideItemsTo_ASrv(...)
