@@ -6,6 +6,7 @@ local IObj = require "iobj"
 local ObjArray = require "obj_array"
 local Callback = require "obj_callback"
 
+local URL = require "obj_url"
 local Location = require "obj_location"
 
 local Shop = require "mobj_shop"
@@ -262,5 +263,80 @@ function T_Shop.T_bestItemSupplier()
     enterprise_chests:deleteResource(farItemSupplierLocator)
 end
 
+local function provideItemsTo_AOSrv_Test(provideItems)
+    -- prepare test (cont)
+    corelog.WriteToLog("* Shop:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local objectLocator = enterprise_shop:getObjectLocator(obj)
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemDepotLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
+    local ingredientsItemSupplierLocator = objectLocator
+
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback2 = Callback:new({
+        _moduleName     = "T_Shop",
+        _methodName     = "provideItemsTo_AOSrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+            ["objectLocator"]                   = objectLocator,
+        },
+    })
+
+    -- test
+    local scheduleResult = obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    }, callback2)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_Shop.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    local objectLocator = callbackData["objectLocator"]
+    enterprise_shop:deleteResource(objectLocator)
+
+    -- end
+    return true
+end
+
+function T_Shop.T_ProvideMultipleItems()
+    -- prepare test
+    local provideItems = {
+        ["minecraft:furnace"]   = 1,
+        ["minecraft:charcoal"]  = 1, -- ToDo: test if furnace get produced once charcoal is being smelted (as soon as projects support parallel steps)
+    }
+
+    -- test
+    provideItemsTo_AOSrv_Test(provideItems)
+end
+
+function T_Shop.T_ProvideCharcoal()
+    -- prepare test
+    local provideItems = {
+        ["minecraft:charcoal"]  = 3,
+    }
+
+    -- test
+    provideItemsTo_AOSrv_Test(provideItems)
+end
+
+function T_Shop.T_ProvideTorch()
+    -- prepare test
+    local provideItems = {
+        ["minecraft:torch"]  = 4,
+    }
+
+    -- test
+    provideItemsTo_AOSrv_Test(provideItems)
+end
 
 return T_Shop
