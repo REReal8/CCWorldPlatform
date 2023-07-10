@@ -4,11 +4,12 @@ local coreassignment
 local coreutils = require "coreutils"
 
 local db	= {
-	logfile			  = "/log/log.txt",
-	assignmentLogFile = "/log/coreassignment.log",
-	projectsLogFile   = "/log/enterprise_projects.log",
-	protocol		  = "corelog",
-	loggerChannel	  = 65534,
+	logfile			    = "/log/log.txt",
+	assignmentLogFile   = "/log/coreassignment.log",
+	projectsLogFile     = "/log/enterprise_projects.log",
+	protocol		    = "corelog",
+	loggerChannel	    = 65534,
+	lastStack           = 0,
 }
 
 local monitorLeft	= nil
@@ -109,6 +110,18 @@ end
 function corelog.Error(message)
 	-- write to the logfile
 	coreutils.WriteToFile(db.logfile, "ERROR:", "append") -- ToDo: consider calling WriteToLog
+
+	-- calling stack, just max once per tick
+	if db.lastStack < os.clock() then
+
+		-- reset
+		db.lastStack = os.clock()
+
+		-- write the callstack to the logfile
+		coreutils.WriteToFile(db.logfile, debug.traceback())
+	end
+
+	-- requested messaage
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
 end
 
