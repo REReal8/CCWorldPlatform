@@ -536,7 +536,7 @@ function enterprise_turtle.StoreItemsFrom_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get Obj
-    local obj = enterprise_turtle:getObject(itemsLocator)
+    local obj = enterprise_turtle:getObject(itemDepotLocator)
     if type(obj) ~= "table" then corelog.Error("enterprise_turtle.StoreItemsFrom_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- have Obj store items
