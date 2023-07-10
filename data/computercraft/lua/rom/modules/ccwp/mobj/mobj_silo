@@ -416,7 +416,7 @@ function Silo:can_StoreItems_QOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:can_StoreItems_QOSrv: not yet implemented")
-    return {success = false}
+    return {success = true} -- we can always store (at least that is what we pretent)
 end
 
 function Silo:needsTo_StoreItemsFrom_SOSrv(...)
@@ -439,7 +439,7 @@ function Silo:needsTo_StoreItemsFrom_SOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:needsTo_StoreItemsFrom_SOSrv: not yet implemented")
-    return {success = false}
+    return {success = true, fuelNeed = 500} -- we can fix anything with that much fuel
 end
 
 function Silo:getDropLocation()
