@@ -80,7 +80,7 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
         startpoint = testStartLocation,
         buildFromAbove = true,
         layer = testBuildLayer1,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        materialsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",
@@ -107,11 +107,10 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
 
             -- BuildLayer_ASrv
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
-                { keyDef = "startpoint"             , sourceStep = 0, sourceKeyDef = "startpoint" },
-                { keyDef = "buildFromAbove"         , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
-                { keyDef = "layer"                  , sourceStep = 0, sourceKeyDef = "layer" },
-
-                { keyDef = "materialsHostLocator"   , sourceStep = 1, sourceKeyDef = "chestLocator" },
+                { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "startpoint" },
+                { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
+                { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "layer" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
 
             -- cleanup
@@ -171,9 +170,9 @@ function t_construction.T_BuildBlueprint_ASrv()
         }
     }
     local blueprintBuildData = {
-        blueprintStartpoint     = testStartLocation:getRelativeLocation(0, 12, 0),
-        blueprint               = testBlueprint1,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        blueprintStartpoint         = testStartLocation:getRelativeLocation(0, 12, 0),
+        blueprint                   = testBlueprint1,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",

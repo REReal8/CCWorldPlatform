@@ -209,25 +209,25 @@ end
 
 function enterprise_storage_silo.BuildNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, siteData, location, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, siteData, location, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This public function (service) builds a new silo.
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Parameters:
-            siteData                    + (table) data about this silo, like type and layout
-                location                + (Location) location to build
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (Callback) to call once service is ready
+            siteData                            + (table) data about this silo, like type and layout
+                location                        + (Location) location to build
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+            callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_storage_silo.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- let construction enterprise build the silo
     local blueprintBuildData = {
-        blueprintStartpoint     = location:copy(),
-        blueprint               = GetSiloL0_blueprint(siteData),
-        materialsHostLocator    = materialsHostLocator,
+        blueprintStartpoint         = location:copy(),
+        blueprint                   = GetSiloL0_blueprint(siteData),
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
     }
     corelog.WriteToLog(">Building silo at "..textutils.serialise(blueprintBuildData.blueprintStartpoint, { compact = true }))
     return enterprise_construction.BuildBlueprint_ASrv(blueprintBuildData, callback)

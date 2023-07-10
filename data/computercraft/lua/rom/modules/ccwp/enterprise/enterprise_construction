@@ -27,23 +27,23 @@ local enterprise_turtle
 
 function enterprise_construction.BuildBlueprint_ASrv(...)
     -- get & check input from description
-    local checkSuccess, blueprintStartpoint, blueprint, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, blueprintStartpoint, blueprint, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                        - (table) {success = true} if the blueprint was successfully build
+                                                - (table) {success = true} if the blueprint was successfully build
 
         Parameters:
-            buildData                   - (table) data about what to build
-                blueprintStartpoint     + (table) top lower left coordinate to start building the blueprint
-                blueprint               + (table) blueprint to build
-                    layerList           - (table) layer to build
-                    escapeSequence      - (table) escapeSequence of blueprint
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (Callback) to call once service is ready
+            buildData                           - (table) data about what to build
+                blueprintStartpoint             + (table) top lower left coordinate to start building the blueprint
+                blueprint                       + (table) blueprint to build
+                    layerList                   - (table) layer to build
+                    escapeSequence              - (table) escapeSequence of blueprint
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+            callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
@@ -67,8 +67,8 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
-    -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
-    local materialsItemsLocator = materialsHostLocator
+    -- determine materialsItemsLocator (by update materialsItemSupplierLocator with itemsNeeded)
+    local materialsItemsLocator = materialsItemSupplierLocator:copy()
     materialsItemsLocator:setQuery(materialsNeeded)
 
     -- set local output location
@@ -107,7 +107,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     local projectData = {
         materialsItemsLocator           = materialsItemsLocator:copy(),
         itemDepotLocator                = itemDepotLocator:copy(),
-        ingredientsItemSupplierLocator  = materialsHostLocator:copy(),
+        ingredientsItemSupplierLocator  = materialsItemSupplierLocator:copy(),
 
         metaData                        = metaData,
         taskCall                        = taskCall,
@@ -124,23 +124,23 @@ end
 
 function enterprise_construction.BuildLayer_ASrv(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                        - (table) {success = true} if the layer was successfully build
+                                                - (table) {success = true} if the layer was successfully build
 
         Parameters:
-            buildData                   - (table) data about what to build
-                startpoint              + (table) lower left coordinate to start building the layer
-                buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
-                replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
-                layer                   + (LayerRectangle) layer to build
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (Callback) to call once service is ready
+            buildData                           - (table) data about what to build
+                startpoint                      + (table) lower left coordinate to start building the layer
+                buildFromAbove                  + (boolean) whether build should be done from above (true) or below (false)
+                replacePresentObjects           + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
+                layer                           + (LayerRectangle) layer to build
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+            callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
@@ -166,8 +166,8 @@ function enterprise_construction.BuildLayer_ASrv(...)
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
-    -- determine materialsItemsLocator (by update materialsHostLocator with itemsNeeded)
-    local materialsItemsLocator = materialsHostLocator
+    -- determine materialsItemsLocator (by update materialsItemSupplierLocator with itemsNeeded)
+    local materialsItemsLocator = materialsItemSupplierLocator:copy()
     materialsItemsLocator:setQuery(materialsNeeded)
 
     -- set local output location
@@ -210,7 +210,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
     local projectData = {
         materialsItemsLocator           = materialsItemsLocator:copy(),
         itemDepotLocator                = itemDepotLocator:copy(),
-        ingredientsItemSupplierLocator  = materialsHostLocator:copy(),
+        ingredientsItemSupplierLocator  = materialsItemSupplierLocator:copy(),
 
         metaData                        = metaData,
         taskCall                        = taskCall,

@@ -32,11 +32,11 @@ function t_manufacturing.T_BuildAndStartNewV1Site()
 
     t_turtle = t_turtle or require "test.t_turtle"
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
-        baseLocation            = baseLocationV1,
-        siteVersion             = "v1",
-        upgrade                 = false,
-        siteLocator             = nil,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        baseLocation                = baseLocationV1,
+        siteVersion                 = "v1",
+        upgrade                     = false,
+        siteLocator                 = nil,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, callbackBuildAndStartNewV1Site)
 end
 
@@ -61,11 +61,11 @@ function t_manufacturing.T_BuildAndStartNewV2Site()
 
     -- test
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
-        baseLocation            = baseLocationV2,
-        siteVersion             = "v2",
-        upgrade                 = true,
-        siteLocator             = siteLocatorV1,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        baseLocation                = baseLocationV2,
+        siteVersion                 = "v2",
+        upgrade                     = true,
+        siteLocator                 = siteLocatorV1,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -73,10 +73,10 @@ function t_manufacturing.T_StopAndDismantleV1Site()
     t_turtle = t_turtle or require "test.t_turtle"
 
     return enterprise_manufacturing.StopAndDismantleSite_ASrv({
-        siteLocator             = siteLocatorV1,
-        baseLocation            = baseLocationV1,
-        siteVersion             = "v1",
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        siteLocator                 = siteLocatorV1,
+        baseLocation                = baseLocationV1,
+        siteVersion                 = "v1",
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -84,10 +84,10 @@ function t_manufacturing.T_BuildNewV0Site()
     t_turtle = t_turtle or require "test.t_turtle"
 
     return enterprise_manufacturing.BuildNewSite_ASrv({
-        baseLocation            = baseLocationV0,
-        siteVersion             = "v0",
-        upgrade                 = false,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        baseLocation                = baseLocationV0,
+        siteVersion                 = "v0",
+        upgrade                     = false,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -112,10 +112,10 @@ local function DismantleV0Site(baseLocation)
     t_turtle = t_turtle or require "test.t_turtle"
 
     return enterprise_manufacturing.DismantleSite_ASrv({
-        baseLocation            = baseLocation,
-        siteVersion             = "v0",
-        siteStopped             = true,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        baseLocation                = baseLocation,
+        siteVersion                 = "v0",
+        siteStopped                 = true,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 

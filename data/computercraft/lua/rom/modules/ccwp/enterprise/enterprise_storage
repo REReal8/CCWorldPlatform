@@ -49,11 +49,11 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         local buildAndStartNewSiteProjecDef = {
             steps   = {
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "BuildNewSite_ASrv" }, stepDataDef = {
-                    { keyDef = "location"               , sourceStep = 0, sourceKeyDef = "location" },
-                    { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },
-                    { keyDef = "topChests"              , sourceStep = 0, sourceKeyDef = "topChests" },
-                    { keyDef = "layers"                 , sourceStep = 0, sourceKeyDef = "layers" },
-                    { keyDef = "materialsHostLocator"   , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
+                    { keyDef = "location"                       , sourceStep = 0, sourceKeyDef = "location" },
+                    { keyDef = "type"                           , sourceStep = 0, sourceKeyDef = "type" },
+                    { keyDef = "topChests"                      , sourceStep = 0, sourceKeyDef = "topChests" },
+                    { keyDef = "layers"                         , sourceStep = 0, sourceKeyDef = "layers" },
+                    { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 }},
                 { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
                     { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },

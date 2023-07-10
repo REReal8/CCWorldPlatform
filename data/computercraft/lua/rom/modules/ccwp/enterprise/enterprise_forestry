@@ -34,24 +34,24 @@ local enterprise_construction = require "enterprise_construction"
 
 function enterprise_forestry.AddNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, forestLevel, nTrees, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, baseLocation, forestLevel, nTrees, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This async public service builds a new forest site and ensures it's ready for use.
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                forestLocator           - (URL) locating the site
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
+                forestLocator                   - (URL) locating the site
 
         Parameters:
-            serviceData                 - (table) data about this site
-                baseLocation            + (Location) world location of the base (lower left corner) of this site
-                forestLevel             + (number) level of the site
-                nTrees                  + (number) number of initial trees
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (Callback) to call once service is ready
+            serviceData                         - (table) data about this site
+                baseLocation                    + (Location) world location of the base (lower left corner) of this site
+                forestLevel                     + (number) level of the site
+                nTrees                          + (number) number of initial trees
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+            callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
@@ -104,16 +104,16 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         -- add build tree step
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
-                { keyDef = "treeBaseLocation"       , sourceStep = 0, sourceKeyDef = "treeBaseLocation" },
-                { keyDef = "treeLayer"              , sourceStep = 0, sourceKeyDef = "treeLayer" },
-                { keyDef = "materialsHostLocator"   , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
+                { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = "treeBaseLocation" },
+                { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
             }}
         )
 
         -- add step data
         local treeBaseLocation  = baseLocation:copy()
         local targetBaseLayer = forest:getBaseLayer(forestLevel)
-        projectData.materialsHostLocator        = materialsHostLocator
+        projectData.materialsItemSupplierLocator= materialsItemSupplierLocator
         projectData.treeBaseLocation            = treeBaseLocation
         projectData.treeLayer                   = targetBaseLayer
     end
@@ -150,25 +150,25 @@ end
 
 function enterprise_forestry.UpgradeSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This private async service upgrades a forest site from the current configuration (i.e. level, # trees, ...) to a new configuration.
 
         Note: downgrading a forest is not supported.
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                 - (table) data about the service
-                forestLocator           + (URL) locating the forest
-                targetLevel             + (number) with forest level to upgrade to
-                targetNTrees            + (number) number of trees to upgrade forest to
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (Callback) to call once service is ready
+            serviceData                         - (table) data about the service
+                forestLocator                   + (URL) locating the forest
+                targetLevel                     + (number) with forest level to upgrade to
+                targetNTrees                    + (number) number of trees to upgrade forest to
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+            callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
@@ -185,10 +185,10 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local areAllTrueStepDataDef = {}
     local targetTreeLayer = forest:getTreeLayer(targetLevel)
     local projectData = {
-        forestLocator           = forestLocator,
-        targetLevel             = targetLevel,
-        treeLayer               = targetTreeLayer,
-        materialsHostLocator    = materialsHostLocator,
+        forestLocator               = forestLocator,
+        targetLevel                 = targetLevel,
+        treeLayer                   = targetTreeLayer,
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
     }
 
     -- add project steps for upgrading level
@@ -234,9 +234,9 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 local treeBaseLocationStr = "treeBaseLocation"..iStepStr
                 table.insert(projectSteps,
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
-                        { keyDef = "treeBaseLocation"       , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
-                        { keyDef = "treeLayer"              , sourceStep = 0, sourceKeyDef = layerStr },
-                        { keyDef = "materialsHostLocator"   , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
+                        { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
+                        { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = layerStr },
+                        { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                     }}
                 )
 
@@ -274,9 +274,9 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             local treeBaseLocationStr = "treeBaseLocation"..iStepStr
             table.insert(projectSteps,
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
-                    { keyDef = "treeBaseLocation"       , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
-                    { keyDef = "treeLayer"              , sourceStep = 0, sourceKeyDef = "treeLayer" },
-                    { keyDef = "materialsHostLocator"   , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
+                    { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
+                    { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
+                    { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 }}
             )
 
@@ -447,22 +447,22 @@ end
 
 function enterprise_forestry.BuildForestTree_ASrv(...)
     -- get & check input from description
-    local checkSuccess, treeBaseLocation, treeLayer, materialsHostLocator, callback = InputChecker.Check([[
+    local checkSuccess, treeBaseLocation, treeLayer, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This private async service extends the forest with 1 tree
 
         Return value:
-                                        - (boolean) whether the service was scheduled successfully
+                                                - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                 - (table) data about this service
-                treeBaseLocation        + (Location) location of the base (lower left corner) of a forest tree (layer)
-                treeLayer               + (LayerRectangle) tree layer to build
-                materialsHostLocator    + (URL) locating the host of the building materials
-            callback                    + (Callback) to call once service is ready
+            serviceData                         - (table) data about this service
+                treeBaseLocation                + (Location) location of the base (lower left corner) of a forest tree (layer)
+                treeLayer                       + (LayerRectangle) tree layer to build
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+            callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
@@ -472,7 +472,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
         buildFromAbove = true,
         replacePresentObjects = false,
         layer = treeLayer,
-        materialsHostLocator = materialsHostLocator,
+        materialsItemSupplierLocator = materialsItemSupplierLocator,
     }
     corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
     return enterprise_construction.BuildLayer_ASrv(buildData, callback)

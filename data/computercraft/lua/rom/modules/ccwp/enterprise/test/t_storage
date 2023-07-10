@@ -33,11 +33,11 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
 
     -- test
     return enterprise_storage.BuildAndStartNewSite_ASrv({
-        location                = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
-        type                    = "silo",
-        topChests               = 2,
-        layers                  = 2,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        location                    = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
+        type                        = "silo",
+        topChests                   = 2,
+        layers                      = 2,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 

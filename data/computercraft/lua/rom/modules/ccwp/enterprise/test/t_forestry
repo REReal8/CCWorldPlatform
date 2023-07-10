@@ -41,10 +41,10 @@ function AddNewSite_ASrv(level, nTrees)
 
     -- test
     enterprise_forestry.AddNewSite_ASrv({
-        baseLocation            = location:copy(),
-        forestLevel             = level,
-        nTrees                  = nTrees,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        baseLocation                = location:copy(),
+        forestLevel                 = level,
+        nTrees                      = nTrees,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
 
@@ -98,10 +98,10 @@ function ExtraCallback(...)
 
     -- test
     enterprise_forestry.UpgradeSite_ASrv({
-        forestLocator           = forestLocator:copy(),
-        targetLevel             = levelWanted,
-        targetNTrees            = treesWanted,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        forestLocator               = forestLocator:copy(),
+        targetLevel                 = levelWanted,
+        targetNTrees                = treesWanted,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
 end
 
@@ -109,10 +109,10 @@ function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted, extr
     -- prepare test
     corelog.WriteToLog("# UpgradeSite_ASrv (L"..levelStart..",trees"..treesStart..") => (L"..levelWanted..",trees"..treesWanted..") test")
     enterprise_forestry.AddNewSite_ASrv({
-        baseLocation            = location:copy(),
-        forestLevel             = levelStart,
-        nTrees                  = treesStart,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        baseLocation                = location:copy(),
+        forestLevel                 = levelStart,
+        nTrees                      = treesStart,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData})
 end
 
@@ -136,10 +136,10 @@ function UpgradeSite_ASrv_PrepCallback(...)
 
     -- test
     enterprise_forestry.UpgradeSite_ASrv({
-        forestLocator           = forestLocator:copy(),
-        targetLevel             = levelWanted,
-        targetNTrees            = treesWanted,
-        materialsHostLocator    = t_turtle.GetCurrentTurtleLocator(),
+        forestLocator               = forestLocator:copy(),
+        targetLevel                 = levelWanted,
+        targetNTrees                = treesWanted,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData })
 end
 
