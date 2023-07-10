@@ -1,27 +1,18 @@
 local enterprise_colonization = {}
 
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 
-local URL = require "obj_url"
 local Location = require "obj_location"
 
 local role_settler = require "role_settler"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
-local enterprise_forestry = require "enterprise_forestry"
-local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_shop = require "enterprise_shop"
-
-local db = {
-    dhtRoot     = "enterprise_colonization",
-    hostName    = "colonization",
-}
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -67,19 +58,12 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- ToDo: instelling van de 3,2,1 coordianten bij start, lijkt nu niet meer te werken
 
-    -- ensure enterprise has a key in the dht
-    if coredht.GetData(db.dhtRoot) == nil then
-        -- create the entry
-        coredht.SaveData({}, db.dhtRoot)
-
-        -- delete BirchForest's
-        enterprise_forestry:deleteObjects("BirchForest")
-    end
-
-    -- add default ItemSuppliers -- ToDo: consider dynamnic adding instances later similair to forests in enterprise_forestry
+    -- register current turtle in shop
+    -- ToDo: figure out where/ how to register (other) turtles that get added
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_turtle.GetHostLocator_Att()})
-    enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = enterprise_manufacturing:getHostLocator()})
+    local currentTurtleId = os.getComputerID()
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining turtleLocator for turtle "..currentTurtleId) return Callback.ErrorCall(callback) end
+    local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return Callback.ErrorCall(callback) end
 
     -- construct arguments
     local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
@@ -94,14 +78,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local factoryLocation           = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
     local nTreeswanted = 6
     local settleData = {
-        materialsHostLocator            = enterprise_shop.GetHostLocator_Att(),
+        materialsHostLocator            = enterprise_shop.GetShopLocator(),
 
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
 
-        ingredientsItemSupplierLocator  = enterprise_shop.GetHostLocator_Att(), -- ToDo: somehow pass this to enterprise_energy
+        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle
 
         factoryVersion0                 = "v0",
         upgradeFalse                    = false,
@@ -132,7 +116,6 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
         siloLocation                    = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
         type                            = "silo",
-        siloType                        = "basic",
         topChests                       = 2,
         layers                          = 2,
     }
@@ -153,6 +136,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "siteLocator" },
+            }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "AddNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "forestLocation" },
                 { keyDef = "forestLevel"                , sourceStep = 0, sourceKeyDef = "forestLm1" },
@@ -160,21 +146,23 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "forestLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },
-                { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
-                { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                , sourceStep = 0, sourceKeyDef = "forestL0" },
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
-                { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
@@ -186,6 +174,17 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 11, sourceKeyDef = "siteLocator" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "siteLocator" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "siteLocator" },
+            }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopAndDismantleSite_ASrv" }, stepDataDef = {
                 { keyDef = "siteLocator"                , sourceStep = 3, sourceKeyDef = "siteLocator" },
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "startLocation" },
@@ -193,13 +192,13 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
-                { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                , sourceStep = 0, sourceKeyDef = "forestL1" },
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
-                { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                , sourceStep = 0, sourceKeyDef = "forestL2" },
                 { keyDef = "targetNTrees"               , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
@@ -208,20 +207,31 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "baseLocation"               , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                , sourceStep = 0, sourceKeyDef = "factoryVersion2" },
                 { keyDef = "upgrade"                    , sourceStep = 0, sourceKeyDef = "upgradeToV2" },
-                { keyDef = "siteLocator"                , sourceStep = 10, sourceKeyDef = "siteLocator" },
+                { keyDef = "siteLocator"                , sourceStep = 11, sourceKeyDef = "siteLocator" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 18, sourceKeyDef = "siteLocator" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "factoryLocator"             , sourceStep = 18, sourceKeyDef = "siteLocator" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 11, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "location"                   , sourceStep = 0, sourceKeyDef = "siloLocation" },
                 { keyDef = "type"                       , sourceStep = 0, sourceKeyDef = "type" },
-                { keyDef = "siloType"                   , sourceStep = 0, sourceKeyDef = "siloType" },
                 { keyDef = "topChests"                  , sourceStep = 0, sourceKeyDef = "topChests" },
                 { keyDef = "layers"                     , sourceStep = 0, sourceKeyDef = "layers" },
                 { keyDef = "materialsHostLocator"       , sourceStep = 0, sourceKeyDef = "materialsHostLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
-                { keyDef = "forestLocator"              , sourceStep = 4, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "factoryLocator"             , sourceStep = 18, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
@@ -240,10 +250,17 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "success14"                  , sourceStep = 14, sourceKeyDef = "success" },
                 { keyDef = "success15"                  , sourceStep = 15, sourceKeyDef = "success" },
                 { keyDef = "success16"                  , sourceStep = 16, sourceKeyDef = "success" },
+                { keyDef = "success17"                  , sourceStep = 17, sourceKeyDef = "success" },
+                { keyDef = "success18"                  , sourceStep = 18, sourceKeyDef = "success" },
+                { keyDef = "success19"                  , sourceStep = 19, sourceKeyDef = "success" },
+                { keyDef = "success20"                  , sourceStep = 20, sourceKeyDef = "success" },
+                { keyDef = "success21"                  , sourceStep = 21, sourceKeyDef = "success" },
+                { keyDef = "success22"                  , sourceStep = 22, sourceKeyDef = "success" },
+                { keyDef = "success23"                  , sourceStep = 23, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 17, sourceKeyDef = "success" },
+            { keyDef = "success"                        , sourceStep = 24, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {
@@ -255,53 +272,11 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-local function GetHostLocator_Att()
-    --[[
-        Attribute locating this enterprise.
-
-        Return value:
-            hostLocator             - (URL) locating this enterprise
-
-        Parameters:
-            nil
-    --]]
-
-    local hostURL = URL:new()
-    hostURL:setHost(db.hostName)
-
-    return hostURL
-end
-
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
 --   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function IsColonizationURL_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, aURL = InputChecker.Check([[
-        This sync public service answers the question if a URL is that of a Colonization.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-
-        Parameters:
-            queryData               - (table) data about the query
-                aURL                + (URL) that needs to be queried
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_colonization.IsColonizationURL_QSrv: Invalid input") return {success = false} end
-
-    -- check if of this ItemSupplier
-    local host = aURL:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_colonization.IsColonizationURL_QSrv: Invalid host input in URL (="..aURL:getURI()..").") return {success = false} end
-    if host == db.hostName then
-        return {success = true}
-    else
-        return {success = false}
-    end
-end
 
 return enterprise_colonization

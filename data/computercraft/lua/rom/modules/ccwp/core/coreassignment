@@ -14,7 +14,7 @@ local db = {
 }
 
 --[[
-    coreassignment offers functionality to have computers or turtles execute assignments advertised by enterprise_assignmentboard.
+    coreassignment offers functionality to have turtles execute assignments advertised by enterprise_assignmentboard.
 
     An assignment revolves around a Task. A Task is a sequence of things that needs to be done (i.e. moving, rotating, placing etc) without interruption
     in the physical minecraft world. A Task typically takes some time to execute.
@@ -48,25 +48,31 @@ function coreassignment.Setup()
 end
 
 function coreassignment.Run()
-    -- is the dth available?
+    -- is the dht available?
     while not coredht.IsReady() do
-
         -- just wait
         os.sleep(0.25)
     end
 
-    -- some variables
-    local computerId = os.getComputerID()
+    -- get (locator for) current Turtle
+    local turtleId = os.getComputerID()
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(turtleId)) if not turtleLocator then corelog.Error("coreassignment.Run: Failed obtaining turtleLocator for turtle "..turtleId) return false end
+    -- register current Turtle if not yet registered
+    local objResourceTable = enterprise_turtle:getResource(turtleLocator)
+    if not objResourceTable then
+        turtleLocator = enterprise_turtle.RegisterTurtle_SSrv({ turtleId = turtleId }).turtleLocator
+        if not turtleLocator then corelog.Error("coreassignment.Run: Failed registering Turtle "..turtleId) return false end
+    end
 
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do
-        -- get assignment for turtle
-        enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-        local serviceResults = enterprise_turtle.GetAssignmentForTurtle_SSrv({ turtleId = computerId })
+        -- try get assignment for turtle
+        local serviceResults = enterprise_turtle.GetAssignmentForTurtle_SSrv({ turtleLocator = turtleLocator })
         if not serviceResults.success then corelog.Error("coreassignment.Run: failure in getting new assignment") end
         local nextAssignment = serviceResults.assignment
 
-        -- did we get the assignment?
+        -- did we get an assignment?
         if nextAssignment then
             -- do the assignment
             DoAssignment(nextAssignment)

@@ -47,7 +47,7 @@ function t_assignmentboard.T_MetaDataConditionsMet()
         location = nil,
     }
     local assignmentFilter = {
-        priorityKeyNeeded   = nil,
+        priorityKeyNeeded   = "",
     }
     local turtleResume = nil
 
@@ -66,21 +66,21 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.priorityKey = nil
+    metaData.priorityKey = ""
 
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, no key)")
     assignmentFilter.priorityKeyNeeded = priorityKey
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.priorityKey = nil
+    metaData.priorityKey = ""
 
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, same key)")
     metaData.priorityKey = priorityKey
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.priorityKey = nil
+    metaData.priorityKey = ""
 
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, other key)")
     local otherPriorityKey = coreutils.NewId()
@@ -88,8 +88,8 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    metaData.priorityKey = nil
-    assignmentFilter.priorityKeyNeeded = nil
+    metaData.priorityKey = ""
+    assignmentFilter.priorityKeyNeeded = ""
 
     -- test needTurtle
     corelog.WriteToLog("  # Test needTurtle")

@@ -46,7 +46,7 @@ end
 
 local function Refuel_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId, fuelItems, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleLocator, fuelItems, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service (re)fuels a turtle from fuelItems.
 
         Return value:
@@ -58,7 +58,7 @@ local function Refuel_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                turtleId                        + (number) id of the turtle to fuel
+                turtleLocator                   + (URL) locator of the turtle
                 fuelItems                       + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -68,11 +68,12 @@ local function Refuel_ASrv(...)
 
     -- create project service data
     local enterprise_turtle = require "enterprise_turtle"
-    local turtleToRefuelLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = turtleId}).turtleLocator
+    local turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = turtleLocator }).turtleId if not turtleId then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtleId from turtleLocator="..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
     local fuelItemsLocator = ingredientsItemSupplierLocator:copy()
     fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
 --    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
     local refuelTaskData = {
+        -- ToDo: consider passing turtleLocator
         turtleId    = turtleId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
 
@@ -82,7 +83,7 @@ local function Refuel_ASrv(...)
         steps   = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "fuelItemsLocator" },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "turtleToRefuelLocator" },
+                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "turtleLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
@@ -103,7 +104,7 @@ local function Refuel_ASrv(...)
         fuelItems                       = coreutils.DeepCopy(fuelItems),
 
         fuelItemsLocator                = fuelItemsLocator,
-        turtleToRefuelLocator           = turtleToRefuelLocator,
+        turtleLocator                   = turtleLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
 
         refuelMetaData                  = role_fuel_worker.Refuel_MetaData(refuelTaskData),
@@ -122,7 +123,7 @@ end
 
 function enterprise_energy.ProvideFuelTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleId, fuelAmount, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleLocator, fuelAmount, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service provides fuel to a turtle.
 
         Return value:
@@ -134,7 +135,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                turtleId                        + (number) id of the turtle
+                turtleLocator                   + (URL) locator of the turtle
                 fuelAmount                      + (number) fuel amount to provide to turtle
                 ingredientsItemSupplierLocator  + (URL) locating where the fuel ingredients can be retrieved
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
@@ -147,12 +148,12 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
 
     -- (re)fuel turtle
     local refuelServiceData = {
-        turtleId                        = turtleId,
+        turtleLocator                   = turtleLocator,
         fuelItems                       = fuelItemsNeed,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }
-    corelog.WriteToLog("* Refuelling turtle(id="..turtleId..") with "..fuelAmount.." fuel *")
+    corelog.WriteToLog("* Refuelling Turtle "..turtleLocator:getURI().." with "..fuelAmount.." fuel *")
     return Refuel_ASrv(refuelServiceData, callback)
 end
 
@@ -168,7 +169,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
     local fuelNeed = 0
     local enterpriseLevel = parameters.enterpriseLevel
     if enterpriseLevel > 0 then
-        -- get forest
+        -- get BirchForest
         local forestLocator = parameters.forestLocator
         local forest = nil
         local enterprise_forestry = require "enterprise_forestry"
@@ -184,18 +185,20 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
             fuelNeed_ExtraTree = forest:getFuelNeedExtraTree_Att()
         end
 
-        -- check there is a factory
+        -- get Factory
+        local factoryLocator = parameters.factoryLocator
+        local factory = nil
         local enterprise_manufacturing = require "enterprise_manufacturing"
-        local aFactoryExists = enterprise_manufacturing:getNumberOfObjects("Factory") > 0
-        if not aFactoryExists then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: not factory found") return enterprise_energy.GetLargeFuelAmount_Att() end
+        factory = enterprise_manufacturing:getObject(factoryLocator)
+        if type(factory) ~= "table" then corelog.Warning("enterprise_energy.GetFuelNeed_Refuel_Att: factory "..factoryLocator:getURI().." not found") return enterprise_energy.GetLargeFuelAmount_Att() end
 
         -- determine fuelNeed by factory
         local items = FuelItemsForFuel(1)
-        local fuelNeed_Production = enterprise_manufacturing.GetFuelNeed_Production_Att(items)
+        local fuelNeed_Production = factory:getFuelNeed_Production_Att(items)
 
         -- determine fuelNeed for traveling
         local forestLocation = forest:getLocation()
-        local factoryLocation = enterprise_manufacturing.GetSiteLocation_Att(items)
+        local factoryLocation = factory:getProductionLocation_Att(items)
         local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
 
         -- add fuelNeed
@@ -254,6 +257,7 @@ function enterprise_energy.ResetParameters()
         enterpriseLevel             = 0,
 
         forestLocator               = nil,
+        factoryLocator              = nil,
 
         fuelItemName                = "minecraft:birch_planks",
         fuelItemGain                = 15,
@@ -262,7 +266,7 @@ end
 
 function enterprise_energy.UpdateEnterprise_SSrv(...)
     -- get & check input from description
-    local checkSuccess, enterpriseLevel, forestLocator = InputChecker.Check([[
+    local checkSuccess, enterpriseLevel, forestLocator, factoryLocator = InputChecker.Check([[
         This private sync service updates the enterprise information.
 
         Return value:
@@ -272,12 +276,16 @@ function enterprise_energy.UpdateEnterprise_SSrv(...)
         Parameters:
             serviceData                 - (table) data about the service
                 enterpriseLevel         + (number) with enterprise level
-                forestLocator           + (URL, nil) locating the forest intended for raw fuel materials
+                forestLocator           + (URL, nil) locating the BirchForest intended for raw fuel materials
+                factoryLocator          + (URL, nil) locating the Factory intended for producing fuel items
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid input") return {success = false} end
 
     -- check forestLocator
     if enterpriseLevel > 0 and not forestLocator then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid forestLocator(=nil) for enterpriseLevel="..enterpriseLevel) return {success = false} end
+
+    -- check factoryLocator
+    if enterpriseLevel > 0 and not factoryLocator then corelog.Error("enterprise_energy.UpdateEnterprise_SSrv: Invalid factoryLocator(=nil) for enterpriseLevel="..enterpriseLevel) return {success = false} end
 
     -- get parameters
     local parameters = enterprise_energy.GetParameters()
@@ -285,6 +293,7 @@ function enterprise_energy.UpdateEnterprise_SSrv(...)
     -- set enterprise information
     parameters.enterpriseLevel = enterpriseLevel
     parameters.forestLocator = forestLocator
+    parameters.factoryLocator = factoryLocator
 
     -- save parameters
     coredht.SaveData(parameters, db.dhtRoot, db.dhtParameters)

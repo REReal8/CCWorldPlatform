@@ -3,6 +3,7 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local IObj = require "iobj"
+local Callback = require "obj_callback"
 local Location = require "obj_location"
 
 local BirchForest = require "mobj_birchforest"
@@ -11,6 +12,8 @@ local role_forester = require "role_forester"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
+
+local t_turtle
 
 function T_BirchForest.T_All()
     -- base methods
@@ -67,10 +70,10 @@ function T_BirchForest.T_Getters()
     assert(forest:getClassName() == className, "gotten className(="..forest:getClassName()..") not the same as expected(="..className..")")
     assert(forest:getId() == id, "gotten id(="..forest:getId()..") not the same as expected(="..id..")")
     assert(forest:getLevel() == level0, "gotten level(="..forest:getLevel()..") not the same as expected(="..level0..")")
-    assert(forest:getLocation() == location1, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(forest:getLocation():isSame(location1), "gotten getLocation(="..textutils.serialize(forest:getLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(forest:getNTrees() == nTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees..")")
-    assert(forest:getLocalLogsLocator() == localLogsLocator, "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
-    assert(forest:getLocalSaplingsLocator() == localSaplingsLocator, "gotten localSaplingsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator:getURI()..")")
+    assert(forest:getLocalLogsLocator():isSame(localLogsLocator), "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
+    assert(forest:getLocalSaplingsLocator():isSame(localSaplingsLocator), "gotten localSaplingsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator:getURI()..")")
 
     -- cleanup test
 end
@@ -80,8 +83,8 @@ function T_BirchForest.CreateForest(level, location, id)
     level = level or level0
     location = location or location1
     id = id or coreutils.NewId()
-    localLogsLocator = localLogsLocator or enterprise_turtle.GetHostLocator_Att()
-    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetHostLocator_Att()
+    localLogsLocator = localLogsLocator or enterprise_turtle.GetAnyTurtleLocator()
+    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetAnyTurtleLocator()
 
     -- create forest object
     local forest = BirchForest:new({
@@ -99,26 +102,33 @@ function T_BirchForest.CreateForest(level, location, id)
     return forest
 end
 
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = { },
+})
+
 function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
-    local localLogsLocator2 = enterprise_chests:getHostLocator()
-    local localSaplingsLocator2 = enterprise_chests:getHostLocator()
+    local localLogsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 2, 0), }).chestLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 2, 0), }).chestLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
     -- test
     forest:setLevel(level2)
     assert(forest:getLevel() == level2, "gotten level(="..forest:getLevel()..") not the same as expected(="..level2..")")
     forest:setLocation(location2)
-    assert(forest:getLocation() == location2, "gotten getLocation(="..textutils.serialize(forest:getId())..") not the same as expected(="..textutils.serialize(location2)..")")
+    assert(forest:getLocation():isSame(location2), "gotten getLocation(="..textutils.serialize(forest:getLocation())..") not the same as expected(="..textutils.serialize(location2)..")")
     forest:setNTrees(nTrees2)
     assert(forest:getNTrees() == nTrees2, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees2..")")
     forest:setLocalLogsLocator(localLogsLocator2)
-    assert(forest:getLocalLogsLocator() == localLogsLocator2, "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator2:getURI()..")")
+    assert(forest:getLocalLogsLocator():isSame(localLogsLocator2), "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator2:getURI()..")")
     forest:setLocalSaplingsLocator(localSaplingsLocator2)
-    assert(forest:getLocalSaplingsLocator() == localSaplingsLocator2, "gotten localLogsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator2:getURI()..")")
+    assert(forest:getLocalSaplingsLocator():isSame(localSaplingsLocator2), "gotten localLogsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator2:getURI()..")")
 
     -- cleanup test
+    return enterprise_chests.DelistChest_ASrv({ chestLocator = localLogsLocator2 }, callback) and enterprise_chests.DelistChest_ASrv({ chestLocator = localSaplingsLocator2 }, callback)
 end
 
 function T_BirchForest.T_IsOfType()
@@ -162,18 +172,17 @@ function T_BirchForest.T_IsOfType()
     isOfType = BirchForest.IsOfType(forest)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- test invalid _localSaplingsLocator
     forest._localSaplingsLocator = "a string"
     isOfType = BirchForest.IsOfType(forest)
     expectedIsOfType = false
     assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    forest._localSaplingsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- cleanup test
 end
-
 
 local compact = { compact = true }
 
@@ -182,6 +191,8 @@ function T_BirchForest.T_isSame()
     corelog.WriteToLog("* BirchForest:isSame() tests")
     local id = coreutils.NewId()
     local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining BirchForest") return end
+    local localLogsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 2, 0), }).chestLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 2, 0), }).chestLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
     -- test same
     local forest1 = T_BirchForest.CreateForest(level0, location1, id)
@@ -211,20 +222,21 @@ function T_BirchForest.T_isSame()
     forest._nTrees = nTrees
 
     -- test different _localLogsLocator
-    forest._localLogsLocator = enterprise_chests:getHostLocator()
+    forest._localLogsLocator = localLogsLocator2
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    forest._localLogsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- test different _localSaplingsLocator
-    forest._localSaplingsLocator = enterprise_chests:getHostLocator()
+    forest._localSaplingsLocator = localSaplingsLocator2
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    forest._localSaplingsLocator = enterprise_turtle.GetHostLocator_Att()
+    forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- cleanup test
+    return enterprise_chests.DelistChest_ASrv({ chestLocator = localLogsLocator2 }, callback) and enterprise_chests.DelistChest_ASrv({ chestLocator = localSaplingsLocator2 }, callback)
 end
 
 function T_BirchForest.T_copy()
@@ -289,7 +301,8 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    t_turtle = t_turtle or require "test.t_turtle"
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
     local needsTo_Provide = forest:needsTo_ProvideItemsTo_SOSrv({

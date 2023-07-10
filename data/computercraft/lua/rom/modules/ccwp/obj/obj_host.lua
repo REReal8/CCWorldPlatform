@@ -214,7 +214,7 @@ function Host:getResource(...)
 
     -- get URL components
     local hostURI = resourceLocator:getHostURI()
-    if hostURI ~= self:getHostName() then corelog.Error("Host:getResource: resourceLocator(="..resourceLocator:getURI()..") not for "..self:getHostName().." Host)") return nil end
+    if hostURI ~= self:getHostName() then corelog.Error("Host:getResource: resourceLocator(="..resourceLocator:getURI()..") not for "..self:getHostName().." Host.") return nil end
     local portURI = resourceLocator:getPortURI()
     local pathSegments = resourceLocator:pathSegments()
 
@@ -344,26 +344,28 @@ function Host:getObject(...)
 
     -- convert to object
     local object = objectFactory:create(className, resourceTable)
+    if not object then corelog.Error("Host:getObject: failed converting resourceTable(="..textutils.serialise(resourceTable)..") to "..className.." object for objectLocator="..objectLocator:getURI()) return nil end
 
     -- end
     return object
 end
 
-local function GetObjectPath(...)
+function Host.GetObjectPath(...)
     -- get & check input from description
-    local checkSuccess, object, className, objectId = InputChecker.Check([[
+    local checkSuccess, className, objectId, object = InputChecker.Check([[
         This method provides the objectPath of an object in the Host with class className and id objectId.
 
-        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getClassName() method the className argument can be set to "".
         If the object has a getId() method the objectId argument can be set to "".
+        If the object is not provided the className and objectId arguments are used
 
         Return value:
             resourcePath            - (string) locating the object within the Host
 
         Parameters:
-            object                  + (table) the object
             className               + (string, "") with the name of the class of the object
             objectId                + (string, "") with the optional id of the object
+            object                  + (table, nil) the object
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Host.GetObjectPath: Invalid input") return nil end
 
@@ -413,7 +415,7 @@ function Host:getObjectLocator(...)
     local checkSuccess, object, className, objectId = InputChecker.Check([[
         This method provides the objectLocator of an object in the Host using a className and objectId argument.
 
-        If the object has a getClassName() method the className argument can set to "".
+        If the object has a getClassName() method the className argument can be set to "".
         If the object has a getId() method the objectId argument can be set to "".
 
         Return value:
@@ -427,7 +429,7 @@ function Host:getObjectLocator(...)
     if not checkSuccess then corelog.Error("Host:getObjectLocator: Invalid input") return nil end
 
     -- get resourcePath
-    local objectPath = GetObjectPath(object, className, objectId)
+    local objectPath = Host.GetObjectPath(className, objectId, object)
     if not objectPath then corelog.Error("Host:getObjectLocator: Failed obtainng objectPath") return nil end
 
     -- get objectLocator
@@ -457,7 +459,7 @@ function Host:saveObject(...)
     if not checkSuccess then corelog.Error("Host:saveObject: Invalid input") return nil end
 
     -- get objectPath
-    local objectPath = GetObjectPath(object, className, objectId)
+    local objectPath = Host.GetObjectPath(className, objectId, object)
     if not objectPath then corelog.Error("Host:saveObject: Failed obtaining objectPath") return nil end
 
     -- save resource
@@ -527,7 +529,6 @@ local function GetObjectsPath(...)
     return objectsPath
 end
 
--- ToDo: investigate if this method can be made private (as it's not envisioned to be used outside of module)
 function Host:getObjects(...)
     -- get & check input from description
     local checkSuccess, className = InputChecker.Check([[
@@ -580,9 +581,9 @@ function Host:getNumberOfObjects(...)
     local objects = self:getObjects(className)
     if not objects then corelog.Error("Host:getNumberOfObjects: Failed obtaining objects of class "..className) return nil end
 
-    -- loop on forests
+    -- loop on objects
     local count = 0
-    for k, forest in pairs(objects) do
+    for k, object in pairs(objects) do
         count = count + 1
     end
 
@@ -608,8 +609,11 @@ function Host:deleteObjects(...)
     -- delete all objects
 --    corelog.Warning("All objects of class "..className.." are being deleted!")
     for id, object in pairs(objects) do
+        -- convert to object
+        object = objectFactory:create(className, object)
+
         -- get locator
-        local objectLocator = self:getObjectLocator(object, className)
+        local objectLocator = self:getObjectLocator(object)
 
         -- delete
         self:deleteResource(objectLocator)

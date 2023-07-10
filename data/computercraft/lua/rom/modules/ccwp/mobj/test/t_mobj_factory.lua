@@ -1,16 +1,22 @@
 local T_Factory = {}
+
 local corelog = require "corelog"
 local coreutils = require "coreutils"
+local coremove = require "coremove"
 
 local IObj = require "iobj"
+local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
+local URL = require "obj_url"
 
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
+
+local t_turtle = require "test.t_turtle"
 
 function T_Factory.T_All()
     -- base methods
@@ -27,6 +33,8 @@ function T_Factory.T_All()
     T_Factory.T_getAvailableSmeltSpot()
 
     -- service methods
+    T_Factory.T_getFuelNeed_Production_Att()
+    T_Factory.T_getProductionLocation_Att()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
@@ -51,11 +59,11 @@ function T_Factory.T_ImplementsIObj()
     -- cleanup test
 end
 
-local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
-local inputLocator1 = enterprise_turtle.GetHostLocator_Att()
+local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
+local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
 local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
-local outputLocator1 = enterprise_turtle.GetHostLocator_Att()
+local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
 local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
@@ -163,20 +171,26 @@ function T_Factory.T_IsOfType()
     -- cleanup test
 end
 
+local callback = Callback:new({
+    _moduleName     = "t_main",
+    _methodName     = "Func1_Callback",
+    _data           = { },
+})
+
 function T_Factory.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Factory:isSame() tests")
     local id = coreutils.NewId()
     local obj = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id) if not obj then corelog.Error("failed obtaining Factory") return end
     local location2  = Location:new({_x= 100, _y= 0, _z= 100, _dx=1, _dy=0})
-    local inputLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be an actual Chest
-    local inputLocators2 = { inputLocator2, }
-    local outputLocator2 = enterprise_chests:getHostLocator() -- note: more correct would be an actual Chest
-    local outputLocators2 = { outputLocator2, }
+    local inputLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 5, 0), }).chestLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
+    local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, inputLocator2, })
+    local outputLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 5, 0), }).chestLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
+    local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, outputLocator2, })
     local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
-    local craftingSpots2 = { craftingSpot2, }
+    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
     local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
-    local smeltingSpots2 = { smeltingSpot2, }
+    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
 
     -- test same
     local obj1 = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id)
@@ -220,6 +234,7 @@ function T_Factory.T_isSame()
     obj._smeltingSpots = smeltingSpots1
 
     -- cleanup test
+    return enterprise_chests.DelistChest_ASrv({ chestLocator = inputLocator2 }, callback) and enterprise_chests.DelistChest_ASrv({ chestLocator = outputLocator2 }, callback)
 end
 
 function T_Factory.T_copy()
@@ -298,6 +313,47 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function T_Factory.T_getFuelNeed_Production_Att()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getFuelNeed_Production_Att() tests")
+    local location2 = Location:new(coremove.GetLocation())
+    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
+    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
+    local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test
+    local items = { ["minecraft:birch_planks"] = 4 }
+    local fuelNeed = obj:getFuelNeed_Production_Att(items)
+    local expectedFuelNeed = 20
+    assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
+
+    -- cleanup test
+end
+
+function T_Factory.T_getProductionLocation_Att()
+    -- prepare test
+    corelog.WriteToLog("* Factory:getProductionLocation_Att() tests")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test craft
+    local itemName = "minecraft:birch_planks"
+    local itemCount = 10
+    local productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
+    local expectedLocation = craftingSpot1:getLocation()
+    assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
+
+    -- test smelt
+    itemName = "minecraft:charcoal"
+    itemCount = 5
+    productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
+    expectedLocation = smeltingSpot1:getLocation()
+    assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
+
+    -- cleanup test
+end
+
 function T_Factory.T_can_ProvideItems_QOSrv()
     -- prepare test
     corelog.WriteToLog("* Factory:can_ProvideItems_QOSrv() tests")
@@ -354,6 +410,61 @@ function T_Factory.T_can_ProvideItems_QOSrv()
     obj._outputLocators = outputLocators1
 
     -- cleanup test
+end
+
+local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
+    -- prepare test
+    corelog.WriteToLog("* Factory:provideItemsTo_AOSrv() tests ("..productionMethod..")")
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback = Callback:new({
+        _moduleName     = "T_Factory",
+        _methodName     = "provideItemsTo_AOSrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        },
+    })
+
+    -- test
+    return obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    }, callback)
+end
+
+function T_Factory.T_provideItemsTo_AOSrv_Craft()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_planks"] = 12 }
+
+    -- test
+    t_provideItemsTo_AOSrv(provideItems, "Craft")
+end
+
+function T_Factory.T_ProvideItemsTo_AOSrv_Smelt()
+    -- prepare test
+    local provideItems = { ["minecraft:charcoal"] = 1 }
+
+    -- test
+    t_provideItemsTo_AOSrv(provideItems, "Smelt")
+end
+
+function T_Factory.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+
+    -- end
+    return true
 end
 
 return T_Factory

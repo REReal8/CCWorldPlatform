@@ -15,6 +15,8 @@ function library.Setup()
     objectFactory:registerClass("Factory",      require "mobj_factory")
     objectFactory:registerClass("ProductionSpot",   require "mobj_production_spot")
     objectFactory:registerClass("Silo",         require "mobj_silo")
+    objectFactory:registerClass("Shop",         require "mobj_shop")
+    objectFactory:registerClass("Turtle",       require "mobj_turtle")
 
     -- register library modules
     local ModuleRegistry = require "module_registry"
@@ -27,6 +29,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")
     moduleRegistry:requireAndRegisterModule("T_Factory", "test.t_mobj_factory")
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
+    moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
 
     -- do other stuff

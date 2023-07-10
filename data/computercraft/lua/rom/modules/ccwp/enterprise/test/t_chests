@@ -10,6 +10,9 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_chests = require "enterprise_chests"
 
 function t_chests.T_All()
+    -- service methods
+    t_chests.T_RegisterChest_SSrv()
+    t_chests.T_DelistChest_ASrv()
 end
 
 local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -60,35 +63,58 @@ function t_chests.GetRegisterAndUpdateChestProjectDef()
     }
 end
 
-local chestLocator1 = nil
-
-function t_chests.T_RegisterChest1()
-    corelog.WriteToLog("* Test RegisterChest_SSrv 1:")
-    -- create chest data
-    local chestData  = {
+function t_chests.T_RegisterChest_SSrv()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_chests.RegisterChest_SSrv() tests")
+    local objParameters = {
         location        = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
     }
 
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.RegisterChest_SSrv("..textutils.serialize(chestData)..")")
-    local result = enterprise_chests.RegisterChest_SSrv(chestData, callback)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
-    if result.success then
-        chestLocator1 = result.chestLocator
-    end
+    -- test
+    local result = enterprise_chests.RegisterChest_SSrv(objParameters)
+    assert(result.success, "failed registering Obj")
+    local objLocator = result.chestLocator
+    assert(objLocator, "failed obtaining objLocator")
+    local obj = enterprise_chests:getObject(objLocator)
+    assert(obj, "failed obtaining obj")
+
+    -- cleanup test
+    enterprise_chests:deleteResource(objLocator)
 end
 
-function t_chests.T_DelistChest1()
-    corelog.WriteToLog("* Test DelistChests 1:")
-    -- create chest data 1
-    local chestData1 = {
-        chestLocator = chestLocator1
+function t_chests.T_DelistChest_ASrv()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_chests.DelistChest_ASrv() tests")
+    local objParameters = {
+        location        = testStartLocation:getRelativeLocation(2, 5, 0),
+        accessDirection = "top"
     }
+    local objLocator = enterprise_chests.RegisterChest_SSrv(objParameters).chestLocator if not objLocator then corelog.Error("failed registering Obj") return end
+    local DelistChest_ASrv_callback = Callback:new({
+        _moduleName     = "t_chests",
+        _methodName     = "DelistChest_ASrv_callback",
+        _data           = {
+            ["objLocator"]                      = objLocator,
+        },
+    })
 
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_chests.DelistChest_ASrv("..textutils.serialize(chestData1)..")")
-    return enterprise_chests.DelistChest_ASrv(chestData1, callback)
+    -- test
+    return enterprise_chests.DelistChest_ASrv({ chestLocator = objLocator}, DelistChest_ASrv_callback)
+end
+
+function t_chests.DelistChest_ASrv_callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local objLocator = callbackData["objLocator"]
+    local objResourceTable = enterprise_chests:getResource(objLocator)
+    assert(not objResourceTable, "Obj wasn't deleted")
+
+    -- cleanup test
+
+    -- end
+    return true
 end
 
 return t_chests

@@ -73,28 +73,35 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- set local output location
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- create project service data
     local buildBlueprintProjectDef = {
         steps   = {
+            -- get materials
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
             }},
+            -- obtain turtleId
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
+                { keyDef = "turtleLocator"                  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+            }},
+            -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"          , sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
+                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "turtleId" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
+                { keyDef = "success3"                       , sourceStep = 3, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "success"                            , sourceStep = 4, sourceKeyDef = "success" },
         }
     }
     local projectData = {
@@ -169,28 +176,35 @@ function enterprise_construction.BuildLayer_ASrv(...)
     --          the service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local itemDepotLocator = enterprise_turtle.GetHostLocator_Att()
+    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- create project service data
     local buildRectangularPatternProjectDef = {
         steps   = {
+            -- get materials
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
             }},
+            -- obtain turtleId
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
+                { keyDef = "turtleLocator"                  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+            }},
+            -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"          , sourceStep = 1, sourceKeyDef = "destinationItemsLocator._port" }, -- ToDo: consider if we can avoid accessing URL internal _port
+                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "turtleId" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
                 { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
+                { keyDef = "success3"                       , sourceStep = 3, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "success"                        , sourceStep = 4, sourceKeyDef = "success" },
         }
     }
     local projectData = {

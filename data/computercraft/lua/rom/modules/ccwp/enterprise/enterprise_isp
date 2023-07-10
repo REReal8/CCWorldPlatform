@@ -8,8 +8,6 @@ local URL = require "obj_url"
 
 local role_fuel_worker = require "role_fuel_worker"
 
-local enterprise_projects = require "enterprise_projects"
-
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
     items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling
@@ -23,9 +21,6 @@ local enterprise_projects = require "enterprise_projects"
     For an enterprise to be an ItemDepot it needs to implement the following services:
         GetItemsLocations_SSrv      - provides the current world locations of different items in an ItemDepot.
         GetItemDepotLocation_SSrv   - provides the world location of an ItemDepot.
-
-    Furthermore most ItemSuppliers and ItemDepots should implement the additional attribute
-        GetHostLocator_Att          - locating this enterprise
 
     The ISP offers generic ItemSupplier and ItemDepot services by relaying them to the underlying ItemSupplier or ItemDepot based on the "base" component of URL's. The interface
     of the corresponding ISP services is the same. Hence, one could see the ISP as an ItemSupplier and ItemDepot itself.
@@ -182,6 +177,62 @@ function enterprise_isp.StoreItemsFrom_ASrv(...)
     -- call method on ItemDepot
     local serviceName = "StoreItemsFrom_ASrv"
     return MethodExecutor.DoASyncService(itemDepotName, serviceName, serviceData, callback)
+end
+
+function enterprise_isp.Can_StoreItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
+        This sync public query service answers the question whether the ItemDepot can store specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             + (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be stored
+                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
+                                        (the "query" component of the URL specifies the items to query for)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_storage.enterprise_isp: Invalid input") return {success = false} end
+
+    -- get ItemDepot
+    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemsLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.StoreItemsFrom_ASrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
+    local itemDepotName = serviceResults.enterpriseName
+
+    -- call method on ItemDepot
+    local serviceName = "Can_StoreItems_QSrv"
+    return MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
+end
+
+function enterprise_isp.NeedsTo_StoreItemsFrom_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, serviceData, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the ItemDepot to store specific items from an ItemSupplier.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to store items
+
+        Parameters:
+            serviceData                         + (table) data to the query
+                itemsLocator                    - (URL) locating the items to store
+                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the URL specifies the items)
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be stored to
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_StoreItemsFrom_SSrv: Invalid input") return {success = false} end
+
+    -- get ItemDepot
+    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemDepotLocator })
+    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_StoreItemsFrom_SSrv: failed obtaining itemDepotName for "..itemDepotLocator:getURI()..".") return {success = false} end
+    local itemDepotName = serviceResults.enterpriseName
+
+    -- call method on ItemDepot
+    local serviceName = "NeedsTo_StoreItemsFrom_SSrv"
+    return MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
 end
 
 function enterprise_isp.NeedsTo_TransferItems_SSrv(...)

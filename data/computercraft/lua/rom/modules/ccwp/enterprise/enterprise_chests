@@ -45,24 +45,24 @@ local Chest = require "mobj_chest"
 function enterprise_chests.RegisterChest_SSrv(...)
     -- get & check input from description
     local checkSuccess, location, accessDirection = InputChecker.Check([[
-        This sync public service registers ("adds") a chest to the enterprise.
+        This sync public service registers ("adds") a Chest to the enterprise.
 
-        Note that the chest should already be present (constructed) in the world. It is however assumed the newly added chest is still empty.
+        Note that the Chest should already be present (constructed) in the world. It is however assumed the newly added Chest is still empty.
 
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                chestLocator        - (URL) locating the created chest (in this enterprise)
+                chestLocator        - (URL) locating the created Chest (in this enterprise)
 
         Parameters:
-            chestData               - (table) data to the chest
-                location            + (Location) location of the chest
-                accessDirection     + (string) whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+            chestData               - (table) data to the Chest
+                location            + (Location) location of the Chest
+                accessDirection     + (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid input") return {success = false} end
 
-    -- create new Chest
-    local chest = Chest:new({
+    -- create new Obj
+    local obj = Chest:new({
         _id             = coreutils.NewId(),
 
         _location       = location:copy(),
@@ -71,15 +71,15 @@ function enterprise_chests.RegisterChest_SSrv(...)
         _inventory      = Inventory:new(), -- assumed to be empty
     })
 
-    -- save the Chest
-    corelog.WriteToLog(">Registering chest "..chest:getId()..".")
-    local chestLocator = enterprise_chests:saveObject(chest)
-    if not chestLocator then corelog.Error("enterprise_chests.RegisterChest_SSrv: Failed registering Chest") return {success = false} end
+    -- save the Obj
+    corelog.WriteToLog(">Registering Chest "..obj:getId()..".")
+    local objLocator = enterprise_chests:saveObject(obj)
+    if not objLocator then corelog.Error("enterprise_chests.RegisterChest_SSrv: Failed registering Obj") return {success = false} end
 
     -- end
     local result = {
         success = true,
-        chestLocator = chestLocator
+        chestLocator = objLocator
     }
     return result
 end
@@ -87,12 +87,12 @@ end
 function enterprise_chests.DelistChest_ASrv(...)
     -- get & check input from description
     local checkSuccess, chestLocator, callback = InputChecker.Check([[
-        This async public service delists ("removes") a chest from the enterprise. Delisting implies
-            - the chest is immediatly no longer available for new business (e.g. adding/ removing items)
-            - wait for all active work on chest to be ended
-            - remove the chest from the enterprise
+        This async public service delists ("removes") a Chest from the enterprise. Delisting implies
+            - the Chest is immediatly no longer available for new business (e.g. adding/ removing items)
+            - wait for all active work on Chest to be ended
+            - remove the Chest from the enterprise
 
-        Note that the chest (and it's possibly remaining items) are not removed from the world.
+        Note that the Chest (and it's possibly remaining items) are not removed from the world.
 
         Return value:
                                 - (boolean) whether the service was scheduled successfully
@@ -103,23 +103,23 @@ function enterprise_chests.DelistChest_ASrv(...)
 
         Parameters:
             serviceData         - (table) data about the service
-                chestLocator    + (URL) locating the chest
+                chestLocator    + (URL) locating the Chest
             callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get the chest
-    local chest = enterprise_chests:getObject(chestLocator)
-    if type(chest) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Failed retrieving chest = "..chestLocator:getURI()) return Callback.ErrorCall(callback) end
+    -- get the Obj
+    local obj = enterprise_chests:getObject(chestLocator)
+    if type(obj) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Obj "..chestLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- stop doing business for this chest
+    -- stop doing business for this Obj
     -- ToDo: implement
 
     -- wait for active work done
     -- ToDo: implement
 
-    -- remove site from enteprise
-    corelog.WriteToLog(">Delisting Chest "..chest:getId())
+    -- remove Obj from enteprise
+    corelog.WriteToLog(">Delisting Chest "..obj:getId())
     enterprise_chests:deleteResource(chestLocator)
 
     -- do callback
@@ -212,13 +212,13 @@ function enterprise_chests.ProvideItemsTo_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Chest "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have Chest provide items
+    -- have Obj provide items
     local provideItems = itemsLocator:getQuery()
-    return chest:provideItemsTo_AOSrv({
+    return obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
@@ -242,13 +242,13 @@ function enterprise_chests.Can_ProvideItems_QSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.Can_ProvideItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
-    -- check Chest can provide items
+    -- check Obj can provide items
     local provideItems = itemsLocator:getQuery()
-    local canProvide = chest:can_ProvideItems_QOSrv({
+    local canProvide = obj:can_ProvideItems_QOSrv({
         provideItems    = provideItems,
     })
 
@@ -278,13 +278,13 @@ function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get Chest
-    local chest = enterprise_chests:getObject(itemsLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- determine needs
     local provideItems = itemsLocator:getQuery()
-    local needs = chest:needsTo_ProvideItemsTo_SOSrv({
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
@@ -321,15 +321,78 @@ function enterprise_chests.StoreItemsFrom_ASrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get chest
-    local chest = enterprise_chests:getObject(itemDepotLocator)
-    if type(chest) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Chest "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- have chest store items
-    return chest:storeItemsFrom_ASrv({
+    -- have Obj store items
+    return obj:storeItemsFrom_AOSrv({
         itemsLocator                    = itemsLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }, callback)
+end
+
+function enterprise_chests.Can_StoreItems_QSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator = InputChecker.Check([[
+        This sync public query service answers the question whether the ItemDepot can store specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be stored
+                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
+                                        (the "query" component of the URL specifies the items to query for)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.Can_StoreItems_QSrv: Invalid input") return {success = false} end
+
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemsLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.Can_StoreItems_QSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
+
+    -- check Obj can store items
+    local storeItems = itemsLocator:getQuery()
+    local canStore = obj:can_StoreItems_QOSrv({
+        storeItems    = storeItems,
+    })
+
+    -- end
+    return canStore
+end
+
+function enterprise_chests.NeedsTo_StoreItemsFrom_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
+        This sync public service returns the needs for the ItemDepot to store specific items from an ItemSupplier.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to store items
+
+        Parameters:
+            serviceData                         - (table) data to the query
+                itemsLocator                    + (URL) locating the items to store
+                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the URL specifies the items)
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be stored to
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_StoreItemsFrom_SSrv: Invalid input") return {success = false} end
+
+    -- get Obj
+    local obj = enterprise_chests:getObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_StoreItemsFrom_SSrv: Obj "..itemDepotLocator:getURI().." not found.") return {success = false} end
+
+    -- determine needs
+    local needs = obj:needsTo_StoreItemsFrom_SOSrv({
+        itemsLocator    = itemsLocator,
+    })
+
+    -- end
+    return needs
 end
 
 -- ToDo: consider getting from/ moving to Chest

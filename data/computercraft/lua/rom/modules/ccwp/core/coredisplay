@@ -236,6 +236,7 @@ function ExecuteMObjTest(t)
 		{key = "f", desc = "Factory",			func = ExecuteMObjTest, param = {filename = "T_Factory"}},
 		{key = "p", desc = "ProductionSpot",	func = ExecuteMObjTest, param = {filename = "T_ProductionSpot"}},
 		{key = "s", desc = "Silo",				func = ExecuteMObjTest, param = {filename = "T_Silo"}},
+		{key = "h", desc = "Shop",				func = ExecuteMObjTest, param = {filename = "T_Shop"}},
 		{key = "t", desc = "Turtle",			func = ExecuteMObjTest, param = {filename = "T_Turtle"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}

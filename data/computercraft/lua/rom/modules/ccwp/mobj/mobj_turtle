@@ -1,5 +1,6 @@
 local Turtle = {
-    _id = -1,
+    _id                     = "any",
+    _fuelPriorityKey        = "",
 }
 
 local corelog = require "corelog"
@@ -35,9 +36,10 @@ function Turtle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _id                     - (number) id of the Turtle
+                _id                     - (string, "any") id of the Turtle
+                _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
 
     -- set class info
     setmetatable(o, self)
@@ -55,7 +57,25 @@ function Turtle:getId()
     return self._id
 end
 
+function Turtle:getTurtleId()
+    return tonumber(self:getId())
+end
+
+function Turtle:getFuelPriorityKey()
+    return self._fuelPriorityKey
+end
+
+function Turtle:setFuelPriorityKey(fuelPriorityKey)
+    -- check
+    if type(fuelPriorityKey) ~= "string" then corelog.Error("LayerRectangle:setCodeArray: Invalid fuelPriorityKey(type="..type(fuelPriorityKey)..")") return end
+
+    self._fuelPriorityKey = fuelPriorityKey
+end
+
 function Turtle:getInventory()
+    -- check current Turtle
+    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+
     -- get current Turtle inventory slots
     local slotTable = {}
     for slot=1,16 do
@@ -81,7 +101,8 @@ end
 function Turtle.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "number" then return false end
+    if type(obj._id) ~= "string" then return false end
+    if type(obj._fuelPriorityKey) ~= "string" then return false end
 
     -- end
     return true
@@ -109,6 +130,7 @@ function Turtle:isSame(obj)
 
     -- check same object
     local isSame =  self._id == obj._id
+                and self._fuelPriorityKey == obj._fuelPriorityKey
 
     -- end
     return isSame
@@ -117,10 +139,20 @@ end
 function Turtle:copy()
     local copy = Turtle:new({
         _id             = self._id,
+        _fuelPriorityKey= self._fuelPriorityKey,
     })
 
     return copy
 end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
 
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
@@ -159,8 +191,7 @@ function Turtle:provideItemsTo_AOSrv(...)
 
     -- create turtleItemsLocator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleItemsLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getId()}).turtleLocator
-    if turtleItemsLocator == nil then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
+    local turtleItemsLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
     -- store items from this turtle to ItemDepot
@@ -173,10 +204,10 @@ function Turtle:provideItemsTo_AOSrv(...)
     return enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
 end
 
-function Turtle:storeItemsFrom_ASrv(...)
+function Turtle:storeItemsFrom_AOSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
+        This async public ItemDepot service stores items from from an ItemSupplier.
 
         An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
 
@@ -198,25 +229,23 @@ function Turtle:storeItemsFrom_ASrv(...)
                 assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Turtle:storeItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check source is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local serviceResults = enterprise_turtle.IsTurtleURL_QSrv({ aURL = itemsLocator})
-    if serviceResults.success then -- source is a turtle
+    if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
-        local sourceTurtleId = itemsLocator:getPort()
+        local sourceTurtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemsLocator }).turtleId if not sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining sourceTurtleId from itemsLocator="..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
         local currentTurtleId = os.getComputerID()
-        if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_ASrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
+        if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
 
         -- verify turtle has items (aleady)
         local storeItems = itemsLocator:getQuery()
         local hasItems = self:getInventory():hasItems(storeItems)
-        if not hasItems then corelog.Error("Turtle:storeItemsFrom_ASrv: storeItems not (all) available in Turtle") return Callback.ErrorCall(callback) end
+        if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all) available in Turtle") return Callback.ErrorCall(callback) end
 
         -- determine destinationItemsLocator
         local destinationItemsLocator = itemsLocator:copy()
-        destinationItemsLocator:setPort(currentTurtleId)
 
         -- end
         local result = {
@@ -226,11 +255,10 @@ function Turtle:storeItemsFrom_ASrv(...)
         return callback:call(result)
     else -- source is not a turtle
         -- create turtleLocator
-        local turtleLocator = enterprise_turtle.GetTurtleLocator_SSrv({turtleId = self:getId()}).turtleLocator
-        if turtleLocator == nil then corelog.Error("Turtle:storeItemsFrom_ASrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
+        local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
         -- have source ItemSupplier provideItemsTo Turtle
-        local ingredientsItemSupplierLocator = enterprise_turtle.GetHostLocator_Att() -- ToDo: consider if there is a better way to supply a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)
+        local ingredientsItemSupplierLocator = itemsLocator:copy() -- note: this is intended as a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)
         local serviceData = {
             itemsLocator                = itemsLocator,
             itemDepotLocator            = turtleLocator,
