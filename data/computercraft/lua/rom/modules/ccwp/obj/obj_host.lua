@@ -215,9 +215,9 @@ function Host:getResource(...)
     -- get URL components
     local hostURI = resourceLocator:getHostURI()
     if hostURI ~= self:getHostName() then
-        corelog.Error("Host:getResource: resourceLocator(="..resourceLocator:getURI()..") not for "..self:getHostName().." Host.")
-        corelog.WriteToLog("hostURI = " .. hostURI)
-        corelog.WriteToLog("self:getHostName() = " .. self:getHostName())
+        corelog.Error("  Host:getResource: resourceLocator(="..resourceLocator:getURI()..") not for "..self:getHostName().." Host.")
+        corelog.WriteToLog("  hostURI = " .. hostURI)
+        corelog.WriteToLog("  self:getHostName() = " .. self:getHostName())
         return nil
     end
     local portURI = resourceLocator:getPortURI()
