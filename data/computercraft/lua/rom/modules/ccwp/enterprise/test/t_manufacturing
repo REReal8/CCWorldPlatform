@@ -54,8 +54,12 @@ function t_manufacturing.BuildAndStartNewV1Site_CallBack(callbackData, serviceRe
 end
 
 function t_manufacturing.T_BuildAndStartNewV2Site()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_manufacturing.BuildAndStartNewSite_ASrv tests")
+    if not siteLocatorV1 then corelog.Error("siteLocatorV1 not yet set, first create v1 site as this test wants to upgrade") return false end
     t_turtle = t_turtle or require "test.t_turtle"
 
+    -- test
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
         baseLocation            = baseLocationV2,
         siteVersion             = "v2",
