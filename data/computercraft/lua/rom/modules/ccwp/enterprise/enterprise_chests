@@ -323,7 +323,7 @@ function enterprise_chests.StoreItemsFrom_ASrv(...)
 
     -- get Obj
     local obj = enterprise_chests:getObject(itemDepotLocator)
-    if type(obj) ~= "table" then corelog.Error("enterprise_chests.ProvideItemsTo_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+    if type(obj) ~= "table" then corelog.Error("enterprise_chests.StoreItemsFrom_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- have Obj store items
     return obj:storeItemsFrom_AOSrv({
