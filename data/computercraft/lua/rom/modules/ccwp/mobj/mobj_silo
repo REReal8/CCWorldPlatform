@@ -447,26 +447,6 @@ function Silo:getDropLocation()
     return self._topChests[self._dropLocation]
 end
 
-function Silo:VerifyReadyToDrop_QSrv(itemList)
-
-    -- would the systeem be ready for the drop of the itemList?
-    return true
-end
-
-function Silo:RequestPermissionToDrop_QSrv(itemList)
-
-    -- reserve space for the drop
-    return true -- true means you are expected to drop the items in the itemList, and call
-end
-
-function Silo:MessageItemsDropped_SSrv(itemList)
-
-    -- initiate storing of the dropped items
-
-    -- useless return
-    return "Thanks you for your message"
-end
-
 function Silo:getPickupLocation()
     -- easy
     return self._topChests[self._pickupLocation]
@@ -573,7 +553,7 @@ function Silo:fromTopchestIntoSilo_AOSrv(...)
 
     local projectData = {
         itemsLocator            = itemsLocator,
-        chestOneLocator         = self._storageChests[1],
+        chestOneLocator         = self._storageChests[ math.random( #self._storageChests ) ],
         assignmentsPriorityKey  = assignmentsPriorityKey,
     }
     local projectDef = {
