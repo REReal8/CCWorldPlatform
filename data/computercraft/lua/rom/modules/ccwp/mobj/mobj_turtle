@@ -242,7 +242,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
         -- verify turtle has items (aleady)
         local storeItems = itemsLocator:getQuery()
         local hasItems = self:getInventory():hasItems(storeItems)
-        if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all) available in Turtle") return Callback.ErrorCall(callback) end
+        if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all) items available in Turtle") return Callback.ErrorCall(callback) end
 
         -- determine destinationItemsLocator
         local destinationItemsLocator = itemsLocator:copy()
