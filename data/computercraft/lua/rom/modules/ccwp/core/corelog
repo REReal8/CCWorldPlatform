@@ -154,6 +154,40 @@ function corelog.WriteToProjectsLog(message, projectId, writeMode)
 	WriteToFormattedLog(message, projectId, "projects", writeMode)
 end
 
+function corelog.FindCaller(ignoreTabel)
+	local ignore = ignoreTabel
+
+	-- always need a table
+	if type(ignore) ~= "table" then ignore = {} end
+
+	-- always ignore some functions
+	ignore["method_executor"] = true
+
+	-- we don't need ourself (0) and the one calling this function (1), start witth 2
+	local level = 2
+
+	-- endless until we are at the end or found something
+	while true do
+
+		-- get the debug info
+		local info = debug.getinfo(level, "Sl")
+
+		-- at the end of the stack?
+		if not info then return nil end
+
+		-- just to be sure, skip C functions
+		if info.what ~= "C" and ignore[info.short_src] == nil then -- not a C function and not in the ignore list
+
+			-- Yahoo!
+			return string.format("[%s]:%d", info.short_src, info.currentline)
+
+		end
+
+		-- still here, try the next level
+		level = level + 1
+	end
+end
+
 --                         _
 --                        | |
 --     _____   _____ _ __ | |_ ___
