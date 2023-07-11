@@ -84,7 +84,7 @@ end
 
 function enterprise_isp.Can_ProvideItems_QSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
+    local checkSuccess, itemsLocator = InputChecker.Check([[
         This sync public query service answers the question whether the ItemSupplier can provide specific items.
 
         Return value:
@@ -92,24 +92,26 @@ function enterprise_isp.Can_ProvideItems_QSrv(...)
                 success             - (boolean) whether the answer to the question is true
 
         Parameters:
-            serviceData             + (table) data to the query
+            serviceData             - (table) data to the query
                 itemsLocator        + (URL) locating the items that need to be queried for providability
                                         (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
 
-    -- get ItemSupplier
-    local serviceResults = GetItemSupplierName_SSrv( { itemSupplierLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: failed obtaining itemSupplierName for "..itemsLocator:getURI()..".") return {success = false} end
-    local itemSupplierName = serviceResults.enterpriseName
+    -- get obj
+    local itemSupplierLocator = itemsLocator:baseCopy()
+    local obj = Host.GetObject(itemSupplierLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: obj "..itemSupplierLocator:getURI().." not found.") return {success = false} end
 
-    -- call method on ItemSupplier
-    local serviceName = "Can_ProvideItems_QSrv"
-    serviceResults = MethodExecutor.DoSyncService(itemSupplierName, serviceName, serviceData)
+    -- check obj can provide items
+    local provideItems = itemsLocator:getQuery()
+    local canProvide = obj:can_ProvideItems_QOSrv({
+        provideItems    = provideItems,
+    })
 
     -- end
-    return serviceResults
+    return canProvide
 end
 
 function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
