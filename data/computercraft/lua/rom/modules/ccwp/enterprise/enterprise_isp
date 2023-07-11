@@ -154,7 +154,7 @@ end
 
 function enterprise_isp.StoreItemsFrom_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemDepotLocator, callback = InputChecker.Check([[
+    local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
 
         An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
@@ -170,24 +170,25 @@ function enterprise_isp.StoreItemsFrom_ASrv(...)
                                             and the "query" should be equal to the "query" component of the itemsLocator)
 
         Parameters:
-            serviceData                 + (table) data about the service
-                itemsLocator            - (URL) locating the items to store
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
                                             (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                             (the "query" component of the URL specifies the items)
                 itemDepotLocator        + (URL) locating the ItemDepot where the items need to be stored to
-                assignmentsPriorityKey  - (string, "") priorityKey that should be set for all assignments triggered by this service
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                    + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get ItemDepot
-    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemDepotLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.StoreItemsFrom_ASrv: failed obtaining itemDepotName for "..itemDepotLocator:getURI()..".") return Callback.ErrorCall(callback) end
-    local itemDepotName = serviceResults.enterpriseName
+    -- get obj
+    local obj = Host.GetObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_isp.StoreItemsFrom_ASrv: obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- call method on ItemDepot
-    local serviceName = "StoreItemsFrom_ASrv"
-    return MethodExecutor.DoASyncService(itemDepotName, serviceName, serviceData, callback)
+    -- have obj store items
+    return obj:storeItemsFrom_AOSrv({
+        itemsLocator                    = itemsLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_isp.Can_StoreItems_QSrv(...)

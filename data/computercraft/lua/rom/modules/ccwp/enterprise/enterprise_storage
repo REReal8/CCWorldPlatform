@@ -193,45 +193,6 @@ function enterprise_storage.DelistStorage_ASrv(...)
     return Callback.ErrorCall(callback)
 end
 
-function enterprise_storage.StoreItemsFrom_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public ItemDepot service stores items from from an ItemSupplier into an ItemDepot.
-
-        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where where stored
-                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
-                                            and the "query" should be equal to the "query" component of the itemsLocator)
-
-        Parameters:
-            serviceData                 - (table) data about the service
-                itemsLocator            + (URL) locating the items to store
-                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                            (the "query" component of the URL specifies the items)
-                itemDepotLocator        + (URL) locating the ItemDepot where the items need to be stored to
-                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                    + (Callback) to call once service is ready
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_storage.StoreItemsFrom_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get Obj
-    local obj = enterprise_storage:getObject(itemDepotLocator)
-    if type(obj) ~= "table" then corelog.Error("enterprise_storage.StoreItemsFrom_ASrv: Obj "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
-
-    -- have Obj store items
-    return obj:storeItemsFrom_AOSrv({
-        itemsLocator                    = itemsLocator,
-        assignmentsPriorityKey          = assignmentsPriorityKey,
-    }, callback)
-end
-
 function enterprise_storage.Can_StoreItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
