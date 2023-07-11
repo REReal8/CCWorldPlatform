@@ -452,12 +452,6 @@ function Silo:getPickupLocation()
     return self._topChests[self._pickupLocation]
 end
 
-function Silo:ItemsAvailable_QSrv(itemList)
-
-    -- fake we have everything
-    return true
-end
-
 function Silo:OrderItems_ASrv(itemList, callback)
 
     -- fake we have delivered
