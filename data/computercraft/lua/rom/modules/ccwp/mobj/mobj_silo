@@ -290,7 +290,7 @@ function Silo:can_ProvideItems_QOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:can_ProvideItems_QOSrv: not yet implemented")
-    return {success = false}
+    return {success = true}
 end
 
 function Silo:needsTo_ProvideItemsTo_SOSrv(...)
@@ -314,7 +314,7 @@ function Silo:needsTo_ProvideItemsTo_SOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:needsTo_ProvideItemsTo_SOSrv: not yet implemented")
-    return {success = false}
+    return {success = true, fuelNeed = 10 + #self._storageChests}
 end
 
 function Silo:storeItemsFrom_AOSrv(...)
