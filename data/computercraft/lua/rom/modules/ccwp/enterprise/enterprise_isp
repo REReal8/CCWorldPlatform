@@ -311,6 +311,38 @@ function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
     }
 end
 
+local function GetItemDepotName_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemDepotLocator = InputChecker.Check([[
+        This sync private service provides the (enterprise) name of an ItemDepot.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the service executed successfully
+                enterpriseName      - (string) with (enterprise) name of the ItemDepot
+
+        Parameters:
+            serviceData             - (table) data about this service
+                itemDepotLocator    + (URL) locating the ItemDepot
+                                        (the "base" component of the URL should specify an ItemDepot enterprise)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Invalid input") return {success = false} end
+
+    -- determine ItemDepot name
+    local host = itemDepotLocator:getHost()
+    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
+    local enterpriseName = nil
+        if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
+    elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
+    else corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Not implemented for "..host .." host.") return {success = false} end
+
+    -- end
+    return {
+        success         = true,
+        enterpriseName  = enterpriseName,
+    }
+end
+
 function enterprise_isp.GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
@@ -463,80 +495,6 @@ function enterprise_isp.AddItemsTo(items, itemsToAdd)
 
     -- end
     return {success = true}
-end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
-
-function GetItemSupplierName_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemSupplierLocator = InputChecker.Check([[
-        This sync private service provides the (enterprise) name of an ItemSupplier.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                enterpriseName      - (string) with (enterprise) name of the ItemSupplier
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemSupplierLocator + (URL) locating the ItemSupplier
-                                        (the "base" component of the URL should specify an ItemSupplier enterprise)
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: Invalid input") return {success = false} end
-
-    -- determine enterpriseName
-    local host = itemSupplierLocator:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
-    local enterpriseName = nil
-        if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
-    elseif host == "enterprise_forestry"then enterpriseName = "enterprise_forestry"
-    elseif host == "enterprise_manufacturing" then enterpriseName = "enterprise_manufacturing"
-    elseif host == "enterprise_shop"    then enterpriseName = "enterprise_shop"
-    elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
-    else corelog.Error("enterprise_isp.GetItemSupplierName_SSrv: Not implemented for "..host .." host.") return {success = false} end
-
-    -- end
-    return {
-        success         = true,
-        enterpriseName  = enterpriseName,
-    }
-end
-
-function GetItemDepotName_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemDepotLocator = InputChecker.Check([[
-        This sync private service provides the (enterprise) name of an ItemDepot.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                enterpriseName      - (string) with (enterprise) name of the ItemDepot
-
-        Parameters:
-            serviceData             - (table) data about this service
-                itemDepotLocator    + (URL) locating the ItemDepot
-                                        (the "base" component of the URL should specify an ItemDepot enterprise)
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Invalid input") return {success = false} end
-
-    -- determine ItemDepot name
-    local host = itemDepotLocator:getHost()
-    if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
-    local enterpriseName = nil
-        if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
-    elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
-    else corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Not implemented for "..host .." host.") return {success = false} end
-
-    -- end
-    return {
-        success         = true,
-        enterpriseName  = enterpriseName,
-    }
 end
 
 return enterprise_isp
