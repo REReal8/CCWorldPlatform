@@ -16,7 +16,6 @@ function T_Host.T_All()
     T_Host.T_IsOfType()
     T_Host.T_isSame()
     T_Host.T_copy()
-    T_Host.T_GetHost()
 
     -- specific methods
     T_Host.T_getHostLocator()
@@ -29,7 +28,9 @@ function T_Host.T_All()
     T_Host.T_getNumberOfObjects()
     T_Host.T_deleteObjects()
 
-    -- helper functions
+    -- class methods
+    T_Host.T_GetHost()
+    T_Host.T_GetObject()
 end
 
 local hostName = "TestHost"
@@ -117,36 +118,6 @@ function T_Host.T_copy()
     -- test
     local copy = host1:copy()
     assert(copy:isSame(host1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(host1, compact)..")")
-
-    -- cleanup test
-end
-
-function T_Host.T_GetHost()
-    -- prepare test
-    corelog.WriteToLog("* Host.GetHost(...) tests")
-    local module = moduleRegistry:getModule(hostName)
-    assert(not module, "a module with name="..hostName.." already registered")
-
-    -- test not registered host
-    local host = Host.GetHost(hostName, true)
-    assert(not host, "unexpectedly got a host with hostName="..hostName)
-
-    -- test registered host
-    moduleRegistry:registerModule(hostName, host1)
-    host = Host.GetHost(hostName)
-    assert(host, "host with hostName="..hostName.." not gotten")
-    moduleRegistry:delistModule(hostName)
-
-    -- test other registered object
-    local testObj = TestObj:new({
-        _field1 = "field1",
-        _field2 = 4,
-    })
-    local testObjName = "testObj"
-    moduleRegistry:registerModule(testObjName, testObj)
-    host = Host.GetHost(testObjName, true)
-    assert(not host, "unexpectedly got a 'Host' with name="..testObjName)
-    moduleRegistry:delistModule(testObjName)
 
     -- cleanup test
 end
@@ -374,6 +345,60 @@ function T_Host.T_deleteObjects()
     assert(nObjects == expectedNObjects, "gotten nObjects(="..nObjects..") not the same as expected(="..expectedNObjects..")")
 
     -- cleanup test
+end
+
+--         _                                _   _               _
+--        | |                              | | | |             | |
+--     ___| | __ _ ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
+--    / __| |/ _` / __/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | (__| | (_| \__ \__ \ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--    \___|_|\__,_|___/___/ |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--
+--
+
+function T_Host.T_GetHost()
+    -- prepare test
+    corelog.WriteToLog("* Host.GetHost(...) tests")
+    local module = moduleRegistry:getModule(hostName)
+    assert(not module, "a module with name="..hostName.." already registered")
+
+    -- test not registered host
+    local host = Host.GetHost(hostName, true)
+    assert(not host, "unexpectedly got a host with hostName="..hostName)
+
+    -- test registered host
+    moduleRegistry:registerModule(hostName, host1)
+    host = Host.GetHost(hostName)
+    assert(host, "host with hostName="..hostName.." not gotten")
+    moduleRegistry:delistModule(hostName)
+
+    -- test other registered object
+    local testObj = TestObj:new({
+        _field1 = "field1",
+        _field2 = 4,
+    })
+    local testObjName = "testObj"
+    moduleRegistry:registerModule(testObjName, testObj)
+    host = Host.GetHost(testObjName, true)
+    assert(not host, "unexpectedly got a 'Host' with name="..testObjName)
+    moduleRegistry:delistModule(testObjName)
+
+    -- cleanup test
+end
+
+function T_Host.T_GetObject()
+    -- prepare test
+    corelog.WriteToLog("* Host.GetObject(...) tests")
+    moduleRegistry:registerModule(hostName, host1)
+    local objectLocator = host1:saveObject(testObject, className)
+
+    -- test GetObject
+    local object = Host.GetObject(objectLocator)
+    assert(object and object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+
+    -- cleanup test
+    host1:deleteResource(objectLocator)
+    moduleRegistry:delistModule(hostName)
 end
 
 return T_Host

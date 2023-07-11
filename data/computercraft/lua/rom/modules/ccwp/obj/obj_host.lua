@@ -107,134 +107,6 @@ function Host:copy()
     return copy
 end
 
---         _                                _   _               _
---        | |                              | | | |             | |
---     ___| | __ _ ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
---    / __| |/ _` / __/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | (__| | (_| \__ \__ \ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---    \___|_|\__,_|___/___/ |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---
---
-
-function Host.GetHost(...)
-    -- get & check input from description
-    local checkSuccess, hostName, suppressWarning = InputChecker.Check([[
-        This method retrieves a Host from a hostName.
-
-        Return value:
-            host                    - (Host) with the Host
-
-        Parameters:
-            hostName                + (string) with hostName of the Host
-            suppressWarning         + (boolean, false) if Warning should be suppressed
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Host.GetHost: Invalid input") return nil end
-
-    -- get Host
-    local host = moduleRegistry:getModule(hostName)
-    if not Host.IsOfType(host) then if not suppressWarning then corelog.Warning("Host.GetHost: No Host registered with hostName="..hostName) end return nil end
-
-    -- end
-    return host
-end
-
-function Host.GetObjectPath(...)
-    -- get & check input from description
-    local checkSuccess, className, objectId, object = InputChecker.Check([[
-        This method provides the objectPath of an object in the Host with class className and id objectId.
-
-        If the object has a getClassName() method the className argument can be set to "".
-        If the object has a getId() method the objectId argument can be set to "".
-        If the object is not provided the className and objectId arguments are used
-
-        Return value:
-            resourcePath            - (string) locating the object within the Host
-
-        Parameters:
-            className               + (string, "") with the name of the class of the object
-            objectId                + (string, "") with the optional id of the object
-            object                  + (table, nil) the object
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Host.GetObjectPath: Invalid input") return nil end
-
-    -- determince resourcePath
-    local objectPath = "/objects"
-
-    -- optionally add className to resourcePath
-    if className == "" then
-        -- attempt to get className from object
-        if object.getClassName then
-            local name = object:getClassName()
-            if type(name) == "string" then
-                className = name
-            else
-                corelog.Warning("Host.GetObjectPath: object:getClassName() did not return(type="..type(name)..") a string")
-            end
-        else
-            corelog.Warning("Host.GetObjectPath: object:getClassName() does not exist. Also not provided. => couldn't determine className")
-        end
-    end
-    if className ~= "" then
-        objectPath = objectPath.."/class="..className
-    end
-
-    -- optionally add objectId to resourcePath
-    if objectId == "" then
-        -- attempt to get objectId from object
-        if object.getId then
-            local id = object:getId()
-            if type(id) == "string" then
-                objectId = id
-            else
-                corelog.Warning("Host.GetObjectPath: object:getId() did not return(type="..type(id)..") a string")
-            end
-        end
-    end
-    if objectId ~= "" then
-        objectPath = objectPath.."/id="..objectId
-    end
-
-    -- end
-    return objectPath
-end
-
--- ToDo: consider if it's better to make this a method of a Host object (instead of the global function we have now)
-function Host.SaveObject_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, hostName, className, objectTable = InputChecker.Check([[
-        This sync service saves an object in Host named hostName.
-
-        Return value:
-                                - (table)
-                success         - (boolean) whether the service executed successfully
-                objectLocator   - (URL) locating the object
-
-        Parameters:
-            serviceData         - (table) data for this service
-                hostName        + (string) with hostName of the Host
-                className       + (string) with the name of the class of the object
-                objectTable     + (table) of the object
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Host.SaveObject_SSrv: Invalid input") return {success = false} end
-
-    -- get Host
-    local host = Host.GetHost(hostName)
-    if not host then corelog.Error("Host.SaveObject_SSrv: host "..hostName.." not found") return {success = false} end
-
-    -- convert to object
-    local object = objectFactory:create(className, objectTable)
-
-    -- save object
-    local objectLocator = host:saveObject(object)
-    if not objectLocator then corelog.Error("Host.SaveObject_SSrv: Failed saving object "..textutils.serialise(object)) return {success = false} end
-
-    -- end
-    return {
-        success         = true,
-        objectLocator   = objectLocator,
-    }
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
@@ -633,6 +505,158 @@ function Host:deleteObjects(...)
         -- delete
         self:deleteResource(objectLocator)
     end
+end
+
+--         _                                _   _               _
+--        | |                              | | | |             | |
+--     ___| | __ _ ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
+--    / __| |/ _` / __/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | (__| | (_| \__ \__ \ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--    \___|_|\__,_|___/___/ |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--
+--
+
+function Host.GetHost(...)
+    -- get & check input from description
+    local checkSuccess, hostName, suppressWarning = InputChecker.Check([[
+        This method retrieves a Host from a hostName.
+
+        Return value:
+            host                    - (Host) with the Host
+
+        Parameters:
+            hostName                + (string) with hostName of the Host
+            suppressWarning         + (boolean, false) if Warning should be suppressed
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.GetHost: Invalid input") return nil end
+
+    -- get Host
+    local host = moduleRegistry:getModule(hostName)
+    if not Host.IsOfType(host) then if not suppressWarning then corelog.Warning("Host.GetHost: No Host registered with hostName="..hostName) end return nil end
+
+    -- end
+    return host
+end
+
+function Host.GetObjectPath(...)
+    -- get & check input from description
+    local checkSuccess, className, objectId, object = InputChecker.Check([[
+        This method provides the objectPath of an object in the Host with class className and id objectId.
+
+        If the object has a getClassName() method the className argument can be set to "".
+        If the object has a getId() method the objectId argument can be set to "".
+        If the object is not provided the className and objectId arguments are used
+
+        Return value:
+            resourcePath            - (string) locating the object within the Host
+
+        Parameters:
+            className               + (string, "") with the name of the class of the object
+            objectId                + (string, "") with the optional id of the object
+            object                  + (table, nil) the object
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.GetObjectPath: Invalid input") return nil end
+
+    -- determince resourcePath
+    local objectPath = "/objects"
+
+    -- optionally add className to resourcePath
+    if className == "" then
+        -- attempt to get className from object
+        if object.getClassName then
+            local name = object:getClassName()
+            if type(name) == "string" then
+                className = name
+            else
+                corelog.Warning("Host.GetObjectPath: object:getClassName() did not return(type="..type(name)..") a string")
+            end
+        else
+            corelog.Warning("Host.GetObjectPath: object:getClassName() does not exist. Also not provided. => couldn't determine className")
+        end
+    end
+    if className ~= "" then
+        objectPath = objectPath.."/class="..className
+    end
+
+    -- optionally add objectId to resourcePath
+    if objectId == "" then
+        -- attempt to get objectId from object
+        if object.getId then
+            local id = object:getId()
+            if type(id) == "string" then
+                objectId = id
+            else
+                corelog.Warning("Host.GetObjectPath: object:getId() did not return(type="..type(id)..") a string")
+            end
+        end
+    end
+    if objectId ~= "" then
+        objectPath = objectPath.."/id="..objectId
+    end
+
+    -- end
+    return objectPath
+end
+
+function Host.GetObject(...)
+    -- get & check input from description
+    local checkSuccess, objectLocator = InputChecker.Check([[
+        This method retrieves an object from a Host using a URL (that was once provided by the Host).
+
+        Return value:
+            object                  - (?) object obtained from the Host
+
+        Parameters:
+            objectLocator           + (URL) locator of the object within the Host
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.GetObject: Invalid input") return nil end
+
+    -- get Host
+    local host = Host.GetHost(objectLocator:getHost()) if not host then corelog.Error("Host.GetObject: Host of "..objectLocator:getURI().." not found") return nil end
+
+    -- get object
+    local object = host:getObject(objectLocator)
+    if not object then corelog.Error("Host.GetObject: Failed object for objectLocator="..objectLocator:getURI()) return nil end
+
+    -- end
+    return object
+end
+
+-- ToDo: consider if it's better to make this a method of a Host object (instead of the global function we have now)
+function Host.SaveObject_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, hostName, className, objectTable = InputChecker.Check([[
+        This sync service saves an object in Host named hostName.
+
+        Return value:
+                                - (table)
+                success         - (boolean) whether the service executed successfully
+                objectLocator   - (URL) locating the object
+
+        Parameters:
+            serviceData         - (table) data for this service
+                hostName        + (string) with hostName of the Host
+                className       + (string) with the name of the class of the object
+                objectTable     + (table) of the object
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host.SaveObject_SSrv: Invalid input") return {success = false} end
+
+    -- get Host
+    local host = Host.GetHost(hostName)
+    if not host then corelog.Error("Host.SaveObject_SSrv: host "..hostName.." not found") return {success = false} end
+
+    -- convert to object
+    local object = objectFactory:create(className, objectTable)
+
+    -- save object
+    local objectLocator = host:saveObject(object)
+    if not objectLocator then corelog.Error("Host.SaveObject_SSrv: Failed saving object "..textutils.serialise(object)) return {success = false} end
+
+    -- end
+    return {
+        success         = true,
+        objectLocator   = objectLocator,
+    }
 end
 
 return Host
