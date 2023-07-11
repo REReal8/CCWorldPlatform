@@ -439,7 +439,7 @@ function Silo:needsTo_StoreItemsFrom_SOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:needsTo_StoreItemsFrom_SOSrv: not yet implemented")
-    return {success = true, fuelNeed = 500} -- we can fix anything with that much fuel
+    return {success = true, fuelNeed = 10 + #self._storageChests} -- we can fix anything with that much fuel
 end
 
 function Silo:getDropLocation()
