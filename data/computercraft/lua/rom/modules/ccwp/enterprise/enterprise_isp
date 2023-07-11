@@ -193,7 +193,7 @@ end
 
 function enterprise_isp.Can_StoreItems_QSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
+    local checkSuccess, itemsLocator = InputChecker.Check([[
         This sync public query service answers the question whether the ItemDepot can store specific items.
 
         Return value:
@@ -201,21 +201,26 @@ function enterprise_isp.Can_StoreItems_QSrv(...)
                 success             - (boolean) whether the answer to the question is true
 
         Parameters:
-            serviceData             + (table) data to the query
+            serviceData             - (table) data to the query
                 itemsLocator        + (URL) locating the items that need to be stored
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.Can_StoreItems_QSrv: Invalid input") return {success = false} end
 
-    -- get ItemDepot
-    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.Can_StoreItems_QSrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
-    local itemDepotName = serviceResults.enterpriseName
+    -- get obj
+    local itemDepotLocator = itemsLocator:baseCopy()
+    local obj = Host.GetObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_isp.Can_StoreItems_QSrv: obj "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
-    -- call method on ItemDepot
-    local serviceName = "Can_StoreItems_QSrv"
-    return MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
+    -- check obj can store items
+    local storeItems = itemsLocator:getQuery()
+    local canStore = obj:can_StoreItems_QOSrv({
+        storeItems    = storeItems,
+    })
+
+    -- end
+    return canStore
 end
 
 function enterprise_isp.NeedsTo_StoreItemsFrom_SSrv(...)
