@@ -171,47 +171,6 @@ function enterprise_shop.DelistItemSupplier_SSrv(...)
     })
 end
 
-function enterprise_shop.ProvideItemsTo_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
-        This async public ItemSupplier service provides specific items to an ItemDepot.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed correctly
-                destinationItemsLocator         - (URL) locating the final ItemDepot and the items that where transferred to it
-                                                    (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
-                                                    the "query" should be equal to orderItems)
-
-        Parameters:
-            serviceData                         - (table) data for the service
-                itemsLocator                    + (URL) locating the items to provide
-                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                    (the "query" component of the URL specifies the items)
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
-                assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
-            callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- get Obj
-    local obj = enterprise_shop:getObject(itemsLocator)
-    if type(obj) ~="table" then corelog.Error("enterprise_shop.ProvideItemsTo_ASrv: Obj "..itemsLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
-
-    -- have Obj provide items
-    local provideItems = itemsLocator:getQuery()
-    return obj:provideItemsTo_AOSrv({
-        provideItems                    = provideItems,
-        itemDepotLocator                = itemDepotLocator,
-        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        assignmentsPriorityKey          = assignmentsPriorityKey,
-    }, callback)
-end
-
 function enterprise_shop.Can_ProvideItems_QSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[

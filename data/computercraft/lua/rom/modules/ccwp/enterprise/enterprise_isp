@@ -5,6 +5,7 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local MethodExecutor = require "method_executor"
 local URL = require "obj_url"
+local Host = require "obj_host"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -41,7 +42,7 @@ local role_fuel_worker = require "role_fuel_worker"
 
 function enterprise_isp.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemsLocator, callback = InputChecker.Check([[
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
@@ -55,25 +56,30 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
                                                     the "query" should be equal to orderItems)
 
         Parameters:
-            serviceData                         + (table) data for the service
+            serviceData                         - (table) data for the service
                 itemsLocator                    + (URL) locating the items to provide
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-                itemDepotLocator                - (URL) locating the ItemDepot where the items need to be provided to
-                ingredientsItemSupplierLocator  - (URL) locating where the production ingredients can be retrieved
-                assignmentsPriorityKey          - (string, "") priorityKey that should be set for all assignments triggered by this service
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
+                ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get ItemSupplier
-    local serviceResults = GetItemSupplierName_SSrv( { itemSupplierLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: failed obtaining itemSupplierName for "..itemsLocator:getURI()..".") return Callback.ErrorCall(callback) end
-    local itemSupplierName = serviceResults.enterpriseName
+    -- get obj
+    local itemSupplierLocator = itemsLocator:baseCopy()
+    local obj = Host.GetObject(itemSupplierLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_isp.ProvideItemsTo_ASrv: obj "..itemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
-    -- call method on ItemSupplier
-    local serviceName = "ProvideItemsTo_ASrv"
-    return MethodExecutor.DoASyncService(itemSupplierName, serviceName, serviceData, callback)
+    -- have obj provide items
+    local provideItems = itemsLocator:getQuery()
+    return obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        assignmentsPriorityKey          = assignmentsPriorityKey,
+    }, callback)
 end
 
 function enterprise_isp.Can_ProvideItems_QSrv(...)
