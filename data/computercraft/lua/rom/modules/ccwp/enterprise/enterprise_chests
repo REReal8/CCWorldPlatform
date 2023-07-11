@@ -183,38 +183,6 @@ function enterprise_chests.GetItemsLocator_SSrv(...)
     return result
 end
 
-function enterprise_chests.NeedsTo_StoreItemsFrom_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
-        This sync public service returns the needs for the ItemDepot to store specific items from an ItemSupplier.
-
-        Return value:
-                                                - (table)
-                success                         - (boolean) whether the service executed correctly
-                fuelNeed                        - (number) amount of fuel needed to store items
-
-        Parameters:
-            serviceData                         - (table) data to the query
-                itemsLocator                    + (URL) locating the items to store
-                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                    (the "query" component of the URL specifies the items)
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be stored to
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_StoreItemsFrom_SSrv: Invalid input") return {success = false} end
-
-    -- get Obj
-    local obj = enterprise_chests:getObject(itemDepotLocator)
-    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_StoreItemsFrom_SSrv: Obj "..itemDepotLocator:getURI().." not found.") return {success = false} end
-
-    -- determine needs
-    local needs = obj:needsTo_StoreItemsFrom_SOSrv({
-        itemsLocator    = itemsLocator,
-    })
-
-    -- end
-    return needs
-end
-
 -- ToDo: consider getting from/ moving to Chest
 function enterprise_chests.GetItemsLocations_SSrv(...)
     -- get & check input from description

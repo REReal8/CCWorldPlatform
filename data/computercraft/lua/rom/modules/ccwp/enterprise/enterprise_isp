@@ -225,7 +225,7 @@ end
 
 function enterprise_isp.NeedsTo_StoreItemsFrom_SSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemDepotLocator = InputChecker.Check([[
+    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemDepot to store specific items from an ItemSupplier.
 
         Return value:
@@ -235,21 +235,24 @@ function enterprise_isp.NeedsTo_StoreItemsFrom_SSrv(...)
 
         Parameters:
             serviceData                         + (table) data to the query
-                itemsLocator                    - (URL) locating the items to store
+                itemsLocator                    + (URL) locating the items to store
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be stored to
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_StoreItemsFrom_SSrv: Invalid input") return {success = false} end
 
-    -- get ItemDepot
-    local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemDepotLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_StoreItemsFrom_SSrv: failed obtaining itemDepotName for "..itemDepotLocator:getURI()..".") return {success = false} end
-    local itemDepotName = serviceResults.enterpriseName
+    -- get obj
+    local obj = Host.GetObject(itemDepotLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_StoreItemsFrom_SSrv: obj "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
-    -- call method on ItemDepot
-    local serviceName = "NeedsTo_StoreItemsFrom_SSrv"
-    return MethodExecutor.DoSyncService(itemDepotName, serviceName, serviceData)
+    -- determine needs
+    local needs = obj:needsTo_StoreItemsFrom_SOSrv({
+        itemsLocator    = itemsLocator,
+    })
+
+    -- end
+    return needs
 end
 
 function enterprise_isp.NeedsTo_TransferItems_SSrv(...)
