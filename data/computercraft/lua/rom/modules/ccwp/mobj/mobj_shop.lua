@@ -160,7 +160,7 @@ function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLo
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
     }
     local serviceResults1 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-    if not serviceResults1.success then corelog.Error("enterprise_shop:bestItemSupplier: Failed obtaining needs for itemLocator1(="..textutils.serialise(itemLocator1)..")") return nil end
+    if not serviceResults1.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemLocator1(="..textutils.serialise(itemLocator1)..")") return nil end
 
     -- get needs 2
     local itemLocator2 = itemSupplierLocator2:copy()
@@ -171,7 +171,7 @@ function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLo
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
     }
     local serviceResults2 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-    if not serviceResults2.success then corelog.Error("enterprise_shop:bestItemSupplier: Failed obtaining needs for itemLocator2(="..textutils.serialise(itemLocator2)..")") return nil end
+    if not serviceResults2.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemLocator2(="..textutils.serialise(itemLocator2)..")") return nil end
 
     -- check lowest fuelNeed
     local fuelNeed1 = serviceResults1.fuelNeed
@@ -537,8 +537,8 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
     local ingredientsNeed = {}
     for itemName, itemCount in pairs(provideItems) do
         -- check item
-        if type(itemName) ~= "string" then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
-        if type(itemCount) ~= "number" then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
+        if type(itemName) ~= "string" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid itemName (type="..type(itemName)..")") return {success = false} end
+        if type(itemCount) ~= "number" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
         local item = { [itemName] = itemCount }
 
         -- get best itemLocator
@@ -547,7 +547,7 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
             itemDepotLocator                = itemDepotLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
         ).itemLocator
-        if not itemLocator then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
+        if not itemLocator then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get provide needs
         local itemServiceData = {
@@ -556,7 +556,7 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         }
         local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-        if not serviceResults.success then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
+        if not serviceResults.success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get fuelNeed to provide
         local fuelNeed_Provide = serviceResults.fuelNeed
@@ -567,7 +567,7 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
 
         -- add ingredientsNeed
         local itemIngredientsNeed = serviceResults.ingredientsNeed
-        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("enterprise_shop.NeedsTo_ProvideItemsTo_SSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
+        if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
     end
 
     -- end
