@@ -452,20 +452,6 @@ function Silo:getPickupLocation()
     return self._topChests[self._pickupLocation]
 end
 
-function Silo:OrderItems_ASrv(itemList, callback)
-
-    -- fake we have delivered
-    return true
-end
-
-function Silo:MessageItemPickedup_SSrv(itemList)
-
-    -- mark items are picked up
-
-    -- useless return
-    return "Thanks you for your message"
-end
-
 function Silo:Save()
     -- we need a valid zelf
     if type(self) ~= "table" or type(self._id) ~= "string" then return false end
