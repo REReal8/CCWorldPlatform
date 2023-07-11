@@ -15,9 +15,7 @@ local ObjArray = require "obj_array"
 local Shop = require "mobj_shop"
 
 --[[
-    The enterprise_shop offers services for providing (ordering) items.
-
-    The enterprise is a Host. It hosts one Shop. It uses the services of the Shop to provide the items.
+    The enterprise_shop is a Host. It hosts one ItemSupplier Shop to provide items.
 --]]
 
 --    _                                     _   _               _

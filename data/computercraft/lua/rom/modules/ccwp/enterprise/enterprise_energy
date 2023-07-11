@@ -17,7 +17,7 @@ local db = {
 }
 
 --[[
-    The Energy enterprise offers services for handling energy (fuel).
+    The enterprise_energy offers services for handling energy (fuel).
 --]]
 
 --                _     _ _         __                  _   _

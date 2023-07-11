@@ -23,7 +23,7 @@ local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 
 --[[
-    The Turtle enterprise provides services related to turtles.
+    The enterprise_turtle provides services related to turtles.
 
     This enterprise is both an ItemSupplier and an ItemDepot, hence it provides the mandatory services and functions for the types (like e.g. Can_ProvideItems_QSrv).
 
