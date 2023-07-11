@@ -183,43 +183,6 @@ function enterprise_chests.GetItemsLocator_SSrv(...)
     return result
 end
 
-function enterprise_chests.NeedsTo_ProvideItemsTo_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator, itemDepotLocator = InputChecker.Check([[
-        This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
-
-        Return value:
-                                                - (table)
-                success                         - (boolean) whether the service executed correctly
-                fuelNeed                        - (number) amount of fuel needed to provide items
-                ingredientsNeed                 - (table) ingredients needed to provide items
-
-        Parameters:
-            serviceData                         - (table) data to the query
-                itemsLocator                    + (URL) locating the items to provide
-                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                                    (the "query" component of the URL specifies the items)
-                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
-
-                ingredientsItemSupplierLocator  - (URL) locating where ingredients can be retrieved
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
-
-    -- get Obj
-    local obj = enterprise_chests:getObject(itemsLocator)
-    if type(obj) ~= "table" then corelog.Error("enterprise_chests.NeedsTo_ProvideItemsTo_SSrv: Obj "..itemsLocator:getURI().." not found.") return {success = false} end
-
-    -- determine needs
-    local provideItems = itemsLocator:getQuery()
-    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
-        provideItems    = provideItems,
-        itemDepotLocator= itemDepotLocator,
-    })
-
-    -- end
-    return needs
-end
-
 function enterprise_chests.StoreItemsFrom_ASrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[

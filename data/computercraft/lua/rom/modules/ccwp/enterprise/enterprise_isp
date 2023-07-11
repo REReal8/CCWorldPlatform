@@ -116,7 +116,7 @@ end
 
 function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, itemsLocator = InputChecker.Check([[
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
         This sync public service returns the needs for an ItemSupplier to provide specific items to an ItemDepot.
 
         Return value:
@@ -126,27 +126,30 @@ function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
                 ingredientsNeed                 - (table) ingredients needed to provide items
 
         Parameters:
-            serviceData                         + (table) data to the query
+            serviceData                         - (table) data to the query
                 itemsLocator                    + (URL) locating the items to provide
                                                     (the "base" component of the URL specifies the ItemSupplier that provides the items)
                                                     (the "query" component of the URL specifies the items)
-                itemDepotLocator                - (URL) locating the ItemDepot where the items need to be delivered to
-
-                ingredientsItemSupplierLocator  - (URL) optionally locating another ItemSupplier where needed ingredient items for the ItemSupplier could be retrieved
+                itemDepotLocator                + (URL) locating the ItemDepot where the items need to be delivered to
+                ingredientsItemSupplierLocator  + (URL) optionally locating another ItemSupplier where needed ingredient items for the ItemSupplier could be retrieved
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: Invalid input") return {success = false} end
 
-    -- get ItemSupplier
-    local serviceResults = GetItemSupplierName_SSrv( { itemSupplierLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: failed obtaining itemSupplierName for "..itemsLocator:getURI()..".") return {success = false} end
-    local itemSupplierName = serviceResults.enterpriseName
+    -- get Obj
+    local itemSupplierLocator = itemsLocator:baseCopy()
+    local obj = Host.GetObject(itemSupplierLocator)
+    if type(obj) ~= "table" then corelog.Error("enterprise_isp.NeedsTo_ProvideItemsTo_SSrv: obj "..itemSupplierLocator:getURI().." not found.") return {success = false} end
 
-    -- call method on ItemSupplier
-    local serviceName = "NeedsTo_ProvideItemsTo_SSrv"
-    serviceResults = MethodExecutor.DoSyncService(itemSupplierName, serviceName, serviceData)
+    -- determine needs
+    local provideItems = itemsLocator:getQuery()
+    local needs = obj:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+    })
 
     -- end
-    return serviceResults
+    return needs
 end
 
 function enterprise_isp.StoreItemsFrom_ASrv(...)
