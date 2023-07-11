@@ -265,6 +265,10 @@ function URL:setURI(fullURI, suppressError)
     self:setQueryURI(queryURI)
 end
 
+function URL:getBaseURI()
+    return self:getSchemeURI()..self:getAuthorityURI()..self:getPathURI()
+end
+
 function URL.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
@@ -298,7 +302,8 @@ function URL:isSame(obj)
     if not URL.IsOfType(obj) then return false end
 
     -- check same object
-    local isSame = self:getURI() == obj:getURI()
+    local isSame =  self:getBaseURI() == obj:getBaseURI()
+                and self:sameQuery(obj)
 
     -- end
     return isSame
@@ -336,7 +341,31 @@ function URL:sameBase(url)
 end
 
 function URL:sameQuery(url)
-    return self:getQueryURI() == url:getQueryURI()
+    -- check same elements as in A
+    local sizeA = 0
+    local queryB = url:getQuery()
+    for keyA, valueA in pairs(self:getQuery()) do
+        sizeA = sizeA + 1
+        -- check same
+        local valueB = queryB[keyA]
+        if valueA ~= valueB then return false end
+    end
+
+    -- check no other elements in B
+    local sizeB = 0
+    for keyB, valueB in pairs(queryB) do
+        sizeB = sizeB + 1
+    end
+    if sizeA ~= sizeB then return false end
+
+    -- end
+    return true
+end
+
+function URL:baseCopy()
+    local uri = self:getBaseURI()
+
+    return URL:newFromURI(uri)
 end
 
 return URL

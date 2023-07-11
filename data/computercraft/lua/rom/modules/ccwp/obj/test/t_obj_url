@@ -34,7 +34,7 @@ local queryURI = "?"..itemName2.."="..itemCount2.."&"..itemName1.."="..itemCount
 local expectedQueryURI = "?"..itemName1.."="..itemCount1.."&"..itemName2.."="..itemCount2
 
 function T_URL.T_All()
---    T_URL_Serializing()
+    -- base methods
     T_URL.T_new()
     T_URL.T_GettersURI()
     T_URL.T_Setters()
@@ -42,8 +42,14 @@ function T_URL.T_All()
     T_URL.T_NewFromURI()
     T_URL.T_IsOfType()
     T_URL.T_isSame()
+    T_URL.T_copy()
+
+    -- specific methods
     T_URL.T_SameURLComponents()
+    T_URL.T_baseCopy()
 end
+
+local compact = { compact = true }
 
 function T_URL.T_URL_Serializing()
     -- new URL
@@ -315,6 +321,32 @@ function T_URL.T_isSame()
     -- cleanup test
 end
 
+function T_URL.T_copy()
+    -- prepare test
+    corelog.WriteToLog("* URL:copy() tests")
+    local obj1 = URL:new({
+        _host = host,
+        _port = port,
+        _path = path,
+        _query = query,
+    })
+
+    -- test
+    local copy = obj1:copy()
+    assert(copy:isSame(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
+
+    -- cleanup test
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
 function T_URL.T_SameURLComponents()
     corelog.WriteToLog("* URL same components tests")
     -- same Host
@@ -390,6 +422,23 @@ function T_URL.T_SameURLComponents()
         _query = query2,
     })
     assert(not aURL:sameQuery(aDifferentURL), "query should not be the same")
+end
+
+function T_URL.T_baseCopy()
+    -- prepare test
+    corelog.WriteToLog("* URL:baseCopy() tests")
+    local obj1 = URL:new({
+        _host = host,
+        _port = port,
+        _path = path,
+        _query = query,
+    })
+
+    -- test
+    local baseCopy = obj1:baseCopy()
+    AssertWithURIs(baseCopy, hostURI, portURI, pathURI, "")
+
+    -- cleanup test
 end
 
 return T_URL
