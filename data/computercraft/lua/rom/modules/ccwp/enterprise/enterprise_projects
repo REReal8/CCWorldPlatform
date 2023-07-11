@@ -71,7 +71,7 @@ function enterprise_projects.StartProject_ASrv(...)
 --    corelog.WriteToProjectsLog("Add new: "..textutils.serialize(project), project.projectId)
     corelog.WriteToProjectsLog("Add new", project.projectId)
     coredht.SaveData(project, db.dhtRoot, project.projectId)
-    corelog.WriteToLog("New project created by " .. (project.callerFunction or "unknown"))
+    corelog.WriteToLog("New project "..project.projectId.." created by " .. (project.callerFunction or "unknown"))
 
     -- let's start
     return enterprise_projects.NextProjectStep({projectId = project.projectId}, projectData) -- the input projectData is interpreted as the result of virtual step 0
