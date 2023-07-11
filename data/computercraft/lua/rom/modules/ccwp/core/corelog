@@ -154,14 +154,11 @@ function corelog.WriteToProjectsLog(message, projectId, writeMode)
 	WriteToFormattedLog(message, projectId, "projects", writeMode)
 end
 
-function corelog.FindCaller(ignoreTabel)
-	local ignore = ignoreTabel
+function corelog.FindCaller(...) -- give ignore string as parameters. corelog.FindCaller("enterprise_projects", "enterprise_storage")
+	local ignore = {method_executor = true}
 
-	-- always need a table
-	if type(ignore) ~= "table" then ignore = {} end
-
-	-- always ignore some functions
-	ignore["method_executor"] = true
+	-- add all other keys to ignore
+	for index, toIgnore in ipairs(arg) do ignore[ toIgnore ] = true end
 
 	-- we don't need ourself (0) and the one calling this function (1), start witth 2
 	local level = 2

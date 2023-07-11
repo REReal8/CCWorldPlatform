@@ -64,7 +64,7 @@ function enterprise_projects.StartProject_ASrv(...)
         currentStep         = 0,
         outputs             = {},
 
-        callerFunction      = corelog.FindCaller({enterprise_projects = true}), -- for debugging
+        callerFunction      = corelog.FindCaller("enterprise_projects"), -- for debugging
     }
 
     -- save
