@@ -205,11 +205,11 @@ function enterprise_isp.Can_StoreItems_QSrv(...)
                                         (the "base" component of the URL specifies the ItemDepot to store the items in)
                                         (the "query" component of the URL specifies the items to query for)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_storage.enterprise_isp: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_isp.Can_StoreItems_QSrv: Invalid input") return {success = false} end
 
     -- get ItemDepot
     local serviceResults = GetItemDepotName_SSrv( { itemDepotLocator = itemsLocator })
-    if not serviceResults.success then corelog.Error("enterprise_isp.StoreItemsFrom_ASrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
+    if not serviceResults.success then corelog.Error("enterprise_isp.Can_StoreItems_QSrv: failed obtaining itemDepotName for "..itemsLocator:getURI()..".") return {success = false} end
     local itemDepotName = serviceResults.enterpriseName
 
     -- call method on ItemDepot
