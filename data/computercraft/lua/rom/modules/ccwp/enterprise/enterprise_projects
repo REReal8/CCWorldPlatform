@@ -312,7 +312,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     -- check results of the previous step
     local previousStep = project.currentStep
     if type(stepResults) ~= "table" then corelog.Warning("enterprise_projects.NextProjectStep: no stepResults from step "..previousStep.." of project"..projectId) stepResults = {} end
-    if previousStep > 0 and not stepResults.success then corelog.Warning("enterprise_projects.NextProjectStep: step "..previousStep.." of project"..projectId.." did not return success!") end
+    if previousStep > 0 and not stepResults.success then corelog.Warning("enterprise_projects.NextProjectStep: step "..previousStep.." of project"..projectId.." did not return success! This project was created by "..(project.callerFunction or "unknown")) end
     -- ToDo: consider TerminateProject in both of above cases
 
     -- save the results of the previous step
