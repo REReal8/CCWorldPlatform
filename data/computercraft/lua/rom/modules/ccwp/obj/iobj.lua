@@ -6,15 +6,19 @@ local corelog = require "corelog"
 --[[
     This module implements the interface IObj.
 
-    It's methods should be implemented by classes adhering to the interface, i.e. that want to use general IObj logic.
+    The IObj interface defines basic methods all objects should adhere to.
+
+    Objects of a class implementing the interface are called Obj's.
 --]]
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
 
 function IObj:new(o)
     --[[
@@ -66,6 +70,13 @@ function IObj:copy()
     return nil
 end
 
+--        _        _   _                       _   _               _
+--       | |      | | (_)                     | | | |             | |
+--    ___| |_ __ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| __/ _` | __| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ || (_| | |_| | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/\__\__,_|\__|_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
 function IObj.ImplementsInterface(obj)
     --[[
         Returns if the object 'obj' implements this interface.
@@ -81,14 +92,5 @@ function IObj.ImplementsInterface(obj)
     -- end
     return true
 end
-
---    _          _                    __                  _   _
---   | |        | |                  / _|                | | (_)
---   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---                | |
---                |_|
 
 return IObj
