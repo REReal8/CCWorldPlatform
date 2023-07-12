@@ -54,6 +54,9 @@ function coreassignment.Run()
         os.sleep(0.25)
     end
 
+    -- only turtles take assignments
+    if not turtle then corelog.WriteToLog("coreassignment.Run(): Not a turtle, not taking assignments") return end
+
     -- get (locator for) current Turtle
     local turtleId = os.getComputerID()
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
@@ -67,9 +70,10 @@ function coreassignment.Run()
 
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do
+
         -- try get assignment for turtle
         local serviceResults = enterprise_turtle.GetAssignmentForTurtle_SSrv({ turtleLocator = turtleLocator })
-        if not serviceResults.success then corelog.Error("coreassignment.Run: failure in getting new assignment") end
+        if not serviceResults or not serviceResults.success then corelog.Error("coreassignment.Run: failure in getting new assignment") end
         local nextAssignment = serviceResults.assignment
 
         -- did we get an assignment?
