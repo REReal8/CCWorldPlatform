@@ -14,18 +14,8 @@ local role_fuel_worker = require "role_fuel_worker"
     items to be handled across (possibly) multiple enterprises the ISP can be seen as a generic entrypoint (or hub or router) for handling
     those items.
 
-    For an Obj to be an ItemSupplier it needs to implement the following services:
-        provideItemsTo_AOSrv        - providing multiple instances of a specific item to an ItemDepot destination.
-        can_ProvideItems_QOSrv      - answers the question whether the ItemSupplier can provide specific items.
-        needsTo_ProvideItemsTo_SOSrv- return the needs for the ItemSupplier to provide specific items to an ItemDepot.
-
-    For an Obj to be an ItemDepot it needs to implement the following services:
-        storeItemsFrom_AOSrv        - stores items from an ItemSupplier
-        can_StoreItems_QOSrv        - answers the question whether the ItemDepot can store specific items.
-        needsTo_StoreItemsFrom_SOSrv- returns the needs to store specific items from an ItemSupplier.
-
-    The ISP offers generic ItemSupplier and ItemDepot services by relaying them to the underlying ItemSupplier or ItemDepot based on the "base" component of URL's. The interface
-    of the corresponding ISP services is the same. Hence, one could see the ISP as an ItemSupplier and ItemDepot itself.
+    The ISP offers generic IItemSupplier and IItemDepot services by relaying them to the underlying ItemSupplier or ItemDepot based on the "base" component of URL's.
+    Besides that the interface of the corresponding ISP services is the same.
 
     The ISP provides the following additional public services
         NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one ItemDepot to another.

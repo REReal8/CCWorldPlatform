@@ -4,8 +4,10 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
 
-local IObj = require "i_obj"
 local Callback = require "obj_callback"
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
+
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
@@ -19,8 +21,11 @@ local enterprise_chests = require "enterprise_chests"
 local t_turtle = require "test.t_turtle"
 
 function T_Factory.T_All()
-    -- base methods
+    -- interfaces
     T_Factory.T_ImplementsIObj()
+    T_Factory.T_ImplementsIItemSupplier()
+
+    -- base methods
     T_Factory.T_new()
     T_Factory.T_IsOfType()
     T_Factory.T_isSame()
@@ -35,10 +40,40 @@ function T_Factory.T_All()
     -- service methods
     T_Factory.T_getFuelNeed_Production_Att()
     T_Factory.T_getProductionLocation_Att()
+
+    -- IItemSupplier methods
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
 local compact = { compact = true }
+
+--    _       _             __
+--   (_)     | |           / _|
+--    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
+--   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
+--   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
+--   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
+
+local function ImplementsInterface(interfaceName)
+    -- prepare test
+    corelog.WriteToLog("* Factory "..interfaceName.." interface test")
+    local Interface = moduleRegistry:getModule(interfaceName)
+    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+
+    -- test
+    local implementsInterface = Interface.ImplementsInterface(obj)
+    assert(implementsInterface, "Factory class does not (fully) implement "..interfaceName.." interface")
+
+    -- cleanup test
+end
+
+function T_Factory.T_ImplementsIObj()
+    ImplementsInterface("IObj")
+end
+
+function T_Factory.T_ImplementsIItemSupplier()
+    ImplementsInterface("IItemSupplier")
+end
 
 --    _                                     _   _               _
 --   | |                                   | | | |             | |
@@ -46,18 +81,6 @@ local compact = { compact = true }
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function T_Factory.T_ImplementsIObj()
-    -- prepare test
-    corelog.WriteToLog("* Factory IObj interface test")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
-
-    -- test
-    local implementsInterface = IObj.ImplementsInterface(obj)
-    assert(implementsInterface, "Factory class does not (fully) implement IObj interface")
-
-    -- cleanup test
-end
 
 local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
 local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()

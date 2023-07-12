@@ -24,6 +24,9 @@ function library.Setup()
     -- register library modules test modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
+    moduleRegistry:requireAndRegisterModule("IObj", "i_obj")
+    moduleRegistry:requireAndRegisterModule("IItemSupplier", "i_item_supplier")
+    moduleRegistry:requireAndRegisterModule("IItemDepot", "i_item_depot")
     moduleRegistry:requireAndRegisterModule("T_ModuleRegistry", "test.t_module_registry")
     moduleRegistry:requireAndRegisterModule("T_ObjectFactory", "test.t_object_factory")
     moduleRegistry:requireAndRegisterModule("T_ObjArray", "test.t_obj_array")

@@ -2,10 +2,11 @@ local T_Shop = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local IObj = require "i_obj"
-local ObjArray = require "obj_array"
 local Callback = require "obj_callback"
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
 
+local ObjArray = require "obj_array"
 local URL = require "obj_url"
 local Location = require "obj_location"
 
@@ -23,8 +24,11 @@ local T_BirchForest = require "test.t_mobj_birchforest"
 local t_turtle = require "test.t_turtle"
 
 function T_Shop.T_All()
-    -- base methods
+    -- interfaces
     T_Shop.T_ImplementsIObj()
+    T_Shop.T_ImplementsIItemSupplier()
+
+    -- base methods
     T_Shop.T_Getters()
     T_Shop.T_IsOfType()
     T_Shop.T_isSame()
@@ -37,6 +41,8 @@ function T_Shop.T_All()
     T_Shop.T_delistItemSupplier_SOSrv()
     T_Shop.T_delistAllItemSuppliers()
     T_Shop.T_bestItemSupplier()
+
+    -- IItemSupplier methods
     T_Shop.T_can_ProvideItems_QOSrv()
     T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
 end
@@ -54,24 +60,40 @@ local itemSuppliersLocators2 = ObjArray:new({
 
 local compact = { compact = true }
 
+--    _       _             __
+--   (_)     | |           / _|
+--    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
+--   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
+--   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
+--   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
+
+local function ImplementsInterface(interfaceName)
+    -- prepare test
+    corelog.WriteToLog("* Shop "..interfaceName.." interface test")
+    local Interface = moduleRegistry:getModule(interfaceName)
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+
+    -- test
+    local implementsInterface = Interface.ImplementsInterface(obj)
+    assert(implementsInterface, "Shop class does not (fully) implement "..interfaceName.." interface")
+
+    -- cleanup test
+end
+
+function T_Shop.T_ImplementsIObj()
+    ImplementsInterface("IObj")
+end
+
+function T_Shop.T_ImplementsIItemSupplier()
+    ImplementsInterface("IItemSupplier")
+end
+
 --    _                                     _   _               _
 --   | |                                   | | | |             | |
 --   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function T_Shop.T_ImplementsIObj()
-    -- prepare test
-    corelog.WriteToLog("* Shop IObj interface test")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
-
-    -- test
-    local implementsInterface = IObj.ImplementsInterface(obj)
-    assert(implementsInterface, "Shop class does not (fully) implement IObj interface")
-
-    -- cleanup test
-end
 
 function T_Shop.T_Getters()
     -- prepare test
