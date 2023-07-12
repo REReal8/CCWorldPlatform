@@ -277,9 +277,50 @@ function Silo:provideItemsTo_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- ToDo: implement
-    corelog.Warning("Silo:provideItemsTo_AOSrv: not yet implemented")
-    return Callback.ErrorCall(callback)
+    -- create project definition
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local projectData = {
+        provideItems            = provideItems,
+        pickupLocator           = self:getPickupLocation(),
+
+        itemDepotLocator        = itemDepotLocator,
+
+        assignmentsPriorityKey  = assignmentsPriorityKey,
+        silo                    = self:copy(),
+    }
+    local projectDef = {
+        steps   = {
+            -- roept functie aan die goederen uit de silo naar de top chest brengt
+            { stepType = "AOSrv", stepTypeDef = { className = "Silo", serviceName = "fromSiloIntoTopchest_AOSrv", objStep = 0, objKeyDef = "silo" }, stepDataDef = {
+                { keyDef = "provideItems"           , sourceStep = 0, sourceKeyDef = "provideItems" },
+                { keyDef = "pickupLocator"          , sourceStep = 0, sourceKeyDef = "pickupLocator" },
+                { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- roept functie aan die goederen van top chest naar destination brengt
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"                   , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
+                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- check for succes
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">Retrieve "..textutils.serialise(provideItems).." from Silo")
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 function Silo:can_ProvideItems_QOSrv(...)
@@ -461,41 +502,6 @@ function Silo:getPickupLocation()
     return self._topChests[self._pickupLocation]
 end
 
-function Silo:Save()
-    -- we need a valid zelf
-    if type(self) ~= "table" or type(self._id) ~= "string" then return false end
-
-    -- easy save this shit, just the data
-    coredht.SaveData(self, dthSiloRoot, self._id)
-end
-
-function Silo:reload()
-    -- just load the damn fucker, use our own id
-    self:load(self._id)
-end
-
-function Silo:load(siloId)
-    -- we need a valid id to work
-    if type(siloId) ~= "string" then return false end
-
-    -- load this shit
-    local siloData = coredht.GetData(dthSiloRoot, siloId)
-
-    -- check our result
-    if type(siloData) == "table" then
-
-        -- set class info
-        setmetatable(siloData, self)
-        self.__index = self
-
-        -- done
-        return siloData
-    else
-        -- found nothing gives nothing
-        return nil
-    end
-end
-
 function Silo:Delete()
     -- for debugging only
     corelog.WriteToLog("Oh no, someone is deleting a silo!!!")
@@ -512,6 +518,72 @@ function Silo:Delete()
 end
 
 -- private methods
+
+function Silo:fromSiloIntoTopchest_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, provideItems, pickupLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        Todo betere omschrijving
+            -- roept functie aan die bepalen welke items naar welke chjests moeten
+            -- indien geen ruimte, eerst enterprise inschakelen voor uitbreiding
+            -- per goederen type opslaan
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) locating the final ItemDepot and the items that where transferred to it
+                                            (upon service succes the "host" component of this URL should be equal to itemDepotLocator, and
+                                            the "query" should be equal to orderItems)
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                provideItems            + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
+                pickupLocator           + (URL) locating the pickupLocator where the items need to be provided to
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:fromSiloIntoTopchest_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    corelog.WriteToLog("fromSiloIntoTopchest_AOSrv begin")
+
+    -- create URL where the items are with item list
+    local chestOneItemsLocator = self._storageChests[ 1 ]:copy() -- to improve!
+    chestOneItemsLocator:setQuery(provideItems)
+
+    local projectData = {
+        pickupLocator           = pickupLocator,
+        chestOneItemsLocator    = chestOneItemsLocator,
+        assignmentsPriorityKey  = assignmentsPriorityKey,
+    }
+    local projectDef = {
+        steps   = {
+            -- roept functie aan die goederen van pickup locatie naar silo topchest
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "chestOneItemsLocator" },
+                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "pickupLocator" },
+                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            }},
+            -- check for succes
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+            }},
+        },
+        returnData  = {
+            { keyDef = "success"                    , sourceStep = 2, sourceKeyDef = "success" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" }, -- todo: merge different URLs when items came from different chests, see enterprise_isp.AddItemsLocators_SSrv
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+    }
+
+    -- start project
+    corelog.WriteToLog(">fromSiloIntoTopchest_AOSrv(...)")
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
 
 function Silo:fromTopchestIntoSilo_AOSrv(...)
     -- get & check input from description
@@ -570,6 +642,11 @@ function Silo:fromTopchestIntoSilo_AOSrv(...)
     -- start project
     corelog.WriteToLog(">fromTopchestIntoSilo_AOSrv(...)")
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
+function Silo:update()
+    -- one host at this time
+    enterprise_storage:saveObject(self)
 end
 
 return Silo

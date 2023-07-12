@@ -82,32 +82,60 @@ function T_Silo.T_NewSilo()
     local siloLocator = enterprise_storage:saveObject(obj)
 end
 
-function T_Silo.T_Load()
+local compact = { compact = true }
 
-    -- we are calling the shots now
-    corelog.WriteToLog("* Silo:NewSilo() tests")
+local function provideItemsTo_AOSrv_Test(provideItems)
+    -- prepare test (cont)
+    corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
+    local obj = Silo:NewSilo({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Silo") return end
+    local siloLocator = enterprise_storage:getObjectLocator(obj)
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
-    -- zeker weten dat er een silo is om mee te werken
-    local newSilo = Silo:NewSilo({location=location1, topChests=2, layers=2})
-    corelog.WriteToLog("newSilo._id = "..(newSilo._id or ""))
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback2 = Callback:new({
+        _moduleName     = "T_Silo",
+        _methodName     = "provideItemsTo_AOSrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+            ["siloLocator"]                     = siloLocator,
+        },
+    })
 
-    -- lijstje met alle silo's
-    local silos = coredht.GetData("mobj_silo")
-
-    -- get a random key
-    local key = next(silos, nil)
-
-    -- load the damn silo
-    local silo = Silo:load(key)
-
-    -- what do we have?
-    corelog.WriteToLog("silo id = "..(silo._id or ""))
-
-    -- might as well delete this new silo before things become messy
-    if type(newSilo) == "table" then newSilo:Delete() end
+    -- test
+    local scheduleResult = obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+    }, callback2)
+    assert(scheduleResult == true, "failed to schedule async service")
 end
 
-local compact = { compact = true }
+function T_Silo.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    local siloLocator = callbackData["siloLocator"]
+    enterprise_storage:deleteResource(siloLocator)
+
+    -- end
+    return true
+end
+
+function T_Silo.T_ProvideMultipleItems()
+    -- prepare test
+    local provideItems = {
+        ["minecraft:birch_planks"]  = 5,
+        ["minecraft:birch_log"]     = 3,
+    }
+
+    -- test
+    provideItemsTo_AOSrv_Test(provideItems)
+end
 
 function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
