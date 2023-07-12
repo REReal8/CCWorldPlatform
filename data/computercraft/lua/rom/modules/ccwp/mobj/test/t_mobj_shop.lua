@@ -2,7 +2,7 @@ local T_Shop = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local IObj = require "iobj"
+local IObj = require "i_obj"
 local ObjArray = require "obj_array"
 local Callback = require "obj_callback"
 

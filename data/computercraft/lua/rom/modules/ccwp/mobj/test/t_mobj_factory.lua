@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
 
-local IObj = require "iobj"
+local IObj = require "i_obj"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"

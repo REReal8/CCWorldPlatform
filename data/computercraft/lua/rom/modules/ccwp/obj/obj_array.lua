@@ -6,7 +6,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
-local IObj = require "iobj"
+local IObj = require "i_obj"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 

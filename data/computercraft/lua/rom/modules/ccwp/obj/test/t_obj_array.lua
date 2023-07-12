@@ -2,7 +2,7 @@ local T_ObjArray = {}
 
 local corelog = require "corelog"
 
-local IObj = require "iobj"
+local IObj = require "i_obj"
 local ObjArray = require "obj_array"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
