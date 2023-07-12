@@ -152,35 +152,6 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
     return chest:updateChestRecord_AOSrv({}, callback)
 end
 
-function enterprise_chests.GetItemsLocator_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, chestLocator, itemsQuery = InputChecker.Check([[
-        This sync public services provides the URL of items in a chest in the enterprise.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                itemsLocator        - (URL) locating the items in a chest
-
-        Parameters:
-            serviceData             - (table) data for this service
-                chestLocator        + (URL) locating a chest
-                itemsQuery          + (table) optional items to locate in chest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid input") return {success = false} end
-
-    -- construct URL
-    local itemsLocator = chestLocator:copy()
-    itemsLocator:setQuery(itemsQuery)
-
-    -- end
-    local result = {
-        success = true,
-        itemsLocator = itemsLocator,
-    }
-    return result
-end
-
 -- ToDo: consider getting from/ moving to Chest
 function enterprise_chests.GetItemsLocations_SSrv(...)
     -- get & check input from description
