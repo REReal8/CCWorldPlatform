@@ -20,7 +20,6 @@ local Chest = require "mobj_chest"
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
-        GetItemsLocator_SSrv    - provide the URL of items in a chest
 
     The enterprise does not provide services to build/ dismantle chests. This should be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them.
