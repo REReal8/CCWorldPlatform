@@ -34,6 +34,17 @@ function IObj:getClassName()
     return "???"
 end
 
+function IObj.IsOfType(obj)
+    --[[
+        Classes implementing this method should return if an instance 'obj' is of type of the class.
+    ]]
+
+    corelog.Error("Method IsOfType() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+
+    -- end
+    return false
+end
+
 function IObj:isSame(obj)
     --[[
         Classes implementing this method should return if the object (i.e. self) is the same as the object 'obj'.
