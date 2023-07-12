@@ -20,7 +20,6 @@ local Chest = require "mobj_chest"
         RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
         DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
-        GetItemsLocator_SSrv    - provide the URL of items in a chest
 
     The enterprise does not provide services to build/ dismantle chests. This should be done by other (enterprise) code. In a sense the enterprise_chests is not the
     "owner" of the chests, it just provides services to operate on them.
@@ -150,35 +149,6 @@ function enterprise_chests.UpdateChestRecord_ASrv(...)
 
     -- have chest update it's records
     return chest:updateChestRecord_AOSrv({}, callback)
-end
-
-function enterprise_chests.GetItemsLocator_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, chestLocator, itemsQuery = InputChecker.Check([[
-        This sync public services provides the URL of items in a chest in the enterprise.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                itemsLocator        - (URL) locating the items in a chest
-
-        Parameters:
-            serviceData             - (table) data for this service
-                chestLocator        + (URL) locating a chest
-                itemsQuery          + (table) optional items to locate in chest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.GetItemsLocator_SSrv: Invalid input") return {success = false} end
-
-    -- construct URL
-    local itemsLocator = chestLocator:copy()
-    itemsLocator:setQuery(itemsQuery)
-
-    -- end
-    local result = {
-        success = true,
-        itemsLocator = itemsLocator,
-    }
-    return result
 end
 
 -- ToDo: consider getting from/ moving to Chest
