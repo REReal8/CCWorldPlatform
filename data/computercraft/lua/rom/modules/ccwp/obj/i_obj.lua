@@ -3,6 +3,8 @@ local IObj = {
 
 local corelog = require "corelog"
 
+local InputChecker = require "input_checker"
+
 --[[
     This module implements the interface IObj.
 
@@ -20,17 +22,28 @@ local corelog = require "corelog"
 --                    _/ |
 --                   |__/
 
-function IObj:new(o)
-    --[[
-        Classes implementing this method should return a new instance of the object based on a provided objectTable with it's fields.
-    ]]
+function IObj:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        This method constructs a XXXObj instance from an objectTable with all necessary fields as defined in the class.
+
+        Return value:
+                o                       - (XXXObj) the constructed XXXObj
+
+        Parameters:
+            o                           + (table) objectTable of this XXXObj
+                field1                  - (Location) location of XXXObj
+                field2                  - (number, 2) ...
+                ...
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("XXXMObj:new: Invalid input") return {} end
 
     corelog.Error("Method new() should be implemented in classes implementing the IObj interface. It should not be called directly.")
 end
 
 function IObj:getClassName()
     --[[
-        Classes implementing this method should return the className of the object (i.e. self).
+        Method that returns the className of the Obj (i.e. self).
     ]]
 
     corelog.Error("Method getClassName() should be implemented in classes implementing the IObj interface. It should not be called directly.")
@@ -40,7 +53,7 @@ end
 
 function IObj.IsOfType(obj)
     --[[
-        Classes implementing this method should return if an instance 'obj' is of type of the class.
+        Method that returns if an object 'obj' is of type of this class.
     ]]
 
     corelog.Error("Method IsOfType() should be implemented in classes implementing the IObj interface. It should not be called directly.")
@@ -51,7 +64,7 @@ end
 
 function IObj:isSame(obj)
     --[[
-        Classes implementing this method should return if the object (i.e. self) is the same as the object 'obj'.
+        Method that returns if the Obj (i.e. self) is the same as the object 'obj'.
     ]]
 
     corelog.Error("Method isSame() should be implemented in classes implementing the IObj interface. It should not be called directly.")
@@ -62,7 +75,7 @@ end
 
 function IObj:copy()
     --[[
-        Classes implementing this method should return a copy of the object (i.e. self).
+        Method that returns a copy of the Obj (i.e. self).
     ]]
 
     corelog.Error("Method copy() should be implemented in classes implementing the IObj interface. It should not be called directly.")
