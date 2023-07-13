@@ -21,6 +21,7 @@ local coredht = require "coredht"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
+local Host = require "obj_host"
 
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
@@ -687,6 +688,33 @@ end
 function Silo:update()
     -- one host at this time
     enterprise_storage:saveObject(self)
+end
+
+-- private
+function Silo:IntegretyCheck(...)
+
+    local callback = Callback:new({
+        _moduleName     = "",
+        _methodName     = "",
+        _data           = {},
+    })
+
+    -- check all top chests
+    for i, chestLocator in ipairs(self._topChests) do
+        local chest = Host.GetObject(chestLocator)
+        if chest then chest:updateChestRecord_AOSrv({}, callback) end
+    end
+
+    -- check all storage chests
+    for i, chestLocator in ipairs(self._storageChests) do
+        local chest = Host.GetObject(chestLocator)
+        if chest then chest:updateChestRecord_AOSrv({}, callback) end
+    end
+end
+
+function Silo:GetChestInventory(chestLocator)
+    local chest = Host.GetObject(chestLocator)
+    if chest then return chest:getInventory() end
 end
 
 return Silo

@@ -80,6 +80,8 @@ function T_Silo.T_NewSilo()
     corelog.WriteToLog("* Silo:NewSilo() tests")
     local obj = Silo:NewSilo({location=location1, topChests=2, layers=2})
     local siloLocator = enterprise_storage:saveObject(obj)
+
+    obj:IntegretyCheck()
 end
 
 local compact = { compact = true }
