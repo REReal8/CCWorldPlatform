@@ -13,8 +13,6 @@ local Callback = require "obj_callback"
 local Factory = require "mobj_factory"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
-local enterprise_energy = require "enterprise_energy"
 local enterprise_construction = require "enterprise_construction"
 
 local db = {
