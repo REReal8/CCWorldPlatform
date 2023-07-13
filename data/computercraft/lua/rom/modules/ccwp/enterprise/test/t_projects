@@ -57,6 +57,42 @@ local testObj = TestObj:new({
 
 local compact = { compact = true }
 
+-- voorstel ter generalsatie van huidige projectDef in T_StartProject_ASrv hieronder:
+local voorstelNieuwProjectDef = {
+    stepType = "Seq", stepDataDef = {
+        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+            { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+        }},
+        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_ASrv" }, stepDataDef = {
+            { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+        }},
+        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+            { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTableSource.key3.nKey2" },
+        }},
+        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+            { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
+            { keyDef = "testArg.field4" , sourceStep = 0, sourceKeyDef = "testTableSource2.key4" },
+        }},
+        { stepType = "SOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_SOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+            { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+        }},
+        { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+            { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+        }},
+    },
+    stepReturnDef  = {
+        { keyDef = "testBArg0"          , sourceStep = 0, sourceKeyDef = "testArgSource" },
+        { keyDef = "testBArg1"          , sourceStep = 1, sourceKeyDef = "input" },
+        { keyDef = "testBArg2"          , sourceStep = 2, sourceKeyDef = "input" },
+        { keyDef = "testBArg3"          , sourceStep = 3, sourceKeyDef = "input" },
+        { keyDef = "testBArg4"          , sourceStep = 4, sourceKeyDef = "input" },
+        { keyDef = "testBArgS"          , sourceStep = 5, sourceKeyDef = "input" },
+        { keyDef = "testObjSelfS"       , sourceStep = 5, sourceKeyDef = "selfObj" },
+        { keyDef = "testBArgA"          , sourceStep = 6, sourceKeyDef = "input" },
+        { keyDef = "testObjSelfA"       , sourceStep = 6, sourceKeyDef = "selfObj" },
+    }
+}
+
 function t_projects.T_StartProject_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
