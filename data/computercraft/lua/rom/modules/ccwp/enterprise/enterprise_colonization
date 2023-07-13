@@ -228,6 +228,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "layers"                         , sourceStep = 0, sourceKeyDef = "layers" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
             }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 22, sourceKeyDef = "siteLocator" },
+            }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
@@ -257,10 +260,11 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "success21"                  , sourceStep = 21, sourceKeyDef = "success" },
                 { keyDef = "success22"                  , sourceStep = 22, sourceKeyDef = "success" },
                 { keyDef = "success23"                  , sourceStep = 23, sourceKeyDef = "success" },
+                { keyDef = "success23"                  , sourceStep = 24, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 24, sourceKeyDef = "success" },
+            { keyDef = "success"                        , sourceStep = 25, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {
