@@ -213,4 +213,20 @@ function T_Silo.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
     return true
 end
 
+function T_Silo.T_GetRandomSilo()
+    local data = coredht.GetData("enterprise_storage", "objects", "class=Silo")
+    if not data then return nil end
+    local id = next(data)
+    if not id then return nil end
+    local silo = Silo:new(data[id])
+    if not silo then return nil end
+
+    -- usefull if this silo is active
+    silo:Activate()
+
+    -- do the testing
+    corelog.WriteToLog("can_ProvideItems_QOSrv test")
+    corelog.WriteToLog(silo:can_ProvideItems_QOSrv({provideItems = {["minecraft:torch"] = 1}}))
+end
+
 return T_Silo

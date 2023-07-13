@@ -354,9 +354,32 @@ function Silo:can_ProvideItems_QOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
-    -- ToDo: implement
-    corelog.Warning("Silo:can_ProvideItems_QOSrv: not yet implemented")
-    return {success = self._operational}
+    -- no trouble if we are not (or no longer) operational
+    if not self._operational then corelog.WriteToLog("inactive silo queried") return false end
+
+    -- loop all storage chests to see if we can deliver
+    -- version 0.1, only intersted if 1 chest can fully deliver (no partial deliveries yet)
+    for i, chestLocator in ipairs(self._storageChests) do
+        -- get the chest
+        local chest     = Host.GetObject(chestLocator)
+
+        -- valid opbject?
+        if chest then
+
+            -- get the inventory of this chest
+            local inventory = chest:getInventory()
+
+            -- valid object?
+            if inventory then
+
+                -- can we deliver from this one?
+                if inventory:hasItems(provideItems) then return {success = true} end
+            end
+        end
+    end
+
+    -- guess we did not find anything
+    return {success = false}
 end
 
 function Silo:needsTo_ProvideItemsTo_SOSrv(...)
@@ -714,7 +737,7 @@ end
 
 function Silo:GetChestInventory(chestLocator)
     local chest = Host.GetObject(chestLocator)
-    if chest then return chest:getInventory() end
+    if chest then corelog.WriteToLog("Getting chest inventory") return chest:getInventory() end
 end
 
 return Silo
