@@ -88,6 +88,7 @@ function IObj.ImplementsInterface(obj)
     if not obj.IsOfType then return false end
     if not obj.isSame then return false end
     if not obj.copy then return false end
+    -- ToDo: consider adding checks for method (parameter) signatures.
 
     -- end
     return true
