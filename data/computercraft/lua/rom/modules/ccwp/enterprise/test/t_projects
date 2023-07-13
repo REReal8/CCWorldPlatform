@@ -73,6 +73,31 @@ local voorstelNieuwProjectDef = {
             { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
             { keyDef = "testArg.field4" , sourceStep = 0, sourceKeyDef = "testTableSource2.key4" },
         }},
+        -- en een mogelijke nested Seq stap:
+        { stepType = "Seq", stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            }},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            }},
+            -- ... etc
+            }, stepReturnDef  = {
+                { keyDef = "testBArg0"          , sourceStep = 0, sourceKeyDef = "testArgSource" },
+                { keyDef = "testBArg1"          , sourceStep = 1, sourceKeyDef = "input" },
+                -- etc
+            }
+        },
+        -- en een mogelijke nested Par stap:
+        { stepType = "Par", stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            }}, -- ... etc
+            }, stepReturnDef  = {
+                { keyDef = "testBArg0"          , sourceStep = 0, sourceKeyDef = "testArgSource" },
+                -- etc
+            }
+        },
         { stepType = "SOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_SOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
             { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
         }},
