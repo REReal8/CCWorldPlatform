@@ -10,6 +10,8 @@ local Silo = {
 
     _topChests              = nil,
     _storageChests          = nil,
+
+    _operational            = false,
 }
 
 local coreutils = require "coreutils"
@@ -88,6 +90,9 @@ function Silo:NewSilo(...)
         _storageChests  = ObjArray:new({
             _objClassName = "URL",
         }),
+
+        -- is this silo accepting requests?
+        _operational    = false,
     }
 
     -- what kind of new silo is this?
@@ -124,6 +129,14 @@ function Silo:NewSilo(...)
 
     -- end
     return siteData
+end
+
+function Silo:Activate()
+    self._operational = true
+end
+
+function Silo:Deactivate()
+    self._operational = false
 end
 
 function Silo:getId()
@@ -342,7 +355,7 @@ function Silo:can_ProvideItems_QOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:can_ProvideItems_QOSrv: not yet implemented")
-    return {success = true}
+    return {success = self._operational}
 end
 
 function Silo:needsTo_ProvideItemsTo_SOSrv(...)
@@ -477,7 +490,7 @@ function Silo:can_StoreItems_QOSrv(...)
 
     -- ToDo: implement
     corelog.Warning("Silo:can_StoreItems_QOSrv: not yet implemented")
-    return {success = true} -- we can always store (at least that is what we pretent)
+    return {success = self._operational} -- we can always store (at least that is what we pretent as long as we are in operation)
 end
 
 function Silo:needsTo_StoreItemsFrom_SOSrv(...)
@@ -677,4 +690,3 @@ function Silo:update()
 end
 
 return Silo
-
