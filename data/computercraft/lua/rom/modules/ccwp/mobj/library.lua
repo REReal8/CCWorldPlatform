@@ -22,6 +22,7 @@ function library.Setup()
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterModule("Factory", "mobj_factory")
+    moduleRegistry:requireAndRegisterModule("IMObj", "i_mobj")
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
