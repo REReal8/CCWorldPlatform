@@ -25,6 +25,7 @@ local enterprise_turtle
 --   | |
 --   |_|
 
+-- ToDo: consider introducing a Blueprint Obj replacing the current table
 function enterprise_construction.BuildBlueprint_ASrv(...)
     -- get & check input from description
     local checkSuccess, blueprintStartpoint, blueprint, materialsItemSupplierLocator, callback = InputChecker.Check([[
