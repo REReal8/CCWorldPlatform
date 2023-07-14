@@ -36,6 +36,19 @@ local URL = require "obj_url"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Host:getHostName()
+    return self._hostName
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
 function Host:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -57,10 +70,6 @@ end
 
 function Host:getClassName()
     return "Host"
-end
-
-function Host:getHostName()
-    return self._hostName
 end
 
 function Host.HasFieldsOfType(obj)
