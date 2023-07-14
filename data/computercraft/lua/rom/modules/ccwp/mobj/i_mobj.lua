@@ -38,7 +38,7 @@ function IMObj:construct(...)
                                         - (XXXMObj) the constructed XXXMObj
 
         Parameters:
-            parameterTable              - (table) data about this XXXMObj
+            constructParameters         - (table) parameters for constructing the MObj
                 param1                  + (Location) location of XXXMObj
                 param2                  + (number, 2) ...
                 ...
