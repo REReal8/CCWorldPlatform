@@ -62,6 +62,7 @@ local testObj = TestObj:new({
 local compact = { compact = true }
 
 -- voorstel ter generalsatie van huidige projectDef in T_StartProject_ASrv hieronder:
+-- note: voorstel is inmiddels outdated omdat er nieuwe stepType's zijn toegevoegd. Maar het idee van een Seq en Par steps blijft hetzelfde.
 local voorstelNieuwProjectDef = {
     stepType = "Seq", stepDataDef = {
         { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
