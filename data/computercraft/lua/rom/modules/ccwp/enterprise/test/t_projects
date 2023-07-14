@@ -88,8 +88,8 @@ local voorstelNieuwProjectDef = {
             }},
             -- ... etc
             }, stepReturnDef  = {
-                { keyDef = "testBArg0"          , sourceStep = 0, sourceKeyDef = "testArgSource" },
-                { keyDef = "testBArg1"          , sourceStep = 1, sourceKeyDef = "input" },
+                { keyDef = "testBArg0"      , sourceStep = 0, sourceKeyDef = "testArgSource" },
+                { keyDef = "test_SSrv_BArg" , sourceStep = 1, sourceKeyDef = "input" },
                 -- etc
             }
         },
@@ -111,15 +111,15 @@ local voorstelNieuwProjectDef = {
         }},
     },
     stepReturnDef  = {
-        { keyDef = "testBArg0"          , sourceStep = 0, sourceKeyDef = "testArgSource" },
-        { keyDef = "testBArg1"          , sourceStep = 1, sourceKeyDef = "input" },
-        { keyDef = "testBArg2"          , sourceStep = 2, sourceKeyDef = "input" },
-        { keyDef = "testBArg3"          , sourceStep = 3, sourceKeyDef = "input" },
-        { keyDef = "testBArg4"          , sourceStep = 4, sourceKeyDef = "input" },
-        { keyDef = "testBArgS"          , sourceStep = 5, sourceKeyDef = "input" },
-        { keyDef = "testObjSelfS"       , sourceStep = 5, sourceKeyDef = "selfObj" },
-        { keyDef = "testBArgA"          , sourceStep = 6, sourceKeyDef = "input" },
-        { keyDef = "testObjSelfA"       , sourceStep = 6, sourceKeyDef = "selfObj" },
+        { keyDef = "testBArg0"              , sourceStep = 0, sourceKeyDef = "testArgSource" },
+        { keyDef = "test_SSrv_BArg"         , sourceStep = 1, sourceKeyDef = "input" },
+        { keyDef = "test_ASrv_BArg"         , sourceStep = 2, sourceKeyDef = "input" },
+        { keyDef = "test_IndexedSource_BArg", sourceStep = 3, sourceKeyDef = "input" },
+        { keyDef = "test_IndexedOutput_BArg", sourceStep = 4, sourceKeyDef = "input" },
+        { keyDef = "test_SOSrv_BArg"        , sourceStep = 5, sourceKeyDef = "input" },
+        { keyDef = "test_SOSrv_SelfObj"     , sourceStep = 5, sourceKeyDef = "selfObj" },
+        { keyDef = "test_AOSrv_BArg"        , sourceStep = 6, sourceKeyDef = "input" },
+        { keyDef = "test_AOSrv_SelfObj"     , sourceStep = 6, sourceKeyDef = "selfObj" },
     }
 }
 
@@ -180,17 +180,17 @@ function t_projects.T_StartProject_ASrv()
             }},
         },
         returnData  = {
-            { keyDef = "testBArg0"          , sourceStep = 0, sourceKeyDef = "testArgSource" },
-            { keyDef = "testBArg1"          , sourceStep = 1, sourceKeyDef = "input" },
-            { keyDef = "testBArg2"          , sourceStep = 2, sourceKeyDef = "input" },
-            { keyDef = "testBArg3"          , sourceStep = 3, sourceKeyDef = "input" },
-            { keyDef = "testBArg4"          , sourceStep = 4, sourceKeyDef = "input" },
-            { keyDef = "testBArgS"          , sourceStep = 5, sourceKeyDef = "input" },
-            { keyDef = "testObjSelfS"       , sourceStep = 5, sourceKeyDef = "selfObj" },
-            { keyDef = "testBArgA"          , sourceStep = 6, sourceKeyDef = "input" },
-            { keyDef = "testObjSelfA"       , sourceStep = 6, sourceKeyDef = "selfObj" },
-            { keyDef = "testBArgLA"         , sourceStep = 7, sourceKeyDef = "input" },
-            { keyDef = "testObjSelfLA"      , sourceStep = 7, sourceKeyDef = "selfObj" },
+            { keyDef = "testBArg0"              , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            { keyDef = "test_SSrv_BArg"         , sourceStep = 1, sourceKeyDef = "input" },
+            { keyDef = "test_ASrv_BArg"         , sourceStep = 2, sourceKeyDef = "input" },
+            { keyDef = "test_IndexedSource_BArg", sourceStep = 3, sourceKeyDef = "input" },
+            { keyDef = "test_IndexedOutput_BArg", sourceStep = 4, sourceKeyDef = "input" },
+            { keyDef = "test_SOSrv_BArg"        , sourceStep = 5, sourceKeyDef = "input" },
+            { keyDef = "test_SOSrv_SelfObj"     , sourceStep = 5, sourceKeyDef = "selfObj" },
+            { keyDef = "test_AOSrv_BArg"        , sourceStep = 6, sourceKeyDef = "input" },
+            { keyDef = "test_AOSrv_SelfObj"     , sourceStep = 6, sourceKeyDef = "selfObj" },
+            { keyDef = "test_LAOSrv_BArg"       , sourceStep = 7, sourceKeyDef = "input" },
+            { keyDef = "test_LAOSrv_SelfObj"    , sourceStep = 7, sourceKeyDef = "selfObj" },
             { keyDef = "success"            , sourceStep = 9, sourceKeyDef = "success" },
         }
     }
@@ -244,48 +244,48 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- test SSrv (results)
-    testBArg = serviceResults.testBArg1
+    testBArg = serviceResults.test_SSrv_BArg
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- test ASrv (results)
-    testBArg = serviceResults.testBArg2
+    testBArg = serviceResults.test_ASrv_BArg
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- test indexed sourceKey Def (results)
-    testBArg = serviceResults.testBArg3
+    testBArg = serviceResults.test_IndexedSource_BArg
     expectedTestBArg = testArgValue222
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- test indexed output and source KeyDef (results)
-    testBArg = serviceResults.testBArg4.field4
+    testBArg = serviceResults.test_IndexedOutput_BArg.field4
     expectedTestBArg = testArgValue44
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
 
     -- test SOSrv (results)
-    testBArg = serviceResults.testBArgS
+    testBArg = serviceResults.test_SOSrv_BArg
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
-    local testObjSelf = serviceResults.testObjSelfS
+    local testObjSelf = serviceResults.test_SOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
     assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- test AOSrv (results)
-    testBArg = serviceResults.testBArgA
+    testBArg = serviceResults.test_AOSrv_BArg
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
-    testObjSelf = serviceResults.testObjSelfA
+    testObjSelf = serviceResults.test_AOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
     assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- test located AOSrv (results)
-    testBArg = serviceResults.testBArgLA
+    testBArg = serviceResults.test_LAOSrv_BArg
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
-    testObjSelf = serviceResults.testObjSelfLA
+    testObjSelf = serviceResults.test_LAOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
     assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
