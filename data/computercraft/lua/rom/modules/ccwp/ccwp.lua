@@ -1,18 +1,21 @@
 local ccwp = {}
 
-function ccwp.Startup()
-    -- add & init libraries
-    local coreLibrary = require "core.library"
-    coreLibrary.Init()
-    local objLibrary = require "obj.library"
-    objLibrary.Init()
-    local roleLibrary = require "role.library"
-    roleLibrary.Init()
-    local mobjLibrary = require "mobj.library"
-    mobjLibrary.Init()
-    local enterpriseLibrary = require "enterprise.library"
-    enterpriseLibrary.Init()
+local coreLibrary = require "core.library"
+local objLibrary = require "obj.library"
+local roleLibrary = require "role.library"
+local mobjLibrary = require "mobj.library"
+local enterpriseLibrary = require "enterprise.library"
 
+function ccwp.Init()
+    -- add & init libraries
+    coreLibrary.Init()
+    objLibrary.Init()
+    roleLibrary.Init()
+    mobjLibrary.Init()
+    enterpriseLibrary.Init()
+end
+
+function ccwp.Startup()
     -- setup libraries
     coreLibrary.Setup()
     objLibrary.Setup()
