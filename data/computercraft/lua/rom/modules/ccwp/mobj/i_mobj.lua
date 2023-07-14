@@ -4,6 +4,7 @@ local IMObj = {
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 
 --[[
     This module implements the interface IMObj.
@@ -77,10 +78,14 @@ function IMObj:activate()
     --[[
         Activates the XXXMObj. This implies it is ready for accepting new business.
 
-        <This method should also activate possible sub MObj the XXXMObj is the owner off.>
+        It also activates all child MObj's it is the parent of.
+
+        Return value:
+                                        - (boolean) whether the XXXMObj was succesfully activated.
     ]]
 
     corelog.Error("Method activate() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    return false
 end
 
 function IMObj:deactivate()
@@ -88,18 +93,73 @@ function IMObj:deactivate()
         Deactivates the XXXMObj. This implies it should no longer accept new business. It still continue's completing
         possible (async) active business.
 
-        It also deactivate all child MObj the XXXMObj is the parent of.>
+        It also deactivates all child MObj's it is the parent of.
+
+        Return value:
+                                - (boolean) whether the XXXMObj was succesfully deactivate.
     ]]
 
     corelog.Error("Method deactivate() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    return false
 end
 
 function IMObj:isActive()
     --[[
-        Returns if XXXMObj is active, i.e. accepting new business.
+        Return value:
+                                        - (boolean) if XXXMObj is active, i.e. accepting new business.
     ]]
 
     corelog.Error("Method isActive() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+end
+
+function IMObj:completeRunningBusiness_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, callback = InputChecker.Check([[
+        This method ensures all running business is completed.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether all business was successfully completed
+
+        Parameters:
+            serviceData                 - (table) data for this service
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("XXXMObj:completeRunningBusiness_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    corelog.Error("Service completeRunningBusiness_AOSrv() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    return Callback.ErrorCall(callback)
+end
+
+function IMObj:getBuildBlueprint()
+    --[[
+        This method returns a blueprint for building the XXXMObj in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    corelog.Error("Method getBuildBlueprint() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+end
+
+function IMObj:getDismantleBlueprint()
+    --[[
+        This method returns a blueprint for dismantling the XXXMObj in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    corelog.Error("Method getDismantleBlueprint() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
 end
 
 --        _        _   _                       _   _               _
@@ -121,6 +181,9 @@ function IMObj.ImplementsInterface(obj)
     if not obj.activate then return false end
     if not obj.deactivate then return false end
     if not obj.isActive then return false end
+    if not obj.completeRunningBusiness_AOSrv then return false end
+    if not obj.getBuildBlueprint then return false end
+    if not obj.getDismantleBlueprint then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.
 
     -- end
