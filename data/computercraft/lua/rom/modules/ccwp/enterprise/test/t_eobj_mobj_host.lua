@@ -3,12 +3,16 @@ local T_MObjHost = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
+local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
+
 local URL = require "obj_url"
+local Location = require "obj_location"
+
 local MObjHost = require "eobj_mobj_host"
 
-local TestMObj = require "test.mobj_test"
+local t_turtle = require "test.t_turtle"
 
 function T_MObjHost.T_All()
     -- IObj methods
@@ -117,26 +121,29 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+local mobj_className = "TestMObj"
+local field1SetValue = "value field1"
+local baseLocation = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
+local constructParameters = {
+    baseLocation    = baseLocation,
+    field1Value     = field1SetValue,
+}
+
 function T_MObjHost.T_registerMObj_SSrv()
     -- prepare test
     corelog.WriteToLog("* MObjHost:registerMObj_SSrv() tests")
-    local mobj_className = "TestMObj"
-    local field1SetValue = "value field1"
-    local constructParameters = {
-        field1Value = field1SetValue
-    }
 
     -- test
-    local serviceResult = host1:registerMObj_SSrv({
+    local serviceResults = host1:registerMObj_SSrv({
         className           = mobj_className,
         constructParameters = constructParameters,
     })
 
     -- check registration success
-    assert(serviceResult and serviceResult.success, "failed registering MObj")
+    assert(serviceResults and serviceResults.success, "failed registering MObj")
 
     -- check mobjLocator returned
-    local mobjLocator = serviceResult.mobjLocator
+    local mobjLocator = serviceResults.mobjLocator
     assert(URL.IsOfType(mobjLocator), "incorrect mobjLocator returned")
 
     -- check mobj saved
@@ -146,12 +153,71 @@ function T_MObjHost.T_registerMObj_SSrv()
     -- check mobj constructed
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
+
+    -- check active
     local isActive = mobj:isActive()
     assert(type(isActive) == "boolean", "isActive does not(="..type(isActive)..") return a boolean")
     assert(not isActive, "MObj is active")
 
     -- cleanup test
     host1:deleteObjects("TestMObj")
+end
+
+function T_MObjHost.T_addMObj_ASrvv()
+    -- prepare test
+    corelog.WriteToLog("* MObjHost:addMObj_ASrv() tests")
+    moduleRegistry:registerModule(hostName, host1)
+    local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
+
+    local materialsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+
+    local callback = Callback:new({
+        _moduleName     = "T_MObjHost",
+        _methodName     = "addMObj_ASrv_Callback",
+        _data           = {
+--            ["field1SetValue"]  = field1SetValue,
+        },
+    })
+
+    -- test
+    local scheduleResult = host1:addMObj_ASrv({
+        className                   = mobj_className,
+        constructParameters         = constructParameters,
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
+    }, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed adding MObj")
+
+    -- check addition success
+    assert(serviceResults and serviceResults.success, "failed adding MObj")
+
+    -- check mobjLocator returned
+    local mobjLocator = URL:new(serviceResults.mobjLocator)
+    assert(URL.IsOfType(mobjLocator), "incorrect mobjLocator returned")
+
+    -- check mobj saved
+    local mobj = host1:getObject(mobjLocator)
+    assert(mobj, "MObj not in host")
+
+    -- check mobj constructed
+    local field1Value = mobj:getField1()
+    assert(field1Value == field1SetValue, "construct did not set _field1")
+
+    -- check active
+    local isActive = mobj:isActive()
+    assert(type(isActive) == "boolean", "isActive does not(="..type(isActive)..") return a boolean")
+    assert(isActive, "MObj is inactive")
+
+    -- cleanup test
+    host1:deleteObjects("TestMObj")
+    moduleRegistry:delistModule(hostName)
+
+    -- end
+    return true
 end
 
 return T_MObjHost
