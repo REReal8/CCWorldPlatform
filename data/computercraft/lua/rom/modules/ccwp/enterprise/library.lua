@@ -24,7 +24,7 @@ function library.Setup()
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModuleTests("t_assignmentboard")
-    moduleRegistry:requireAndRegisterModuleTests("t_eobj_mobj_host")
+    moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_eobj_mobj_host")
     moduleRegistry:requireAndRegisterModuleTests("t_chests")
     moduleRegistry:requireAndRegisterModuleTests("t_colonization")
     moduleRegistry:requireAndRegisterModuleTests("t_construction")
