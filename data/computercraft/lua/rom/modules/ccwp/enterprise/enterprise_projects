@@ -438,7 +438,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- get Obj
         local obj = Host.GetObject(objLocator)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return nil end
-        local objData = obj
+        local objData = obj -- note: we sort of decast back to a table here. but that doesn't seem to be a problem
 
         --
         local callback = Callback:new({
