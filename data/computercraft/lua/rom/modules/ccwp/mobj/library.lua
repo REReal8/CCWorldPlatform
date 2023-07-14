@@ -17,6 +17,8 @@ function library.Setup()
     objectFactory:registerClass("Shop",         require "mobj_shop")
     objectFactory:registerClass("Turtle",       require "mobj_turtle")
 
+    objectFactory:registerClass("TestMObj",     require "test.mobj_test")
+
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()

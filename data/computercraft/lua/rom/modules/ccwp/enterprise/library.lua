@@ -2,7 +2,7 @@ local library = {}
 
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/enterprise/?"
+    package.path = package.path..";/rom/modules/ccwp/enterprise/?;/rom/modules/ccwp/enterprise/?.lua"
 end
 
 function library.Setup()
@@ -10,6 +10,7 @@ function library.Setup()
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterModule("enterprise_assignmentboard")
+    moduleRegistry:requireAndRegisterModule("eobj_mobj_host")
     moduleRegistry:requireAndRegisterModule("enterprise_chests")
     moduleRegistry:requireAndRegisterModule("enterprise_construction")
     moduleRegistry:requireAndRegisterModule("enterprise_energy")
@@ -23,6 +24,7 @@ function library.Setup()
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModuleTests("t_assignmentboard")
+    moduleRegistry:requireAndRegisterModuleTests("t_eobj_mobj_host")
     moduleRegistry:requireAndRegisterModuleTests("t_chests")
     moduleRegistry:requireAndRegisterModuleTests("t_colonization")
     moduleRegistry:requireAndRegisterModuleTests("t_construction")
