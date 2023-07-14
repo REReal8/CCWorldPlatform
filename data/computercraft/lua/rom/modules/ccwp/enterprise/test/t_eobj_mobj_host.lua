@@ -163,7 +163,7 @@ function T_MObjHost.T_registerMObj_SSrv()
     host1:deleteObjects("TestMObj")
 end
 
-function T_MObjHost.T_addMObj_ASrvv()
+function T_MObjHost.T_addMObj_ASrv()
     -- prepare test
     corelog.WriteToLog("* MObjHost:addMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
