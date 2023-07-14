@@ -56,11 +56,13 @@ function IMObj:destruct()
         The XXXMObj is not yet deleted from the Host.
 
         Return value:
+                                        - (boolean) whether the XXXMObj was succesfully destructed.
 
         Parameters:
     ]]
 
     corelog.Error("Method destruct() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    return false
 end
 
 function IMObj:getId()
