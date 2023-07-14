@@ -629,46 +629,6 @@ function Host.GetObject(...)
     return object
 end
 
-function Host.DoLocatedObjMethod_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, objLocator, methodName, methodArguments = InputChecker.Check([[
-        This public service executes a normal method on an Obj identified by an objLocator. The service execution is considered
-        a success if the method does not return nil.
-
-        This is a usefull generic service to wrap around none service methods such that they can be used as a SSrv project step.
-        (it eliminates the need to write both the normal method as the service method for the same behavior)
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                methodResults       - (?) result of the function call
-
-        Parameters:
-            objLocator              + (URL) locating the Obj
-            methodName              + (string) name of method to execute
-            methodArguments         + (table) with arguments to supply to the method
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Host.DoLocatedObjMethod_SSrv: Invalid input") return {success = false} end
-
-    -- get Obj
-    local obj = Host.GetObject(objLocator)
-    if type(obj) ~= "table" then corelog.Error("Host.DoLocatedObjMethod_SSrv: Obj "..objLocator:getURI().." not found.") return {success = false} end
-
-    -- get method
-    local method = obj[methodName]
-    if not method then corelog.Warning("Host.DoLocatedObjMethod_SSrv(...): Method "..methodName.." not found in Obj "..textutils.serialise(obj, {compact = true})) return {success = false} end
-
-    -- call method
---    local methodResults = method(obj, table.unpack(methodArguments))
-    local methodResults = method(obj, methodArguments)
-
-    -- end
-    return {
-        success         = type(methodResults) ~= "nil",
-        methodResults   = methodResults,
-    }
-end
-
 -- ToDo: consider if it's better to make this a method of a Host object (instead of the global function we have now)
 function Host.SaveObject_SSrv(...)
     -- get & check input from description

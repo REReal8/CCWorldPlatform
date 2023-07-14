@@ -497,9 +497,23 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         local objLocator = GetFieldValueFromDataUsingKeyDef(sourceStepData, locatorKeyDef)
         if type(objLocator) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objLocator field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
-        -- do service, keep the results
+        -- get Obj
+        local obj = Host.GetObject(objLocator)
+        if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return nil end
+
+        -- get method
+        local method = obj[methodName]
+        if not method then corelog.Warning("enterprise_projects.NextProjectStep: Method "..methodName.." not found in Obj "..textutils.serialise(obj, {compact = true})) TerminateProject(internalProjectData) return nil end
+
+        -- do method
         corelog.WriteToProjectsLog("Start step "..currentStep.." located sync Obj method", projectId)
-        local results = Host.DoLocatedObjMethod_SSrv(objLocator, methodName, stepData)
+        local methodResults = method(obj, stepData)
+
+        -- wrap results to make it act as a service
+        local results = {
+            success         = type(methodResults) ~= "nil",
+            methodResults   = methodResults,
+        }
 
         -- next step
         return enterprise_projects.NextProjectStep(internalProjectData, results)
