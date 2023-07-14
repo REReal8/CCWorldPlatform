@@ -18,8 +18,7 @@ function T_MObjHost.T_All()
 --    T_MObjHost.T_registerMObj_SSrv()
 end
 
-local hostName = "Test_MObjHost"
-local hostName2 = "Test_MObjHost2"
+local hostName = "TestMObjHost"
 
 local host1 = MObjHost:new({
     _hostName   = hostName,
@@ -122,9 +121,9 @@ function T_MObjHost.T_registerMObj_SSrv()
     -- prepare test
     corelog.WriteToLog("* MObjHost:registerMObj_SSrv() tests")
     local mobj_className = "TestMObj"
-    local field1Value = "value field1"
+    local field1SetValue = "value field1"
     local constructParameters = {
-        field1Value = field1Value
+        field1Value = field1SetValue
     }
 
     -- test
@@ -132,12 +131,27 @@ function T_MObjHost.T_registerMObj_SSrv()
         className           = mobj_className,
         constructParameters = constructParameters,
     })
-    assert(serviceResult and serviceResult.success, "failed registering MObj")
-    assert(URL.IsOfType(serviceResult.mobjLocator), "incorrect mobjLocator returned")
 
---    assert(host:getHostName() == hostName, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..hostName..")")
+    -- check registration success
+    assert(serviceResult and serviceResult.success, "failed registering MObj")
+
+    -- check mobjLocator returned
+    local mobjLocator = serviceResult.mobjLocator
+    assert(URL.IsOfType(mobjLocator), "incorrect mobjLocator returned")
+
+    -- check mobj saved
+    local mobj = host1:getObject(mobjLocator)
+    assert(mobj, "MObj not in host")
+
+    -- check mobj constructed
+    local field1Value = mobj:getField1()
+    assert(field1Value == field1SetValue, "construct did not set _field1")
+    local isActive = mobj:isActive()
+    assert(type(isActive) == "boolean", "isActive does not(="..type(isActive)..") return a boolean")
+    assert(not isActive, "MObj is active")
 
     -- cleanup test
+    host1:deleteObjects("TestMObj")
 end
 
 return T_MObjHost

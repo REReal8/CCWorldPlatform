@@ -1,8 +1,12 @@
 local TestMObj = {
-    _field1 = "",
+    _id         = "",
+    _isActive   = false,
+
+    _field1     = "",
 }
 
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
@@ -40,18 +44,23 @@ end
 --                    _/ |
 --                   |__/
 
-function TestMObj:new(o)
-    --[[
-        Constructs a TestMObj.
+function TestMObj:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a TestMObj.
 
         Parameters:
-            o               - (table) table with
-                _field1     - (string) field
-    --]]
+            o                           + (table, {}) table with object fields
+                _id                     - (string) id of the TestMObj
+                _field1                 - (string) field
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestMObj:new: Invalid input") return nil end
 
-    o = o or {}   -- create object if user does not provide one
+    -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- end
     return o
 end
 
@@ -130,7 +139,15 @@ function TestMObj:construct(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
 
-    corelog.Error("Method construct() not yet implemented.")
+    -- make object table
+    local oTable = {
+        _id             = coreutils.NewId(),
+
+        _field1         = field1Value,
+    }
+
+    -- create new TestMObj
+    return TestMObj:new(oTable)
 end
 
 function TestMObj:destruct()
@@ -156,7 +173,7 @@ function TestMObj:getId()
         Return a unique Id of the TestMObj.
     ]]
 
-    corelog.Error("Method getId() not yet implemented.")
+    return self._id
 end
 
 function TestMObj:activate()
@@ -169,8 +186,11 @@ function TestMObj:activate()
                                         - (boolean) whether the TestMObj was succesfully activated.
     ]]
 
-    corelog.Error("Method activate() not yet implemented.")
-    return false
+    -- set active
+    self._isActive = true
+
+    -- end
+    return true
 end
 
 function TestMObj:deactivate()
@@ -184,8 +204,11 @@ function TestMObj:deactivate()
                                 - (boolean) whether the TestMObj was succesfully deactivate.
     ]]
 
-    corelog.Error("Method deactivate() not yet implemented.")
-    return false
+    -- set inactive
+    self._isActive = false
+
+    -- end
+    return true
 end
 
 function TestMObj:isActive()
@@ -194,7 +217,7 @@ function TestMObj:isActive()
                                         - (boolean) if TestMObj is active, i.e. accepting new business.
     ]]
 
-    corelog.Error("Method isActive() not yet implemented.")
+    return self._isActive
 end
 
 function TestMObj:completeRunningBusiness_AOSrv(...)
