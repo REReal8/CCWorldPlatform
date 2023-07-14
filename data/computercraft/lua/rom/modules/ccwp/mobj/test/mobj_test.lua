@@ -1,8 +1,9 @@
 local TestMObj = {
-    _id         = "",
-    _isActive   = false,
+    _id             = "",
+    _isActive       = false,
 
-    _field1     = "",
+    _baseLocation   = nil,
+    _field1         = "",
 }
 
 local corelog = require "corelog"
@@ -35,6 +36,10 @@ function TestMObj:setField1(strValue)
     self._field1 = strValue
 end
 
+function TestMObj:getBaseLocation()
+    return self._baseLocation
+end
+
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -52,6 +57,8 @@ function TestMObj:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the TestMObj
+                _isActive               - (boolean) if the TestMObj is active
+                _baseLocation           - (Location) base location of the TestMObj
                 _field1                 - (string) field
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:new: Invalid input") return nil end
@@ -123,7 +130,7 @@ end
 
 function TestMObj:construct(...)
     -- get & check input from description
-    local checkSuccess, field1Value = InputChecker.Check([[
+    local checkSuccess, baseLocation, field1Value = InputChecker.Check([[
         This method constructs a TestMObj instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also registers all child MObj's the TestMObj spawns (by calling the RegisterMObj method on the appropriate MObjHost).
@@ -135,6 +142,7 @@ function TestMObj:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the MObj
+                baseLocation            + (Location) base location of the TestMObj
                 field1Value             + (string) value to set field1 to
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
@@ -142,7 +150,9 @@ function TestMObj:construct(...)
     -- make object table
     local oTable = {
         _id             = coreutils.NewId(),
+        _isActive       = false,
 
+        _baseLocation   = baseLocation,
         _field1         = field1Value,
     }
 
@@ -253,7 +263,24 @@ function TestMObj:getBuildBlueprint()
         Parameters:
     ]]
 
-    corelog.Error("Method getBuildBlueprint() not yet implemented.")
+    -- construct layer list
+    local layerList = {
+--        { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
+        -- note: empty as we currently do not want to actually have the Turtle move
+    }
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+        }
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
 end
 
 function TestMObj:getDismantleBlueprint()
