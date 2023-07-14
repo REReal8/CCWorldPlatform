@@ -160,6 +160,10 @@ function t_projects.T_StartProject_ASrv()
             { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
+            -- test located SOSrv
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "test_SOSrv", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            }},
             -- test located AOSrv
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "test_AOSrv", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
@@ -177,6 +181,7 @@ function t_projects.T_StartProject_ASrv()
                 { keyDef = "success6"       , sourceStep = 6, sourceKeyDef = "success" },
                 { keyDef = "success7"       , sourceStep = 7, sourceKeyDef = "success" },
                 { keyDef = "success8"       , sourceStep = 8, sourceKeyDef = "success" },
+                { keyDef = "success9"       , sourceStep = 9, sourceKeyDef = "success" },
             }},
         },
         returnData  = {
@@ -189,9 +194,11 @@ function t_projects.T_StartProject_ASrv()
             { keyDef = "test_SOSrv_SelfObj"     , sourceStep = 5, sourceKeyDef = "selfObj" },
             { keyDef = "test_AOSrv_BArg"        , sourceStep = 6, sourceKeyDef = "input" },
             { keyDef = "test_AOSrv_SelfObj"     , sourceStep = 6, sourceKeyDef = "selfObj" },
-            { keyDef = "test_LAOSrv_BArg"       , sourceStep = 7, sourceKeyDef = "input" },
-            { keyDef = "test_LAOSrv_SelfObj"    , sourceStep = 7, sourceKeyDef = "selfObj" },
-            { keyDef = "success"            , sourceStep = 9, sourceKeyDef = "success" },
+            { keyDef = "test_LSOSrv_BArg"       , sourceStep = 7, sourceKeyDef = "input" },
+            { keyDef = "test_LSOSrv_SelfObj"    , sourceStep = 7, sourceKeyDef = "selfObj" },
+            { keyDef = "test_LAOSrv_BArg"       , sourceStep = 8, sourceKeyDef = "input" },
+            { keyDef = "test_LAOSrv_SelfObj"    , sourceStep = 8, sourceKeyDef = "selfObj" },
+            { keyDef = "success"            , sourceStep = 10, sourceKeyDef = "success" },
         }
     }
     local projectData = {
@@ -277,6 +284,15 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     expectedTestBArg = testArgValue20
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
     testObjSelf = serviceResults.test_AOSrv_SelfObj
+    testObjSelf = TestObj:new(testObjSelf)
+    assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
+    assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
+
+    -- test located SOSrv (results)
+    testBArg = serviceResults.test_LSOSrv_BArg
+    expectedTestBArg = testArgValue20
+    assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
+    local testObjSelf = serviceResults.test_LSOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
     assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
