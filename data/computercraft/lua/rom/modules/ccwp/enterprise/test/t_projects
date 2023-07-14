@@ -153,7 +153,7 @@ function t_projects.T_StartProject_ASrv()
             { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
-            { stepType = "SLMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
+            { stepType = "LSMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {

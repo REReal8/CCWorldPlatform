@@ -411,7 +411,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         })
 
         -- do service
-        corelog.WriteToProjectsLog("Start step "..currentStep.." async obj service", projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." async Obj service", projectId)
         local scheduledCorrectly = MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback)
         if scheduledCorrectly ~= true then corelog.Error("enterprise_projects.NextProjectStep: Failed scheduling ("..type(scheduledCorrectly)..") AOSrv service "..className..":"..serviceName.." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
         return scheduledCorrectly
@@ -436,12 +436,12 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- do service, keep the results
-        corelog.WriteToProjectsLog("Start step "..currentStep.." sync obj service", projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." sync Obj service", projectId)
         local results = MethodExecutor.DoSyncObjService(className, objData, serviceName, stepData)
 
         -- next step
         return enterprise_projects.NextProjectStep(internalProjectData, results)
-    elseif stepType == "SLMtd" then
+    elseif stepType == "LSMtd" then
         -- get & check input from description
         local checkSuccess, methodName, locatorStep, locatorKeyDef = InputChecker.Check([[
             Parameters:
@@ -450,18 +450,18 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
                     locatorStep         + (number)
                     locatorKeyDef       + (string)
         --]], stepTypeDef)
-        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepTypeDef fields for SLMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepTypeDef fields for LSMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- get sourceStepData
         local sourceStepData = project.outputs[ locatorStep ]
-        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for locator of SLMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for locator of LSMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- get locatorData
         local locatorData = GetFieldValueFromDataUsingKeyDef(sourceStepData, locatorKeyDef)
         if type(locatorData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid locatorData field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
         -- do service, keep the results
-        corelog.WriteToProjectsLog("Start step "..currentStep.." sync located obj method", projectId)
+        corelog.WriteToProjectsLog("Start step "..currentStep.." located sync Obj method", projectId)
         local results = Host.DoLocatedObjMethod_SSrv(locatorData, methodName, stepData)
 
         -- next step
