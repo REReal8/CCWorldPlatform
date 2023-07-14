@@ -118,7 +118,7 @@ function InputChecker.Check(description, ...)
         -- hmm, het woord 'parameter' nog niet eens gevonden
         else
             -- zoeken naar waar de parameters beginnen
-            local start = string.find(stringPart, "[Pp]arameters")
+            local start = string.find(stringPart, "[Pp]arameters:")
             if start then parameterStart = start - 1 end
         end
     end
