@@ -540,6 +540,7 @@ function Host.GetHost(...)
     -- get Host
     local host = moduleRegistry:getModule(hostName)
     if not Host.IsOfType(host) then if not suppressWarning then corelog.Warning("Host.GetHost: No Host registered with hostName="..hostName) end return nil end
+    if not host then if not suppressWarning then corelog.Warning("Host.GetHost: No module registered with hostName="..hostName) end return nil end
 
     -- end
     return host
