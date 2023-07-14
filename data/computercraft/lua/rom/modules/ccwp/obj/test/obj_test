@@ -140,6 +140,36 @@ function TestObj:copy()
     return copy
 end
 
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+function TestObj:getTestArg(...)
+    -- get & check input from description
+    local checkSuccess, testArg = InputChecker.Check([[
+        This public method returns a test argument.
+
+        Return value:
+            input               - (?) the test input argument
+
+        Parameters:
+            serviceData         - (table) data about the service
+                testArg         + (?) as a test argument
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:getTestArg: Invalid input") return {success = false} end
+
+    -- verify true object
+    assert(TestObj.IsOfType(self), "TestObj:getTestArg: self(="..textutils.serialise(self)..") not of type TestObj")
+
+    -- end
+    return testArg
+end
+
 --                        _
 --                       (_)
 --    ___  ___ _ ____   ___  ___ ___  ___

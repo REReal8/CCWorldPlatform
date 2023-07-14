@@ -7,6 +7,8 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local MethodExecutor = require "method_executor"
 
+local Host = require "obj_host"
+
 local db = {
     dhtRoot     = "enterprise_projects",
 }
@@ -436,6 +438,31 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- do service, keep the results
         corelog.WriteToProjectsLog("Start step "..currentStep.." sync obj service", projectId)
         local results = MethodExecutor.DoSyncObjService(className, objData, serviceName, stepData)
+
+        -- next step
+        return enterprise_projects.NextProjectStep(internalProjectData, results)
+    elseif stepType == "SLMtd" then
+        -- get & check input from description
+        local checkSuccess, methodName, locatorStep, locatorKeyDef = InputChecker.Check([[
+            Parameters:
+                stepTypeDef             - (table)
+                    methodName          + (string)
+                    locatorStep         + (number)
+                    locatorKeyDef       + (string)
+        --]], stepTypeDef)
+        if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepTypeDef fields for SLMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+
+        -- get sourceStepData
+        local sourceStepData = project.outputs[ locatorStep ]
+        if type(sourceStepData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid sourceStepData for locator of SLMtd step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+
+        -- get locatorData
+        local locatorData = GetFieldValueFromDataUsingKeyDef(sourceStepData, locatorKeyDef)
+        if type(locatorData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid locatorData field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+
+        -- do service, keep the results
+        corelog.WriteToProjectsLog("Start step "..currentStep.." sync located obj method", projectId)
+        local results = Host.DoLocatedObjMethod_SSrv(locatorData, methodName, stepData)
 
         -- next step
         return enterprise_projects.NextProjectStep(internalProjectData, results)

@@ -3,6 +3,10 @@ local t_projects = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
+
+local Host = require "obj_host"
 
 local TestObj = require "test.obj_test"
 
@@ -121,6 +125,13 @@ local voorstelNieuwProjectDef = {
 function t_projects.T_StartProject_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
+    local hostName = "TestHost"
+    local host = Host:new({
+        _hostName   = hostName,
+    })
+    moduleRegistry:registerModule(hostName, host)
+    local objLocator = host:saveObject(testObj)
+
     local projectDef = {
         steps   = {
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
@@ -140,6 +151,9 @@ function t_projects.T_StartProject_ASrv()
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
             { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            }},
+            { stepType = "SLMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
@@ -181,11 +195,16 @@ function t_projects.T_StartProject_ASrv()
         },
         testTable4 = { },
         testObj = testObj,
+        objLocator = objLocator,
     }
     local callback = Callback:new({
         _moduleName     = "t_projects",
         _methodName     = "StartProject_ASrv_Callback",
-        _data           = { [0] = callbackTestValue},
+        _data           = {
+            [0]             = callbackTestValue,
+            ["hostName"]    = hostName,
+            ["objLocator"]  = objLocator,
+        },
     })
     local projectServiceData = {
         projectDef  = projectDef,
@@ -240,6 +259,11 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- cleanup test
+    local objLocator = callbackData["objLocator"]
+    local hostName = callbackData["hostName"]
+    local host = Host.GetHost(hostName) if not host then corelog.Error("host not found") return end
+    host:deleteResource(objLocator)
+    moduleRegistry:delistModule(hostName)
 end
 
 function t_projects.T_DeleteProjects()
