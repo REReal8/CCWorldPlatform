@@ -15,7 +15,7 @@ function T_MObjHost.T_All()
     T_MObjHost.T_new()
 
     -- service methods
---    T_MObjHost.T_registerMObj_SSrv()
+    T_MObjHost.T_registerMObj_SSrv()
 end
 
 local hostName = "TestMObjHost"
