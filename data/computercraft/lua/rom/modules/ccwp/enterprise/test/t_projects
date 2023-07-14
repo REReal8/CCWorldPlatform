@@ -103,10 +103,10 @@ local voorstelNieuwProjectDef = {
                 -- etc
             }
         },
-        { stepType = "SOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_SOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+        { stepType = "SOSrv", stepTypeDef = { className = "TestObj", serviceName = "test_SOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
             { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
         }},
-        { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+        { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
             { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
         }},
     },
@@ -153,15 +153,15 @@ function t_projects.T_StartProject_ASrv()
                 { keyDef = "testArg.field4" , sourceStep = 0, sourceKeyDef = "testTableSource2.key4" },
             }},
             -- test SOSrv
-            { stepType = "SOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_SOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+            { stepType = "SOSrv", stepTypeDef = { className = "TestObj", serviceName = "test_SOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
             -- test AOSrv
-            { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "Test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
+            { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
             -- test located AOSrv
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "Test_AOSrv", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "test_AOSrv", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
             }},
             -- test located SMtd

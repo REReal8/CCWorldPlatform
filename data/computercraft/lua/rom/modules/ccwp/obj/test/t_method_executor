@@ -77,7 +77,7 @@ function T_MethodExecutor.T_DoSyncObjService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoSyncObjService() test")
     local className = "TestObj"
-    local serviceName = "Test_SOSrv"
+    local serviceName = "test_SOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
     local objData = {}
     local serviceData = {
@@ -130,7 +130,7 @@ function T_MethodExecutor.T_DoASyncObjService()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.DoASyncObjService() test")
     local className = "TestObj"
-    local serviceName = "Test_AOSrv"
+    local serviceName = "test_AOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
     local objData = {}
     local serviceData = {

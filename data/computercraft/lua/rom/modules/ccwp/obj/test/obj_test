@@ -177,7 +177,7 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/\__ \
 --   |___/\___|_|    \_/ |_|\___\___||___/
 
-function TestObj:Test_SOSrv(...)
+function TestObj:test_SOSrv(...)
     -- get & check input from description
     local checkSuccess, serviceData, testArg = InputChecker.Check([[
         This public sync service returns a test argument.
@@ -190,10 +190,10 @@ function TestObj:Test_SOSrv(...)
             serviceData         + (table) data about the service
                 testArg         + (?) as a test argument
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestObj:Test_SOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("TestObj:test_SOSrv: Invalid input") return {success = false} end
 
     -- verify true object
-    assert(TestObj.IsOfType(self), "TestObj:Test_SOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(TestObj.IsOfType(self), "TestObj:test_SOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- determine result to return
     local serviceResult = {
@@ -208,7 +208,7 @@ function TestObj:Test_SOSrv(...)
     return serviceResult
 end
 
-function TestObj:Test_AOSrv(...)
+function TestObj:test_AOSrv(...)
     -- get & check input from description
     local checkSuccess, testArg, callback = InputChecker.Check([[
         This public async service executes an assignment with a callback function and callback data.
@@ -226,10 +226,10 @@ function TestObj:Test_AOSrv(...)
                 testArg         + (number) as a test argument
             callback            + (Callback) to call once service is ready
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestObj:Test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("TestObj:test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- verify true object
-    assert(TestObj.IsOfType(self), "TestObj:Test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(TestObj.IsOfType(self), "TestObj:test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- create assignment arguments
     local taskData = {
