@@ -293,27 +293,6 @@ function Host:deleteResource(...)
     return savedResource == nil
 end
 
-local classNamePattern = "%/class=([%w]+)"
-local function GetClassName(...)
-    -- get & check input from description
-    local checkSuccess, objectLocator = InputChecker.Check([[
-        This method gets the className corresponding to an object referenced by an objectLocator.
-
-        Return value:
-            className           - (string) the className of the object
-
-        Parameters:
-            objectLocator       + (URL) locating the object
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Host:getClassName: Invalid input") return nil end
-
-    -- get className from path
-    local className = objectLocator:getPath():match(classNamePattern)
-
-    -- end
-    return className
-end
-
 function Host:getObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
@@ -328,7 +307,7 @@ function Host:getObject(...)
     if not checkSuccess then corelog.Error("Host:getObject: Invalid input") return nil end
 
     -- get className
-    local className = GetClassName(objectLocator)
+    local className = Host.GetClassName(objectLocator)
     if type(className) ~= "string" then corelog.Error("Host:getObject: failed obtaining className from objectLocator="..objectLocator:getURI()) return nil end
 
     -- get raw Resource
@@ -522,6 +501,27 @@ end
 --   / __| __/ _` | __| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   \__ \ || (_| | |_| | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\__\__,_|\__|_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+local classNamePattern = "%/class=([%w]+)"
+function Host.GetClassName(...)
+    -- get & check input from description
+    local checkSuccess, objectLocator = InputChecker.Check([[
+        This method gets the className corresponding to an object referenced by an objectLocator.
+
+        Return value:
+            className           - (string) the className of the object
+
+        Parameters:
+            objectLocator       + (URL) locating the object
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:getClassName: Invalid input") return nil end
+
+    -- get className from path
+    local className = objectLocator:getPath():match(classNamePattern)
+
+    -- end
+    return className
+end
 
 function Host.GetHost(...)
     -- get & check input from description
