@@ -127,7 +127,6 @@ function TestMObj:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the MObj
                 field1Value             + (string) value to set field1 to
-                field2Value             + (string) value to set field2 to
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
 
