@@ -692,7 +692,7 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
 --                }},
 --            },
             returnData  = {
-                { keyDef = "success"                    , sourceStep = 1, sourceKeyDef = "success" },
+--                { keyDef = "success"                    , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "destinationItemsLocator"    , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" }, -- todo: merge different URLs when items came from different chests, see enterprise_isp.AddItemsLocators_SSrv
             }
         },
