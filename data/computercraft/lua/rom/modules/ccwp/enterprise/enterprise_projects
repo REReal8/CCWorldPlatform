@@ -64,9 +64,10 @@ function enterprise_projects.StartProject_ASrv(...)
         projectId           = coreutils.NewId(),
 
         currentStep         = 0,
+        allTrue             = true,                                         -- keeps track weather all steps returned true
         outputs             = {},
 
-        callerFunction      = corelog.FindCaller("enterprise_projects"), -- for debugging
+        callerFunction      = corelog.FindCaller("enterprise_projects"),    -- for debugging
     }
 
     -- save
@@ -253,6 +254,11 @@ local function EndProject(internalProjectData)
         local setSuccess = SetDataFieldUsingKeyDef(projectResults, fieldDef.keyDef, fieldValue)
         if not setSuccess then corelog.Error("enterprise_projects.EndProject: Failed setting resultData field "..fieldDef.keyDef.." of project"..projectId) break end
     end
+
+    -- default success settings
+    if projectResults.success == nil then projectResults.success = project.allTrue end
+
+    -- usefull logging
     corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResults), project.projectId)
 
     -- we are done, do the callback
@@ -315,6 +321,9 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     if type(stepResults) ~= "table" then corelog.Warning("enterprise_projects.NextProjectStep: no stepResults from step "..previousStep.." of project"..projectId) stepResults = {} end
     if previousStep > 0 and not stepResults.success then corelog.Warning("enterprise_projects.NextProjectStep: step "..previousStep.." of project"..projectId.." did not return success! This project was created by "..(project.callerFunction or "unknown")) end
     -- ToDo: consider TerminateProject in both of above cases
+
+    -- update all true
+    if previousStep > 0 then project.allTrue = project.allTrue and stepResults.success end
 
     -- save the results of the previous step
 --    corelog.WriteToProjectsLog("Save results step "..previousStep..": "..textutils.serialize(stepResults), projectId)
