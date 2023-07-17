@@ -295,11 +295,6 @@ function Silo:provideItemsTo_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- check if we can provide the requested items
-    local answer    = self:can_ProvideItems_QOSrv({provideItems = provideItems})
-    corelog.WriteToLog("self:can_ProvideItems_QOSrv:")
-    corelog.WriteToLog(answer)
-
     -- create project definition
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local projectData = {
@@ -628,7 +623,13 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:fromSiloIntoTopchest_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    -- usefull for debugging
     corelog.WriteToLog("fromSiloIntoTopchest_AOSrv begin")
+
+    -- check if we can provide the requested items
+    local answer    = self:can_ProvideItems_QOSrv({provideItems = provideItems})
+    corelog.WriteToLog("self:can_ProvideItems_QOSrv:")
+    corelog.WriteToLog(answer)
 
     -- create URL where the items are with item list
     local chestOneItemsLocator = self._storageChests[ 1 ]:copy() -- to improve!
