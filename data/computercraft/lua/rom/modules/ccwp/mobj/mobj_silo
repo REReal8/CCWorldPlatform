@@ -713,7 +713,17 @@ function Silo:update()
     enterprise_storage:saveObject(self)
 end
 
--- private
+--[[
+             _            _
+            (_)          | |
+  _ __  _ __ ___   ____ _| |_ ___
+ | '_ \| '__| \ \ / / _` | __/ _ \
+ | |_) | |  | |\ V / (_| | ||  __/
+ | .__/|_|  |_| \_/ \__,_|\__\___|
+ | |
+ |_|
+--]]
+
 function Silo:IntegretyCheck(...)
 
     local callback = Callback:new({
