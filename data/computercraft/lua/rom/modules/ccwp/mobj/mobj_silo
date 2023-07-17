@@ -293,6 +293,11 @@ function Silo:provideItemsTo_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    -- check if we can provide the requested items
+    local answer    = self:can_ProvideItems_QOSrv({provideItems = provideItems})
+    corelog.WriteToLog("self:can_ProvideItems_QOSrv:")
+    corelog.WriteToLog(answer)
+
     -- create project definition
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local projectData = {
@@ -738,8 +743,8 @@ end
 function Silo:IntegretyCheck(...)
 
     local callback = Callback:new({
-        _moduleName     = "",
-        _methodName     = "",
+        _moduleName     = "enterprise_assignmentboard",
+        _methodName     = "Dummy_Callback",
         _data           = {},
     })
 
