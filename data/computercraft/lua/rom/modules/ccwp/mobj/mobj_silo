@@ -373,7 +373,18 @@ function Silo:can_ProvideItems_QOSrv(...)
             if inventory then
 
                 -- can we deliver from this one?
-                if inventory:hasItems(provideItems) then return {success = true} end
+                if inventory:hasItems(provideItems) then
+                    -- nice!
+                    return {
+                        success = true,
+                        pickupList = {
+                            {
+                                chestLocator = chestLocator,
+                                itemList     = provideItems,
+                            },
+                        },
+                    }
+                end
             end
         end
     end
