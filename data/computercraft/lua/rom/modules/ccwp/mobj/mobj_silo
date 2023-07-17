@@ -134,10 +134,12 @@ end
 
 function Silo:Activate()
     self._operational = true
+    self:update()
 end
 
 function Silo:Deactivate()
     self._operational = false
+    self:update()
 end
 
 function Silo:getId()
