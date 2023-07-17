@@ -99,6 +99,10 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
     local obj = Silo:NewSilo({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Silo") return end
+
+    -- activate the silo
+    obj:Activate()
+
     local siloLocator = enterprise_storage:getObjectLocator(obj)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
@@ -112,9 +116,6 @@ local function provideItemsTo_AOSrv_Test(provideItems)
             ["siloLocator"]                     = siloLocator,
         },
     })
-
-    -- activate the silo
-    obj:Activate()
 
     -- test
     local scheduleResult = obj:provideItemsTo_AOSrv({
@@ -145,6 +146,7 @@ function T_Silo.T_ProvideMultipleItems()
     local provideItems = {
         ["minecraft:birch_planks"]  = 5,
         ["minecraft:birch_log"]     = 3,
+        ["minecraft:coal"]          = 7,
     }
 
     -- test
@@ -231,8 +233,24 @@ function T_Silo.T_GetRandomSilo()
     silo:Activate()
 
     -- do the testing
-    corelog.WriteToLog("can_ProvideItems_QOSrv test")
-    corelog.WriteToLog(silo:can_ProvideItems_QOSrv({provideItems = {["minecraft:torch"] = 1}}))
+--    corelog.WriteToLog("can_ProvideItems_QOSrv test")
+--    corelog.WriteToLog(silo:can_ProvideItems_QOSrv({provideItems = {["minecraft:coal"] = 7}}))
+
+    -- prepare test
+    local provideItems = {
+        ["minecraft:birch_planks"]  = 5,
+        ["minecraft:birch_log"]     = 3,
+        ["minecraft:coal"]          = 7,
+    }
+
+    local callback = Callback:new({
+        _moduleName     = "enterprise_assignmentboard",
+        _methodName     = "Dummy_Callback",
+        _data           = {},
+    })
+
+    -- test
+    silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_turtle.GetCurrentTurtleLocator()}, callback)
 end
 
 return T_Silo

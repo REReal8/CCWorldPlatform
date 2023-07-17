@@ -357,7 +357,13 @@ function Silo:can_ProvideItems_QOSrv(...)
     if not checkSuccess then corelog.Error("Silo:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- no trouble if we are not (or no longer) operational
-    if not self._operational then corelog.WriteToLog("inactive silo queried") return false end
+    if not self._operational then
+        -- weird
+        corelog.WriteToLog("inactive silo queried (self._operational = "..tostring(self._operational)..")")
+
+        -- ignore this for now
+    --    return {success = false, message = "silo not operational"}
+    end
 
     -- loop all storage chests to see if we can deliver
     -- version 0.2, only intersted if 1 chest can fully deliver (no partial deliveries yet)
@@ -393,7 +399,7 @@ function Silo:can_ProvideItems_QOSrv(...)
     end
 
     -- guess we did not find anything
-    return {success = false}
+    return {success = false, message = "items not available"}
 end
 
 function Silo:needsTo_ProvideItemsTo_SOSrv(...)
@@ -624,44 +630,47 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:fromSiloIntoTopchest_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- usefull for debugging
-    corelog.WriteToLog("fromSiloIntoTopchest_AOSrv begin")
-
     -- check if we can provide the requested items
     local answer    = self:can_ProvideItems_QOSrv({provideItems = provideItems})
-    corelog.WriteToLog("self:can_ProvideItems_QOSrv:")
-    corelog.WriteToLog(answer)
+
+    -- check if we can!
+    if not answer or not answer.success then
+        corelog.Error("Silo:fromSiloIntoTopchest_AOSrv(...): don't know where to get the requested items")
+        corelog.WriteToLog("answer:")
+        corelog.WriteToLog(answer)
+        return nil
+    end
 
     -- create URL where the items are with item list
-    local chestOneItemsLocator = self._storageChests[ 1 ]:copy() -- to improve!
-    chestOneItemsLocator:setQuery(provideItems)
+--    local chestOneItemsLocator = self._storageChests[ 1 ]:copy() -- to improve!
+    local sourceChestLocator = answer.pickupList[1].chestLocator
+    sourceChestLocator:setQuery(answer.pickupList[1].itemList)
 
-    local projectData = {
-        pickupLocator           = pickupLocator,
-        chestOneItemsLocator    = chestOneItemsLocator,
-        assignmentsPriorityKey  = assignmentsPriorityKey,
-    }
-    local projectDef = {
-        steps   = {
-            -- roept functie aan die goederen van pickup locatie naar silo topchest
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
-                { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "chestOneItemsLocator" },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "pickupLocator" },
-                { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }},
-            -- check for succes
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-            }},
-        },
-        returnData  = {
-            { keyDef = "success"                    , sourceStep = 2, sourceKeyDef = "success" },
-            { keyDef = "destinationItemsLocator"    , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" }, -- todo: merge different URLs when items came from different chests, see enterprise_isp.AddItemsLocators_SSrv
-        }
-    }
+    -- the project definition
     local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
+        projectData = {
+            pickupLocator           = pickupLocator,
+            sourceChestLocator      = sourceChestLocator,
+            assignmentsPriorityKey  = assignmentsPriorityKey,
+        },
+        projectDef  = {
+            steps   = {
+                -- roept functie aan die goederen van pickup locatie naar silo topchest
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "sourceChestLocator" },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "pickupLocator" },
+                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                }},
+                -- check for succes
+                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+                    { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+                }},
+            },
+            returnData  = {
+                { keyDef = "success"                    , sourceStep = 2, sourceKeyDef = "success" },
+                { keyDef = "destinationItemsLocator"    , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" }, -- todo: merge different URLs when items came from different chests, see enterprise_isp.AddItemsLocators_SSrv
+            }
+        },
     }
 
     -- start project
@@ -729,8 +738,8 @@ function Silo:fromTopchestIntoSilo_AOSrv(...)
 end
 
 function Silo:update()
-    -- one host at this time
-    enterprise_storage:saveObject(self)
+    -- one host at this time NOT WORKING
+--    enterprise_storage:saveObject(self)
 end
 
 --[[
