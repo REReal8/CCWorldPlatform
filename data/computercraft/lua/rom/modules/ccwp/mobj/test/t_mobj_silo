@@ -113,6 +113,9 @@ local function provideItemsTo_AOSrv_Test(provideItems)
         },
     })
 
+    -- activate the silo
+    obj:Activate()
+
     -- test
     local scheduleResult = obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
@@ -220,6 +223,9 @@ function T_Silo.T_GetRandomSilo()
     if not id then return nil end
     local silo = Silo:new(data[id])
     if not silo then return nil end
+
+    -- see what's inside
+--    silo:IntegretyCheck()
 
     -- usefull if this silo is active
     silo:Activate()
