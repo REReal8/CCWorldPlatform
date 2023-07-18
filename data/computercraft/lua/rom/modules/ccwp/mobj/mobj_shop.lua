@@ -472,11 +472,11 @@ function Shop:provideItemsTo_AOSrv(...)
     local iAddItemsLocatorStep = iStep
 
     -- add check for all a success
-    iStep = iStep + 1
+--[[     iStep = iStep + 1
     table.insert(projectSteps,
         { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = areAllTrueStepDataDef}
     )
-    local iAreAllTrueStep = iStep
+    local iAreAllTrueStep = iStep ]]
 
     -- create project service data
     local projectDef = {

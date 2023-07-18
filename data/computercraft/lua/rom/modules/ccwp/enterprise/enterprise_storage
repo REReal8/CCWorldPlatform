@@ -59,10 +59,10 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
                     { keyDef = "topChests"              , sourceStep = 0, sourceKeyDef = "topChests" },
                     { keyDef = "layers"                 , sourceStep = 0, sourceKeyDef = "layers" },
                 }},
-                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                    { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-                    { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-                }},
+--                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
+--                    { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
+--                    { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
+--                }},
             },
             returnData  = {
     --            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },

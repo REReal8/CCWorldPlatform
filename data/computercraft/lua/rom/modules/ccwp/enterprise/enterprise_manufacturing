@@ -151,6 +151,8 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     )
     iStep = iStep + 1
 
+    -- weird, no all true stap in this project
+
     -- create project definition
     local buildAndStartNewSiteProjectDef = {
         steps = projectSteps,

@@ -101,6 +101,8 @@ function enterprise_projects.AreAllTrue_QSrv(serviceData)
     -- check input
     if type(serviceData) ~= "table" then corelog.Error("enterprise_projects.AreAllTrue_QSrv: Invalid input") return {success = false} end
 
+    corelog.Error("enterprise_projects.AreAllTrue_QSrv: Who is still using this query service?!?")
+
     -- use remaining input
     local allTrue = true
     for key, serviceArgument in pairs(serviceData) do
