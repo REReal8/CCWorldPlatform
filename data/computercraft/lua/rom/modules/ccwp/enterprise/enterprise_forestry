@@ -133,7 +133,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
+--            { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
             { keyDef = "forestLocator"                  , sourceStep = 2, sourceKeyDef = "forestLocator" },
         }
     }
@@ -315,7 +315,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"    , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
+--            { keyDef = "success"    , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

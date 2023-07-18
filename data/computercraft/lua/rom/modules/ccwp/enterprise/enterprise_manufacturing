@@ -155,7 +155,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     local buildAndStartNewSiteProjectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                , sourceStep = iStep, sourceKeyDef = "success" },
+--            { keyDef = "success"                , sourceStep = iStep, sourceKeyDef = "success" },
             { keyDef = "siteLocator"            , sourceStep = iStep, sourceKeyDef = "siteLocator" },
         }
     }
@@ -312,7 +312,7 @@ function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 2, sourceKeyDef = "success" },
+--            { keyDef = "success"                    , sourceStep = 2, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

@@ -354,7 +354,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                     }},
                 },
                 returnData  = {
-                    { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
+        --            { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
                     { keyDef = "destinationItemsLocator"            , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
                 }
             }

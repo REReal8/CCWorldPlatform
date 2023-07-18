@@ -198,7 +198,7 @@ function t_projects.T_StartProject_ASrv()
             { keyDef = "test_LSOSrv_SelfObj"    , sourceStep = 7, sourceKeyDef = "selfObj" },
             { keyDef = "test_LAOSrv_BArg"       , sourceStep = 8, sourceKeyDef = "input" },
             { keyDef = "test_LAOSrv_SelfObj"    , sourceStep = 8, sourceKeyDef = "selfObj" },
-            { keyDef = "success"            , sourceStep = 10, sourceKeyDef = "success" },
+--            { keyDef = "success"            , sourceStep = 10, sourceKeyDef = "success" },
         }
     }
     local projectData = {

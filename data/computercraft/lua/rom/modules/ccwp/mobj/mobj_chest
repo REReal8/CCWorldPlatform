@@ -204,7 +204,7 @@ function Chest:updateChestRecord_AOSrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+--            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {
@@ -309,7 +309,7 @@ function Chest:provideItemsTo_AOSrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
+--            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
             { keyDef = "destinationItemsLocator"    , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
         }
     }
@@ -498,7 +498,7 @@ function Chest:storeItemsFrom_AOSrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
+--            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
             { keyDef = "destinationItemsLocator"    , sourceStep = 0, sourceKeyDef = "destinationItemsLocator" },
         }
     }

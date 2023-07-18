@@ -104,7 +104,7 @@ function MObjHost:addMObj_ASrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
+--            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
             { keyDef = "mobjLocator"                , sourceStep = 0, sourceKeyDef = "mobjLocator" },
         }
     }
@@ -239,7 +239,7 @@ function MObjHost:removeMObj_ASrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
+--            { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

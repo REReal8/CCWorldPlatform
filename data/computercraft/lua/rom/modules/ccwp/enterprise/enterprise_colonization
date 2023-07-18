@@ -264,7 +264,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }},
         },
         returnData  = {
-            { keyDef = "success"                        , sourceStep = 25, sourceKeyDef = "success" },
+--            { keyDef = "success"                        , sourceStep = 25, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

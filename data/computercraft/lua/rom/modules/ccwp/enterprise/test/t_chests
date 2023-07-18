@@ -57,7 +57,7 @@ function t_chests.GetRegisterAndUpdateChestProjectDef()
             }},
         },
         returnData = {
-            { keyDef = "success"                , sourceStep = 3, sourceKeyDef = "success" },
+--            { keyDef = "success"                , sourceStep = 3, sourceKeyDef = "success" },
             { keyDef = "chestLocator"           , sourceStep = 1, sourceKeyDef = "chestLocator" },
         }
     }

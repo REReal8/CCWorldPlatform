@@ -482,7 +482,7 @@ function Shop:provideItemsTo_AOSrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "success"                , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
+--            { keyDef = "success"                , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
             { keyDef = "destinationItemsLocator", sourceStep = iAddItemsLocatorStep, sourceKeyDef = "itemsLocator" },
         }
     }
