@@ -1,0 +1,121 @@
+local Miner = {
+    _id                     = "",
+    _version                = 1,
+
+    _location               = nil,
+
+    _topChests              = nil,
+
+    _operational            = false,
+}
+
+-- includes / requires
+local coreutils = require "coreutils"
+local corelog = require "corelog"
+local coredht = require "coredht"
+
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
+local ObjArray = require "obj_array"
+local Host = require "obj_host"
+
+local Location = require "obj_location"
+local Inventory = require "obj_inventory"
+
+local role_fuel_worker = require "role_fuel_worker"
+local role_chests_worker = require "role_chests_worker"
+
+local enterprise_isp = require "enterprise_isp"
+local enterprise_projects = require "enterprise_projects"
+local enterprise_turtle
+local enterprise_chests = require "enterprise_chests"
+local enterprise_storage
+
+-- usefull
+local dthMinerRoot   = "mobj_miner"
+
+--[[
+    The following design decisions are made
+        - The miner has full control of all area with z coordinate -32 and lower.
+--]]
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function Miner:NewMiner(...)
+    -- get & check input from description
+    local checkSuccess, location, topChests = InputChecker.Check([[
+        Construct a miner.
+
+        Parameters:
+            siteData                    - (table) data about this silo, like type and layout
+                location                + (Location) location of site
+                topChests               + (number, 2) # of top chests
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
+
+    -- better safe then sorry, maybe flexible one day
+--    location:setDX(0)
+--    location:setDY(1)
+
+    -- main var
+    local siteData  = {
+        _id             = coreutils.NewId(),
+
+        -- might be userfull later
+        _version        = 1,
+
+        -- locations
+        _location       = location,
+
+        -- chests
+        _topChests      = ObjArray:new({
+            _objClassName = "URL",
+        }),
+
+        -- is this silo accepting requests?
+        _operational    = false,
+    }
+
+    -- what kind of new silo is this?
+    corelog.WriteToLog(">Starting miner at "..textutils.serialise(location, { compact = true }))
+
+    -- add our top chests, depending how many we have
+    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}).chestLocator) end
+    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}).chestLocator) end
+    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}).chestLocator) end
+    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}).chestLocator) end
+    if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}).chestLocator) end
+    if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}).chestLocator) end
+    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}).chestLocator) end
+    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}).chestLocator) end
+
+    -- set class info
+    setmetatable(siteData, self)
+    self.__index = self
+
+    -- end
+    return siteData
+end
+
+function Miner:Activate()
+    self._operational = true
+    self:update()
+end
+
+function Miner:Deactivate()
+    self._operational = false
+    self:update()
+end
+
+function Miner:getId()
+    return self._id
+end
+
+function Miner:getLocation()
+    return self._location
+end
