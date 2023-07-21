@@ -314,3 +314,5 @@ function Miner:needsTo_ProvideItemsTo_SOSrv(...)
     -- ToDo: better estimate, probebly based on earlier experience
     return {success = true, fuelNeed = 1000}
 end
+
+return Miner
