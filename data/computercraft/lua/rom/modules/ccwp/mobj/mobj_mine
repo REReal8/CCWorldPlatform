@@ -1,4 +1,4 @@
-local Miner = {
+local Mine = {
     _id                     = "",
     _version                = 1,
 
@@ -32,11 +32,11 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_storage
 
 -- usefull
-local dthMinerRoot   = "mobj_miner"
+local dthMineRoot   = "mobj_mine"
 
 --[[
     The following design decisions are made
-        - The miner has full control of all area with z coordinate -32 and lower.
+        - The mine has full control of all area with z coordinate -32 and lower.
 --]]
 
 --    _                                     _   _               _
@@ -46,10 +46,10 @@ local dthMinerRoot   = "mobj_miner"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Miner:NewMiner(...)
+function Mine:NewMine(...)
     -- get & check input from description
     local checkSuccess, location, topChests = InputChecker.Check([[
-        Construct a miner.
+        Construct a mine.
 
         Parameters:
             siteData                    - (table) data about this silo, like type and layout
@@ -82,7 +82,7 @@ function Miner:NewMiner(...)
     }
 
     -- what kind of new silo is this?
-    corelog.WriteToLog(">Starting miner at "..textutils.serialise(location, { compact = true }))
+    corelog.WriteToLog(">Starting mine at "..textutils.serialise(location, { compact = true }))
 
     -- add our top chests, depending how many we have
     if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}).chestLocator) end
@@ -102,21 +102,21 @@ function Miner:NewMiner(...)
     return siteData
 end
 
-function Miner:Activate()
+function Mine:Activate()
     self._operational = true
     self:update()
 end
 
-function Miner:Deactivate()
+function Mine:Deactivate()
     self._operational = false
     self:update()
 end
 
-function Miner:getId()
+function Mine:getId()
     return self._id
 end
 
-function Miner:getLocation()
+function Mine:getLocation()
     return self._location
 end
 
@@ -129,7 +129,7 @@ end
 --                    _/ |
 --                   |__/
 
-function Miner:new(...)
+function Mine:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
         Construct a Silo.
@@ -151,11 +151,11 @@ function Miner:new(...)
     return o
 end
 
-function Miner:getClassName()
-    return "Miner"
+function Mine:getClassName()
+    return "Mine"
 end
 
-function Miner.HasFieldsOfType(obj)
+function Mine.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
@@ -169,22 +169,22 @@ function Miner.HasFieldsOfType(obj)
     return true
 end
 
-function Miner.HasClassNameOfType(obj)
+function Mine.HasClassNameOfType(obj)
     -- check
-    if not obj.getClassName or obj:getClassName() ~= Miner:getClassName() then return false end
+    if not obj.getClassName or obj:getClassName() ~= Mine:getClassName() then return false end
 
     -- end
     return true
 end
 
-function Miner.IsOfType(obj)
+function Mine.IsOfType(obj)
     -- check
-    return Miner.HasFieldsOfType(obj) and Miner.HasClassNameOfType(obj)
+    return Mine.HasFieldsOfType(obj) and Mine.HasClassNameOfType(obj)
 end
 
-function Miner:isSame(obj)
+function Mine:isSame(obj)
     -- check input
-    if not Miner.IsOfType(obj) then return false end
+    if not Mine.IsOfType(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id
@@ -198,8 +198,8 @@ function Miner:isSame(obj)
     return isSame
 end
 
-function Miner:copy()
-    local copy = Miner:new({
+function Mine:copy()
+    local copy = Mine:new({
         _id             = self._id,
         _version        = self._version,
 
@@ -220,7 +220,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function Miner:provideItemsTo_AOSrv(...)
+function Mine:provideItemsTo_AOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
@@ -242,14 +242,14 @@ function Miner:provideItemsTo_AOSrv(...)
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Miner:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("Mine:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- start project
-    corelog.WriteToLog(">Retrieve "..textutils.serialise(provideItems).." from Miner (!!NOT IMPLEMENTEND!!)")
+    corelog.WriteToLog(">Retrieve "..textutils.serialise(provideItems).." from Mine (!!NOT IMPLEMENTEND!!)")
     return {success = false}
 end
 
-function Miner:can_ProvideItems_QOSrv(...)
+function Mine:can_ProvideItems_QOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems = InputChecker.Check([[
         This sync public query service answers the question whether the ItemSupplier can provide specific items.
@@ -262,15 +262,15 @@ function Miner:can_ProvideItems_QOSrv(...)
             serviceData             - (table) data to the query
                 provideItems        + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Miner:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("Mine:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
     -- no trouble if we are not (or no longer) operational
     if not self._operational then
         -- weird
-        corelog.WriteToLog("inactive miner queried (self._operational = "..tostring(self._operational)..")")
+        corelog.WriteToLog("inactive mine queried (self._operational = "..tostring(self._operational)..")")
 
         -- ignore this error for now
-    --    return {success = false, message = "miner not operational"}
+    --    return {success = false, message = "mine not operational"}
     end
 
     -- check if all items are underground findable
@@ -292,7 +292,7 @@ function Miner:can_ProvideItems_QOSrv(...)
     return {success = false, message = "items not available"}
 end
 
-function Miner:needsTo_ProvideItemsTo_SOSrv(...)
+function Mine:needsTo_ProvideItemsTo_SOSrv(...)
     -- get & check input from description
     local checkSuccess, provideItems, itemDepotLocator = InputChecker.Check([[
         This sync public service returns the needs for the ItemSupplier to provide specific items to an ItemDepot.
@@ -309,10 +309,10 @@ function Miner:needsTo_ProvideItemsTo_SOSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL, nil) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Miner:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false, fuelNeed = 20000} end
+    if not checkSuccess then corelog.Error("Mine:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false, fuelNeed = 20000} end
 
     -- ToDo: better estimate, probebly based on earlier experience
     return {success = true, fuelNeed = 1000}
 end
 
-return Miner
+return Mine
