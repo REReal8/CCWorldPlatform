@@ -1,4 +1,4 @@
-local T_Miner = {}
+local T_Mine = {}
 local corelog = require "corelog"
 local coredht = require "coredht"
 
@@ -9,26 +9,26 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local Location = require "obj_location"
 local URL = require "obj_url"
 
-local Miner = require "mobj_miner"
+local Mine = require "mobj_mine"
 
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
 
 local t_turtle = require "test.t_turtle"
 
-function T_Miner.T_All()
+function T_Mine.T_All()
     -- interfaces
     -- ToDo: proper cleanup of Chests before enabling
---    T_Miner.T_ImplementsIObj()
---    T_Miner.T_ImplementsIItemSupplier()
---    T_Miner.T_ImplementsIItemDepot()
+--    T_Mine.T_ImplementsIObj()
+--    T_Mine.T_ImplementsIItemSupplier()
+--    T_Mine.T_ImplementsIItemDepot()
 
     -- base methods
 
     -- ToDo: "All" tests are supposed to have no side-effect and should cause the system (typically the dht) be cleared of any changes it made. This seems
     -- not the case for ensure T_new() test. Hence it is commented for now.
---    T_Miner.T_new()
---    T_Miner.T_Load()
+--    T_Mine.T_new()
+--    T_Mine.T_Load()
 end
 
 -- handy
@@ -43,27 +43,27 @@ local location1  = Location:new({_x= 12, _y= -6, _z= 1, _dx=0, _dy=1})
 
 local function ImplementsInterface(interfaceName)
     -- prepare test
-    corelog.WriteToLog("* Miner "..interfaceName.." interface test")
+    corelog.WriteToLog("* Mine "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = Miner:NewMiner({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Miner") return end
+    local obj = Mine:NewMine({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Mine") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "Miner class does not (fully) implement "..interfaceName.." interface")
+    assert(implementsInterface, "Mine class does not (fully) implement "..interfaceName.." interface")
 
     -- cleanup test
     -- ToDo: proper cleanup of Chests
 end
 
-function T_Miner.T_ImplementsIObj()
+function T_Mine.T_ImplementsIObj()
     ImplementsInterface("IObj")
 end
 
-function T_Miner.T_ImplementsIItemSupplier()
+function T_Mine.T_ImplementsIItemSupplier()
     ImplementsInterface("IItemSupplier")
 end
 
-function T_Miner.T_ImplementsIItemDepot()
+function T_Mine.T_ImplementsIItemDepot()
     ImplementsInterface("IItemDepot")
 end
 
@@ -74,11 +74,11 @@ end
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function T_Miner.T_NewMiner()
+function T_Mine.T_NewMine()
 
     -- do the new test
-    corelog.WriteToLog("* Miner:NewMiner() tests")
-    local obj = Miner:NewMiner({location=location1, topChests=2})
+    corelog.WriteToLog("* Mine:NewMine() tests")
+    local obj = Mine:NewMine({location=location1, topChests=2})
 end
 
 local compact = { compact = true }
@@ -94,23 +94,23 @@ local compact = { compact = true }
 
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
-    corelog.WriteToLog("* Miner:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Miner:NewMiner({location=location1, topChests=2}) if not obj then corelog.Error("failed obtaining Miner") return end
+    corelog.WriteToLog("* Mine:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
+    local obj = Mine:NewMine({location=location1, topChests=2}) if not obj then corelog.Error("failed obtaining Mine") return end
 
-    -- activate the miner
+    -- activate the mine
     obj:Activate()
 
-    local minerLocator = enterprise_storage:getObjectLocator(obj)
+    local mineLocator = enterprise_storage:getObjectLocator(obj)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
     local callback2 = Callback:new({
-        _moduleName     = "T_Miner",
+        _moduleName     = "T_Mine",
         _methodName     = "provideItemsTo_AOSrv_Callback",
         _data           = {
             ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["minerLocator"]                     = minerLocator,
+            ["mineLocator"]                     = mineLocator,
         },
     })
 
@@ -122,7 +122,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     assert(scheduleResult == true, "failed to schedule async service")
 end
 
-function T_Miner.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+function T_Mine.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
 
@@ -138,7 +138,7 @@ function T_Miner.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
     return true
 end
 
-function T_Miner.T_ProvideMultipleItems()
+function T_Mine.T_ProvideMultipleItems()
     -- prepare test
     local provideItems = {
         ["minecraft:iron_ore"]  = 5,
@@ -149,4 +149,4 @@ function T_Miner.T_ProvideMultipleItems()
     provideItemsTo_AOSrv_Test(provideItems)
 end
 
-return T_Miner
+return T_Mine
