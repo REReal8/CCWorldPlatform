@@ -134,6 +134,8 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
         }}
     )
     iStep = iStep + 1
+
+    -- only when upgrading a site
     if upgrade then
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StopSite_ASrv" }, stepDataDef = {
@@ -142,6 +144,8 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
         )
         iStep = iStep + 1
     end
+
+    -- continue
     table.insert(projectSteps,
         { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
             { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },

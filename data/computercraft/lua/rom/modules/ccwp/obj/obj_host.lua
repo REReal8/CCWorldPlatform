@@ -250,10 +250,8 @@ function Host:saveResource(...)
 
     -- save Resource to dht using URL components
     local savedResource = nil
-    if portURI == "" then
-        savedResource = coredht.SaveData(resource, hostURI, table.unpack(pathSegments))
-    else
-        savedResource = coredht.SaveData(resource, hostURI, portURI, table.unpack(pathSegments))
+    if portURI == ""    then savedResource = coredht.SaveData(resource, hostURI, table.unpack(pathSegments))
+                        else savedResource = coredht.SaveData(resource, hostURI, portURI, table.unpack(pathSegments))
     end
     if not savedResource then corelog.Error("Host:saveResource: Failed saving Resource Resource "..resourceLocator:getURI()) return nil end
 

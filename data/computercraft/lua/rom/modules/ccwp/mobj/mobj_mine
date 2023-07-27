@@ -19,6 +19,9 @@ local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local Host = require "obj_host"
 
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
+
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 
@@ -313,6 +316,45 @@ function Mine:needsTo_ProvideItemsTo_SOSrv(...)
 
     -- ToDo: better estimate, probebly based on earlier experience
     return {success = true, fuelNeed = 1000}
+end
+
+local function TopLayerlayer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = Block:new({ _name = "minecraft:chest" }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "  C C ",
+            [5] = "      ",
+            [4] = "T     ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+end
+
+function Mine.GetV1SiteBuildData(serviceData)
+    -- construct layer list
+    local layerList = {
+        { startpoint = Location:new({ _x= 0, _y= 0, _z= 0}), buildFromAbove = true,    layer = TopLayerlayer()},
+    }
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {Location:new({ _x= 0, _y= 0, _z=  1})}
+    }
+
+    -- construct build data
+    local siteBuildData = {
+        blueprintStartpoint = serviceData.baseLocation:copy(),
+        blueprint = blueprint
+    }
+
+    return siteBuildData
 end
 
 return Mine
