@@ -72,7 +72,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     -- save the BirchForest
     corelog.WriteToLog(">Adding forest "..forest:getId()..".")
     local forestLocator = enterprise_forestry:saveObject(forest)
-    if not forestLocator then corelog.Error("enterprise_chests.RegisterChest_SSrv: Failed adding BirchForest") return Callback.ErrorCall(callback) end
+    if not forestLocator then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Failed adding BirchForest") return Callback.ErrorCall(callback) end
 
     -- create projectDef and projectData
     local projectData = {
