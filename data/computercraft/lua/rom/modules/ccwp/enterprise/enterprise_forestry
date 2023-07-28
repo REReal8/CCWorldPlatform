@@ -51,10 +51,10 @@ function enterprise_forestry.AddNewSite_ASrv(...)
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check nTrees == 1  -- ToDo: remove this restriction
-    if nTrees ~=1 then corelog.Warning("enterprise_forestry.BuildAndStartNewSite_ASrv: not yet implemented for nTrees="..nTrees) return Callback.ErrorCall(callback) end
+    if nTrees ~=1 then corelog.Warning("enterprise_forestry.AddNewSite_ASrv: not yet implemented for nTrees="..nTrees) return Callback.ErrorCall(callback) end
 
     -- create new BirchForest
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
@@ -72,7 +72,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     -- save the BirchForest
     corelog.WriteToLog(">Adding forest "..forest:getId()..".")
     local forestLocator = enterprise_forestry:saveObject(forest)
-    if not forestLocator then corelog.Error("enterprise_forestry.BuildAndStartNewSite_ASrv: Failed adding BirchForest") return Callback.ErrorCall(callback) end
+    if not forestLocator then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Failed adding BirchForest") return Callback.ErrorCall(callback) end
 
     -- create projectDef and projectData
     local projectData = {
