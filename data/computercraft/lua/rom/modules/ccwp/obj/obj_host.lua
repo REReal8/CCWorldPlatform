@@ -75,7 +75,7 @@ end
 function Host:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do
-        if metatable.__index == Host or obj == Host then
+        if metatable.__index == self or obj == self then
             return true
         end
         metatable = getmetatable(metatable.__index)
