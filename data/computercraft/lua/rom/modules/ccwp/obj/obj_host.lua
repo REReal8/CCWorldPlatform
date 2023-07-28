@@ -72,34 +72,20 @@ function Host:getClassName()
     return "Host"
 end
 
-function Host.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._hostName) ~= "string" then return false end
-
-    -- end
-    return true
-end
-
-function Host.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Host:getClassName() then return false end
-
-    -- end
-    return true
-end
-
-function Host.IsOfType(obj)
-    -- check
-    local isOfType = Host.HasFieldsOfType(obj) and Host.HasClassNameOfType(obj)
-
-    -- end
-    return isOfType
+function Host:isTypeOf(obj)
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == Host or obj == Host then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Host:isSame(obj)
     -- check input
-    if not Host.IsOfType(obj) then return false end
+    if not Host:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._hostName == obj._hostName
@@ -538,7 +524,7 @@ function Host.GetHost(...)
     -- get Host
     local host = moduleRegistry:getModule(hostName)
     if not host then if not suppressWarning then corelog.Warning("Host.GetHost: No module registered with hostName="..hostName) end return nil end
-    if not Host.IsOfType(host) then if not suppressWarning then corelog.Warning("Host.GetHost: Module "..hostName.." is not a valid Host") end return nil end
+    if not Host:isTypeOf(host) then if not suppressWarning then corelog.Warning("Host.GetHost: Module "..hostName.." is not of type Host") end return nil end
 
     -- end
     return host

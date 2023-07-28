@@ -64,27 +64,20 @@ end
 
 function T_Host.T_IsOfType()
     -- prepare test
-    corelog.WriteToLog("* Host.IsOfType() tests")
+    corelog.WriteToLog("* Host:isTypeOf() tests")
     local host2 = Host:new({
         _hostName   = hostName,
     })
 
     -- test valid
-    local isOfType = Host.IsOfType(host2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Host:isTypeOf(host2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Host.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-
-    -- test invalid hostName
-    host2._hostName = 1000
-    isOfType = Host.IsOfType(host2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
-    host2._hostName = hostName
+    isTypeOf = Host:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- cleanup test
 end
