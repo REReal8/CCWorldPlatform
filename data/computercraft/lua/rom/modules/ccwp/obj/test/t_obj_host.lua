@@ -13,7 +13,7 @@ local TestObj = require "test.obj_test"
 function T_Host.T_All()
     -- base methods
     T_Host.T_new()
-    T_Host.T_IsOfType()
+    T_Host.T_isOfType()
     T_Host.T_isSame()
     T_Host.T_copy()
 
@@ -62,7 +62,7 @@ function T_Host.T_new()
     -- cleanup test
 end
 
-function T_Host.T_IsOfType()
+function T_Host.T_isOfType()
     -- prepare test
     corelog.WriteToLog("* Host:isTypeOf() tests")
     local host2 = Host:new({
