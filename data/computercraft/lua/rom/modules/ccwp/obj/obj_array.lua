@@ -84,12 +84,15 @@ function ObjArray.HasClassNameOfType(objArray)
     return true
 end
 
-function ObjArray:isTypeOf(objArray)
-    -- check
-    local isTypeOf = ObjArray.HasFieldsOfType(objArray) and ObjArray.HasClassNameOfType(objArray)
-
-    -- end
-    return isTypeOf
+function ObjArray:isTypeOf(obj)
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function ObjArray:isSame(objArray)
