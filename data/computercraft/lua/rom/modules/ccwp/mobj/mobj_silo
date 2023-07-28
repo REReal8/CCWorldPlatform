@@ -189,33 +189,6 @@ function Silo:getClassName()
     return "Silo"
 end
 
-function Silo.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "string" then return false end
-    if type(obj._version) ~= "number" then return false end
-
-    if not Location:isTypeOf(obj._location) then return false end
-    if not Location:isTypeOf(obj._entryLocation) then return false end
-
-    if type(obj._dropLocation) ~= "number" then return false end
-    if type(obj._pickupLocation) ~= "number" then return false end
-
-    if not ObjArray:isTypeOf(obj._topChests) then return false end
-    if not ObjArray:isTypeOf(obj._storageChests) then return false end
-
-    -- end
-    return true
-end
-
-function Silo.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Silo:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Silo:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

@@ -79,24 +79,6 @@ function Shop:getClassName()
     return "Shop"
 end
 
-function Shop.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "string" then return false end
-    if not ObjArray:isTypeOf(obj._itemSuppliersLocators) then return false end
-
-    -- end
-    return true
-end
-
-function Shop.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Shop:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Shop:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

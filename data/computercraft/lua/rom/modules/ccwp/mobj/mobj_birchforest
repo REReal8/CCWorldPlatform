@@ -151,28 +151,6 @@ function BirchForest:getClassName()
     return "BirchForest"
 end
 
-function BirchForest.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "string" then return false end
-    if type(obj._level) ~= "number" then return false end
-    if not Location:isTypeOf(obj._location) then return false end
-    if type(obj._nTrees) ~= "number" then return false end
-    if not URL:isTypeOf(obj._localLogsLocator) then return false end
-    if not URL:isTypeOf(obj._localSaplingsLocator) then return false end
-
-    -- end
-    return true
-end
-
-function BirchForest.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= BirchForest:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function BirchForest:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

@@ -60,6 +60,7 @@ function ProductionSpot:new(...)
     self.__index = self
 
     -- check
+    -- ToDo: consider if this is still needed...
     if not ProductionSpot.HasFieldsOfType(o) then corelog.Warning("ProductionSpot:new: o(="..textutils.serialize(o)..") does not have all ProductionSpot fields") end
 
     -- end
@@ -75,14 +76,6 @@ function ProductionSpot.HasFieldsOfType(obj)
     if type(obj) ~= "table" then return false end
     if not Location:isTypeOf(obj._location) then return false end
     if type(obj._isCraftingSpot) ~= "boolean" then return false end
-
-    -- end
-    return true
-end
-
-function ProductionSpot.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= ProductionSpot:getClassName() then return false end
 
     -- end
     return true

@@ -75,23 +75,6 @@ function TestMObj:getClassName()
     return "TestMObj"
 end
 
-function TestMObj.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._field1) ~= "string" then return false end
-
-    -- end
-    return true
-end
-
-function TestMObj.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= TestMObj:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function TestMObj:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

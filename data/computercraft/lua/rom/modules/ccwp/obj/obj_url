@@ -269,26 +269,6 @@ function URL:getBaseURI()
     return self:getSchemeURI()..self:getAuthorityURI()..self:getPathURI()
 end
 
-function URL.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._host) ~= "string" then return false end
-    if type(obj._port) ~= "nil" and type(obj._port) ~= "number" then return false end
-    if type(obj._path) ~= "string" then return false end
-    if type(obj._query) ~= "table" then return false end
-
-    -- end
-    return true
-end
-
-function URL.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= URL:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function URL:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

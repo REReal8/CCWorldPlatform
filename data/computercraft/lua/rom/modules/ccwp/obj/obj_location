@@ -92,27 +92,6 @@ function Location:setDY(dy)
     self._dy = dy
 end
 
-function Location.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._x) ~= "number" then return false end
-    if type(obj._y) ~= "number" then return false end
-    if type(obj._z) ~= "number" then return false end
-    if type(obj._dx) ~= "number" then return false end
-    if type(obj._dy) ~= "number" then return false end
-
-    -- end
-    return true
-end
-
-function Location.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Location:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Location:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

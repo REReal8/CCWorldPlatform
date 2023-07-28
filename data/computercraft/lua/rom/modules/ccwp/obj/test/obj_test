@@ -90,24 +90,6 @@ function TestObj:getClassName()
     return "TestObj"
 end
 
-function TestObj.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._field1) ~= "string" then return false end
-    if type(obj._field2) ~= "number" or (type(obj._field3) ~= "nil" and type(obj._field3) ~= "number") then return false end
-
-    -- end
-    return true
-end
-
-function TestObj.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= TestObj:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function TestObj:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

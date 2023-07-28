@@ -89,26 +89,6 @@ function Chest:getClassName()
     return "Chest"
 end
 
-function Chest.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "string" then return false end
-    if not Location:isTypeOf(obj._location) then return false end
-    if type(obj._accessDirection) ~= "string" then return false end
-    if not Inventory:isTypeOf(obj._inventory) then return false end
-
-    -- end
-    return true
-end
-
-function Chest.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Chest:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Chest:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

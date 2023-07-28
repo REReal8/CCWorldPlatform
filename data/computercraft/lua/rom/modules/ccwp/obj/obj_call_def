@@ -70,25 +70,6 @@ function CallDef:setData(data)
     self._data = data
 end
 
-function CallDef.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._moduleName) ~= "string" then return false end
-    if type(obj._methodName) ~= "string" then return false end
-    if type(obj._data) ~= "table" then return false end
-
-    -- end
-    return true
-end
-
-function CallDef.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= CallDef:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function CallDef:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

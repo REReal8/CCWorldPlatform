@@ -53,23 +53,6 @@ function Inventory:setSlotTable(slotTable)
     self._itemTable = {} -- note: drop current and have it rebuild once needed
 end
 
-function Inventory.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if not Inventory.IsSlotTable(obj._slotTable) then return false end
-
-    -- end
-    return true
-end
-
-function Inventory.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Inventory:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Inventory:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

@@ -107,24 +107,6 @@ function Turtle:getClassName()
     return "Turtle"
 end
 
-function Turtle.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "string" then return false end
-    if type(obj._fuelPriorityKey) ~= "string" then return false end
-
-    -- end
-    return true
-end
-
-function Turtle.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Turtle:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Turtle:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

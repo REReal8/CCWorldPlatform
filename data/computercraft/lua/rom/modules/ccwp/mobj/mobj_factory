@@ -115,28 +115,6 @@ function Factory:getClassName()
     return "Factory"
 end
 
-function Factory.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._id) ~= "string" then return false end
-    if not Location:isTypeOf(obj._baseLocation) then return false end
-    if not ObjArray:isTypeOf(obj._inputLocators) then return false end
-    if not ObjArray:isTypeOf(obj._outputLocators) then return false end
-    if not ObjArray:isTypeOf(obj._craftingSpots) then return false end
-    if not ObjArray:isTypeOf(obj._smeltingSpots) then return false end
-
-    -- end
-    return true
-end
-
-function Factory.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Factory:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 function Factory:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do

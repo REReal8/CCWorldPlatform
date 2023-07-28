@@ -225,6 +225,7 @@ function Block.BlockListTransform(blockList)
     local blockListTransform = {}
     -- copy elements
     for i, block in ipairs(blockList) do
+        -- ToDo: consider doing this similair to, or using ObjArray:transformObjTables => also making HasFieldsOfType and HasClassNameOfType methods obsolete (like was done for the other classes)
         if Block.HasFieldsOfType(block) then
             if Block.HasClassNameOfType(block) then
                 blockListTransform[i] = block -- already a Block
