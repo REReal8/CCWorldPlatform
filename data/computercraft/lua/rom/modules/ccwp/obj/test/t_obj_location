@@ -7,7 +7,7 @@ local Location = require "obj_location"
 function T_Location.T_All()
     -- base methods
     T_Location.T_new()
-    T_Location.T_IsOfType()
+    T_Location.T_isTypeOf()
     T_Location.T_isSame()
     T_Location.T_copy()
 
@@ -78,9 +78,9 @@ function T_Location.T_new()
     -- cleanup test
 end
 
-function T_Location.T_IsOfType()
+function T_Location.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Location.IsOfType() tests")
+    corelog.WriteToLog("* Location:isTypeOf() tests")
     local location2 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -90,48 +90,48 @@ function T_Location.T_IsOfType()
     })
 
     -- test valid
-    local isOfType = Location.IsOfType(location2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Location:isTypeOf(location2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Location.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Location:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid x
     location2._x = "a string"
-    isOfType = Location.IsOfType(location2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Location:isTypeOf(location2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     location2:setX(x1)
 
     -- test invalid y
     location2._y = "a string"
-    isOfType = Location.IsOfType(location2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Location:isTypeOf(location2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     location2:setY(y1)
 
     -- test invalid z
     location2._z = "a string"
-    isOfType = Location.IsOfType(location2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Location:isTypeOf(location2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     location2:setZ(z1)
 
     -- test invalid dx
     location2._dx = "a string"
-    isOfType = Location.IsOfType(location2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Location:isTypeOf(location2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     location2:setDX(dx1)
 
     -- test invalid dy
     location2._dy = "a string"
-    isOfType = Location.IsOfType(location2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Location:isTypeOf(location2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     location2:setDY(dy1)
 
     -- cleanup test

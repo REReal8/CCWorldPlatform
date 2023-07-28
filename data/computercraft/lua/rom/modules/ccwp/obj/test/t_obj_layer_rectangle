@@ -21,7 +21,7 @@ function T_LayerRectangle.T_All()
     -- base methods
     T_LayerRectangle.T_new()
     T_LayerRectangle.T_getBlock()
-    T_LayerRectangle.T_IsOfType()
+    T_LayerRectangle.T_isTypeOf()
     T_LayerRectangle.T_isSame()
     T_LayerRectangle.T_copy()
     T_LayerRectangle.T_ParseWithCheckInput()
@@ -63,14 +63,14 @@ function T_LayerRectangle.T_IsCodeArray()
     corelog.WriteToLog("* LayerRectangle.IsCodeArray tests")
 
     -- test valid
-    local isOfType = LayerRectangle.IsCodeArray(codeArray1)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsCodeArray(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = LayerRectangle.IsCodeArray(codeArray1)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeArray(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = LayerRectangle.IsCodeArray("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsCodeArray(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = LayerRectangle.IsCodeArray("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeArray(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- cleanup test
 end
@@ -172,14 +172,14 @@ function T_LayerRectangle.T_IsCodeMap()
     corelog.WriteToLog("* LayerRectangle.IsCodeMap tests")
 
     -- test valid
-    local isOfType = LayerRectangle.IsCodeMap(codeMap1)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsCodeMap(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = LayerRectangle.IsCodeMap(codeMap1)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeMap(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = LayerRectangle.IsCodeMap("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsCodeMap(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = LayerRectangle.IsCodeMap("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeMap(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- cleanup test
 end
@@ -304,36 +304,36 @@ function T_LayerRectangle.T_getBlock()
     -- cleanup test
 end
 
-function T_LayerRectangle.T_IsOfType()
+function T_LayerRectangle.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsOfType() tests")
+    corelog.WriteToLog("* LayerRectangle:isTypeOf() tests")
     local layer = LayerRectangle:new({
         _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
         _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
     })
 
     -- test valid
-    local isOfType = LayerRectangle.IsOfType(layer)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = LayerRectangle:isTypeOf(layer)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = LayerRectangle.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = LayerRectangle:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _codeArray
     layer._codeArray = "a string"
-    isOfType = LayerRectangle.IsOfType(layer)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = LayerRectangle:isTypeOf(layer)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     layer._codeArray = LayerRectangle.CodeArrayCopy(codeArray1)
 
     -- test invalid _codeMap
     layer._codeMap = "a string"
-    isOfType = LayerRectangle.IsOfType(layer)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = LayerRectangle:isTypeOf(layer)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     layer._codeMap = LayerRectangle.CodeMapCopy(codeMap1)
 
     -- cleanup test
@@ -395,9 +395,9 @@ function T_LayerRectangle.T_ParseWithCheckInput()
             layer   + (LayerRectangle) object to retrieve from arg
     ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
     if not checkSuccess then corelog.Error("t_obj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isOfType = LayerRectangle.IsOfType(layer)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = LayerRectangle:isTypeOf(layer)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- cleanup test
 end
@@ -473,9 +473,9 @@ function T_LayerRectangle.T_transformToLayer()
 
     -- test
     local transformLayer = fromLayer:transformToLayer(toLayer)
-    local isOfType = LayerRectangle.IsOfType(transformLayer)
-    local expectedIsOfType = true
-    assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = LayerRectangle:isTypeOf(transformLayer)
+    local expectedIsTypeOf = true
+    assert(isTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
             ["T"]   = Block:new({ _name = torchItemName }),
@@ -511,9 +511,9 @@ function T_LayerRectangle.T_transformToLayer()
         },
     })
     transformLayer = fromLayer:transformToLayer(toLayer)
-    isOfType = LayerRectangle.IsOfType(transformLayer)
-    expectedIsOfType = true
-    assert(isOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = LayerRectangle:isTypeOf(transformLayer)
+    expectedIsTypeOf = true
+    assert(isTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
             ["T"]   = Block:new({ _name = torchItemName }),

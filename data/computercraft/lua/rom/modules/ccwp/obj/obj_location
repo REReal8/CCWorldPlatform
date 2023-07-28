@@ -113,12 +113,12 @@ function Location.HasClassNameOfType(obj)
     return true
 end
 
-function Location.IsOfType(obj)
+function Location:isTypeOf(obj)
     -- check
-    local isOfType = Location.HasFieldsOfType(obj) and Location.HasClassNameOfType(obj)
+    local isTypeOf = Location.HasFieldsOfType(obj) and Location.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Location:hasSamePosition(obj)
@@ -133,7 +133,7 @@ end
 
 function Location:isSame(obj)
     -- check input
-    if not Location.IsOfType(obj) then return false end
+    if not Location:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame = self:hasSamePosition(obj) and self:hasSameDirection(obj)
@@ -334,7 +334,7 @@ end
 
 function Location:blockDistanceTo(o)
     -- check input
-    if not Location.IsOfType(o) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
+    if not Location:isTypeOf(o) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
 
     return math.abs(o._x - self._x) + math.abs(o._y - self._y) + math.abs(o._z - self._z)
 end

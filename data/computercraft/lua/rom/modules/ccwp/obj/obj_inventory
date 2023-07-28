@@ -70,17 +70,17 @@ function Inventory.HasClassNameOfType(obj)
     return true
 end
 
-function Inventory.IsOfType(obj)
+function Inventory:isTypeOf(obj)
     -- check
-    local isOfType = Inventory.HasFieldsOfType(obj) and Inventory.HasClassNameOfType(obj)
+    local isTypeOf = Inventory.HasFieldsOfType(obj) and Inventory.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Inventory:isSame(obj)
     -- check input
-    if not Inventory.IsOfType(obj) then return false end
+    if not Inventory:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame = Inventory.IsSameSlotTable(self._slotTable, obj._slotTable)

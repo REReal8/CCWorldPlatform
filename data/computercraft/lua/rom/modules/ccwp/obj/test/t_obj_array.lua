@@ -11,7 +11,7 @@ function T_ObjArray.T_All()
     -- base methods
     T_ObjArray.T_ImplementsIObj()
     T_ObjArray.T_new()
-    T_ObjArray.T_IsOfType()
+    T_ObjArray.T_isTypeOf()
     T_ObjArray.T_isSame()
     T_ObjArray.T_copy()
 
@@ -79,9 +79,9 @@ function T_ObjArray.T_new()
     -- cleanup test
 end
 
-function T_ObjArray.T_IsOfType()
+function T_ObjArray.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* ObjArray.IsOfType() tests")
+    corelog.WriteToLog("* ObjArray:isTypeOf() tests")
     local objArray2 = ObjArray:new({
         _objClassName   = objClassName1,
 
@@ -90,27 +90,27 @@ function T_ObjArray.T_IsOfType()
     })
 
     -- test valid
-    local isOfType = ObjArray.IsOfType(objArray2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = ObjArray:isTypeOf(objArray2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = ObjArray.IsOfType("a string")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ObjArray:isTypeOf("a string")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid className
     objArray2._objClassName = 1000
-    isOfType = ObjArray.IsOfType(objArray2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ObjArray:isTypeOf(objArray2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     objArray2._objClassName = objClassName1
 
     -- test Obj's of wrong type
     objArray2[3] = wrongTestObj1
-    isOfType = ObjArray.IsOfType(objArray2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ObjArray:isTypeOf(objArray2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     objArray2[3] = nil
 
     -- cleanup test
@@ -196,8 +196,8 @@ function T_ObjArray.T_transformObjTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj.IsOfType(testObj1Table), "testObj1Table incorrectly of type "..objClassName1)
-    assert(not TestObj.IsOfType(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
+    assert(not TestObj:isTypeOf(testObj1Table), "testObj1Table incorrectly of type "..objClassName1)
+    assert(not TestObj:isTypeOf(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
     objArray2[1] = testObj1
@@ -226,13 +226,13 @@ function T_ObjArray.T_transformObjTables()
     -- test only ObjTables
     objArray2[1] = testObj1Table
     objArray2[2] = testObj2Table
-    local isOfType = ObjArray.IsOfType(objArray2)
-    local expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = ObjArray:isTypeOf(objArray2)
+    local expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     objArray2:transformObjTables()
-    isOfType = ObjArray.IsOfType(objArray2)
-    expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ObjArray:isTypeOf(objArray2)
+    expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
@@ -243,16 +243,16 @@ function T_ObjArray.T_transformObjTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj.IsOfType(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
+    assert(not TestObj:isTypeOf(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
     objArray2[1] = testObj1
     objArray2[2] = testObj2Table
-    isOfType = ObjArray.IsOfType(objArray2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ObjArray:isTypeOf(objArray2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     objArray2:transformObjTables()
-    isOfType = ObjArray.IsOfType(objArray2)
-    expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ObjArray:isTypeOf(objArray2)
+    expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
@@ -285,8 +285,8 @@ function T_ObjArray.T_new_transformsObjTables()
     local expectedNElements = 2
     assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
     local objClass = objArray:getObjClass()
-    assert(objClass.IsOfType(objArray[1]), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
-    assert(objClass.IsOfType(objArray[2]), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
+    assert(objClass:isTypeOf(objArray[1]), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
+    assert(objClass:isTypeOf(objArray[2]), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
 
     -- cleanup test
 end

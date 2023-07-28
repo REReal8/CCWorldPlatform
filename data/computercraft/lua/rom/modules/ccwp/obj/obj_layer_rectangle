@@ -115,17 +115,17 @@ function LayerRectangle.HasClassNameOfType(obj)
     return true
 end
 
-function LayerRectangle.IsOfType(obj)
+function LayerRectangle:isTypeOf(obj)
     -- check
-    local isOfType = LayerRectangle.HasFieldsOfType(obj) and LayerRectangle.HasClassNameOfType(obj)
+    local isTypeOf = LayerRectangle.HasFieldsOfType(obj) and LayerRectangle.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function LayerRectangle:isSame(obj)
     -- check input
-    if not LayerRectangle.IsOfType(obj) then return false end
+    if not LayerRectangle:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  LayerRectangle.IsSameCodeArray(self._codeArray, obj._codeArray) and
@@ -450,7 +450,7 @@ function LayerRectangle.CodeArrayValid(codeArray, warn)
     if type(codeArray) ~= "table" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid codeArray (type="..type(codeArray)..")") end return false end
     for code, block in pairs(codeArray) do
         if type(code) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid code (type="..type(code)..")") end return false end
-        if not Block.IsOfType(block) then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid block (type="..type(block)..")") end return false end
+        if not Block:isTypeOf(block) then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid block (type="..type(block)..")") end return false end
     end
 
     -- end

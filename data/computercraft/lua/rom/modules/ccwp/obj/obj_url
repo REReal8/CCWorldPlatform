@@ -289,17 +289,17 @@ function URL.HasClassNameOfType(obj)
     return true
 end
 
-function URL.IsOfType(obj)
+function URL:isTypeOf(obj)
     -- check
-    local isOfType = URL.HasFieldsOfType(obj) and URL.HasClassNameOfType(obj)
+    local isTypeOf = URL.HasFieldsOfType(obj) and URL.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function URL:isSame(obj)
     -- check input
-    if not URL.IsOfType(obj) then return false end
+    if not URL:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self:getBaseURI() == obj:getBaseURI()

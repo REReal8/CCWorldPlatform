@@ -164,9 +164,9 @@ function Mine.HasFieldsOfType(obj)
     if type(obj._id) ~= "string" then return false end
     if type(obj._version) ~= "number" then return false end
 
-    if not Location.IsOfType(obj._location) then return false end
+    if not Location:isTypeOf(obj._location) then return false end
 
-    if not ObjArray.IsOfType(obj._topChests) then return false end
+    if not ObjArray:isTypeOf(obj._topChests) then return false end
 
     -- end
     return true
@@ -180,14 +180,14 @@ function Mine.HasClassNameOfType(obj)
     return true
 end
 
-function Mine.IsOfType(obj)
+function Mine:isTypeOf(obj)
     -- check
     return Mine.HasFieldsOfType(obj) and Mine.HasClassNameOfType(obj)
 end
 
 function Mine:isSame(obj)
     -- check input
-    if not Mine.IsOfType(obj) then return false end
+    if not Mine:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

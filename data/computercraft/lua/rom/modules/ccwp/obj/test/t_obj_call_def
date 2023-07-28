@@ -7,7 +7,7 @@ local CallDef = require "obj_callback"
 function T_CallDef.T_All()
     -- base methods
     T_CallDef.T_new()
-    T_CallDef.T_IsOfType()
+    T_CallDef.T_isTypeOf()
     T_CallDef.T_isSame()
     T_CallDef.T_copy()
 
@@ -61,9 +61,9 @@ function T_CallDef.T_new()
     -- cleanup test
 end
 
-function T_CallDef.T_IsOfType()
+function T_CallDef.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* CallDef.IsOfType() tests")
+    corelog.WriteToLog("* CallDef:isTypeOf() tests")
     local callback2 = CallDef:new({
         _moduleName     = moduleName1,
         _methodName     = methodName1,
@@ -71,34 +71,34 @@ function T_CallDef.T_IsOfType()
     })
 
     -- test valid
-    local isOfType = CallDef.IsOfType(callback2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = CallDef:isTypeOf(callback2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = CallDef.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = CallDef:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid moduleName
     callback2._moduleName = 999
-    isOfType = CallDef.IsOfType(callback2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = CallDef:isTypeOf(callback2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     callback2:setModuleName(moduleName1)
 
     -- test invalid methodName
     callback2._methodName = 999
-    isOfType = CallDef.IsOfType(callback2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = CallDef:isTypeOf(callback2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     callback2:setMethodName(methodName1)
 
     -- test invalid data
     callback2._data = 1000
-    isOfType = CallDef.IsOfType(callback2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = CallDef:isTypeOf(callback2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     callback2:setData(data1)
 
     -- cleanup test

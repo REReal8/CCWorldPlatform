@@ -27,7 +27,7 @@ function T_Factory.T_All()
 
     -- base methods
     T_Factory.T_new()
-    T_Factory.T_IsOfType()
+    T_Factory.T_isTypeOf()
     T_Factory.T_isSame()
     T_Factory.T_copy()
 
@@ -141,54 +141,54 @@ function T_Factory.CreateFactory(baseLocation, inputLocators, outputLocators, cr
     return obj
 end
 
-function T_Factory.T_IsOfType()
+function T_Factory.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Factory.IsOfType() tests")
+    corelog.WriteToLog("* Factory:isTypeOf() tests")
     local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
 
     -- test valid
-    local isOfType = Factory.IsOfType(obj)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Factory:isTypeOf(obj)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Factory.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Factory:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _baseLocation
     obj._baseLocation = "a string"
-    isOfType = Factory.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Factory:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._baseLocation = location1
 
     -- test invalid _inputLocators
     obj._inputLocators = "a string"
-    isOfType = Factory.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Factory:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._inputLocators = inputLocators1
 
     -- test invalid _outputLocators
     obj._outputLocators = "a string"
-    isOfType = Factory.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Factory:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._outputLocators = outputLocators1
 
     -- test invalid _craftingSpots
     obj._craftingSpots = "a string"
-    isOfType = Factory.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Factory:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._craftingSpots = craftingSpots1
 
     -- test invalid _smeltingSpots
     obj._smeltingSpots = "a string"
-    isOfType = Factory.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Factory:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._smeltingSpots = smeltingSpots1
 
     -- cleanup test

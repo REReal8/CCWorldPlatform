@@ -16,7 +16,7 @@ function T_Inventory.T_All()
 
     -- base methods
     T_Inventory.T_new()
-    T_Inventory.T_IsOfType()
+    T_Inventory.T_isTypeOf()
     T_Inventory.T_isSame()
     T_Inventory.T_copy()
 
@@ -217,28 +217,28 @@ function T_Inventory.T_new()
     -- cleanup test
 end
 
-function T_Inventory.T_IsOfType()
+function T_Inventory.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Inventory.IsOfType() tests")
+    corelog.WriteToLog("* Inventory:isTypeOf() tests")
     local inventory = Inventory:new({
         _slotTable  = Inventory.SlotTableCopy(slotTable1),
     })
 
     -- test valid
-    local isOfType = Inventory.IsOfType(inventory)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Inventory:isTypeOf(inventory)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Inventory.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Inventory:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _slotTable
     inventory._slotTable = 1000
-    isOfType = Inventory.IsOfType(inventory)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Inventory:isTypeOf(inventory)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     inventory._slotTable = Inventory.SlotTableCopy(slotTable1)
 
     -- cleanup test

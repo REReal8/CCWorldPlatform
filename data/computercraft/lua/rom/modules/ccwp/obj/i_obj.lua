@@ -51,12 +51,12 @@ function IObj:getClassName()
     return "???"
 end
 
-function IObj.IsOfType(obj)
+function IObj:isTypeOf(obj)
     --[[
         Method that returns if an object 'obj' is of type of this class.
     ]]
 
-    corelog.Error("Method IsOfType() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    corelog.Error("Method isTypeOf() should be implemented in classes implementing the IObj interface. It should not be called directly.")
 
     -- end
     return false
@@ -98,7 +98,7 @@ function IObj.ImplementsInterface(obj)
     -- check
     if not obj.new then return false end
     if not obj.getClassName then return false end
-    if not obj.IsOfType then return false end
+    if not obj.isTypeOf then return false end
     if not obj.isSame then return false end
     if not obj.copy then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.

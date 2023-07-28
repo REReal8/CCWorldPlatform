@@ -53,28 +53,28 @@ function T_MObjHost.T_new()
 end
 
 --[[
-function T_MObjHost.T_IsOfType()
+function T_MObjHost.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* MObjHost.IsOfType() tests")
+    corelog.WriteToLog("* MObjHost:isTypeOf() tests")
     local host2 = MObjHost:new({
         _hostName   = hostName,
     })
 
     -- test valid
-    local isOfType = MObjHost.IsOfType(host2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = MObjHost:isTypeOf(host2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = MObjHost.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = MObjHost:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid hostName
     host2._hostName = 1000
-    isOfType = MObjHost.IsOfType(host2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = MObjHost:isTypeOf(host2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     host2._hostName = hostName
 
     -- cleanup test
@@ -144,7 +144,7 @@ function T_MObjHost.T_registerMObj_SSrv()
 
     -- check mobjLocator returned
     local mobjLocator = serviceResults.mobjLocator
-    assert(URL.IsOfType(mobjLocator), "incorrect mobjLocator returned")
+    assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
 
     -- check mobj saved
     local mobj = host1:getObject(mobjLocator)
@@ -197,7 +197,7 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
 
     -- check mobjLocator returned
     local mobjLocator = URL:new(serviceResults.mobjLocator)
-    assert(URL.IsOfType(mobjLocator), "incorrect mobjLocator returned")
+    assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
 
     -- check mobj saved
     local mobj = host1:getObject(mobjLocator)

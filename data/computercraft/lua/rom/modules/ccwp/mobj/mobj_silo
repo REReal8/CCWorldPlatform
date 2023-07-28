@@ -195,14 +195,14 @@ function Silo.HasFieldsOfType(obj)
     if type(obj._id) ~= "string" then return false end
     if type(obj._version) ~= "number" then return false end
 
-    if not Location.IsOfType(obj._location) then return false end
-    if not Location.IsOfType(obj._entryLocation) then return false end
+    if not Location:isTypeOf(obj._location) then return false end
+    if not Location:isTypeOf(obj._entryLocation) then return false end
 
     if type(obj._dropLocation) ~= "number" then return false end
     if type(obj._pickupLocation) ~= "number" then return false end
 
-    if not ObjArray.IsOfType(obj._topChests) then return false end
-    if not ObjArray.IsOfType(obj._storageChests) then return false end
+    if not ObjArray:isTypeOf(obj._topChests) then return false end
+    if not ObjArray:isTypeOf(obj._storageChests) then return false end
 
     -- end
     return true
@@ -216,14 +216,14 @@ function Silo.HasClassNameOfType(obj)
     return true
 end
 
-function Silo.IsOfType(obj)
+function Silo:isTypeOf(obj)
     -- check
     return Silo.HasFieldsOfType(obj) and Silo.HasClassNameOfType(obj)
 end
 
 function Silo:isSame(obj)
     -- check input
-    if not Silo.IsOfType(obj) then return false end
+    if not Silo:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

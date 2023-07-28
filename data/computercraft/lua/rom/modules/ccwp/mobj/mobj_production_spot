@@ -73,7 +73,7 @@ end
 function ProductionSpot.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
-    if not Location.IsOfType(obj._location) then return false end
+    if not Location:isTypeOf(obj._location) then return false end
     if type(obj._isCraftingSpot) ~= "boolean" then return false end
 
     -- end
@@ -88,17 +88,17 @@ function ProductionSpot.HasClassNameOfType(obj)
     return true
 end
 
-function ProductionSpot.IsOfType(obj)
+function ProductionSpot:isTypeOf(obj)
     -- check
-    local isOfType = ProductionSpot.HasFieldsOfType(obj) and ProductionSpot.HasClassNameOfType(obj)
+    local isTypeOf = ProductionSpot.HasFieldsOfType(obj) and ProductionSpot.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function ProductionSpot:isSame(obj)
     -- check input
-    if not ProductionSpot.IsOfType(obj) then return false end
+    if not ProductionSpot:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._location:isSame(obj._location)

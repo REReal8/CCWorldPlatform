@@ -125,17 +125,17 @@ function Turtle.HasClassNameOfType(obj)
     return true
 end
 
-function Turtle.IsOfType(obj)
+function Turtle:isTypeOf(obj)
     -- check
-    local isOfType = Turtle.HasFieldsOfType(obj) and Turtle.HasClassNameOfType(obj)
+    local isTypeOf = Turtle.HasFieldsOfType(obj) and Turtle.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Turtle:isSame(obj)
     -- check input
-    if not Turtle.IsOfType(obj) then return false end
+    if not Turtle:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

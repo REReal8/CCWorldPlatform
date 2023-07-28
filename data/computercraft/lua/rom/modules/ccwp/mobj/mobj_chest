@@ -93,9 +93,9 @@ function Chest.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
-    if not Location.IsOfType(obj._location) then return false end
+    if not Location:isTypeOf(obj._location) then return false end
     if type(obj._accessDirection) ~= "string" then return false end
-    if not Inventory.IsOfType(obj._inventory) then return false end
+    if not Inventory:isTypeOf(obj._inventory) then return false end
 
     -- end
     return true
@@ -109,17 +109,17 @@ function Chest.HasClassNameOfType(obj)
     return true
 end
 
-function Chest.IsOfType(obj)
+function Chest:isTypeOf(obj)
     -- check
-    local isOfType = Chest.HasFieldsOfType(obj) and Chest.HasClassNameOfType(obj)
+    local isTypeOf = Chest.HasFieldsOfType(obj) and Chest.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Chest:isSame(obj)
     -- check input
-    if not Chest.IsOfType(obj) then return false end
+    if not Chest:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

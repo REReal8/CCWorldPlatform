@@ -40,7 +40,7 @@ function T_URL.T_All()
     T_URL.T_Setters()
     T_URL.T_SettersFromURI()
     T_URL.T_NewFromURI()
-    T_URL.T_IsOfType()
+    T_URL.T_isTypeOf()
     T_URL.T_isSame()
     T_URL.T_copy()
 
@@ -218,9 +218,9 @@ function T_URL.T_NewFromURI()
     -- cleanup test
 end
 
-function T_URL.T_IsOfType()
+function T_URL.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* URL.IsOfType() tests")
+    corelog.WriteToLog("* URL:isTypeOf() tests")
     local url = URL:new({
         _host = host,
         _port = port,
@@ -229,41 +229,41 @@ function T_URL.T_IsOfType()
     })
 
     -- test valid
-    local isOfType = URL.IsOfType(url)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = URL:isTypeOf(url)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = URL.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = URL:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _host
     url._host = 20
-    isOfType = URL.IsOfType(url)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = URL:isTypeOf(url)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     url._host = host
 
     -- test invalid _port
     url._port = "a string"
-    isOfType = URL.IsOfType(url)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = URL:isTypeOf(url)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     url._port = port
 
     -- test invalid _path
     url._path = 20
-    isOfType = URL.IsOfType(url)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = URL:isTypeOf(url)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     url._path = path
 
     -- test invalid _query
     url._query = "a string"
-    isOfType = URL.IsOfType(url)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = URL:isTypeOf(url)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     url._query = query
 
     -- cleanup test

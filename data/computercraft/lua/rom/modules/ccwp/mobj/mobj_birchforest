@@ -60,7 +60,7 @@ end
 
 function BirchForest:setLocation(location)
     -- check input
-    if not Location.IsOfType(location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
+    if not Location:isTypeOf(location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
 
     self._location = location
 end
@@ -82,7 +82,7 @@ end
 
 function BirchForest:setLocalLogsLocator(localLocator)
     -- check input
-    if not URL.IsOfType(localLocator) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
+    if not URL:isTypeOf(localLocator) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
 
     self._localLogsLocator = localLocator
 end
@@ -93,7 +93,7 @@ end
 
 function BirchForest:setLocalSaplingsLocator(localLocator)
     -- check input
-    if not URL.IsOfType(localLocator) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
+    if not URL:isTypeOf(localLocator) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
 
     self._localSaplingsLocator = localLocator
 end
@@ -156,10 +156,10 @@ function BirchForest.HasFieldsOfType(obj)
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
     if type(obj._level) ~= "number" then return false end
-    if not Location.IsOfType(obj._location) then return false end
+    if not Location:isTypeOf(obj._location) then return false end
     if type(obj._nTrees) ~= "number" then return false end
-    if not URL.IsOfType(obj._localLogsLocator) then return false end
-    if not URL.IsOfType(obj._localSaplingsLocator) then return false end
+    if not URL:isTypeOf(obj._localLogsLocator) then return false end
+    if not URL:isTypeOf(obj._localSaplingsLocator) then return false end
 
     -- end
     return true
@@ -173,17 +173,17 @@ function BirchForest.HasClassNameOfType(obj)
     return true
 end
 
-function BirchForest.IsOfType(obj)
+function BirchForest:isTypeOf(obj)
     -- check
-    local isOfType = BirchForest.HasFieldsOfType(obj) and BirchForest.HasClassNameOfType(obj)
+    local isTypeOf = BirchForest.HasFieldsOfType(obj) and BirchForest.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function BirchForest:isSame(obj)
     -- check input
-    if not BirchForest.IsOfType(obj) then return false end
+    if not BirchForest:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

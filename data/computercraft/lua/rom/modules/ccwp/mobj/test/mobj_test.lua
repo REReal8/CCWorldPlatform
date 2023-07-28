@@ -92,17 +92,17 @@ function TestMObj.HasClassNameOfType(obj)
     return true
 end
 
-function TestMObj.IsOfType(obj)
+function TestMObj:isTypeOf(obj)
     -- check
-    local isOfType = TestMObj.HasFieldsOfType(obj) and TestMObj.HasClassNameOfType(obj)
+    local isTypeOf = TestMObj.HasFieldsOfType(obj) and TestMObj.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function TestMObj:isSame(obj)
     -- check input
-    if not TestMObj.IsOfType(obj) then return false end
+    if not TestMObj:isTypeOf(obj) then return false end
 
     -- check same
     local isSame = self._field1 == obj._field1

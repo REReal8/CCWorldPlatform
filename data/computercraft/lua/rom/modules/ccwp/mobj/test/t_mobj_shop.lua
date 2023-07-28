@@ -30,7 +30,7 @@ function T_Shop.T_All()
 
     -- base methods
     T_Shop.T_Getters()
-    T_Shop.T_IsOfType()
+    T_Shop.T_isTypeOf()
     T_Shop.T_isSame()
     T_Shop.T_copy()
 
@@ -126,26 +126,26 @@ function T_Shop.CreateShop(itemSuppliersLocators, id)
     return obj
 end
 
-function T_Shop.T_IsOfType()
+function T_Shop.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Shop.IsOfType() tests")
+    corelog.WriteToLog("* Shop:isTypeOf() tests")
     local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
 
     -- test valid
-    local isOfType = Shop.IsOfType(obj)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Shop:isTypeOf(obj)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Shop.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Shop:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _itemSuppliersLocators
     obj._itemSuppliersLocators = "a string"
-    isOfType = Shop.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Shop:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._itemSuppliersLocators = itemSuppliersLocators1
 
     -- cleanup test

@@ -69,7 +69,7 @@ function ObjArray.HasFieldsOfType(objArray)
     local objClass = objArray:getObjClass()
     if not objClass then return false end
     for i, obj in ipairs(objArray) do
-        if not objClass.IsOfType(obj) then return false end
+        if not objClass:isTypeOf(obj) then return false end
     end
 
     -- end
@@ -84,17 +84,17 @@ function ObjArray.HasClassNameOfType(objArray)
     return true
 end
 
-function ObjArray.IsOfType(objArray)
+function ObjArray:isTypeOf(objArray)
     -- check
-    local isOfType = ObjArray.HasFieldsOfType(objArray) and ObjArray.HasClassNameOfType(objArray)
+    local isTypeOf = ObjArray.HasFieldsOfType(objArray) and ObjArray.HasClassNameOfType(objArray)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function ObjArray:isSame(objArray)
     -- check input
-    if not ObjArray.IsOfType(objArray) then return false end
+    if not ObjArray:isTypeOf(objArray) then return false end
 
     -- check same class
     if self._objClassName ~= objArray._objClassName then return false end

@@ -12,7 +12,7 @@ function T_ProductionSpot.T_All()
 
     -- base methods
     T_ProductionSpot.T_new()
-    T_ProductionSpot.T_IsOfType()
+    T_ProductionSpot.T_isTypeOf()
     T_ProductionSpot.T_isSame()
     T_ProductionSpot.T_copy()
 
@@ -73,36 +73,36 @@ function T_ProductionSpot.T_new()
     -- cleanup test
 end
 
-function T_ProductionSpot.T_IsOfType()
+function T_ProductionSpot.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* ProductionSpot.IsOfType() tests")
+    corelog.WriteToLog("* ProductionSpot:isTypeOf() tests")
     local obj2 = ProductionSpot:new({
         _location       = location1,
         _isCraftingSpot = isCraftingSpot1,
     })
 
     -- test valid
-    local isOfType = ProductionSpot.IsOfType(obj2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = ProductionSpot:isTypeOf(obj2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = ProductionSpot.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ProductionSpot:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _location
     obj2._location = "a string"
-    isOfType = ProductionSpot.IsOfType(obj2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ProductionSpot:isTypeOf(obj2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj2._location = location1
 
     -- test invalid _isCraftingSpot
     obj2._isCraftingSpot = "a string"
-    isOfType = ProductionSpot.IsOfType(obj2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = ProductionSpot:isTypeOf(obj2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj2._isCraftingSpot = isCraftingSpot1
 
 

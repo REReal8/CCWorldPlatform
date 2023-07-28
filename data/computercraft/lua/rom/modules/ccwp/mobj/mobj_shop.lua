@@ -83,7 +83,7 @@ function Shop.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
-    if not ObjArray.IsOfType(obj._itemSuppliersLocators) then return false end
+    if not ObjArray:isTypeOf(obj._itemSuppliersLocators) then return false end
 
     -- end
     return true
@@ -97,17 +97,17 @@ function Shop.HasClassNameOfType(obj)
     return true
 end
 
-function Shop.IsOfType(obj)
+function Shop:isTypeOf(obj)
     -- check
-    local isOfType = Shop.HasFieldsOfType(obj) and Shop.HasClassNameOfType(obj)
+    local isTypeOf = Shop.HasFieldsOfType(obj) and Shop.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Shop:isSame(obj)
     -- check input
-    if not Shop.IsOfType(obj) then return false end
+    if not Shop:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

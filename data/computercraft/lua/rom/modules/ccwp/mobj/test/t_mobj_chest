@@ -27,7 +27,7 @@ function T_Chest.T_All()
 
     -- base methods
     T_Chest.T_Getters()
-    T_Chest.T_IsOfType()
+    T_Chest.T_isTypeOf()
     T_Chest.T_isSame()
     T_Chest.T_copy()
 
@@ -119,40 +119,40 @@ function T_Chest.CreateChest(location, accessDirection, inventory, id)
     return obj
 end
 
-function T_Chest.T_IsOfType()
+function T_Chest.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Chest.IsOfType() tests")
+    corelog.WriteToLog("* Chest:isTypeOf() tests")
     local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test valid
-    local isOfType = Chest.IsOfType(obj)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Chest:isTypeOf(obj)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Chest.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Chest:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _location
     obj._location = "a string"
-    isOfType = Chest.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Chest:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._location = location1
 
     -- test invalid _accessDirection
     obj._accessDirection = 20
-    isOfType = Chest.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Chest:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._accessDirection = accessDirection1
 
     -- test invalid _inventory
     obj._inventory = 20
-    isOfType = Chest.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Chest:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._inventory = inventory1
 
     -- cleanup test

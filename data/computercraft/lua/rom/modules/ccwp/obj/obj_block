@@ -91,17 +91,17 @@ function Block.HasClassNameOfType(obj)
     return true
 end
 
-function Block.IsOfType(obj)
+function Block:isTypeOf(obj)
     -- check
-    local isOfType = Block.HasFieldsOfType(obj) and Block.HasClassNameOfType(obj)
+    local isTypeOf = Block.HasFieldsOfType(obj) and Block.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Block:isSame(obj)
     -- check input
-    if not Block.IsOfType(obj) then return false end
+    if not Block:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame = self._name == obj._name
@@ -163,7 +163,7 @@ function Block.IsBlockList(blockList)
 
     -- check elements
     for i, block in ipairs(blockList) do
-        if not Block.IsOfType(block) then return false end
+        if not Block:isTypeOf(block) then return false end
     end
 
     -- end

@@ -25,7 +25,7 @@ function T_BirchForest.T_All()
     -- base methods
     T_BirchForest.T_Getters()
     T_BirchForest.T_Setters()
-    T_BirchForest.T_IsOfType()
+    T_BirchForest.T_isTypeOf()
     T_BirchForest.T_isSame()
     T_BirchForest.T_copy()
 
@@ -154,54 +154,54 @@ function T_BirchForest.T_Setters()
     return enterprise_chests.DelistChest_ASrv({ chestLocator = localLogsLocator2 }, callback) and enterprise_chests.DelistChest_ASrv({ chestLocator = localSaplingsLocator2 }, callback)
 end
 
-function T_BirchForest.T_IsOfType()
+function T_BirchForest.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* BirchForest.IsOfType() tests")
+    corelog.WriteToLog("* BirchForest:isTypeOf() tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
 
     -- test valid
-    local isOfType = BirchForest.IsOfType(forest)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = BirchForest:isTypeOf(forest)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = BirchForest.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = BirchForest:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _level
     forest._level = "a string"
-    isOfType = BirchForest.IsOfType(forest)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = BirchForest:isTypeOf(forest)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     forest._level = level0
 
     -- test invalid _location
     forest._location = "a string"
-    isOfType = BirchForest.IsOfType(forest)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = BirchForest:isTypeOf(forest)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     forest._location = location1
 
     -- test invalid _nTrees
     forest._nTrees = "a string"
-    isOfType = BirchForest.IsOfType(forest)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = BirchForest:isTypeOf(forest)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     forest._nTrees = level0
 
     -- test invalid _localLogsLocator
     forest._localLogsLocator = "a string"
-    isOfType = BirchForest.IsOfType(forest)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = BirchForest:isTypeOf(forest)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- test invalid _localSaplingsLocator
     forest._localSaplingsLocator = "a string"
-    isOfType = BirchForest.IsOfType(forest)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = BirchForest:isTypeOf(forest)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- cleanup test

@@ -276,7 +276,7 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
     local testObjSelf = serviceResults.test_SOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
-    assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
+    assert(TestObj:isTypeOf(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- test AOSrv (results)
@@ -285,7 +285,7 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
     testObjSelf = serviceResults.test_AOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
-    assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
+    assert(TestObj:isTypeOf(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- test located SOSrv (results)
@@ -294,7 +294,7 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
     local testObjSelf = serviceResults.test_LSOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
-    assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
+    assert(TestObj:isTypeOf(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- test located AOSrv (results)
@@ -303,7 +303,7 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     assert(testBArg == expectedTestBArg, "gotten testBArg(="..testBArg..") not the same as expected(="..expectedTestBArg..")")
     testObjSelf = serviceResults.test_LAOSrv_SelfObj
     testObjSelf = TestObj:new(testObjSelf)
-    assert(TestObj.IsOfType(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
+    assert(TestObj:isTypeOf(testObjSelf), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not of type TestObj")
     assert(testObjSelf:isSame(testObj), "gotten testObjSelf(="..textutils.serialise(testObjSelf, compact )..") not the same as expected(="..textutils.serialise(testObj, compact )..")")
 
     -- cleanup test

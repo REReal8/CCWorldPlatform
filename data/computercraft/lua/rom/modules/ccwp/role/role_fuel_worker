@@ -106,8 +106,8 @@ end
 
 function role_fuel_worker.NeededFuelToFrom(endLocation, startLocation)
     -- check input
-    if not Location.IsOfType(endLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return 9999 end
-    if not Location.IsOfType(startLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return 9999 end
+    if not Location:isTypeOf(endLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return 9999 end
+    if not Location:isTypeOf(startLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return 9999 end
 
     return startLocation:blockDistanceTo(endLocation)
 end

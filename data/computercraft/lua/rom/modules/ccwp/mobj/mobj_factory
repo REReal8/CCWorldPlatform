@@ -119,11 +119,11 @@ function Factory.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._id) ~= "string" then return false end
-    if not Location.IsOfType(obj._baseLocation) then return false end
-    if not ObjArray.IsOfType(obj._inputLocators) then return false end
-    if not ObjArray.IsOfType(obj._outputLocators) then return false end
-    if not ObjArray.IsOfType(obj._craftingSpots) then return false end
-    if not ObjArray.IsOfType(obj._smeltingSpots) then return false end
+    if not Location:isTypeOf(obj._baseLocation) then return false end
+    if not ObjArray:isTypeOf(obj._inputLocators) then return false end
+    if not ObjArray:isTypeOf(obj._outputLocators) then return false end
+    if not ObjArray:isTypeOf(obj._craftingSpots) then return false end
+    if not ObjArray:isTypeOf(obj._smeltingSpots) then return false end
 
     -- end
     return true
@@ -137,17 +137,17 @@ function Factory.HasClassNameOfType(obj)
     return true
 end
 
-function Factory.IsOfType(obj)
+function Factory:isTypeOf(obj)
     -- check
-    local isOfType = Factory.HasFieldsOfType(obj) and Factory.HasClassNameOfType(obj)
+    local isTypeOf = Factory.HasFieldsOfType(obj) and Factory.HasClassNameOfType(obj)
 
     -- end
-    return isOfType
+    return isTypeOf
 end
 
 function Factory:isSame(obj)
     -- check input
-    if not Factory.IsOfType(obj) then return false end
+    if not Factory:isTypeOf(obj) then return false end
 
     -- check same object
     local isSame =  self._id == obj._id

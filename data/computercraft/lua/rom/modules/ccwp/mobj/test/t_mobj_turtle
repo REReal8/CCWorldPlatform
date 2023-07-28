@@ -25,7 +25,7 @@ function T_Turtle.T_All()
 
     -- base methods
     T_Turtle.T_Getters()
-    T_Turtle.T_IsOfType()
+    T_Turtle.T_isTypeOf()
     T_Turtle.T_isSame()
     T_Turtle.T_copy()
 
@@ -113,26 +113,26 @@ function T_Turtle.CreateTurtle(id, fuelPriorityKey)
     return turtle
 end
 
-function T_Turtle.T_IsOfType()
+function T_Turtle.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Turtle.IsOfType() tests")
+    corelog.WriteToLog("* Turtle:isTypeOf() tests")
     local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("failed obtaining Turtle") return end
 
     -- test valid
-    local isOfType = Turtle.IsOfType(obj)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Turtle:isTypeOf(obj)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Turtle.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Turtle:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid _fuelPriorityKey
     obj._fuelPriorityKey = {" a table "}
-    isOfType = Turtle.IsOfType(obj)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Turtle:isTypeOf(obj)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     obj._fuelPriorityKey = fuelPriorityKey1
 
     -- cleanup test

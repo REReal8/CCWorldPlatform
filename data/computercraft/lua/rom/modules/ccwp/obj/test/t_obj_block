@@ -9,7 +9,7 @@ local Block = require "obj_block"
 function T_Block.T_All()
     -- base methods
     T_Block.T_new()
-    T_Block.T_IsOfType()
+    T_Block.T_isTypeOf()
     T_Block.T_isSame()
     T_Block.T_copy()
 
@@ -82,9 +82,9 @@ function T_Block.T_new()
     -- cleanup test
 end
 
-function T_Block.T_IsOfType()
+function T_Block.T_isTypeOf()
     -- prepare test
-    corelog.WriteToLog("* Block.IsOfType() tests")
+    corelog.WriteToLog("* Block:isTypeOf() tests")
     local block2 = Block:new({
         _dx     = dx1,
         _dy     = dy1,
@@ -93,34 +93,34 @@ function T_Block.T_IsOfType()
     })
 
     -- test valid
-    local isOfType = Block.IsOfType(block2)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Block:isTypeOf(block2)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test different object
-    isOfType = Block.IsOfType("a atring")
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Block:isTypeOf("a atring")
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- test invalid dx
     block2._dx = "a string"
-    isOfType = Block.IsOfType(block2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Block:isTypeOf(block2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     block2:setDx(dx1)
 
     -- test invalid dy
     block2._dy = "a string"
-    isOfType = Block.IsOfType(block2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Block:isTypeOf(block2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     block2:setDy(dy1)
 
     -- test invalid name
     block2._name = 1000
-    isOfType = Block.IsOfType(block2)
-    expectedIsOfType = false
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    isTypeOf = Block:isTypeOf(block2)
+    expectedIsTypeOf = false
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
     block2:setName(saplingItemName)
 
     -- cleanup test
@@ -273,9 +273,9 @@ function T_Block.T_ParseWithCheckInput()
             block   + (Block) object to retrieve from arg
     ]], table.unpack({ textutils.unserialize(textutils.serialize(block1)) }))
     if not checkSuccess then corelog.Error("T_Block.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isOfType = Block.IsOfType(block)
-    local expectedIsOfType = true
-    assert(isOfType == expectedIsOfType, "gotten IsOfType(="..tostring(isOfType)..") not the same as expected(="..tostring(expectedIsOfType)..")")
+    local isTypeOf = Block:isTypeOf(block)
+    local expectedIsTypeOf = true
+    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- cleanup test
 end
