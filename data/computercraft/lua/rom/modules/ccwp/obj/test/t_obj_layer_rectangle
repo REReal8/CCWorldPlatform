@@ -322,20 +322,6 @@ function T_LayerRectangle.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _codeArray
-    layer._codeArray = "a string"
-    isTypeOf = LayerRectangle:isTypeOf(layer)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    layer._codeArray = LayerRectangle.CodeArrayCopy(codeArray1)
-
-    -- test invalid _codeMap
-    layer._codeMap = "a string"
-    isTypeOf = LayerRectangle:isTypeOf(layer)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    layer._codeMap = LayerRectangle.CodeMapCopy(codeMap1)
-
     -- cleanup test
 end
 

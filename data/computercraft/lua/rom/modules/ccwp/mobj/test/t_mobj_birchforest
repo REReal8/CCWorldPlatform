@@ -169,41 +169,6 @@ function T_BirchForest.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _level
-    forest._level = "a string"
-    isTypeOf = BirchForest:isTypeOf(forest)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    forest._level = level0
-
-    -- test invalid _location
-    forest._location = "a string"
-    isTypeOf = BirchForest:isTypeOf(forest)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    forest._location = location1
-
-    -- test invalid _nTrees
-    forest._nTrees = "a string"
-    isTypeOf = BirchForest:isTypeOf(forest)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    forest._nTrees = level0
-
-    -- test invalid _localLogsLocator
-    forest._localLogsLocator = "a string"
-    isTypeOf = BirchForest:isTypeOf(forest)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
-
-    -- test invalid _localSaplingsLocator
-    forest._localSaplingsLocator = "a string"
-    isTypeOf = BirchForest:isTypeOf(forest)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
-
     -- cleanup test
 end
 

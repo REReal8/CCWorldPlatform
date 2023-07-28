@@ -91,21 +91,6 @@ function T_ProductionSpot.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _location
-    obj2._location = "a string"
-    isTypeOf = ProductionSpot:isTypeOf(obj2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj2._location = location1
-
-    -- test invalid _isCraftingSpot
-    obj2._isCraftingSpot = "a string"
-    isTypeOf = ProductionSpot:isTypeOf(obj2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj2._isCraftingSpot = isCraftingSpot1
-
-
     -- cleanup test
 end
 

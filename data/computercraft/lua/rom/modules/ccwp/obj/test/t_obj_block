@@ -102,27 +102,6 @@ function T_Block.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid dx
-    block2._dx = "a string"
-    isTypeOf = Block:isTypeOf(block2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    block2:setDx(dx1)
-
-    -- test invalid dy
-    block2._dy = "a string"
-    isTypeOf = Block:isTypeOf(block2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    block2:setDy(dy1)
-
-    -- test invalid name
-    block2._name = 1000
-    isTypeOf = Block:isTypeOf(block2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    block2:setName(saplingItemName)
-
     -- cleanup test
 end
 
@@ -306,7 +285,7 @@ function T_Block.T_IsBlockList()
     isBlockList = Block.IsBlockList( { block1:copy(), block2:copy() } )
     expectedIsBlockList = false
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
-    block2._dx = furnaceItemName
+    block2._name = furnaceItemName
 
     -- test two valid blocks + different object
     isBlockList = Block.IsBlockList( { block1:copy(), block2:copy(), "a string" } )

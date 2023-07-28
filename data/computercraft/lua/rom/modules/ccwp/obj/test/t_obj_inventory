@@ -234,13 +234,6 @@ function T_Inventory.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _slotTable
-    inventory._slotTable = 1000
-    isTypeOf = Inventory:isTypeOf(inventory)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    inventory._slotTable = Inventory.SlotTableCopy(slotTable1)
-
     -- cleanup test
 end
 

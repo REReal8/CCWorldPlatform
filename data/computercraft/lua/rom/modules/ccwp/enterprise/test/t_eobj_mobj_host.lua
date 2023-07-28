@@ -70,13 +70,6 @@ function T_MObjHost.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid hostName
-    host2._hostName = 1000
-    isTypeOf = MObjHost:isTypeOf(host2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    host2._hostName = hostName
-
     -- cleanup test
 end
 

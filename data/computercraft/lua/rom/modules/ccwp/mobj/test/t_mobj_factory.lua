@@ -156,41 +156,6 @@ function T_Factory.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _baseLocation
-    obj._baseLocation = "a string"
-    isTypeOf = Factory:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._baseLocation = location1
-
-    -- test invalid _inputLocators
-    obj._inputLocators = "a string"
-    isTypeOf = Factory:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._inputLocators = inputLocators1
-
-    -- test invalid _outputLocators
-    obj._outputLocators = "a string"
-    isTypeOf = Factory:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._outputLocators = outputLocators1
-
-    -- test invalid _craftingSpots
-    obj._craftingSpots = "a string"
-    isTypeOf = Factory:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._craftingSpots = craftingSpots1
-
-    -- test invalid _smeltingSpots
-    obj._smeltingSpots = "a string"
-    isTypeOf = Factory:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._smeltingSpots = smeltingSpots1
-
     -- cleanup test
 end
 

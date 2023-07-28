@@ -80,27 +80,6 @@ function T_CallDef.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid moduleName
-    callback2._moduleName = 999
-    isTypeOf = CallDef:isTypeOf(callback2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    callback2:setModuleName(moduleName1)
-
-    -- test invalid methodName
-    callback2._methodName = 999
-    isTypeOf = CallDef:isTypeOf(callback2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    callback2:setMethodName(methodName1)
-
-    -- test invalid data
-    callback2._data = 1000
-    isTypeOf = CallDef:isTypeOf(callback2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    callback2:setData(data1)
-
     -- cleanup test
 end
 

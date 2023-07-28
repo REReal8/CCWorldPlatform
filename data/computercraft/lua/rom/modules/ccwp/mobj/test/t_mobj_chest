@@ -134,27 +134,6 @@ function T_Chest.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _location
-    obj._location = "a string"
-    isTypeOf = Chest:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._location = location1
-
-    -- test invalid _accessDirection
-    obj._accessDirection = 20
-    isTypeOf = Chest:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._accessDirection = accessDirection1
-
-    -- test invalid _inventory
-    obj._inventory = 20
-    isTypeOf = Chest:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._inventory = inventory1
-
     -- cleanup test
 end
 

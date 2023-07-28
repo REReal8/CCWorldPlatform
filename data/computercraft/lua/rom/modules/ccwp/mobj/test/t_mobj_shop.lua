@@ -141,13 +141,6 @@ function T_Shop.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _itemSuppliersLocators
-    obj._itemSuppliersLocators = "a string"
-    isTypeOf = Shop:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._itemSuppliersLocators = itemSuppliersLocators1
-
     -- cleanup test
 end
 

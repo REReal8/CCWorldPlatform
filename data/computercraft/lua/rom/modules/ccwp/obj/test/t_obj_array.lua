@@ -99,20 +99,6 @@ function T_ObjArray.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid className
-    objArray2._objClassName = 1000
-    isTypeOf = ObjArray:isTypeOf(objArray2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    objArray2._objClassName = objClassName1
-
-    -- test Obj's of wrong type
-    objArray2[3] = wrongTestObj1
-    isTypeOf = ObjArray:isTypeOf(objArray2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    objArray2[3] = nil
-
     -- cleanup test
 end
 
@@ -226,13 +212,13 @@ function T_ObjArray.T_transformObjTables()
     -- test only ObjTables
     objArray2[1] = testObj1Table
     objArray2[2] = testObj2Table
-    local isTypeOf = ObjArray:isTypeOf(objArray2)
-    local expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    local hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
+    local expectedHasFieldsOfType = false
+    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     objArray2:transformObjTables()
-    isTypeOf = ObjArray:isTypeOf(objArray2)
-    expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
+    expectedHasFieldsOfType = true
+    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
@@ -246,13 +232,13 @@ function T_ObjArray.T_transformObjTables()
     assert(not TestObj:isTypeOf(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
     objArray2[1] = testObj1
     objArray2[2] = testObj2Table
-    isTypeOf = ObjArray:isTypeOf(objArray2)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
+    expectedHasFieldsOfType = false
+    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     objArray2:transformObjTables()
-    isTypeOf = ObjArray:isTypeOf(objArray2)
-    expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
+    expectedHasFieldsOfType = true
+    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil

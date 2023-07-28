@@ -128,13 +128,6 @@ function T_Turtle.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _fuelPriorityKey
-    obj._fuelPriorityKey = {" a table "}
-    isTypeOf = Turtle:isTypeOf(obj)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    obj._fuelPriorityKey = fuelPriorityKey1
-
     -- cleanup test
 end
 

@@ -238,34 +238,6 @@ function T_URL.T_isTypeOf()
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test invalid _host
-    url._host = 20
-    isTypeOf = URL:isTypeOf(url)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    url._host = host
-
-    -- test invalid _port
-    url._port = "a string"
-    isTypeOf = URL:isTypeOf(url)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    url._port = port
-
-    -- test invalid _path
-    url._path = 20
-    isTypeOf = URL:isTypeOf(url)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    url._path = path
-
-    -- test invalid _query
-    url._query = "a string"
-    isTypeOf = URL:isTypeOf(url)
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-    url._query = query
-
     -- cleanup test
 end
 
