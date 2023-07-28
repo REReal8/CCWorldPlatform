@@ -110,11 +110,14 @@ function Chest.HasClassNameOfType(obj)
 end
 
 function Chest:isTypeOf(obj)
-    -- check
-    local isTypeOf = Chest.HasFieldsOfType(obj) and Chest.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Chest:isSame(obj)

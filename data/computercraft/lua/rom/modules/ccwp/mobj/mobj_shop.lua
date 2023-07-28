@@ -98,11 +98,14 @@ function Shop.HasClassNameOfType(obj)
 end
 
 function Shop:isTypeOf(obj)
-    -- check
-    local isTypeOf = Shop.HasFieldsOfType(obj) and Shop.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Shop:isSame(obj)

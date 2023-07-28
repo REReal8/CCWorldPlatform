@@ -174,11 +174,14 @@ function BirchForest.HasClassNameOfType(obj)
 end
 
 function BirchForest:isTypeOf(obj)
-    -- check
-    local isTypeOf = BirchForest.HasFieldsOfType(obj) and BirchForest.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function BirchForest:isSame(obj)

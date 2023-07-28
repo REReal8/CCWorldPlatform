@@ -93,11 +93,14 @@ function TestMObj.HasClassNameOfType(obj)
 end
 
 function TestMObj:isTypeOf(obj)
-    -- check
-    local isTypeOf = TestMObj.HasFieldsOfType(obj) and TestMObj.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function TestMObj:isSame(obj)

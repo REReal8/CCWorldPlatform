@@ -138,11 +138,14 @@ function Factory.HasClassNameOfType(obj)
 end
 
 function Factory:isTypeOf(obj)
-    -- check
-    local isTypeOf = Factory.HasFieldsOfType(obj) and Factory.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Factory:isSame(obj)

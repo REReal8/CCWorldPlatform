@@ -217,8 +217,14 @@ function Silo.HasClassNameOfType(obj)
 end
 
 function Silo:isTypeOf(obj)
-    -- check
-    return Silo.HasFieldsOfType(obj) and Silo.HasClassNameOfType(obj)
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Silo:isSame(obj)

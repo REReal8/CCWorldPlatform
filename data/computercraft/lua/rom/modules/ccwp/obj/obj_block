@@ -92,11 +92,14 @@ function Block.HasClassNameOfType(obj)
 end
 
 function Block:isTypeOf(obj)
-    -- check
-    local isTypeOf = Block.HasFieldsOfType(obj) and Block.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Block:isSame(obj)

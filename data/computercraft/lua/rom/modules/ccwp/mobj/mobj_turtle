@@ -126,11 +126,14 @@ function Turtle.HasClassNameOfType(obj)
 end
 
 function Turtle:isTypeOf(obj)
-    -- check
-    local isTypeOf = Turtle.HasFieldsOfType(obj) and Turtle.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
 end
 
 function Turtle:isSame(obj)
