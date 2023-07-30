@@ -47,7 +47,6 @@ function MObjHost:addMObj_ASrv(...)
         This async public service add a new MObj and ensures it's ready for use. Adding consist of
             - registering a new MObj
             - building the MObj in the world
-            - activating the MObj
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -94,9 +93,6 @@ function MObjHost:addMObj_ASrv(...)
                 { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
                 { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
-            }},
-            -- activate MObj (& save)
-            { stepType = "LSMtd", stepTypeDef = { methodName = "activate", locatorStep = 0, locatorKeyDef = "mobjLocator" }, stepDataDef = {
             }},
         },
         returnData  = {
@@ -162,7 +158,6 @@ function MObjHost:removeMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, mobjLocator, materialsItemSupplierLocator, callback = InputChecker.Check([[
         This async public service removes a MObj. Removing consist of
-            - deactivating the MObj (stop accepting new business)
             - waiting for running business to be completed
             - dismantle MObj in the world
             - delisting the MObj
@@ -185,10 +180,6 @@ function MObjHost:removeMObj_ASrv(...)
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
     if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:removeMObj_ASrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
-
-    -- deactivate MObj (stops accepting business)
-    local success = mobj:deactivate()
-    if not success then corelog.Error("MObjHost:registerMObj_SSrv: Failed deactivating "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getDismantleBlueprint()

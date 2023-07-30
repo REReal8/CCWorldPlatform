@@ -1,6 +1,5 @@
 local TestMObj = {
     _id             = "",
-    _isActive       = false,
 
     _baseLocation   = nil,
     _field1         = "",
@@ -57,7 +56,6 @@ function TestMObj:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _id                     - (string) id of the TestMObj
-                _isActive               - (boolean) if the TestMObj is active
                 _baseLocation           - (Location) base location of the TestMObj
                 _field1                 - (string) field
     ]], table.unpack(arg))
@@ -136,7 +134,6 @@ function TestMObj:construct(...)
     -- make object table
     local oTable = {
         _id             = coreutils.NewId(),
-        _isActive       = false,
 
         _baseLocation   = baseLocation,
         _field1         = field1Value,
@@ -170,50 +167,6 @@ function TestMObj:getId()
     ]]
 
     return self._id
-end
-
-function TestMObj:activate()
-    --[[
-        Activates the TestMObj. This implies it is ready for accepting new business.
-
-        It also activates all child MObj's it is the parent of.
-
-        Return value:
-                                        - (boolean) whether the TestMObj was succesfully activated.
-    ]]
-
-    -- set active
-    self._isActive = true
-
-    -- end
-    return true
-end
-
-function TestMObj:deactivate()
-    --[[
-        Deactivates the TestMObj. This implies it should no longer accept new business. It still continue's completing
-        possible (async) active business.
-
-        It also deactivates all child MObj's it is the parent of.
-
-        Return value:
-                                - (boolean) whether the TestMObj was succesfully deactivate.
-    ]]
-
-    -- set inactive
-    self._isActive = false
-
-    -- end
-    return true
-end
-
-function TestMObj:isActive()
-    --[[
-        Return value:
-                                        - (boolean) if TestMObj is active, i.e. accepting new business.
-    ]]
-
-    return self._isActive
 end
 
 function TestMObj:completeRunningBusiness_AOSrv(...)

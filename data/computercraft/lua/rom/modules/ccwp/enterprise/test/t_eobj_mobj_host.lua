@@ -148,10 +148,6 @@ function T_MObjHost.T_registerMObj_SSrv()
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
 
-    -- check active
-    local isActive = mobj:isActive()
-    assert(type(isActive) == "boolean", "isActive does not(="..type(isActive)..") return a boolean")
-    assert(not isActive, "MObj is active")
 
     -- cleanup test
     host1:deleteObjects("TestMObj")
@@ -201,10 +197,6 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
 
-    -- check active
-    local isActive = mobj:isActive()
-    assert(type(isActive) == "boolean", "isActive does not(="..type(isActive)..") return a boolean")
-    assert(isActive, "MObj is inactive")
 
     -- cleanup test
     host1:deleteObjects("TestMObj")

@@ -74,44 +74,6 @@ function IMObj:getId()
     corelog.Error("Method getId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
 end
 
-function IMObj:activate()
-    --[[
-        Activates the XXXMObj. This implies it is ready for accepting new business.
-
-        It also activates all child MObj's it is the parent of.
-
-        Return value:
-                                        - (boolean) whether the XXXMObj was succesfully activated.
-    ]]
-
-    corelog.Error("Method activate() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
-    return false
-end
-
-function IMObj:deactivate()
-    --[[
-        Deactivates the XXXMObj. This implies it should no longer accept new business. It still continue's completing
-        possible (async) active business.
-
-        It also deactivates all child MObj's it is the parent of.
-
-        Return value:
-                                - (boolean) whether the XXXMObj was succesfully deactivate.
-    ]]
-
-    corelog.Error("Method deactivate() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
-    return false
-end
-
-function IMObj:isActive()
-    --[[
-        Return value:
-                                        - (boolean) if XXXMObj is active, i.e. accepting new business.
-    ]]
-
-    corelog.Error("Method isActive() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
-end
-
 function IMObj:completeRunningBusiness_AOSrv(...)
     -- get & check input from description
     local checkSuccess, callback = InputChecker.Check([[
@@ -178,9 +140,6 @@ function IMObj.ImplementsInterface(obj)
     if not obj.construct then return false end
     if not obj.destruct then return false end
     if not obj.getId then return false end
-    if not obj.activate then return false end
-    if not obj.deactivate then return false end
-    if not obj.isActive then return false end
     if not obj.completeRunningBusiness_AOSrv then return false end
     if not obj.getBuildBlueprint then return false end
     if not obj.getDismantleBlueprint then return false end
