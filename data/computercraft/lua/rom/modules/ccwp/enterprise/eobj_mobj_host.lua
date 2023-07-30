@@ -98,13 +98,8 @@ function MObjHost:addMObj_ASrv(...)
             -- activate MObj (& save)
             { stepType = "LSMtd", stepTypeDef = { methodName = "activate", locatorStep = 0, locatorKeyDef = "mobjLocator" }, stepDataDef = {
             }},
---            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
---                { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
---                { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
---            }},
         },
         returnData  = {
---            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
             { keyDef = "mobjLocator"                , sourceStep = 0, sourceKeyDef = "mobjLocator" },
         }
     }
@@ -232,14 +227,8 @@ function MObjHost:removeMObj_ASrv(...)
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "delistMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
             }},
-
---            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
---                { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
---                { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
---            }},
         },
         returnData  = {
---            { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {
