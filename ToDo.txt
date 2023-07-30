@@ -1,17 +1,27 @@
 ToDo List
 ---------
 
-R finish IMObj (remove activate, deactivate, ...)
-   R+G ensure all MObj's follow interface
+R  finish AdministrationOffice (+ usage in enterprise_project)
+   R  load/ save itself after one if the 3 WIP calls
 
-R finish AdministrationOffice (+ usage in enterprise_project)
-   - load/ save itself after one if the 3 WIP calls
+R  finish MObjHost
+   R  test delistMObj_SSrv and removeMObj_ASrv
+   R  remove completeRunningBusiness_AOSrv from IMObj interface
+   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use AdministrationOffice)
 
-R finish MObjHost
-   R finish (remove usages of activate, deactivate + use AdministrationOffice)
+RG ensure all MObj's follow IMObj interface
+   R  mobj_birchforest
+   R  mobj_chest
+   R  mobj_factory
+   G  mobj_mine
+   R  mobj_production_spot
+   G  mobj_shop
+   R  mobj_silo
+   R  mobj_turtle
 
-R make enterprise_factory, enterprise_forest and enterprise_storage into an MObjHost
-   - use new MObjHost methods
+R  use MObjHost class
+   R  make enterprise_factory, enterprise_forest and enterprise_storage into an MObjHost
+   R  use new MObjHost methods instead of current equivalent
 
 G moveTo:
    G v1.1: boven maaiveld
