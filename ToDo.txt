@@ -64,62 +64,62 @@ G  enterprise_project
             }},
    -  error handling (no_error, ignored errors, failed on error)
 
-- merge enterprise_chests into enterprise_storage
+-  merge enterprise_chests into enterprise_storage
 
-- waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
-   - v1
+-  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
+   -  v1
       - turtle registers in (m)obj_wastehandler
       - adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument
       - gebruik wasteItemDepotLocator in factory and forest, contruction
-   - v2
+   -  v2
       - rename enterprise_storage into enterprise_warehousing
       - silo registers in (m)obj_wastehandler
-   - v3
+   -  v3
       - registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
       - ensure it takes the closest
 
-G mine v2 maken
+G  mine v2 maken
 
-G display station
-   - system status (e.g. fuel per turtle, silo)
-   - logging
+G  display station
+   -  system status (e.g. fuel per turtle, silo)
+   -  logging
 
-R Factory:
+R  Factory:
    - uitsplitsen in CreaftSpot & SmeltSpot mobj's
 
-- rename enterprise_shop to better name enterprise_shopping or enterprise_itemsupplier
+-  rename enterprise_shop to better name enterprise_shopping or enterprise_itemsupplier
 
-- ItemSupplierGroup & ItemStorageGroup
+-  ItemSupplierGroup & ItemStorageGroup
 
-R Objects: shouldn't they have their own responsibility to load and save themself? G: YES!
+R  Objects: shouldn't they have their own responsibility to load and save themself? G: YES!
 
-- improve IItemDepot and IItemSupplier interfaces
+-  improve IItemDepot and IItemSupplier interfaces
 
-G player station
-   - v1.0: input & output chest UI
+G  player station
+   -  v1.0: input & output chest UI
 
-- IItemSupplier & IItemDepot interface
-   - consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
+-  IItemSupplier & IItemDepot interface
+   -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
 
-- recipe book
+-  recipe book
 
-- create (& use) multiple turtles
+-  create (& use) multiple turtles
 
-- availability
-   - e.g. no 2 turtles into 1 silo shaft
+-  availability
+   -  e.g. no 2 turtles into 1 silo shaft
 
-- claiming
-   - items (in suppliers)
-   - free slots (in depot's)
+-  claiming
+   -  items (in suppliers)
+   -  free slots (in depot's)
 
-- IObj logic semi-automatic
-   - copy
-   - isSame
-   - etc
+-  IObj logic semi-automatic
+   -  copy
+   -  isSame
+   -  etc
 
-- enterprise_energy
-   - coal fuel (v5 enterprise)
+-  enterprise_energy
+   -  coal fuel (v5 enterprise)
 
-- tool management
-   - does a turtle have it's own tools?
+-  tool management
+   -  does a turtle have it's own tools?
 
