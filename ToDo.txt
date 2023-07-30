@@ -1,8 +1,10 @@
 ToDo List
 ---------
 
-R  finish AdministrationOffice (+ usage in enterprise_project)
+R  AdministrationOffice
+   R  finish AdministrationOffice (+ usage in enterprise_project)
    R  load/ save itself after one if the 3 WIP calls
+   R  enterprise_project: optionally administer project started and completed in AdministrationOffice
 
 R  finish MObjHost
    R  test delistMObj_SSrv and removeMObj_ASrv
@@ -27,17 +29,15 @@ G moveTo:
    G v1.1: boven maaiveld
    - v2.0: (snel) wegen
 
-- enterprise project
-   R administer project started and completed in AdministrationOffice
-   G description field for debugging
-   G project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
+G  enterprise_project
+   G  description field for debugging
+   G  project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
          { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
          }},
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
-
-   - (nested?) sequential projectStep
+   -  (nested?) sequential projectStep
             { stepType = "SerialSteps", stepTypeDef = { aoWIPId = "myId", }, stepDataDef = {                                        -- sourceStep = 10 (or stepName)
                 { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {   -- sourceStep = 10.1
                     { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
@@ -52,8 +52,7 @@ G moveTo:
                     { keyDef = "testBArg0"              , sourceStep = 0, sourceKeyDef = "testArgSource" },
                 }
             }},
-
-   - (nested?) parellel projectStep
+   -  (nested?) parellel projectStep
             { stepType = "ParellelSteps", stepTypeDef = { aoWIPId = "myId", }, stepDataDef = {
                 -- as above with any stepType (including SerialSteps), i.e.
                 -- sourceStep = 11.1
@@ -63,8 +62,7 @@ G moveTo:
 
                 -- additional steps to perform in parellel                                                                          -- sourceStep = 11.n
             }},
-
-   - error handling (no_error, ignored errors, failed on error)
+   -  error handling (no_error, ignored errors, failed on error)
 
 - merge enterprise_chests into enterprise_storage
 
