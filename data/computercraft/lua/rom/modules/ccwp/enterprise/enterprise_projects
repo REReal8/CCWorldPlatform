@@ -240,9 +240,10 @@ local function EndProject(internalProjectData)
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
     local projectId = internalProjectData.projectId
     local projectResults = {}
+    local projectDef = project.projectDef
 
     -- create the projectResult
-    for iField, fieldDef in ipairs(project.projectDef.returnData) do
+    for iField, fieldDef in ipairs(projectDef.returnData) do
         -- get sourceStepData
         local sourceStep = fieldDef.sourceStep
         local sourceStepData = project.outputs[ sourceStep ]
