@@ -162,6 +162,8 @@ function MObjHost:removeMObj_ASrv(...)
             - dismantle MObj in the world
             - delisting the MObj
 
+        This service assumes the MObj will not get any new business, i.e. it was already delisted in users of the MObj.
+
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
 
