@@ -20,10 +20,16 @@ R make enterprise_factory, enterprise_forest and enterprise_storage into an MObj
 - enterprise project
   R administer project started and completed in AdministrationOffice
   G description field for debugging
-  G project stappen kunnen een naam krijgen, e.g stepName = "kaas", en worden gebruikt voor sourceStep's
   - (nested?) parellel projectStep
   - (nested?) sequential projectStep
   - error handling (no_error, ignored errors, failed on error)
+   G project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
+         { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
+         }},
+      en worden gebruikt voor sourceStep's, e.g.
+         { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
+
 
 - merge enterprise_chests into enterprise_storage
 
