@@ -91,7 +91,14 @@ R  Factory:
 
 -  rename enterprise_shop to better name enterprise_shopping or enterprise_itemsupplier
 
--  ItemSupplierGroup & ItemStorageGroup
+-  ItemSupplierGroup & ItemDepotGroup
+   -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.
+      -  in the Shop (or WasteHandler)
+      -  for top chests
+      -  for storage "chests" in the Silo
+      -  in the Factory?
+   -  part of this code is/ seems to be the same
+   -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
 
 R  Objects: shouldn't they have their own responsibility to load and save themself? G: YES!
 
