@@ -18,6 +18,7 @@ R make enterprise_factory, enterprise_forest and enterprise_storage into an MObj
    - v2.0: (snel) wegen
 
 - enterprise project
+  R administer project started and completed in AdministrationOffice
   G description field for debugging
   G project stappen kunnen een naam krijgen, e.g stepName = "kaas", en worden gebruikt voor sourceStep's
   - (nested?) parellel projectStep
