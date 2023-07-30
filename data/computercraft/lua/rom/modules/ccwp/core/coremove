@@ -469,6 +469,13 @@ function coremove.MoveTo(l, force)
 	l._dx = l._dx or db.dx
 	l._dy = l._dy or db.dy
 
+	-- maybe moving above ground level is a better idear...
+	local aboveGroundLevel  = db.z == 1 or l._z == 1
+	local targetZ			= l._z
+
+	-- Yes, we will go above the ground level for better movement!
+	if aboveGroundLevel then l._z = 2 end
+
 	-- might be a difficult route, try more times
 	for i=1,3 do
 		-- first, get to the right z
@@ -489,6 +496,9 @@ function coremove.MoveTo(l, force)
 		-- now go down
 		if l._z < db.z then coremove.Down(db.z - l._z, force) end
 	end
+
+	-- did we end up too high?
+	if aboveGroundLevel and targetZ < db.z then coremove.Down(db.z - targetZ, force) end
 end
 
 function coremove.TurnTo( t )
