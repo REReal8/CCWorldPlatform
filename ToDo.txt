@@ -85,7 +85,9 @@ G  display station
    -  logging
 
 R  Factory:
-   - uitsplitsen in CreaftSpot & SmeltSpot mobj's
+   -  remove static method style code (remaining from before it was a mobj)
+   -  ensure no longer need to register it as a module in the mobj library
+   -  split into CraftSpot & SmeltSpot mobj's
 
 -  rename enterprise_shop to better name enterprise_shopping or enterprise_itemsupplier
 
