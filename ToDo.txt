@@ -13,7 +13,7 @@ R finish MObjHost
 R make enterprise_factory, enterprise_forest and enterprise_storage into an MObjHost
    - use new MObjHost methods
 
-- moveTo:
+G moveTo:
    G v1.1: boven maaiveld
    - v2.0: (snel) wegen
 
