@@ -27,8 +27,33 @@ R make enterprise_factory, enterprise_forest and enterprise_storage into an MObj
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
-   - (nested?) parellel projectStep
    - (nested?) sequential projectStep
+            { stepType = "SerialSteps", stepTypeDef = { aoWIPId = "myId", }, stepDataDef = {                                        -- sourceStep = 10 (or stepName)
+                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {   -- sourceStep = 10.1
+                    { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+                }},
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_ASrv" }, stepDataDef = {   -- sourceStep = 10.2
+                    { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+                }},
+
+                -- additional steps to perform in sequence                                                                          -- sourceStep = 10.n
+
+                returnData  = {
+                    { keyDef = "testBArg0"              , sourceStep = 0, sourceKeyDef = "testArgSource" },
+                }
+            }},
+
+   - (nested?) parellel projectStep
+            { stepType = "ParellelSteps", stepTypeDef = { aoWIPId = "myId", }, stepDataDef = {
+                -- as above with any stepType (including SerialSteps), i.e.
+                -- sourceStep = 11.1
+                --              11.1.1
+                --              11.1.2 S
+                --              11.2
+
+                -- additional steps to perform in parellel                                                                          -- sourceStep = 11.n
+            }},
+
    - error handling (no_error, ignored errors, failed on error)
 
 - merge enterprise_chests into enterprise_storage
