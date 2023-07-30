@@ -26,7 +26,7 @@ R  use MObjHost class
    R  use new MObjHost methods instead of current equivalent
 
 G moveTo:
-   G v1.1: boven maaiveld
+   G v1.1: boven maaiveld (done)
    - v2.0: (snel) wegen
 
 G  enterprise_project
