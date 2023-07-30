@@ -74,6 +74,7 @@ function IMObj:getId()
     corelog.Error("Method getId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
 end
 
+-- ToDo: remove
 function IMObj:completeRunningBusiness_AOSrv(...)
     -- get & check input from description
     local checkSuccess, callback = InputChecker.Check([[
