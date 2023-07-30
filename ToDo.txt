@@ -123,3 +123,6 @@ G  player station
 -  tool management
    -  does a turtle have it's own tools?
 
+-  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
+
+-  Other ToDo's to be found everywhere in all code files
