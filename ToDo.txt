@@ -18,11 +18,8 @@ R make enterprise_factory, enterprise_forest and enterprise_storage into an MObj
    - v2.0: (snel) wegen
 
 - enterprise project
-  R administer project started and completed in AdministrationOffice
-  G description field for debugging
-  - (nested?) parellel projectStep
-  - (nested?) sequential projectStep
-  - error handling (no_error, ignored errors, failed on error)
+   R administer project started and completed in AdministrationOffice
+   G description field for debugging
    G project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
          { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
@@ -30,6 +27,9 @@ R make enterprise_factory, enterprise_forest and enterprise_storage into an MObj
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
+   - (nested?) parellel projectStep
+   - (nested?) sequential projectStep
+   - error handling (no_error, ignored errors, failed on error)
 
 - merge enterprise_chests into enterprise_storage
 
@@ -48,8 +48,8 @@ R make enterprise_factory, enterprise_forest and enterprise_storage into an MObj
 G mine v2 maken
 
 G display station
-  - system status (e.g. fuel per turtle, silo)
-  - logging
+   - system status (e.g. fuel per turtle, silo)
+   - logging
 
 R Factory:
    - uitsplitsen in CreaftSpot & SmeltSpot mobj's
@@ -63,7 +63,7 @@ R Objects: shouldn't they have their own responsibility to load and save themsel
 - improve IItemDepot and IItemSupplier interfaces
 
 G player station
-  - v1.0: input & output chest UI
+   - v1.0: input & output chest UI
 
 - IItemSupplier & IItemDepot interface
    - consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
@@ -85,7 +85,7 @@ G player station
    - etc
 
 - enterprise_energy
-  - coal fuel (v5 enterprise)
+   - coal fuel (v5 enterprise)
 
 - tool management
    - does a turtle have it's own tools?
