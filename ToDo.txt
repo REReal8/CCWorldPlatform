@@ -100,8 +100,6 @@ R  Factory:
    -  part of this code is/ seems to be the same
    -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
 
-R  Objects: shouldn't they have their own responsibility to load and save themself? G: YES!
-
 -  improve IItemDepot and IItemSupplier interfaces
 
 G  player station

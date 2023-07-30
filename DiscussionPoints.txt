@@ -1,5 +1,5 @@
 Hoe doen we de opslag aan het einde van een stuk werk?
-------------------------------------------------------
+======================================================
 
 Waar komt dit nu voor?
 - factory
@@ -23,3 +23,14 @@ oplossing richtingen
       - wellicht toevoegen: ultra urgente stap:
 
 => Voor nu denken we dat optie 2 beter is.
+
+
+
+
+Objects: shouldn't objects have their own responsibility to load and save themself?
+===================================================================================
+
+G: YES!
+R: not yet sure
+
+- if yes: what is the best way to implement this
