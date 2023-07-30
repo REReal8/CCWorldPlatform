@@ -189,13 +189,9 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     local mobjLocator = URL:new(serviceResults.mobjLocator)
     assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
 
-    -- check mobj saved
+    -- check mobj registered (full check done in T_registerMObj_SSrv)
     local mobj = host1:getObject(mobjLocator)
-    assert(mobj, "MObj not in host")
-
-    -- check mobj constructed
-    local field1Value = mobj:getField1()
-    assert(field1Value == field1SetValue, "construct did not set _field1")
+    assert(mobj, "MObj not registered")
 
 
     -- cleanup test
