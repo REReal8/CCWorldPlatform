@@ -30,7 +30,7 @@ G moveTo:
    - v2.0: (snel) wegen
 
 G  enterprise_project
-   G  description field for debugging
+   G  description field for debugging (done, use projectDef.meta.title and projectDef.meta.description)
    G  project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
          { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
@@ -80,7 +80,7 @@ G  enterprise_project
 
 G  mine v2 maken
 
-G  display station
+G  display station (Yahoo!!, working (except for building it))
    -  system status (e.g. fuel per turtle, silo)
    -  logging
 
