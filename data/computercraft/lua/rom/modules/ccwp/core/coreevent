@@ -359,7 +359,7 @@ function ProcessModemMessageEvent(side, frequency, replyFrequency, message, dist
 		coreutils.WriteToFile("/event/"..envelope.protocol.."/"..envelope.subject, envelope, "overwrite")
 
 		-- log to monitor screen
-		corelog.WriteToMonitor("to: "..me..", from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)
+--		corelog.WriteToMonitor(me..": Modem event from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)
 
 		-- continue with this event
 		return envelope.protocol, envelope.subject, envelope, nil, nil, nil
