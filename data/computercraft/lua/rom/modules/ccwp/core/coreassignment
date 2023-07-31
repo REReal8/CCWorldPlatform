@@ -78,9 +78,17 @@ function coreassignment.Run()
 
         -- did we get an assignment?
         if nextAssignment then
+            -- we are doing stuff
+            corelog.SetStatus("Taking assignment!")
+
             -- do the assignment
             DoAssignment(nextAssignment)
-        else os.sleep(0.25)     -- apparently no assignment for me now
+        else
+            -- update status
+            corelog.SetStatus("Idle (no assignment)")
+
+            -- just wait a (quarter of a) second
+            os.sleep(0.25)     -- apparently no assignment for me now
         end
     end
 end
