@@ -64,7 +64,7 @@ function corelog.Setup()
 
 		-- show who's boss!
 		corelog.WriteToLog("--- starting up monitor ---")
-		corelog.SetStatus("Logger status", "Ready for new messages", "Thank you for reading this")
+		corelog.SetStatus("I am the logger", "Ready for new messages", "Thank you for reading this")
 	end
 end
 
