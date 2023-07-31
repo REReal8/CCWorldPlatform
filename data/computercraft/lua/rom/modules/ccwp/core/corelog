@@ -42,7 +42,6 @@ function corelog.Setup()
 
 		-- we will be the logger of this system
 		coreassignment = coreassignment or require "coreassignment"
-
 		coreassignment.RejectAllAssignments()
 
 		-- listen to the logger port
