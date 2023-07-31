@@ -17,6 +17,7 @@ function library.Setup()
     objectFactory:registerClass("Mine",         require "mobj_mine")
     objectFactory:registerClass("Shop",         require "mobj_shop")
     objectFactory:registerClass("Turtle",       require "mobj_turtle")
+    objectFactory:registerClass("UtilStation",  require "mobj_util_station")
 
     objectFactory:registerClass("TestMObj",     require "test.mobj_test")
 
@@ -35,6 +36,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Mine", "test.t_mobj_mine")
     moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
+    moduleRegistry:requireAndRegisterModule("T_UtilStation", "test.t_mobj_util_station")
 
     -- do other stuff
 end

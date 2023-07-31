@@ -1,0 +1,17 @@
+local T_UtilStation = {}
+
+local corelog = require "corelog"
+
+local Callback = require "obj_callback"
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
+
+local UtilStation = require "mobj_util_station"
+
+local compact = { compact = true }
+
+function T_UtilStation.T_Build_Station()
+    corelog.WriteToLog("About to build Util Station!")
+end
+
+return T_UtilStation
