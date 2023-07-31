@@ -373,7 +373,7 @@ end
 
 function enterprise_assignmentboard.DHTReadySetup()
     -- bestaat de entry al in de dht?
-    if not coredht.GetData(db.dhtRoot)              then coredht.SaveData({}, db.dhtRoot ) end
+    if not coredht.GetData(db.dhtRoot)             then coredht.SaveData({}, db.dhtRoot ) end
     if not coredht.GetData(db.dhtRoot, db.dhtList) then coredht.SaveData({}, db.dhtRoot, db.dhtList ) end
 end
 
