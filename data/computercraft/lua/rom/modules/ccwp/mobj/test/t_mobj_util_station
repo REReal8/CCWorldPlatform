@@ -3,8 +3,9 @@ local T_UtilStation = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
+
+local enterprise_construction   = require "enterprise_construction"
+local enterprise_shop           = require "enterprise_shop"
 
 local UtilStation = require "mobj_util_station"
 
@@ -12,6 +13,17 @@ local compact = { compact = true }
 
 function T_UtilStation.T_Build_Station()
     corelog.WriteToLog("About to build Util Station!")
+
+    -- create callback
+    local callback = Callback:new({
+        _moduleName     = "enterprise_assignmentboard",
+        _methodName     = "Dummy_Callback",
+        _data           = {},
+    })
+
+    local siteBuildData = UtilStation.GetV1SiteBuildData()
+    siteBuildData.materialsItemSupplierLocator = enterprise_shop.GetShopLocator()
+    enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
 end
 
 return T_UtilStation
