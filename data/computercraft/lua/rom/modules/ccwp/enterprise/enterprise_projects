@@ -72,6 +72,7 @@ function enterprise_projects.StartProject_ASrv(...)
 
     -- save
     corelog.WriteToProjectsLog("Add new", project.projectId)
+    if projectDef.info and projectDef.info.description then corelog.WriteToProjectsLog("project description: ", projectDef.info.description) end
     coredht.SaveData(project, db.dhtRoot, project.projectId)
 --    corelog.WriteToLog("New project "..project.projectId.." created by " .. (project.callerFunction or "unknown"))
 

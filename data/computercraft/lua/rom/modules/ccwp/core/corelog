@@ -10,6 +10,7 @@ local db	= {
 	protocol		    = "corelog",
 	loggerChannel	    = 65534,
 	lastStack           = 0,
+	status				= {},
 }
 
 local monitorLeft	= nil
@@ -29,16 +30,26 @@ function corelog.Setup()
 	-- let others check our pulse
 	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol, "pulse request")
 
-	-- check if we have monitors on our side (and we are not a turtle, so a handheld or computer)
-	if peripheral.getType("left") == "monitor" and peripheral.getType("right") == "monitor" and not turtle then
+	-- check if we have monitors on our side (and we are not a turtle / pocket / command, se we are a computer)
+	if peripheral.getType("left") == "monitor" and peripheral.getType("right") == "monitor" and not turtle and not pocket and not commands then
 		-- get monitor handles
 		monitorLeft		= peripheral.wrap("left")
 		monitorRight	= peripheral.wrap("right")
 
-		-- start at the bottom
+		-- fresh start
 		monitorLeft.clear()
+		monitorRight.clear()
+
+		-- no blinking!
+		monitorLeft.setCursorBlink(false)
+		monitorRight.setCursorBlink(false)
+
+		-- start the left one at the bottom
 		local w, h = monitorLeft.getSize()
 		monitorLeft.setCursorPos(1,h)
+
+		-- right monitor has bigger text size
+		monitorRight.setTextScale(2)
 
 		-- we will be the logger of this system
 		coreassignment = coreassignment or require "coreassignment"
@@ -49,10 +60,11 @@ function corelog.Setup()
 
 		-- listen to our events
 		coreevent.AddEventListener(DoEventWriteToLog, db.protocol, "write to log")
+		coreevent.AddEventListener(DoEventStatusUpdate, db.protocol, "status update")
 
 		-- show who's boss!
-		monitorLeft.clear()
-		corelog.WriteToMonitor("me: --- starting up monitor ---", monitorLeft)
+		corelog.WriteToLog("--- starting up monitor ---")
+		corelog.SetStatus("Logger status", "Ready for new messages", "Thank you for reading this")
 	end
 end
 
@@ -70,7 +82,7 @@ function corelog.WriteToLog(message, writeMode)
 	-- send message
 	if monitorLeft then
 		-- we are the logging station, don't send message
-		corelog.WriteToMonitor("me: "..message, monitorLeft)
+		corelog.WriteToMonitor("me: "..message)
 	else
 
 		-- send message two whoever is loggin our stuff
@@ -81,6 +93,82 @@ function corelog.WriteToLog(message, writeMode)
 			message		= {text = message} })
 	end
 end
+
+local function MonitorWriteLine(message, monitor)
+	-- where do we start?
+	local x, y = monitor.getCursorPos()
+
+	-- write the line
+	monitor.write(message)
+
+	-- ready for the next line
+	monitor.setCursorPos(1, y + 1)
+end
+
+local function UpdateStatus(statusData, monitor)
+	-- which do we use?
+	monitor = monitor or monitorRight
+
+	-- make sure the status data is valid
+	if type(statusData) ~= "table"				then return end
+	if not statusData.me						then return end
+	if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
+	if type(statusData.message)	  ~= "string"	then statusData.message		= nil end
+	if type(statusData.subline)	  ~= "string"	then statusData.subline		= nil end
+	if type(statusData.details)	  ~= "string"	then statusData.details		= nil end
+
+	-- first, remember the status (and forget the previous status)
+	db.status[statusData.me] = statusData
+
+	-- now, show this to the monitor
+	monitor.clear()
+
+	-- maybe set cursor to be sure
+	monitor.setCursorPos(1, 1)
+
+	-- here we go
+	for id, data in pairs(db.status) do
+
+		-- write!
+		MonitorWriteLine("id: "..id.." (fuel: "..data.fuelLevel..")", monitor)
+		if data.message then MonitorWriteLine(data.message, monitor) end
+		if data.subline then MonitorWriteLine(data.subline, monitor) end
+		if data.details then MonitorWriteLine(data.details, monitor) end
+		MonitorWriteLine("", monitor)
+	end
+end
+
+function corelog.SetStatus(message, subline, details)
+	-- get us and our fuel level
+	local fuelLevel = 0
+	if turtle then fuelLevel = turtle.getFuelLevel() end
+
+	-- all relevant information for the status update together
+	local statusUpdate = {
+		me			= os.getComputerID(),
+		fuelLevel	= fuelLevel,
+		message		= message,
+		subline		= subline,
+		details		= details
+	}
+
+	-- send to the logger (unless that's us)
+	if monitorRight then
+
+		-- update the status
+		UpdateStatus(statusUpdate)
+	else
+
+		-- not us, send the info
+		coreevent.SendMessage({
+			channel		= db.loggerChannel,
+			protocol	= db.protocol,
+			subject		= "status update",
+			message		= statusUpdate})
+	end
+end
+
+
 
 function corelog.WriteToMonitor(message, monitor)
 	-- default monitor
@@ -208,7 +296,12 @@ end
 
 function DoEventWriteToLog(subject, envelope)
 	-- write the message on the monitor
-	corelog.WriteToMonitor(envelope.from ..":".. envelope.message.text, monitorLeft)
+	corelog.WriteToMonitor(envelope.from ..":".. envelope.message.text)
+end
+
+function DoEventStatusUpdate(subject, envelope)
+	-- do the status update
+	UpdateStatus(envelope.message)
 end
 
 return corelog
