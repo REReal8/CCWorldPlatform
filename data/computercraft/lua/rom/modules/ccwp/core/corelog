@@ -95,14 +95,30 @@ function corelog.WriteToLog(message, writeMode)
 end
 
 local function MonitorWriteLine(message, monitor)
-	-- where do we start?
-	local x, y = monitor.getCursorPos()
+	local onderaan	= true
+	local x, y		= monitor.getCursorPos()
+	local w, h		= monitor.getSize()
 
-	-- write the line
-	monitor.write(message)
 
-	-- ready for the next line
-	monitor.setCursorPos(1, y + 1)
+	if not onderaan and y < h then
+		-- where do we start?
+
+		-- write the line
+		monitor.write(message)
+
+		-- ready for the next line
+		monitor.setCursorPos(1, y + 1)
+
+	else
+		-- scroll the existing stuff up
+		monitor.scroll(1)
+
+		-- set the cursus back at the start of the line
+		monitor.setCursorPos(1,h)
+
+		-- write the message
+		monitor.write(message)
+	end
 end
 
 local function UpdateStatus(statusData, monitor)
