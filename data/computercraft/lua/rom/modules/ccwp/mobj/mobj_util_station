@@ -101,7 +101,7 @@ function UtilStation.GetV1SiteBuildData(serviceData)
     -- compose da blueprint
     local blueprint = {
         layerList = layerList,
---        escapeSequence = { Location:new({_y = -12, _x = -12, _z = 1, _dx = 0, _dy = 1}) }
+        escapeSequence = { Location:new({ _x= 9, _y= 5, _z= 0}) }
     }
 
     -- return build data
