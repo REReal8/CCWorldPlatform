@@ -49,7 +49,7 @@ end
 local function Computer_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = Block:new({ _name = "computercraft:computer_normal" }),
+            ["C"]   = Block:new({ _name = "computercraft:computer_normal", _dx =0, _dy = -1 }),
         },
         _codeMap    = {
             [1] = "C",
