@@ -54,7 +54,8 @@ function enterprise_projects.StartProject_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_projects.StartProject_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- set metaData defaults  ToDo: consider doing with CheckInput
-    if type(projectDef.returnData) ~= "table" then projectDef.returnData = {} end
+    if type(projectDef.meta)        ~= "table" then projectDef.meta         = {} end
+    if type(projectDef.returnData)  ~= "table" then projectDef.returnData   = {} end
 
     -- data of the project
     local project   = {
@@ -70,11 +71,16 @@ function enterprise_projects.StartProject_ASrv(...)
         callerFunction      = corelog.FindCaller("enterprise_projects"),    -- for debugging
     }
 
-    -- save
+    -- default meta's
+    if not projectDef.meta.title        then projectDef.meta.title          = "untitled" corelog.WriteToLog("Project has no title!! ("..project.callerFunction..")") end
+    if not projectDef.meta.description  then projectDef.meta.description    = "" end
+
+    -- logging
     corelog.WriteToProjectsLog("Add new", project.projectId)
-    if projectDef.info and projectDef.info.description then corelog.WriteToProjectsLog("project description: ", projectDef.info.description) end
+    corelog.WriteToProjectsLog("project title: ", projectDef.meta.title)
+
+    -- save
     coredht.SaveData(project, db.dhtRoot, project.projectId)
---    corelog.WriteToLog("New project "..project.projectId.." created by " .. (project.callerFunction or "unknown"))
 
     -- let's start
     return enterprise_projects.NextProjectStep({projectId = project.projectId}, projectData) -- the input projectData is interpreted as the result of virtual step 0
@@ -356,6 +362,9 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     -- prepare stepData
     local stepData = GetStepData(project, step.stepDataDef)
     if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
+
+    -- update status before doing the step
+    corelog.SetStatus("Project: "..project.projectDef.meta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, "Stepname: (todo)")
 
     -- select and do stepType
     if stepType == "ASrv" then
