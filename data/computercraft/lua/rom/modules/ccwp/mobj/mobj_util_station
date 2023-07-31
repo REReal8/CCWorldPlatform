@@ -11,7 +11,7 @@ local LayerRectangle    = require "obj_layer_rectangle"
 local db = {
     dhtRoot             = "utility_station",
 }
-
+--[[
 local function RunLogger()
     -- keep track of what's happening
     coreutils.WriteToLog('We are usefull, we are logger!')
@@ -33,7 +33,7 @@ function UtilStation.Run()
     if myId == USdata.logger        then RunLogger() end
     if myId == USdata.itemInterface then RunItemInterface() end
 end
-
+--]]
 local function Chest_layer()
     return LayerRectangle:new({
         _codeArray  = {
