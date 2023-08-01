@@ -423,6 +423,7 @@ function Factory:provideItemsTo_AOSrv(...)
         local projectServiceData = {
             projectDef  = projectDef,
             projectData = projectData,
+            projectMeta = { title = "We are a factory", description = "We provide" },
         }
 
         -- start project
@@ -745,6 +746,7 @@ function Factory.ProduceItem_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "We are a factory", description = "Time to make stuff" },
     }
 
     -- start project

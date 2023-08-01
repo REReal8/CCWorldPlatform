@@ -35,6 +35,7 @@ function t_chests.T_RegisterAndUpdateChest()
     local projectServiceData = {
         projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
         projectData = projectData,
+        projectMeta = { title = "Testing", description = "Register and update chest" },
     }
 
     -- start project

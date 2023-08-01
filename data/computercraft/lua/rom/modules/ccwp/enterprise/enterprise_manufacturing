@@ -168,6 +168,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     local projectServiceData = {
         projectDef  = buildAndStartNewSiteProjectDef,
         projectData = serviceData,
+        projectMeta = { title = "Building new factory", description = "Crafting the world for you!" },
     }
 
     -- start project
@@ -324,6 +325,7 @@ function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
     local projectServiceData = {
         projectDef  = stopAndDismantleSiteProjectDef,
         projectData = serviceData,
+        projectMeta = { title = "Removing factory", description = "We regred though respect your choice" },
     }
 
     -- start project

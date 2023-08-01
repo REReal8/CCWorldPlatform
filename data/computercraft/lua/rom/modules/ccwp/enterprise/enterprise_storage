@@ -72,6 +72,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
         local projectServiceData = {
             projectDef  = buildAndStartNewSiteProjecDef,
             projectData = siteData,
+            projectMeta = { title = "Building new storage", description = "For storing precious goods" },
         }
 
         -- start project

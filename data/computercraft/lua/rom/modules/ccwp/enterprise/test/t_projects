@@ -220,6 +220,7 @@ function t_projects.T_StartProject_ASrv()
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Testing", description = "Start project" },
     }
 
     -- test

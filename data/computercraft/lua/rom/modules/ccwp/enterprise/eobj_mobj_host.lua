@@ -102,6 +102,7 @@ function MObjHost:addMObj_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Adding a new mobj", description = "Just wondering which one, aren't you?" },
     }
 
     -- start project
@@ -227,6 +228,7 @@ function MObjHost:removeMObj_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Removing mobj", description = "Word goes it's no longer needed" },
     }
 
     -- start project
