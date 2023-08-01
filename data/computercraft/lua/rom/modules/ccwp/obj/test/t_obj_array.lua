@@ -212,13 +212,7 @@ function T_ObjArray.T_transformObjTables()
     -- test only object tables
     objArray2[1] = testObject1Table
     objArray2[2] = testObject2Table
-    local hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
-    local expectedHasFieldsOfType = false
-    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     objArray2:transformObjTables()
-    hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
-    expectedHasFieldsOfType = true
-    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
@@ -232,13 +226,7 @@ function T_ObjArray.T_transformObjTables()
     assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
     objArray2[1] = testObj1
     objArray2[2] = testObject2Table
-    hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
-    expectedHasFieldsOfType = false
-    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     objArray2:transformObjTables()
-    hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
-    expectedHasFieldsOfType = true
-    assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil

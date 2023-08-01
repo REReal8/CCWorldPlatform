@@ -60,22 +60,6 @@ function ObjArray:getObjClass()
     return objClass
 end
 
-function ObjArray.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._objClassName) ~= "string" then return false end
-
-    -- check elements
-    local objClass = obj:getObjClass()
-    if not objClass then return false end
-    for i, el in ipairs(obj) do
-        if not objClass:isTypeOf(el) then return false end
-    end
-
-    -- end
-    return true
-end
-
 function ObjArray:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do
