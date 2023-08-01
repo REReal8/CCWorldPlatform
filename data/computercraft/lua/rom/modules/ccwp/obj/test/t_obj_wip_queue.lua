@@ -25,6 +25,7 @@ function T_WIPQueue.T_All()
     T_WIPQueue.T_copy()
 
     -- specific methods
+    T_WIPQueue.T_callAndReleaseCallbacks()
 end
 
 local workId1 = "id1"
@@ -295,5 +296,42 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+local callback2Called = false
+
+function T_WIPQueue.T_callAndReleaseCallbacks()
+    -- prepare test
+    corelog.WriteToLog("* WIPQueue:callAndReleaseCallbacks() tests")
+    local obj1 = WIPQueue:new({
+        _workList       = {},
+        _callbackList   = callbackList1:copy(),
+    }) assert(obj1)
+    local callback2 = Callback:new({
+        _moduleName     = "T_WIPQueue",
+        _methodName     = "callAndReleaseCallbacks_Callback",
+        _data           = {},
+    })
+    obj1:addCallback(callback2)
+    callback2Called = false
+
+    -- test
+    local succes = obj1:callAndReleaseCallbacks(callback1)
+    assert(succes, "callAndReleaseCallbacks not a success")
+    assert(callback2Called, "callback2 not called")
+    assert(not hasCallback(obj1._callbackList, callback2), "callback2 not removed")
+
+    -- cleanup test
+end
+
+function T_WIPQueue.callAndReleaseCallbacks_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+    callback2Called = true
+
+    -- cleanup test
+
+    -- end
+    return true
+end
 
 return T_WIPQueue
