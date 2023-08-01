@@ -454,30 +454,8 @@ function Below( t )
 	}
 end
 
-function coremove.MoveTo(l, force)
-	if l == nil then
-		print("Cannot move to nil location")
-		corelog.WriteToLog("function coremove.MoveTo: Cannot move to nil location")
-		corelog.WriteToLog(debug.traceback())
-		return false
-	end
-
-	-- might be partly given coordinates, enricht with the current coordinates
-	l._x  = l._x  or db.x
-	l._y  = l._y  or db.y
-	l._z  = l._z  or db.z
-	l._dx = l._dx or db.dx
-	l._dy = l._dy or db.dy
-
-	-- check if we are already at the right position
-	local alreadyAtPostion = l._x == db.x and l._y == db.y and l._z == db.z
-
-	-- maybe moving above ground level is a better idear...
-	local aboveGroundLevel  = db.z == 1 or l._z == 1
-	local targetZ			= l._z
-
-	-- Yes, we will go above the ground level for better movement!
-	if aboveGroundLevel and not alreadyAtPostion then l._z = 2 end
+local function SimpleMoveTo(l, force)
+	-- local function, checking parameter no longer done, you take care of that yourself!
 
 	-- might be a difficult route, try more times
 	for i=1,3 do
@@ -500,8 +478,40 @@ function coremove.MoveTo(l, force)
 		if l._z < db.z then coremove.Down(db.z - l._z, force) end
 	end
 
-	-- did we end up too high?
-	if aboveGroundLevel and targetZ < db.z then coremove.Down(db.z - targetZ, force) end
+end
+
+function coremove.MoveTo(l, force)
+	if l == nil then
+		print("Cannot move to nil location")
+		corelog.WriteToLog("function coremove.MoveTo: Cannot move to nil location")
+		corelog.WriteToLog(debug.traceback())
+		return false
+	end
+
+	-- might be partly given coordinates, enricht with the current coordinates
+	l._x  = l._x  or db.x
+	l._y  = l._y  or db.y
+	l._z  = l._z  or db.z
+	l._dx = l._dx or db.dx
+	l._dy = l._dy or db.dy
+
+	-- do the movement
+	SimpleMoveTo(l, force)
+
+	-- did we get there?
+	if l._x ~= db.x or l._y ~= db.y or l._z ~= db.z then
+
+		-- we are clearly stuck, might be good to move upwards and try again
+		local targetZ	= l._z
+		l._z			= 2
+
+		-- try again
+		SimpleMoveTo(l, force)
+
+		-- and now to the requested location
+		l._z			= targetZ
+		SimpleMoveTo(l, force)
+	end
 end
 
 function coremove.TurnTo( t )
