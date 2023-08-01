@@ -99,8 +99,8 @@ function ObjArray:copy()
     })
 
     -- copy elements
-    for i, obj in ipairs(self) do
-        copy[i] = obj:copy()
+    for i, el in ipairs(self) do
+        copy[i] = el:copy()
     end
 
     return copy

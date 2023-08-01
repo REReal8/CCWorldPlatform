@@ -518,7 +518,7 @@ function LayerRectangle.TransformToCodeArray(...)
     local codeArrayTransform = {}
     -- copy elements
     for code, block in pairs(codeArray) do
-        -- ToDo: consider doing this similair to, or using ObjArray:transformObjTables => also making HasFieldsOfType and HasClassNameOfType methods obsolete (like was done for the other classes)
+        -- ToDo: consider doing this similair to, or using ObjArray:transformObjectTables => also making HasFieldsOfType and HasClassNameOfType methods obsolete (like was done for the other classes)
         if Block.HasFieldsOfType(block) then
             if Block.HasClassNameOfType(block) then
                 codeArrayTransform[code] = block -- already a Block

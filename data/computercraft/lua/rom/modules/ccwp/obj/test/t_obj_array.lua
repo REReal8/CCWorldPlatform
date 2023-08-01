@@ -16,7 +16,7 @@ function T_ObjArray.T_All()
     T_ObjArray.T_copy()
 
     -- specific methods
-    T_ObjArray.T_transformObjTables()
+    T_ObjArray.T_transformObjectTables()
     T_ObjArray.T_new_transformsObjTables()
 end
 
@@ -168,9 +168,9 @@ end
 --       | |
 --       |_|
 
-function T_ObjArray.T_transformObjTables()
+function T_ObjArray.T_transformObjectTables()
     -- prepare test
-    corelog.WriteToLog("* ObjArray:transformObjTables() tests")
+    corelog.WriteToLog("* ObjArray:transformObjectTables() tests")
     local objArray2 = ObjArray:new({
         _objClassName   = objClassName1,
     }) if not objArray2 then corelog.Warning("objArray2 unexpectedly nil") return end
@@ -188,7 +188,7 @@ function T_ObjArray.T_transformObjTables()
     -- test already only Obj's (nothing should change)
     objArray2[1] = testObj1
     objArray2[2] = testObj2
-    objArray2:transformObjTables()
+    objArray2:transformObjectTables()
     local expectedNElements = 2
     assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
@@ -200,7 +200,7 @@ function T_ObjArray.T_transformObjTables()
     objArray2[1] = testObj1
     objArray2[2] = wrongTestObj1
     objArray2[3] = testObj2
-    objArray2:transformObjTables(true)
+    objArray2:transformObjectTables(true)
     expectedNElements = 2
     assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
@@ -212,7 +212,7 @@ function T_ObjArray.T_transformObjTables()
     -- test only object tables
     objArray2[1] = testObject1Table
     objArray2[2] = testObject2Table
-    objArray2:transformObjTables()
+    objArray2:transformObjectTables()
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
@@ -226,7 +226,7 @@ function T_ObjArray.T_transformObjTables()
     assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
     objArray2[1] = testObj1
     objArray2[2] = testObject2Table
-    objArray2:transformObjTables()
+    objArray2:transformObjectTables()
     assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
