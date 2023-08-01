@@ -137,4 +137,4 @@ G  player station
 
 -  Other ToDo's to be found everywhere in all code files
 
-G  turtle without db/inventory.lua file should check for tool present
+G  turtle without db/inventory.lua file should check for tool present (done)
