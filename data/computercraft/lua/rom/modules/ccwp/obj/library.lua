@@ -19,6 +19,7 @@ function library.Setup()
     objectFactory:registerClass("Block", require "obj_block")
     objectFactory:registerClass("LayerRectangle", require "obj_layer_rectangle")
     objectFactory:registerClass("Inventory", require "obj_inventory")
+    objectFactory:registerClass("WIPQueue", require "obj_wip_queue")
 
     objectFactory:registerClass("TestObj", require "test.obj_test")
 
@@ -44,6 +45,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Block", "test.t_obj_block")
     moduleRegistry:requireAndRegisterModule("T_LayerRectangle", "test.t_obj_layer_rectangle")
     moduleRegistry:requireAndRegisterModule("T_Inventory", "test.t_obj_inventory")
+    moduleRegistry:requireAndRegisterModule("T_WIPQueue", "test.t_obj_wip_queue")
 
     -- do other stuff
 end
