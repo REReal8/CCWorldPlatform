@@ -133,6 +133,9 @@ local function UpdateStatus(statusData, monitor)
 	if type(statusData.subline)	  ~= "string"	then statusData.subline		= nil end
 	if type(statusData.details)	  ~= "string"	then statusData.details		= nil end
 
+	-- nicer
+	if statusData.fuelLevel == 0				then statusData.fuelLevel	= "empty" end
+
 	-- first, remember the status (and forget the previous status)
 	db.status[statusData.me] = statusData
 
