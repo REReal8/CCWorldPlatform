@@ -72,8 +72,8 @@ function enterprise_projects.StartProject_ASrv(...)
     }
 
     -- default meta's
-    if not projectDef.meta.title        then projectDef.meta.title          = "untitled" corelog.WriteToLog("Project has no title!! (project created at "..project.callerFunction..")") end
-    if not projectDef.meta.description  then projectDef.meta.description    = "" end
+--    if not projectDef.meta.title        then projectDef.meta.title          = "untitled" corelog.WriteToLog("Project has no title!! (project created at "..project.callerFunction..")") end
+--    if not projectDef.meta.description  then projectDef.meta.description    = "" end
 
     -- logging
     corelog.WriteToProjectsLog("Add new", project.projectId)
