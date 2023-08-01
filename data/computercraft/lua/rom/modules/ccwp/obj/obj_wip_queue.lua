@@ -34,7 +34,6 @@ function WIPQueue:addWork(...)
     if not checkSuccess then corelog.Error("WIPQueue:addWork: Invalid input") return false end
 
     -- add to _workList
---    self._workList.workId = true
     table.insert(self._workList, workId)
 
     -- end

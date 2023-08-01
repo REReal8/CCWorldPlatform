@@ -1,7 +1,6 @@
 local T_WIPQueue = {}
 local corelog = require "corelog"
 
-local InputChecker = require "input_checker"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local Callback = require "obj_callback"
@@ -14,6 +13,12 @@ function T_WIPQueue.T_All()
     T_WIPQueue.T_ImplementsIObj()
 
     -- base methods
+    T_WIPQueue.T_addWork()
+    T_WIPQueue.T_removeWork()
+    T_WIPQueue.T_noWIP()
+    T_WIPQueue.T_addCallback()
+
+    -- IObj methods
     T_WIPQueue.T_new()
     T_WIPQueue.T_isTypeOf()
     T_WIPQueue.T_isSame()
@@ -34,10 +39,16 @@ local workList2 = {
     workId2,
     workId3,
 }
+local workId = "id"
 local callbackClassName = "Callback"
 local callbackList1 = ObjArray:new({
     _objClassName   = callbackClassName,
 }) if not callbackList1 then return end
+local callback1 = Callback:new({
+    _moduleName     = "enterprise_assignmentboard",
+    _methodName     = "Dummy_Callback",
+    _data           = {},
+})
 
 local compact = { compact = true }
 
@@ -75,6 +86,106 @@ end
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+local function hasWork(workList, workId)
+    for i, aWorkId in ipairs(workList) do
+        if aWorkId == workId then
+            return true
+        end
+    end
+
+    -- end
+    return false
+end
+
+local function workListCopy(workList)
+    local copy = {}
+    for i, workId in ipairs(workList) do
+        copy[i] = workId
+    end
+
+    -- end
+    return copy
+end
+
+function T_WIPQueue.T_addWork()
+    -- prepare test
+    corelog.WriteToLog("* WIPQueue:addWork() tests")
+    local obj1 = WIPQueue:new({
+        _workList       = workListCopy(workList1),
+        _callbackList   = callbackList1:copy(),
+    }) assert(obj1)
+    assert(not hasWork(obj1._workList, workId), "workId already present")
+
+    -- test
+    obj1:addWork(workId)
+    assert(hasWork(obj1._workList, workId), "workId not added")
+
+    -- cleanup test
+end
+
+function T_WIPQueue.T_removeWork()
+    -- prepare test
+    corelog.WriteToLog("* WIPQueue:removeWork() tests")
+    local obj1 = WIPQueue:new({
+        _workList       = workListCopy(workList1),
+        _callbackList   = callbackList1:copy(),
+    }) assert(obj1)
+    obj1:addWork(workId)
+    assert(hasWork(obj1._workList, workId), "workId not added")
+
+    -- test
+    obj1:removeWork(workId)
+    assert(not hasWork(obj1._workList, workId), "workId not removed")
+
+    -- cleanup test
+end
+
+function T_WIPQueue.T_noWIP()
+    -- prepare test
+    corelog.WriteToLog("* WIPQueue:noWIP() tests")
+    local obj1 = WIPQueue:new({
+        _workList       = {},
+        _callbackList   = callbackList1:copy(),
+    }) assert(obj1)
+
+    -- test noWIP
+    local noWIP = obj1:noWIP()
+    assert(noWIP, "unexpected WIP")
+
+    -- test WIP
+    obj1:addWork(workId)
+    noWIP = obj1:noWIP()
+    assert(not noWIP, "unexpected no WIP")
+
+    -- cleanup test
+end
+
+local function hasCallback(callbackList, callback)
+    for i, aCallback in ipairs(callbackList) do
+        if aCallback:isSame(callback) then
+            return true
+        end
+    end
+
+    -- end
+    return false
+end
+
+function T_WIPQueue.T_addCallback()
+    -- prepare test
+    corelog.WriteToLog("* WIPQueue:addCallback() tests")
+    local obj1 = WIPQueue:new({
+        _workList       = {},
+        _callbackList   = callbackList1:copy(),
+    }) assert(obj1)
+    assert(not hasCallback(obj1._callbackList, callback1), "callback1 already present")
+
+    -- test
+    obj1:addCallback(callback1)
+    assert(hasCallback(obj1._callbackList, callback1), "callback1 not added")
+
+    -- cleanup test
+end
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -91,7 +202,7 @@ function T_WIPQueue.T_new()
 
     -- test full
     local obj = WIPQueue:new({
-        _workList       = workList1,
+        _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
     }) assert(obj)
     assert(obj._workList[1] == workId1, "no workId1")
@@ -126,18 +237,13 @@ function T_WIPQueue.T_isSame()
     -- prepare test
     corelog.WriteToLog("* WIPQueue:isSame() tests")
     local obj1 = WIPQueue:new({
-        _workList       = workList1,
+        _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
     }) assert(obj1)
     local obj2 = WIPQueue:new({
-        _workList       = workList1,
+        _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
     }) assert(obj2)
-    local callback1 = Callback:new({
-        _moduleName     = "enterprise_assignmentboard",
-        _methodName     = "Dummy_Callback",
-        _data           = {},
-    })
     local callbackList2 = ObjArray:new({
         _objClassName   = callbackClassName,
 
@@ -150,11 +256,11 @@ function T_WIPQueue.T_isSame()
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
     -- test different _workList
-    obj2._workList = workList2
+    obj2._workList = workListCopy(workList2)
     isSame = obj1:isSame(obj2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    obj2._workList = workList1
+    obj2._workList = workListCopy(workList1)
 
     -- test different _callbackList
     obj2._callbackList = callbackList2:copy()
@@ -170,7 +276,7 @@ function T_WIPQueue.T_copy()
     -- prepare test
     corelog.WriteToLog("* WIPQueue:copy() tests")
     local obj1 = WIPQueue:new({
-        _workList       = workList1,
+        _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
     }) assert(obj1)
 
