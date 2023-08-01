@@ -22,7 +22,7 @@ function T_UtilStation.T_Build_Station()
 
     -- get turtle locator
     local currentTurtleId = os.getComputerID()
-    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining turtleLocator for turtle "..currentTurtleId) return Callback.ErrorCall(callback) end
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("T_UtilStation.T_Build_Station: Failed obtaining turtleLocator for turtle "..currentTurtleId) return Callback.ErrorCall(callback) end
 
     local siteBuildData = UtilStation.GetV1SiteBuildData()
     siteBuildData.materialsItemSupplierLocator = enterprise_shop.GetShopLocator()
