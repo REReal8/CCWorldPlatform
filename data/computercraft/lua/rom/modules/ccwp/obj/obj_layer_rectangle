@@ -187,8 +187,8 @@ function LayerRectangle:itemsNeeded()
         -- get block
         local block = self._codeArray[code]
 
-        -- check is minecraft item
-        if block:isMinecraftItem() then
+        -- check is an actual item
+        if block:isMinecraftItem() or block:isComputercraftItem() then
             -- set counter
             itemList[block:getName()] = (itemList[block:getName()] or 0) + codeCount
         end

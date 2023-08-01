@@ -17,6 +17,7 @@ function T_Block.T_All()
     T_Block.T_isMinecraftItem()
     T_Block.T_isAnyBlock()
     T_Block.T_isNoneBlock()
+    T_Block.T_isComputercraftItem()
     T_Block.T_ParseWithCheckInput()
 
     -- helper functions
@@ -33,6 +34,7 @@ local dy2 = 0
 local saplingItemName = "minecraft:birch_sapling"
 local furnaceItemName = "minecraft:furnace"
 local chestItemName = "minecraft:chest"
+local computerItemName = "computercraft:computer_normal"
 
 local block1 = Block:new({
     _dx     = dx1,
@@ -241,6 +243,37 @@ function T_Block.T_isNoneBlock()
 
     -- cleanup test
 end
+
+function T_Block.T_isComputercraftItem()
+    -- prepare test
+    corelog.WriteToLog("* Block:isComputercraftItem() tests")
+    local blockName = computerItemName
+    local block2 = Block:new({
+        _dx     = dx1,
+        _dy     = dy1,
+
+        _name   = blockName,
+    })
+
+    -- test computercraft item
+    local isComputercraftItem = block2:isComputercraftItem()
+    assert(isComputercraftItem, "gotten isComputercraftItem(="..tostring(isComputercraftItem)..") for "..blockName.." not the same as expected(true)")
+
+    -- test blockNameAny
+    blockName = Block.AnyBlockName()
+    block2:setName(blockName)
+    isComputercraftItem = block2:isComputercraftItem()
+    assert(not isComputercraftItem, "gotten isComputercraftItem(="..tostring(isComputercraftItem)..") for "..blockName.." not the same as expected(false)")
+
+    -- test blockNameNone
+    blockName = Block.NoneBlockName()
+    block2:setName(blockName)
+    isComputercraftItem = block2:isComputercraftItem()
+    assert(not isComputercraftItem, "gotten isComputercraftItem(="..tostring(isComputercraftItem)..") for "..blockName.." not the same as expected(false)")
+
+    -- cleanup test
+end
+
 
 function T_Block.T_ParseWithCheckInput()
     -- prepare test
