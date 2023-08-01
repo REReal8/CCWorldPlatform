@@ -27,6 +27,7 @@ R  use MObjHost class
 
 G moveTo:
    G v1.1: boven maaiveld (done)
+   G v1.2: boven maaiveld even wat intilligenter dan nu
    - v2.0: (snel) wegen
 
 G  enterprise_project
