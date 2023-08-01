@@ -469,12 +469,15 @@ function coremove.MoveTo(l, force)
 	l._dx = l._dx or db.dx
 	l._dy = l._dy or db.dy
 
+	-- check if we are already at the right position
+	local alreadyAtPostion = l._x == db.x and l._y == db.y and l._z == db.z
+
 	-- maybe moving above ground level is a better idear...
 	local aboveGroundLevel  = db.z == 1 or l._z == 1
 	local targetZ			= l._z
 
 	-- Yes, we will go above the ground level for better movement!
-	if aboveGroundLevel then l._z = 2 end
+	if aboveGroundLevel and not alreadyAtPostion then l._z = 2 end
 
 	-- might be a difficult route, try more times
 	for i=1,3 do
