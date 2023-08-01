@@ -274,7 +274,6 @@ function T_Block.T_isComputercraftItem()
     -- cleanup test
 end
 
-
 function T_Block.T_ParseWithCheckInput()
     -- prepare test
     corelog.WriteToLog("* Block parsing with CheckInput tests")
