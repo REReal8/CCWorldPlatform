@@ -213,6 +213,7 @@ function ExecuteObjTest(t)
 		{key = "m", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ModuleRegistry"}},
 		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
 		{key = "a", desc = "ObjArray", 			func = ExecuteObjTest, param = {filename = "T_ObjArray"}},
+		{key = "o", desc = "ObjTable", 			func = ExecuteObjTest, param = {filename = "T_ObjTable"}},
 		{key = "d", desc = "CallDef", 			func = ExecuteObjTest, param = {filename = "T_CallDef"}},
 		{key = "c", desc = "Callback", 			func = ExecuteObjTest, param = {filename = "T_Callback"}},
 		{key = "t", desc = "TaskCall", 			func = ExecuteObjTest, param = {filename = "T_TaskCall"}},
