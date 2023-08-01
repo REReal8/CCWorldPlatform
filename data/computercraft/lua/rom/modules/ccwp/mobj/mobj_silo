@@ -313,6 +313,7 @@ function Silo:provideItemsTo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Retrieving from a silo", description = "Underground magic" },
     }
 
     -- start project
@@ -487,6 +488,7 @@ function Silo:storeItemsFrom_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "The silo is for storing", description = "Free your inventory and the rest will follow" },
     }
 
     -- start project
@@ -675,6 +677,7 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
                 { keyDef = "destinationItemsLocator"    , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" }, -- todo: merge different URLs when items came from different chests, see enterprise_isp.AddItemsLocators_SSrv
             }
         },
+        projectMeta = { title = "Internal silo project", description = "None of your business" },
     }
 
     -- start project
@@ -734,6 +737,7 @@ function Silo:fromTopchestIntoSilo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Internal silo project", description = "None of your business" },
     }
 
     -- start project

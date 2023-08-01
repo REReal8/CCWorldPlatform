@@ -193,6 +193,7 @@ function Chest:updateChestRecord_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Updating chest record", description = "Sit back and relax" },
     }
 
     -- start project
@@ -299,6 +300,7 @@ function Chest:provideItemsTo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Providing items from a chest", description = "The items will be deliverd" },
     }
 
     -- start project
@@ -488,6 +490,7 @@ function Chest:storeItemsFrom_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Storing items to a chest", description = "Getting stuff off your hands" },
     }
 
     -- start project

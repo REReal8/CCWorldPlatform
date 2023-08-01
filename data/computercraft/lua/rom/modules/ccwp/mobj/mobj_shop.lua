@@ -474,6 +474,7 @@ function Shop:provideItemsTo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "The shop will provide", description = "Wait and see" },
     }
 
     -- start project

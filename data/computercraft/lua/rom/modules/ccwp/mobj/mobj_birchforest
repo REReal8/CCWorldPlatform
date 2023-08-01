@@ -352,6 +352,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
             local projectServiceData = {
                 projectDef  = projectDef,
                 projectData = projectData,
+                projectMeta = { title = "Harvesting forest", description = "The most usefull task in the world" },
             }
 
             -- start project

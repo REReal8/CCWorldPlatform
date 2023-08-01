@@ -140,6 +140,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "New forest site", description = "More trees == more fun" },
     }
 
     -- start project
@@ -321,6 +322,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
+        projectMeta = { title = "Adding trees to the forest", description = "More trees == more fun" },
     }
 
     -- start project

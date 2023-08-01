@@ -116,6 +116,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     local projectServiceData = {
         projectDef  = buildBlueprintProjectDef,
         projectData = projectData,
+        projectMeta = { title = "Building blueprint", description = "Use unknown" },
     }
 
     -- start project
@@ -219,6 +220,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
     local projectServiceData = {
         projectDef  = buildRectangularPatternProjectDef,
         projectData = projectData,
+        projectMeta = { title = "Building blueprint layer", description = "Use unknown" },
     }
 
     -- start project

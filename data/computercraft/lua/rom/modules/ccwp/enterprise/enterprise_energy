@@ -115,6 +115,7 @@ local function Refuel_ASrv(...)
     local projectServiceData = {
         projectDef  = buildBlueprintProjectDef,
         projectData = projectData,
+        projectMeta = { title = "Refuel", description = "this turtle needs more fuel" },
     }
 
     -- start project

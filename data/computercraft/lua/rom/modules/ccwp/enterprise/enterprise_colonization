@@ -270,6 +270,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local projectServiceData = {
         projectDef  = createNewWorldProjectDef,
         projectData = settleData,
+        projectMeta = { title = "Project colonize", description = "Creating a new world" },
     }
 
     -- start project
