@@ -29,12 +29,11 @@ R  use MObjHost class
 -  Support building blueprints (layers) from front
 
 G moveTo:
-   G v1.1: boven maaiveld (done)
    G v1.2: boven maaiveld even wat intilligenter dan nu (done)
    - v2.0: (snel) wegen
 
 G  enterprise_project
-   G  description field for debugging (done, use projectDef.meta.title and projectDef.meta.description)
+   G  description field for debugging (done, use projectMeta.title and projectMeta.description)
    G  project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
          { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
@@ -137,3 +136,5 @@ G  player station
 -  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
 
 -  Other ToDo's to be found everywhere in all code files
+
+G  turtle without db/inventory.lua file should check for tool present
