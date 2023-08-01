@@ -25,6 +25,8 @@ R  use MObjHost class
    R  make enterprise_factory, enterprise_forest and enterprise_storage into an MObjHost
    R  use new MObjHost methods instead of current equivalent
 
+-  Support building blueprints (layers) from front
+
 G moveTo:
    G v1.1: boven maaiveld (done)
    G v1.2: boven maaiveld even wat intilligenter dan nu (done)
