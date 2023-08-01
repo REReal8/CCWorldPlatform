@@ -38,7 +38,7 @@ local function Chest_layer()
     return LayerRectangle:new({
         _codeArray  = {
             ["C"]   = Block:new({ _name = "minecraft:chest" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            [" "]   = Block:new({ _name = Block.AnyBlockName() }),
         },
         _codeMap    = {
             [1] = "C C",
@@ -72,7 +72,7 @@ local function Monitor_Only_layer()
     return LayerRectangle:new({
         _codeArray  = {
             ["M"]   = Block:new({ _name = "computercraft:monitor_normal" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            [" "]   = Block:new({ _name = Block.AnyBlockName() }),
         },
         _codeMap    = {
             [1] = "MMMMMMMM MMMMMMMM",
