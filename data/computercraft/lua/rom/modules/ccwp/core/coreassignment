@@ -1,10 +1,11 @@
 local coreassignment = {}
 local coresystem = require "coresystem"
-local coredht = require "coredht"
-local corelog = require "corelog"
+local coredht    = require "coredht"
+local corelog    = require "corelog"
+local coremove   = require "coremove"
 
-local Callback = require "obj_callback"
-local TaskCall = require "obj_task_call"
+local Callback   = require "obj_callback"
+local TaskCall   = require "obj_task_call"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_turtle
@@ -85,7 +86,7 @@ function coreassignment.Run()
             DoAssignment(nextAssignment)
         else
             -- update status
-            corelog.SetStatus("Idle (no assignment)")
+            corelog.SetStatus("Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
 
             -- just wait a (quarter of a) second
             os.sleep(0.25)     -- apparently no assignment for me now

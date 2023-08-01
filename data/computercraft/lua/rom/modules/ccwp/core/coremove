@@ -357,6 +357,14 @@ function coremove.GetLocation()
 	}
 end
 
+function coremove.GetLocationAsString()
+	return "Location: ("..db.x..", "..db.y..", "..db.z..")"
+end
+
+function coremove.GetDirectionAsString()
+	return "Direction: ("..db.dx..", "..db.dy..")"
+end
+
 function GetLocationFront( c )
 	c = c or 1
 	return {
