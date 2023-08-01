@@ -365,7 +365,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
     if not stepData then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining stepData for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
 
     -- update status before doing the step
-    corelog.SetStatus("Project: "..project.projectDef.meta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, "Stepname: (todo)")
+--    corelog.SetStatus("Project: "..project.projectDef.meta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, "Stepname: (todo)")
+    corelog.SetStatus("Project: XXX Doing step "..project.currentStep.." of "..#project.projectDef.steps, "Stepname: (todo)")
 
     -- select and do stepType
     if stepType == "ASrv" then

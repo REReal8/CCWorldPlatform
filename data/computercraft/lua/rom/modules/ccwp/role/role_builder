@@ -219,7 +219,7 @@ function role_builder.BuildLayer_Task(...)
             if not block then corelog.Error("role_builder.BuildLayer_Task: No block at ("..col..","..row..")") return {success = false} end
 
             -- check block type
-            if block:isMinecraftItem() then
+            if block:isMinecraftItem() or block:isComputercraftItem() then
                 -- optionally turn in specific direction
                 if block:getDx() ~= nil or block:getDy() ~= nil then
                     -- turn in the right direction

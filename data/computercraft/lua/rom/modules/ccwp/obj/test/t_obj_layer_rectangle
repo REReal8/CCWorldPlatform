@@ -40,11 +40,13 @@ end
 local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
+local computerItemName = "computercraft:computer_normal"
 local codeArray1 = {
     ["T"]   = Block:new({ _name = torchItemName }),
     ["S"]   = Block:new({ _name = saplingItemName }),
     ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
     ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+    ["K"]   = Block:new({ _name = computerItemName }),
     ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
     [" "]   = Block:new({ _name = Block.NoneBlockName() }),
 }
@@ -83,6 +85,7 @@ function T_LayerRectangle.T_IsSameCodeArray()
         ["S"]   = Block:new({ _name = saplingItemName }),
         ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
         ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["K"]   = Block:new({ _name = computerItemName }),
         ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
         [" "]   = Block:new({ _name = Block.NoneBlockName() }),
     }
@@ -163,7 +166,7 @@ local codeMap1 = {
     [5] = "      ",
     [4] = "T  S  ",
     [3] = "  ?   ",
-    [2] = "      ",
+    [2] = "   K  ",
     [1] = "   T  ",
 }
 
@@ -192,7 +195,7 @@ function T_LayerRectangle.T_IsSameCodeMap()
         [5] = "      ",
         [4] = "T  S  ",
         [3] = "  ?   ",
-        [2] = "      ",
+        [2] = "   K  ",
         [1] = "   T  ",
     }
 
@@ -562,6 +565,7 @@ function T_LayerRectangle.T_removeRow()
         _codeArray  = {
             ["T"]   = Block:new({ _name = torchItemName }),
             ["S"]   = Block:new({ _name = saplingItemName }),
+            ["K"]   = Block:new({ _name = computerItemName }),
             ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
             [" "]   = Block:new({ _name = Block.NoneBlockName() }),
         },
@@ -569,7 +573,7 @@ function T_LayerRectangle.T_removeRow()
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "  ?   ",
-            [2] = "      ",
+            [2] = "   K  ",
             [1] = "   T  ",
         },
     })
@@ -583,6 +587,7 @@ function T_LayerRectangle.T_removeRow()
             ["T"]   = Block:new({ _name = torchItemName }),
             ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
             ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["K"]   = Block:new({ _name = computerItemName }),
             ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
             [" "]   = Block:new({ _name = Block.NoneBlockName() }),
         },
@@ -590,7 +595,7 @@ function T_LayerRectangle.T_removeRow()
             [5] = "CD   ?",
             [4] = "      ",
             [3] = "  ?   ",
-            [2] = "      ",
+            [2] = "   K  ",
             [1] = "   T  ",
         },
     })
@@ -605,6 +610,7 @@ function T_LayerRectangle.T_removeRow()
             ["S"]   = Block:new({ _name = saplingItemName }),
             ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
             ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["K"]   = Block:new({ _name = computerItemName }),
             ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
             [" "]   = Block:new({ _name = Block.NoneBlockName() }),
         },
@@ -613,7 +619,7 @@ function T_LayerRectangle.T_removeRow()
             [4] = "      ",
             [3] = "T  S  ",
             [2] = "  ?   ",
-            [1] = "      ",
+            [1] = "   K  ",
         },
     })
     assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
@@ -627,7 +633,7 @@ function T_LayerRectangle.T_getCodeCol()
 
     -- test
     local column = layer1:getCodeCol(4)
-    local expectedColumn = "T  S  "
+    local expectedColumn = "TK S  "
     assert(column == expectedColumn, "gotten column(="..column..") not the same as expected(="..expectedColumn..")")
 
     -- cleanup test
@@ -646,6 +652,7 @@ function T_LayerRectangle.T_removeColumn()
             ["S"]   = Block:new({ _name = saplingItemName }),
             ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
             ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["K"]   = Block:new({ _name = computerItemName }),
             ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
             [" "]   = Block:new({ _name = Block.NoneBlockName() }),
         },
@@ -654,7 +661,7 @@ function T_LayerRectangle.T_removeColumn()
             [5] = "     ",
             [4] = "T  S ",
             [3] = "  ?  ",
-            [2] = "     ",
+            [2] = "   K ",
             [1] = "   T ",
         },
     })
@@ -690,6 +697,7 @@ function T_LayerRectangle.T_removeColumn()
             ["T"]   = Block:new({ _name = torchItemName }),
             ["S"]   = Block:new({ _name = saplingItemName }),
             ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+            ["K"]   = Block:new({ _name = computerItemName }),
             ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
             [" "]   = Block:new({ _name = Block.NoneBlockName() }),
         },
@@ -698,7 +706,7 @@ function T_LayerRectangle.T_removeColumn()
             [5] = "     ",
             [4] = "  S  ",
             [3] = " ?   ",
-            [2] = "     ",
+            [2] = "  K  ",
             [1] = "  T  ",
         },
     })

@@ -60,7 +60,7 @@ end
 local function Modem_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["M"]   = Block:new({ _name = "computercraft:modem_wireless_normal" }),
+            ["M"]   = Block:new({ _name = "computercraft:wireless_modem_normal" }),
         },
         _codeMap    = {
             [1] = "M",
