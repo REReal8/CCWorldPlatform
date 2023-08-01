@@ -133,7 +133,7 @@ end
 
 function ObjArray:transformObjTables(suppressWarning)
     --[[
-        Transform the objects in the array that are still objTable's into objects of type 'objClass'.
+        Transform the objects in the array that are still object tables into objects of type 'objClass'.
 
         Parameters:
             suppressWarning         + (boolean, false) if Warning should be suppressed
@@ -151,18 +151,18 @@ function ObjArray:transformObjTables(suppressWarning)
 
     -- transform objectTable's
     local nrSkipped = 0
-    for i, objTable in ipairs(self) do
-        -- check if objTable already an Obj
+    for i, objectTable in ipairs(self) do
+        -- check if objectTable already an Obj
         local obj = nil
-        if IObj.ImplementsInterface(objTable) then
+        if IObj.ImplementsInterface(objectTable) then
             -- check Obj of correct type
-            if objClassName == objTable:getClassName() then
-                obj = objTable -- already an object of type 'class'
+            if objClassName == objectTable:getClassName() then
+                obj = objectTable -- already an object of type 'class'
             else
-                if not suppressWarning then corelog.Warning("ObjArray:transformObjTables(): objTable class (="..objTable:getClassName()..") different from objClassName(="..objClassName..")") end
+                if not suppressWarning then corelog.Warning("ObjArray:transformObjTables(): objectTable class (="..objectTable:getClassName()..") different from objClassName(="..objClassName..")") end
             end
         else
-            obj = objClass:new(objTable) -- transform
+            obj = objClass:new(objectTable) -- transform
         end
 
         -- add/ change in self array
@@ -171,7 +171,7 @@ function ObjArray:transformObjTables(suppressWarning)
 
         -- check obj obtained
         if not obj then
-            if not suppressWarning then corelog.Warning("ObjArray:transformObjTables(): failed transforming objTable(="..textutils.serialize(objTable)..") to a "..objClassName.." object => skipped") end
+            if not suppressWarning then corelog.Warning("ObjArray:transformObjTables(): failed transforming objectTable(="..textutils.serialize(objectTable)..") to a "..objClassName.." object => skipped") end
             nrSkipped = nrSkipped + 1
         end
     end

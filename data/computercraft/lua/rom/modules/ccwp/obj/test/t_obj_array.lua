@@ -174,16 +174,16 @@ function T_ObjArray.T_transformObjTables()
     local objArray2 = ObjArray:new({
         _objClassName   = objClassName1,
     }) if not objArray2 then corelog.Warning("objArray2 unexpectedly nil") return end
-    local testObj1Table = {
+    local testObject1Table = {
         _field1 = "field1_1",
         _field2 = 1,
     }
-    local testObj2Table = {
+    local testObject2Table = {
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj:isTypeOf(testObj1Table), "testObj1Table incorrectly of type "..objClassName1)
-    assert(not TestObj:isTypeOf(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
+    assert(not TestObj:isTypeOf(testObject1Table), "testObject1Table incorrectly of type "..objClassName1)
+    assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
     objArray2[1] = testObj1
@@ -209,9 +209,9 @@ function T_ObjArray.T_transformObjTables()
     objArray2[2] = nil
     objArray2[3] = nil
 
-    -- test only ObjTables
-    objArray2[1] = testObj1Table
-    objArray2[2] = testObj2Table
+    -- test only object tables
+    objArray2[1] = testObject1Table
+    objArray2[2] = testObject2Table
     local hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
     local expectedHasFieldsOfType = false
     assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
@@ -225,13 +225,13 @@ function T_ObjArray.T_transformObjTables()
     objArray2[2] = nil
 
     -- test mix ObjTables and Obj's
-    testObj2Table = {
+    testObject2Table = {
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj:isTypeOf(testObj2Table), "testObj2Table incorrectly of type "..objClassName1)
+    assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
     objArray2[1] = testObj1
-    objArray2[2] = testObj2Table
+    objArray2[2] = testObject2Table
     hasFieldsOfType = ObjArray.HasFieldsOfType(objArray2)
     expectedHasFieldsOfType = false
     assert(hasFieldsOfType == expectedHasFieldsOfType, "gotten HasFieldsOfType(="..tostring(hasFieldsOfType)..") not the same as expected(="..tostring(expectedHasFieldsOfType)..")")
@@ -250,11 +250,11 @@ end
 function T_ObjArray.T_new_transformsObjTables()
     -- prepare test
     corelog.WriteToLog("* ObjArray:new() transforms objTables tests")
-    local testObj1Table = {
+    local testObject1Table = {
         _field1 = "field1_1",
         _field2 = 1,
     }
-    local testObj2Table = {
+    local testObject2Table = {
         _field1 = "field1_2",
         _field2 = 2,
     }
@@ -263,8 +263,8 @@ function T_ObjArray.T_new_transformsObjTables()
     local objArray = ObjArray:new({
         _objClassName   = objClassName1,
 
-        testObj1Table,
-        testObj2Table,
+        testObject1Table,
+        testObject2Table,
     })
     if not objArray then return end
     assert(objArray:getObjClassName() == objClassName1, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..objClassName1..")")
