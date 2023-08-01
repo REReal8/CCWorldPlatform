@@ -6,10 +6,9 @@ local Callback = require "obj_callback"
 
 local enterprise_construction   = require "enterprise_construction"
 local enterprise_shop           = require "enterprise_shop"
+local enterprise_turtle         = require "enterprise_turtle"
 
 local UtilStation = require "mobj_util_station"
-
-local compact = { compact = true }
 
 function T_UtilStation.T_Build_Station()
     corelog.WriteToLog("About to build Util Station!")
@@ -21,8 +20,13 @@ function T_UtilStation.T_Build_Station()
         _data           = {},
     })
 
+    -- get turtle locator
+    local currentTurtleId = os.getComputerID()
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining turtleLocator for turtle "..currentTurtleId) return Callback.ErrorCall(callback) end
+
     local siteBuildData = UtilStation.GetV1SiteBuildData()
     siteBuildData.materialsItemSupplierLocator = enterprise_shop.GetShopLocator()
+    siteBuildData.materialsItemSupplierLocator = currentTurtleLocator
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
 end
 
