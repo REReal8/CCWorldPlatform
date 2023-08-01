@@ -20,7 +20,42 @@ function coreinventory.Init()
 	local dbFile = coreutils.ReadTableFromFile(db.dbFilename)
 
 	-- check for empty table --> https://stackoverflow.com/questions/1252539/most-efficient-way-to-determine-if-a-lua-table-is-empty-contains-no-entries
-	if next(dbFile) ~= nil then db = dbFile end
+	if next(dbFile) == nil then
+
+        -- no db file found check for peripheral on the left
+        local peripheralName = peripheral.getType("left")
+        db['left'] = (peripheralName or "")
+
+        -- no db file found, check for tool on the right
+        coreinventory.GetEmptySlot()
+        local itemDetails = turtle.getItemDetail()
+
+        -- confirm slot is empty
+        if itemDetails == nil then
+
+            -- remove any item on the right
+            turtle.equipRight()
+
+            -- anything present?
+            itemDetails = turtle.getItemDetail()
+
+            -- anything present?
+            if itemDetails ~= nil then
+
+                -- remember
+                db['right'] = itemDetails.name
+
+                -- re-equip
+                turtle.equipRight()
+            end
+        end
+
+        -- write what we have to disk
+        coreutils.WriteToFile(db.dbFilename, db, "overwrite")
+    else
+        -- load the table from file
+        db = dbFile
+    end
 end
 
 local function DHTReadySetup()
@@ -245,9 +280,6 @@ function coreinventory.Equip(itemName, requestedSide)
 
     -- rightt side is default
     requestedSide = requestedSide or 'right'
-
-    -- more dubug
-    --corelog.WriteToLog("coreinventory.Equip: ("..(itemName or '')..","..(requestedSide or '')..")")
 
     -- already equiped? might be the wrong side but we don't care about that
     if db.left == itemName or db.right == itemName then return true end
