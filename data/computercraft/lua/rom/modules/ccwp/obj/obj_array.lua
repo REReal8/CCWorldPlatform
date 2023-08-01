@@ -13,7 +13,7 @@ local objectFactory = ObjectFactory:getInstance()
 --[[
     This module implements the class ObjArray.
 
-    A ObjArray is an array of objects of the same 'class'. The class should implement the IObj interface.
+    A ObjArray is an array of Obj's of the same 'class'. The class should implement the IObj interface.
 --]]
 
 --    _                                     _   _               _
@@ -60,16 +60,16 @@ function ObjArray:getObjClass()
     return objClass
 end
 
-function ObjArray.HasFieldsOfType(objArray)
+function ObjArray.HasFieldsOfType(obj)
     -- check
-    if type(objArray) ~= "table" then return false end
-    if type(objArray._objClassName) ~= "string" then return false end
+    if type(obj) ~= "table" then return false end
+    if type(obj._objClassName) ~= "string" then return false end
 
     -- check elements
-    local objClass = objArray:getObjClass()
+    local objClass = obj:getObjClass()
     if not objClass then return false end
-    for i, obj in ipairs(objArray) do
-        if not objClass:isTypeOf(obj) then return false end
+    for i, el in ipairs(obj) do
+        if not objClass:isTypeOf(el) then return false end
     end
 
     -- end
@@ -87,21 +87,21 @@ function ObjArray:isTypeOf(obj)
     return false
 end
 
-function ObjArray:isSame(objArray)
+function ObjArray:isSame(obj)
     -- check input
-    if not ObjArray:isTypeOf(objArray) then return false end
+    if not ObjArray:isTypeOf(obj) then return false end
 
     -- check same class
-    if self._objClassName ~= objArray._objClassName then return false end
+    if self._objClassName ~= obj._objClassName then return false end
 
     -- check same size
-    if table.getn(self) ~= table.getn(objArray) then return false end
+    if table.getn(self) ~= table.getn(obj) then return false end
 
     -- check same elements
-    for i, objA in ipairs(self) do
+    for i, elA in ipairs(self) do
         -- check same obj
-        local objB = objArray[i]
-        if not objA:isSame(objB) then return false end
+        local elB = obj[i]
+        if not elA:isSame(elB) then return false end
     end
 
     -- end
