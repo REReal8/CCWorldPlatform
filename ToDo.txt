@@ -134,8 +134,6 @@ G  player station
 
 -  Other ToDo's to be found everywhere in all code files
 
-G  turtle without db/inventory.lua file should check for tool present (done)
-
 G  Display verbeteren
    G  display blijft na kiezen van een test optie in de groep waar de test gekozen is
    G  display gebruikt 2 kolommen als er veel tests zijn
@@ -143,6 +141,8 @@ G  Display verbeteren
 
 G moveTo:
    - v2.0: (snel) wegen (veel)
+
+-  Bij inschrijven assigment controleren of er een pickaxe in de inventory zit (indien not equiped)
 
 
 *** history ***
@@ -160,4 +160,6 @@ G moveTo:
 G  display station (Yahoo!!, working (except for building it)) (done)
    -  system status (e.g. fuel per turtle, silo)               (done)
    -  logging                                                  (done)
+
+G  turtle without db/inventory.lua file should check for tool present (done)
 
