@@ -228,7 +228,7 @@ function ExecuteObjTest(t)
 		{key = "w", desc = "WIPAdministrator",	func = ExecuteObjTest, param = {filename = "T_WIPAdministrator"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
-	return ExecuteXObjTest(t, "obj", options, ExecuteMObjTest)
+	return ExecuteXObjTest(t, "obj", options, ExecuteObjTest)
 end
 
 function ExecuteMObjTest(t)
