@@ -32,7 +32,6 @@ local db = {
         ["minecraft:charcoal"] = { -- ToDo consider similar format to crafting to simpify code
             smelting  = {
                 itemName    = "minecraft:birch_log",
---                itemCount   = 1,
                 yield       = 1,
             },
         },
