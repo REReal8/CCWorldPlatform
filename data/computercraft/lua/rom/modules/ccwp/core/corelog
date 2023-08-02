@@ -338,7 +338,7 @@ end
 
 function DoEventWriteToLog(subject, envelope)
 	-- write the message on the monitor
-	corelog.WriteToMonitor(envelope.from ..":".. envelope.message.text)
+	corelog.WriteToMonitor(envelope.from ..":".. (envelope.message.text or "no text?!?"))
 end
 
 function DoEventStatusUpdate(subject, envelope)
