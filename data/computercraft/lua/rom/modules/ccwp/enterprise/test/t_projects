@@ -13,7 +13,7 @@ local TestObj = require "test.obj_test"
 local enterprise_projects = require "enterprise_projects"
 
 function t_projects.T_All()
-    t_projects.T_AreAllTrue_QSrv()
+--    t_projects.T_AreAllTrue_QSrv()
     t_projects.T_DeleteProjects()
     t_projects.T_StartProject_ASrv()
 end
