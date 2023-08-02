@@ -74,8 +74,6 @@ function corelog.Setup()
 end
 
 function CoreLogEventReadySetup()
-	corelog.WriteToLog("corelog EventReadySetup()")
-
 	-- set up heartbeat timer
 	if monitorLeft and monitorRight then coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer") end
 end
