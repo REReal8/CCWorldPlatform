@@ -83,7 +83,7 @@ function WIPAdministrator:removeWIPQueue(...)
     if not queue then corelog.Warning("WIPAdministrator:removeWIPQueue: WIPQueue "..queueId.." not present") return false end
 
     -- check no WIP remaining
-    if not queue:noWIP() then corelog.Warning("WIPAdministrator:removeWIPQueue: WIP remaining on WIPQueue "..queueId.." => removing it anyway ") end
+    if not queue:noWIP() then corelog.Warning("WIPAdministrator:removeWIPQueue: WIP remaining on WIPQueue "..queueId.." => removing WIPQueue anyway ") end
 
     -- remove WIPQueue
     self._wipQueues[queueId] = nil

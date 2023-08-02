@@ -122,7 +122,7 @@ function T_WIPAdministrator.T_getWIPQueue()
     }) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
     local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues2:copy(),
+        _wipQueues      = wipQueues2,
     }) assert(obj1)
 
     -- test returns already present WIPQueue
@@ -136,7 +136,10 @@ function T_WIPAdministrator.T_getWIPQueue()
     assert(wipQueue:noWIP(), "gotten wipQueue(="..textutils.serialise(wipQueue)..") has WIP (and hence can't be new)")
 
     -- cleanup test
-    enterprise_administration:reset()
+    wipQueue1:removeWork(workId1)
+    wipQueue1:removeWork(workId2)
+    obj1:removeWIPQueue(wipQueueId1)
+    obj1:removeWIPQueue(wipQueueId2)
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -271,7 +274,8 @@ function T_WIPAdministrator.T_administerWorkStarted()
     assert(hasWork(wipQueue._workList, workId3), "workId3 not registered")
 
     -- cleanup test
-    enterprise_administration:reset()
+    wipQueue:removeWork(workId3)
+    obj1:removeWIPQueue(wipQueueId2)
 end
 
 local callback1Called = false
@@ -319,7 +323,8 @@ function T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     assert(hasCallback(wipQueue._callbackList, callback1), "callback1 not added")
 
     -- cleanup test
-    enterprise_administration:reset()
+    wipQueue:removeWork(workId3)
+    obj1:removeWIPQueue(wipQueueId2)
 end
 
 function T_WIPAdministrator.waitForNoWIPOnQueue_AOSrv_Callback(callbackData, serviceResults)
@@ -370,7 +375,7 @@ function T_WIPAdministrator.T_administerWorkCompleted()
     assert(callback1Called, "callback1 not called")
 
     -- cleanup test
-    enterprise_administration:reset()
+    obj1:removeWIPQueue(wipQueueId2)
 end
 
 return T_WIPAdministrator
