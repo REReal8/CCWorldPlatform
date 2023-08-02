@@ -160,7 +160,7 @@ local function UpdateStatus(statusData, monitor)
 		-- write!
 		MonitorWriteLine("", monitor)
 		MonitorWriteLine("id: "..id.." (fuel: "..data.fuelLevel..")", monitor)
-		if projectStatus.message or assignmentStatus.message then MonitorWriteLine(string.format("%-20.20s %-20.20s", (projectStatus.message or ""), (assignmentStatus.message or "")), monitor) end
+		if projectStatus.message or assignmentStatus.message then MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.message or "", assignmentStatus.message or ""), monitor) end
 		if projectStatus.subline or assignmentStatus.subline then MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor) end
 		if projectStatus.details or assignmentStatus.details then MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor) end
 	end
