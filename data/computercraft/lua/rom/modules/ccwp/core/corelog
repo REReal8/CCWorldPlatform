@@ -11,6 +11,7 @@ local db	= {
 	loggerChannel	    = 65534,
 	lastStack           = 0,
 	status				= {},
+	heartbeatTimer		= 100,
 }
 
 local monitorLeft	= nil
@@ -18,17 +19,16 @@ local monitorRight	= nil
 
 function corelog.Init()
 	-- place markers in the logfile
-	corelog.WriteToLog("--- starting up ---", "overwrite")
+	corelog.WriteToLog("--- starting up ---")--, "overwrite")
 	corelog.WriteToAssignmentLog("--- starting up assignments ---", nil, "overwrite")
 	corelog.WriteToProjectsLog("--- starting up projects ---", nil, "overwrite")
 end
 
 function corelog.Setup()
-	-- start sending messages when we are ready to receive them too
-	coreevent.EventReadyFunction(EventReadySetup)
+	corelog.WriteToLog("corelog.Setup()")
 
-	-- let others check our pulse
-	coreevent.AddEventListener(DoEventPulseRequest,	db.protocol, "pulse request")
+	-- start sending messages when we are ready to receive them too
+	coreevent.EventReadyFunction(CoreLogEventReadySetup)
 
 	-- check if we have monitors on our side (and we are not a turtle / pocket / command, se we are a computer)
 	if peripheral.getType("left") == "monitor" and peripheral.getType("right") == "monitor" and not turtle and not pocket and not commands then
@@ -61,15 +61,23 @@ function corelog.Setup()
 		-- listen to our events
 		coreevent.AddEventListener(DoEventWriteToLog, db.protocol, "write to log")
 		coreevent.AddEventListener(DoEventStatusUpdate, db.protocol, "status update")
+		coreevent.AddEventListener(DoEventHeartbeatTimer, db.protocol, "heartbeat timer")
+		coreevent.AddEventListener(DoEventReceiveHeartbeat, db.protocol, "receive heartbeat")
 
 		-- show who's boss!
 		corelog.WriteToLog("--- starting up monitor ---")
 		corelog.SetStatus("project", "I am the logger", "Just ignore me", "Have a nice day")
+	else
+		-- responde to heartbeat
+		coreevent.AddEventListener(DoEventSendHeartbeat, db.protocol, "send heartbeat")
 	end
 end
 
-function EventReadySetup()
-	-- no need to do anything?
+function CoreLogEventReadySetup()
+	corelog.WriteToLog("corelog EventReadySetup()")
+
+	-- set up heartbeat timer
+	if monitorLeft and monitorRight then coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer") end
 end
 
 function corelog.WriteToLog(message, writeMode)
@@ -85,7 +93,7 @@ function corelog.WriteToLog(message, writeMode)
 	-- send message
 	if monitorLeft then
 		-- we are the logging station, don't send message
-		corelog.WriteToMonitor("me: "..message)
+		corelog.WriteToMonitor("me: "..(message or "nil message"))
 	else
 
 		-- send message two whoever is loggin our stuff
@@ -129,27 +137,29 @@ local function UpdateStatus(statusData, monitor)
 	monitor = monitor or monitorRight
 
 	-- make sure the status data is valid
-	if type(statusData) ~= "table"				then return end
-	if not statusData.me						then return end
-	if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
-	if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
-	if type(statusData.group)	  ~= "string"	then statusData.group		= "assignment" end
-	if type(statusData.message)	  ~= "string"	then statusData.message		= "" end
-	if type(statusData.subline)	  ~= "string"	then statusData.subline		= "" end
-	if type(statusData.details)	  ~= "string"	then statusData.details		= "" end
+	if type(statusData) == "table"				then
+		if not statusData.me						then return end
+		if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
+		if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
+		if type(statusData.group)	  ~= "string"	then statusData.group		= "assignment" end
+		if type(statusData.message)	  ~= "string"	then statusData.message		= "" end
+		if type(statusData.subline)	  ~= "string"	then statusData.subline		= "" end
+		if type(statusData.details)	  ~= "string"	then statusData.details		= "" end
 
-	-- nicer
-	if statusData.fuelLevel == 0 then
-		if statusData.kind == "turtle"	then statusData.fuelLevel	= "empty"
-										else statusData.fuelLevel	= "n/a"
+		-- nicer
+		if statusData.fuelLevel == 0 then
+			if statusData.kind == "turtle"	then statusData.fuelLevel	= "empty"
+											else statusData.fuelLevel	= "n/a"
+			end
 		end
-	end
 
-	-- first, remember the status (and forget the previous status)
-	if type(db.status[statusData.me]) ~= "table" then db.status[statusData.me] = {} end
-	db.status[statusData.me].kind				= statusData.kind
-	db.status[statusData.me].fuelLevel			= statusData.fuelLevel
-	db.status[statusData.me][statusData.group]	= statusData
+		-- remember the status (and forget the previous status)
+		if type(db.status[statusData.me]) ~= "table" then db.status[statusData.me] = {} end
+		db.status[statusData.me].kind				= statusData.kind
+		db.status[statusData.me].fuelLevel			= statusData.fuelLevel
+		db.status[statusData.me].heartbeat			= os.clock()
+		db.status[statusData.me][statusData.group]	= statusData
+	end
 
 	-- now, show this to the monitor
 	monitor.clear()
@@ -163,9 +173,13 @@ local function UpdateStatus(statusData, monitor)
 		local projectStatus		= data.project or {}
 		local assignmentStatus	= data.assignment or {}
 
+		-- check for dead mates
+		local deadMessage		= "DEAD *** "
+		if os.clock() - data.heartbeat < 5 or id == os.getComputerID() then deadMessage = "" end
+
 		-- write!
 		MonitorWriteLine("", monitor)
-		MonitorWriteLine(data.kind.." "..id..", fuel: "..data.fuelLevel, monitor)
+		MonitorWriteLine(deadMessage..data.kind.." "..id..", fuel: "..data.fuelLevel, monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.message or "", assignmentStatus.message or ""), monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor)
@@ -324,18 +338,6 @@ end
 --
 --
 
-function DoEventPulseRequest(subject, envelope)
-	local fuelLevel
-
-	-- computers don't have a fuel level
-	if turtle	then fuelLevel = turtle.getFuelLevel()
-				else fuelLevel = 0
-	end
-
-	-- send some information about us back
-    coreevent.ReplyToMessage(envelope, "pulse response", {fuelLevel=fuelLevel})
-end
-
 function DoEventWriteToLog(subject, envelope)
 	-- write the message on the monitor
 	corelog.WriteToMonitor(envelope.from ..":".. envelope.message.text)
@@ -344,6 +346,38 @@ end
 function DoEventStatusUpdate(subject, envelope)
 	-- do the status update
 	UpdateStatus(envelope.message)
+end
+
+function DoEventHeartbeatTimer()
+	-- just send a heartbeat request to anyone around
+	coreevent.SendMessage({
+		channel		= 65535,			-- public channel
+		protocol	= db.protocol,
+		subject		= "send heartbeat",
+		message		= {}})
+
+	-- do this event again in 5
+	coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer")
+
+	-- update the status
+	UpdateStatus()
+end
+
+function DoEventSendHeartbeat(subject, envelope)
+	local fuelLevel 	= 0
+	if turtle then fuelLevel = turtle.getFuelLevel() end
+
+	-- easy reply since we have a heartbeat
+	coreevent.ReplyToMessage(envelope, "receive heartbeat", {fuelLevel = fuelLevel})
+end
+
+function DoEventReceiveHeartbeat(subject, envelope)
+	-- remember this one is alive
+	db.status[envelope.from].heartbeat = os.clock()
+	db.status[envelope.from].fuelLevel = envelope.message.fuelLevel
+
+	-- update the status
+	UpdateStatus()
 end
 
 return corelog

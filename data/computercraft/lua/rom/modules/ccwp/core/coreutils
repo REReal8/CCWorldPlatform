@@ -25,12 +25,10 @@ end
 -- niet nodig voor utils
 function coreutils.Setup()
 	-- start sending messages when we are ready to receive them too
-	coreevent.EventReadyFunction(EventReadySetup)		-- ToDo: consider removing as nothing is done
 end
 
 function EventReadySetup()
 	-- startup, read from disk or get data from peers? Why not both!
---	coreevent.SendMessage({protocol=db.protocol, subject="what is the current time"})
 end
 
 -- generates a new id

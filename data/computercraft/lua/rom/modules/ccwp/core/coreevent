@@ -263,7 +263,7 @@ end
 
 function coreevent.EventReadyFunction(func)
 	-- just add function to the list
-	eventready[#eventready + 1] = func
+	table.insert(eventready, func)
 end
 
 -- to add a custom functions to the event listener

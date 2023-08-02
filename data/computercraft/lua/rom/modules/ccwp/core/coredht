@@ -26,7 +26,7 @@ function coredht.Init()
     if db._version == nil   then db._version = 0    end
 end
 
-local function EventReadySetup()
+local function CoreDHTEventReadySetup()
 	-- startup, read from disk or get data from peers? Why not both!
 	coreevent.SendMessage({protocol=protocol, subject="get all data"})
 
@@ -174,7 +174,7 @@ function coredht.Setup()
 	coreevent.AddEventListener(DoEventSaveData,      protocol, "save data")
 
 	-- start sending messages when we are ready to receive them too
-	coreevent.EventReadyFunction(EventReadySetup)
+	coreevent.EventReadyFunction(CoreDHTEventReadySetup)
 end
 
 function coredht.DHTReadyFunction(func)
