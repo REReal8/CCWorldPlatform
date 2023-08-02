@@ -1,16 +1,17 @@
 ToDo List
 ---------
 
-R  WIPHandler (formerly knows as AdministrationOffice)
+R  WIPAdministrator (formerly knows as AdministrationOffice)
    R  introduce enterprise_administration
-   R  finish WIPHandler (+ usage in enterprise_project)
+   R  finish WIPAdministrator (+ usage in enterprise_project)
    R  load/ save itself after one if the 3 WIP calls
-   R  enterprise_project: optionally administer project started and completed in WIPHandler
+   R  enterprise_project: optionally administer project started and completed in WIPAdministrator
+   R  write WIPAdministrator test
 
 R  finish MObjHost
    R  test delistMObj_SSrv and removeMObj_ASrv
    R  remove completeRunningBusiness_AOSrv from IMObj interface
-   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPHandler)
+   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)
 
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
