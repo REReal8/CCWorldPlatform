@@ -20,7 +20,7 @@ function coreinventory.Init()
 	local dbFile = coreutils.ReadTableFromFile(db.dbFilename)
 
 	-- check for empty table --> https://stackoverflow.com/questions/1252539/most-efficient-way-to-determine-if-a-lua-table-is-empty-contains-no-entries
-	if next(dbFile) == nil then
+	if turtle and next(dbFile) == nil then
 
         -- no db file found check for peripheral on the left
         local peripheralName = peripheral.getType("left")
