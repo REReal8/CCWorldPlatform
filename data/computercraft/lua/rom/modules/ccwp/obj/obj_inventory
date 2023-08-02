@@ -101,6 +101,17 @@ function Inventory:isEmpty()
     return isEmpty
 end
 
+function Inventory:hasNoItems()
+    -- get getItemTable
+    local itemTable = self:getItemTable()
+
+    -- check
+    local hasNoItems = next(itemTable) == nil
+
+    -- end
+    return hasNoItems
+end
+
 function Inventory:getItemTable()
     -- check _itemTable already build
     if not self:isEmpty() and next(self._itemTable) == nil then
@@ -120,6 +131,9 @@ function Inventory:buildItemTable()
         if type(item) == "table" then
             -- add to items
             itemTable[ item.name ]  = (itemTable[ item.name ] or 0) + item.count
+
+            -- remove key (in case of substract)
+            if itemTable[ item.name ] == 0 then itemTable[ item.name ] = nil end
         end
     end
 
@@ -154,6 +168,39 @@ function Inventory:hasItems(...)
 
     -- end
     return true
+end
+
+function Inventory:substract(...)
+    -- get & check input from description
+    local checkSuccess, inventoryToCompare = InputChecker.Check([[
+        Basic subtraction of two inventories, self and given by parameter
+        Warning: Uses negative slots
+        Note: has itemTable calculated
+
+        Return value:
+                            - (Inventory) new inventory with differences between self and given inventory.
+
+        Parameters:
+            inventory       + (Inventory) inventory to subtract from self
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Inventory:substract: Invalid input") return false end
+
+    -- the variable we are going to calculate
+    local calculatedSlotList = {}
+
+    -- loop all slots
+    for slot = 1, 16 do
+
+        -- here we go, use negative slots because the itemName can be different
+        if inventoryToCompare._slotTable[slot]  ~= nil then calculatedSlotList[-slot]   = { name = inventoryToCompare._slotTable[slot].name,    count = -inventoryToCompare._slotTable[slot].count }    end
+        if self._slotTable[slot]                ~= nil then calculatedSlotList[slot]    = { name = self._slotTable[slot].name,                  count = self._slotTable[slot].count }                   end
+    end
+
+    local calculatedInventory = Inventory:new({_slotTable = calculatedSlotList})
+    calculatedInventory:getItemTable()
+
+    -- we are done!!
+    return calculatedInventory
 end
 
 --    _          _                    __                  _   _

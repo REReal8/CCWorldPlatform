@@ -22,8 +22,10 @@ function T_Inventory.T_All()
 
     -- specific methods
     T_Inventory.T_isEmpty()
+    T_Inventory.T_hasNoItems()
     T_Inventory.T_getItemTable()
     T_Inventory.T_hasItems()
+    T_Inventory.T_substract()
 end
 
 local saplingItemName = "minecraft:birch_sapling"
@@ -301,6 +303,53 @@ function T_Inventory.T_isEmpty()
     -- cleanup test
 end
 
+function T_Inventory.T_hasNoItems()
+    -- prepare test
+    corelog.WriteToLog("* Inventory:hasNoItems() tests")
+    local negSlotTable1 = {
+        { name = saplingItemName, count = saplingCount1 },
+        { name = saplingItemName, count = -saplingCount1 },
+    }
+    local negSlotTable2 = {
+        { name = saplingItemName, count = saplingCount1 },
+        { name = saplingItemName, count = -saplingCount1 },
+        { name = chestItemName, count = chestCount1 },
+    }
+
+    -- test empty
+    local inventory = Inventory:new({
+    })
+    local hasNoItems = inventory:hasNoItems()
+    local expectedHasNoItems = true
+    assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
+
+    -- test not empty
+    inventory = Inventory:new({
+        _slotTable  = slotTable1,
+    })
+    hasNoItems = inventory:hasNoItems()
+    expectedHasNoItems = false
+    assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
+
+    -- test negative values in slot (net result = 0)
+    inventory = Inventory:new({
+        _slotTable  = negSlotTable1,
+    })
+    hasNoItems = inventory:hasNoItems()
+    expectedHasNoItems = true
+    assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
+
+    -- test negative values in slot (net result ~= 0)
+    inventory = Inventory:new({
+        _slotTable  = negSlotTable2,
+    })
+    hasNoItems = inventory:hasNoItems()
+    expectedHasNoItems = false
+    assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
+
+    -- cleanup test
+end
+
 function T_Inventory.T_getItemTable()
     -- prepare test
     corelog.WriteToLog("* Inventory:getItemTable() tests")
@@ -351,5 +400,52 @@ function T_Inventory.T_hasItems()
 
     -- cleanup test
 end
+
+function T_Inventory.T_substract()
+    -- prepare test
+    corelog.WriteToLog("* Inventory:substract() tests")
+    local inv1 = Inventory:new({
+        _slotTable = {
+            { name = "minecraft:dirt", count = 20 },
+            { name = "minecraft:birch_log", count = 1 },
+            { name = "minecraft:birch_sapling", count = 5 },
+        }
+    })
+    local inv2 = Inventory:new({
+        _slotTable = {
+            { name = "minecraft:dirt", count = 20 },
+            { name = "minecraft:birch_log", count = 1 },
+            [ 4 ] = { name = "minecraft:birch_sapling", count = 5 },
+        }
+    })
+    local inv3 = Inventory:new({
+        _slotTable = {
+            { name = "minecraft:dirt", count = 15 },
+            { name = "minecraft:birch_log", count = 1 },
+            { name = "minecraft:birch_sapling", count = 3 },
+        }
+    })
+
+    -- test on itself returns noItems
+    local calculatedInventory = inv1:substract(inv1)
+    assert(calculatedInventory:hasNoItems(), "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") is not empty ")
+
+    -- test different slot returns noItems
+    calculatedInventory = inv1:substract(inv2)
+    assert(calculatedInventory._slotTable[3].count == 5 , "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") incorrect ")
+    assert(calculatedInventory._slotTable[-4].count == -5 , "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") incorrect ")
+    assert(calculatedInventory:hasNoItems(), "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") is not empty ")
+
+    -- test has most items
+    calculatedInventory = inv1:substract(inv3)
+    assert(calculatedInventory._itemTable["minecraft:dirt"] == 5 , "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") incorrect ")
+    assert(calculatedInventory._itemTable["minecraft:birch_log"] == nil , "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") incorrect ")
+    assert(calculatedInventory._itemTable["minecraft:birch_sapling"] == 2 , "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") incorrect ")
+    assert(not calculatedInventory:hasNoItems(), "calculatedInventory(="..textutils.serialize(calculatedInventory, compact)..") is not empty ")
+
+    -- cleanup test
+end
+
+
 
 return T_Inventory
