@@ -11,11 +11,13 @@ local Host = require "obj_host"
 local TestObj = require "test.obj_test"
 
 local enterprise_projects = require "enterprise_projects"
+local enterprise_administration = require "enterprise_administration"
 
 function t_projects.T_All()
 --    t_projects.T_AreAllTrue_QSrv()
     t_projects.T_DeleteProjects()
     t_projects.T_StartProject_ASrv()
+    t_projects.T_StartProject_ASrv_registersWIP()
 end
 
 function t_projects.T_AreAllTrue_QSrv()
@@ -239,6 +241,49 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     local host = Host.GetHost(hostName) if not host then corelog.Error("host not found") return end
     host:deleteResource(objLocator)
     moduleRegistry:delistModule(hostName)
+end
+
+function t_projects.T_StartProject_ASrv_registersWIP()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() registers WIP tests")
+    local projectDef = {
+        steps   = {
+        },
+        returnData  = {
+        }
+    }
+    local projectData = {
+    }
+    local wipId = "myWIPId"
+    local callback = Callback:new({
+        _moduleName     = "t_projects",
+        _methodName     = "StartProject_ASrv_registersWIP_Callback",
+        _data           = {
+            ["wipId"]       = wipId,
+        },
+    })
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+        projectMeta = { title = "Testing", description = "Start project registers WIP", wipId = wipId},
+    }
+
+    -- test
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
+function t_projects.StartProject_ASrv_registersWIP_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    -- wipId queue created
+    local administrator = enterprise_administration:getWIPAdministrator() assert(administrator)
+    local wipId = callbackData["wipId"]
+    local queue = administrator._wipQueues[wipId]
+    assert(queue, "no wipId queue created")
+
+    -- cleanup test
+    administrator:removeWIPQueue(wipId)
 end
 
 function t_projects.T_DeleteProjects()

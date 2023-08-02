@@ -9,6 +9,8 @@ local MethodExecutor = require "method_executor"
 
 local Host = require "obj_host"
 
+local enterprise_administration = require "enterprise_administration"
+
 local db = {
     dhtRoot     = "enterprise_projects",
 }
@@ -82,6 +84,16 @@ function enterprise_projects.StartProject_ASrv(...)
 
     -- save
     coredht.SaveData(project, db.dhtRoot, project.projectId)
+
+    -- possibly inform WIPAdministrator
+    if type(projectMeta.wipId) == "string" then
+        -- get WIPAdministrator
+        local wipHandler = enterprise_administration:getWIPAdministrator()
+        if not wipHandler then corelog.Error("enterprise_projects:StartProject_ASrv: Failed obtaining WIPAdministrator") return Callback.ErrorCall(callback) end
+
+        -- administer work started
+        wipHandler:administerWorkStarted(projectMeta.wipId, project.projectId)
+    end
 
     -- let's start
     return enterprise_projects.NextProjectStep({projectId = project.projectId}, projectData) -- the input projectData is interpreted as the result of virtual step 0
@@ -247,6 +259,7 @@ local function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
     local projectId = internalProjectData.projectId
+    local projectMeta = project.projectMeta
     local projectResults = {}
     local projectDef = project.projectDef
 
@@ -271,6 +284,16 @@ local function EndProject(internalProjectData)
 
     -- usefull logging
     corelog.WriteToProjectsLog("Project results: "..textutils.serialize(projectResults), project.projectId)
+
+    -- possibly inform WIPAdministrator
+    if type(projectMeta.wipId) == "string" then
+        -- get WIPAdministrator
+        local wipHandler = enterprise_administration:getWIPAdministrator()
+        if not wipHandler then corelog.Error("enterprise_projects:EndProject: Failed obtaining WIPAdministrator") return false end
+
+        -- administer work completed
+        wipHandler:administerWorkCompleted(projectMeta.wipId, projectId)
+    end
 
     -- we are done, do the callback
     corelog.WriteToProjectsLog("Calling callback function", project.projectId)
