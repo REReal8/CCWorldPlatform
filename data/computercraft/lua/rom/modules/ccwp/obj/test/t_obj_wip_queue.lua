@@ -87,9 +87,9 @@ end
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-local function hasWork(workList, workId)
+local function hasWork(workList, someWorkId)
     for i, aWorkId in ipairs(workList) do
-        if aWorkId == workId then
+        if aWorkId == someWorkId then
             return true
         end
     end
