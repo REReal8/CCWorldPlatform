@@ -21,6 +21,7 @@ function T_MObjHost.T_All()
     T_MObjHost.T_registerMObj_SSrv()
     T_MObjHost.T_addMObj_ASrv()
     T_MObjHost.T_delistMObj_SSrv()
+--    T_MObjHost.T_removeMObj_ASrv()
 end
 
 local hostName = "TestMObjHost"
@@ -178,8 +179,6 @@ end
 
 function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
-    assert(serviceResults.success, "failed adding MObj")
-
     -- check addition success
     assert(serviceResults and serviceResults.success, "failed adding MObj")
 
@@ -224,6 +223,60 @@ function T_MObjHost.T_delistMObj_SSrv()
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
+end
+
+function T_MObjHost.T_removeMObj_ASrv()
+    -- prepare test
+    corelog.WriteToLog("* MObjHost:removeMObj_ASrv() tests")
+    moduleRegistry:registerModule(hostName, host1)
+    local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
+
+    local serviceResults = host1:registerMObj_SSrv({
+        className           = mobj_className,
+        constructParameters = constructParameters,
+    })
+    local mobjLocator = URL:new(serviceResults.mobjLocator)
+
+    local materialsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+
+    local callback = Callback:new({
+        _moduleName     = "T_MObjHost",
+        _methodName     = "removeMObj_ASrv_Callback",
+        _data           = {
+--            ["field1SetValue"]  = field1SetValue,
+        },
+    })
+
+    -- test
+    local scheduleResult = host1:removeMObj_ASrv({
+        mobjLocator                 = mobjLocator,
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
+    }, callback)
+    assert(scheduleResult == true, "failed to schedule async service")
+end
+
+function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    -- check addition success
+    assert(serviceResults and serviceResults.success, "failed removing MObj")
+
+    -- check mobjLocator returned
+    local mobjLocator = URL:new(serviceResults.mobjLocator)
+    assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
+
+    -- check mobj deleted
+    local mobjResourceTable = host1:getResource(mobjLocator)
+    assert(not mobjResourceTable, "MObj not deleted")
+
+    -- check dismantle blueprint "build"
+    -- ToDo: add mock test
+
+    -- cleanup test
+    host1:deleteObjects("TestMObj")
+    moduleRegistry:delistModule(hostName)
+
+    -- end
+    return true
 end
 
 return T_MObjHost

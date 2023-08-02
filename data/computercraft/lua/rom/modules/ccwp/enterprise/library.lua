@@ -21,6 +21,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_shop")
     moduleRegistry:requireAndRegisterModule("enterprise_storage")
     moduleRegistry:requireAndRegisterModule("enterprise_turtle")
+    moduleRegistry:requireAndRegisterModule("enterprise_administration")
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModuleTests("t_assignmentboard")
