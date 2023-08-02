@@ -65,6 +65,38 @@ function WIPAdministrator:getWIPQueue(...)
     return queue
 end
 
+function WIPAdministrator:removeWIPQueue(...)
+    -- get & check input from description
+    local checkSuccess, queueId = InputChecker.Check([[
+        This method removes the WIPQueue 'queueId'.
+
+        Return value:
+                                                - (boolean) whether the method was called successfully
+
+        Parameters:
+            queueId                             + (string) with the id of the WIPQueue
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("WIPAdministrator:removeWIPQueue: Invalid input") return false end
+
+    -- get queue
+    local queue = self._wipQueues[queueId]
+    if not queue then corelog.Warning("WIPAdministrator:removeWIPQueue: WIPQueue "..queueId.." not present") return false end
+
+    -- check no WIP remaining
+    if not queue:noWIP() then corelog.Warning("WIPAdministrator:removeWIPQueue: WIP remaining on WIPQueue "..queueId.." => removing it anyway ") end
+
+    -- remove WIPQueue
+    self._wipQueues[queueId] = nil
+
+    -- save
+    enterprise_administration = require "enterprise_administration"
+    local objLocator = enterprise_administration:saveObject(self)
+    if not objLocator then corelog.Error("WIPAdministrator:getWIPQueue: Failed saving WIPAdministrator") return false end
+
+    -- end
+    return true
+end
+
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___

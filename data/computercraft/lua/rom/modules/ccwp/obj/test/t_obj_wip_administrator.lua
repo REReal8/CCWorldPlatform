@@ -17,6 +17,7 @@ function T_WIPAdministrator.T_All()
     T_WIPAdministrator.T_ImplementsIObj()
 
     -- base methods
+    T_WIPAdministrator.T_removeWIPQueue()
     T_WIPAdministrator.T_getWIPQueue()
 
     -- IObj methods
@@ -76,6 +77,32 @@ end
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+
+function T_WIPAdministrator.T_removeWIPQueue()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:removeWIPQueue() tests")
+    local wipQueueId1 = "wipQueueId1"
+    local wipQueue1 = WIPQueue:new({
+        _workList       = {},
+        _callbackList   = callbackList1:copy(),
+    }) assert(wipQueue1)
+
+    local wipQueues2 = ObjTable:new({
+        _objClassName   = wipQueueClassName,
+    }) assert(wipQueues2)
+    wipQueues2[wipQueueId1] = wipQueue1
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues2:copy(),
+    }) assert(obj1)
+
+    -- test
+    local success = obj1:removeWIPQueue(wipQueueId1)
+    assert(success, "removeWIPQueue failed")
+    assert(not obj1._wipQueues[wipQueueId1], "WIPQueue not removed")
+
+    -- cleanup test
+end
 
 function T_WIPAdministrator.T_getWIPQueue()
     -- prepare test
