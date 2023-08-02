@@ -24,10 +24,13 @@ function T_WIPAdministrator.T_All()
     T_WIPAdministrator.T_copy()
 
     -- specific methods
+    T_WIPAdministrator.T_administerWorkStarted()
+    T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
+    T_WIPAdministrator.T_administerWorkCompleted()
 end
 
-local workId1 = "id1"
-local workId2 = "id2"
+local workId1 = "workId1"
+local workId2 = "workId2"
 local callbackClassName = "Callback"
 local callbackList1 = ObjArray:new({
     _objClassName   = callbackClassName,
@@ -92,8 +95,6 @@ function T_WIPAdministrator.T_getWIPQueue()
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues2:copy(),
     }) assert(obj1)
-    corelog.WriteToLog("obj1:")
-    corelog.WriteToLog(obj1)
 
     -- test returns already present WIPQueue
     local wipQueue = obj1:getWIPQueue(wipQueueId1)
@@ -212,5 +213,131 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+local function hasWork(workList, someWorkId)
+    for i, aWorkId in ipairs(workList) do
+        if aWorkId == someWorkId then
+            return true
+        end
+    end
+
+    -- end
+    return false
+end
+
+function T_WIPAdministrator.T_administerWorkStarted()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:administerWorkStarted() tests")
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues1:copy(),
+    }) assert(obj1)
+    local workId3 = "workId3"
+    local wipQueueId2 = "wipQueueId2"
+
+    -- test
+    local success = obj1:administerWorkStarted(wipQueueId2, workId3)
+    assert(success, "administerWorkStarted did not succeed")
+    local wipQueue = obj1:getWIPQueue(wipQueueId2)
+    assert(hasWork(wipQueue._workList, workId3), "workId3 not registered")
+
+    -- cleanup test
+end
+
+local callback1Called = false
+local callback1 = Callback:new({
+    _moduleName     = "T_WIPAdministrator",
+    _methodName     = "waitForNoWIPOnQueue_AOSrv_Callback",
+    _data           = { callbackName = "callback1", },
+})
+
+local function hasCallback(callbackList, callback)
+    for i, aCallback in ipairs(callbackList) do
+        if aCallback:isSame(callback) then
+            return true
+        end
+    end
+
+    -- end
+    return false
+end
+
+function T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:waitForNoWIPOnQueue_AOSrv() tests")
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues1:copy(),
+    }) assert(obj1)
+
+    callback1Called = false
+
+    local wipQueueId2 = "wipQueueId2"
+
+    -- test callback called when no WIP
+    local success = obj1:waitForNoWIPOnQueue_AOSrv({queueId = wipQueueId2}, callback1)
+    assert(success, "waitForNoWIPOnQueue_AOSrv not a success")
+    assert(callback1Called, "callback1 not called")
+    callback1Called = false
+
+    -- test callback not called and added when WIP
+    local workId3 = "workId3"
+    obj1:administerWorkStarted(wipQueueId2, workId3)
+    success = obj1:waitForNoWIPOnQueue_AOSrv({queueId = wipQueueId2}, callback1)
+    assert(success, "waitForNoWIPOnQueue_AOSrv not a success")
+    assert(not callback1Called, "callback1 called")
+    local wipQueue = obj1:getWIPQueue(wipQueueId2)
+    assert(hasCallback(wipQueue._callbackList, callback1), "callback1 not added")
+
+    -- cleanup test
+end
+
+function T_WIPAdministrator.waitForNoWIPOnQueue_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    assert(serviceResults.success, "failed executing async service")
+
+    -- callback2
+    if callbackData["callbackName"] == "callback1" then
+        callback1Called = true
+    end
+
+    -- cleanup test
+
+    -- end
+    return true
+end
+
+function T_WIPAdministrator.T_administerWorkCompleted()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:administerWorkCompleted() tests")
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues1:copy(),
+    }) assert(obj1)
+    local workId3 = "workId3"
+    local wipQueueId2 = "wipQueueId2"
+    obj1:administerWorkStarted(wipQueueId2, workId3)
+    local workId4 = "workId4"
+
+    -- test work removed
+    local success = obj1:administerWorkCompleted(wipQueueId2, workId3)
+    assert(success, "administerWorkCompleted did not succeed")
+    local wipQueue = obj1:getWIPQueue(wipQueueId2)
+    assert(not hasWork(wipQueue._workList, workId3), "workId3 not removed")
+
+    -- test callback(s) not called when still WIP
+    obj1:administerWorkStarted(wipQueueId2, workId3)
+    obj1:administerWorkStarted(wipQueueId2, workId4)
+    callback1Called = false
+    success = obj1:waitForNoWIPOnQueue_AOSrv({queueId = wipQueueId2}, callback1)
+
+    success = obj1:administerWorkCompleted(wipQueueId2, workId3)
+    assert(success, "administerWorkCompleted did not succeed")
+    assert(not callback1Called, "callback1 called")
+
+    -- test callback(s) called when no more WIP
+    success = obj1:administerWorkCompleted(wipQueueId2, workId4)
+    assert(success, "administerWorkCompleted did not succeed")
+    assert(callback1Called, "callback1 not called")
+
+    -- cleanup test
+end
 
 return T_WIPAdministrator
