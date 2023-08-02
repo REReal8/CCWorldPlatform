@@ -10,7 +10,11 @@ local InputChecker = require "input_checker"
 --[[
     This module implements the WIPQueue class.
 
-    A WIPQueue stores information for Work In Progress (WIP). It is typically used by the WIPHandler.
+    A WIPQueue stores administrative information for Work In Progress (WIP) on an entity.
+
+    An example case is registering all the WIP for an MObj.
+
+    It is typically used in combination with the WIPAdministrator.
 --]]
 
 --    _                                     _   _               _
