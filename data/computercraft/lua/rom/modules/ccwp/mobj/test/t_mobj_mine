@@ -102,6 +102,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
 
     local mineLocator = enterprise_storage:getObjectLocator(obj)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
@@ -118,6 +119,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     local scheduleResult = obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
     }, callback2)
     assert(scheduleResult == true, "failed to schedule async service")
 end

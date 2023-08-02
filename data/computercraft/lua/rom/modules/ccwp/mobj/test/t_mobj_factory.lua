@@ -406,10 +406,11 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
+    local callback2 = Callback:new({
         _moduleName     = "T_Factory",
         _methodName     = "provideItemsTo_AOSrv_Callback",
         _data           = {
@@ -422,12 +423,13 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    }, callback)
+        wasteItemDepotLocator           = wasteItemDepotLocator,
+    }, callback2)
 end
 
 function T_Factory.T_provideItemsTo_AOSrv_Craft()
     -- prepare test
-    local provideItems = { ["minecraft:birch_planks"] = 12 }
+    local provideItems = { ["minecraft:birch_planks"] = 11 }
 
     -- test
     t_provideItemsTo_AOSrv(provideItems, "Craft")

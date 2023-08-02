@@ -292,6 +292,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemDepotLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local ingredientsItemSupplierLocator = objectLocator
+    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
@@ -309,6 +310,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
     }, callback2)
     assert(scheduleResult == true, "failed to schedule async service")
 end

@@ -43,6 +43,7 @@ function IItemSupplier:provideItemsTo_AOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  - (URL) locating where possible ingredients needed to provide can be retrieved
+                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
