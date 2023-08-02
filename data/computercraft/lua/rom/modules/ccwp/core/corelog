@@ -174,8 +174,8 @@ local function UpdateStatus(statusData, monitor)
 		local assignmentStatus	= data.assignment or {}
 
 		-- check for dead mates
-		local deadMessage		= "DEAD *** "
-		if os.clock() - data.heartbeat < 5 or id == os.getComputerID() then deadMessage = "" end
+		local deadMessage		= "DEAD "
+		if os.clock() - data.heartbeat < (db.heartbeatTimer / 20) or id == os.getComputerID() then deadMessage = "" end
 
 		-- write!
 		MonitorWriteLine("", monitor)
