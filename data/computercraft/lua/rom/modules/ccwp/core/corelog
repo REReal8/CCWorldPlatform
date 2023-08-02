@@ -177,7 +177,7 @@ local function UpdateStatus(statusData, monitor)
 
 		-- write!
 		MonitorWriteLine("", monitor)
-		MonitorWriteLine(deadMessage..data.kind.." "..id..", fuel: "..data.fuelLevel, monitor)
+		MonitorWriteLine(deadMessage..(data.kind or "unknown").." "..id..", fuel: "..data.fuelLevel, monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.message or "", assignmentStatus.message or ""), monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor)
@@ -371,6 +371,7 @@ end
 
 function DoEventReceiveHeartbeat(subject, envelope)
 	-- remember this one is alive
+	if type(db.status[envelope.from]) ~= "table" then db.status[envelope.from] = {} end
 	db.status[envelope.from].heartbeat = os.clock()
 	db.status[envelope.from].fuelLevel = envelope.message.fuelLevel
 
