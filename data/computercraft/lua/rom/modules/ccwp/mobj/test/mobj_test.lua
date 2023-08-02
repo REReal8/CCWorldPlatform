@@ -147,7 +147,7 @@ function TestMObj:destruct()
     --[[
         This method destructs a TestMObj instance.
 
-        It also delists all child MObj's the TestMObj is the parent of (by calling the DelistMObj method on the appropriate MObjHost).
+        It (also) delists all child MObj's the TestMObj is the parent of (by calling the DelistMObj method on the appropriate MObjHost).
 
         The TestMObj is not yet deleted from the Host.
 
@@ -157,8 +157,8 @@ function TestMObj:destruct()
         Parameters:
     ]]
 
-    corelog.Error("Method destruct() not yet implemented.")
-    return false
+    -- end
+    return true
 end
 
 function TestMObj:getId()

@@ -9,7 +9,8 @@ R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
    R  write WIPAdministrator tests                             (done)
 
 R  finish MObjHost
-   R  test delistMObj_SSrv and removeMObj_ASrv
+   R  test delistMObj_SSrv                                        (done)
+   R  test removeMObj_ASrv
    R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
 

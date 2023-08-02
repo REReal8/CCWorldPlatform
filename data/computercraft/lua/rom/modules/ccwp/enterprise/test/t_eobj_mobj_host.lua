@@ -1,6 +1,5 @@
 local T_MObjHost = {}
 
-local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
@@ -21,6 +20,7 @@ function T_MObjHost.T_All()
     -- service methods
     T_MObjHost.T_registerMObj_SSrv()
     T_MObjHost.T_addMObj_ASrv()
+    T_MObjHost.T_delistMObj_SSrv()
 end
 
 local hostName = "TestMObjHost"
@@ -28,8 +28,6 @@ local hostName = "TestMObjHost"
 local host1 = MObjHost:new({
     _hostName   = hostName,
 })
-
-local compact = { compact = true }
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -200,6 +198,32 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
 
     -- end
     return true
+end
+
+function T_MObjHost.T_delistMObj_SSrv()
+    -- prepare test
+    corelog.WriteToLog("* MObjHost:delistMObj_SSrv() tests")
+    moduleRegistry:registerModule(hostName, host1)
+    local serviceResults = host1:registerMObj_SSrv({
+        className           = mobj_className,
+        constructParameters = constructParameters,
+    })
+    local mobjLocator = URL:new(serviceResults.mobjLocator)
+
+    -- test
+    serviceResults = host1:delistMObj_SSrv({
+        mobjLocator         = mobjLocator,
+    })
+
+    -- check delisting success
+    assert(serviceResults and serviceResults.success, "failed delisting MObj")
+
+    -- check mobj deleted
+    local mobjResourceTable = host1:getResource(mobjLocator)
+    assert(not mobjResourceTable, "MObj not deleted")
+
+    -- cleanup test
+    moduleRegistry:delistModule(hostName)
 end
 
 return T_MObjHost

@@ -252,7 +252,7 @@ function MObjHost:delistMObj_SSrv(...)
                 success                         - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData                         + (table) data about this service
+            serviceData                         - (table) data about this service
                 mobjLocator                     + (URL) locating the MObj
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MObjHost:delistMObj_SSrv: Invalid input") return {success = false} end
