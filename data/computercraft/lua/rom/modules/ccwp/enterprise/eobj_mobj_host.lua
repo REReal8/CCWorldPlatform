@@ -14,6 +14,7 @@ local objectFactory = ObjectFactory:getInstance()
 local IMObj = require "i_mobj"
 
 local enterprise_projects = require "enterprise_projects"
+local enterprise_administration = require "enterprise_administration"
 
 --[[
     The MObjHost is a Host that hosts MObj objects and provides additional services on and with these MObj's.
@@ -194,16 +195,18 @@ function MObjHost:removeMObj_ASrv(...)
         blueprint                   = blueprint,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
 
---        mobjHost                    = self:copy(),
---        OR
         hostLocator                 = self:getHostLocator(),
 
         mobjLocator                 = mobjLocator,
+        mobjId                      = mobj:getId(),
+
+        wipHandlerLocator           = enterprise_administration:getWIPAdministratorLocator(),
     }
     local projectDef = {
         steps   = {
             -- complete running business
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "completeRunningBusiness_AOSrv", locatorStep = 0, locatorKeyDef = "mobjLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "waitForNoWIPOnQueue_AOSrv", locatorStep = 0, locatorKeyDef = "wipHandlerLocator" }, stepDataDef = {
+                { keyDef = "queueId"                        , sourceStep = 0, sourceKeyDef = "mobjId" },
             }},
             -- dismantle MObj in the world
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildBlueprint_ASrv" }, stepDataDef = {

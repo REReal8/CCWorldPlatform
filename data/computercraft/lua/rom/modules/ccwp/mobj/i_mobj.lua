@@ -4,7 +4,6 @@ local IMObj = {
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
 
 --[[
     This module implements the interface IMObj.
@@ -14,6 +13,9 @@ local Callback = require "obj_callback"
     MObj's are hosted by a MObjHost who interacts with the defined methods in this interface.
 
     MObj's should also implement the IObj interface.
+
+    MObj's should make sure that any async work is registered in the WIPAdministrator with the MObj id as wipId.
+    For async work via projects this can be done by setting the 'wipId' key in the projectMeta to MObj id.
 --]]
 
 --    _____ __  __  ____  _     _                  _   _               _
@@ -74,29 +76,6 @@ function IMObj:getId()
     corelog.Error("Method getId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
 end
 
--- ToDo: remove
-function IMObj:completeRunningBusiness_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, callback = InputChecker.Check([[
-        This method ensures all running business is completed.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether all business was successfully completed
-
-        Parameters:
-            serviceData                 - (table) data for this service
-            callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("XXXMObj:completeRunningBusiness_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    corelog.Error("Service completeRunningBusiness_AOSrv() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
-    return Callback.ErrorCall(callback)
-end
-
 function IMObj:getBuildBlueprint()
     --[[
         This method returns a blueprint for building the XXXMObj in the physical minecraft world.
@@ -141,7 +120,6 @@ function IMObj.ImplementsInterface(obj)
     if not obj.construct then return false end
     if not obj.destruct then return false end
     if not obj.getId then return false end
-    if not obj.completeRunningBusiness_AOSrv then return false end
     if not obj.getBuildBlueprint then return false end
     if not obj.getDismantleBlueprint then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.

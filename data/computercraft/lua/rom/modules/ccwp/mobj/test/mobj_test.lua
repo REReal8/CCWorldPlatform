@@ -169,28 +169,6 @@ function TestMObj:getId()
     return self._id
 end
 
-function TestMObj:completeRunningBusiness_AOSrv(...)
-    -- get & check input from description
-    local checkSuccess, callback = InputChecker.Check([[
-        This method ensures all running business is completed.
-
-        Return value:
-                                        - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                        - (table)
-                success                 - (boolean) whether all business was successfully completed
-
-        Parameters:
-            serviceData                 - (table) data for this service
-            callback                    + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestMObj:completeRunningBusiness_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    corelog.Error("Service completeRunningBusiness_AOSrv() not yet implemented.")
-    return Callback.ErrorCall(callback)
-end
-
 function TestMObj:getBuildBlueprint()
     --[[
         This method returns a blueprint for building the TestMObj in the physical minecraft world.

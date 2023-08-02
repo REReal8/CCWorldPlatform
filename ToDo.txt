@@ -10,8 +10,8 @@ R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
 
 R  finish MObjHost
    R  test delistMObj_SSrv and removeMObj_ASrv
-   R  remove completeRunningBusiness_AOSrv from IMObj interface
-   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)
+   R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
+   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
 
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
