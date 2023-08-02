@@ -19,7 +19,7 @@ local monitorRight	= nil
 
 function corelog.Init()
 	-- place markers in the logfile
-	corelog.WriteToLog("--- starting up ---")--, "overwrite")
+	corelog.WriteToLog("--- starting up ---", "overwrite")
 	corelog.WriteToAssignmentLog("--- starting up assignments ---", nil, "overwrite")
 	corelog.WriteToProjectsLog("--- starting up projects ---", nil, "overwrite")
 end
