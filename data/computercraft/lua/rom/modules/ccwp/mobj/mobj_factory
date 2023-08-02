@@ -363,6 +363,7 @@ function Factory:provideItemsTo_AOSrv(...)
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
 
         -- determine wasteItemsLocator
+        -- ToDo: consider fixing: we assume the current turtle will eventually have the waste. Remove this hack.
         local currentTurtleId = os.getComputerID()
         local wasteItemsLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)):copy()
         wasteItemsLocator:setQuery({ [itemName] = productSurplus })
