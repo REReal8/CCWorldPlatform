@@ -24,7 +24,7 @@ R  use MObjHost class
 
 -  Support building blueprints (layers) from front
 
-G  bleuprint
+G  blueprint
    G  Blueprint layer holds a desription / name
    G  used to pass to project step (zodat het in de status schermen te zien is)
    -  Introduce Blueprint objects
@@ -69,7 +69,9 @@ G  enterprise_project
 -  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
    -  v1
       RG adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument    (done)
-      -  gebruik wasteItemDepotLocator in factory and forest, contruction
+      -  gebruik wasteItemDepotLocator in factory (done)
+      -  gebruik wasteItemDepotLocator in forest, contruction
+      G  forrested return havested items so waste can be calculated
    -  v2
       -  create obj_wastehandler and enterprise_wastehandling
       -  turtle registers in (m)obj_wastehandler
