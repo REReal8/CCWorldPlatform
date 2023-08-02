@@ -1,18 +1,12 @@
 ToDo List
 ---------
 
-R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
-   R  introduce enterprise_administration                      (done)
-   R  finish WIPAdministrator                                  (done)
-      R  load/ save itself after one if the 3 WIP calls        (done)
-   R  enterprise_project: optionally administer project started and completed in WIPAdministrator  (done)
-   R  write WIPAdministrator tests                             (done)
-
 R  finish MObjHost
    R  test delistMObj_SSrv                                        (done)
    R  test removeMObj_ASrv
    R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
+   -  Support updating of MObj's
 
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
@@ -20,8 +14,8 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_factory
    G  mobj_mine
    R  mobj_production_spot
-   G  mobj_shop
-   R  mobj_silo
+   R  mobj_shop
+   G  mobj_silo
    R  mobj_turtle
 
 R  use MObjHost class
@@ -30,9 +24,10 @@ R  use MObjHost class
 
 -  Support building blueprints (layers) from front
 
-G moveTo:
-   G v1.2: boven maaiveld even wat intilligenter dan nu (done)
-   - v2.0: (snel) wegen
+G  bleuprint
+   G  Blueprint layer holds a desription / name
+   G  used to pass to project step (zodat het in de status schermen te zien is)
+   -  Introduce Blueprint objects
 
 G  enterprise_project
    G  description field for debugging (done, use projectMeta.title and projectMeta.description)
@@ -84,10 +79,6 @@ G  enterprise_project
       - ensure it takes the closest
 
 G  mine v2 maken
-
-G  display station (Yahoo!!, working (except for building it))
-   -  system status (e.g. fuel per turtle, silo)
-   -  logging
 
 R  Factory:
    -  remove static method style code (remaining from before it was a mobj)
@@ -145,3 +136,24 @@ G  Display verbeteren
    G  display blijft na kiezen van een test optie in de groep waar de test gekozen is
    G  display gebruikt 2 kolommen als er veel tests zijn
    R  niet meer dan 2 rijen met tests definieren (done)
+
+G moveTo:
+   - v2.0: (snel) wegen (veel)
+
+
+*** history ***
+
+R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
+   R  introduce enterprise_administration                      (done)
+   R  finish WIPAdministrator                                  (done)
+      R  load/ save itself after one if the 3 WIP calls        (done)
+   R  enterprise_project: optionally administer project started and completed in WIPAdministrator  (done)
+   R  write WIPAdministrator tests                             (done)
+
+G moveTo:
+   G v1.2: boven maaiveld even wat intilligenter dan nu        (done)
+
+G  display station (Yahoo!!, working (except for building it)) (done)
+   -  system status (e.g. fuel per turtle, silo)               (done)
+   -  logging                                                  (done)
+
