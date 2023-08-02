@@ -67,9 +67,11 @@ function role_alchemist.Craft_ItemsNeeded(recipe, productItemCount)
         itemList[itemName] = math.ceil(itemList[itemName] * productItemCount / yield)
     end
 
+    -- calculate the surplus
+    local productSurplus = recipe.yield - productItemCount % recipe.yield
+
     -- return itemList
---    corelog.WriteToLog("Craft_ItemsNeeded: itemList="..textutils.serialise(itemList))
-    return itemList
+    return itemList, productSurplus
 end
 
 local function ItemInRecipe(itemName, recipe)
@@ -291,9 +293,12 @@ function role_alchemist.Smelt_ItemsNeeded(recipe, productItemCount, fuelItemName
     }
     itemList[fuelItemName] = (itemList[fuelItemName] or 0) + fuelItemCount
 
+    -- calculate the surplus
+    local productSurplus = recipe.yield - productItemCount % recipe.yield
+
     -- return itemList
 --    corelog.WriteToLog("Smelt_ItemsNeeded: itemList="..textutils.serialise(itemList))
-    return itemList
+    return itemList, productSurplus
 end
 
 function role_alchemist.Smelt_Task(smeltData)

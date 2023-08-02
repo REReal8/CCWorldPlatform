@@ -319,7 +319,7 @@ end
 
 function Factory:provideItemsTo_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
@@ -337,7 +337,7 @@ function Factory:provideItemsTo_AOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
-                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -358,9 +358,14 @@ function Factory:provideItemsTo_AOSrv(...)
         -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
         local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)
         if not productionSpot then corelog.Error("Factory:provideItemsTo_AOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return Callback.ErrorCall(callback) end
-        local ingredientsNeeded = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
+        local ingredientsNeeded, productSurplus = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
+
+        -- determine wasteItemsLocator
+        local currentTurtleId = os.getComputerID()
+        local wasteItemsLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)):copy()
+        wasteItemsLocator:setQuery({ [itemName] = productSurplus })
 
         -- retrieve site input & output locator's
         local localInputLocator = self:getAvailableInputLocator():copy()
@@ -373,12 +378,14 @@ function Factory:provideItemsTo_AOSrv(...)
         -- create project service data
         local projectDef = {
             steps = {
+                -- get ingredients
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                     { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localInputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
+                -- produce items
                 { stepType = "ASrv", stepTypeDef = { moduleName = "Factory", serviceName = "ProduceItem_ASrv" }, stepDataDef = {
                     { keyDef = "localInputItemsLocator"         , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
                     { keyDef = "localOutputLocator"             , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
@@ -388,12 +395,18 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "productionRecipe"               , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
+                -- deliver items
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
                     { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
-                -- ToDo: consider storing rest/ waste materials (e.g. those caused by ceil (rounding up) of ingredient items)
+                -- store waste items
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "wasteItemsLocator" },
+                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                }},
             },
             returnData  = {
                 { keyDef = "destinationItemsLocator"            , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
@@ -412,6 +425,9 @@ function Factory:provideItemsTo_AOSrv(...)
             itemName                        = itemName,
             itemCount                       = itemCount,
             productionRecipe                = productionRecipe,
+
+            wasteItemsLocator               = wasteItemsLocator,
+            wasteItemDepotLocator           = wasteItemDepotLocator,
 
             assignmentsPriorityKey          = assignmentsPriorityKey,
         }
@@ -654,7 +670,6 @@ function Factory.ProduceItem_ASrv(...)
 
     -- add production steps
     local extraStep = 0
-    local areAllTrueStep = nil
     if productionSpot:isCraftingSpot() then
         -- add crafting step
         table.insert(projectSteps,
@@ -667,13 +682,6 @@ function Factory.ProduceItem_ASrv(...)
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
-
-        -- are all true step
---[[         areAllTrueStep = { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-            { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
-            { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
-            { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
-        }} ]]
     else
         -- add smelting step
         table.insert(projectSteps,
@@ -697,13 +705,6 @@ function Factory.ProduceItem_ASrv(...)
             }}
         )
 
-        -- are all true step
---[[         areAllTrueStep = { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-            { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
-            { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
-            { keyDef = "success3"                   , sourceStep = 3, sourceKeyDef = "success" },
-            { keyDef = "success4"                   , sourceStep = 4, sourceKeyDef = "success" },
-        }} ]]
         extraStep = 1
     end
 
@@ -715,13 +716,11 @@ function Factory.ProduceItem_ASrv(...)
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }}
     )
-    -- table.insert(projectSteps, areAllTrueStep)
 
     -- create project service data
     local projectDef = {
         steps = projectSteps,
         returnData  = {
---            { keyDef = "success"                    , sourceStep = 4 + extraStep, sourceKeyDef = "success" },
             { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
         }
     }

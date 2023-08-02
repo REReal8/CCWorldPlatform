@@ -131,6 +131,7 @@ function ProductionSpot:produceIngredientsNeeded(...)
 
         Return value:
             ingredientsNeeded           - (table) ingredientsNeeded to produce items
+            productSurplus              - (number) number of surplus requested products
 
         Parameters:
             productionRecipe            + (table) production recipe
@@ -140,19 +141,22 @@ function ProductionSpot:produceIngredientsNeeded(...)
 
     -- determine ingredientsNeeded
     local ingredientsNeeded = nil
+    local productSurplus = nil
     if self:isCraftingSpot() then
-        ingredientsNeeded = coreutils.DeepCopy(role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount))
+        ingredientsNeeded, productSurplus = role_alchemist.Craft_ItemsNeeded(productionRecipe, productItemCount)
+        ingredientsNeeded = coreutils.DeepCopy(ingredientsNeeded)
     else
         -- determine production fuel
         -- ToDo: do this differently
         local fuelItemName  = "minecraft:birch_planks"
         local fuelItemCount = productItemCount
 
-        ingredientsNeeded = coreutils.DeepCopy(role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount))
+        ingredientsNeeded, productSurplus = role_alchemist.Smelt_ItemsNeeded(productionRecipe, productItemCount, fuelItemName, fuelItemCount)
+        ingredientsNeeded = coreutils.DeepCopy(ingredientsNeeded)
     end
 
     -- end
-    return ingredientsNeeded
+    return ingredientsNeeded, productSurplus
 end
 
 return ProductionSpot
