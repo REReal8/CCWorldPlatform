@@ -39,7 +39,7 @@ function WIPAdministrator:getWIPQueue(...)
     if not checkSuccess then corelog.Error("WIPAdministrator:getWIPQueue: Invalid input") return nil end
 
     -- get queue
-    local queue = self._wipQueues.queueId
+    local queue = self._wipQueues[queueId]
     if not queue then
         corelog.WriteToLog("WIPAdministrator:getWIPQueue: WIPQueue with id="..queueId.." not yet found. Creating it")
 
