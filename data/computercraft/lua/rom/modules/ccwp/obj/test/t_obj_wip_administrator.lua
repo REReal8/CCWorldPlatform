@@ -10,6 +10,8 @@ local ObjTable = require "obj_table"
 local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
 
+local enterprise_administration = require "enterprise_administration"
+
 function T_WIPAdministrator.T_All()
     -- interfaces
     T_WIPAdministrator.T_ImplementsIObj()
@@ -107,6 +109,7 @@ function T_WIPAdministrator.T_getWIPQueue()
     assert(wipQueue:noWIP(), "gotten wipQueue(="..textutils.serialise(wipQueue)..") has WIP (and hence can't be new)")
 
     -- cleanup test
+    enterprise_administration:reset()
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -241,6 +244,7 @@ function T_WIPAdministrator.T_administerWorkStarted()
     assert(hasWork(wipQueue._workList, workId3), "workId3 not registered")
 
     -- cleanup test
+    enterprise_administration:reset()
 end
 
 local callback1Called = false
@@ -288,6 +292,7 @@ function T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     assert(hasCallback(wipQueue._callbackList, callback1), "callback1 not added")
 
     -- cleanup test
+    enterprise_administration:reset()
 end
 
 function T_WIPAdministrator.waitForNoWIPOnQueue_AOSrv_Callback(callbackData, serviceResults)
@@ -338,6 +343,7 @@ function T_WIPAdministrator.T_administerWorkCompleted()
     assert(callback1Called, "callback1 not called")
 
     -- cleanup test
+    enterprise_administration:reset()
 end
 
 return T_WIPAdministrator
