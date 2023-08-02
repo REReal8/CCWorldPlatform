@@ -107,6 +107,8 @@ G  player station
 
 -  recipe book
 
+-  Bug: Factory:provideItemsTo_AOSrv meerdere items zorgt voor meerdere keren aanroepen van callback terwijl het er maar 1 moet zijn
+
 -  create (& use) multiple turtles
 
 -  availability
