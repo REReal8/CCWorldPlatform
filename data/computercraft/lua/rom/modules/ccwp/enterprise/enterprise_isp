@@ -31,7 +31,7 @@ local role_fuel_worker = require "role_fuel_worker"
 
 function enterprise_isp.ProvideItemsTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
@@ -51,6 +51,7 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
                                                     (the "query" component of the URL specifies the items)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -67,6 +68,7 @@ function enterprise_isp.ProvideItemsTo_ASrv(...)
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }, callback)
 end

@@ -239,7 +239,7 @@ end
 
 function BirchForest:provideItemsTo_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
@@ -257,7 +257,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
-                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -328,21 +328,18 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "itemsLocator" },
                         { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                         { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                        { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                         { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
---[[                     { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                        { keyDef = "success1"                       , sourceStep = 1, sourceKeyDef = "success" },
-                        { keyDef = "success2"                       , sourceStep = 2, sourceKeyDef = "success" },
-                    }}, ]]
                 },
                 returnData  = {
-        --            { keyDef = "success"                            , sourceStep = 3, sourceKeyDef = "success" },
                     { keyDef = "destinationItemsLocator"            , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
                 }
             }
             local projectData = {
                 itemsLocator                    = itemsLocator,
                 ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
+                wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
                 itemDepotLocator                = itemDepotLocator:copy(),
 
                 harvestForestMetaData           = role_forester.HarvestForest_MetaData(harvestForestTaskData),

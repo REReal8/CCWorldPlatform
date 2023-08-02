@@ -7,6 +7,7 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
 local Location = require "obj_location"
+local URL = require "obj_url"
 
 local BirchForest = require "mobj_birchforest"
 
@@ -14,6 +15,7 @@ local role_forester = require "role_forester"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
+local enterprise_forestry = require "enterprise_forestry"
 
 local t_turtle
 
@@ -328,5 +330,74 @@ function T_BirchForest.T_can_ProvideItems_QOSrv()
 
     -- cleanup test
 end
+
+local function t_provideItemsTo_AOSrv(provideItems)
+    -- prepare test
+    corelog.WriteToLog("* BirchForest:provideItemsTo_AOSrv() tests ("..next(provideItems)..")")
+    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("failed obtaining BirchForest") return end
+    local objLocator = enterprise_forestry:saveObject(obj)
+    t_turtle = t_turtle or require "test.t_turtle"
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+
+    local T_Chest = require "test.t_mobj_chest"
+    local chest2 = T_Chest.CreateChest(location1:getRelativeLocation(0, 0, -1)) if not chest2 then corelog.Error("failed obtaining Chest 2") return end
+    local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
+--    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+
+    local expectedDestinationItemsLocator = itemDepotLocator:copy()
+    expectedDestinationItemsLocator:setQuery(provideItems)
+    local callback2 = Callback:new({
+        _moduleName     = "T_BirchForest",
+        _methodName     = "provideItemsTo_AOSrv_Callback",
+        _data           = {
+            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+            ["objLocator"] = objLocator,
+        },
+    })
+
+    -- test
+    return obj:provideItemsTo_AOSrv({
+        provideItems                    = provideItems,
+        itemDepotLocator                = itemDepotLocator,
+        ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
+    }, callback2)
+end
+
+function T_BirchForest.T_provideItemsTo_AOSrv_Log()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_log"] = 10 }
+
+    -- test
+    t_provideItemsTo_AOSrv(provideItems)
+end
+
+function T_BirchForest.T_provideItemsTo_AOSrv_Sapling()
+    -- prepare test
+    local provideItems = { ["minecraft:birch_sapling"] = 1 }
+
+    -- test
+    t_provideItemsTo_AOSrv(provideItems)
+end
+
+function T_BirchForest.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+    -- test (cont)
+    corelog.WriteToLog(callbackData)
+    corelog.WriteToLog(serviceResults)
+    assert(serviceResults.success, "failed executing async service")
+
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
+    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    local objLocator = URL:new(callbackData["objLocator"])
+    enterprise_forestry:deleteResource(objLocator)
+
+    -- end
+    return true
+end
+
 
 return T_BirchForest
