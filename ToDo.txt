@@ -104,6 +104,7 @@ G  player station
 
 -  IItemSupplier & IItemDepot interface
    -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
+   -  don't do anything when itemList is empty --> where do check?
 
 -  recipe book
 
