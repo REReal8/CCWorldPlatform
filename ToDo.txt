@@ -2,9 +2,9 @@ ToDo List
 ---------
 
 R  WIPAdministrator (formerly knows as AdministrationOffice)
-   R  introduce enterprise_administration
-   R  finish WIPAdministrator (+ usage in enterprise_project)
-   R  load/ save itself after one if the 3 WIP calls
+   R  introduce enterprise_administration                (done)
+   R  finish WIPAdministrator                            (done)
+      R  load/ save itself after one if the 3 WIP calls  (done)
    R  enterprise_project: optionally administer project started and completed in WIPAdministrator
    R  write WIPAdministrator test
 

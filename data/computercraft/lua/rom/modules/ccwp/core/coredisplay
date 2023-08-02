@@ -225,6 +225,7 @@ function ExecuteObjTest(t)
 		{key = "r", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
 		{key = "i", desc = "Inventory",			func = ExecuteObjTest, param = {filename = "T_Inventory"}},
 		{key = "q", desc = "WIPQueue",			func = ExecuteObjTest, param = {filename = "T_WIPQueue"}},
+		{key = "w", desc = "WIPAdministrator",	func = ExecuteObjTest, param = {filename = "T_WIPAdministrator"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "obj", options, ExecuteMObjTest)
