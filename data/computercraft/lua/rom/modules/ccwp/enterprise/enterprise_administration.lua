@@ -39,8 +39,8 @@ function enterprise_administration:getWIPAdministrator()
     --]]
 
     local administrator = self:getObjects("WIPAdministrator")
-    corelog.WriteToLog("administrator:")
-    corelog.WriteToLog(administrator)
+--    corelog.WriteToLog("administrator:")
+--    corelog.WriteToLog(administrator)
 
     if next(administrator) == nil then
         -- the WIPAdministrator is not there yet => create it
