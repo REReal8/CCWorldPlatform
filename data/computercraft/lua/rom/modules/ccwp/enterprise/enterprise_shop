@@ -64,7 +64,7 @@ function enterprise_shop:getShop()
     else
         -- check exactly 1 Shop
         if nShops ~= 1 then
-            corelog.Warning("enterprise_shop:getShop: there are "..nShops.." in the world while we expected 1.")
+            corelog.Warning("enterprise_shop:getShop: there are "..nShops.." Shop's in the world while we expected 1.")
         end
 
         -- get locator of (first) Shop
