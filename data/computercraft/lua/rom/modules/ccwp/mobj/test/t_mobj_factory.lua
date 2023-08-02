@@ -439,7 +439,7 @@ function T_Factory.T_provideItemsTo_AOSrv_Craft()
     t_provideItemsTo_AOSrv(provideItems, "Craft")
 end
 
-function T_Factory.T_ProvideItemsTo_AOSrv_Smelt()
+function T_Factory.T_provideItemsTo_AOSrv_Smelt()
     -- prepare test
     local provideItems = { ["minecraft:charcoal"] = 1 }
 
