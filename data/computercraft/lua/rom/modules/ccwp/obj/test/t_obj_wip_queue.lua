@@ -298,6 +298,7 @@ end
 --       |_|
 
 local callback2Called = false
+local callback3Called = false
 
 function T_WIPQueue.T_callAndReleaseCallbacks()
     -- prepare test
@@ -306,19 +307,30 @@ function T_WIPQueue.T_callAndReleaseCallbacks()
         _workList       = {},
         _callbackList   = callbackList1:copy(),
     }) assert(obj1)
+
     local callback2 = Callback:new({
         _moduleName     = "T_WIPQueue",
         _methodName     = "callAndReleaseCallbacks_Callback",
-        _data           = {},
+        _data           = { callbackName = "callback2", },
     })
     obj1:addCallback(callback2)
     callback2Called = false
+
+    local callback3 = Callback:new({
+        _moduleName     = "T_WIPQueue",
+        _methodName     = "callAndReleaseCallbacks_Callback",
+        _data           = { callbackName = "callback3", },
+    })
+    obj1:addCallback(callback3)
+    callback3Called = false
 
     -- test
     local succes = obj1:callAndReleaseCallbacks(callback1)
     assert(succes, "callAndReleaseCallbacks not a success")
     assert(callback2Called, "callback2 not called")
     assert(not hasCallback(obj1._callbackList, callback2), "callback2 not removed")
+    assert(callback3Called, "callback3 not called")
+    assert(not hasCallback(obj1._callbackList, callback3), "callback3 not removed")
 
     -- cleanup test
 end
@@ -326,7 +338,16 @@ end
 function T_WIPQueue.callAndReleaseCallbacks_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
-    callback2Called = true
+
+    -- callback2
+    if callbackData["callbackName"] == "callback2" then
+        callback2Called = true
+    end
+
+    -- callback3
+    if callbackData["callbackName"] == "callback3" then
+        callback3Called = true
+    end
 
     -- cleanup test
 
