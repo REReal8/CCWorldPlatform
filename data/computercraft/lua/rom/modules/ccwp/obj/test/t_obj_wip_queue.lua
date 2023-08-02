@@ -100,8 +100,8 @@ end
 
 local function workListCopy(workList)
     local copy = {}
-    for i, workId in ipairs(workList) do
-        copy[i] = workId
+    for i, aWorkId in ipairs(workList) do
+        copy[i] = aWorkId
     end
 
     -- end
