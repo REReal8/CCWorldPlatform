@@ -6,7 +6,7 @@ R  WIPAdministrator (formerly knows as AdministrationOffice)
    R  finish WIPAdministrator                            (done)
       R  load/ save itself after one if the 3 WIP calls  (done)
    R  enterprise_project: optionally administer project started and completed in WIPAdministrator
-   R  write WIPAdministrator test
+   R  write WIPAdministrator tests                       (done)
 
 R  finish MObjHost
    R  test delistMObj_SSrv and removeMObj_ASrv
