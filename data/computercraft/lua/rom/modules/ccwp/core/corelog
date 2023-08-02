@@ -64,7 +64,7 @@ function corelog.Setup()
 
 		-- show who's boss!
 		corelog.WriteToLog("--- starting up monitor ---")
-		corelog.SetStatus("I am the logger", "Just ignore me", "Thank you for reading this")
+		corelog.SetStatus("assignment", "I am the logger", "Just ignore me", "Thank you for reading this")
 	end
 end
 
@@ -78,6 +78,9 @@ function corelog.WriteToLog(message, writeMode)
 
 	-- write to the logfile
 	coreutils.WriteToFile(db.logfile, message, writeMode)
+
+	-- might be a table
+	if type(message) == "table" then message = textutils.serialize(message) end
 
 	-- send message
 	if monitorLeft then
@@ -129,6 +132,7 @@ local function UpdateStatus(statusData, monitor)
 	if type(statusData) ~= "table"				then return end
 	if not statusData.me						then return end
 	if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
+	if type(statusData.group)	  ~= "string"	then statusData.group		= "assignment" end
 	if type(statusData.message)	  ~= "string"	then statusData.message		= nil end
 	if type(statusData.subline)	  ~= "string"	then statusData.subline		= nil end
 	if type(statusData.details)	  ~= "string"	then statusData.details		= nil end
@@ -137,7 +141,9 @@ local function UpdateStatus(statusData, monitor)
 	if statusData.fuelLevel == 0				then statusData.fuelLevel	= "empty" end
 
 	-- first, remember the status (and forget the previous status)
-	db.status[statusData.me] = statusData
+	if type(db.status[statusData.me]) ~= "table" then db.status[statusData.me] = {} end
+	db.status[statusData.me].fuelLevel			= statusData.fuelLevel
+	db.status[statusData.me][statusData.group]	= statusData
 
 	-- now, show this to the monitor
 	monitor.clear()
@@ -148,16 +154,19 @@ local function UpdateStatus(statusData, monitor)
 	-- here we go
 	for id, data in pairs(db.status) do
 
+		local projectStatus		= data.project or {}
+		local assignmentStatus	= data.assignment or {}
+
 		-- write!
-		MonitorWriteLine("id: "..id.." (fuel: "..data.fuelLevel..")", monitor)
-		if data.message then MonitorWriteLine(data.message, monitor) end
-		if data.subline then MonitorWriteLine(data.subline, monitor) end
-		if data.details then MonitorWriteLine(data.details, monitor) end
 		MonitorWriteLine("", monitor)
+		MonitorWriteLine("id: "..id.." (fuel: "..data.fuelLevel..")", monitor)
+		if projectStatus.message or assignmentStatus.message then MonitorWriteLine(string.format("%-20.20s %-20.20s", (projectStatus.message or ""), (assignmentStatus.message or "")), monitor) end
+		if projectStatus.subline or assignmentStatus.subline then MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor) end
+		if projectStatus.details or assignmentStatus.details then MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor) end
 	end
 end
 
-function corelog.SetStatus(message, subline, details)
+function corelog.SetStatus(group, message, subline, details)
 	-- get us and our fuel level
 	local fuelLevel = 0
 	if turtle then fuelLevel = turtle.getFuelLevel() end
@@ -166,6 +175,7 @@ function corelog.SetStatus(message, subline, details)
 	local statusUpdate = {
 		me			= os.getComputerID(),
 		fuelLevel	= fuelLevel,
+		group		= group,
 		message		= message,
 		subline		= subline,
 		details		= details

@@ -83,7 +83,7 @@ function coreassignment.Run()
             DoAssignment(nextAssignment)
         else
             -- update status
-            corelog.SetStatus("Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
+            corelog.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
 
             -- just wait a (quarter of a) second
             os.sleep(0.25)     -- apparently no assignment for me now
@@ -122,7 +122,7 @@ function DoAssignment(assignment)
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
     corelog.WriteToLog("Starting "..taskCall:getModuleName().."."..taskCall:getMethodName())
-    corelog.SetStatus("Module: "..taskCall:getModuleName(), "Method: "..taskCall:getMethodName())
+    corelog.SetStatus("assignment", "Module: "..taskCall:getModuleName(), "Method: "..taskCall:getMethodName())
     local taskResult = taskCall:call()
     corelog.WriteToAssignmentLog("Completed task (result="..textutils.serialize(taskResult)..")", assignmentId)
 
