@@ -64,7 +64,7 @@ function corelog.Setup()
 
 		-- show who's boss!
 		corelog.WriteToLog("--- starting up monitor ---")
-		corelog.SetStatus("assignment", "I am the logger", "Just ignore me", "Thank you for reading this")
+		corelog.SetStatus("project", "I am the logger", "Just ignore me", "Have a nice day")
 	end
 end
 
@@ -131,17 +131,23 @@ local function UpdateStatus(statusData, monitor)
 	-- make sure the status data is valid
 	if type(statusData) ~= "table"				then return end
 	if not statusData.me						then return end
+	if type(statusData.kind)	  ~= "string"	then statusData.kind	    = "unknown kind" end
 	if type(statusData.fuelLevel) ~= "number"	then statusData.fuelLevel	= 0 end
 	if type(statusData.group)	  ~= "string"	then statusData.group		= "assignment" end
-	if type(statusData.message)	  ~= "string"	then statusData.message		= nil end
-	if type(statusData.subline)	  ~= "string"	then statusData.subline		= nil end
-	if type(statusData.details)	  ~= "string"	then statusData.details		= nil end
+	if type(statusData.message)	  ~= "string"	then statusData.message		= "" end
+	if type(statusData.subline)	  ~= "string"	then statusData.subline		= "" end
+	if type(statusData.details)	  ~= "string"	then statusData.details		= "" end
 
 	-- nicer
-	if statusData.fuelLevel == 0				then statusData.fuelLevel	= "empty" end
+	if statusData.fuelLevel == 0 then
+		if statusData.kind == "turtle"	then statusData.fuelLevel	= "empty"
+										else statusData.fuelLevel	= "n/a"
+		end
+	end
 
 	-- first, remember the status (and forget the previous status)
 	if type(db.status[statusData.me]) ~= "table" then db.status[statusData.me] = {} end
+	db.status[statusData.me].kind				= statusData.kind
 	db.status[statusData.me].fuelLevel			= statusData.fuelLevel
 	db.status[statusData.me][statusData.group]	= statusData
 
@@ -159,7 +165,7 @@ local function UpdateStatus(statusData, monitor)
 
 		-- write!
 		MonitorWriteLine("", monitor)
-		MonitorWriteLine("id: "..id.." (fuel: "..data.fuelLevel..")", monitor)
+		MonitorWriteLine(data.kind.." "..id..", fuel: "..data.fuelLevel, monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.message or "", assignmentStatus.message or ""), monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.subline or "", assignmentStatus.subline or ""), monitor)
 		MonitorWriteLine(string.format("%-20.20s %-20.20s", projectStatus.details or "", assignmentStatus.details or ""), monitor)
@@ -167,6 +173,12 @@ local function UpdateStatus(statusData, monitor)
 end
 
 function corelog.SetStatus(group, message, subline, details)
+	-- what kind are we?
+	local kind = "computer"	-- default type
+	if turtle   then kind = "turtle" end
+	if pocket   then kind = "pocket" end
+	if commands then kind = "command computer" end
+
 	-- get us and our fuel level
 	local fuelLevel = 0
 	if turtle then fuelLevel = turtle.getFuelLevel() end
@@ -174,6 +186,7 @@ function corelog.SetStatus(group, message, subline, details)
 	-- all relevant information for the status update together
 	local statusUpdate = {
 		me			= os.getComputerID(),
+		kind		= kind,
 		fuelLevel	= fuelLevel,
 		group		= group,
 		message		= message,
