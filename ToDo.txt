@@ -140,3 +140,8 @@ G  player station
 -  Other ToDo's to be found everywhere in all code files
 
 G  turtle without db/inventory.lua file should check for tool present (done)
+
+G  Display verbeteren
+   G  display blijft na kiezen van een test optie in de groep waar de test gekozen is
+   G  display gebruikt 2 kolommen als er veel tests zijn
+   R  niet meer dan 2 rijen met tests definieren (done)
