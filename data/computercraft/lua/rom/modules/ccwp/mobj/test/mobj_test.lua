@@ -211,7 +211,23 @@ function TestMObj:getDismantleBlueprint()
         Parameters:
     ]]
 
-    corelog.Error("Method getDismantleBlueprint() not yet implemented.")
+    -- construct layer list
+    local layerList = {
+        -- note: empty as we currently do not want to actually have the Turtle move
+    }
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+        }
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
 end
 
 return TestMObj

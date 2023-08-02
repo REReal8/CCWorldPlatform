@@ -221,7 +221,7 @@ function MObjHost:removeMObj_ASrv(...)
 --                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
 --            }},
 --            OR
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "delistMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
             }},
         },

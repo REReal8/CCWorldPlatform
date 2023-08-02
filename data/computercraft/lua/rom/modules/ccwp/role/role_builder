@@ -19,10 +19,26 @@ local role_fuel_worker = require "role_fuel_worker"
 --   | |
 --   |_|
 
-function role_builder.BuildBlueprint_MetaData(buildData)
+function role_builder.BuildBlueprint_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, blueprintStartpoint, layerList, escapeSequence = InputChecker.Check([[
+        This Task builds a blueprint.
+
+        Return value:
+                                        - (table) {success = true} if the blueprint was successfully build
+
+        Parameters:
+            buildData                   - (table) data about the blueprint
+                blueprintStartpoint     + (Location) top lower left coordinate to start building the blueprint
+                blueprint               - (table) blueprint to build
+                    layerList           + (table) layer to build
+                    escapeSequence      + (table) escapeSequence of blueprint
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_builder.BuildBlueprint_MetaData: Invalid input") return {success = false} end
+
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = buildData.blueprintStartpoint:copy(),
+        location = blueprintStartpoint:copy(),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 0,
@@ -30,14 +46,14 @@ function role_builder.BuildBlueprint_MetaData(buildData)
     }
 
     -- loop on layers
-    local lastLocation = buildData.blueprintStartpoint:copy()
-    for i, buildLayer in ipairs(buildData.blueprint.layerList) do
+    local lastLocation = blueprintStartpoint:copy()
+    for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
         local layerBuildData = {
             startpoint              = buildLayer.startpoint:getRelativeLocation(
-                                                                buildData.blueprintStartpoint:getX(),
-                                                                buildData.blueprintStartpoint:getY(),
-                                                                buildData.blueprintStartpoint:getZ()),
+                                                                blueprintStartpoint:getX(),
+                                                                blueprintStartpoint:getY(),
+                                                                blueprintStartpoint:getZ()),
             buildFromAbove          = buildLayer.buildFromAbove,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
@@ -61,7 +77,7 @@ function role_builder.BuildBlueprint_MetaData(buildData)
     end
 
     -- update metadata with escapeSequence (if present)
-    for i, escapeLocation in ipairs(buildData.blueprint.escapeSequence) do
+    for i, escapeLocation in ipairs(escapeSequence) do
         metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(escapeLocation, lastLocation)
 
         lastLocation = escapeLocation
