@@ -241,7 +241,7 @@ function GetReplies(messageId)
 	return tmp
 end
 
--- function to fire an event is a specific number of seconds
+-- function to fire an event in a specific number of seconds
 function coreevent.CreateTimeEvent(ticks, protocol, p1, p2, p3, p4, p5)
 	local id = os.startTimer(ticks/20)
 
