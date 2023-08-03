@@ -72,4 +72,17 @@ function Callback.ErrorCall(callback)
     return callback:call({success = false})
 end
 
+function Callback.GetNewDummyCallBack()
+    -- construct dummy callback
+    local callback = Callback:new({ _moduleName = "Callback", _methodName = "Dummy_Callback", _data = { }, })
+
+    -- end
+    return callback
+end
+
+function Callback.Dummy_Callback(...)
+    corelog.WriteToProjectsLog("Callback.Dummy_Callback called")
+    -- do nothing
+end
+
 return Callback

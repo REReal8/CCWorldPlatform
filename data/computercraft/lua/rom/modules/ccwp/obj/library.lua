@@ -30,6 +30,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("IObj", "i_obj")
     moduleRegistry:requireAndRegisterModule("IItemSupplier", "i_item_supplier")
     moduleRegistry:requireAndRegisterModule("IItemDepot", "i_item_depot")
+    moduleRegistry:requireAndRegisterModule("Callback", "obj_callback")
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_ModuleRegistry", "test.t_module_registry")
