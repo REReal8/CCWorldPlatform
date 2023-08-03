@@ -12,10 +12,8 @@ local InputChecker = require "input_checker"
     like to programmically interact with. Objects of a class implementing the interface are referred to as MObj's.
     MObj's are hosted by a MObjHost who interacts with the defined methods in this interface.
 
-    MObj's should also implement the IObj interface.
-
     MObj's should make sure that any async work is registered in the WIPAdministrator with the MObj id as wipId.
-    For async work via projects this can be done by setting the 'wipId' key in the projectMeta to MObj id.
+    For async work via projects this can be done by setting the 'wipId' key in the projectMeta to the MObj id.
 --]]
 
 --    _____ __  __  ____  _     _                  _   _               _
@@ -32,9 +30,9 @@ function IMObj:construct(...)
     local checkSuccess, param1, param2 = InputChecker.Check([[
         This method constructs a XXXMObj instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also registers all child MObj's the XXXMObj spawns (by calling the RegisterMObj method on the appropriate MObjHost).
+        It also registers all child MObj's the XXXMObj spawns (by calling hostMObj_SSrv on the appropriate MObjHost).
 
-        The constructed XXXMObj is not activated or saved in the Host.
+        The constructed XXXMObj is not yet saved in the Host.
 
         Return value:
                                         - (XXXMObj) the constructed XXXMObj
@@ -54,7 +52,7 @@ function IMObj:destruct()
     --[[
         This method destructs a XXXMObj instance.
 
-        It also delists all child MObj's the XXXMObj is the parent of (by calling the DelistMObj method on the appropriate MObjHost).
+        It also delists all child MObj's the XXXMObj is the parent of (by calling releaseMObj_SSrv on the appropriate MObjHost).
 
         The XXXMObj is not yet deleted from the Host.
 
