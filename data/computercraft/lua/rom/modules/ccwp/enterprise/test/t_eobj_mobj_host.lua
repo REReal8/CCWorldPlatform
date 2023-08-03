@@ -192,7 +192,7 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
 
 
     -- cleanup test
-    host1:deleteObjects("TestMObj")
+    host1:deleteResource(mobjLocator)
     moduleRegistry:delistModule(hostName)
 
     -- end
@@ -243,7 +243,7 @@ function T_MObjHost.T_removeMObj_ASrv()
         _moduleName     = "T_MObjHost",
         _methodName     = "removeMObj_ASrv_Callback",
         _data           = {
---            ["field1SetValue"]  = field1SetValue,
+            ["mobjLocator"]  = mobjLocator,
         },
     })
 
@@ -257,14 +257,11 @@ end
 
 function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
-    -- check addition success
+    -- check removeMObj_ASrv success
     assert(serviceResults and serviceResults.success, "failed removing MObj")
 
-    -- check mobjLocator returned
-    local mobjLocator = URL:new(serviceResults.mobjLocator)
-    assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
-
     -- check mobj deleted
+    local mobjLocator = callbackData["mobjLocator"]
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
 
@@ -272,7 +269,6 @@ function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
     -- ToDo: add mock test
 
     -- cleanup test
-    host1:deleteObjects("TestMObj")
     moduleRegistry:delistModule(hostName)
 
     -- end
