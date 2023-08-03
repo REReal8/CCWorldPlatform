@@ -77,10 +77,11 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
     -- test service 1
     corelog.WriteToLog("* BuildLayer_ASrv (from turtle) test")
     local buildData = {
-        startpoint = testStartLocation,
-        buildFromAbove = true,
-        layer = testBuildLayer1,
-        materialsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator(),
+        startpoint                  = testStartLocation,
+        buildFromAbove              = true,
+        layer                       = testBuildLayer1,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",
@@ -111,6 +112,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                 { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
                 { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "layer" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 1, sourceKeyDef = "chestLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
 
             -- cleanup
@@ -140,9 +142,9 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
             },
 
             -- build data
-            startpoint          = testStartLocation2,
-            buildFromAbove      = true,
-            layer               = testBuildLayer1,
+            startpoint              = testStartLocation2,
+            buildFromAbove          = true,
+            layer                   = testBuildLayer1,
         },
         projectMeta = {
             title = "Testing",
@@ -177,6 +179,7 @@ function t_construction.T_BuildBlueprint_ASrv()
         blueprintStartpoint         = testStartLocation:getRelativeLocation(0, 12, 0),
         blueprint                   = testBlueprint1,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }
     local callback = Callback:new({
         _moduleName     = "t_main",

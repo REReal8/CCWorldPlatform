@@ -28,7 +28,7 @@ local enterprise_turtle
 -- ToDo: consider introducing a Blueprint Obj replacing the current table
 function enterprise_construction.BuildBlueprint_ASrv(...)
     -- get & check input from description
-    local checkSuccess, blueprintStartpoint, blueprint, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, blueprintStartpoint, blueprint, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a blueprint as a single assignment/ task.
 
         Return value:
@@ -44,6 +44,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                     layerList                   - (table) layer to build
                     escapeSequence              - (table) escapeSequence of blueprint
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildBlueprint_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -84,6 +85,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             -- obtain turtleId
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
@@ -109,6 +111,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         materialsItemsLocator           = materialsItemsLocator:copy(),
         itemDepotLocator                = itemDepotLocator:copy(),
         ingredientsItemSupplierLocator  = materialsItemSupplierLocator:copy(),
+        wasteItemDepotLocator           = wasteItemDepotLocator,
 
         metaData                        = metaData,
         taskCall                        = taskCall,
@@ -126,7 +129,7 @@ end
 
 function enterprise_construction.BuildLayer_ASrv(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
 
         Return value:
@@ -142,6 +145,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 replacePresentObjects           + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
                 layer                           + (LayerRectangle) layer to build
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -188,6 +192,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             -- obtain turtleId
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
@@ -213,6 +218,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
         materialsItemsLocator           = materialsItemsLocator:copy(),
         itemDepotLocator                = itemDepotLocator:copy(),
         ingredientsItemSupplierLocator  = materialsItemSupplierLocator:copy(),
+        wasteItemDepotLocator           = wasteItemDepotLocator,
 
         metaData                        = metaData,
         taskCall                        = taskCall,

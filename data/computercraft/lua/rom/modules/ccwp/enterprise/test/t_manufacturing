@@ -37,6 +37,7 @@ function t_manufacturing.T_BuildAndStartNewV1Site()
         upgrade                     = false,
         siteLocator                 = nil,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callbackBuildAndStartNewV1Site)
 end
 
@@ -66,6 +67,7 @@ function t_manufacturing.T_BuildAndStartNewV2Site()
         upgrade                     = true,
         siteLocator                 = siteLocatorV1,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -77,6 +79,7 @@ function t_manufacturing.T_StopAndDismantleV1Site()
         baseLocation                = baseLocationV1,
         siteVersion                 = "v1",
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -88,6 +91,7 @@ function t_manufacturing.T_BuildNewV0Site()
         siteVersion                 = "v0",
         upgrade                     = false,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 
@@ -116,6 +120,7 @@ local function DismantleV0Site(baseLocation)
         siteVersion                 = "v0",
         siteStopped                 = true,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 

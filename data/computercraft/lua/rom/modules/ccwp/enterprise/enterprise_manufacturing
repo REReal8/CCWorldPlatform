@@ -117,6 +117,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
                 upgrade                         + (boolean, false) if site should (only) be updated from a previous version
                 siteLocator                     - (URL, nil) locating the to be upgraded site
                 materialsItemSupplierLocator    - (URL) locating the host of the building materials
+                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -130,6 +131,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
             { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "siteVersion" },
             { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgrade" },
             { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+            { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
         }}
     )
     iStep = iStep + 1
@@ -177,7 +179,7 @@ end
 
 function enterprise_manufacturing.BuildNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, baseLocation, siteVersion, upgrade, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, serviceData, baseLocation, siteVersion, upgrade, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a new factory site.
 
         Return value:
@@ -193,6 +195,7 @@ function enterprise_manufacturing.BuildNewSite_ASrv(...)
                 siteVersion                     + (string) version string of the site
                 upgrade                         + (boolean, false) if site should (only) be updated from a previous version
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -210,6 +213,7 @@ function enterprise_manufacturing.BuildNewSite_ASrv(...)
         return Callback.ErrorCall(callback)
     end
     siteBuildData.materialsItemSupplierLocator = materialsItemSupplierLocator
+    siteBuildData.wasteItemDepotLocator = wasteItemDepotLocator
 
     -- let construction enterprise build the site
     if upgrade then
@@ -248,7 +252,7 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
     elseif siteVersion == "v2" then
         siteStartData = Factory.GetV2SiteStartData(serviceData)
     else
-        corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to start a factory site of version "..siteVersion)
+        corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Don't know how to start a factory site of version "..siteVersion)
         return {success = false}
     end
 
@@ -300,6 +304,7 @@ function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
                 baseLocation                    - (Location) world location of the base (lower left corner) of this site
                 siteVersion                     + (string) version string of the site
                 materialsItemSupplierLocator    - (URL) locating the host of the building materials
+                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StopAndDismantleSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -315,6 +320,7 @@ function enterprise_manufacturing.StopAndDismantleSite_ASrv(...)
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "siteVersion" },
                 { keyDef = "siteStopped"                    , sourceStep = 1, sourceKeyDef = "success" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
         },
         returnData  = {
@@ -334,7 +340,7 @@ end
 
 function enterprise_manufacturing.DismantleSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, siteVersion, siteStopped, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, serviceData, siteVersion, siteStopped, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service dismantles a factory site. Dismantling means the site is physically removed from minecraft world.
         Possibly part of the world is restored to a neutral (e.g. flat) state.
 
@@ -351,6 +357,7 @@ function enterprise_manufacturing.DismantleSite_ASrv(...)
                 siteVersion                     + (string) version string of the site
                 siteStopped                     + (boolean) confirmation that the site was already stopped
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.DismantleSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -372,6 +379,7 @@ function enterprise_manufacturing.DismantleSite_ASrv(...)
         return Callback.ErrorCall(callback)
     end
     siteDismantleBuildData.materialsItemSupplierLocator = materialsItemSupplierLocator
+    siteDismantleBuildData.wasteItemDepotLocator = wasteItemDepotLocator
 
     -- let construction enterprise dismantle the site
     return enterprise_construction.BuildBlueprint_ASrv(siteDismantleBuildData, callback)

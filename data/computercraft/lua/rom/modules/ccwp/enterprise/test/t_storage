@@ -38,6 +38,7 @@ function t_storage.T_BuildAndStartNewSite_ASrv()
         topChests                   = 2,
         layers                      = 2,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
 end
 

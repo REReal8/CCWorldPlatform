@@ -76,10 +76,11 @@ G  enterprise_project
 
 -  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
    -  v1
-      RG adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument    (done)
+      RG adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument                      (done)
+      R  add wasteItemDepotLocator to methods where (p|P)rovideItemsTo_AOSrv, and the parent methods of those, are used    (done)
       -  gebruik wasteItemDepotLocator in factory (done)
       -  gebruik wasteItemDepotLocator in forest, contruction
-      G  forrested return havested items so waste can be calculated
+      G  forrester return havested items so waste can be calculated
    -  v2
       -  create obj_wastehandler and enterprise_wastehandling
       -  turtle registers in (m)obj_wastehandler

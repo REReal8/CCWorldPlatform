@@ -45,6 +45,7 @@ function AddNewSite_ASrv(level, nTrees)
         forestLevel                 = level,
         nTrees                      = nTrees,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
 end
 
@@ -102,6 +103,7 @@ function ExtraCallback(...)
         targetLevel                 = levelWanted,
         targetNTrees                = treesWanted,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
 end
 
@@ -113,6 +115,7 @@ function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted, extr
         forestLevel                 = levelStart,
         nTrees                      = treesStart,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData})
 end
 
@@ -140,6 +143,7 @@ function UpgradeSite_ASrv_PrepCallback(...)
         targetLevel                 = levelWanted,
         targetNTrees                = treesWanted,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData })
 end
 

@@ -142,11 +142,13 @@ local function TriggerRefuelIfNeeded(turtleObj)
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
-        local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator()
+        local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator() -- ToDo: somehow get this passed into enterprise_turtle
+        local wasteItemDepotLocator = turtleLocator:copy()                      -- ToDo: somehow get this passed into enterprise_turtle
         local serviceData = {
             turtleLocator                   = turtleLocator,
             fuelAmount                      = refuelAmount,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+            wasteItemDepotLocator           = wasteItemDepotLocator,
 
             assignmentsPriorityKey          = priorityKey,
         }

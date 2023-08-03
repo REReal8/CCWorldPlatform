@@ -44,7 +44,7 @@ end
 
 function MObjHost:addMObj_ASrv(...)
     -- get & check input from description
-    local checkSuccess, className, constructParameters, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service add a new MObj and ensures it's ready for use. Adding consist of
             - registering a new MObj
             - building the MObj in the world
@@ -62,6 +62,7 @@ function MObjHost:addMObj_ASrv(...)
                 className                       + (string, "") with the name of the class of the MObj
                 constructParameters             + (table) parameters for constructing the MObj
                 materialsItemSupplierLocator    + (URL) locating the host for building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MObjHost:addMobj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -84,6 +85,7 @@ function MObjHost:addMObj_ASrv(...)
         buildLocation               = buildLocation,
         blueprint                   = blueprint,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = wasteItemDepotLocator,
 
         mobjLocator                 = mobjLocator,
     }
@@ -94,6 +96,7 @@ function MObjHost:addMObj_ASrv(...)
                 { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
                 { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
         },
         returnData  = {
@@ -157,7 +160,7 @@ end
 
 function MObjHost:removeMObj_ASrv(...)
     -- get & check input from description
-    local checkSuccess, mobjLocator, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, mobjLocator, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service removes a MObj. Removing consist of
             - waiting for running business to be completed
             - dismantle MObj in the world
@@ -176,6 +179,7 @@ function MObjHost:removeMObj_ASrv(...)
             serviceData                         - (table) data about this service
                 mobjLocator                     + (URL) locating the MObj
                 materialsItemSupplierLocator    + (URL) locating the host for dismantling materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MObjHost:removeMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -193,6 +197,7 @@ function MObjHost:removeMObj_ASrv(...)
         buildLocation               = buildLocation,
         blueprint                   = blueprint,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = wasteItemDepotLocator,
 
         hostLocator                 = self:getHostLocator(),
 
@@ -212,6 +217,7 @@ function MObjHost:removeMObj_ASrv(...)
                 { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
                 { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             -- delist MObj
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {

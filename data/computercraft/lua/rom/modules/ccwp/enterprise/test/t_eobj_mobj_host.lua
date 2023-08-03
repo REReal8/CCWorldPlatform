@@ -176,6 +176,7 @@ function T_MObjHost.T_addMObj_ASrv(serviceData, testsCallback)
         className                   = mobj_className,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
 

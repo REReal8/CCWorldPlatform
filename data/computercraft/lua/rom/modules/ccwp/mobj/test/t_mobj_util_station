@@ -18,8 +18,8 @@ function T_UtilStation.T_Build_Station()
     local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("T_UtilStation.T_Build_Station: Failed obtaining turtleLocator for turtle "..currentTurtleId) return end
 
     local siteBuildData = UtilStation.GetV1SiteBuildData()
-    siteBuildData.materialsItemSupplierLocator = enterprise_shop.GetShopLocator()
     siteBuildData.materialsItemSupplierLocator = currentTurtleLocator
+    siteBuildData.wasteItemDepotLocator = currentTurtleLocator:copy()
     enterprise_construction.BuildBlueprint_ASrv(siteBuildData, Callback.GetNewDummyCallBack())
 end
 

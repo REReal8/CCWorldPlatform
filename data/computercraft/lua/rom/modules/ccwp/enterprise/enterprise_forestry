@@ -32,7 +32,7 @@ local enterprise_construction = require "enterprise_construction"
 
 function enterprise_forestry.AddNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, forestLevel, nTrees, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, baseLocation, forestLevel, nTrees, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a new forest site and ensures it's ready for use.
 
         Return value:
@@ -49,6 +49,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
                 forestLevel                     + (number) level of the site
                 nTrees                          + (number) number of initial trees
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -105,6 +106,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
                 { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = "treeBaseLocation" },
                 { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }}
         )
 
@@ -112,6 +114,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         local treeBaseLocation  = baseLocation:copy()
         local targetBaseLayer = forest:getBaseLayer(forestLevel)
         projectData.materialsItemSupplierLocator= materialsItemSupplierLocator
+        projectData.wasteItemDepotLocator       = wasteItemDepotLocator
         projectData.treeBaseLocation            = treeBaseLocation
         projectData.treeLayer                   = targetBaseLayer
     end
@@ -149,7 +152,7 @@ end
 
 function enterprise_forestry.UpgradeSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This private async service upgrades a forest site from the current configuration (i.e. level, # trees, ...) to a new configuration.
 
         Note: downgrading a forest is not supported.
@@ -167,6 +170,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 targetLevel                     + (number) with forest level to upgrade to
                 targetNTrees                    + (number) number of trees to upgrade forest to
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -188,6 +192,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         targetLevel                 = targetLevel,
         treeLayer                   = targetTreeLayer,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = wasteItemDepotLocator,
     }
 
     -- add project steps for upgrading level
@@ -236,6 +241,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                         { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
                         { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = layerStr },
                         { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                        { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                     }}
                 )
 
@@ -276,6 +282,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                     { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
                     { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
                     { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 }}
             )
 
@@ -339,7 +346,7 @@ end
 
 function enterprise_forestry.BuildForestTree_ASrv(...)
     -- get & check input from description
-    local checkSuccess, treeBaseLocation, treeLayer, materialsItemSupplierLocator, callback = InputChecker.Check([[
+    local checkSuccess, treeBaseLocation, treeLayer, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This private async service extends the forest with 1 tree
 
         Return value:
@@ -354,17 +361,19 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
                 treeBaseLocation                + (Location) location of the base (lower left corner) of a forest tree (layer)
                 treeLayer                       + (LayerRectangle) tree layer to build
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- let construction enterprise build the tree
     local buildData = {
-        startpoint = treeBaseLocation:copy(),
-        buildFromAbove = true,
-        replacePresentObjects = false,
-        layer = treeLayer,
-        materialsItemSupplierLocator = materialsItemSupplierLocator,
+        startpoint                  = treeBaseLocation:copy(),
+        buildFromAbove              = true,
+        replacePresentObjects       = false,
+        layer                       = treeLayer,
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = wasteItemDepotLocator,
     }
     corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
     return enterprise_construction.BuildLayer_ASrv(buildData, callback)

@@ -79,13 +79,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local nTreeswanted = 6
     local settleData = {
         materialsItemSupplierLocator    = enterprise_shop.GetShopLocator(),
+        wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_turtle:TriggerRefuelIfNeeded
 
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
 
-        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle
+        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle:TriggerRefuelIfNeeded
 
         factoryVersion0                 = "v0",
         upgradeFalse                    = false,
@@ -135,6 +136,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "siteLocator" },
@@ -144,6 +146,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "forestLevel"                    , sourceStep = 0, sourceKeyDef = "forestLm1" },
                 { keyDef = "nTrees"                         , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "forestLocator" },
@@ -158,6 +161,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL0" },
                 { keyDef = "targetNTrees"                   , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
@@ -173,6 +177,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion1" },
                 { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 11, sourceKeyDef = "siteLocator" },
@@ -190,18 +195,21 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
                 { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL1" },
                 { keyDef = "targetNTrees"                   , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
                 { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL2" },
                 { keyDef = "targetNTrees"                   , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "factoryLocation" },
@@ -209,6 +217,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgradeToV2" },
                 { keyDef = "siteLocator"                    , sourceStep = 11, sourceKeyDef = "siteLocator" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 18, sourceKeyDef = "siteLocator" },
@@ -227,6 +236,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "topChests"                      , sourceStep = 0, sourceKeyDef = "topChests" },
                 { keyDef = "layers"                         , sourceStep = 0, sourceKeyDef = "layers" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"            , sourceStep = 22, sourceKeyDef = "siteLocator" },

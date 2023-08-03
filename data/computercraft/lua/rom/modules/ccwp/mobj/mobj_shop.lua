@@ -369,7 +369,7 @@ end
 
 function Shop:provideItemsTo_AOSrv(...)
     -- get & check input from description
-    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, provideItems, itemDepotLocator, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This async public ItemSupplier service provides specific items to an ItemDepot.
 
         Return value:
@@ -387,7 +387,7 @@ function Shop:provideItemsTo_AOSrv(...)
                 provideItems                    + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to provide
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where the production ingredients can be retrieved
-                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -432,6 +432,7 @@ function Shop:provideItemsTo_AOSrv(...)
                 { keyDef = "itemsLocator"                   , sourceStep = iStep - 1, sourceKeyDef = "itemLocator" }, -- note: from itemLocator to itemsLocator as ProvideItemsTo_ASrv method could handle multiple
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
@@ -447,6 +448,7 @@ function Shop:provideItemsTo_AOSrv(...)
     projectData.itemDepotLocator = itemDepotLocator
     -- ToDo: consider first locally gathering the ordered items and sending them in one go to the itemDepotLocator if all off them are obtained.
     projectData.ingredientsItemSupplierLocator = ingredientsItemSupplierLocator
+    projectData.wasteItemDepotLocator = wasteItemDepotLocator
     projectData.assignmentsPriorityKey = assignmentsPriorityKey
     projectData.shop = self:copy() -- ToDo: consider providing locator at some point, to allow for things to change while performing async project
 

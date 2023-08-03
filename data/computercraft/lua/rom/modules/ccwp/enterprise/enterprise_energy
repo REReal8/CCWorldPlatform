@@ -46,7 +46,7 @@ end
 
 local function Refuel_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleLocator, fuelItems, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleLocator, fuelItems, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service (re)fuels a turtle from fuelItems.
 
         Return value:
@@ -61,6 +61,7 @@ local function Refuel_ASrv(...)
                 turtleLocator                   + (URL) locator of the turtle
                 fuelItems                       + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to fuel with
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
@@ -71,7 +72,6 @@ local function Refuel_ASrv(...)
     local turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = turtleLocator }).turtleId if not turtleId then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtleId from turtleLocator="..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
     local fuelItemsLocator = ingredientsItemSupplierLocator:copy()
     fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
---    corelog.WriteToLog("    fuelItemsLocator="..fuelItemsLocator:getURI()..".")
     local refuelTaskData = {
         -- ToDo: consider passing turtleLocator
         turtleId    = turtleId,
@@ -85,6 +85,7 @@ local function Refuel_ASrv(...)
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "fuelItemsLocator" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "turtleLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
@@ -106,6 +107,7 @@ local function Refuel_ASrv(...)
         fuelItemsLocator                = fuelItemsLocator,
         turtleLocator                   = turtleLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
 
         refuelMetaData                  = role_fuel_worker.Refuel_MetaData(refuelTaskData),
         refuelTaskCall                  = TaskCall:new({ _moduleName = "role_fuel_worker", _methodName = "Refuel_Task", _data = refuelTaskData, }),
@@ -124,7 +126,7 @@ end
 
 function enterprise_energy.ProvideFuelTo_ASrv(...)
     -- get & check input from description
-    local checkSuccess, turtleLocator, fuelAmount, ingredientsItemSupplierLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+    local checkSuccess, turtleLocator, fuelAmount, ingredientsItemSupplierLocator, wasteItemDepotLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
         This public async service provides fuel to a turtle.
 
         Return value:
@@ -139,6 +141,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
                 turtleLocator                   + (URL) locator of the turtle
                 fuelAmount                      + (number) fuel amount to provide to turtle
                 ingredientsItemSupplierLocator  + (URL) locating where the fuel ingredients can be retrieved
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
                 assignmentsPriorityKey          + (string, "") priorityKey that should be set for all assignments triggered by this service
             callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
@@ -152,6 +155,7 @@ function enterprise_energy.ProvideFuelTo_ASrv(...)
         turtleLocator                   = turtleLocator,
         fuelItems                       = fuelItemsNeed,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
+        wasteItemDepotLocator           = wasteItemDepotLocator,
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }
     corelog.WriteToLog("* Refuelling Turtle "..turtleLocator:getURI().." with "..fuelAmount.." fuel *")

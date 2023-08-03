@@ -331,10 +331,12 @@ function Turtle:storeItemsFrom_AOSrv(...)
 
         -- have source ItemSupplier provideItemsTo Turtle
         local ingredientsItemSupplierLocator = itemsLocator:copy() -- note: this is intended as a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)
+        local wasteItemDepotLocator = turtleLocator:copy() -- note: only added because ProvideItemsTo_ASrv asks for it. It will/ should also not be used/ needed as storing items implies no waste.
         local serviceData = {
             itemsLocator                = itemsLocator,
             itemDepotLocator            = turtleLocator,
             ingredientsItemSupplierLocator = ingredientsItemSupplierLocator,
+            wasteItemDepotLocator       = wasteItemDepotLocator,
             assignmentsPriorityKey      = assignmentsPriorityKey,
         }
         return enterprise_isp.ProvideItemsTo_ASrv(serviceData, callback)

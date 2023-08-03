@@ -52,6 +52,7 @@ function enterprise_storage.BuildAndStartNewSite_ASrv(...)
                     { keyDef = "topChests"                      , sourceStep = 0, sourceKeyDef = "topChests" },
                     { keyDef = "layers"                         , sourceStep = 0, sourceKeyDef = "layers" },
                     { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 }},
                 { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_storage", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
                     { keyDef = "type"                   , sourceStep = 0, sourceKeyDef = "type" },

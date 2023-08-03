@@ -384,6 +384,7 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localInputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
+                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- produce items
