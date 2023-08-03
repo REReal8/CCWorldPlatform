@@ -214,13 +214,7 @@ function MObjHost:removeMObj_ASrv(...)
                 { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
             }},
-
             -- delist MObj
-            -- ToDo: what is best way to do this?
---            { stepType = "SOSrv", stepTypeDef = { className = "MObjHost", serviceName = "delistMObj_SSrv", objStep = 0, objKeyDef = "mobjHost" }, stepDataDef = {
---                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
---            }},
---            OR
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
             }},
