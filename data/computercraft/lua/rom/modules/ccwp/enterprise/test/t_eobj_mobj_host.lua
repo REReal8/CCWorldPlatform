@@ -21,14 +21,13 @@ function T_MObjHost.T_All()
     -- service methods
     T_MObjHost.T_registerMObj_SSrv()
     T_MObjHost.T_delistMObj_SSrv()
-    local callback = Callback:new({ _moduleName = "enterprise_assignmentboard", _methodName = "Dummy_Callback", _data = { }, })
     local projectServiceData = { projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { },
         projectDef  = { steps = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_addMObj_ASrv" }, stepDataDef = {} },
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_removeMObj_ASrv" }, stepDataDef = {} },
             }, returnData  = { } },
     }
-    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    enterprise_projects.StartProject_ASrv(projectServiceData, Callback.GetNewDummyCallBack())
 end
 
 local hostName = "TestMObjHost"
@@ -154,6 +153,8 @@ function T_MObjHost.T_registerMObj_SSrv()
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
 
+    -- check child MObj's registered
+    -- ToDo: implement test(s)
 
     -- cleanup test
     host1:deleteObjects("TestMObj")
@@ -200,6 +201,8 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     local mobj = host1:getObject(mobjLocator)
     assert(mobj, "MObj not registered")
 
+    -- check build blueprint constructed
+    -- ToDo: add mock test
 
     -- cleanup test
     host1:deleteResource(mobjLocator)
@@ -237,6 +240,9 @@ function T_MObjHost.T_delistMObj_SSrv()
     -- check mobj deleted
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
+
+    -- check child MObj's delisted
+    -- ToDo: implement test(s)
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
@@ -285,6 +291,9 @@ function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
     local mobjLocator = callbackData["mobjLocator"]
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
+
+    -- check dismantle blueprint "build"
+    -- ToDo: add mock test
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
