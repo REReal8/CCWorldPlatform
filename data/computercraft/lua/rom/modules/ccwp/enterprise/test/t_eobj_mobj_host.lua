@@ -197,6 +197,8 @@ function T_MObjHost.hostAndBuildMObj_ASrv_Callback(callbackData, serviceResults)
     local mobj = host1:getObject(mobjLocator)
     assert(mobj, "MObj not hosted")
 
+    -- check build blueprint build
+    -- ToDo: add mock test
 
     -- cleanup test
     host1:deleteResource(mobjLocator)
@@ -283,6 +285,9 @@ function T_MObjHost.dismantleAndReleaseMObj_ASrv_Callback(callbackData, serviceR
     local mobjLocator = callbackData["mobjLocator"]
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
+
+    -- check dismantle blueprint "build"
+    -- ToDo: add mock test
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
