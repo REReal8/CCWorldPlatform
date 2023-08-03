@@ -38,7 +38,7 @@ function Inventory:new(...)
 end
 
 function Inventory:getClassName()
-    return "Chest"
+    return "Inventory"
 end
 
 function Inventory:getSlotTable()
