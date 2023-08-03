@@ -7,9 +7,11 @@ R  finish MObjHost
    R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
    -  (re)consider relevant method naming:
-      - now:      addNew      register    build       construct      save        -  remove      delist      dismantle   destruct    deleteResource
-      - option1:  createNew   ?           build       construct      ?           -  destroy     ?           dismantle   destruct    ?
-      - option2:
+                  MObjHost          MObjHost       (MObj)Host  MObj           MObj        -  MObjHost                MObjHost    (MObj)Host     MObj                 MObj        -  ent_constr
+      - now:      addMObj           registerMObj   saveObject  buildBlueprint construct   -  removeMObj              delistMObj  deleteResource dismantleBlueprint   destruct    -  build
+      - option1:  createNew         ?              ?           buildBlueprint construct   -  destroy                 ?           ?              dismantleBlueprint   destruct    -  build
+      - option2:  buildAndHostMObj  hostMObj       saveObject  buildBlueprint construct   -  releaseAndDismantleMObj releaseMObj deleteResource dismantleBlueprint   destruct    -  build
+      - based on the following conversation I have chosen option 2: https://chat.openai.com/share/65d3e63b-7618-4522-a436-e88964f4d293
    -  Support updating of MObj's
 
 R  Dummy callback             (done)

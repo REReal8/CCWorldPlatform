@@ -19,11 +19,11 @@ function T_MObjHost.T_All()
     T_MObjHost.T_new()
 
     -- service methods
-    T_MObjHost.T_registerMObj_SSrv()
-    T_MObjHost.T_delistMObj_SSrv()
+    T_MObjHost.T_hostMObj_SSrv()
+    T_MObjHost.T_releaseMObj_SSrv()
     enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_addMObj_ASrv" }, stepDataDef = {} },
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_removeMObj_ASrv" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_buildAndHostMObj_ASrv" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_releaseAndDismantleMObj_ASrv" }, stepDataDef = {} },
         }, returnData  = { } }, }, Callback.GetNewDummyCallBack())
 end
 
@@ -125,18 +125,18 @@ local constructParameters = {
     field1Value     = field1SetValue,
 }
 
-function T_MObjHost.T_registerMObj_SSrv()
+function T_MObjHost.T_hostMObj_SSrv()
     -- prepare test
-    corelog.WriteToLog("* MObjHost:registerMObj_SSrv() tests")
+    corelog.WriteToLog("* MObjHost:hostMObj_SSrv() tests")
 
     -- test
-    local serviceResults = host1:registerMObj_SSrv({
+    local serviceResults = host1:hostMObj_SSrv({
         className           = mobj_className,
         constructParameters = constructParameters,
     })
 
-    -- check registration success
-    assert(serviceResults and serviceResults.success, "failed registering MObj")
+    -- check hosting success
+    assert(serviceResults and serviceResults.success, "failed hosting MObj")
 
     -- check mobjLocator returned
     local mobjLocator = serviceResults.mobjLocator
@@ -155,9 +155,9 @@ function T_MObjHost.T_registerMObj_SSrv()
     host1:deleteObjects("TestMObj")
 end
 
-function T_MObjHost.T_addMObj_ASrv(serviceData, testsCallback)
+function T_MObjHost.T_buildAndHostMObj_ASrv(serviceData, testsCallback)
     -- prepare test
-    corelog.WriteToLog("* MObjHost:addMObj_ASrv() tests")
+    corelog.WriteToLog("* MObjHost:buildAndHostMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
     local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
 
@@ -165,14 +165,14 @@ function T_MObjHost.T_addMObj_ASrv(serviceData, testsCallback)
 
     local callback = Callback:new({
         _moduleName     = "T_MObjHost",
-        _methodName     = "addMObj_ASrv_Callback",
+        _methodName     = "buildAndHostMObj_ASrv_Callback",
         _data           = {
             ["testsCallback"]   = testsCallback,
         },
     })
 
     -- test
-    local scheduleResult = host1:addMObj_ASrv({
+    local scheduleResult = host1:buildAndHostMObj_ASrv({
         className                   = mobj_className,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
@@ -184,18 +184,18 @@ function T_MObjHost.T_addMObj_ASrv(serviceData, testsCallback)
     return true
 end
 
-function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
+function T_MObjHost.buildAndHostMObj_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
-    -- check addition success
-    assert(serviceResults and serviceResults.success, "failed adding MObj")
+    -- check buildAndHostMObj_ASrv success
+    assert(serviceResults and serviceResults.success, "failed building and hosting MObj")
 
     -- check mobjLocator returned
     local mobjLocator = URL:new(serviceResults.mobjLocator)
     assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
 
-    -- check mobj registered (full check done in T_registerMObj_SSrv)
+    -- check mobj hosted (full check done in T_hostMObj_SSrv)
     local mobj = host1:getObject(mobjLocator)
-    assert(mobj, "MObj not registered")
+    assert(mobj, "MObj not hosted")
 
 
     -- cleanup test
@@ -213,23 +213,23 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     end
 end
 
-function T_MObjHost.T_delistMObj_SSrv()
+function T_MObjHost.T_releaseMObj_SSrv()
     -- prepare test
-    corelog.WriteToLog("* MObjHost:delistMObj_SSrv() tests")
+    corelog.WriteToLog("* MObjHost:releaseMObj_SSrv() tests")
     moduleRegistry:registerModule(hostName, host1)
-    local serviceResults = host1:registerMObj_SSrv({
+    local serviceResults = host1:hostMObj_SSrv({
         className           = mobj_className,
         constructParameters = constructParameters,
     })
     local mobjLocator = URL:new(serviceResults.mobjLocator)
 
     -- test
-    serviceResults = host1:delistMObj_SSrv({
+    serviceResults = host1:releaseMObj_SSrv({
         mobjLocator         = mobjLocator,
     })
 
-    -- check delisting success
-    assert(serviceResults and serviceResults.success, "failed delisting MObj")
+    -- check releasing success
+    assert(serviceResults and serviceResults.success, "failed releasing MObj")
 
     -- check mobj deleted
     local mobjResourceTable = host1:getResource(mobjLocator)
@@ -239,13 +239,13 @@ function T_MObjHost.T_delistMObj_SSrv()
     moduleRegistry:delistModule(hostName)
 end
 
-function T_MObjHost.T_removeMObj_ASrv(serviceData, testsCallback)
+function T_MObjHost.T_releaseAndDismantleMObj_ASrv(serviceData, testsCallback)
     -- prepare test
-    corelog.WriteToLog("* MObjHost:removeMObj_ASrv() tests")
+    corelog.WriteToLog("* MObjHost:releaseAndDismantleMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
     local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
 
-    local serviceResults = host1:registerMObj_SSrv({
+    local serviceResults = host1:hostMObj_SSrv({
         className           = mobj_className,
         constructParameters = constructParameters,
     })
@@ -255,7 +255,7 @@ function T_MObjHost.T_removeMObj_ASrv(serviceData, testsCallback)
 
     local callback = Callback:new({
         _moduleName     = "T_MObjHost",
-        _methodName     = "removeMObj_ASrv_Callback",
+        _methodName     = "releaseAndDismantleMObj_ASrv_Callback",
         _data           = {
             ["mobjLocator"]     = mobjLocator,
             ["testsCallback"]   = testsCallback,
@@ -263,7 +263,7 @@ function T_MObjHost.T_removeMObj_ASrv(serviceData, testsCallback)
     })
 
     -- test
-    local scheduleResult = host1:removeMObj_ASrv({
+    local scheduleResult = host1:releaseAndDismantleMObj_ASrv({
         mobjLocator                 = mobjLocator,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
@@ -274,10 +274,10 @@ function T_MObjHost.T_removeMObj_ASrv(serviceData, testsCallback)
     return true
 end
 
-function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
+function T_MObjHost.releaseAndDismantleMObj_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
-    -- check removeMObj_ASrv success
-    assert(serviceResults and serviceResults.success, "failed removing MObj")
+    -- check releaseAndDismantleMObj_ASrv success
+    assert(serviceResults and serviceResults.success, "failed releasing and dismantling MObj")
 
     -- check mobj deleted
     local mobjLocator = callbackData["mobjLocator"]

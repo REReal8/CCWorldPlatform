@@ -42,11 +42,11 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function MObjHost:addMObj_ASrv(...)
+function MObjHost:buildAndHostMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service add a new MObj and ensures it's ready for use. Adding consist of
-            - registering a new MObj
+        This async public service builds and hosts a new MObj. It consist of
+            - hosting a new MObj
             - building the MObj in the world
 
         Return value:
@@ -65,20 +65,20 @@ function MObjHost:addMObj_ASrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MObjHost:addMobj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- register new MObj
-    local serviceResult = self:registerMObj_SSrv({ className = className, constructParameters = constructParameters})
-    if not serviceResult or not serviceResult.success then corelog.Error("MObjHost:addMobj_ASrv: Failed registering a new "..className..".") return Callback.ErrorCall(callback) end
+    -- hosting new MObj
+    local serviceResult = self:hostMObj_SSrv({ className = className, constructParameters = constructParameters})
+    if not serviceResult or not serviceResult.success then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Failed hosting a new "..className..".") return Callback.ErrorCall(callback) end
 
     -- get MObj
     local mobjLocator = serviceResult.mobjLocator
     local mobj = self:getObject(mobjLocator)
-    if not mobj then corelog.Error("MObjHost:addMobj_ASrv: Failed obtaining "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    if not mobj then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Failed obtaining "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getBuildBlueprint()
-    if not buildLocation or not blueprint then corelog.Error("MObjHost:addMobj_ASrv: Failed obtaining build blueprint for "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    if not buildLocation or not blueprint then corelog.Error("MObjHost:buildAndHostMObj_ASrv: Failed obtaining build blueprint for "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local projectData = {
@@ -113,11 +113,11 @@ function MObjHost:addMObj_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function MObjHost:registerMObj_SSrv(...)
+function MObjHost:hostMObj_SSrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters = InputChecker.Check([[
-        This sync public service registers a new MObj in the MObjHost. Registration consist of
-            - construction of a new inactive MObj instance
+        This sync public service hosts a new MObj in the MObjHost. Hosting consist of
+            - construction of a new MObj instance
             - saving the instance in the MObjHost.
 
         Note that the MObj is not physically build in the world.
@@ -132,23 +132,23 @@ function MObjHost:registerMObj_SSrv(...)
                 className           + (string, "") with the name of the class of the MObj
                 constructParameters + (table) parameters for constructing the MObj
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MObjHost:registerMObj_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("MObjHost:hostMObj_SSrv: Invalid input") return {success = false} end
 
     -- log
-    corelog.WriteToLog(">Registering new "..className..".")
+    corelog.WriteToLog(">Hosting new "..className..".")
 
     -- get class
     local class = objectFactory:getClass(className)
-    if not class then corelog.Error("MObjHost:registerMObj_SSrv: Class "..className.." not found in objectFactory") return {success = false} end
-    if not IMObj.ImplementsInterface(class) then corelog.Error("MObjHost:registerMObj_SSrv: Class "..className.." does not (fully) implement IMObj interface") return {success = false} end
+    if not class then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." not found in objectFactory") return {success = false} end
+    if not IMObj.ImplementsInterface(class) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." does not (fully) implement IMObj interface") return {success = false} end
 
     -- construct new MObj
     local mobj = class:construct(constructParameters)
-    if not mobj then corelog.Error("MObjHost:registerMObj_SSrv: Failed constructing "..className.." from constructParameters(="..textutils.serialise(constructParameters)..")") return {success = false} end
+    if not mobj then corelog.Error("MObjHost:hostMObj_SSrv: Failed constructing "..className.." from constructParameters(="..textutils.serialise(constructParameters)..")") return {success = false} end
 
     -- save the MObj
     local mobjLocator = self:saveObject(mobj)
-    if not mobjLocator then corelog.Error("MObjHost:registerMObj_SSrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return {success = false} end
+    if not mobjLocator then corelog.Error("MObjHost:hostMObj_SSrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return {success = false} end
 
     -- end
     local result = {
@@ -158,15 +158,15 @@ function MObjHost:registerMObj_SSrv(...)
     return result
 end
 
-function MObjHost:removeMObj_ASrv(...)
+function MObjHost:releaseAndDismantleMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, mobjLocator, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service removes a MObj. Removing consist of
+        This async public service releases and dismantles a MObj. It consists of
             - waiting for running business to be completed
-            - dismantle MObj in the world
-            - delisting the MObj
+            - dismantling the MObj in the world
+            - releasing the MObj
 
-        This service assumes the MObj will not get any new business, i.e. it was already delisted in users of the MObj.
+        This service assumes the MObj will not get any new business, i.e. it was already delisted for users of the MObj.
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -182,15 +182,15 @@ function MObjHost:removeMObj_ASrv(...)
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MObjHost:removeMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("MObjHost:releaseAndDismantleMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:removeMObj_ASrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
+    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:releaseAndDismantleMObj_ASrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getDismantleBlueprint()
-    if not buildLocation or not blueprint then corelog.Error("MObjHost:addMobj_ASrv: Failed obtaining dismantle blueprint for "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
+    if not buildLocation or not blueprint then corelog.Error("MObjHost:releaseAndDismantleMObj_ASrv: Failed obtaining dismantle blueprint for "..mobjLocator:getURI()..".") return Callback.ErrorCall(callback) end
 
     -- create project definition
     local projectData = {
@@ -219,8 +219,8 @@ function MObjHost:removeMObj_ASrv(...)
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
-            -- delist MObj
-            { stepType = "LSOSrv", stepTypeDef = { serviceName = "delistMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            -- release MObj
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "releaseMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
             }},
         },
@@ -237,10 +237,10 @@ function MObjHost:removeMObj_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function MObjHost:delistMObj_SSrv(...)
+function MObjHost:releaseMObj_SSrv(...)
     -- get & check input from description
     local checkSuccess, mobjLocator = InputChecker.Check([[
-        This async public service delists a MObj from the MObjHost. Delisting implies
+        This async public service releases a MObj from the MObjHost. Releasing implies
             - destruction of an MObj instance
             - deleting the instance from the MObjHost.
 
@@ -254,22 +254,22 @@ function MObjHost:delistMObj_SSrv(...)
             serviceData                         - (table) data about this service
                 mobjLocator                     + (URL) locating the MObj
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MObjHost:delistMObj_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("MObjHost:releaseMObj_SSrv: Invalid input") return {success = false} end
 
     -- log
-    corelog.WriteToLog(">Delisting "..mobjLocator:getURI())
+    corelog.WriteToLog(">Releasing "..mobjLocator:getURI())
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:delistMObj_SSrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
 
     -- destuct MObj
     local success = mobj:destruct()
-    if not success then corelog.Error("MObjHost:registerMObj_SSrv: Failed destructing "..mobjLocator:getURI()) return {success = false} end
+    if not success then corelog.Error("MObjHost:releaseMObj_SSrv: Failed destructing "..mobjLocator:getURI()) return {success = false} end
 
     -- remove MObj from MObjHost
     success = self:deleteResource(mobjLocator)
-    if not success then corelog.Error("MObjHost:registerMObj_SSrv: Failed deleting "..mobjLocator:getURI()) return {success = false} end
+    if not success then corelog.Error("MObjHost:releaseMObj_SSrv: Failed deleting "..mobjLocator:getURI()) return {success = false} end
 
     -- end
     return {success = success}
