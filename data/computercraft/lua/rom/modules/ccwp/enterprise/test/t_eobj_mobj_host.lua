@@ -266,6 +266,7 @@ function T_MObjHost.T_removeMObj_ASrv(serviceData, testsCallback)
     local scheduleResult = host1:removeMObj_ASrv({
         mobjLocator                 = mobjLocator,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
 
