@@ -10,6 +10,7 @@ local URL = require "obj_url"
 local Location = require "obj_location"
 
 local MObjHost = require "eobj_mobj_host"
+local enterprise_projects = require "enterprise_projects"
 
 local t_turtle = require "test.t_turtle"
 
@@ -19,9 +20,15 @@ function T_MObjHost.T_All()
 
     -- service methods
     T_MObjHost.T_registerMObj_SSrv()
-    T_MObjHost.T_addMObj_ASrv()
     T_MObjHost.T_delistMObj_SSrv()
---    T_MObjHost.T_removeMObj_ASrv()
+    local callback = Callback:new({ _moduleName = "enterprise_assignmentboard", _methodName = "Dummy_Callback", _data = { }, })
+    local projectServiceData = { projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { },
+        projectDef  = { steps = {
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_addMObj_ASrv" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_removeMObj_ASrv" }, stepDataDef = {} },
+            }, returnData  = { } },
+    }
+    enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 local hostName = "TestMObjHost"
@@ -152,7 +159,7 @@ function T_MObjHost.T_registerMObj_SSrv()
     host1:deleteObjects("TestMObj")
 end
 
-function T_MObjHost.T_addMObj_ASrv()
+function T_MObjHost.T_addMObj_ASrv(serviceData, testsCallback)
     -- prepare test
     corelog.WriteToLog("* MObjHost:addMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
@@ -164,7 +171,7 @@ function T_MObjHost.T_addMObj_ASrv()
         _moduleName     = "T_MObjHost",
         _methodName     = "addMObj_ASrv_Callback",
         _data           = {
---            ["field1SetValue"]  = field1SetValue,
+            ["testsCallback"]   = testsCallback,
         },
     })
 
@@ -175,6 +182,9 @@ function T_MObjHost.T_addMObj_ASrv()
         materialsItemSupplierLocator= materialsItemSupplierLocator,
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
+
+    -- end
+    return true
 end
 
 function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
@@ -196,7 +206,14 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     moduleRegistry:delistModule(hostName)
 
     -- end
-    return true
+    local testsCallback = callbackData["testsCallback"]
+    if testsCallback then
+        -- report we are done with testing
+        testsCallback = Callback:new(testsCallback)
+        return testsCallback:call({success = true})
+    else
+        return true
+    end
 end
 
 function T_MObjHost.T_delistMObj_SSrv()
@@ -225,7 +242,7 @@ function T_MObjHost.T_delistMObj_SSrv()
     moduleRegistry:delistModule(hostName)
 end
 
-function T_MObjHost.T_removeMObj_ASrv()
+function T_MObjHost.T_removeMObj_ASrv(serviceData, testsCallback)
     -- prepare test
     corelog.WriteToLog("* MObjHost:removeMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
@@ -243,7 +260,8 @@ function T_MObjHost.T_removeMObj_ASrv()
         _moduleName     = "T_MObjHost",
         _methodName     = "removeMObj_ASrv_Callback",
         _data           = {
-            ["mobjLocator"]  = mobjLocator,
+            ["mobjLocator"]     = mobjLocator,
+            ["testsCallback"]   = testsCallback,
         },
     })
 
@@ -253,6 +271,9 @@ function T_MObjHost.T_removeMObj_ASrv()
         materialsItemSupplierLocator= materialsItemSupplierLocator,
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
+
+    -- end
+    return true
 end
 
 function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
@@ -269,7 +290,14 @@ function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
     moduleRegistry:delistModule(hostName)
 
     -- end
-    return true
+    local testsCallback = callbackData["testsCallback"]
+    if testsCallback then
+        -- report we are done with testing
+        testsCallback = Callback:new(testsCallback)
+        return testsCallback:call({success = true})
+    else
+        return true
+    end
 end
 
 return T_MObjHost

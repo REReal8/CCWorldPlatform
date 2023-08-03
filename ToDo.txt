@@ -3,7 +3,7 @@ ToDo List
 
 R  finish MObjHost
    R  test delistMObj_SSrv                                        (done)
-   R  test removeMObj_ASrv
+   R  test removeMObj_ASrv                                        (done)
    R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
    -  (re)consider relevant method naming:
@@ -11,6 +11,10 @@ R  finish MObjHost
       - option1:  createNew   ?           build       construct      ?           -  destroy     ?           dismantle   destruct    ?
       - option2:
    -  Support updating of MObj's
+
+R  Dummy callback
+   R  in more logical class
+   R  easier way to obtaine
 
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
