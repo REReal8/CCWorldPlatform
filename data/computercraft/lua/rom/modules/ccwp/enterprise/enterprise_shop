@@ -57,6 +57,7 @@ function enterprise_shop:getShop()
                 _objClassName   = locatorClassName,
             }),
         })
+        corelog.WriteToLog("Creating Shop "..shop:getId())
 
         -- save it
         local objLocator = self:saveObject(shop)
