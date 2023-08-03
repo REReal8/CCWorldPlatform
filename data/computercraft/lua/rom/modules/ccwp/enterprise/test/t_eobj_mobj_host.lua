@@ -265,9 +265,6 @@ function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
 
-    -- check dismantle blueprint "build"
-    -- ToDo: add mock test
-
     -- cleanup test
     moduleRegistry:delistModule(hostName)
 
