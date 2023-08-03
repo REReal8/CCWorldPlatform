@@ -336,11 +336,6 @@ function enterprise_assignmentboard.EndAssignment(assignmentId) -- ToDo: make th
     corelog.WriteToAssignmentLog("Ended", assignmentId)
 end
 
-function enterprise_assignmentboard.Dummy_Callback(emptyTable)
-    corelog.WriteToAssignmentLog("Dummy_Callback called")
-    -- do nothing
-end
-
 function enterprise_assignmentboard.Reset()
     -- end assignments
     enterprise_assignmentboard.EndAssignments()

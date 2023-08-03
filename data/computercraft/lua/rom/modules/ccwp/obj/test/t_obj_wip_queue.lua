@@ -45,11 +45,7 @@ local callbackClassName = "Callback"
 local callbackList1 = ObjArray:new({
     _objClassName   = callbackClassName,
 }) if not callbackList1 then return end
-local callback1 = Callback:new({
-    _moduleName     = "enterprise_assignmentboard",
-    _methodName     = "Dummy_Callback",
-    _data           = {},
-})
+local callback1 = Callback.GetNewDummyCallBack()
 
 local compact = { compact = true }
 

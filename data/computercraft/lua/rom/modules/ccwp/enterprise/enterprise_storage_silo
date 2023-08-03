@@ -38,11 +38,6 @@ end
 
 function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
     -- variables
-    local callback = Callback:new({
-        _moduleName     = "enterprise_assignmentboard",
-        _methodName     = "Dummy_Callback",
-        _data           = { },
-    })
     local assignmentMeta        = {
         startTime       = 0,
         location        = location:copy(),
@@ -60,7 +55,7 @@ function ItemsDelivered(sitesIndex, topChestIndex, itemList, location)
         metaData    = assignmentMeta,
         taskCall    = TaskCall:new({ _moduleName = "role_storage_silo_worker", _methodName = "ItemsDelivered_Task", _data = assignmentArguments, }),
     }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, Callback.GetNewDummyCallBack())
 end
 
 function ItemPresent(site, itemName)
@@ -250,12 +245,6 @@ function FindSiteByTopChest(site, location)
 end
 
 function CheckIntegrity(site)
-    local callback = Callback:new({
-        _moduleName     = "enterprise_assignmentboard",
-        _methodName     = "Dummy_Callback",
-        _data           = { },
-    })
-
     -- meta about the assignment, for the selection procedure
     local assignmentMeta        = {
         startTime       = 0,
@@ -275,7 +264,7 @@ function CheckIntegrity(site)
         metaData    = assignmentMeta,
         taskCall    = TaskCall:new({ _moduleName = "role_storage_silo_worker", _methodName = "CheckIntegrity_Task", _data = assignmentArguments, }),
     }
-    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
+    return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, Callback.GetNewDummyCallBack())
 end
 
 --    _           _ _     _               _   _                                 _     _                       _       _

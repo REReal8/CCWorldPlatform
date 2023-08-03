@@ -243,14 +243,8 @@ function T_Silo.T_GetRandomSilo()
         ["minecraft:coal"]          = 7,
     }
 
-    local callback = Callback:new({
-        _moduleName     = "enterprise_assignmentboard",
-        _methodName     = "Dummy_Callback",
-        _data           = {},
-    })
-
     -- test
-    silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_turtle.GetCurrentTurtleLocator()}, callback)
+    silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_turtle.GetCurrentTurtleLocator()}, Callback.GetNewDummyCallBack())
 end
 
 return T_Silo

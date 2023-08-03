@@ -762,23 +762,16 @@ end
 --]]
 
 function Silo:IntegretyCheck(...)
-
-    local callback = Callback:new({
-        _moduleName     = "enterprise_assignmentboard",
-        _methodName     = "Dummy_Callback",
-        _data           = {},
-    })
-
     -- check all top chests
     for i, chestLocator in ipairs(self._topChests) do
         local chest = Host.GetObject(chestLocator)
-        if chest then chest:updateChestRecord_AOSrv({}, callback) end
+        if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
     end
 
     -- check all storage chests
     for i, chestLocator in ipairs(self._storageChests) do
         local chest = Host.GetObject(chestLocator)
-        if chest then chest:updateChestRecord_AOSrv({}, callback) end
+        if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
     end
 end
 

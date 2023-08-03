@@ -13,21 +13,14 @@ local UtilStation = require "mobj_util_station"
 function T_UtilStation.T_Build_Station()
     corelog.WriteToLog("About to build Util Station!")
 
-    -- create callback
-    local callback = Callback:new({
-        _moduleName     = "enterprise_assignmentboard",
-        _methodName     = "Dummy_Callback",
-        _data           = {},
-    })
-
     -- get turtle locator
     local currentTurtleId = os.getComputerID()
-    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("T_UtilStation.T_Build_Station: Failed obtaining turtleLocator for turtle "..currentTurtleId) return Callback.ErrorCall(callback) end
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("T_UtilStation.T_Build_Station: Failed obtaining turtleLocator for turtle "..currentTurtleId) return end
 
     local siteBuildData = UtilStation.GetV1SiteBuildData()
     siteBuildData.materialsItemSupplierLocator = enterprise_shop.GetShopLocator()
     siteBuildData.materialsItemSupplierLocator = currentTurtleLocator
-    enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
+    enterprise_construction.BuildBlueprint_ASrv(siteBuildData, Callback.GetNewDummyCallBack())
 end
 
 return T_UtilStation
