@@ -6,6 +6,10 @@ R  finish MObjHost
    R  test removeMObj_ASrv
    R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
+   -  (re)consider relevant method naming:
+      - now:      addNew      register    build       construct      save        -  remove      delist      dismantle   destruct    deleteResource
+      - option1:  createNew   ?           build       construct      ?           -  destroy     ?           dismantle   destruct    ?
+      - option2:
    -  Support updating of MObj's
 
 RG ensure all MObj's follow IMObj interface
