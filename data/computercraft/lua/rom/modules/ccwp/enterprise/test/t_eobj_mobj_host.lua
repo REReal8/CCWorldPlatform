@@ -153,8 +153,6 @@ function T_MObjHost.T_registerMObj_SSrv()
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
 
-    -- check child MObj's registered
-    -- ToDo: implement test(s)
 
     -- cleanup test
     host1:deleteObjects("TestMObj")
@@ -201,8 +199,6 @@ function T_MObjHost.addMObj_ASrv_Callback(callbackData, serviceResults)
     local mobj = host1:getObject(mobjLocator)
     assert(mobj, "MObj not registered")
 
-    -- check build blueprint constructed
-    -- ToDo: add mock test
 
     -- cleanup test
     host1:deleteResource(mobjLocator)
@@ -240,9 +236,6 @@ function T_MObjHost.T_delistMObj_SSrv()
     -- check mobj deleted
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
-
-    -- check child MObj's delisted
-    -- ToDo: implement test(s)
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
@@ -291,9 +284,6 @@ function T_MObjHost.removeMObj_ASrv_Callback(callbackData, serviceResults)
     local mobjLocator = callbackData["mobjLocator"]
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
-
-    -- check dismantle blueprint "build"
-    -- ToDo: add mock test
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
