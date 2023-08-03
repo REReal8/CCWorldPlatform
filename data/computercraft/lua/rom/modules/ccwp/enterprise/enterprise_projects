@@ -479,12 +479,10 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- get objLocator
         local objLocator = GetFieldValueFromDataUsingKeyDef(sourceStepData, locatorKeyDef)
         if type(objLocator) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objLocator field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
-        local className = Host.GetClassName(objLocator)
 
         -- get Obj
         local obj = Host.GetObject(objLocator)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return nil end
-        local objData = obj -- note: we sort of decast back to a table here. but that doesn't seem to be a problem
 
         --
         local callback = Callback:new({
@@ -495,7 +493,8 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." located async Obj service", projectId)
-        local scheduledCorrectly = MethodExecutor.DoASyncObjService(className, objData, serviceName, stepData, callback)
+        local scheduledCorrectly = MethodExecutor.CallInstanceMethod(obj, serviceName, { stepData, callback })
+        local className = Host.GetClassName(objLocator)
         if scheduledCorrectly ~= true then corelog.Error("enterprise_projects.NextProjectStep: Failed scheduling ("..type(scheduledCorrectly)..") LAOSrv service "..className..":"..serviceName.." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return nil end
         return scheduledCorrectly
     elseif stepType == "SOSrv" then
@@ -542,16 +541,14 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         -- get objLocator
         local objLocator = GetFieldValueFromDataUsingKeyDef(sourceStepData, locatorKeyDef)
         if type(objLocator) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objLocator field "..locatorKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return nil end
-        local className = Host.GetClassName(objLocator)
 
         -- get Obj
         local obj = Host.GetObject(objLocator)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return nil end
-        local objData = obj -- note: we sort of decast back to a table here. but that doesn't seem to be a problem
 
         -- do service, keep the results
         corelog.WriteToProjectsLog("Start step "..currentStep.." located sync Obj service", projectId)
-        local results = MethodExecutor.DoSyncObjService(className, objData, serviceName, stepData)
+        local results = MethodExecutor.CallInstanceMethod(obj, serviceName, { stepData })
 
         -- next step
         return enterprise_projects.NextProjectStep(internalProjectData, results)
