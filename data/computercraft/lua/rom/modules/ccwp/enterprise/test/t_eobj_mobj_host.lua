@@ -21,13 +21,10 @@ function T_MObjHost.T_All()
     -- service methods
     T_MObjHost.T_registerMObj_SSrv()
     T_MObjHost.T_delistMObj_SSrv()
-    local projectServiceData = { projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { },
-        projectDef  = { steps = {
+    enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_addMObj_ASrv" }, stepDataDef = {} },
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_removeMObj_ASrv" }, stepDataDef = {} },
-            }, returnData  = { } },
-    }
-    enterprise_projects.StartProject_ASrv(projectServiceData, Callback.GetNewDummyCallBack())
+        }, returnData  = { } }, }, Callback.GetNewDummyCallBack())
 end
 
 local hostName = "TestMObjHost"
