@@ -22,8 +22,8 @@ function T_MObjHost.T_All()
     T_MObjHost.T_hostMObj_SSrv()
     T_MObjHost.T_releaseMObj_SSrv()
     enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_buildAndHostMObj_ASrv" }, stepDataDef = {} },
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_releaseAndDismantleMObj_ASrv" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_dismantleAndReleaseMObj_ASrv" }, stepDataDef = {} },
         }, returnData  = { } }, }, Callback.GetNewDummyCallBack())
 end
 
@@ -155,9 +155,9 @@ function T_MObjHost.T_hostMObj_SSrv()
     host1:deleteObjects("TestMObj")
 end
 
-function T_MObjHost.T_buildAndHostMObj_ASrv(serviceData, testsCallback)
+function T_MObjHost.T_hostAndBuildMObj_ASrv(serviceData, testsCallback)
     -- prepare test
-    corelog.WriteToLog("* MObjHost:buildAndHostMObj_ASrv() tests")
+    corelog.WriteToLog("* MObjHost:hostAndBuildMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
     local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
 
@@ -165,14 +165,14 @@ function T_MObjHost.T_buildAndHostMObj_ASrv(serviceData, testsCallback)
 
     local callback = Callback:new({
         _moduleName     = "T_MObjHost",
-        _methodName     = "buildAndHostMObj_ASrv_Callback",
+        _methodName     = "hostAndBuildMObj_ASrv_Callback",
         _data           = {
             ["testsCallback"]   = testsCallback,
         },
     })
 
     -- test
-    local scheduleResult = host1:buildAndHostMObj_ASrv({
+    local scheduleResult = host1:hostAndBuildMObj_ASrv({
         className                   = mobj_className,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
@@ -184,9 +184,9 @@ function T_MObjHost.T_buildAndHostMObj_ASrv(serviceData, testsCallback)
     return true
 end
 
-function T_MObjHost.buildAndHostMObj_ASrv_Callback(callbackData, serviceResults)
+function T_MObjHost.hostAndBuildMObj_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
-    -- check buildAndHostMObj_ASrv success
+    -- check hostAndBuildMObj_ASrv success
     assert(serviceResults and serviceResults.success, "failed building and hosting MObj")
 
     -- check mobjLocator returned
@@ -239,9 +239,9 @@ function T_MObjHost.T_releaseMObj_SSrv()
     moduleRegistry:delistModule(hostName)
 end
 
-function T_MObjHost.T_releaseAndDismantleMObj_ASrv(serviceData, testsCallback)
+function T_MObjHost.T_dismantleAndReleaseMObj_ASrv(serviceData, testsCallback)
     -- prepare test
-    corelog.WriteToLog("* MObjHost:releaseAndDismantleMObj_ASrv() tests")
+    corelog.WriteToLog("* MObjHost:dismantleAndReleaseMObj_ASrv() tests")
     moduleRegistry:registerModule(hostName, host1)
     local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
 
@@ -255,7 +255,7 @@ function T_MObjHost.T_releaseAndDismantleMObj_ASrv(serviceData, testsCallback)
 
     local callback = Callback:new({
         _moduleName     = "T_MObjHost",
-        _methodName     = "releaseAndDismantleMObj_ASrv_Callback",
+        _methodName     = "dismantleAndReleaseMObj_ASrv_Callback",
         _data           = {
             ["mobjLocator"]     = mobjLocator,
             ["testsCallback"]   = testsCallback,
@@ -263,7 +263,7 @@ function T_MObjHost.T_releaseAndDismantleMObj_ASrv(serviceData, testsCallback)
     })
 
     -- test
-    local scheduleResult = host1:releaseAndDismantleMObj_ASrv({
+    local scheduleResult = host1:dismantleAndReleaseMObj_ASrv({
         mobjLocator                 = mobjLocator,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
@@ -274,9 +274,9 @@ function T_MObjHost.T_releaseAndDismantleMObj_ASrv(serviceData, testsCallback)
     return true
 end
 
-function T_MObjHost.releaseAndDismantleMObj_ASrv_Callback(callbackData, serviceResults)
+function T_MObjHost.dismantleAndReleaseMObj_ASrv_Callback(callbackData, serviceResults)
     -- test (cont)
-    -- check releaseAndDismantleMObj_ASrv success
+    -- check dismantleAndReleaseMObj_ASrv success
     assert(serviceResults and serviceResults.success, "failed releasing and dismantling MObj")
 
     -- check mobj deleted
