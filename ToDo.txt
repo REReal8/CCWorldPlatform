@@ -20,17 +20,37 @@ R  Dummy callback             (done)
 
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
-   R  mobj_chest
+   R  mobj_chest              (done)
    R  mobj_factory
    G  mobj_mine
-   R  mobj_production_spot
-   R  mobj_shop
    G  mobj_silo
+   R  mobj_shop
    R  mobj_turtle
 
 R  use MObjHost class
-   R  make enterprise_factory, enterprise_forest and enterprise_storage into an MObjHost
-   R  use new MObjHost methods instead of current equivalent
+   R  enterprise_forest
+      R  upgrade to a MObjHost
+      R  use new MObjHost methods instead of current equivalent
+   R  enterprise_chest
+      R  upgrade to a MObjHost
+      R  use new MObjHost methods instead of current equivalent
+      -  merge into enterprise_storage
+   R  enterprise_factory
+      R  upgrade to a MObjHost
+      R  use new MObjHost methods instead of current equivalent
+   -  enterprise_gathering
+      -  upgrade into an MObjHost
+      -  use new MObjHost methods instead of current equivalent
+   -  enterprise_storage
+      -  upgrade into an MObjHost
+      -  use new MObjHost methods instead of current equivalent
+   R  enterprise_shop
+      R  upgrade into an MObjHost
+      R  use new MObjHost methods instead of current equivalent
+      -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
+   R  enterprise_turtle
+      R  upgrade into an MObjHost
+      R  use new MObjHost methods instead of current equivalent
 
 -  Support building blueprints (layers) from front
 
@@ -74,8 +94,6 @@ G  enterprise_project
             }},
    -  error handling (no_error, ignored errors, failed on error)
 
--  merge enterprise_chests into enterprise_storage
-
 -  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
    -  v1
       RG adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument                      (done)
@@ -97,9 +115,7 @@ G  mine v2 maken
 R  Factory:
    -  remove static method style code (remaining from before it was a mobj)
    -  ensure no longer need to register it as a module in the mobj library
-   -  split into CraftSpot & SmeltSpot mobj's
-
--  rename enterprise_shop to better name enterprise_shopping or enterprise_itemsupplier
+   -  split into CraftSpot & SmeltSpot MObj's
 
 -  ItemSupplierGroup & ItemDepotGroup
    -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.

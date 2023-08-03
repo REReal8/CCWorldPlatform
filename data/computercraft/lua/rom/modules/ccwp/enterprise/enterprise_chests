@@ -39,7 +39,7 @@ local Chest = require "mobj_chest"
 
 function enterprise_chests.RegisterChest_SSrv(...)
     -- get & check input from description
-    local checkSuccess, location, accessDirection = InputChecker.Check([[
+    local checkSuccess, chestData = InputChecker.Check([[
         This sync public service registers ("adds") a Chest to the enterprise.
 
         Note that the Chest should already be present (constructed) in the world. It is however assumed the newly added Chest is still empty.
@@ -50,21 +50,14 @@ function enterprise_chests.RegisterChest_SSrv(...)
                 chestLocator        - (URL) locating the created Chest (in this enterprise)
 
         Parameters:
-            chestData               - (table) data to the Chest
-                location            + (Location) location of the Chest
-                accessDirection     + (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+            chestData               + (table) data to the Chest
+                location            - (Location) location of the Chest
+                accessDirection     - (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid input") return {success = false} end
 
     -- create new Obj
-    local obj = Chest:new({
-        _id             = coreutils.NewId(),
-
-        _location       = location:copy(),
-        _accessDirection= accessDirection,
-
-        _inventory      = Inventory:new(), -- assumed to be empty
-    })
+    local obj = Chest:construct(chestData)
 
     -- save the Obj
     corelog.WriteToLog(">Registering Chest "..obj:getId()..".")
