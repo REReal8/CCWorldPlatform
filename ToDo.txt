@@ -6,7 +6,7 @@ R  finish MObjHost
    R  test removeMObj_ASrv                                        (done)
    R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
-   -  (re)consider relevant method naming:
+   R  (re)consider relevant method naming:                        (done)
                   MObjHost          MObjHost       (MObj)Host  MObj           MObj        -  MObjHost                MObjHost    (MObj)Host     MObj                 MObj        -  ent_constr
       - now:      addMObj           registerMObj   saveObject  buildBlueprint construct   -  removeMObj              delistMObj  deleteResource dismantleBlueprint   destruct    -  build
       - option1:  createNew         ?              ?           buildBlueprint construct   -  destroy                 ?           ?              dismantleBlueprint   destruct    -  build
