@@ -110,7 +110,6 @@ function MObjHost:addMObj_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
--- ToDo: does this have to be a service?
 function MObjHost:registerMObj_SSrv(...)
     -- get & check input from description
     local checkSuccess, className, constructParameters = InputChecker.Check([[
