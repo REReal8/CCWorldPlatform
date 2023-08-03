@@ -149,7 +149,7 @@ end
 function MethodExecutor.CallObjMethod(...)
     -- get & check input from description
     local checkSuccess, className, objFieldsTable, methodName, methodArguments = InputChecker.Check([[
-        This method executes a method of ab obj based on a className and the methodArguments.
+        This method executes a method of an Obj based on it's className + objFieldsTable and the methodName + the methodArguments.
 
         Return value:
             results                     - (?) function return value(s)
@@ -166,12 +166,34 @@ function MethodExecutor.CallObjMethod(...)
     local obj = objectFactory:create(className, objFieldsTable)
     if not obj then corelog.Warning("MethodExecutor.CallObjMethod(...): Object "..className.." not created for objFields "..textutils.serialise(objFieldsTable, {compact = true}) ) return nil end
 
+    -- call instance method
+    local results = MethodExecutor.CallInstanceMethod(obj, methodName, methodArguments)
+
+    -- end
+    return results
+end
+
+function MethodExecutor.CallInstanceMethod(...)
+    -- get & check input from description
+    local checkSuccess, object, methodName, methodArguments = InputChecker.Check([[
+        This method executes an instance method of an object based on a methodName and the methodArguments.
+
+        Return value:
+            results                     - (?) function return value(s)
+
+        Parameters:
+            object                      + (table) object to execute on
+            methodName                  + (string) name of method to execute
+            methodArguments             + (table) with arguments to supply to the method
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MethodExecutor.CallInstanceMethod(...): Invalid input") return nil end
+
     -- get method
-    local method = obj[methodName]
-    if not method then corelog.Warning("MethodExecutor.CallObjMethod(...): Method "..methodName.." not found in object "..textutils.serialise(obj, {compact = true})) return nil end
+    local method = object[methodName]
+    if not method then corelog.Warning("MethodExecutor.CallInstanceMethod(...): Method "..methodName.." not found in object "..textutils.serialise(object, {compact = true})) return nil end
 
     -- call method
-    local results = method(obj, table.unpack(methodArguments))
+    local results = method(object, table.unpack(methodArguments))
 
     -- end
     return results

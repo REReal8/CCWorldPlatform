@@ -8,11 +8,15 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
+local TestObj = require "test.obj_test"
+
 local MethodExecutor = require "method_executor"
 
 function T_MethodExecutor.T_All()
     T_MethodExecutor.T_CallMethod()
     T_MethodExecutor.T_CallModuleMethod()
+    T_MethodExecutor.T_CallInstanceMethod()
+    T_MethodExecutor.T_CallObjMethod()
 
     T_MethodExecutor.T_DoSyncService()
     T_MethodExecutor.T_DoSyncObjService()
@@ -49,6 +53,53 @@ function T_MethodExecutor.T_CallModuleMethod()
     -- test
     local result = MethodExecutor.CallModuleMethod("myModule", "increment", {5})
     assert(result == 6, "Unexpected result from increment method: " .. tostring(result))
+
+    -- cleanup test
+    moduleRegistry:delistModule("myModule")
+end
+
+function T_MethodExecutor.T_CallInstanceMethod()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.CallInstanceMethod() test")
+    local field2Value = 3
+    local object = TestObj:new({
+        _field1 = "field1_1",
+        _field2 = field2Value,
+    })
+    local methodName = "field2Plus"
+    local addValue = 5
+    local methodArguments = {
+        addValue,
+    }
+
+    -- test
+    local result = MethodExecutor.CallInstanceMethod(object, methodName, methodArguments)
+    local expectedResult = field2Value + addValue
+    assert(result == expectedResult, "Unexpected result(="..result..") from method, expected "..expectedResult)
+
+    -- cleanup test
+    moduleRegistry:delistModule("myModule")
+end
+
+function T_MethodExecutor.T_CallObjMethod()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.CallObjMethod() test")
+    local className = "TestObj"
+    local field2Value = 3
+    local objFieldsTable = {
+        _field1 = "field1_1",
+        _field2 = field2Value,
+    }
+    local methodName = "field2Plus"
+    local addValue = 5
+    local methodArguments = {
+        addValue,
+    }
+
+    -- test
+    local result = MethodExecutor.CallObjMethod(className, objFieldsTable, methodName, methodArguments)
+    local expectedResult = field2Value + addValue
+    assert(result == expectedResult, "Unexpected result(="..result..") from method, expected "..expectedResult)
 
     -- cleanup test
     moduleRegistry:delistModule("myModule")

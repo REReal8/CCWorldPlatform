@@ -134,6 +134,26 @@ end
 --       | |
 --       |_|
 
+function TestObj:field2Plus(...)
+    -- get & check input from description
+    local checkSuccess, addValue = InputChecker.Check([[
+        This method returns the sum of field2 and addValue.
+
+        Return value:
+            input               - (?) the test input argument
+
+        Parameters:
+            addValue            + (number) value to add
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:field2Plus: Invalid input") return 99999 end
+
+    -- determine sum
+    local sum = self:getField2() + addValue
+
+    -- end
+    return sum
+end
+
 function TestObj:getTestArg(...)
     -- get & check input from description
     local checkSuccess, testArg = InputChecker.Check([[
