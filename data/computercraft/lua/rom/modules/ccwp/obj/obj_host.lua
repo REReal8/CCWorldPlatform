@@ -608,7 +608,7 @@ function Host.GetObject(...)
 
     -- get object
     local object = host:getObject(objectLocator)
-    if not object then corelog.Error("Host.GetObject: Failed object for objectLocator="..objectLocator:getURI()) return nil end
+    if not object then corelog.Error("Host.GetObject: Failed getting object for objectLocator="..objectLocator:getURI()) return nil end
 
     -- end
     return object
