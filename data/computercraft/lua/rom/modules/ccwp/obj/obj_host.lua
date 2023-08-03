@@ -280,7 +280,7 @@ end
 function Host:getObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
-        This method retrieves an object from the Host using a URL (that was once provided by the Host).
+        This method retrieves an object from the Host using a locator (that was once provided by the Host).
 
         Return value:
             object                  - (?) object obtained from the Host
@@ -593,7 +593,10 @@ end
 function Host.GetObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
-        This method retrieves an object from a Host using a URL (that was once provided by the Host).
+        This method retrieves an object from a Host using a locator (that was once provided by a Host).
+
+        The method first retrieves the Host corresponding to the locator. If the locator locates the Host itself it returns the Host.
+        Otherwise it will retrieve the object from the Host with the getObject method of the Host.
 
         Return value:
             object                  - (?) object obtained from the Host
@@ -606,7 +609,12 @@ function Host.GetObject(...)
     -- get Host
     local host = Host.GetHost(objectLocator:getHost()) if not host then corelog.Error("Host.GetObject: Host of "..objectLocator:getURI().." not found") return nil end
 
-    -- get object
+    -- check the Host itself is wanted
+    if objectLocator:isSame(host:getHostLocator()) then
+        return host
+    end
+
+    -- get object from Host
     local object = host:getObject(objectLocator)
     if not object then corelog.Error("Host.GetObject: Failed getting object for objectLocator="..objectLocator:getURI()) return nil end
 

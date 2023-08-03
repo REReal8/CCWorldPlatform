@@ -383,11 +383,16 @@ function T_Host.T_GetObject()
     -- prepare test
     corelog.WriteToLog("* Host.GetObject(...) tests")
     moduleRegistry:registerModule(hostName, host1)
-    local objectLocator = host1:saveObject(testObject, className)
 
-    -- test GetObject
+    -- test get object hosted by host1
+    local objectLocator = host1:saveObject(testObject, className)
     local object = Host.GetObject(objectLocator)
     assert(object and object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+
+    -- test get host1 from itself
+    local hostLocator = host1:getHostLocator()
+    object = Host.GetObject(hostLocator)
+    assert(object and object:isSame(host1), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- cleanup test
     host1:deleteResource(objectLocator)
