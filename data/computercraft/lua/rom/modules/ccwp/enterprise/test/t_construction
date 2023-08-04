@@ -10,6 +10,7 @@ local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_construction = require "enterprise_construction"
+local enterprise_chests = require "enterprise_chests"
 
 local t_chests = require "test.t_chests"
 local t_turtle = require "test.t_turtle"
@@ -100,12 +101,11 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
     -- create project definition
     local buildRectangularPattern_ASrvProjectDef = {
         steps   = {
-            -- preparation
+            -- host and update chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "StartProject_ASrv" }, stepDataDef = {
                 { keyDef = "projectDef"             , sourceStep = 0, sourceKeyDef = "projectDef" },
                 { keyDef = "projectData"            , sourceStep = 0, sourceKeyDef = "projectData" },
             }},
-
             -- BuildLayer_ASrv
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
                 { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "startpoint" },
@@ -114,7 +114,6 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 1, sourceKeyDef = "chestLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
-
             -- cleanup
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "DelistChest_ASrv" }, stepDataDef = {
                 { keyDef = "chestLocator"           , sourceStep = 1, sourceKeyDef = "chestLocator" },
@@ -127,10 +126,14 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
         projectDef  = buildRectangularPattern_ASrvProjectDef,
         projectData = {
             -- chest
-            projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
+            projectDef  = t_chests.GetHostAndUpdateChestProjectDef(),
             projectData = {
-                chestLocation        = testStartLocation:getRelativeLocation(2, 5, 0),
-                chestAccessDirection = "top",
+                hostLocator         = enterprise_chests:getHostLocator(),
+                className           = "Chest",
+                constructParameters = {
+                    location        = testStartLocation:getRelativeLocation(2, 5, 0),
+                    accessDirection = "top",
+                }
             },
 
             -- build data
@@ -138,10 +141,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
             buildFromAbove          = true,
             layer                   = testBuildLayer1,
         },
-        projectMeta = {
-            title = "Testing",
-            description = "Building a layer"
-        },
+        projectMeta = { title = "Test: Build Layer from Chest", description = "Building a test layer" },
     }
 
     -- start project

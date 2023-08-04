@@ -24,16 +24,20 @@ local callback = Callback:new({
     _data           = { },
 })
 
-function t_chests.T_RegisterAndUpdateChest()
-    corelog.WriteToLog("* Test Register and Update chest")
+function t_chests.T_hostAndUpdateChest()
+    corelog.WriteToLog("* Test host and update chest")
 
     -- create project
     local projectData = {
-        chestLocation        = testStartLocation2:getRelativeLocation(2, 5, 0),
-        chestAccessDirection = "back"
+        hostLocator         = enterprise_chests:getHostLocator(),
+        className           = "Chest",
+        constructParameters = {
+            location        = testStartLocation2:getRelativeLocation(2, 5, 0),
+            accessDirection = "back",
+        }
     }
     local projectServiceData = {
-        projectDef  = t_chests.GetRegisterAndUpdateChestProjectDef(),
+        projectDef  = t_chests.GetHostAndUpdateChestProjectDef(),
         projectData = projectData,
         projectMeta = { title = "Testing", description = "Register and update chest" },
     }
@@ -42,13 +46,15 @@ function t_chests.T_RegisterAndUpdateChest()
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
-function t_chests.GetRegisterAndUpdateChestProjectDef()
+function t_chests.GetHostAndUpdateChestProjectDef()
     return {
         steps = {
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "RegisterChest_SSrv" }, stepDataDef = {
-                { keyDef = "location"           , sourceStep = 0, sourceKeyDef = "chestLocation" },
-                { keyDef = "accessDirection"    , sourceStep = 0, sourceKeyDef = "chestAccessDirection" },
+            -- host Chest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "className"          , sourceStep = 0, sourceKeyDef = "className" },
+                { keyDef = "constructParameters", sourceStep = 0, sourceKeyDef = "constructParameters" },
             }},
+            -- update Chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "UpdateChestRecord_ASrv" }, stepDataDef = {
                 { keyDef = "chestLocator"       , sourceStep = 1, sourceKeyDef = "mobjLocator" },
             }},
