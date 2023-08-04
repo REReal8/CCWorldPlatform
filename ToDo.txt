@@ -53,12 +53,14 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
    -  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
 
--  Support building blueprints (layers) from front
 
 G  blueprint
    G  Blueprint layer holds a desription / name
    G  used to pass to project step (zodat het in de status schermen te zien is)
    -  Introduce Blueprint objects
+
+-  Construction
+   -  Support building blueprints (layers) from front
 
 G  enterprise_project
    -  consider introducing a Project object (class)!, and using that in enterprise_project
