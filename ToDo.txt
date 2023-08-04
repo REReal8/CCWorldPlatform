@@ -60,6 +60,7 @@ G  blueprint
    -  Introduce Blueprint objects
 
 G  enterprise_project
+   -  consider introducing a Project object (class)!, and using that in enterprise_project
    G  description field for debugging (done, use projectMeta.title and projectMeta.description)
    G  project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
          { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
