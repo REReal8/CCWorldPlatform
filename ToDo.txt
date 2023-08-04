@@ -51,6 +51,7 @@ R  use MObjHost class
    R  enterprise_turtle
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
+   R  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
 
 -  Support building blueprints (layers) from front
 
