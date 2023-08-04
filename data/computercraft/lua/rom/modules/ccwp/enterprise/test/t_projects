@@ -248,42 +248,36 @@ function t_projects.T_StartProject_ASrv_registersWIP()
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() registers WIP tests")
     local projectDef = {
         steps   = {
+            -- test ASrv
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_ASrv" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
+            }},
         },
         returnData  = {
         }
     }
     local projectData = {
+        testArgSource = testArgValue20,
     }
+    local administrator = enterprise_administration:getWIPAdministrator() assert(administrator)
     local wipId = "myWIPId"
-    local callback = Callback:new({
-        _moduleName     = "t_projects",
-        _methodName     = "StartProject_ASrv_registersWIP_Callback",
-        _data           = {
-            ["wipId"]       = wipId,
-        },
-    })
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
         projectMeta = { title = "Testing", description = "Start project registers WIP", wipId = wipId},
     }
 
-    -- test
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-end
+    -- test schedule
+    local scheduleSuccess = enterprise_projects.StartProject_ASrv(projectServiceData, Callback:GetNewDummyCallBack())
+    assert(scheduleSuccess, "failed scheduling async service")
 
-function t_projects.StartProject_ASrv_registersWIP_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    -- wipId queue created
-    local administrator = enterprise_administration:getWIPAdministrator() assert(administrator)
-    local wipId = callbackData["wipId"]
+    -- test wipId queue created
+    -- note: we rely here on the fact that the async test in the project is picked up with a delay, hence the project has not yet completed, hence the queue is not yet removed
     local queue = administrator._wipQueues[wipId]
     assert(queue, "no wipId queue created")
 
-    -- cleanup test
-    administrator:removeWIPQueue(wipId)
+    -- end
+    return true
 end
 
 function t_projects.T_DeleteProjects()

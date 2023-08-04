@@ -335,6 +335,7 @@ function T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     assert(success, "waitForNoWIPOnQueue_AOSrv not a success")
     assert(callback1Called, "callback1 not called")
     callback1Called = false
+    assert(obj1._wipQueues[wipQueueId2] == nil, "WIPQueue not removed when no WIP")
 
     -- test callback not called and added when WIP
     local workId3 = "workId3"
@@ -391,14 +392,15 @@ function T_WIPAdministrator.T_administerWorkCompleted()
     success = obj1:administerWorkCompleted(wipQueueId2, workId3)
     assert(success, "administerWorkCompleted did not succeed")
     assert(not callback1Called, "callback1 called")
+    assert(obj1._wipQueues[wipQueueId2] ~= nil, "WIPQueue not in WIPAdministrator")
 
     -- test callback(s) called when no more WIP
     success = obj1:administerWorkCompleted(wipQueueId2, workId4)
     assert(success, "administerWorkCompleted did not succeed")
     assert(callback1Called, "callback1 not called")
+    assert(obj1._wipQueues[wipQueueId2] == nil, "WIPQueue not removed after no WIP")
 
     -- cleanup test
-    obj1:removeWIPQueue(wipQueueId2)
 end
 
 return T_WIPAdministrator

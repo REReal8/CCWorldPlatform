@@ -226,7 +226,7 @@ function WIPAdministrator:administerWorkCompleted(...)
     local checkSuccess, queueId, workId = InputChecker.Check([[
         This method removes work identified by 'workId' from the WIPQueue 'queueId'.
 
-        If no work is left in the queue all callbacks wanting to be informed on idle are called.
+        If no work is left in the queue all callbacks wanting to be informed on idle are called. After that the queue is removed.
 
         Return value:
                                                 - (boolean) whether the method was called successfully
@@ -252,7 +252,7 @@ function WIPAdministrator:administerWorkCompleted(...)
         if not success then corelog.Error("WIPAdministrator:administerWorkCompleted: Failed calling Callbacks from WIPQueue "..queueId) return false end
 
         -- remove queue
-        self._wipQueues.queueId = nil
+        self._wipQueues[queueId] = nil
     end
 
     -- save
@@ -289,6 +289,18 @@ function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
 
     -- check queue is idle (i.e. no WIP)
     if queue:noWIP() then
+        -- remove just created queue (by calling getWIPQueue)
+        self:removeWIPQueue(queueId)
+
+        --[[
+        self._wipQueues[queueId] = nil
+
+        -- save
+        enterprise_administration = require "enterprise_administration"
+        local objLocator = enterprise_administration:saveObject(self)
+        if not objLocator then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_AOSrv: Failed saving WIPAdministrator") return false end
+        ]]
+
         -- immediatly call callback
         return callback:call({success = true})
     else
