@@ -96,7 +96,7 @@ function t_chests.T_DelistChest_ASrv()
         accessDirection = "top"
     }
     local objLocator = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters}).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end
-    local DelistChest_ASrv_callback = Callback:new({
+    local callback = Callback:new({
         _moduleName     = "t_chests",
         _methodName     = "DelistChest_ASrv_callback",
         _data           = {
@@ -105,7 +105,7 @@ function t_chests.T_DelistChest_ASrv()
     })
 
     -- test
-    return enterprise_chests.DelistChest_ASrv({ chestLocator = objLocator}, DelistChest_ASrv_callback)
+    return enterprise_chests.DelistChest_ASrv({ chestLocator = objLocator}, callback)
 end
 
 function t_chests.DelistChest_ASrv_callback(callbackData, serviceResults)
