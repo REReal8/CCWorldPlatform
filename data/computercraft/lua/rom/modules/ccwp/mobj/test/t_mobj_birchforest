@@ -137,8 +137,8 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
     local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
-    local localLogsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 2, 0), }).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 2, 0), }).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
+    local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
     -- test
     forest:setLevel(level2)
@@ -181,8 +181,8 @@ function T_BirchForest.T_isSame()
     corelog.WriteToLog("* BirchForest:isSame() tests")
     local id = coreutils.NewId()
     local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining BirchForest") return end
-    local localLogsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 2, 0), }).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 2, 0), }).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
+    local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
     -- test same
     local forest1 = T_BirchForest.CreateForest(level0, location1, id)
