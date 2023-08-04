@@ -1034,13 +1034,13 @@ function Factory.GetV2SiteStartData(serviceData)
     local inputChestLocator = enterprise_chests.RegisterChest_SSrv({
         location        = baseLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
-    }).chestLocator
+    }).mobjLocator
 
     -- register output chest
     local outputChestLocator = enterprise_chests.RegisterChest_SSrv({
         location        = baseLocation:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
-    }).chestLocator
+    }).mobjLocator
 
     -- construct start data
     local startData = {

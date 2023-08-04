@@ -100,14 +100,14 @@ function Silo:NewSilo(...)
     corelog.WriteToLog(">Starting silo at "..textutils.serialise(location, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}).chestLocator) end
-    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}).chestLocator) end
-    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}).chestLocator) end
-    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}).chestLocator) end
-    if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}).chestLocator) end
-    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}).chestLocator) end
-    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}).chestLocator) end
+    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}).mobjLocator) end
+    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}).mobjLocator) end
+    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}).mobjLocator) end
+    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}).mobjLocator) end
+    if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}).mobjLocator) end
+    if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}).mobjLocator) end
+    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}).mobjLocator) end
+    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests.RegisterChest_SSrv({location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}).mobjLocator) end
 
     -- set the defaults (basic setup)
     if topChests >= 1 then siteData._dropLocation   = 1 end
@@ -118,10 +118,10 @@ function Silo:NewSilo(...)
 
         -- do the floor
         local shaft = siteData._entryLocation:getRelativeLocation(0, 0, -1 - i)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}).chestLocator)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}).chestLocator)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}).chestLocator)
-        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}).chestLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}).mobjLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}).mobjLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}).mobjLocator)
+        table.insert(siteData._storageChests, enterprise_chests.RegisterChest_SSrv({location=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}).mobjLocator)
     end
 
     -- set class info

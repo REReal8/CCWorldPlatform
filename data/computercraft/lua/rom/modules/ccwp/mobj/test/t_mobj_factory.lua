@@ -172,9 +172,9 @@ function T_Factory.T_isSame()
     local id = coreutils.NewId()
     local obj = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id) if not obj then corelog.Error("failed obtaining Factory") return end
     local location2  = Location:new({_x= 100, _y= 0, _z= 100, _dx=1, _dy=0})
-    local inputLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 5, 0), }).chestLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
+    local inputLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(2, 5, 0), }).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
     local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, inputLocator2, })
-    local outputLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 5, 0), }).chestLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
+    local outputLocator2 = enterprise_chests.RegisterChest_SSrv({ location = location2:getRelativeLocation(4, 5, 0), }).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
     local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, outputLocator2, })
     local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })

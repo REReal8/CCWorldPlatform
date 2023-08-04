@@ -35,7 +35,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
         Return value:
                                     - (table)
                 success             - (boolean) whether the service executed successfully
-                chestLocator        - (URL) locating the created Chest (in this enterprise)
+                mobjLocator         - (URL) locating the created Chest (in this enterprise)
 
         Parameters:
             chestData               + (table) data to the Chest
@@ -51,11 +51,7 @@ function enterprise_chests.RegisterChest_SSrv(...)
     })
 
     -- end
-    local result = {
-        success         = hResult.success,
-        chestLocator    = hResult.mobjLocator
-    }
-    return result
+    return hResult
 end
 
 function enterprise_chests.DelistChest_ASrv(...)
