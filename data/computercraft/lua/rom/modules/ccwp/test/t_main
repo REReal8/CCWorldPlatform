@@ -38,6 +38,7 @@ local T_Shop = require "test.t_mobj_shop"
 local T_Turtle = require "test.t_mobj_turtle"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
+local enterprise_administration = require "enterprise_administration"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing = require "enterprise_manufacturing"
@@ -119,6 +120,7 @@ function t_main.T_ResetWorld()
     coreinventory.ResetAllItems()
     coreassignment.Reset()
     enterprise_assignmentboard.Reset()
+    enterprise_administration:reset()
     enterprise_projects.DeleteProjects()
     enterprise_energy.ResetParameters()
     enterprise_manufacturing:deleteObjects("Factory")

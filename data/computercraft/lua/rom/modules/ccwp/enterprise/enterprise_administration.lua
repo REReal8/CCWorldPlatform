@@ -89,8 +89,8 @@ function enterprise_administration:createNewWIPAdministrator()
 end
 
 function enterprise_administration:reset()
-    -- create (new) WIPAdministrator
-    self:createNewWIPAdministrator()
+    -- reset WIPAdministrator
+    self:getWIPAdministrator():reset()
 end
 
 --                        _                           _   _               _
