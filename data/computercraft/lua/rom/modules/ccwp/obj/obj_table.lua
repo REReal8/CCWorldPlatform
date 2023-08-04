@@ -146,8 +146,6 @@ function ObjTable:getNObjs()
     return nObj
 end
 
-
-
 function ObjTable:objs()
     --[[
         Factory for iterator over Obj's.
