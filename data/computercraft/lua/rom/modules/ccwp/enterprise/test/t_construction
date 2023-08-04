@@ -115,7 +115,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
             -- cleanup
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "DelistChest_SSrv" }, stepDataDef = {
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "releaseMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
                 { keyDef = "mobjLocator"                    , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
         },
@@ -135,6 +135,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                     accessDirection = "top",
                 }
             },
+            hostLocator = enterprise_chests:getHostLocator(),
 
             -- build data
             startpoint              = testStartLocation2,

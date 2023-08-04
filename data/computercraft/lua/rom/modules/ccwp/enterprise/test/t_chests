@@ -12,7 +12,7 @@ local enterprise_chests = require "enterprise_chests"
 function t_chests.T_All()
     -- service methods
     t_chests.T_hostMObj_SSrv_Chest()
-    t_chests.T_DelistChest_SSrv()
+    t_chests.T_releaseMObj_SSrv_Chest()
 end
 
 local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -87,10 +87,10 @@ function t_chests.T_hostMObj_SSrv_Chest()
     enterprise_chests:deleteResource(mobjLocator)
 end
 
-function t_chests.T_DelistChest_SSrv()
+function t_chests.T_releaseMObj_SSrv_Chest()
     -- prepare test
     local className = "Chest"
-    corelog.WriteToLog("* enterprise_chests.DelistChest_SSrv() tests")
+    corelog.WriteToLog("* enterprise_chests:releaseMObj_SSrv() tests")
     local constructParameters = {
         location        = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
@@ -98,7 +98,7 @@ function t_chests.T_DelistChest_SSrv()
     local objLocator = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters}).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end
 
     -- test
-    local serviceResults = enterprise_chests.DelistChest_SSrv({ mobjLocator = objLocator})
+    local serviceResults = enterprise_chests:releaseMObj_SSrv({ mobjLocator = objLocator})
     assert(serviceResults.success, "failed executing async service")
 
     local objResourceTable = enterprise_chests:getResource(objLocator)
