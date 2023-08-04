@@ -68,10 +68,18 @@ end
 
 function IMObj:getId()
     --[[
-        Return a unique Id of the XXXMObj.
+        Return the unique Id of the XXXMObj.
     ]]
 
     corelog.Error("Method getId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+end
+
+function IMObj:getWIPId()
+    --[[
+        Returns the unique Id of the XXXMObj used for administering WIP.
+    ]]
+
+    corelog.Error("Method getWIPId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
 end
 
 function IMObj:getBuildBlueprint()
@@ -118,6 +126,7 @@ function IMObj.ImplementsInterface(obj)
     if not obj.construct then return false end
     if not obj.destruct then return false end
     if not obj.getId then return false end
+    if not obj.getWIPId then return false end
     if not obj.getBuildBlueprint then return false end
     if not obj.getDismantleBlueprint then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.

@@ -181,10 +181,18 @@ end
 
 function Chest:getId()
     --[[
-        Return a unique Id of the Chest.
+        Return the unique Id of the Chest.
     ]]
 
     return self._id
+end
+
+function Chest:getWIPId()
+    --[[
+        Returns the unique Id of the Chest used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
 end
 
 local function Chest_layer()
@@ -331,7 +339,7 @@ function Chest:updateChestRecord_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "Updating chest record", description = "Sit back and relax" },
+        projectMeta = { title = "Updating record "..self:getWIPId(), description = "Sit back and relax", wipId = self:getWIPId() },
     }
 
     -- start project
@@ -431,7 +439,7 @@ function Chest:provideItemsTo_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "Providing items from a chest", description = "The items will be deliverd" },
+        projectMeta = { title = "Providing items from "..self:getWIPId(), description = "The items will be deliverd", wipId = self:getWIPId() },
     }
 
     -- start project
@@ -614,7 +622,7 @@ function Chest:storeItemsFrom_AOSrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "Storing items to a chest", description = "Getting stuff off your hands" },
+        projectMeta = { title = "Storing items to "..self:getWIPId(), description = "Getting stuff off your hands", wipId = self:getWIPId() },
     }
 
     -- start project

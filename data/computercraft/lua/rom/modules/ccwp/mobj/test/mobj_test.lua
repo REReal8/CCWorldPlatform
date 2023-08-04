@@ -168,6 +168,14 @@ function TestMObj:getId()
     return self._id
 end
 
+function TestMObj:getWIPId()
+    --[[
+        Returns the unique Id of the TestMObj used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
+end
+
 function TestMObj:getBuildBlueprint()
     --[[
         This method returns a blueprint for building the TestMObj in the physical minecraft world.
