@@ -150,6 +150,8 @@ function T_MObjHost.T_hostMObj_SSrv()
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
 
+    -- check child MObj's hosted
+    -- ToDo: consider implementing testing this. Or shouldn't we as it's a choice to have and responsibilty of the MObj to do this?
 
     -- cleanup test
     host1:deleteObjects("TestMObj")
@@ -236,6 +238,9 @@ function T_MObjHost.T_releaseMObj_SSrv()
     -- check mobj deleted
     local mobjResourceTable = host1:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj not deleted")
+
+    -- check child MObj's released
+    -- ToDo: consider implementing testing this. Or shouldn't we as it's a responsibilty of the MObj to do this?
 
     -- cleanup test
     moduleRegistry:delistModule(hostName)
