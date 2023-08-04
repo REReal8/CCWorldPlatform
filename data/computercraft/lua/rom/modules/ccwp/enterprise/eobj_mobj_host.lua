@@ -230,7 +230,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "Removing mobj", description = "Word goes it's no longer needed" },
+        projectMeta = { title = "dismantle and release MObj", description = "Word goes we fully want to remove it" },
     }
 
     -- start project
