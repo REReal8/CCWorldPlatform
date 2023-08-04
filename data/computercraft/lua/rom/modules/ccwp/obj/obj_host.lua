@@ -277,6 +277,8 @@ function Host:deleteResource(...)
     return savedResource == nil
 end
 
+-- ToDo: consider splitting off (L)ObjHost, with most methods below
+
 function Host:getObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
