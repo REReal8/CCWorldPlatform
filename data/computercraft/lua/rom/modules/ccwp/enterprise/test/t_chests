@@ -11,7 +11,7 @@ local enterprise_chests = require "enterprise_chests"
 
 function t_chests.T_All()
     -- service methods
-    t_chests.T_RegisterChest_SSrv()
+    t_chests.T_hostMObj_SSrv_Chest()
     t_chests.T_DelistChest_ASrv()
 end
 
@@ -59,34 +59,37 @@ function t_chests.GetRegisterAndUpdateChestProjectDef()
     }
 end
 
-function t_chests.T_RegisterChest_SSrv()
+function t_chests.T_hostMObj_SSrv_Chest()
     -- prepare test
-    corelog.WriteToLog("* enterprise_chests.RegisterChest_SSrv() tests")
-    local objParameters = {
+    local className = "Chest"
+    corelog.WriteToLog("* enterprise_chests:hostMObj_SSrv() ("..className..") tests")
+    local constructParameters = {
         location        = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
     }
 
     -- test
-    local result = enterprise_chests.RegisterChest_SSrv(objParameters)
-    assert(result.success, "failed registering Obj")
-    local objLocator = result.mobjLocator
-    assert(objLocator, "failed obtaining objLocator")
-    local obj = enterprise_chests:getObject(objLocator)
-    assert(obj, "failed obtaining obj")
+    local result = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters,})
+    assert(result.success, "failed hosting "..className)
+    local mobjLocator = result.mobjLocator
+    assert(mobjLocator, "failed obtaining mobjLocator")
+    local mobj = enterprise_chests:getObject(mobjLocator)
+    assert(mobj, "failed obtaining mobj")
 
     -- cleanup test
-    enterprise_chests:deleteResource(objLocator)
+    mobj:destruct()
+    enterprise_chests:deleteResource(mobjLocator)
 end
 
 function t_chests.T_DelistChest_ASrv()
     -- prepare test
+    local className = "Chest"
     corelog.WriteToLog("* enterprise_chests.DelistChest_ASrv() tests")
-    local objParameters = {
+    local constructParameters = {
         location        = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
     }
-    local objLocator = enterprise_chests.RegisterChest_SSrv(objParameters).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end
+    local objLocator = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters}).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end
     local DelistChest_ASrv_callback = Callback:new({
         _moduleName     = "t_chests",
         _methodName     = "DelistChest_ASrv_callback",
