@@ -116,7 +116,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
             }},
             -- cleanup
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "DelistChest_SSrv" }, stepDataDef = {
-                { keyDef = "chestLocator"           , sourceStep = 1, sourceKeyDef = "chestLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
         },
         returnData  = {

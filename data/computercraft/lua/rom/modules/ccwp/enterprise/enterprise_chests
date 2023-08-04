@@ -25,7 +25,7 @@ local Callback = require "obj_callback"
 
 function enterprise_chests.DelistChest_SSrv(...)
     -- get & check input from description
-    local checkSuccess, chestLocator = InputChecker.Check([[
+    local checkSuccess, mobjLocator = InputChecker.Check([[
         This sync public service delists ("removes") a Chest from the enterprise. Delisting implies
             - remove the Chest from the enterprise
 
@@ -36,12 +36,12 @@ function enterprise_chests.DelistChest_SSrv(...)
 
         Parameters:
             serviceData         - (table) data about the service
-                chestLocator    + (URL) locating the Chest
+                mobjLocator     + (URL) locating the Chest
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_SSrv: Invalid input") return {success = false} end
 
     -- pass on to releaseMObj_SSrv
-    local rResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = chestLocator})
+    local rResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator})
     return rResult
 end
 

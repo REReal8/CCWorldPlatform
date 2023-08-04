@@ -98,7 +98,7 @@ function t_chests.T_DelistChest_SSrv()
     local objLocator = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters}).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end
 
     -- test
-    local serviceResults = enterprise_chests.DelistChest_SSrv({ chestLocator = objLocator})
+    local serviceResults = enterprise_chests.DelistChest_SSrv({ mobjLocator = objLocator})
     assert(serviceResults.success, "failed executing async service")
 
     local objResourceTable = enterprise_chests:getResource(objLocator)

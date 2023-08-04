@@ -217,7 +217,7 @@ function T_Factory.T_isSame()
     obj._smeltingSpots = smeltingSpots1
 
     -- cleanup test
-    return enterprise_chests.DelistChest_SSrv({ chestLocator = inputLocator2 }) and enterprise_chests.DelistChest_SSrv({ chestLocator = outputLocator2 })
+    return enterprise_chests.DelistChest_SSrv({ mobjLocator = inputLocator2 }) and enterprise_chests.DelistChest_SSrv({ mobjLocator = outputLocator2 })
 end
 
 function T_Factory.T_copy()
