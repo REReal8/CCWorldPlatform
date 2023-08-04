@@ -9,7 +9,6 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
 
 --[[
     This module implements the class TestMObj.
