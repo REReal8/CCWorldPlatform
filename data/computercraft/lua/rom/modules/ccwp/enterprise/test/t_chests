@@ -99,7 +99,7 @@ function t_chests.T_releaseMObj_SSrv_Chest()
 
     -- test
     local serviceResults = enterprise_chests:releaseMObj_SSrv({ mobjLocator = objLocator})
-    assert(serviceResults.success, "failed executing async service")
+    assert(serviceResults.success, "failed executing sync service")
 
     local objResourceTable = enterprise_chests:getResource(objLocator)
     assert(not objResourceTable, "Obj wasn't deleted")
