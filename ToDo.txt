@@ -53,7 +53,6 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
    -  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
 
-
 G  blueprint
    G  Blueprint layer holds a desription / name
    G  used to pass to project step (zodat het in de status schermen te zien is)
@@ -165,8 +164,6 @@ G  player station
 
 -  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
 
--  Other ToDo's to be found everywhere in all code files
-
 G  Display verbeteren
    G  display blijft na kiezen van een test optie in de groep waar de test gekozen is
    G  display gebruikt 2 kolommen als er veel tests zijn
@@ -177,8 +174,11 @@ G moveTo:
 
 -  Bij inschrijven assigment controleren of er een pickaxe in de inventory zit (indien not equiped)
 
+-  Other ToDo's to be found everywhere in all code files
 
-*** history ***
+
+ToDo history
+------------
 
 R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
    R  introduce enterprise_administration                      (done)
