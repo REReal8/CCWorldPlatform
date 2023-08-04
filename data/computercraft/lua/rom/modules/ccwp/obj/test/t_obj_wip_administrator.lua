@@ -25,6 +25,7 @@ function T_WIPAdministrator.T_All()
     -- specific methods
     T_WIPAdministrator.T_removeWIPQueue()
     T_WIPAdministrator.T_getWIPQueue()
+    T_WIPAdministrator.T_reset()
     T_WIPAdministrator.T_administerWorkStarted()
     T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     T_WIPAdministrator.T_administerWorkCompleted()
@@ -242,6 +243,31 @@ function T_WIPAdministrator.T_getWIPQueue()
     wipQueue1:removeWork(workId2)
     obj1:removeWIPQueue(wipQueueId1)
     obj1:removeWIPQueue(wipQueueId2)
+end
+
+function T_WIPAdministrator.T_reset()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:reset() tests")
+    local wipQueueId1 = "wipQueueId1"
+    local wipQueue1 = WIPQueue:new({
+        _workList       = {},
+        _callbackList   = callbackList1:copy(),
+    }) assert(wipQueue1)
+
+    local wipQueues = ObjTable:new({
+        _objClassName   = wipQueueClassName,
+    }) assert(wipQueues)
+    wipQueues[wipQueueId1] = wipQueue1
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues:copy(),
+    }) assert(obj1)
+
+    -- test
+    local success = obj1:reset(wipQueueId1)
+    assert(success, "reset failed")
+    assert(not obj1._wipQueues[wipQueueId1], "WIPQueue not removed")
+
+    -- cleanup test
 end
 
 local function hasWork(workList, someWorkId)

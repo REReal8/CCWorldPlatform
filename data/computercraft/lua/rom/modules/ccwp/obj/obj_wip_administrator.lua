@@ -168,6 +168,30 @@ function WIPAdministrator:removeWIPQueue(...)
     return true
 end
 
+function WIPAdministrator:reset()
+    --[[
+        This method resets the WIPAdministrator. Resetting implies:
+        - removing all WIPQueue's
+
+        Return value:
+                                                - (boolean) whether the method was called successfully
+
+        Parameters:
+    ]]
+
+    -- loop on WIPQueue's
+    for queueId, queue in pairs(self._wipQueues) do
+        if queueId ~= "_objClassName" then
+            -- remove queue
+            local success = self:removeWIPQueue(queueId)
+            if not success then corelog.Error("WIPAdministrator:reset: Failed removing WIPQueue "..queueId) return false end
+        end
+    end
+
+    -- end
+    return true
+end
+
 function WIPAdministrator:administerWorkStarted(...)
     -- get & check input from description
     local checkSuccess, queueId, workId = InputChecker.Check([[
