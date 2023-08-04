@@ -25,6 +25,77 @@ local enterprise_administration
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function WIPAdministrator:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a WIPAdministrator.
+
+        Parameters:
+            o                           + (table) table with object fields
+                _wipQueues              - (ObjTable) with WIPQueue's
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("WIPAdministrator:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
+function WIPAdministrator:getClassName()
+    return "WIPAdministrator"
+end
+
+function WIPAdministrator:isTypeOf(obj)
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
+end
+
+function WIPAdministrator:isSame(obj)
+    -- check input
+    if not WIPAdministrator:isTypeOf(obj) then return false end
+
+    -- check same object
+    if not self._wipQueues:isSame(obj._wipQueues) then return false end
+
+    -- end
+    return true
+end
+
+function WIPAdministrator:copy()
+    local copy = WIPAdministrator:new({
+        _wipQueues  = self._wipQueues:copy(),
+    })
+
+    return copy
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
 function WIPAdministrator:getWIPQueue(...)
     -- get & check input from description
     local checkSuccess, queueId = InputChecker.Check([[
@@ -96,77 +167,6 @@ function WIPAdministrator:removeWIPQueue(...)
     -- end
     return true
 end
-
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                    _/ |
---                   |__/
-
-function WIPAdministrator:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a WIPAdministrator.
-
-        Parameters:
-            o                           + (table) table with object fields
-                _wipQueues              - (ObjTable) with WIPQueue's
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("WIPAdministrator:new: Invalid input") return {} end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
-
-function WIPAdministrator:getClassName()
-    return "WIPAdministrator"
-end
-
-function WIPAdministrator:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function WIPAdministrator:isSame(obj)
-    -- check input
-    if not WIPAdministrator:isTypeOf(obj) then return false end
-
-    -- check same object
-    if not self._wipQueues:isSame(obj._wipQueues) then return false end
-
-    -- end
-    return true
-end
-
-function WIPAdministrator:copy()
-    local copy = WIPAdministrator:new({
-        _wipQueues  = self._wipQueues:copy(),
-    })
-
-    return copy
-end
-
---                        _  __ _                       _   _               _
---                       (_)/ _(_)                     | | | |             | |
---    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---       | |
---       |_|
 
 function WIPAdministrator:administerWorkStarted(...)
     -- get & check input from description

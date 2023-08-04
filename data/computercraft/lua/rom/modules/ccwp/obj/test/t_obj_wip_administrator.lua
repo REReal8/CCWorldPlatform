@@ -10,15 +10,11 @@ local ObjTable = require "obj_table"
 local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
 
-local enterprise_administration = require "enterprise_administration"
-
 function T_WIPAdministrator.T_All()
     -- interfaces
     T_WIPAdministrator.T_ImplementsIObj()
 
     -- base methods
-    T_WIPAdministrator.T_removeWIPQueue()
-    T_WIPAdministrator.T_getWIPQueue()
 
     -- IObj methods
     T_WIPAdministrator.T_new()
@@ -27,6 +23,8 @@ function T_WIPAdministrator.T_All()
     T_WIPAdministrator.T_copy()
 
     -- specific methods
+    T_WIPAdministrator.T_removeWIPQueue()
+    T_WIPAdministrator.T_getWIPQueue()
     T_WIPAdministrator.T_administerWorkStarted()
     T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     T_WIPAdministrator.T_administerWorkCompleted()
@@ -77,70 +75,6 @@ end
 --   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-
-function T_WIPAdministrator.T_removeWIPQueue()
-    -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:removeWIPQueue() tests")
-    local wipQueueId1 = "wipQueueId1"
-    local wipQueue1 = WIPQueue:new({
-        _workList       = {},
-        _callbackList   = callbackList1:copy(),
-    }) assert(wipQueue1)
-
-    local wipQueues2 = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-    }) assert(wipQueues2)
-    wipQueues2[wipQueueId1] = wipQueue1
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues2:copy(),
-    }) assert(obj1)
-
-    -- test
-    local success = obj1:removeWIPQueue(wipQueueId1)
-    assert(success, "removeWIPQueue failed")
-    assert(not obj1._wipQueues[wipQueueId1], "WIPQueue not removed")
-
-    -- cleanup test
-end
-
-function T_WIPAdministrator.T_getWIPQueue()
-    -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:getWIPQueue() tests")
-    local wipQueueId1 = "wipQueueId1"
-    local workList1 = {
-        workId1,
-        workId2,
-    }
-    local wipQueue1 = WIPQueue:new({
-        _workList       = workList1,
-        _callbackList   = callbackList1:copy(),
-    }) assert(wipQueue1)
-
-    local wipQueues2 = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-    }) assert(wipQueues2)
-    wipQueues2[wipQueueId1] = wipQueue1
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues2,
-    }) assert(obj1)
-
-    -- test returns already present WIPQueue
-    local wipQueue = obj1:getWIPQueue(wipQueueId1)
-    assert(wipQueue:isSame(wipQueue1), "gotten wipQueue(="..textutils.serialise(wipQueue)..") not the same as expected(="..textutils.serialise(wipQueue1)..")")
-
-    -- test creates not yet present WIPQueue
-    local wipQueueId2 = "wipQueueId2"
-    wipQueue = obj1:getWIPQueue(wipQueueId2)
-    assert(wipQueue, "WIPQueue not created")
-    assert(wipQueue:noWIP(), "gotten wipQueue(="..textutils.serialise(wipQueue)..") has WIP (and hence can't be new)")
-
-    -- cleanup test
-    wipQueue1:removeWork(workId1)
-    wipQueue1:removeWork(workId2)
-    obj1:removeWIPQueue(wipQueueId1)
-    obj1:removeWIPQueue(wipQueueId2)
-end
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -246,6 +180,69 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function T_WIPAdministrator.T_removeWIPQueue()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:removeWIPQueue() tests")
+    local wipQueueId1 = "wipQueueId1"
+    local wipQueue1 = WIPQueue:new({
+        _workList       = {},
+        _callbackList   = callbackList1:copy(),
+    }) assert(wipQueue1)
+
+    local wipQueues2 = ObjTable:new({
+        _objClassName   = wipQueueClassName,
+    }) assert(wipQueues2)
+    wipQueues2[wipQueueId1] = wipQueue1
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues2:copy(),
+    }) assert(obj1)
+
+    -- test
+    local success = obj1:removeWIPQueue(wipQueueId1)
+    assert(success, "removeWIPQueue failed")
+    assert(not obj1._wipQueues[wipQueueId1], "WIPQueue not removed")
+
+    -- cleanup test
+end
+
+function T_WIPAdministrator.T_getWIPQueue()
+    -- prepare test
+    corelog.WriteToLog("* WIPAdministrator:getWIPQueue() tests")
+    local wipQueueId1 = "wipQueueId1"
+    local workList1 = {
+        workId1,
+        workId2,
+    }
+    local wipQueue1 = WIPQueue:new({
+        _workList       = workList1,
+        _callbackList   = callbackList1:copy(),
+    }) assert(wipQueue1)
+
+    local wipQueues2 = ObjTable:new({
+        _objClassName   = wipQueueClassName,
+    }) assert(wipQueues2)
+    wipQueues2[wipQueueId1] = wipQueue1
+    local obj1 = WIPAdministrator:new({
+        _wipQueues      = wipQueues2,
+    }) assert(obj1)
+
+    -- test returns already present WIPQueue
+    local wipQueue = obj1:getWIPQueue(wipQueueId1)
+    assert(wipQueue:isSame(wipQueue1), "gotten wipQueue(="..textutils.serialise(wipQueue)..") not the same as expected(="..textutils.serialise(wipQueue1)..")")
+
+    -- test creates not yet present WIPQueue
+    local wipQueueId2 = "wipQueueId2"
+    wipQueue = obj1:getWIPQueue(wipQueueId2)
+    assert(wipQueue, "WIPQueue not created")
+    assert(wipQueue:noWIP(), "gotten wipQueue(="..textutils.serialise(wipQueue)..") has WIP (and hence can't be new)")
+
+    -- cleanup test
+    wipQueue1:removeWork(workId1)
+    wipQueue1:removeWork(workId2)
+    obj1:removeWIPQueue(wipQueueId1)
+    obj1:removeWIPQueue(wipQueueId2)
+end
 
 local function hasWork(workList, someWorkId)
     for i, aWorkId in ipairs(workList) do
