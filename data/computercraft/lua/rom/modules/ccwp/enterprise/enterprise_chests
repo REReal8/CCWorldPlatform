@@ -1,6 +1,6 @@
-local Host = require "obj_host"
+local MObjHost = require "eobj_mobj_host"
 
-local enterprise_chests = Host:new({
+local enterprise_chests = MObjHost:new({
     _hostName   = "enterprise_chests",
 })
 
