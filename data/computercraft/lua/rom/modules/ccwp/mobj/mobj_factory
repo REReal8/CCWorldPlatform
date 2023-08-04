@@ -1030,17 +1030,20 @@ function Factory.GetV2SiteStartData(serviceData)
     --
     local baseLocation = serviceData.baseLocation
 
+    corelog.WriteToLog("serviceData:")
+    corelog.WriteToLog(serviceData)
+
     -- register input chest
-    local inputChestLocator = enterprise_chests.RegisterChest_SSrv({
+    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
         location        = baseLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
-    }).mobjLocator
+    }}).mobjLocator
 
     -- register output chest
-    local outputChestLocator = enterprise_chests.RegisterChest_SSrv({
+    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
         location        = baseLocation:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
-    }).mobjLocator
+    }}).mobjLocator
 
     -- construct start data
     local startData = {
