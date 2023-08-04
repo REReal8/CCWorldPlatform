@@ -4,30 +4,18 @@ local enterprise_chests = Host:new({
     _hostName   = "enterprise_chests",
 })
 
-local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local Inventory = require "obj_inventory"
 
 local Chest = require "mobj_chest"
 
 --[[
-    The enterprise_chests provides services to perform operation on chests.
+    The enterprise_chests is a Host. It hosts Chest's (i.e. Factory's).
 
     It provides the following specific enterprise services
-        RegisterChest_SSrv      - to register ("add") a chest that can be serviced by this enterprise
-        DelistChest_ASrv        - to delist ("remove") a chest from being serviced by this enterprise
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
-
-    The enterprise does not provide services to build/ dismantle chests. This should be done by other (enterprise) code. In a sense the enterprise_chests is not the
-    "owner" of the chests, it just provides services to operate on them.
-
-    The following enterprise design decisions are made
-        - Registered chests should never be accessed directly but only via the services of this enterprise.
-        - Every chest get's a chestLocator upon registration.
-        - To operate on a chest this chestLocator should be supplied to each of the public services.
 --]]
 
 --                        _                           _   _               _

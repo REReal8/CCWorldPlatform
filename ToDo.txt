@@ -32,7 +32,7 @@ R  use MObjHost class
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
    R  enterprise_chest
-      R  upgrade to a MObjHost
+      R  upgrade to a MObjHost                                    (done)
       R  use new MObjHost methods instead of current equivalent
       -  merge into enterprise_storage
    R  enterprise_factory
