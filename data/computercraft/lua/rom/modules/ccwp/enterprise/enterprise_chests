@@ -40,16 +40,9 @@ function enterprise_chests.DelistChest_SSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_SSrv: Invalid input") return {success = false} end
 
-    -- get the Obj
-    local obj = enterprise_chests:getObject(chestLocator)
-    if type(obj) ~="table" then corelog.Error("enterprise_chests.DelistChest_SSrv: Obj "..chestLocator:getURI().." not found.") return {success = false} end
-
-    -- remove Obj from enteprise
-    corelog.WriteToLog(">Delisting Chest "..obj:getId())
-    enterprise_chests:deleteResource(chestLocator)
-
-    -- end
-    return {success = true}
+    -- pass on to releaseMObj_SSrv
+    local rResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = chestLocator})
+    return rResult
 end
 
 function enterprise_chests.UpdateChestRecord_ASrv(...)
