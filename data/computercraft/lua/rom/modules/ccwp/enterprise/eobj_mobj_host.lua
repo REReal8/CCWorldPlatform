@@ -204,12 +204,12 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
         mobjLocator                 = mobjLocator,
         mobjId                      = mobj:getId(),
 
-        wipHandlerLocator           = enterprise_administration:getWIPAdministratorLocator(),
+        wipAdministratorLocator     = enterprise_administration:getWIPAdministratorLocator(),
     }
     local projectDef = {
         steps   = {
             -- complete running business
-            { stepType = "LAOSrv", stepTypeDef = { serviceName = "waitForNoWIPOnQueue_AOSrv", locatorStep = 0, locatorKeyDef = "wipHandlerLocator" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "waitForNoWIPOnQueue_AOSrv", locatorStep = 0, locatorKeyDef = "wipAdministratorLocator" }, stepDataDef = {
                 { keyDef = "queueId"                        , sourceStep = 0, sourceKeyDef = "mobjId" },
             }},
             -- dismantle MObj in the world
