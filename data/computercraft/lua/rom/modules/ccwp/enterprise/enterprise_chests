@@ -9,8 +9,6 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 
-local Chest = require "mobj_chest"
-
 --[[
     The enterprise_chests is a Host. It hosts Chest's (i.e. Factory's).
 
