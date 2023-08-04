@@ -28,14 +28,14 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_turtle
 
 R  use MObjHost class
-   R  enterprise_forest
+   R  enterprise_forestry
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
    R  enterprise_chest
       R  upgrade to a MObjHost                                    (done)
       R  use new MObjHost methods instead of current equivalent   (done)
       -  merge into enterprise_storage
-   R  enterprise_factory
+   R  enterprise_manufacturing
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
    -  enterprise_gathering
