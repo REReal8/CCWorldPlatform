@@ -92,7 +92,7 @@ function enterprise_projects.StartProject_ASrv(...)
         if not wipHandler then corelog.Error("enterprise_projects:StartProject_ASrv: Failed obtaining WIPAdministrator") return Callback.ErrorCall(callback) end
 
         -- administer work started
-        wipHandler:administerWorkStarted(projectMeta.wipId, project.projectId)
+        wipHandler:administerWorkStarted(projectMeta.wipId, "Project "..project.projectId)
     end
 
     -- let's start
@@ -292,7 +292,7 @@ local function EndProject(internalProjectData)
         if not wipHandler then corelog.Error("enterprise_projects:EndProject: Failed obtaining WIPAdministrator") return false end
 
         -- administer work completed
-        wipHandler:administerWorkCompleted(projectMeta.wipId, projectId)
+        wipHandler:administerWorkCompleted(projectMeta.wipId, "Project "..projectId)
     end
 
     -- we are done, do the callback
