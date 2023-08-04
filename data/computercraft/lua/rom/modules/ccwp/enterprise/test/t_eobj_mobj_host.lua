@@ -253,8 +253,6 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv(serviceData, testsCallback)
     })
     local mobjLocator = URL:new(serviceResults.mobjLocator)
 
-    local materialsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
-
     local callback = Callback:new({
         _moduleName     = "T_MObjHost",
         _methodName     = "dismantleAndReleaseMObj_ASrv_Callback",
@@ -267,7 +265,7 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv(serviceData, testsCallback)
     -- test
     local scheduleResult = host1:dismantleAndReleaseMObj_ASrv({
         mobjLocator                 = mobjLocator,
-        materialsItemSupplierLocator= materialsItemSupplierLocator,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
