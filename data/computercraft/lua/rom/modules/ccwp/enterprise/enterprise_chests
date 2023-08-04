@@ -23,46 +23,33 @@ local Callback = require "obj_callback"
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function enterprise_chests.DelistChest_ASrv(...)
+function enterprise_chests.DelistChest_SSrv(...)
     -- get & check input from description
-    local checkSuccess, chestLocator, callback = InputChecker.Check([[
-        This async public service delists ("removes") a Chest from the enterprise. Delisting implies
-            - the Chest is immediatly no longer available for new business (e.g. adding/ removing items)
-            - wait for all active work on Chest to be ended
+    local checkSuccess, chestLocator = InputChecker.Check([[
+        This sync public service delists ("removes") a Chest from the enterprise. Delisting implies
             - remove the Chest from the enterprise
 
         Note that the Chest (and it's possibly remaining items) are not removed from the world.
 
         Return value:
-                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                - (table)
                 success         - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData         - (table) data about the service
                 chestLocator    + (URL) locating the Chest
-            callback            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_chests.DelistChest_SSrv: Invalid input") return {success = false} end
 
     -- get the Obj
     local obj = enterprise_chests:getObject(chestLocator)
-    if type(obj) ~="table" then corelog.Error("enterprise_chests.DelistChest_ASrv: Obj "..chestLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
-
-    -- stop doing business for this Obj
-    -- ToDo: implement
-
-    -- wait for active work done
-    -- ToDo: implement
+    if type(obj) ~="table" then corelog.Error("enterprise_chests.DelistChest_SSrv: Obj "..chestLocator:getURI().." not found.") return {success = false} end
 
     -- remove Obj from enteprise
     corelog.WriteToLog(">Delisting Chest "..obj:getId())
     enterprise_chests:deleteResource(chestLocator)
 
-    -- do callback
-    return callback:call({success = true})
+    -- end
+    return {success = true}
 end
 
 function enterprise_chests.UpdateChestRecord_ASrv(...)

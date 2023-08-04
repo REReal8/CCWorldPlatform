@@ -160,12 +160,6 @@ function T_Factory.T_isTypeOf()
     -- cleanup test
 end
 
-local callback = Callback:new({
-    _moduleName     = "t_main",
-    _methodName     = "Func1_Callback",
-    _data           = { },
-})
-
 function T_Factory.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Factory:isSame() tests")
@@ -223,7 +217,7 @@ function T_Factory.T_isSame()
     obj._smeltingSpots = smeltingSpots1
 
     -- cleanup test
-    return enterprise_chests.DelistChest_ASrv({ chestLocator = inputLocator2 }, callback) and enterprise_chests.DelistChest_ASrv({ chestLocator = outputLocator2 }, callback)
+    return enterprise_chests.DelistChest_SSrv({ chestLocator = inputLocator2 }) and enterprise_chests.DelistChest_SSrv({ chestLocator = outputLocator2 })
 end
 
 function T_Factory.T_copy()

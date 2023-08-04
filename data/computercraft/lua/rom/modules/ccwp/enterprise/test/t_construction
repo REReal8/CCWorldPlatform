@@ -115,7 +115,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
             -- cleanup
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "DelistChest_ASrv" }, stepDataDef = {
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "DelistChest_SSrv" }, stepDataDef = {
                 { keyDef = "chestLocator"           , sourceStep = 1, sourceKeyDef = "chestLocator" },
             }},
         },
