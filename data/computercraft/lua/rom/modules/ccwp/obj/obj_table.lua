@@ -23,6 +23,19 @@ local objectFactory = ObjectFactory:getInstance()
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function ObjTable:getObjClassName()
+    return self._objClassName
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
 function ObjTable:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -49,17 +62,6 @@ function ObjTable:getClassName()
     return "ObjTable"
 end
 
-function ObjTable:getObjClassName()
-    return self._objClassName
-end
-
-function ObjTable:getObjClass()
-    local objClass = objectFactory:getClass(self._objClassName)
-    if not objClass then corelog.Error("ObjTable:getObjClass(): failed obtaining class "..self._objClassName.." from objectFactory (did we forget to set _objClassName?)") end
-
-    return objClass
-end
-
 function ObjTable:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do
@@ -69,19 +71,6 @@ function ObjTable:isTypeOf(obj)
         metatable = getmetatable(metatable.__index)
     end
     return false
-end
-
-function ObjTable:getNObjs()
-    -- count
-    local nObj = 0
-    for key, el in pairs(self) do
-        if key ~= "_objClassName" then
-            nObj = nObj + 1
-        end
-    end
-
-    -- end
-    return nObj
 end
 
 function ObjTable:isSame(obj)
@@ -136,6 +125,26 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function ObjTable:getObjClass()
+    local objClass = objectFactory:getClass(self._objClassName)
+    if not objClass then corelog.Error("ObjTable:getObjClass(): failed obtaining class "..self._objClassName.." from objectFactory (did we forget to set _objClassName?)") end
+
+    return objClass
+end
+
+function ObjTable:getNObjs()
+    -- count
+    local nObj = 0
+    for key, el in pairs(self) do
+        if key ~= "_objClassName" then
+            nObj = nObj + 1
+        end
+    end
+
+    -- end
+    return nObj
+end
 
 function ObjTable:transformObjectTables(suppressWarning)
     --[[
