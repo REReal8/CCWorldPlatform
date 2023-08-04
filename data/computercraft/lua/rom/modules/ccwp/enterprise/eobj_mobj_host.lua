@@ -134,9 +134,6 @@ function MObjHost:hostMObj_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("MObjHost:hostMObj_SSrv: Invalid input") return {success = false} end
 
-    -- log
-    corelog.WriteToLog(">Hosting new "..className..".")
-
     -- get class
     local class = objectFactory:getClass(className)
     if not class then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." not found in objectFactory") return {success = false} end
@@ -149,6 +146,9 @@ function MObjHost:hostMObj_SSrv(...)
     -- save the MObj
     local mobjLocator = self:saveObject(mobj)
     if not mobjLocator then corelog.Error("MObjHost:hostMObj_SSrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return {success = false} end
+
+    -- log
+    corelog.WriteToLog(">Hosting new "..className.." "..mobj:getId()..".")
 
     -- end
     local result = {
