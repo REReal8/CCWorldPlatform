@@ -126,17 +126,9 @@ function enterprise_forestry.AddNewSite_ASrv(...)
             { keyDef = "nTrees"                     , sourceStep = 0, sourceKeyDef = "nTrees" },
         }}
     )
---    table.insert(projectSteps,
---        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
---            { keyDef = "success1"                   , sourceStep = 1, sourceKeyDef = "success" },
---            { keyDef = "success2"                   , sourceStep = 2, sourceKeyDef = "success" },
---        }}
---    )
-
     local projectDef = {
         steps = projectSteps,
         returnData  = {
---            { keyDef = "success"                        , sourceStep = 3, sourceKeyDef = "success" },
             { keyDef = "forestLocator"                  , sourceStep = 2, sourceKeyDef = "forestLocator" },
         }
     }
@@ -312,18 +304,10 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         end
     end
 
-    -- add check for all a success
---    iStep = iStep + 1
---    table.insert(projectSteps,
---        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = areAllTrueStepDataDef}
---    )
---    local iAreAllTrueStep = iStep
-
     -- create project service data
     local projectDef = {
         steps = projectSteps,
         returnData  = {
---            { keyDef = "success"    , sourceStep = iAreAllTrueStep, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {

@@ -324,13 +324,8 @@ function Chest:updateChestRecord_AOSrv(...)
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
                 { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
             }},
---[[             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-            }}, ]]
         },
         returnData  = {
---            { keyDef = "success"                    , sourceStep = 3, sourceKeyDef = "success" },
         }
     }
     local projectServiceData = {
@@ -428,15 +423,8 @@ function Chest:provideItemsTo_AOSrv(...)
                 { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
---[[             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-                { keyDef = "success3"               , sourceStep = 3, sourceKeyDef = "success" },
-                { keyDef = "success4"               , sourceStep = 4, sourceKeyDef = "success" },
-            }}, ]]
         },
         returnData  = {
---            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
             { keyDef = "destinationItemsLocator"    , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
         }
     }
@@ -618,15 +606,8 @@ function Chest:storeItemsFrom_AOSrv(...)
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
                 { keyDef = "objectTable._inventory" , sourceStep = 3, sourceKeyDef = "inventory" },
             }},
---[[             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_projects", serviceName = "AreAllTrue_QSrv" }, stepDataDef = {
-                { keyDef = "success1"               , sourceStep = 1, sourceKeyDef = "success" },
-                { keyDef = "success2"               , sourceStep = 2, sourceKeyDef = "success" },
-                { keyDef = "success3"               , sourceStep = 3, sourceKeyDef = "success" },
-                { keyDef = "success4"               , sourceStep = 4, sourceKeyDef = "success" },
-            }}, ]]
         },
         returnData  = {
---            { keyDef = "success"                    , sourceStep = 5, sourceKeyDef = "success" },
             { keyDef = "destinationItemsLocator"    , sourceStep = 0, sourceKeyDef = "destinationItemsLocator" },
         }
     }
