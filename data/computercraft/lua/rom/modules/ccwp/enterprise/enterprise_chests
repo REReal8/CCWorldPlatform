@@ -44,18 +44,16 @@ function enterprise_chests.RegisterChest_SSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_chests.RegisterChest_SSrv: Invalid input") return {success = false} end
 
-    -- create new Obj
-    local obj = Chest:construct(chestData)
-
-    -- save the Obj
-    corelog.WriteToLog(">Registering Chest "..obj:getId()..".")
-    local objLocator = enterprise_chests:saveObject(obj)
-    if not objLocator then corelog.Error("enterprise_chests.RegisterChest_SSrv: Failed registering Obj") return {success = false} end
+    -- have hostMObj_SSrv handle service
+    local hResult = enterprise_chests:hostMObj_SSrv({
+        className           = "Chest",
+        constructParameters = chestData,
+    })
 
     -- end
     local result = {
-        success = true,
-        chestLocator = objLocator
+        success         = hResult.success,
+        chestLocator    = hResult.mobjLocator
     }
     return result
 end
