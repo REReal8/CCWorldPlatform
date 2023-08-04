@@ -146,6 +146,29 @@ function ObjTable:getNObjs()
     return nObj
 end
 
+
+
+function ObjTable:objs()
+    --[[
+        Factory for iterator over Obj's.
+
+        note: this iterator ensures a proper iterator is obtained that skips the _objClassName field.
+    --]]
+
+    -- create iterator that skips _objClassName
+    local function nextObj(table)
+        local key, value = next(table)
+        while key do
+            if key ~= "_objClassName" then
+                return key, value
+            end
+            key, value = next(table, key) -- Continue to the next key-value pair
+        end
+    end
+
+    return nextObj, self, nil
+end
+
 function ObjTable:transformObjectTables(suppressWarning)
     --[[
         Transform the objects in the ObjTable that are still object tables into objects of type 'objClass'.

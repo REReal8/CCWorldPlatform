@@ -180,12 +180,10 @@ function WIPAdministrator:reset()
     ]]
 
     -- loop on WIPQueue's
-    for queueId, queue in pairs(self._wipQueues) do
-        if queueId ~= "_objClassName" then
-            -- remove queue
-            local success = self:removeWIPQueue(queueId)
-            if not success then corelog.Error("WIPAdministrator:reset: Failed removing WIPQueue "..queueId) return false end
-        end
+    for queueId, queue in self._wipQueues:objs() do
+        -- remove queue
+        local success = self:removeWIPQueue(queueId)
+        if not success then corelog.Error("WIPAdministrator:reset: Failed removing WIPQueue "..queueId) return false end
     end
 
     -- end
