@@ -1,0 +1,207 @@
+local ItemTable = {
+}
+
+local corelog = require "corelog"
+local InputChecker = require "input_checker"
+
+--[[
+    This module implements the class ItemTabel.
+
+    An item table object for comparing and calculating
+--]]
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function ItemTable:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Inventory.
+
+        Parameters:
+            o                           + (table, {}) table with object fields
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemTable:new: Invalid input") return {} end
+
+--    o = o or {}   -- create object if user does not provide one -- not needed since input check creates empty table is not supplied
+    setmetatable(o, self)
+    self.__index = self
+    return o
+end
+
+function ItemTable:getClassName()
+    return "ItemTable"
+end
+
+function ItemTable:isTypeOf(obj)
+    local metatable = getmetatable(obj)
+    while metatable do
+        if metatable.__index == self or obj == self then
+            return true
+        end
+        metatable = getmetatable(metatable.__index)
+    end
+    return false
+end
+
+function ItemTable:isSame(obj)
+    -- check input
+    if not ItemTable:isTypeOf(obj) then return false end
+
+    -- check same object
+    for itemName, itemCount in pairs(self) do if type(obj[ itemName ])  ~= "number" or obj[ itemName ]  ~= itemCount then return false end end
+    for itemName, itemCount in pairs(obj)  do if type(self[ itemName ]) ~= "number" or self[ itemName ] ~= itemCount then return false end end
+
+    -- still here? Then we are fine
+    return true
+end
+
+function ItemTable:copy()
+    local copiedObject = {}
+
+    -- create new table
+    for itemName, itemCount in pairs(self) do copiedObject[ itemName ] = itemCount end
+
+    -- make it an item table object
+    copiedObject = ItemTable:new(copiedObject)
+
+    -- make it an object
+    return copiedObject
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+function ItemTable:isEmpty()
+    -- end
+    return next(self) == nil
+end
+
+function ItemTable:hasNoItems()
+    -- loop all items
+    for itemName, itemCount in pairs(self) do if itemCount ~= 0 then return false end end
+
+    -- if we get here, there were no items
+    return true
+end
+
+function ItemTable.combine(...)
+    -- get & check input from description
+    local checkSuccess, firstItemList, secondItemList = InputChecker.Check([[
+        This function combine two tables to one new item table
+
+        Return value:
+                            - (itemTable) new item table with both item tables combined
+
+        Parameters:
+            firstItemList   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
+            secondItemList  + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
+        --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemTable.combine: Invalid input") return false end
+
+    -- for the new list
+    local combined      = {}
+
+    -- loop the first, copy all to the combined
+    for itemName, itemCount in pairs(firstItemList) do combined[ itemName ] = itemCount end
+
+    -- loop the second, might be a value present
+    for itemName, itemCount in pairs(secondItemList) do combined[ itemName ] = (combined[ itemName ] or 0) + itemCount end
+
+    -- no need to thank us
+    return ItemTable:new(combined)
+end
+
+function ItemTable.compare(...)
+    -- get & check input from description
+    local checkSuccess, firstItemList, secondItemList = InputChecker.Check([[
+        This function compares two item tables, to see which items/counts are unique, and which are shared.
+        This function can be used to substract an ItemTable from another ItemTable, since the remainder is what's unique in the first.
+
+        Return value:
+                            - (itemTable) unique in first
+                            - (itemTable) shared in both
+                            - (itemTable) unique in second
+
+        Parameters:
+            firstItemList   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
+            secondItemList  + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
+        --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemTable.compare: Invalid input") return false end
+
+    -- this is what we will return
+    local uniqueFirst   = {}
+    local common        = {}
+    local uniqueSecond  = {}
+
+    -- loop the first
+    for firstName, firstCount in pairs(firstItemList) do
+
+        -- is this one also in the seconed?
+        if type(secondItemList[ firstName ]) == "number" then
+
+            -- both have this item, see which has the least
+            local itemCount = math.min(firstCount, secondItemList[ firstName ])
+
+            -- this is what both have in common
+            common[ firstName ] = itemCount
+
+            -- this is what's left in the first
+            if firstCount > itemCount then
+
+                -- the first had more
+                uniqueFirst[ firstName ] = firstCount - itemCount
+
+            -- maybe the second had more
+            elseif secondItemList[ firstName ] > itemCount then
+
+                -- the first had more
+                uniqueSecond[ firstName ] = secondItemList[ firstName ] - itemCount
+            end
+
+        else
+            -- nope, this item is only in the first
+            uniqueFirst[ firstName ] = firstCount
+        end
+    end
+
+    -- might be in the second but not in the first.
+    for secondName, secondCount in pairs(secondItemList) do
+
+            -- unique for the second?
+            if firstItemList[ secondName ] == nil then
+
+                -- yes, unique to the second item table
+                uniqueSecond[ secondName ] = secondCount
+            end
+    end
+
+    -- end
+    return ItemTable:new(uniqueFirst), ItemTable:new(common), ItemTable:new(uniqueSecond)
+end
+
+
+
+--    _          _                    __                  _   _
+--   | |        | |                  / _|                | | (_)
+--   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--                | |
+--                |_|
+
+
+-- we no need any help ;-)
+
+return ItemTable

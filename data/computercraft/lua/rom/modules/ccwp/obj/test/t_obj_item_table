@@ -1,0 +1,253 @@
+local T_ItemTable = {}
+
+local corelog = require "corelog"
+local ItemTable = require "obj_item_table"
+
+function T_ItemTable.T_All()
+    -- base methods
+    T_ItemTable.T_isTypeOf()
+    T_ItemTable.T_IsSameItemTable()
+    T_ItemTable.T_copy()
+
+    -- specific methods
+    T_ItemTable.T_isEmpty()
+    T_ItemTable.T_hasNoItems()
+    T_ItemTable.T_combine()
+    T_ItemTable.T_compare()
+end
+
+local testTable1    = ItemTable:new({
+    ["minecraft:coal"]      = 5,
+    ["minecraft:torch"]     = 11,
+})
+local testTable2    = ItemTable:new({
+    ["minecraft:coal"]      = 15,
+    ["minecraft:furnace"]   = 27,
+})
+local testTable3    = ItemTable:new({
+    ["minecraft:coal"]      = 0,
+})
+
+local testTable4    = ItemTable:new({
+})
+local testTable5    = ItemTable:new({
+    ["minecraft:birch_log"]  = 3,
+})
+
+local functionResult = nil
+local expectedResult = nil
+
+--    _          _                    __                  _   _
+--   | |        | |                  / _|                | | (_)
+--   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
+--   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
+--   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
+--   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
+--                | |
+--                |_|
+
+--    _                                     _   _               _
+--   | |                                   | | | |             | |
+--   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function T_ItemTable.T_isTypeOf()
+    -- prepare test
+    corelog.WriteToLog("* ItemTable:isTypeOf() tests")
+
+    -- test valid
+    functionResult = ItemTable:isTypeOf(testTable1)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten isTypeOf(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = ItemTable:isTypeOf(testTable2)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten isTypeOf(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    -- test different object
+    functionResult = ItemTable:isTypeOf({["minecraft:coal"] = 1})
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten isTypeOf(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = ItemTable:isTypeOf("kaas")
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten isTypeOf(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    -- cleanup test
+end
+
+function T_ItemTable.T_IsSameItemTable()
+    -- prepare test
+    corelog.WriteToLog("* T_ItemTable.T_IsSameItemTable() tests")
+
+    -- test same
+    functionResult = testTable1:isSame(testTable1)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable2:isSame(testTable2)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable1:isSame(testTable2)
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable2:isSame(testTable1)
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+end
+
+
+function T_ItemTable.T_copy()
+    -- prepare test
+    corelog.WriteToLog("* T_ItemTable:copy() tests")
+
+    -- test (need is same for testing)
+    local copyOfTable1  = testTable1:copy()
+
+    -- the tests
+    functionResult = testTable1:isSame(copyOfTable1)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten copy(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    -- changing a value, should not anymore be the same
+    copyOfTable1["minecraft:birch_log"] = (copyOfTable1["minecraft:birch_log"] or 0) + 15
+
+    -- another test
+    functionResult = testTable1:isSame(copyOfTable1)
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten copy(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    -- cleanup test
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+function T_ItemTable.T_isEmpty()
+    -- prepare test
+    corelog.WriteToLog("* T_ItemTable.T_isEmpty() tests")
+
+    -- test same
+    functionResult = testTable1:isEmpty()
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable2:isEmpty()
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable3:isEmpty()
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable4:isEmpty()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+end
+
+function T_ItemTable.T_hasNoItems()
+    -- prepare test
+    corelog.WriteToLog("* T_ItemTable.T_hasNoItems() tests")
+
+    -- test same
+    functionResult = testTable1:hasNoItems()
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable2:hasNoItems()
+    expectedResult = false
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable3:hasNoItems()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    functionResult = testTable4:hasNoItems()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+end
+
+function T_ItemTable.T_combine()
+    -- prepare test
+    corelog.WriteToLog("* T_ItemTable.T_combine() tests")
+
+    -- usefull
+    local testTable = {}
+
+    -- testing
+    testTable = ItemTable.combine(testTable1, testTable3)
+    functionResult = testTable:isSame(testTable1)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    testTable = ItemTable.combine(testTable1, testTable4)
+    functionResult = testTable:isSame(testTable1)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    testTable = ItemTable.combine(testTable1, testTable2)
+    functionResult = testTable:isSame(ItemTable:new({["minecraft:coal"] = 20, ["minecraft:torch"] = 11, ["minecraft:furnace"] = 27}))
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+end
+
+function T_ItemTable.T_compare()
+    -- prepare test
+    corelog.WriteToLog("* T_ItemTable.T_compare() tests")
+
+    -- usefull
+    local t1 = {}
+    local t2 = {}
+    local t3 = {}
+
+    -- compare with itself
+    t1, t2, t3 = ItemTable.compare(testTable2, testTable2)
+
+    functionResult = t1:isEmpty()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    functionResult = t2:isSame(testTable2)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    functionResult = t3:isEmpty()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    -- compare filled with empty table
+    t1, t2, t3 = ItemTable.compare(testTable1, testTable4)
+
+    functionResult = t1:isSame(testTable1)
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    functionResult = t2:isEmpty()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    functionResult = t3:isEmpty()
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+
+    -- compare two filled tables
+    t1, t2, t3 = ItemTable.compare(testTable1, testTable2)
+
+    functionResult = t1:isSame(ItemTable:new({["minecraft:torch"] = 11}))
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    functionResult = t2:isSame(ItemTable:new({["minecraft:coal"] = 5}))
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+    functionResult = t3:isSame(ItemTable:new({["minecraft:coal"] = 10, ["minecraft:furnace"] = 27}))
+    expectedResult = true
+    assert(functionResult == expectedResult, "gotten IsSameItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
+end
+
+return T_ItemTable
