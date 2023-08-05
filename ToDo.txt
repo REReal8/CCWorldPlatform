@@ -53,6 +53,13 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
    -  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
 
+-  hosting/ releasing, building/ dismantling v2.0
+   -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
+      -  mobj_shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in mobj_shop as enterprise_shop) seems incorrect.
+      -  mobj_shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
+      -  the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
+      -  should we introduce some intermediate abstraction between IObj and IMObj, e.g. IHObj (hostable Obj), or IWObj (Workable Obj), or IAObj (async Obj)?
+
 G  blueprint
    G  Blueprint layer holds a desription / name
    G  used to pass to project step (zodat het in de status schermen te zien is)
