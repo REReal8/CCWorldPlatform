@@ -21,11 +21,6 @@ local T_Obj = require "test.t_obj"
 local t_turtle = require "test.t_turtle"
 
 function T_Silo.T_All()
-    -- interfaces
-    T_Silo.T_ImplementsIMObj()
-    T_Silo.T_ImplementsIItemSupplier()
-    T_Silo.T_ImplementsIItemDepot()
-
     -- IObj methods
     T_Silo.T_new()
     T_Silo.T_ImplementsIObj()
@@ -33,6 +28,15 @@ function T_Silo.T_All()
     T_Silo.T_isTypeOf()
     T_Silo.T_isSame()
     T_Silo.T_copy()
+
+    -- IMObj methods
+    T_Silo.T_ImplementsIMObj()
+
+    -- IItemSupplier methods
+    T_Silo.T_ImplementsIItemSupplier()
+
+    -- IItemDepot methods
+    T_Silo.T_ImplementsIItemDepot()
 
     -- ToDo: "All" tests are supposed to have no side-effect and should cause the system (typically the dht) be cleared of any changes it made. This seems
     -- not the case for ensure T_new() test. Hence it is commented for now.
@@ -62,18 +66,6 @@ local function ImplementsInterface(interfaceName)
 
     -- cleanup test
     obj:destruct()
-end
-
-function T_Silo.T_ImplementsIMObj()
-    ImplementsInterface("IMObj")
-end
-
-function T_Silo.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
-end
-
-function T_Silo.T_ImplementsIItemDepot()
-    ImplementsInterface("IItemDepot")
 end
 
 --    _                                     _   _               _
@@ -214,6 +206,10 @@ end
 --                            _/ |
 --                           |__/
 
+function T_Silo.T_ImplementsIMObj()
+    ImplementsInterface("IMObj")
+end
+
 function T_Silo.T_construct()
 
     -- do the new test
@@ -234,6 +230,10 @@ local compact = { compact = true }
 --   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|    |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                                              | |   | |
 --                                              |_|   |_|
+
+function T_Silo.T_ImplementsIItemSupplier()
+    ImplementsInterface("IItemSupplier")
+end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
@@ -301,6 +301,10 @@ end
 --   |_____|_____|\__\___|_| |_| |_|_____/ \___| .__/ \___/ \__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                                             | |
 --                                             |_|
+
+function T_Silo.T_ImplementsIItemDepot()
+    ImplementsInterface("IItemDepot")
+end
 
 function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
