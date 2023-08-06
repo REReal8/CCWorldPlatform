@@ -10,10 +10,11 @@ local URL = require "obj_url"
 
 local Turtle = require "mobj_turtle"
 
-local T_Chest = require "test.t_mobj_chest"
-
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
+
+local T_Obj = require "test.t_obj"
+local T_Chest = require "test.t_mobj_chest"
 
 local t_turtle = require "test.t_turtle"
 
@@ -210,7 +211,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Chest.NewObj(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
+    local chest2 = T_Obj.newObj("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
     local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
@@ -274,7 +275,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Chest.NewObj(location2:getRelativeLocation(2, 5, 0)) if not chest2 then corelog.Error("failed obtaining chest 2") return end
+    local chest2 = T_Obj.newObj("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
     local itemsLocator = enterprise_chests:saveObject(chest2)
 
     -- test

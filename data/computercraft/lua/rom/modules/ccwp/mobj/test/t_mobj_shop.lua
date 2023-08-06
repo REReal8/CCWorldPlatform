@@ -19,6 +19,8 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
+local T_Obj = require "test.t_obj"
+
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local t_turtle = require "test.t_turtle"
@@ -233,9 +235,11 @@ function T_Shop.T_delistAllItemSuppliers()
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
-    local chest = T_Chest.NewObj(location1) if not chest then corelog.Error("failed obtaining Chest") return end
+
+    local chest = T_Obj.newObj("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
     local chestLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = chestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
+
     nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 2, "Shop "..obj:getId().." does not have 2 ItemSupplier's")
 
     -- test
@@ -259,17 +263,17 @@ function T_Shop.T_bestItemSupplier()
     }
     local ingredientsItemSupplierLocator = objectLocator
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
-    local chest = T_Chest.NewObj(location1) if not chest then corelog.Error("failed obtaining Chest") return end
+    local chest = T_Obj.newObj("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
     local itemDepotLocator = enterprise_chests:saveObject(chest)
 
     -- test lowest fuelNeed
     local closeLocation = location1:getRelativeLocation(1, 1, 0)
-    chest = T_Chest.NewObj(closeLocation) if not chest then corelog.Error("failed obtaining Chest") return end
+    chest = T_Obj.newObj("Chest", T_Chest.NewOTable(closeLocation)) assert(chest, "failed obtaining Chest")
     local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local farLocation = location1:getRelativeLocation(99999, 1, 0)
-    chest = T_Chest.NewObj(farLocation) if not chest then corelog.Error("failed obtaining Chest") return end
+    chest = T_Obj.newObj("Chest", T_Chest.NewOTable(farLocation)) assert(chest, "failed obtaining Chest")
     local farItemSupplierLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 

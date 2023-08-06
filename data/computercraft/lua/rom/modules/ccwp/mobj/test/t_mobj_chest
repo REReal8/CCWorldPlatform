@@ -102,24 +102,6 @@ function T_Chest.NewOTable(location, accessDirection, inventory, id)
     return oTable
 end
 
-function T_Chest.NewObj(location, accessDirection, inventory, id)
-    -- check input
-    -- ToDo: remove check??? or even remove method?
-    location = location or location1
-    id = id or coreutils.NewId()
-    accessDirection = accessDirection or accessDirection1
-    inventory = inventory or inventory1
-
-    -- get new oTable
-    local oTable = T_Chest.NewOTable(location, accessDirection, inventory, id)
-
-    -- create new Obj
-    local obj = Chest:new(oTable)
-
-    -- end
-    return obj
-end
-
 function T_Chest.T_new()
     -- prepare test
     local oTable = T_Chest.NewOTable()
