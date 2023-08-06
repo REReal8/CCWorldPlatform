@@ -30,6 +30,7 @@ function T_Chest.T_All()
     T_Chest.T_Getters()
 
     -- IObj methods
+    T_Chest.T_getClassName()
     T_Chest.T_isTypeOf()
     T_Chest.T_isSame()
     T_Chest.T_copy()
@@ -95,11 +96,9 @@ function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
-    local className = "Chest"
     local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test
-    assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
     assert(obj:getBaseLocation() == location1, "gotten getBaseLocation(="..textutils.serialize(obj:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(obj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..obj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
@@ -135,6 +134,18 @@ function T_Chest.CreateChest(location, accessDirection, inventory, id)
 
     -- end
     return obj
+end
+
+function T_Chest.T_getClassName()
+    -- prepare test
+    corelog.WriteToLog("* Chest:getClassName() tests")
+    local className = "Chest"
+    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
+
+    -- test valid
+    assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
+
+    -- cleanup test
 end
 
 function T_Chest.T_isTypeOf()
