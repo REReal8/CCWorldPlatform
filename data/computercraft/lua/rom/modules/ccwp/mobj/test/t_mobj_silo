@@ -21,6 +21,8 @@ local T_Obj = require "test.t_obj"
 local t_turtle = require "test.t_turtle"
 
 function T_Silo.T_All()
+    -- base methods
+
     -- IObj methods
     T_Silo.T_new()
     T_Silo.T_ImplementsIObj()
