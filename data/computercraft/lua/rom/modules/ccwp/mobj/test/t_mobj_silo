@@ -39,11 +39,6 @@ function T_Silo.T_All()
 
     -- IItemDepot methods
     T_Silo.T_ImplementsIItemDepot()
-
-    -- ToDo: "All" tests are supposed to have no side-effect and should cause the system (typically the dht) be cleared of any changes it made. This seems
-    -- not the case for ensure T_new() test. Hence it is commented for now.
---    T_Silo.T_new()
---    T_Silo.T_Load()
 end
 
 local className = "Silo"
