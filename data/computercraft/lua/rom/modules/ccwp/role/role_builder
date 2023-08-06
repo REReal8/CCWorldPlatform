@@ -103,15 +103,17 @@ function role_builder.BuildBlueprint_Task(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_builder.BuildBlueprint_Task: Invalid input") return {success = false} end
 
+    -- go to blueprintStartpoint
+    coremove.GoTo(blueprintStartpoint, false) -- note: not forcing, to ensure we do not destroy other structures
+    -- ToDo: consider using start sequence
+
     -- loop on layers
     for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
         local startpoint = Location:new(buildLayer.startpoint)
         local layerBuildData = {
-            startpoint              = startpoint:getRelativeLocation(
-                                                                   blueprintStartpoint:getX(),
-                                                                   blueprintStartpoint:getY(),
-                                                                   blueprintStartpoint:getZ()),
+            startpoint              = startpoint:getRelativeLocation(blueprintStartpoint:getX(), blueprintStartpoint:getY(), blueprintStartpoint:getZ()),
+            forceToStartPoint       = true, -- note: forcing, to ensure we get to the layer startpoint directly (blueprint's should ensure this doesn't destroy anything!)
             buildFromAbove          = buildLayer.buildFromAbove,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
@@ -128,10 +130,7 @@ function role_builder.BuildBlueprint_Task(...)
     -- perform escape sequence
     for i, escapeLocation in ipairs(escapeSequence) do
         escapeLocation = Location:new(escapeLocation)
-        coremove.GoTo(blueprintStartpoint:getRelativeLocation(
-                                                   escapeLocation:getX(),
-                                                   escapeLocation:getY(),
-                                                   escapeLocation:getZ()))
+        coremove.GoTo(blueprintStartpoint:getRelativeLocation(escapeLocation:getX(), escapeLocation:getY(), escapeLocation:getZ()), false) -- note: not forcing, to ensure we do not destroy created structures
     end
 
     return {success = true}
@@ -175,7 +174,7 @@ end
 
 function role_builder.BuildLayer_Task(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer = InputChecker.Check([[
+    local checkSuccess, startpoint, forceToStartPoint, buildFromAbove, replacePresentObjects, layer = InputChecker.Check([[
         This Task builds a rectangular layer in the x,y plane.
 
         Return value:
@@ -184,6 +183,7 @@ function role_builder.BuildLayer_Task(...)
         Parameters:
             buildData                   - (table) data about the layer
                 startpoint              + (Location) lower left coordinate to start building the layer
+                forceToStartPoint       + (boolean, false) whether to force going to startpoint
                 buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
                 replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
@@ -213,7 +213,7 @@ function role_builder.BuildLayer_Task(...)
     end
 
     -- go to starting location
-    coremove.GoTo(startpoint:getRelativeLocation(0, 0, deltaZ), false)
+    coremove.GoTo(startpoint:getRelativeLocation(0, 0, deltaZ), forceToStartPoint)
 
     -- walk along columns
     for col=1, layer:getNColumns() do
