@@ -19,6 +19,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+
 local ObjArray = require "obj_array"
 local Host = require "obj_host"
 
@@ -121,6 +122,8 @@ function Silo:isSame(obj)
                 and self._topChests:isSame(obj._topChests)
                 and self._storageChests:isSame(obj._storageChests)
 
+                and self._operational == obj._operational
+
     -- end
     return isSame
 end
@@ -156,7 +159,7 @@ end
 
 function Silo:construct(...)
     -- get & check input from description
-    local checkSuccess, location, topChests, layers = InputChecker.Check([[
+    local checkSuccess, baseLocation, topChests, layers = InputChecker.Check([[
         This method constructs a Silo instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also ensures all child MObj's the Silo spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
@@ -168,15 +171,15 @@ function Silo:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the Silo
-                location                + (Location) location of the Silo
+                baseLocation            + (Location) base location of the Silo
                 topChests               + (number, 2) # of top chests
                 layers                  + (number, 2) # of layers
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:construct: Invalid input") return nil end
 
     -- better safe then sorry, maybe flexible one day
-    location:setDX(0)
-    location:setDY(1)
+    baseLocation:setDX(0)
+    baseLocation:setDY(1)
 
     -- make object table
     local oTable  = {
@@ -186,8 +189,8 @@ function Silo:construct(...)
         _version        = 1,
 
         -- locations
-        _baseLocation   = location,
-        _entryLocation  = location:getRelativeLocation(3, 3, 0),
+        _baseLocation   = baseLocation,
+        _entryLocation  = baseLocation:getRelativeLocation(3, 3, 0),
 
         -- pickup and drop
         _dropLocation   = 0,
@@ -206,17 +209,17 @@ function Silo:construct(...)
     }
 
     -- log
-    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(location, { compact = true }))
+    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 2 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 3 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 4 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 5 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 6 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 7 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
-    if topChests >= 8 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
+    if topChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if topChests >= 2 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if topChests >= 3 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
+    if topChests >= 4 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
+    if topChests >= 5 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if topChests >= 6 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if topChests >= 7 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
+    if topChests >= 8 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
 
     -- set the defaults (basic setup)
     if topChests >= 1 then oTable._dropLocation   = 1 end

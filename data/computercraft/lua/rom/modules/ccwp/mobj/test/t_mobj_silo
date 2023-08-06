@@ -1,11 +1,13 @@
 local T_Silo = {}
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 local coredht = require "coredht"
 
 local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
+local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -14,16 +16,23 @@ local Silo = require "mobj_silo"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
 
+local T_Obj = require "test.t_obj"
+
 local t_turtle = require "test.t_turtle"
 
 function T_Silo.T_All()
     -- interfaces
-    T_Silo.T_ImplementsIObj()
     T_Silo.T_ImplementsIMObj()
     T_Silo.T_ImplementsIItemSupplier()
     T_Silo.T_ImplementsIItemDepot()
 
-    -- base methods
+    -- IObj methods
+    T_Silo.T_new()
+    T_Silo.T_ImplementsIObj()
+    T_Silo.T_getClassName()
+    T_Silo.T_isTypeOf()
+    T_Silo.T_isSame()
+    T_Silo.T_copy()
 
     -- ToDo: "All" tests are supposed to have no side-effect and should cause the system (typically the dht) be cleared of any changes it made. This seems
     -- not the case for ensure T_new() test. Hence it is commented for now.
@@ -31,7 +40,7 @@ function T_Silo.T_All()
 --    T_Silo.T_Load()
 end
 
--- handy
+local className = "Silo"
 local location1  = Location:new({_x= 12, _y= 12, _z= 1, _dx=0, _dy=1})
 
 --    _       _             __
@@ -45,7 +54,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* Silo "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = Silo:construct({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -53,10 +62,6 @@ local function ImplementsInterface(interfaceName)
 
     -- cleanup test
     obj:destruct()
-end
-
-function T_Silo.T_ImplementsIObj()
-    ImplementsInterface("IObj")
 end
 
 function T_Silo.T_ImplementsIMObj()
@@ -78,6 +83,128 @@ end
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function T_Silo.NewOTable(baseLocation, topChests, storageChests, id)
+    -- check input
+    baseLocation = baseLocation or location1
+
+    topChests = topChests or ObjArray:new({ _objClassName = "URL", })
+    storageChests = storageChests or ObjArray:new({ _objClassName = "URL", })
+
+    id = id or coreutils.NewId()
+
+    -- create new oTable
+    local oTable  = {
+        _id             = id,
+
+        _version        = 1,
+
+        -- locations
+        _baseLocation   = baseLocation,
+        _entryLocation  = baseLocation:getRelativeLocation(3, 3, 0),
+
+        -- pickup and drop
+        _dropLocation   = 0,
+        _pickupLocation = 0,
+
+        -- chests
+        _topChests      = topChests,
+        _storageChests  = storageChests,
+
+        -- is this silo accepting requests?
+        _operational    = false,
+    }
+
+    -- end
+    return oTable
+end
+
+function T_Silo.T_new()
+    -- prepare test
+    local oTable = T_Silo.NewOTable()
+
+    -- test
+    T_Obj.T_new(className, oTable)
+end
+
+function T_Silo.T_ImplementsIObj()
+    -- prepare test
+    local oTable = T_Silo.NewOTable()
+
+    -- test
+    T_Obj.T_ImplementsInterface(className, oTable)
+end
+
+function T_Silo.T_getClassName()
+    -- prepare test
+    local oTable = T_Silo.NewOTable()
+
+    -- test
+    T_Obj.T_getClassName(className, oTable)
+end
+
+function T_Silo.T_isTypeOf()
+    -- prepare test
+    local oTable = T_Silo.NewOTable()
+
+    -- test
+    T_Obj.T_isTypeOf(className, oTable)
+end
+
+function T_Silo.T_isSame()
+    -- prepare test
+    corelog.WriteToLog("* "..className..":isSame() tests")
+    local id = coreutils.NewId()
+    local topChests1 = ObjArray:new({ _objClassName = "URL", })
+
+    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local topChests2 = ObjArray:new({ _objClassName = "URL", chestLocator1 })
+    local storageChests1 = ObjArray:new({ _objClassName = "URL", })
+
+    local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local storageChests2 = ObjArray:new({ _objClassName = "URL", chestLocator2 })
+
+    local obj = T_Obj.newObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+
+    -- test same
+    local obj1 = T_Obj.newObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local isSame = obj1:isSame(obj)
+    local expectedIsSame = true
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+
+    -- test different _topChests
+    obj._topChests = topChests2
+    isSame = obj1:isSame(obj)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    obj._topChests = topChests1
+
+    -- test different storageChests1
+    obj._storageChests = storageChests2
+    isSame = obj1:isSame(obj)
+    expectedIsSame = false
+    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    obj._storageChests = storageChests1
+
+    -- cleanup test
+end
+
+function T_Silo.T_copy()
+    -- prepare test
+    local oTable = T_Silo.NewOTable()
+
+    -- test
+    T_Obj.T_copy(className, oTable)
+end
+
 --    _____ __  __  ____  _     _                  _   _               _
 --   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
 --     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -91,7 +218,7 @@ function T_Silo.T_construct()
 
     -- do the new test
     corelog.WriteToLog("* Silo:construct() tests")
-    local obj = Silo:construct({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
     local siloLocator = enterprise_storage:saveObject(obj)
 
     obj:IntegretyCheck()
@@ -111,7 +238,7 @@ local compact = { compact = true }
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
 
     -- activate the silo
     obj:Activate()
@@ -179,7 +306,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = t_turtle.GetCurrentTurtleLocator()
-    local obj = Silo:construct({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
     local siloLocator = enterprise_storage:saveObject(obj)
 
     local provideItems = {

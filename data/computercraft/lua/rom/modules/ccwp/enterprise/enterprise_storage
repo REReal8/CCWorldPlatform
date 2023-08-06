@@ -120,7 +120,7 @@ function enterprise_storage.StartNewSite_SSrv(...)
     -- what kind of ItemStorage is this?
     if siteData.type == 'silo' then
         local obj = Silo:construct({
-            location    = location,
+            baseLocation= location,
             topChests   = topChests,
             layers      = layers,
         })
