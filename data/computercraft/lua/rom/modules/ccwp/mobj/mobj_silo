@@ -16,28 +16,16 @@ local Silo = {
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local Host = require "obj_host"
 
-local Location = require "obj_location"
-local Inventory = require "obj_inventory"
-
-local role_fuel_worker = require "role_fuel_worker"
-local role_chests_worker = require "role_chests_worker"
-
-local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage
-
--- usefull
-local dthSiloRoot   = "mobj_silo"
-
 
 
 --[[
@@ -81,7 +69,7 @@ function Silo:new(...)
         Construct a Silo.
 
         Parameters:
-            o                           + (table) data about this silo, like type and layout
+            o                           + (table, {}) with object fields
                 _id                     - (string) id of the Silo
                 _version                - (number) version of the Silo
                 _location               - (Location) location of the Silo
@@ -180,7 +168,7 @@ function Silo:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the Silo
-                location                + (Location) location of site
+                location                + (Location) location of the Silo
                 topChests               + (number, 2) # of top chests
                 layers                  + (number, 2) # of layers
     ]], table.unpack(arg))

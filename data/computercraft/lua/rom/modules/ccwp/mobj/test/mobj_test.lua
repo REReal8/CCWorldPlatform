@@ -53,7 +53,7 @@ function TestMObj:new(...)
         Construct a TestMObj.
 
         Parameters:
-            o                           + (table, {}) table with object fields
+            o                           + (table, {}) with object fields
                 _id                     - (string) id of the TestMObj
                 _baseLocation           - (Location) base location of the TestMObj
                 _field1                 - (string) field
