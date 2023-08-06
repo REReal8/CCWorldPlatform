@@ -1030,9 +1030,6 @@ function Factory.GetV2SiteStartData(serviceData)
     --
     local baseLocation = serviceData.baseLocation
 
-    corelog.WriteToLog("serviceData:")
-    corelog.WriteToLog(serviceData)
-
     -- register input chest
     local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
         location        = baseLocation:getRelativeLocation(2, 5, 0),
