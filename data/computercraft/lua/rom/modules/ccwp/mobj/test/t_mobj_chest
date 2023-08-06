@@ -14,6 +14,7 @@ local URL = require "obj_url"
 local enterprise_chests = require "enterprise_chests"
 
 local T_Obj = require "test.t_obj"
+local T_MObj = require "test.t_mobj"
 
 local t_turtle = require "test.t_turtle"
 
@@ -185,17 +186,12 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Chest.T_ImplementsInterface_IMObj(className, oTable)
-    assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IMObj", className, oTable)
-end
-
 function T_Chest.T_ImplementsIMObj()
     -- prepare test
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Chest.T_ImplementsInterface_IMObj(className, oTable)
+    T_MObj.T_ImplementsInterface(className, oTable)
 end
 
 --                        _                           _   _               _

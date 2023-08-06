@@ -17,6 +17,7 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
 
 local T_Obj = require "test.t_obj"
+local T_MObj = require "test.t_mobj"
 
 local t_turtle = require "test.t_turtle"
 
@@ -204,7 +205,11 @@ end
 --                           |__/
 
 function T_Silo.T_ImplementsIMObj()
-    ImplementsInterface("IMObj")
+    -- prepare test
+    local oTable = T_Silo.NewOTable()
+
+    -- test
+    T_MObj.T_ImplementsInterface(className, oTable)
 end
 
 function T_Silo.T_construct()
