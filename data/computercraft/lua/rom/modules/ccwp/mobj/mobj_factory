@@ -93,7 +93,7 @@ function Factory:new(...)
         Construct a Factory.
 
         Parameters:
-            o                           + (table, {}) table with object fields
+            o                           + (table, {}) with object fields
                 _id                     - (string) id of the Factory
                 _baseLocation           - (Location) location of the Factory
                 _inputLocators          - (ObjArray) with input locators

@@ -129,11 +129,11 @@ function BirchForest:new(...)
         Construct a BirchForest.
 
         Parameters:
-            o                           + (table, {}) table with object fields
-                _id                     - (string) id of the forest
+            o                           + (table, {}) with object fields
+                _id                     - (string) id of the BirchForest
                 _level                  - (number) level of the forest
-                _location               - (Location) base location of the forest
-                _nTrees                 - (number) # trees in the forest
+                _location               - (Location) location of the BirchForest
+                _nTrees                 - (number) # trees in the BirchForest
                 _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
                 _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
     ]], table.unpack(arg))
