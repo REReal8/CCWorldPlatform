@@ -6,8 +6,6 @@ local coremove = require "coremove"
 local role_fuel_worker = require "role_fuel_worker"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
 
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
