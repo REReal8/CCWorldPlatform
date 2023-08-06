@@ -209,7 +209,7 @@ function Silo:construct(...)
     }
 
     -- log
-    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))
+--    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))
 
     -- add our top chests, depending how many we have
     if topChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
