@@ -17,6 +17,8 @@ local enterprise_chests = require "enterprise_chests"
 
 local T_Obj = require "test.t_obj"
 local T_MObj = require "test.t_mobj"
+local T_ItemSupplier = require "test.t_item_supplier"
+local T_ItemDepot = require "test.t_item_depot"
 
 local t_turtle = require "test.t_turtle"
 
@@ -274,17 +276,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Chest.T_ImplementsInterface_IItemSupplier(className, oTable)
-    assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IItemSupplier", className, oTable)
-end
-
 function T_Chest.T_ImplementsIItemSupplier()
     -- prepare test
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Chest.T_ImplementsInterface_IItemSupplier(className, oTable)
+    T_ItemSupplier.T_ImplementsInterface(className, oTable)
 end
 
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
@@ -411,17 +408,12 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Chest.T_ImplementsInterface_IItemDepot(className, oTable)
-    assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IItemDepot", className, oTable)
-end
-
 function T_Chest.T_ImplementsIItemDepot()
     -- prepare test
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Chest.T_ImplementsInterface_IItemDepot(className, oTable)
+    T_ItemDepot.T_ImplementsInterface(className, oTable)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
