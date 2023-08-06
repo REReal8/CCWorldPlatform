@@ -34,6 +34,8 @@ function T_Silo.T_All()
 
     -- IMObj methods
     T_Silo.T_ImplementsIMObj()
+    T_Silo.T_destruct()
+    T_Silo.T_construct()
 
     -- IItemSupplier methods
     T_Silo.T_ImplementsIItemSupplier()
@@ -212,6 +214,49 @@ function T_Silo.T_ImplementsIMObj()
 
     -- test
     T_MObj.T_ImplementsInterface(className, oTable)
+end
+
+function T_Silo.T_destruct()
+    -- prepare test
+    corelog.WriteToLog("* "..className..":destruct() tests")
+    local mobj = Silo:construct({
+        baseLocation    = location1,
+        topChests       = 0,
+        layers          = 0,
+    })
+
+    -- test
+    local destructSuccess = mobj:destruct()
+    assert(destructSuccess, className..":destruct not a success")
+end
+
+function T_Silo.T_construct()
+    -- prepare test
+    corelog.WriteToLog("* "..className..":construct() tests")
+    local topChests1 = 4
+    local layers1 = 3
+
+    -- test
+    local mobj = Silo:construct({
+        baseLocation    = location1,
+        topChests       = topChests1,
+        layers          = layers1,
+    })
+    assert(mobj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(mobj._topChests:nObjs() == topChests1, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
+    assert(mobj._storageChests:nObjs() == layers1*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
+    mobj:destruct()
+
+    -- test default
+    mobj = Silo:construct({
+        baseLocation    = location1,
+    })
+    assert(mobj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(mobj._topChests:nObjs() == 2, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(=2)")
+    assert(mobj._storageChests:nObjs() == 2*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(=8)")
+    mobj:destruct()
+
+    -- cleanup test
 end
 
 function T_Silo.T_integrity()

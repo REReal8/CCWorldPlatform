@@ -34,8 +34,8 @@ function T_Chest.T_All()
 
     -- IMObj methods
     T_Chest.T_ImplementsIMObj()
-    T_Chest.T_construct()
     T_Chest.T_destruct()
+    T_Chest.T_construct()
 
     -- IItemSupplier methods
     T_Chest.T_ImplementsIItemSupplier()
@@ -199,13 +199,14 @@ function T_Chest.T_ImplementsIMObj()
     T_MObj.T_ImplementsInterface(className, oTable)
 end
 
+local constructParameters1 = {
+    baseLocation    = location1,
+    accessDirection = accessDirection1,
+}
+
 function T_Chest.T_construct()
     -- prepare test
     corelog.WriteToLog("* "..className..":construct() tests")
-    local constructParameters1 = {
-        baseLocation    = location1,
-        accessDirection = accessDirection1,
-    }
 
     -- test
     local mobj = Chest:construct(constructParameters1)
@@ -217,10 +218,7 @@ end
 function T_Chest.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..className..":destruct() tests")
-    local constructParameters1 = {
         baseLocation    = location1,
-        accessDirection = accessDirection1,
-    }
     local mobj = Chest:construct(constructParameters1)
 
     -- test

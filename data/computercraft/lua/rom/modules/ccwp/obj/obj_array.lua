@@ -115,6 +115,10 @@ end
 --       | |
 --       |_|
 
+function ObjArray:nObjs()
+    return #self
+end
+
 function ObjArray:transformObjectTables(suppressWarning)
     --[[
         Transform the objects in the ObjArray that are still object tables into objects of type 'objClass'.
