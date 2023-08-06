@@ -51,6 +51,7 @@ function T_Obj.newObj(className, oTable)
 
     -- create Obj from oTable
     local obj = objectFactory:create(className, oTable)
+    if not obj then corelog.Warning("failed creating "..className.." Obj from oTable "..textutils.serialise(oTable, compact)) end
 
     -- end
     return obj
