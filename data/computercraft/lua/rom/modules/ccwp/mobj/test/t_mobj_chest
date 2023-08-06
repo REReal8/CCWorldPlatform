@@ -228,7 +228,7 @@ end
 function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local obj = T_Chest.NewObj(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Obj.newObj(className, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local callback = Callback:new({
@@ -238,7 +238,6 @@ function T_Chest.T_updateChestRecord_AOSrv()
             ["chestLocator"]                    = chestLocator,
         },
     })
-
 
     -- test
     local scheduleResult = obj:updateChestRecord_AOSrv({}, callback)
@@ -284,7 +283,7 @@ end
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:provideItemsTo_AOSrv() test (to "..toStr..")")
-    local obj = T_Chest.NewObj(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Obj.newObj(className, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -321,7 +320,7 @@ end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Chest.NewObj(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
+    local obj2 = T_Obj.newObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
 
     -- test
@@ -351,7 +350,7 @@ end
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local obj = T_Chest.NewObj() if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Obj.newObj(className, T_Chest.NewOTable()) assert(obj, "failed obtaining "..className)
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -379,7 +378,7 @@ function T_Chest.T_can_ProvideItems_QOSrv()
             { name = "minecraft:dirt", count = 20 },
         }
     })
-    local obj = T_Chest.NewObj(location1, accessDirection1, inventory) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Obj.newObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory)) assert(obj, "failed obtaining "..className)
 
     -- test can
     local itemName = "minecraft:dirt"
@@ -421,7 +420,7 @@ end
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local obj = T_Chest.NewObj(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Obj.newObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -459,7 +458,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Chest.NewObj(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
+    local obj2 = T_Obj.newObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
     local itemsLocator = enterprise_chests:saveObject(obj2)
 
     -- test
