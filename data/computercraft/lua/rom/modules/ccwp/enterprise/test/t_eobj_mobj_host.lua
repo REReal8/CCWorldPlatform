@@ -118,10 +118,10 @@ end
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 local mobj_className = "TestMObj"
+local location = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
 local field1SetValue = "value field1"
-local baseLocation = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
 local constructParameters = {
-    baseLocation    = baseLocation,
+    location        = location,
     field1Value     = field1SetValue,
 }
 

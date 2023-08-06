@@ -1,7 +1,7 @@
 local TestMObj = {
     _id             = "",
 
-    _baseLocation   = nil,
+    _location       = nil,
     _field1         = "",
 }
 
@@ -34,8 +34,8 @@ function TestMObj:setField1(strValue)
     self._field1 = strValue
 end
 
-function TestMObj:getBaseLocation()
-    return self._baseLocation
+function TestMObj:getLocation()
+    return self._location
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -55,7 +55,7 @@ function TestMObj:new(...)
         Parameters:
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the TestMObj
-                _baseLocation           - (Location) base location of the TestMObj
+                _location               - (Location) location of the TestMObj
                 _field1                 - (string) field
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:new: Invalid input") return nil end
@@ -96,7 +96,10 @@ end
 
 function TestMObj:copy()
     local copy = TestMObj:new({
-        _field1 = self._field1,
+        _id         = self._id,
+
+        _field1     = self._field1,
+        _location   = self._location,
     })
 
     return copy
@@ -113,7 +116,7 @@ end
 
 function TestMObj:construct(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, field1Value = InputChecker.Check([[
+    local checkSuccess, location, field1Value = InputChecker.Check([[
         This method constructs a TestMObj instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also registers all child MObj's the TestMObj spawns (by calling the RegisterMObj method on the appropriate MObjHost).
@@ -125,7 +128,7 @@ function TestMObj:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the MObj
-                baseLocation            + (Location) base location of the TestMObj
+                location                + (Location) location of the TestMObj
                 field1Value             + (string) value to set field1 to
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
@@ -134,7 +137,7 @@ function TestMObj:construct(...)
     local oTable = {
         _id             = coreutils.NewId(),
 
-        _baseLocation   = baseLocation,
+        _location       = location,
         _field1         = field1Value,
     }
 
@@ -201,7 +204,7 @@ function TestMObj:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = self._location:copy()
 
     -- end
     return buildLocation, blueprint
@@ -231,7 +234,7 @@ function TestMObj:getDismantleBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._baseLocation:copy()
+    local buildLocation = self._location:copy()
 
     -- end
     return buildLocation, blueprint
