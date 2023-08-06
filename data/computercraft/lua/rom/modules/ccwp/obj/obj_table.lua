@@ -92,7 +92,7 @@ function ObjTable:isSame(obj)
     end
 
     -- count elements B
-    local sizeB = obj:getNObjs()
+    local sizeB = obj:nObjs()
 
     -- check same size
     if sizeA ~= sizeB then return false end
@@ -133,7 +133,7 @@ function ObjTable:getObjClass()
     return objClass
 end
 
-function ObjTable:getNObjs()
+function ObjTable:nObjs()
     -- count
     local nObj = 0
     for key, el in pairs(self) do
@@ -177,7 +177,7 @@ function ObjTable:transformObjectTables(suppressWarning)
     suppressWarning = suppressWarning or false
 
     -- check if empty
-    if self:getNObjs() == 0 then return end
+    if self:nObjs() == 0 then return end
 
     -- get objClass
     local objClassName = self:getObjClassName()

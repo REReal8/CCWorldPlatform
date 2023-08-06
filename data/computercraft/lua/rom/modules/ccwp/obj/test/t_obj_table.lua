@@ -65,7 +65,7 @@ function T_ObjTable.T_new()
     }) if not objTable then corelog.Warning("objTable unexpectedly nil") return end
     assert(objTable:getObjClassName() == objClassName1, "gotten getObjClassName(="..objTable:getObjClassName()..") not the same as expected(="..objClassName1..")")
     local expectedNElements = 2
-    assert(objTable:getNObjs() == expectedNElements, " # elements(="..objTable:getNObjs()..") not the same as expected(="..expectedNElements..")")
+    assert(objTable:nObjs() == expectedNElements, " # elements(="..objTable:nObjs()..") not the same as expected(="..expectedNElements..")")
     assert(objTable.testObj1Key:isSame(testObj1), "obj 1 in objTable(="..textutils.serialise(objTable.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objTable.testObj2Key:isSame(testObj2), "obj 2 in objTable(="..textutils.serialise(objTable.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
 
@@ -74,7 +74,7 @@ function T_ObjTable.T_new()
     local defaultName = ""
     assert(objTable:getObjClassName() == defaultName, "gotten getObjClassName(="..objTable:getObjClassName()..") not the same as expected(="..defaultName..")")
     expectedNElements = 0
-    assert(objTable:getNObjs() == expectedNElements, " # elements(="..objTable:getNObjs()..") not the same as expected(="..expectedNElements..")")
+    assert(objTable:nObjs() == expectedNElements, " # elements(="..objTable:nObjs()..") not the same as expected(="..expectedNElements..")")
 
     -- cleanup test
 end
@@ -190,7 +190,7 @@ function T_ObjTable.T_transformObjectTables()
     objTable2.testObj2Key = testObj2
     objTable2:transformObjectTables()
     local expectedNElements = 2
-    assert(objTable2:getNObjs() == expectedNElements, " # elements(="..objTable2:getNObjs()..") not the same as expected(="..expectedNElements..")")
+    assert(objTable2:nObjs() == expectedNElements, " # elements(="..objTable2:nObjs()..") not the same as expected(="..expectedNElements..")")
     assert(objTable2.testObj1Key:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objTable2.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objTable2.testObj2Key:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objTable2.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objTable2.testObj1Key = nil
@@ -202,7 +202,7 @@ function T_ObjTable.T_transformObjectTables()
     objTable2.testObj2Key = testObj2
     objTable2:transformObjectTables(true)
     expectedNElements = 2
-    assert(objTable2:getNObjs() == expectedNElements, " # elements(="..objTable2:getNObjs()..") not the same as expected(="..expectedNElements..")")
+    assert(objTable2:nObjs() == expectedNElements, " # elements(="..objTable2:nObjs()..") not the same as expected(="..expectedNElements..")")
     assert(objTable2.testObj1Key:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objTable2.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
     assert(objTable2.testObj2Key:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objTable2.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objTable2.testObj1Key = nil
