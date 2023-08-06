@@ -21,6 +21,12 @@ function T_MObjHost.T_All()
     -- service methods
     T_MObjHost.T_hostMObj_SSrv()
     T_MObjHost.T_releaseMObj_SSrv()
+end
+
+function T_MObjHost.T_AllPhysical()
+    -- IObj methods
+
+    -- service methods
     enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv" }, stepDataDef = {} },
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_dismantleAndReleaseMObj_ASrv" }, stepDataDef = {} },
