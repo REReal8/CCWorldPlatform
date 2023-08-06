@@ -101,7 +101,7 @@ function T_Chest.T_Getters()
     -- test
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getLocation() == location1, "gotten getLocation(="..textutils.serialize(obj:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(obj:getBaseLocation() == location1, "gotten getBaseLocation(="..textutils.serialize(obj:getId())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(obj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..obj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
     assert(obj:getInventory():isSame(inventory1), "gotten getInventory(="..textutils.serialize(obj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
 
@@ -128,7 +128,7 @@ function T_Chest.CreateChest(location, accessDirection, inventory, id)
     local obj = Chest:new({
         _id                     = id,
 
-        _location               = location,
+        _baseLocation           = location,
         _accessDirection        = accessDirection,
         _inventory              = inventory,
     })
@@ -167,12 +167,12 @@ function T_Chest.T_isSame()
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
-    -- test different _location
-    obj._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
+    -- test different _baseLocation
+    obj._baseLocation = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
     isSame = obj1:isSame(obj)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    obj._location = location1
+    obj._baseLocation = location1
 
     -- test different _accessDirection
     obj._accessDirection = "bottom"
@@ -345,7 +345,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
-    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, obj:getLocation())
+    local expectedFuelNeed = 1 * role_fuel_worker.NeededFuelToFrom(itemDepotLocation, obj:getBaseLocation())
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")

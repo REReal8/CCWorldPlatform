@@ -90,9 +90,9 @@ local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLoc
 local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
-local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+local craftingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
 local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
-local smeltingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
 local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
 
 function T_Factory.T_new()
@@ -170,9 +170,9 @@ function T_Factory.T_isSame()
     local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, inputLocator2, })
     local outputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(4, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
     local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, outputLocator2, })
-    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
     local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
 
     -- test same
@@ -300,9 +300,9 @@ function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test
     corelog.WriteToLog("* Factory:getFuelNeed_Production_Att() tests")
     local location2 = Location:new(coremove.GetLocation())
-    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
     local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
     local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("failed obtaining Factory") return end
 
@@ -324,14 +324,14 @@ function T_Factory.T_getProductionLocation_Att()
     local itemName = "minecraft:birch_planks"
     local itemCount = 10
     local productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
-    local expectedLocation = craftingSpot1:getLocation()
+    local expectedLocation = craftingSpot1:getBaseLocation()
     assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
 
     -- test smelt
     itemName = "minecraft:charcoal"
     itemCount = 5
     productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
-    expectedLocation = smeltingSpot1:getLocation()
+    expectedLocation = smeltingSpot1:getBaseLocation()
     assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
 
     -- cleanup test

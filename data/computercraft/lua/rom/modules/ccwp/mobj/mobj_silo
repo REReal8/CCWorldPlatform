@@ -2,7 +2,7 @@ local Silo = {
     _id                     = "",
     _version                = 1,
 
-    _location               = nil,
+    _baseLocation           = nil,
     _entryLocation          = nil,
 
     _dropLocation           = 0,
@@ -50,8 +50,8 @@ function Silo:Deactivate()
     self:update()
 end
 
-function Silo:getLocation()
-    return self._location
+function Silo:getBaseLocation()
+    return self._baseLocation
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -72,7 +72,7 @@ function Silo:new(...)
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the Silo
                 _version                - (number) version of the Silo
-                _location               - (Location) location of the Silo
+                _baseLocation           - (Location) base location of the Silo
                 _entryLocation          - (Location) entry location of the Silo
                 _dropLocation           - (number) top chest index
                 _pickupLocation         - (number) top chest index
@@ -112,7 +112,7 @@ function Silo:isSame(obj)
     local isSame =  self._id == obj._id
                 and self._version == obj._version
 
-                and self._location:isSame(obj._location)
+                and self._baseLocation:isSame(obj._baseLocation)
                 and self._entryLocation:isSame(obj._entryLocation)
 
                 and self._dropLocation == obj._dropLocation
@@ -130,7 +130,7 @@ function Silo:copy()
         _id             = self._id,
         _version        = self._version,
 
-        _location       = self._location:copy(),
+        _baseLocation   = self._baseLocation:copy(),
         _entryLocation  = self._entryLocation:copy(),
 
         -- pickup and drop
@@ -186,7 +186,7 @@ function Silo:construct(...)
         _version        = 1,
 
         -- locations
-        _location       = location,
+        _baseLocation   = location,
         _entryLocation  = location:getRelativeLocation(3, 3, 0),
 
         -- pickup and drop
@@ -298,7 +298,7 @@ function Silo:getBuildBlueprint()
 
     -- construct layer list
     local layerList = {
---        { startpoint = self._location:copy(), buildFromAbove = true, layer = Chest_layer()},
+--        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = Chest_layer()},
     }
 
     -- construct blueprint
@@ -309,7 +309,7 @@ function Silo:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._location:copy()
+    local buildLocation = self._baseLocation:copy()
 
     -- end
     return buildLocation, blueprint
@@ -328,7 +328,7 @@ function Silo:getDismantleBlueprint()
 
     -- construct layer list
     local layerList = {
---        { startpoint = self._location:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
+--        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
     }
 
     -- construct blueprint
@@ -339,7 +339,7 @@ function Silo:getDismantleBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._location:copy()
+    local buildLocation = self._baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

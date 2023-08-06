@@ -77,7 +77,7 @@ function enterprise_chests.GetItemsLocations_SSrv(...)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemsLocations_SSrv: Chest "..itemsLocator:getURI().." not found.") return {success = false} end
 
     -- get location
-    local location = chest:getLocation()
+    local location = chest:getBaseLocation()
 
     -- end
     return {
@@ -109,7 +109,7 @@ function enterprise_chests.GetItemDepotLocation_SSrv(...)
     if type(chest) ~= "table" then corelog.Error("enterprise_chests.GetItemDepotLocation_SSrv: Chest "..itemDepotLocator:getURI().." not found.") return {success = false} end
 
     -- get location
-    local location = chest:getLocation()
+    local location = chest:getBaseLocation()
 
     -- end
     return {

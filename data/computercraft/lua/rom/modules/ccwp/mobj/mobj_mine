@@ -2,7 +2,7 @@ local Mine = {
     _id                     = "",
     _version                = 1,
 
-    _location               = nil,
+    _baseLocation           = nil,
 
     _topChests              = nil,
 
@@ -73,7 +73,7 @@ function Mine:NewMine(...)
         _version        = 1,
 
         -- locations
-        _location       = location,
+        _baseLocation   = location,
 
         -- chests
         _topChests      = ObjArray:new({
@@ -119,8 +119,8 @@ function Mine:getId()
     return self._id
 end
 
-function Mine:getLocation()
-    return self._location
+function Mine:getBaseLocation()
+    return self._baseLocation
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -135,16 +135,16 @@ end
 function Mine:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
-        Construct a Silo.
+        Construct a Mine.
 
         Parameters:
-            o                           + (table) data about this silo, like type and layout
-                _id                     - (string) id of the Silo
-                _version                - (number) version of the Silo
-                _location               - (Location) location of the Silo
+            o                           + (table) with object fields
+                _id                     - (string) id of the Mine
+                _version                - (number) version of the Mine
+                _baseLocation           - (Location) base location of the Mine
                 _topChests              - (ObjArray) with top chests
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("Mine:new: Invalid input") return {} end
 
     -- set class info
     setmetatable(o, self)
@@ -177,7 +177,7 @@ function Mine:isSame(obj)
     local isSame =  self._id == obj._id
                 and self._version == obj._version
 
-                and self._location:isSame(obj._location)
+                and self._baseLocation:isSame(obj._baseLocation)
 
                 and self._topChests:isSame(obj._topChests)
 
@@ -190,7 +190,7 @@ function Mine:copy()
         _id             = self._id,
         _version        = self._version,
 
-        _location       = self._location:copy(),
+        _baseLocation   = self._baseLocation:copy(),
 
         _topChests      = self._topChests:copy(),
     })

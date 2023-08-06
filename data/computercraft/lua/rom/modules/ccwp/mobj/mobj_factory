@@ -302,7 +302,7 @@ function Factory:getProductionLocation_Att(...)
     -- get location
     local productionSpot = self:getAvailableProductionSpot(recipe)
     if not productionSpot then corelog.Error("Factory:getSiteLocation_Att: No ProductionSpot available.") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
-    local location = productionSpot:getLocation()
+    local location = productionSpot:getBaseLocation()
 
     -- end
     return location
@@ -606,7 +606,7 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining locations for items "..localInputItemsLocator:getURI()..".") return {success = false} end
     local fuelNeed_ToProductionlocation = 0
     for i, location in ipairs(serviceResults.locations) do
-        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionSpot:getLocation(), location)
+        fuelNeed_ToProductionlocation = fuelNeed_ToProductionlocation + role_fuel_worker.NeededFuelToFrom(productionSpot:getBaseLocation(), location)
     end
 
     -- fuelNeed for production
@@ -618,7 +618,7 @@ function Factory.NeedsTo_ProvideItemsTo_SSrv(...)
     -- fuelNeed from productionSpot to localOutputLocator
     serviceResults =  enterprise_isp.GetItemDepotLocation_SSrv({ itemDepotLocator = localOutputLocator })
     if not serviceResults.success then corelog.Error("Factory.NeedsTo_ProvideItemsTo_SSrv: failed obtaining location for ItemDepot "..localOutputLocator:getURI()..".") return {success = false} end
-    local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionSpot:getLocation())
+    local fuelNeed_FromProductionLocation = role_fuel_worker.NeededFuelToFrom(serviceResults.location, productionSpot:getBaseLocation())
 
     -- end
 --    corelog.WriteToLog("FS fuelNeed_ToProductionlocation="..fuelNeed_ToProductionlocation..", fuelNeed_Production="..fuelNeed_Production..", fuelNeed_FromProductionLocation="..fuelNeed_FromProductionLocation)
@@ -855,7 +855,7 @@ function Factory.GetV0SiteStartData(serviceData)
         craftingSpots = ObjArray:new({
             _objClassName = productionSpotClassName,
 
-            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(0, 0, 0), _isCraftingSpot = true }),
+            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(0, 0, 0), _isCraftingSpot = true }),
         }),
         smeltingSpots = ObjArray:new({
             _objClassName = productionSpotClassName,
@@ -946,12 +946,12 @@ function Factory.GetV1SiteStartData(serviceData)
         craftingSpots = ObjArray:new({
             _objClassName = productionSpotClassName,
 
-            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -4), _isCraftingSpot = true }),
+            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -4), _isCraftingSpot = true }),
         }),
         smeltingSpots = ObjArray:new({
             _objClassName = productionSpotClassName,
 
-            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -3), _isCraftingSpot = false }),
+            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -3), _isCraftingSpot = false }),
         }),
     }
 
@@ -1062,12 +1062,12 @@ function Factory.GetV2SiteStartData(serviceData)
         craftingSpots = ObjArray:new({
             _objClassName = productionSpotClassName,
 
-            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -4), _isCraftingSpot = true }),
+            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -4), _isCraftingSpot = true }),
         }),
         smeltingSpots = ObjArray:new({
             _objClassName = productionSpotClassName,
 
-            ProductionSpot:new({ _location = baseLocation:getRelativeLocation(3, 3, -3), _isCraftingSpot = false }),
+            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -3), _isCraftingSpot = false }),
         }),
     }
 
@@ -1105,7 +1105,7 @@ function Factory.CraftItem_ASrv(...)
         productItemCount= productItemCount,
 
         recipe          = productionRecipe,
-        workingLocation = productionSpot:getLocation():copy(),
+        workingLocation = productionSpot:getBaseLocation():copy(),
 
         priorityKey     = assignmentsPriorityKey,
     }
@@ -1152,7 +1152,7 @@ function Factory.SmeltItem_ASrv(...)
         productItemCount= productItemCount,
         recipe          = productionRecipe,
 
-        workingLocation = productionSpot:getLocation():copy(),
+        workingLocation = productionSpot:getBaseLocation():copy(),
 
         -- ToDo: do this more efficient/ different (determine beste type, calculate etc)
         fuelItemName    = "minecraft:birch_planks",
@@ -1202,7 +1202,7 @@ function Factory.Pickup_ASrv(...)
         productItemName = productItemName,
         productItemCount= productItemCount,
 
-        workingLocation = productionSpot:getLocation():copy(),
+        workingLocation = productionSpot:getBaseLocation():copy(),
 
         priorityKey     = assignmentsPriorityKey,
     }

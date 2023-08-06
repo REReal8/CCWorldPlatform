@@ -95,7 +95,7 @@ function T_BirchForest.T_Getters()
     assert(forest:getClassName() == className, "gotten className(="..forest:getClassName()..") not the same as expected(="..className..")")
     assert(forest:getId() == id, "gotten id(="..forest:getId()..") not the same as expected(="..id..")")
     assert(forest:getLevel() == level0, "gotten level(="..forest:getLevel()..") not the same as expected(="..level0..")")
-    assert(forest:getLocation():isSame(location1), "gotten getLocation(="..textutils.serialize(forest:getLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(forest:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(forest:getBaseLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(forest:getNTrees() == nTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees..")")
     assert(forest:getLocalLogsLocator():isSame(localLogsLocator), "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
     assert(forest:getLocalSaplingsLocator():isSame(localSaplingsLocator), "gotten localSaplingsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator:getURI()..")")
@@ -103,10 +103,10 @@ function T_BirchForest.T_Getters()
     -- cleanup test
 end
 
-function T_BirchForest.CreateForest(level, location, id)
+function T_BirchForest.CreateForest(level, baseLocation, id)
     -- check input
     level = level or level0
-    location = location or location1
+    baseLocation = baseLocation or location1
     id = id or coreutils.NewId()
     localLogsLocator = localLogsLocator or enterprise_turtle.GetAnyTurtleLocator()
     localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetAnyTurtleLocator()
@@ -116,7 +116,7 @@ function T_BirchForest.CreateForest(level, location, id)
         _id                     = id,
         _level                  = level,
 
-        _location               = location,
+        _baseLocation           = baseLocation,
         _nTrees                 = nTrees,
 
         _localLogsLocator       = localLogsLocator,
@@ -138,7 +138,7 @@ function T_BirchForest.T_Setters()
     forest:setLevel(level2)
     assert(forest:getLevel() == level2, "gotten level(="..forest:getLevel()..") not the same as expected(="..level2..")")
     forest:setLocation(location2)
-    assert(forest:getLocation():isSame(location2), "gotten getLocation(="..textutils.serialize(forest:getLocation())..") not the same as expected(="..textutils.serialize(location2)..")")
+    assert(forest:getBaseLocation():isSame(location2), "gotten getBaseLocation(="..textutils.serialize(forest:getBaseLocation())..") not the same as expected(="..textutils.serialize(location2)..")")
     forest:setNTrees(nTrees2)
     assert(forest:getNTrees() == nTrees2, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees2..")")
     forest:setLocalLogsLocator(localLogsLocator2)
@@ -191,12 +191,12 @@ function T_BirchForest.T_isSame()
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
     forest._level = level0
 
-    -- test different _location
-    forest._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
+    -- test different _baseLocation
+    forest._baseLocation = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
     isSame = forest1:isSame(forest)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    forest._location = location1
+    forest._baseLocation = location1
 
     -- test different _nTrees
     forest._nTrees = nTrees + 1
