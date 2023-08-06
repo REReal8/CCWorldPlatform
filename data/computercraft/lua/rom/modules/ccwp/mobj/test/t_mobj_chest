@@ -11,8 +11,6 @@ local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local URL = require "obj_url"
 
-local Chest = require "mobj_chest"
-
 local enterprise_chests = require "enterprise_chests"
 
 local T_Obj = require "test.t_obj"
