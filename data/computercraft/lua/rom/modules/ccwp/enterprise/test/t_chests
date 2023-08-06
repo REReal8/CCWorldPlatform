@@ -32,7 +32,7 @@ function t_chests.T_hostAndUpdateChest()
         hostLocator         = enterprise_chests:getHostLocator(),
         className           = "Chest",
         constructParameters = {
-            location        = testStartLocation2:getRelativeLocation(2, 5, 0),
+            baseLocation    = testStartLocation2:getRelativeLocation(2, 5, 0),
             accessDirection = "back",
         }
     }
@@ -70,7 +70,7 @@ function t_chests.T_hostMObj_SSrv_Chest()
     local className = "Chest"
     corelog.WriteToLog("* enterprise_chests:hostMObj_SSrv() ("..className..") tests")
     local constructParameters = {
-        location        = testStartLocation:getRelativeLocation(2, 5, 0),
+        baseLocation    = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
     }
 
@@ -92,7 +92,7 @@ function t_chests.T_releaseMObj_SSrv_Chest()
     local className = "Chest"
     corelog.WriteToLog("* enterprise_chests:releaseMObj_SSrv() tests")
     local constructParameters = {
-        location        = testStartLocation:getRelativeLocation(2, 5, 0),
+        baseLocation    = testStartLocation:getRelativeLocation(2, 5, 0),
         accessDirection = "top"
     }
     local objLocator = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters}).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end

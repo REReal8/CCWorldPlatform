@@ -43,7 +43,7 @@ function enterprise_gathering.AddNewMine_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this site
-                baseLocation                    + (Location) world location of the base (lower left corner) of this site
+                baseLocation                    + (Location) base location of the Mine
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
@@ -52,8 +52,8 @@ function enterprise_gathering.AddNewMine_ASrv(...)
     -- create new mine
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local mine = mobj_mine:NewMine({
-        location                = baseLocation:copy(),
-        topChests               = 2,
+        _baseLocation           = baseLocation:copy(),
+        _topChests              = 2,
     })
 
     -- save the mine

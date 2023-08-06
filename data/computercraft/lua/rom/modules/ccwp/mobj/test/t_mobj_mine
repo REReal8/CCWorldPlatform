@@ -45,7 +45,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* Mine "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = Mine:NewMine({location=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Mine") return end
+    local obj = Mine:NewMine({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed obtaining Mine") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -78,7 +78,7 @@ function T_Mine.T_NewMine()
 
     -- do the new test
     corelog.WriteToLog("* Mine:NewMine() tests")
-    local obj = Mine:NewMine({location=location1, topChests=2})
+    local obj = Mine:NewMine({baseLocation=location1, topChests=2})
 end
 
 local compact = { compact = true }
@@ -95,7 +95,7 @@ local compact = { compact = true }
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Mine:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Mine:NewMine({location=location1, topChests=2}) if not obj then corelog.Error("failed obtaining Mine") return end
+    local obj = Mine:NewMine({baseLocation=location1, topChests=2}) if not obj then corelog.Error("failed obtaining Mine") return end
 
     -- activate the mine
     obj:Activate()

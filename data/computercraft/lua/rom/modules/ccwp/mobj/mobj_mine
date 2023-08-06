@@ -51,12 +51,12 @@ local dthMineRoot   = "mobj_mine"
 
 function Mine:NewMine(...)
     -- get & check input from description
-    local checkSuccess, location, topChests = InputChecker.Check([[
+    local checkSuccess, baseLocation, topChests = InputChecker.Check([[
         Construct a mine.
 
         Parameters:
             siteData                    - (table) data about this silo, like type and layout
-                location                + (Location) location of site
+                baseLocation            + (Location) base location of Mine
                 topChests               + (number, 2) # of top chests
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
@@ -73,7 +73,7 @@ function Mine:NewMine(...)
         _version        = 1,
 
         -- locations
-        _baseLocation   = location,
+        _baseLocation   = baseLocation,
 
         -- chests
         _topChests      = ObjArray:new({
@@ -85,17 +85,17 @@ function Mine:NewMine(...)
     }
 
     -- what kind of new silo is this?
-    corelog.WriteToLog(">Starting mine at "..textutils.serialise(location, { compact = true }))
+    corelog.WriteToLog(">Starting mine at "..textutils.serialise(baseLocation, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
-    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
+    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
+    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
+    if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
+    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
 
     -- set class info
     setmetatable(siteData, self)

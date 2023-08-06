@@ -116,7 +116,7 @@ end
 
 function TestMObj:construct(...)
     -- get & check input from description
-    local checkSuccess, location, field1Value = InputChecker.Check([[
+    local checkSuccess, baseLocation, field1Value = InputChecker.Check([[
         This method constructs a TestMObj instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also registers all child MObj's the TestMObj spawns (by calling the RegisterMObj method on the appropriate MObjHost).
@@ -128,7 +128,7 @@ function TestMObj:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the MObj
-                location                + (Location) location of the TestMObj
+                baseLocation            + (Location) base location of the TestMObj
                 field1Value             + (string) value to set field1 to
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
@@ -137,7 +137,7 @@ function TestMObj:construct(...)
     local oTable = {
         _id             = coreutils.NewId(),
 
-        _baseLocation   = location,
+        _baseLocation   = baseLocation,
         _field1         = field1Value,
     }
 
