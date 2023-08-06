@@ -60,7 +60,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* Chest "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj() if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -96,7 +96,7 @@ function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
@@ -116,7 +116,7 @@ end
 --                    _/ |
 --                   |__/
 
-function T_Chest.CreateChest(location, accessDirection, inventory, id)
+function T_Chest.NewObj(location, accessDirection, inventory, id)
     -- check input
     location = location or location1
     id = id or coreutils.NewId()
@@ -140,7 +140,7 @@ function T_Chest.T_getClassName()
     -- prepare test
     corelog.WriteToLog("* Chest:getClassName() tests")
     local className = "Chest"
-    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj() if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test valid
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
@@ -151,7 +151,7 @@ end
 function T_Chest.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* Chest:isTypeOf() tests")
-    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj() if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test valid
     local isTypeOf = Chest:isTypeOf(obj)
@@ -170,10 +170,10 @@ function T_Chest.T_isSame()
     -- prepare test
     corelog.WriteToLog("* Chest:isSame() tests")
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1, accessDirection1, inventory1, id) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test same
-    local obj1 = T_Chest.CreateChest(location1, accessDirection1, inventory1, id)
+    local obj1 = T_Chest.NewObj(location1, accessDirection1, inventory1, id)
     local isSame = obj1:isSame(obj)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
@@ -205,7 +205,7 @@ end
 function T_Chest.T_copy()
     -- prepare test
     corelog.WriteToLog("* Chest:copy() tests")
-    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory1) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1, accessDirection1, inventory1) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test
     local copy = obj:copy()
@@ -234,7 +234,7 @@ end
 function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local callback = Callback:new({
@@ -277,7 +277,7 @@ end
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:provideItemsTo_AOSrv() test (to "..toStr..")")
-    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -314,7 +314,7 @@ end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
+    local obj2 = T_Chest.NewObj(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
 
     -- test
@@ -344,7 +344,7 @@ end
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local obj = T_Chest.CreateChest() if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj() if not obj then corelog.Error("failed obtaining Chest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -372,7 +372,7 @@ function T_Chest.T_can_ProvideItems_QOSrv()
             { name = "minecraft:dirt", count = 20 },
         }
     })
-    local obj = T_Chest.CreateChest(location1, accessDirection1, inventory) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1, accessDirection1, inventory) if not obj then corelog.Error("failed obtaining Chest") return end
 
     -- test can
     local itemName = "minecraft:dirt"
@@ -401,7 +401,7 @@ end
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local obj = T_Chest.CreateChest(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
+    local obj = T_Chest.NewObj(location1:getRelativeLocation(2, 5, 0)) if not obj then corelog.Error("failed obtaining Chest") return end
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -439,7 +439,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Chest.CreateChest(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
+    local obj2 = T_Chest.NewObj(location2:getRelativeLocation(2, 5, 0)) if not obj2 then corelog.Error("failed obtaining Chest 2") return end
     local itemsLocator = enterprise_chests:saveObject(obj2)
 
     -- test

@@ -402,7 +402,7 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
-    local chest2 = T_Chest.CreateChest(location1:getRelativeLocation(0, 0, -1)) if not chest2 then corelog.Error("failed obtaining Chest 2") return end
+    local chest2 = T_Chest.NewObj(location1:getRelativeLocation(0, 0, -1)) if not chest2 then corelog.Error("failed obtaining Chest 2") return end
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 --    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
