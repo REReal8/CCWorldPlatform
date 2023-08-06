@@ -15,7 +15,7 @@ local compact = { compact = true }
 --   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
 --   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
 
--- ToDo: move to even more generic place
+-- ToDo: consider moving to more generic place (i.e. not coupled to IObj)
 function T_Obj.ImplementsInterface(interfaceName, className, oTable)
     -- prepare test
     assert(className, "no className provided")
@@ -68,7 +68,7 @@ function T_Obj.T_new(className, oTable)
     -- cleanup test
 end
 
-function T_Obj.T_ImplementsIObj(className, oTable)
+function T_Obj.T_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
     T_Obj.ImplementsInterface("IObj", className, oTable)
 end
