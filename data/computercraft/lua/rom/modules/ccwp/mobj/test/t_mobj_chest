@@ -218,7 +218,6 @@ end
 function T_Chest.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..className..":destruct() tests")
-        baseLocation    = location1,
     local mobj = Chest:construct(constructParameters1)
 
     -- test
