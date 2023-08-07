@@ -264,7 +264,7 @@ function Host:deleteResource(...)
     local pathSegments = resourceLocator:pathSegments()
 
     -- delete Resource from dht using URL components
---    corelog.WriteToLog(">removing resource "..resourceLocator:getURI())
+    corelog.WriteToLog(">removing resource "..resourceLocator:getURI())
     local savedResource = nil
     if portURI == "" then
         savedResource = coredht.SaveData(nil, hostURI, table.unpack(pathSegments))
