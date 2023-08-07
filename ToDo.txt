@@ -23,7 +23,7 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_chest              (done)
    R  mobj_factory
    G  mobj_mine
-   G  mobj_silo
+   R  mobj_silo
    R  mobj_shop
    R  mobj_turtle
 
@@ -41,9 +41,9 @@ R  use MObjHost class
    -  enterprise_gathering
       -  upgrade into an MObjHost
       -  use new MObjHost methods instead of current equivalent
-   -  enterprise_storage
-      -  upgrade into an MObjHost
-      -  use new MObjHost methods instead of current equivalent
+   R  enterprise_storage
+      R  upgrade into an MObjHost
+      R  use new MObjHost methods instead of current equivalent
    R  enterprise_shop
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
@@ -51,7 +51,7 @@ R  use MObjHost class
    R  enterprise_turtle
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
-   -  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
+   R  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
 
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
