@@ -12,8 +12,26 @@ local T_BirchForest = require "test.t_mobj_birchforest"
 local enterprise_storage = require "enterprise_storage"
 local enterprise_forestry = require "enterprise_forestry"
 
+local T_MObjHost = require "test.t_eobj_mobj_host"
+
 local t_turtle = require "test.t_turtle"
 local t_manufacturing = require "test.t_manufacturing"
+
+function t_storage.T_hostAndBuildMObj_ASrv_Silo()
+    -- prepare test
+    local hostName = "enterprise_storage"
+    local className = "Silo"
+    local location1  = Location:new({_x= 12, _y= 12, _z= 1, _dx=0, _dy=1})
+    local constructParameters = {
+        baseLocation    = location1,
+        topChests       = 2,
+        layers          = 2,
+    }
+    local testsCallback = nil
+
+    -- test
+    return T_MObjHost.T_hostAndBuildMObj_ASrv(hostName, className, constructParameters, testsCallback)
+end
 
 function t_storage.T_BuildAndStartNewSite_ASrv()
     -- prepare test

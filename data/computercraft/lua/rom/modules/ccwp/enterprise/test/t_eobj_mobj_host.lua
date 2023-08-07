@@ -28,15 +28,15 @@ function T_MObjHost.T_AllPhysical()
 
     -- service methods
     enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv_TestMObj" }, stepDataDef = {} },
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_dismantleAndReleaseMObj_ASrv" }, stepDataDef = {} },
         }, returnData  = { } }, }, Callback.GetNewDummyCallBack())
 end
 
-local hostName = "TestMObjHost"
+local mobjHostName = "TestMObjHost"
 
 local host1 = MObjHost:new({
-    _hostName   = hostName,
+    _hostName   = mobjHostName,
 })
 
 --    _____ ____  _     _                  _   _               _
@@ -54,9 +54,9 @@ function T_MObjHost.T_new()
 
     -- test full
     local host = MObjHost:new({
-        _hostName   = hostName,
+        _hostName   = mobjHostName,
     })
-    assert(host:getHostName() == hostName, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..hostName..")")
+    assert(host:getHostName() == mobjHostName, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..mobjHostName..")")
 
     -- cleanup test
 end
@@ -66,7 +66,7 @@ function T_MObjHost.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* MObjHost:isTypeOf() tests")
     local host2 = MObjHost:new({
-        _hostName   = hostName,
+        _hostName   = mobjHostName,
     })
 
     -- test valid
@@ -86,7 +86,7 @@ function T_MObjHost.T_isSame()
     -- prepare test
     corelog.WriteToLog("* MObjHost:isSame() tests")
     local host2 = MObjHost:new({
-        _hostName   = hostName,
+        _hostName   = mobjHostName,
     })
 
     -- test same
@@ -94,12 +94,12 @@ function T_MObjHost.T_isSame()
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
 
-    -- test different hostName
+    -- test different mobjHostName
     host2._hostName = hostName2
     isSame = host1:isSame(host2)
     expectedIsSame = false
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    host2._hostName = hostName
+    host2._hostName = mobjHostName
 
     -- cleanup test
 end
@@ -126,7 +126,7 @@ end
 local mobj_className = "TestMObj"
 local location1 = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
 local field1SetValue = "value field1"
-local constructParameters = {
+local mobj_constructParameters = {
     baseLocation    = location1,
     field1Value     = field1SetValue,
 }
@@ -138,7 +138,7 @@ function T_MObjHost.T_hostMObj_SSrv()
     -- test
     local serviceResults = host1:hostMObj_SSrv({
         className           = mobj_className,
-        constructParameters = constructParameters,
+        constructParameters = mobj_constructParameters,
     })
 
     -- check hosting success
@@ -163,11 +163,11 @@ function T_MObjHost.T_hostMObj_SSrv()
     host1:deleteObjects("TestMObj")
 end
 
-function T_MObjHost.T_hostAndBuildMObj_ASrv(serviceData, testsCallback)
+function T_MObjHost.T_hostAndBuildMObj_ASrv(hostName, className, constructParameters, testsCallback)
     -- prepare test
-    corelog.WriteToLog("* MObjHost:hostAndBuildMObj_ASrv() tests")
-    moduleRegistry:registerModule(hostName, host1)
-    local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
+    assert(hostName)
+    corelog.WriteToLog("* "..hostName..":hostAndBuildMObj_ASrv() tests")
+    local host = moduleRegistry:getModule(hostName) assert(host, "host "..hostName.." not registered")
 
     local materialsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
@@ -175,13 +175,14 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv(serviceData, testsCallback)
         _moduleName     = "T_MObjHost",
         _methodName     = "hostAndBuildMObj_ASrv_Callback",
         _data           = {
+            ["hostName"]        = hostName,
             ["testsCallback"]   = testsCallback,
         },
     })
 
     -- test
-    local scheduleResult = host1:hostAndBuildMObj_ASrv({
-        className                   = mobj_className,
+    local scheduleResult = host:hostAndBuildMObj_ASrv({
+        className                   = className,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
@@ -190,6 +191,14 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv(serviceData, testsCallback)
 
     -- end
     return true
+end
+
+function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj(serviceData, testsCallback)
+    -- prepare test
+    moduleRegistry:registerModule(mobjHostName, host1)
+
+    -- test
+    return T_MObjHost.T_hostAndBuildMObj_ASrv(mobjHostName, mobj_className, mobj_constructParameters, testsCallback)
 end
 
 function T_MObjHost.hostAndBuildMObj_ASrv_Callback(callbackData, serviceResults)
@@ -202,15 +211,19 @@ function T_MObjHost.hostAndBuildMObj_ASrv_Callback(callbackData, serviceResults)
     assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
 
     -- check mobj hosted (full check done in T_hostMObj_SSrv)
-    local mobj = host1:getObject(mobjLocator)
+    local hostName = callbackData["hostName"]
+    local host = moduleRegistry:getModule(hostName) assert(host, "host "..hostName.." not registered")
+    local mobj = host:getObject(mobjLocator)
     assert(mobj, "MObj not hosted")
 
     -- check build blueprint build
     -- ToDo: add mock test
 
     -- cleanup test
-    host1:deleteResource(mobjLocator)
-    moduleRegistry:delistModule(hostName)
+    host:deleteResource(mobjLocator)
+    if hostName == mobjHostName then -- ToDo: do elsewhere
+        moduleRegistry:delistModule(hostName)
+    end
 
     -- end
     local testsCallback = callbackData["testsCallback"]
@@ -226,10 +239,10 @@ end
 function T_MObjHost.T_releaseMObj_SSrv()
     -- prepare test
     corelog.WriteToLog("* MObjHost:releaseMObj_SSrv() tests")
-    moduleRegistry:registerModule(hostName, host1)
+    moduleRegistry:registerModule(mobjHostName, host1)
     local serviceResults = host1:hostMObj_SSrv({
         className           = mobj_className,
-        constructParameters = constructParameters,
+        constructParameters = mobj_constructParameters,
     })
     local mobjLocator = URL:new(serviceResults.mobjLocator)
 
@@ -249,18 +262,18 @@ function T_MObjHost.T_releaseMObj_SSrv()
     -- ToDo: consider implementing testing this. Or shouldn't we as it's a responsibilty of the MObj to do this?
 
     -- cleanup test
-    moduleRegistry:delistModule(hostName)
+    moduleRegistry:delistModule(mobjHostName)
 end
 
 function T_MObjHost.T_dismantleAndReleaseMObj_ASrv(serviceData, testsCallback)
     -- prepare test
     corelog.WriteToLog("* MObjHost:dismantleAndReleaseMObj_ASrv() tests")
-    moduleRegistry:registerModule(hostName, host1)
-    local host = moduleRegistry:getModule(hostName) if not host then corelog.Warning("host "..hostName.." not registered") return nil end
+    moduleRegistry:registerModule(mobjHostName, host1)
+    local host = moduleRegistry:getModule(mobjHostName) if not host then corelog.Warning("host "..mobjHostName.." not registered") return nil end
 
     local serviceResults = host1:hostMObj_SSrv({
         className           = mobj_className,
-        constructParameters = constructParameters,
+        constructParameters = mobj_constructParameters,
     })
     local mobjLocator = URL:new(serviceResults.mobjLocator)
 
@@ -299,7 +312,7 @@ function T_MObjHost.dismantleAndReleaseMObj_ASrv_Callback(callbackData, serviceR
     -- ToDo: add mock test
 
     -- cleanup test
-    moduleRegistry:delistModule(hostName)
+    moduleRegistry:delistModule(mobjHostName)
 
     -- end
     local testsCallback = callbackData["testsCallback"]

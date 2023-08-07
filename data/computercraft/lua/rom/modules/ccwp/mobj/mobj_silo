@@ -23,6 +23,10 @@ local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local Host = require "obj_host"
 
+local Location = require "obj_location"
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
+
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
@@ -288,6 +292,52 @@ function Silo:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
+local function TopL0_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "  C C ",
+            [5] = "      ",
+            [4] = "T     ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+end
+
+local function Shaft_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [1] = " ",
+        },
+    })
+end
+
+local function Chest_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
+            ["E"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy =-1 }),
+            ["F"]   = Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "DDF",
+            [2] = "C F",
+            [1] = "CEE",
+        },
+    })
+end
+
 function Silo:getBuildBlueprint()
     --[[
         This method returns a blueprint for building the Silo in the physical minecraft world.
@@ -300,14 +350,22 @@ function Silo:getBuildBlueprint()
     ]]
 
     -- construct layer list
+    local nTopChests = #(self._topChests)
+    if nTopChests ~= 2 then corelog.Warning("Silo:getBuildBlueprint: Not yet implemented for other (="..nTopChests..") than 2 top chests") end
     local layerList = {
---        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = Chest_layer()},
+        { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use nTopChests
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = false, layer = Shaft_layer()},
     }
+    local nLayers = #(self._storageChests)/ 4
+    for i=1, nLayers, 1 do
+        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = Chest_layer()})
+    end
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
+            Location:new({ _x= 3, _y= 3, _z=  1}),
         }
     }
 
@@ -330,6 +388,7 @@ function Silo:getDismantleBlueprint()
     ]]
 
     -- construct layer list
+    corelog.Warning("Silo:getDismantleBlueprint(): not yet implemented")
     local layerList = {
 --        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
     }
