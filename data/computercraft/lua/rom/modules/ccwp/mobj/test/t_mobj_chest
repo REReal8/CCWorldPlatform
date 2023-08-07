@@ -49,6 +49,7 @@ function T_Chest.T_All()
 end
 
 local className = "Chest"
+local mobjHostName = "enterprise_chests"
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
 local accessDirection1 = "top"
@@ -284,74 +285,40 @@ function T_Chest.T_ImplementsIItemSupplier()
     T_ItemSupplier.T_ImplementsInterface(className, oTable)
 end
 
-local function provideItemsTo_AOSrv_Test(provideItems, itemDepotLocator)
-    -- prepare test (cont)
-    corelog.WriteToLog("* Chest:provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
-    local obj = T_Obj.newObj(className, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
-    --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
-    local chestLocator = enterprise_chests:getObjectLocator(obj)
-
-    local expectedDestinationItemsLocator = itemDepotLocator:copy()
-    expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
-        _moduleName     = "T_Chest",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["chestLocator"]                    = chestLocator,
-            ["itemDepotLocator"]                = itemDepotLocator,
-        },
-    })
-
-    -- test
-    local scheduleResult = obj:provideItemsTo_AOSrv({
-        provideItems    = provideItems,
-        itemDepotLocator= itemDepotLocator,
-    }, callback)
-    assert(scheduleResult == true, "failed to schedule async service")
-end
-
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
+    local constructParameters = {
+        baseLocation    = location1:getRelativeLocation(2, 5, 0),
+        accessDirection = accessDirection1,
+    }
+    --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
+
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
 
     -- test
-    provideItemsTo_AOSrv_Test(provideItems, itemDepotLocator)
+    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
+    local constructParameters = {
+        baseLocation    = location1:getRelativeLocation(2, 5, 0),
+        accessDirection = accessDirection1,
+    }
+
     local obj2 = T_Obj.newObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
+
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
 
     -- test
-    provideItemsTo_AOSrv_Test(provideItems, itemDepotLocator)
-end
-
-function T_Chest.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-    local chestLocator = callbackData["chestLocator"]
-    enterprise_chests:deleteResource(chestLocator)
-    local itemDepotLocator = callbackData["itemDepotLocator"]
-    if enterprise_chests:isLocatorFromHost(itemDepotLocator) then
-        enterprise_chests:deleteResource(itemDepotLocator)
-    end
-
-    -- end
-    return true
+    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
