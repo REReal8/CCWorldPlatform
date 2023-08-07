@@ -55,7 +55,7 @@ function MObjHost:hostAndBuildMObj_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the created MObj
+                mobjLocator                     - (URL) locating the hosted and build MObj
 
         Parameters:
             serviceData                         - (table) data about this site

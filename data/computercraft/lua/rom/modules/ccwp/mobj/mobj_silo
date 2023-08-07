@@ -388,7 +388,7 @@ function Silo:getDismantleBlueprint()
     ]]
 
     -- construct layer list
-    corelog.Warning("Silo:getDismantleBlueprint(): not yet implemented")
+    corelog.Warning("Silo:getDismantleBlueprint(): not yet (fully) implemented")
     local layerList = {
 --        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
     }
