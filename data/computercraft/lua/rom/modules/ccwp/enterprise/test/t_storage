@@ -119,7 +119,7 @@ function t_storage.hostAndBuildMObj_ASrv_Silo_cleanupTest_SSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("t_storage.hostAndBuildMObj_ASrv_Silo_cleanupTest_SSrv: Invalid input") return {success = true} end
 
-    corelog.WriteToLog("hostAndBuildMObj_ASrv_Silo_cleanupTest_SSrv")
+--    corelog.WriteToLog("hostAndBuildMObj_ASrv_Silo_cleanupTest_SSrv")
 
     -- cleanup test: remembering mobjLocator (for possible usage by T_dismantleAndReleaseMObj_ASrv_Silo)
     mobjLocator_Silo = mobjLocator
@@ -187,7 +187,7 @@ function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(...)
 end
 
 function t_storage.dismantleAndReleaseMObj_ASrv_Silo_cleanupTest_SSrv(...)
-    corelog.WriteToLog("dismantleAndReleaseMObj_ASrv_Silo_cleanupTest_SSrv")
+--    corelog.WriteToLog("dismantleAndReleaseMObj_ASrv_Silo_cleanupTest_SSrv")
 
     -- cleanup test: stop remembering mobjLocator_Silo
     mobjLocator_Silo = nil
