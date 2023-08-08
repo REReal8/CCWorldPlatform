@@ -128,13 +128,16 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- create project definition
     local createNewWorldProjectDef = {
         steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap create steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
+            -- initial (L0) enterprise_energy
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL0" },
             }},
+            -- initialise coordinates
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesMetaData" },
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "initialiseCoordinatesTaskCall" },
             }},
+            -- host, build and register initial (L0) factory (crafting spot, i.e. in place hole in the ground)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "startLocation" },
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
@@ -145,6 +148,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "siteLocator" },
             }},
+            -- host, build and register initial (L-1) forest (1 sapling in front of turtle)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "AddNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "forestLocation" },
                 { keyDef = "forestLevel"                    , sourceStep = 0, sourceKeyDef = "forestLm1" },
@@ -155,11 +159,13 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "forestLocator" },
             }},
+            -- update enterprise_energy to L1
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "siteLocator" },
             }},
+            -- upgrade forest to L0 (1 tree/ sapling)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
                 { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL0" },
@@ -172,10 +178,12 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "siteLocator" },
             }},
+            -- collect some cobblestone for furnance
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneMetaData" },
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "collectCobbleStoneTaskCall" },
             }},
+            -- host, build and register new L1 factory (crafting + smelting spot)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion1" },
@@ -191,6 +199,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "siteLocator" },
             }},
+            -- delist, dismantle and release initial crafting spot
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "siteLocator" },
             }},
@@ -201,6 +210,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
+            -- upgrade forest to L1 with 6 trees
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
                 { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL1" },
@@ -208,6 +218,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
+            -- upgrade forest to L2 (in/out chests + 6 trees)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
                 { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL2" },
@@ -215,6 +226,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
+            -- upgrade/ replace existing L1 factory to/ with L2 factory (in/out chests, crafting + smelting spot)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
                 { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "factoryLocation" },
                 { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion2" },
@@ -234,6 +246,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "DelistItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 11, sourceKeyDef = "siteLocator" },
             }},
+            -- host, build and register Silo
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
                 { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "siloClassName" },
                 { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "siloConstructParameters" },
