@@ -29,11 +29,11 @@ function T_MObjHost.T_AllPhysical()
 
     -- service methods
     enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv_TestMObj" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv_TestMObj" }, stepDataDef = {}},
             { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_dismantleAndReleaseMObj_ASrv_TestMObj" }, stepDataDef = {
                 { keyDef = "mobjLocator"        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            } },
-        }, returnData  = { } }, }, Callback.GetNewDummyCallBack())
+            }},
+        }, returnData  = { }}, }, Callback.GetNewDummyCallBack())
 end
 
 local test_mobjHostName1 = "TestMObjHost"
@@ -158,12 +158,12 @@ function T_MObjHost.hostAndBuildMObj_ASrv_test_ASrv(...)
                     { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
                     { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                     { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                } },
+                }},
                 -- test: check results
                 { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "hostAndBuildMObj_ASrv_checkResults_SSrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "mobjLocator"                    , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-                } },
+                }},
             },
             returnData  = {
                 { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
@@ -243,11 +243,11 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj(...)
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                     { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-                } },
+                }},
                 -- cleanup test
                 { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "hostAndBuildMObj_ASrv_TestMObj_cleanupTest_SSrv" }, stepDataDef = {
                     { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-                } },
+                }},
             },
             returnData  = {
                 { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
@@ -357,12 +357,12 @@ function T_MObjHost.dismantleAndReleaseMObj_ASrv_test_ASrv(...)
                     { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
                     { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                     { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                } },
+                }},
                 -- test: check results
                 { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_checkResults_SSrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-                } },
+                }},
             },
             returnData  = {
             }
@@ -449,10 +449,10 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(...)
                 { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_test_ASrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-                } },
+                }},
                 -- cleanup test
                 { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_TestMObj_cleanupTest_SSrv" }, stepDataDef = {
-                } },
+                }},
             },
             returnData  = {
             }

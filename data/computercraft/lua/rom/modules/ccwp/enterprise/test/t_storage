@@ -30,11 +30,11 @@ function t_storage.T_AllPhysical()
 
     -- service methods
     enterprise_projects.StartProject_ASrv({ projectMeta = { title = "enterprise_storage ASrv Tests", description = "ASync enterprise_storage tests in sequence" }, projectData = { }, projectDef  = { steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "t_storage", serviceName = "T_hostAndBuildMObj_ASrv_Silo" }, stepDataDef = {} },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "t_storage", serviceName = "T_hostAndBuildMObj_ASrv_Silo" }, stepDataDef = {}},
             { stepType = "ASrv", stepTypeDef = { moduleName = "t_storage", serviceName = "T_dismantleAndReleaseMObj_ASrv_Silo" }, stepDataDef = {
                 { keyDef = "mobjLocator"        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            } },
-        }, returnData  = { } }, }, Callback.GetNewDummyCallBack())
+            }},
+        }, returnData  = { }}, }, Callback.GetNewDummyCallBack())
 end
 
 --                        _                           _   _               _
@@ -90,11 +90,11 @@ function t_storage.T_hostAndBuildMObj_ASrv_Silo(...)
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                     { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-                } },
+                }},
                 -- cleanup test
                 { stepType = "SSrv", stepTypeDef = { moduleName = "t_storage", serviceName = "hostAndBuildMObj_ASrv_Silo_cleanupTest_SSrv" }, stepDataDef = {
                     { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-                } },
+                }},
             },
             returnData  = {
                 { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
@@ -175,10 +175,10 @@ function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(...)
                 { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_test_ASrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-                } },
+                }},
                 -- cleanup test
                 { stepType = "SSrv", stepTypeDef = { moduleName = "t_storage", serviceName = "dismantleAndReleaseMObj_ASrv_Silo_cleanupTest_SSrv" }, stepDataDef = {
-                } },
+                }},
             },
             returnData  = {
             }
