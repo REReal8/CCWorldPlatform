@@ -196,46 +196,4 @@ function t_storage.dismantleAndReleaseMObj_ASrv_Silo_cleanupTest_SSrv(...)
     return {success = true}
 end
 
-function t_storage.T_BuildAndStartNewSite_ASrv()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_storage.BuildAndStartNewSite_ASrv() test")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
-    local forestLocator = enterprise_forestry:saveObject(forest)
-
-    local location = Location:new(coremove.GetLocation())
-    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
-    local factoryLocator = result.siteLocator
-
-    local callback = Callback:new({
-        _moduleName     = "t_storage",
-        _methodName     = "Cleanup_Callback",
-        _data           = { forestLocator = forestLocator, factoryLocator = factoryLocator },
-    })
-
-    -- test
-    return enterprise_storage.BuildAndStartNewSite_ASrv({
-        location                    = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
-        type                        = "silo",
-        topChests                   = 2,
-        layers                      = 2,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, callback)
-end
-
-function t_storage.Cleanup_Callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-    corelog.WriteToLog("  doing t_storage.Cleanup_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(serviceResults)..")")
-    local siloLocator = serviceResults.siteLocator
-
-    -- cleanup test
-    t_manufacturing.StopSite(callbackData.factoryLocator)
-    enterprise_forestry:deleteResource(callbackData.forestLocator)
-    enterprise_storage:deleteResource(siloLocator)
-
-    -- end
-    return true
-end
-
 return t_storage
