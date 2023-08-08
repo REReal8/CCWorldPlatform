@@ -200,7 +200,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "itemSupplierLocator"        , sourceStep = 11, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
+                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" }, -- ToDo: back to wanted energyL2
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "siteLocator" },
             }},
@@ -244,7 +244,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "itemSupplierLocator"        , sourceStep = 18, sourceKeyDef = "siteLocator" },
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
-                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
+                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },  -- ToDo: back to wanted energyL2
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 18, sourceKeyDef = "siteLocator" },
             }},
