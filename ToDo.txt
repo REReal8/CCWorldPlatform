@@ -27,20 +27,31 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_shop
    R  mobj_turtle
 
+R  Generalise test functions into "templates" to reduce duplication
+   R  generalise (I)Obj test functions                            (done)
+   R  generalise (I)ItemSupplier test functions
+   R  generalise (I)ItemDepot test functions
+   R  generalise (I)MObj test functions; i.e. for construct, destruct etc, etc
+   R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
+
 R  use MObjHost class
    R  enterprise_forestry
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
+      R  use generalised test functions
    R  enterprise_chest
       R  upgrade to a MObjHost                                    (done)
       R  use new MObjHost methods instead of current equivalent   (done)
+      R  use generalised test functions
       -  merge into enterprise_storage
    R  enterprise_manufacturing
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
+      R  use generalised test functions
    -  enterprise_gathering
       -  upgrade into an MObjHost
       -  use new MObjHost methods instead of current equivalent
+      -  use generalised test functions
    R  enterprise_storage
       R  upgrade into an MObjHost                                 (done)
       R  use new MObjHost methods instead of current equivalent   (done)
@@ -48,11 +59,12 @@ R  use MObjHost class
    R  enterprise_shop
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
+      R  use generalised test functions
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
    R  enterprise_turtle
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
-   R  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
+      R  use generalised test functions
 
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
