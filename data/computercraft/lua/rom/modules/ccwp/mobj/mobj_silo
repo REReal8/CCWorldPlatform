@@ -350,13 +350,13 @@ function Silo:getBuildBlueprint()
     ]]
 
     -- construct layer list
-    local nTopChests = #(self._topChests)
+    local nTopChests = self:getNTopChests()
     if nTopChests ~= 2 then corelog.Warning("Silo:getBuildBlueprint: Not yet implemented for other (="..nTopChests..") than 2 top chests") end
     local layerList = {
         { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use nTopChests
         { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = false, layer = Shaft_layer()},
     }
-    local nLayers = #(self._storageChests)/ 4
+    local nLayers = self:getNStorageLayers()
     for i=1, nLayers, 1 do
         table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = Chest_layer()})
     end
@@ -712,6 +712,24 @@ end
 function Silo:getPickupLocation()
     -- easy
     return self._topChests[self._pickupLocation]
+end
+
+function Silo:getNTopChests()
+    --[[
+        Returns the # top Chest's in the Silo.
+    ]]
+
+    -- end
+    return #(self._topChests)
+end
+
+function Silo:getNStorageLayers()
+    --[[
+        Returns the # storage layers in the Silo.
+    ]]
+
+    -- end
+    return #(self._storageChests)/ 4
 end
 
 --                        _                           _   _               _
