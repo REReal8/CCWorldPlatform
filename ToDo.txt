@@ -66,6 +66,8 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
 
+-  Investigate + possibly fix why we relatively need to go to L3 enterprise_energy in enterprise_colonization
+
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
       -  mobj_shop (currently) does not have a physical presence in the world. Hence having build and dismantle (both in mobj_shop as enterprise_shop) seems incorrect.
