@@ -128,7 +128,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- create project definition
     local createNewWorldProjectDef = {
         steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap create steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
-            -- initial (L0) enterprise_energy
+            -- initial (L0) enterprise_energy (refuelAmount = 0, fuelNeed_Refuel = 0)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL0" },
             }},
@@ -159,7 +159,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "forestLocator" },
             }},
-            -- update enterprise_energy to L1
+            -- update enterprise_energy to L1 (refuelAmount = 1 log = 60, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
@@ -173,6 +173,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }},
+            -- update enterprise_energy to L2 (refuelAmount = 1 tree = 300, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
