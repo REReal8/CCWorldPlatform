@@ -314,6 +314,8 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
             fuelLevel       = turtle.getFuelLevel(),
             axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
             inventoryItems  = coreinventory.GetInventoryDetail().items,
+            leftEquiped     = coreinventory.LeftEquiped(),
+            rightEquiped    = coreinventory.RightEquiped(),
         }
     end
     local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = turtleResume })
