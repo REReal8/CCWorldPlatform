@@ -1,21 +1,13 @@
 local t_storage = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 
 local Location = require "obj_location"
 
-local T_BirchForest = require "test.t_mobj_birchforest"
-
-local enterprise_storage = require "enterprise_storage"
-local enterprise_forestry = require "enterprise_forestry"
 local enterprise_projects = require "enterprise_projects"
-
-local t_turtle = require "test.t_turtle"
-local t_manufacturing = require "test.t_manufacturing"
 
 function t_storage.T_All()
     -- IObj methods
