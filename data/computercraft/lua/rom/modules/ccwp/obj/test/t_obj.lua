@@ -8,12 +8,6 @@ local objectFactory = ObjectFactory:getInstance()
 
 local compact = { compact = true }
 
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
 
 -- ToDo: consider moving to more generic place (i.e. not coupled to IObj)
 function T_Obj.ImplementsInterface(interfaceName, className, oTable)
