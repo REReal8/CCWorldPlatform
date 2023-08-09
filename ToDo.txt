@@ -31,7 +31,7 @@ R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)Obj test functions                            (done)
    R  generalise (I)ItemSupplier test functions
    R  generalise (I)ItemDepot test functions
-   R  generalise (I)MObj test functions; i.e. for construct, destruct etc, etc
+   R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
 
 R  use MObjHost class
