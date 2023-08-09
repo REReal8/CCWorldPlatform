@@ -196,6 +196,10 @@ G moveTo:
 
 -  Bij inschrijven assigment controleren of er een pickaxe in de inventory zit (indien not equiped)
 
+-  IObj
+   -  consider if isEqual is a better name for isSame
+   (continue literature study on identity and equality in OOP, look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop)
+
 -  Other ToDo's to be found everywhere in all code files
 
 
