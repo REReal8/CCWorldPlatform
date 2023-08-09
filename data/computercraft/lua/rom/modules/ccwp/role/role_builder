@@ -49,11 +49,9 @@ function role_builder.BuildBlueprint_MetaData(...)
     local lastLocation = blueprintStartpoint:copy()
     for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
+        local startpoint = Location:new(buildLayer.startpoint)
         local layerBuildData = {
-            startpoint              = buildLayer.startpoint:getRelativeLocation(
-                                                                blueprintStartpoint:getX(),
-                                                                blueprintStartpoint:getY(),
-                                                                blueprintStartpoint:getZ()),
+            startpoint              = startpoint:getRelativeLocation(blueprintStartpoint:getX(), blueprintStartpoint:getY(), blueprintStartpoint:getZ()),
             buildFromAbove          = buildLayer.buildFromAbove,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
@@ -73,11 +71,12 @@ function role_builder.BuildBlueprint_MetaData(...)
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
         end
 
-        lastLocation = buildLayer.startpoint:getRelativeLocation(layerBuildData.layer:getNColumns(), layerBuildData.layer:getNRows(), deltaZ)
+        lastLocation = startpoint:getRelativeLocation(layerBuildData.layer:getNColumns(), layerBuildData.layer:getNRows(), deltaZ)
     end
 
     -- update metadata with escapeSequence (if present)
     for i, escapeLocation in ipairs(escapeSequence) do
+        escapeLocation = Location:new(escapeLocation)
         metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(escapeLocation, lastLocation)
 
         lastLocation = escapeLocation
