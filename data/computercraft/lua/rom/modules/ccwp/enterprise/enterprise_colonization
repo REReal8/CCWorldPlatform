@@ -201,6 +201,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" }, -- ToDo: back to wanted energyL2
+                -- ToDo: investigate how we can postpone L3 to later ... somehow this sometimes fails. Is this because we do not yet claim resources inside the turtle??
                 { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "siteLocator" },
             }},
