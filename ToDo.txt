@@ -22,8 +22,8 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
    R  mobj_chest              (done)
    R  mobj_factory
-   G  mobj_mine
-   R  mobj_silo
+   -  mobj_mine
+   R  mobj_silo               (done)
    R  mobj_shop
    R  mobj_turtle
 
@@ -33,6 +33,15 @@ R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)ItemDepot test functions
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
+
+R  Use generalised test functions for MObj's
+   -  in mobj_birchforest
+   R  in mobj_chest
+   -  in mobj_factory
+   -  in mobj_mine
+   R  in mobj_silo
+   -  in mobj_shop
+   -  in mobj_turtle
 
 R  use MObjHost class
    R  enterprise_forestry
