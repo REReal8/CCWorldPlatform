@@ -22,7 +22,7 @@ function T_Obj.ImplementsInterface(interfaceName, className, oTable)
     corelog.WriteToLog("* "..className.." "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
 
-    local obj = T_Obj.newObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
+    local obj = T_Obj.createObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -40,7 +40,11 @@ end
 --                    _/ |
 --                   |__/
 
-function T_Obj.newObj(className, oTable)
+function T_Obj.createObj(className, oTable)
+    --[[
+        This test helper method creates and returns an Obj of class 'className' from an object table 'oTable'.
+    ]]
+
     -- check input
     assert(className, "no className provided")
     assert(oTable, "no oTable for "..className.." provided")
@@ -63,7 +67,7 @@ function T_Obj.T_new(className, oTable)
     corelog.WriteToLog("* "..className..":new() tests")
 
     -- test
-    local obj = T_Obj.newObj(className, oTable)
+    local obj = T_Obj.createObj(className, oTable)
     assert(obj, "failed creating "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
 
     -- cleanup test
@@ -79,7 +83,7 @@ function T_Obj.T_getClassName(className, oTable)
     assert(className, "no className provided")
     corelog.WriteToLog("* "..className..":getClassName() tests")
 
-    local obj = T_Obj.newObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
+    local obj = T_Obj.createObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
 
     -- test
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
@@ -92,7 +96,7 @@ function T_Obj.T_isTypeOf(className, oTable)
     assert(className, "no className provided")
     corelog.WriteToLog("* "..className..":isTypeOf() tests")
 
-    local obj = T_Obj.newObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
+    local obj = T_Obj.createObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
 
     local class = objectFactory:getClass(className)
     assert (class, "Class "..className.." not found in objectFactory")
@@ -115,7 +119,7 @@ function T_Obj.T_copy(className, oTable)
     assert(className, "no className provided")
     corelog.WriteToLog("* "..className..":copy() tests")
 
-    local obj = T_Obj.newObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
+    local obj = T_Obj.createObj(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
 
     -- test
     local copy = obj:copy()

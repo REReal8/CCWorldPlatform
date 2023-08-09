@@ -145,10 +145,10 @@ function T_Silo.T_isSame()
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests2 = ObjArray:new({ _objClassName = "URL", chestLocator2 })
 
-    local obj = T_Obj.newObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
 
     -- test same
-    local obj1 = T_Obj.newObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local obj1 = T_Obj.createObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
     local isSame = obj1:isSame(obj)
     local expectedIsSame = true
     assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
