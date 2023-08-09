@@ -69,20 +69,24 @@ end
 --                    _/ |
 --                   |__/
 
-function TestObj:new(o)
-    --[[
+function TestObj:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
         Constructs a TestObj.
 
         Parameters:
-            o               - (table) table with
+            o               + (table, {}) table with object fields
                 _field1     - (string) field
                 _field2     - (number) field
-                _field3     - (number) (optional) field
-    --]]
+                _field3     - (number, nil) (optional) field
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
 
-    o = o or {}   -- create object if user does not provide one
+    -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- end
     return o
 end
 
