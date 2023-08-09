@@ -8,7 +8,6 @@ local objectFactory = ObjectFactory:getInstance()
 
 local compact = { compact = true }
 
-
 -- ToDo: consider moving to more generic place (i.e. not coupled to IObj)
 function T_Obj.ImplementsInterface(interfaceName, className, oTable)
     -- prepare test
