@@ -4,7 +4,7 @@ local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 
-local Location = require "obj_location"
+local InputChecker = require "input_checker"
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -104,12 +104,24 @@ function role_fuel_worker.Refuel_Task(taskData)
     return {success = true}
 end
 
-function role_fuel_worker.NeededFuelToFrom(endLocation, startLocation)
-    -- check input
-    if not Location:isTypeOf(endLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid endLocation (type="..type(endLocation)..")") return 9999 end
-    if not Location:isTypeOf(startLocation) then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid startLocation (type="..type(startLocation)..")") return 9999 end
+function role_fuel_worker.NeededFuelToFrom(...)
+    local enterprise_energy = require "enterprise_energy"
 
-    return startLocation:blockDistanceTo(endLocation)
+    -- get & check input from description
+    local checkSuccess, locationB, locationA = InputChecker.Check([[
+        This method returns the fuel needed to travel from locationA to locationB.
+
+        Return value:
+            fuelNeed                - (number) with fuel needed to travel
+
+        Parameters:
+            locationB               + (Location) with destination location
+            locationA               + (Location) with start location
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_fuel_worker.NeededFuelToFrom: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
+
+    -- end
+    return locationA:blockDistanceTo(locationB)
 end
 
 --    _                 _    __                  _   _
