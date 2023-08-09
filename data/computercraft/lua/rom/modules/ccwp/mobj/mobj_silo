@@ -321,7 +321,7 @@ local function Shaft_layer()
     })
 end
 
-local function Chest_layer()
+local function Storage_layer()
     return LayerRectangle:new({
         _codeArray  = {
             ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
@@ -358,7 +358,7 @@ function Silo:getBuildBlueprint()
     }
     local nLayers = self:getNStorageLayers()
     for i=1, nLayers, 1 do
-        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = Chest_layer()})
+        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = Storage_layer()})
     end
 
     -- construct blueprint
@@ -376,6 +376,47 @@ function Silo:getBuildBlueprint()
     return buildLocation, blueprint
 end
 
+local function StorageDismantle_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["D"]   = Block:new({ _name = "minecraft:dirt" }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "DDD",
+            [2] = "D?D",
+            [1] = "DDD",
+        },
+    })
+end
+
+local function ShaftDismantle_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["D"]   = Block:new({ _name = "minecraft:dirt" }),
+        },
+        _codeMap    = {
+            [1] = "D",
+        },
+    })
+end
+
+local function TopDismantle_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "      ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "      ",
+        },
+    })
+end
+
 function Silo:getDismantleBlueprint()
     --[[
         This method returns a blueprint for dismantling the Silo in the physical minecraft world.
@@ -388,15 +429,31 @@ function Silo:getDismantleBlueprint()
     ]]
 
     -- construct layer list
-    corelog.Warning("Silo:getDismantleBlueprint(): not yet (fully) implemented")
     local layerList = {
---        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
+        -- dismantle top layer
+        { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove = true, layer = TopDismantle_layer()},
+        -- position in shaft of first storage layer
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = false, layer = Shaft_layer()},
     }
+    local nLayers = self:getNStorageLayers()
+    for i=1, nLayers, 1 do
+        -- dismantle storage layer i
+        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = StorageDismantle_layer()})
+    end
+    -- position in shaft below last storage layer
+    table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -1-nLayers}), buildFromAbove = false, layer = Shaft_layer()})
+    for i=1, nLayers+1, 1 do
+        -- dismantle shaft layer i
+        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -2-nLayers+i}), buildFromAbove = true, layer = ShaftDismantle_layer()})
+    end
+
+    -- note: this dismantle blueprint does not restore the layer below the last storage layer
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
+            Location:new({ _x= 3, _y= 3, _z=  1}),
         }
     }
 
