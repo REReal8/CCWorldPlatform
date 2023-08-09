@@ -27,6 +27,8 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_shop
    R  mobj_turtle
 
+R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
+
 R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)Obj test functions                            (done)
    R  generalise (I)ItemSupplier test functions
@@ -179,11 +181,6 @@ G  player station
 -  claiming
    -  items (in suppliers)
    -  free slots (in depot's)
-
--  IObj logic semi-automatic
-   -  copy
-   -  isSame
-   -  etc
 
 -  enterprise_energy
    -  Investigate + possibly fix why we relatively soon need to go to L3 enterprise_energy in enterprise_colonization
