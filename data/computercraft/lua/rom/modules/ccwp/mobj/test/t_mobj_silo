@@ -145,10 +145,10 @@ function T_Silo.T_isEqual()
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests2 = ObjArray:new({ _objClassName = "URL", chestLocator2 })
 
-    local obj = T_Obj.pt_createObjFromTable(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
 
     -- test same
-    local obj1 = T_Obj.pt_createObjFromTable(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local obj1 = T_Obj.createObjFromTable(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
     local isEqual = obj1:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")

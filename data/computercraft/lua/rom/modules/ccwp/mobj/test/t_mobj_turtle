@@ -211,7 +211,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.pt_createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
     local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
@@ -275,7 +275,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.pt_createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
     local itemsLocator = enterprise_chests:saveObject(chest2)
 
     -- test
