@@ -116,7 +116,7 @@ function T_Obj.T_copy(className, oTable)
 
     -- test
     local copy = obj:copy()
-    assert(copy:isSame(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
+    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
 
     -- cleanup test
 end
