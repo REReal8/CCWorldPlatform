@@ -97,7 +97,7 @@ function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
-    local obj = T_Obj.createObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
 
     -- test
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
@@ -145,10 +145,10 @@ function T_Chest.T_isEqual()
     -- prepare test
     corelog.WriteToLog("* "..className..":isEqual() tests")
     local id = coreutils.NewId()
-    local obj = T_Obj.createObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
 
     -- test same
-    local obj1 = T_Obj.createObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
+    local obj1 = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
     local isEqual = obj1:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -238,7 +238,7 @@ end
 function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local obj = T_Obj.createObj(className, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local callback = Callback:new({
@@ -310,7 +310,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
         accessDirection = accessDirection1,
     }
 
-    local obj2 = T_Obj.createObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
+    local obj2 = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
 
     local provideItems = {
@@ -324,7 +324,7 @@ end
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local obj = T_Obj.createObj(className, T_Chest.NewOTable()) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable()) assert(obj, "failed obtaining "..className)
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -352,7 +352,7 @@ function T_Chest.T_can_ProvideItems_QOSrv()
             { name = "minecraft:dirt", count = 20 },
         }
     })
-    local obj = T_Obj.createObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory)) assert(obj, "failed obtaining "..className)
 
     -- test can
     local itemName = "minecraft:dirt"
@@ -389,7 +389,7 @@ end
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local obj = T_Obj.createObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -427,7 +427,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Obj.createObj(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
+    local obj2 = T_Obj.pt_createObjFromTable(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
     local itemsLocator = enterprise_chests:saveObject(obj2)
 
     -- test
