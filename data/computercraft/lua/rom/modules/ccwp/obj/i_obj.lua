@@ -3,8 +3,6 @@ local IObj = {
 
 local corelog = require "corelog"
 
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the interface IObj.
 
@@ -23,8 +21,7 @@ local InputChecker = require "input_checker"
 --                   |__/
 
 function IObj:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
+    --[[
         This method constructs a XXXObj instance from an objectTable with all necessary fields as defined in the class.
 
         Return value:
@@ -35,8 +32,7 @@ function IObj:new(...)
                 field1                  - (Location) location of XXXObj
                 field2                  - (number, 2) ...
                 ...
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("XXXMObj:new: Invalid input") return {} end
+    ]]
 
     corelog.Error("Method new() should be implemented in classes implementing the IObj interface. It should not be called directly.")
 end
