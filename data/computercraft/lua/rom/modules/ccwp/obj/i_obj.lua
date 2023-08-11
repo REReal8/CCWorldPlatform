@@ -22,23 +22,6 @@ end
 --                    _/ |
 --                   |__/
 
-function IObj:new(...)
-    --[[
-        This method constructs a XXXObj instance from an objectTable with all necessary fields as defined in the class.
-
-        Return value:
-                o                       - (XXXObj) the constructed XXXObj
-
-        Parameters:
-            o                           + (table) objectTable of this XXXObj
-                field1                  - (Location) location of XXXObj
-                field2                  - (number, 2) ...
-                ...
-    ]]
-
-    unimplementedMethodError("new")
-end
-
 function IObj:getClassName()
     --[[
         Method that returns the className of the Obj (i.e. self).
@@ -94,7 +77,6 @@ function IObj.ImplementsInterface(obj)
     ]]
 
     -- check
-    if not obj.new then return false end
     if not obj.getClassName then return false end
     if not obj.isTypeOf then return false end
     if not obj.isEqual then return false end
