@@ -2,7 +2,7 @@ local IObj = {
 }
 
 --[[
-    This module implements the interface IObj.
+    This module specifies the IObj interface.
 
     It defines a set of methods that classes adhering to this interface must implement.
 
