@@ -6,6 +6,8 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
+local IObj = require "i_obj"
+
 local compact = { compact = true }
 
 -- ToDo: consider moving to more generic place (i.e. not coupled to IObj)
@@ -22,6 +24,50 @@ function T_Obj.ImplementsInterface(interfaceName, className, oTable)
     assert(implementsInterface, ""..className.." class does not (fully) implement "..interfaceName.." interface")
 
     -- cleanup test
+end
+
+function T_Obj.CheckOTableFieldsSame(oTableA, oTableB)
+    --[[
+
+    ]]
+
+    -- check both arguments are tables
+    assert(type(oTableA) == "table", "oTableA not a table: oTableA="..textutils.serialise(oTableA))
+    assert(type(oTableB) == "table", "oTableB not a table: oTableB="..textutils.serialise(oTableB))
+
+    -- loop over fields oTable1
+    for fieldKeyA, fieldValueA in pairs(oTableA) do
+        -- check fieldKeyA is in oTableB
+        assert(oTableB.fieldKeyA, "field "..fieldKeyA.." not found (in oTableB)")
+
+        -- check fieldValue types are equal
+        local fieldValueB = oTableB.fieldKeyA
+        assert(type(fieldValueB) == type(fieldValueA), "field "..fieldKeyA.." type(="..type(fieldValueB)..") not same as expected(="..type(fieldValueA)..")")
+
+        -- check supported fieldValue type
+        assert(type(fieldValueA) ~= "function", "field "..fieldKeyA.." type(="..type(fieldValueA)..") not supported")
+        assert(type(fieldValueA) ~= "thread", "field "..fieldKeyA.." type(="..type(fieldValueA)..") not supported")
+        assert(type(fieldValueA) ~= "userdata", "field "..fieldKeyA.." type(="..type(fieldValueA)..") not supported")
+
+        -- check fieldValue values are equal
+        if type(fieldValueA) ~= "table" then
+            -- check build in values equal
+            assert(fieldValueB == fieldValueA, "field "..fieldKeyA.." value(="..fieldValueB..") not the same as expected(="..fieldValueA..")")
+        else
+            -- check table values equal
+            if fieldValueA == fieldValueB then -- identical so also equal
+            else -- not identical
+                -- check IObj's
+                assert(IObj.ImplementsInterface(fieldValueB), "field "..fieldKeyA.." not an IObj, checking plane table fields not supported")
+
+                -- check fieldValue isEqual
+                assert(fieldValueB:isEqual(fieldValueA), "field "..fieldKeyA.." value(="..textutils.serialise(fieldValueB)..") not the same as expected(="..textutils.serialise(fieldValueA)..")")
+            end
+        end
+    end
+
+    -- end
+    return true
 end
 
 --    _____ ____  _     _                  _   _               _
