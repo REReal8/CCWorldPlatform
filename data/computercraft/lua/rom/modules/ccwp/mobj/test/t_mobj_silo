@@ -29,7 +29,7 @@ function T_Silo.T_All()
     T_Silo.T_ImplementsIObj()
     T_Silo.T_getClassName()
     T_Silo.T_isTypeOf()
-    T_Silo.T_isSame()
+    T_Silo.T_isEqual()
     T_Silo.T_copy()
 
     -- IMObj methods
@@ -132,9 +132,9 @@ function T_Silo.T_isTypeOf()
     T_Obj.T_isTypeOf(className, oTable)
 end
 
-function T_Silo.T_isSame()
+function T_Silo.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* "..className..":isSame() tests")
+    corelog.WriteToLog("* "..className..":isEqual() tests")
     local id = coreutils.NewId()
     local topChests1 = ObjArray:new({ _objClassName = "URL", })
 
@@ -149,22 +149,22 @@ function T_Silo.T_isSame()
 
     -- test same
     local obj1 = T_Obj.createObj(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
-    local isSame = obj1:isSame(obj)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _topChests
     obj._topChests = topChests2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._topChests = topChests1
 
     -- test different storageChests1
     obj._storageChests = storageChests2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._storageChests = storageChests1
 
     -- cleanup test
@@ -221,7 +221,7 @@ function T_Silo.T_construct()
         topChests       = topChests1,
         layers          = layers1,
     })
-    assert(mobj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
     assert(mobj._topChests:nObjs() == topChests1, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
     assert(mobj._storageChests:nObjs() == layers1*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
     mobj:destruct()
@@ -230,7 +230,7 @@ function T_Silo.T_construct()
     mobj = Silo:construct({
         baseLocation    = location1,
     })
-    assert(mobj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
     assert(mobj._topChests:nObjs() == 2, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(=2)")
     assert(mobj._storageChests:nObjs() == 2*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(=8)")
     mobj:destruct()
@@ -307,7 +307,7 @@ function T_Silo.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local siloLocator = callbackData["siloLocator"]
@@ -386,7 +386,7 @@ function T_Silo.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local siloLocator = callbackData["siloLocator"]

@@ -83,15 +83,15 @@ function TestMObj:isTypeOf(obj)
     return false
 end
 
-function TestMObj:isSame(obj)
+function TestMObj:isEqual(obj)
     -- check input
     if not TestMObj:isTypeOf(obj) then return false end
 
     -- check same
-    local isSame = self._field1 == obj._field1
+    local isEqual = self._field1 == obj._field1
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function TestMObj:copy()

@@ -97,7 +97,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         -- min
         local minLocation = Location:new(statistics.minLocation)
         local newMinLocation = minLocation:minLocation(location)
-        if not minLocation:isSame(newMinLocation) then
+        if not minLocation:isEqual(newMinLocation) then
             -- set new value
             statistics.minLocation = newMinLocation
             statisticsChanged = true
@@ -106,7 +106,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         -- max
         local maxLocation = Location:new(statistics.maxLocation)
         local newMaxLocation = maxLocation:maxLocation(location)
-        if not maxLocation:isSame(newMaxLocation) then
+        if not maxLocation:isEqual(newMaxLocation) then
             -- set new value
             statistics.maxLocation = newMaxLocation
             statisticsChanged = true

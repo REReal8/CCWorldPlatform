@@ -83,15 +83,15 @@ function Host:isTypeOf(obj)
     return false
 end
 
-function Host:isSame(obj)
+function Host:isEqual(obj)
     -- check input
     if not Host:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._hostName == obj._hostName
+    local isEqual =  self._hostName == obj._hostName
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Host:copy()
@@ -612,7 +612,7 @@ function Host.GetObject(...)
     local host = Host.GetHost(objectLocator:getHost()) if not host then corelog.Error("Host.GetObject: Host of "..objectLocator:getURI().." not found") return nil end
 
     -- check the Host itself is wanted
-    if objectLocator:isSame(host:getHostLocator()) then
+    if objectLocator:isEqual(host:getHostLocator()) then
         return host
     end
 

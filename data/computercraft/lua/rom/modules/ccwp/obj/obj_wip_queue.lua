@@ -150,12 +150,12 @@ function WIPQueue:isTypeOf(obj)
     return false
 end
 
-function WIPQueue:isSame(obj)
+function WIPQueue:isEqual(obj)
     -- check input
     if not WIPQueue:isTypeOf(obj) then return false end
 
     -- check same _callbackList
-    if not self._callbackList:isSame(obj._callbackList) then return false end
+    if not self._callbackList:isEqual(obj._callbackList) then return false end
 
     -- check same _workList
     if table.getn(self._workList) ~= table.getn(obj._workList) then return false end

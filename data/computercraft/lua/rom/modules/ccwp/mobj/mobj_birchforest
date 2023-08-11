@@ -162,20 +162,20 @@ function BirchForest:isTypeOf(obj)
     return false
 end
 
-function BirchForest:isSame(obj)
+function BirchForest:isEqual(obj)
     -- check input
     if not BirchForest:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
+    local isEqual =  self._id == obj._id
                 and self._level == obj._level
-                and self._baseLocation:isSame(obj._baseLocation)
+                and self._baseLocation:isEqual(obj._baseLocation)
                 and self._nTrees == obj._nTrees
-                and self._localLogsLocator:isSame(obj._localLogsLocator)
-                and self._localSaplingsLocator:isSame(obj._localSaplingsLocator)
+                and self._localLogsLocator:isEqual(obj._localLogsLocator)
+                and self._localSaplingsLocator:isEqual(obj._localSaplingsLocator)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function BirchForest:copy()

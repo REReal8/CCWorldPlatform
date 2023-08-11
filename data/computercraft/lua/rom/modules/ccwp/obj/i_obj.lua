@@ -60,12 +60,12 @@ function IObj:isTypeOf(obj)
     return false
 end
 
-function IObj:isSame(otherObj)
+function IObj:isEqual(otherObj)
     --[[
         Method that returns if the current Obj is equal to another Obj.
     ]]
 
-    unimplementedMethodError("isSame")
+    unimplementedMethodError("isEqual")
 
     -- end
     return false
@@ -97,7 +97,7 @@ function IObj.ImplementsInterface(obj)
     if not obj.new then return false end
     if not obj.getClassName then return false end
     if not obj.isTypeOf then return false end
-    if not obj.isSame then return false end
+    if not obj.isEqual then return false end
     if not obj.copy then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.
 

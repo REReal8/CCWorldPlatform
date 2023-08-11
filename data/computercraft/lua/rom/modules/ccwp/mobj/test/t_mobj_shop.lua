@@ -33,7 +33,7 @@ function T_Shop.T_All()
     -- base methods
     T_Shop.T_Getters()
     T_Shop.T_isTypeOf()
-    T_Shop.T_isSame()
+    T_Shop.T_isEqual()
     T_Shop.T_copy()
 
     -- specific methods
@@ -107,7 +107,7 @@ function T_Shop.T_Getters()
     -- test
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getItemSuppliersLocators():isSame(itemSuppliersLocators1), "gotten getItemSuppliersLocators(="..textutils.serialize(obj:getItemSuppliersLocators())..") not the same as expected(="..textutils.serialize(itemSuppliersLocators1)..")")
+    assert(obj:getItemSuppliersLocators():isEqual(itemSuppliersLocators1), "gotten getItemSuppliersLocators(="..textutils.serialize(obj:getItemSuppliersLocators())..") not the same as expected(="..textutils.serialize(itemSuppliersLocators1)..")")
 
     -- cleanup test
 end
@@ -146,23 +146,23 @@ function T_Shop.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Shop.T_isSame()
+function T_Shop.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Shop:isSame() tests")
+    corelog.WriteToLog("* Shop:isEqual() tests")
     local id = coreutils.NewId()
     local obj = T_Shop.CreateShop(itemSuppliersLocators1, id) if not obj then corelog.Error("failed obtaining Shop") return end
 
     -- test same
     local obj1 = T_Shop.CreateShop(itemSuppliersLocators1, id)
-    local isSame = obj1:isSame(obj)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _itemSuppliersLocators
     obj._itemSuppliersLocators = itemSuppliersLocators2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._itemSuppliersLocators = itemSuppliersLocators1
 
     -- cleanup test
@@ -175,7 +175,7 @@ function T_Shop.T_copy()
 
     -- test
     local copy = obj:copy()
-    assert(copy:isSame(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
+    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
 
     -- cleanup test
 end
@@ -279,7 +279,7 @@ function T_Shop.T_bestItemSupplier()
 
     local bestItemSupplierLocator = obj:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, farItemSupplierLocator, closeItemSupplierLocator)
     local expectedItemSupplierLocator = closeItemSupplierLocator
-    assert(bestItemSupplierLocator:isSame(expectedItemSupplierLocator), "gotten bestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
+    assert(bestItemSupplierLocator:isEqual(expectedItemSupplierLocator), "gotten bestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator)
@@ -325,7 +325,7 @@ function T_Shop.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local objectLocator = callbackData["objectLocator"]

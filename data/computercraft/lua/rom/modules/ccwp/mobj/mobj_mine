@@ -169,20 +169,20 @@ function Mine:isTypeOf(obj)
     return false
 end
 
-function Mine:isSame(obj)
+function Mine:isEqual(obj)
     -- check input
     if not Mine:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
+    local isEqual =  self._id == obj._id
                 and self._version == obj._version
 
-                and self._baseLocation:isSame(obj._baseLocation)
+                and self._baseLocation:isEqual(obj._baseLocation)
 
-                and self._topChests:isSame(obj._topChests)
+                and self._topChests:isEqual(obj._topChests)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Mine:copy()

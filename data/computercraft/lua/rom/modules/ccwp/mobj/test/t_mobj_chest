@@ -31,7 +31,7 @@ function T_Chest.T_All()
     T_Chest.T_ImplementsIObj()
     T_Chest.T_getClassName()
     T_Chest.T_isTypeOf()
-    T_Chest.T_isSame()
+    T_Chest.T_isEqual()
     T_Chest.T_copy()
 
     -- IMObj methods
@@ -73,9 +73,9 @@ function T_Chest.T_Getters()
 
     -- test
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
     assert(obj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..obj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
-    assert(obj:getInventory():isSame(inventory1), "gotten getInventory(="..textutils.serialize(obj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
+    assert(obj:getInventory():isEqual(inventory1), "gotten getInventory(="..textutils.serialize(obj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
 
     -- cleanup test
 end
@@ -141,37 +141,37 @@ function T_Chest.T_isTypeOf()
     T_Obj.T_isTypeOf(className, oTable)
 end
 
-function T_Chest.T_isSame()
+function T_Chest.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* "..className..":isSame() tests")
+    corelog.WriteToLog("* "..className..":isEqual() tests")
     local id = coreutils.NewId()
     local obj = T_Obj.createObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
 
     -- test same
     local obj1 = T_Obj.createObj(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
-    local isSame = obj1:isSame(obj)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _baseLocation
     obj._baseLocation = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._baseLocation = location1
 
     -- test different _accessDirection
     obj._accessDirection = "bottom"
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._accessDirection = accessDirection1
 
     -- test different _itemsInventory
     obj._inventory = { "ToDo: add some elements here" } -- ToDo
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._inventory = inventory1
 
     -- cleanup test
@@ -213,9 +213,9 @@ function T_Chest.T_construct()
 
     -- test
     local mobj = Chest:construct(constructParameters1)
-    assert(mobj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
     assert(mobj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..mobj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
-    assert(mobj:getInventory():isSame(emptyInventory), "gotten getInventory(="..textutils.serialize(mobj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(emptyInventory, compact)..")")
+    assert(mobj:getInventory():isEqual(emptyInventory), "gotten getInventory(="..textutils.serialize(mobj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(emptyInventory, compact)..")")
 end
 
 function T_Chest.T_destruct()
@@ -440,7 +440,7 @@ function T_Chest.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local chestLocator = callbackData["chestLocator"]

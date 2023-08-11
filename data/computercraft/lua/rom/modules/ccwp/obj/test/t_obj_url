@@ -41,7 +41,7 @@ function T_URL.T_All()
     T_URL.T_SettersFromURI()
     T_URL.T_NewFromURI()
     T_URL.T_isTypeOf()
-    T_URL.T_isSame()
+    T_URL.T_isEqual()
     T_URL.T_copy()
 
     -- specific methods
@@ -241,9 +241,9 @@ function T_URL.T_isTypeOf()
     -- cleanup test
 end
 
-function T_URL.T_isSame()
+function T_URL.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* URL:isSame() tests")
+    corelog.WriteToLog("* URL:isEqual() tests")
     local url1 = URL:new({
         _host = host,
         _port = port,
@@ -258,36 +258,36 @@ function T_URL.T_isSame()
     })
 
     -- test same
-    local isSame = url1:isSame(url2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = url1:isEqual(url2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _host
     url2:setHost(host2)
-    isSame = url1:isSame(url2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = url1:isEqual(url2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     url2:setHost(host)
 
     -- test different _port
     url2:setPort(port2)
-    isSame = url1:isSame(url2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = url1:isEqual(url2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     url2:setPort(port)
 
     -- test different _path
     url2:setPath(path2)
-    isSame = url1:isSame(url2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = url1:isEqual(url2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     url2:setPath(path)
 
     -- test different _query
     url2:setQuery(query2)
-    isSame = url1:isSame(url2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = url1:isEqual(url2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     url2:setQuery(query)
 
     -- cleanup test
@@ -305,7 +305,7 @@ function T_URL.T_copy()
 
     -- test
     local copy = obj1:copy()
-    assert(copy:isSame(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
+    assert(copy:isEqual(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
 
     -- cleanup test
 end

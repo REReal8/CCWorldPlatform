@@ -126,20 +126,20 @@ function Factory:isTypeOf(obj)
     return false
 end
 
-function Factory:isSame(obj)
+function Factory:isEqual(obj)
     -- check input
     if not Factory:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
-                and self._baseLocation:isSame(obj._baseLocation)
-                and self._inputLocators:isSame(obj._inputLocators)
-                and self._outputLocators:isSame(obj._outputLocators)
-                and self._craftingSpots:isSame(obj._craftingSpots)
-                and self._smeltingSpots:isSame(obj._smeltingSpots)
+    local isEqual =  self._id == obj._id
+                and self._baseLocation:isEqual(obj._baseLocation)
+                and self._inputLocators:isEqual(obj._inputLocators)
+                and self._outputLocators:isEqual(obj._outputLocators)
+                and self._craftingSpots:isEqual(obj._craftingSpots)
+                and self._smeltingSpots:isEqual(obj._smeltingSpots)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Factory:copy()

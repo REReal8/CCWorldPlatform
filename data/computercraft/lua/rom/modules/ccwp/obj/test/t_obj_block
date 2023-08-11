@@ -10,7 +10,7 @@ function T_Block.T_All()
     -- base methods
     T_Block.T_new()
     T_Block.T_isTypeOf()
-    T_Block.T_isSame()
+    T_Block.T_isEqual()
     T_Block.T_copy()
 
     -- specific methods
@@ -22,7 +22,7 @@ function T_Block.T_All()
 
     -- helper functions
     T_Block.T_IsBlockList()
-    T_Block.T_IsSameBlockList()
+    T_Block.T_IsEqualBlockList()
     T_Block.T_BlockListCopy()
     T_Block.T_BlockListTransform()
 end
@@ -107,9 +107,9 @@ function T_Block.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Block.T_isSame()
+function T_Block.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Block:isSame() tests")
+    corelog.WriteToLog("* Block:isEqual() tests")
     local block2 = Block:new({
         _dx     = dx1,
         _dy     = dy1,
@@ -118,29 +118,29 @@ function T_Block.T_isSame()
     })
 
     -- test same
-    local isSame = block1:isSame(block2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = block1:isEqual(block2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different dx
     block2:setDx(dx2)
-    isSame = block1:isSame(block2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = block1:isEqual(block2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     block2:setDx(dx1)
 
     -- test different dy
     block2:setDy(dy2)
-    isSame = block1:isSame(block2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = block1:isEqual(block2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     block2:setDy(dy1)
 
     -- test different name
     block2:setName(furnaceItemName)
-    isSame = block1:isSame(block2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = block1:isEqual(block2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     block2:setName(saplingItemName)
 
     -- cleanup test
@@ -152,7 +152,7 @@ function T_Block.T_copy()
 
     -- test
     local copy = block1:copy()
-    assert(copy:isSame(block1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(block1, compact)..")")
+    assert(copy:isEqual(block1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(block1, compact)..")")
 
     -- cleanup test
 end
@@ -327,44 +327,44 @@ function T_Block.T_IsBlockList()
     -- cleanup test
 end
 
-function T_Block.T_IsSameBlockList()
+function T_Block.T_IsEqualBlockList()
     -- prepare test
-    corelog.WriteToLog("* Block.IsSameBlockList() tests")
+    corelog.WriteToLog("* Block.IsEqualBlockList() tests")
     local block2 = Block:new({
         _name   = furnaceItemName,
     })
 
     -- test with same blocks in same order
-    local isSameBlockList = Block.IsSameBlockList(
+    local isEqualBlockList = Block.IsEqualBlockList(
         { block1:copy(), block2:copy() },
         { block1:copy(), block2:copy() }
     )
-    local expectedIsSameBlockList = true
-    assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
+    local expectedIsEqualBlockList = true
+    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
 
     -- test with 2 empty lists
-    isSameBlockList = Block.IsSameBlockList(
+    isEqualBlockList = Block.IsEqualBlockList(
         { },
         { }
     )
-    expectedIsSameBlockList = true
-    assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
+    expectedIsEqualBlockList = true
+    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
 
     -- test with same blocks in different order
-    isSameBlockList = Block.IsSameBlockList(
+    isEqualBlockList = Block.IsEqualBlockList(
         { block1:copy(), block2:copy() },
         { block2:copy(), block1:copy() }
     )
-    expectedIsSameBlockList = false
-    assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
+    expectedIsEqualBlockList = false
+    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
 
     -- test with different blocks
-    isSameBlockList = Block.IsSameBlockList(
+    isEqualBlockList = Block.IsEqualBlockList(
         { block1:copy(), block2:copy() },
         { block1:copy(), Block:new({ _name = chestItemName,}) }
     )
-    expectedIsSameBlockList = false
-    assert(isSameBlockList == expectedIsSameBlockList, "gotten IsSameBlockList(="..tostring(isSameBlockList)..") not the same as expected(="..tostring(expectedIsSameBlockList)..")")
+    expectedIsEqualBlockList = false
+    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
 
     -- cleanup test
 end
@@ -379,7 +379,7 @@ function T_Block.T_BlockListCopy()
     -- test
     local copy = Block.BlockListCopy({ block1:copy(), block2:copy() })
     local expectedCopy = { block1:copy(), block2:copy() }
-    assert(Block.IsSameBlockList(copy, expectedCopy), "gotten BlockListCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
+    assert(Block.IsEqualBlockList(copy, expectedCopy), "gotten BlockListCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
 
     -- cleanup test
 end

@@ -19,7 +19,7 @@ function T_WIPAdministrator.T_All()
     -- IObj methods
     T_WIPAdministrator.T_new()
     T_WIPAdministrator.T_isTypeOf()
-    T_WIPAdministrator.T_isSame()
+    T_WIPAdministrator.T_isEqual()
     T_WIPAdministrator.T_copy()
 
     -- specific methods
@@ -94,7 +94,7 @@ function T_WIPAdministrator.T_new()
     local obj = WIPAdministrator:new({
         _wipQueues      = wipQueues1:copy(),
     }) assert(obj)
-    assert(obj._wipQueues:isSame(wipQueues1), "gotten _wipQueues(="..textutils.serialise(obj._wipQueues)..") not the same as expected(="..textutils.serialise(wipQueues1)..")")
+    assert(obj._wipQueues:isEqual(wipQueues1), "gotten _wipQueues(="..textutils.serialise(obj._wipQueues)..") not the same as expected(="..textutils.serialise(wipQueues1)..")")
 
     -- cleanup test
 end
@@ -119,9 +119,9 @@ function T_WIPAdministrator.T_isTypeOf()
     -- cleanup test
 end
 
-function T_WIPAdministrator.T_isSame()
+function T_WIPAdministrator.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:isSame() tests")
+    corelog.WriteToLog("* WIPAdministrator:isEqual() tests")
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues1:copy(),
     }) assert(obj1)
@@ -145,15 +145,15 @@ function T_WIPAdministrator.T_isSame()
     }) assert(wipQueues2)
 
     -- test same
-    local isSame = obj1:isSame(obj2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _wipQueues
     obj2._wipQueues = wipQueues2:copy()
-    isSame = obj1:isSame(obj2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj2._workList = wipQueues1:copy()
 
     -- cleanup test
@@ -168,7 +168,7 @@ function T_WIPAdministrator.T_copy()
 
     -- test
     local copy = obj1:copy()
-    assert(copy:isSame(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
+    assert(copy:isEqual(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
 
     -- cleanup test
 end
@@ -230,7 +230,7 @@ function T_WIPAdministrator.T_getWIPQueue()
 
     -- test returns already present WIPQueue
     local wipQueue = obj1:getWIPQueue(wipQueueId1)
-    assert(wipQueue:isSame(wipQueue1), "gotten wipQueue(="..textutils.serialise(wipQueue)..") not the same as expected(="..textutils.serialise(wipQueue1)..")")
+    assert(wipQueue:isEqual(wipQueue1), "gotten wipQueue(="..textutils.serialise(wipQueue)..") not the same as expected(="..textutils.serialise(wipQueue1)..")")
 
     -- test creates not yet present WIPQueue
     local wipQueueId2 = "wipQueueId2"
@@ -310,7 +310,7 @@ local callback1 = Callback:new({
 
 local function hasCallback(callbackList, callback)
     for i, aCallback in ipairs(callbackList) do
-        if aCallback:isSame(callback) then
+        if aCallback:isEqual(callback) then
             return true
         end
     end

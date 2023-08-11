@@ -127,27 +127,27 @@ function Silo:isTypeOf(obj)
     return false
 end
 
-function Silo:isSame(obj)
+function Silo:isEqual(obj)
     -- check input
     if not Silo:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
+    local isEqual =  self._id == obj._id
                 and self._version == obj._version
 
-                and self._baseLocation:isSame(obj._baseLocation)
-                and self._entryLocation:isSame(obj._entryLocation)
+                and self._baseLocation:isEqual(obj._baseLocation)
+                and self._entryLocation:isEqual(obj._entryLocation)
 
                 and self._dropLocation == obj._dropLocation
                 and self._pickupLocation == obj._pickupLocation
 
-                and self._topChests:isSame(obj._topChests)
-                and self._storageChests:isSame(obj._storageChests)
+                and self._topChests:isEqual(obj._topChests)
+                and self._storageChests:isEqual(obj._storageChests)
 
                 and self._operational == obj._operational
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Silo:copy()

@@ -92,16 +92,16 @@ function ProductionSpot:isTypeOf(obj)
     return false
 end
 
-function ProductionSpot:isSame(obj)
+function ProductionSpot:isEqual(obj)
     -- check input
     if not ProductionSpot:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._baseLocation:isSame(obj._baseLocation)
+    local isEqual =  self._baseLocation:isEqual(obj._baseLocation)
                 and self._isCraftingSpot == obj._isCraftingSpot
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function ProductionSpot:copy()

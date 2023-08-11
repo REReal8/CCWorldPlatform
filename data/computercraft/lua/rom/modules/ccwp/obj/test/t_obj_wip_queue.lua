@@ -21,7 +21,7 @@ function T_WIPQueue.T_All()
     -- IObj methods
     T_WIPQueue.T_new()
     T_WIPQueue.T_isTypeOf()
-    T_WIPQueue.T_isSame()
+    T_WIPQueue.T_isEqual()
     T_WIPQueue.T_copy()
 
     -- specific methods
@@ -159,7 +159,7 @@ end
 
 local function hasCallback(callbackList, callback)
     for i, aCallback in ipairs(callbackList) do
-        if aCallback:isSame(callback) then
+        if aCallback:isEqual(callback) then
             return true
         end
     end
@@ -204,7 +204,7 @@ function T_WIPQueue.T_new()
     }) assert(obj)
     assert(obj._workList[1] == workId1, "no workId1")
     assert(obj._workList[2] == workId2, "no workId2")
-    assert(obj._callbackList:isSame(callbackList1), "gotten _callbackList(="..textutils.serialise(obj._callbackList)..") not the same as expected(="..textutils.serialise(callbackList1)..")")
+    assert(obj._callbackList:isEqual(callbackList1), "gotten _callbackList(="..textutils.serialise(obj._callbackList)..") not the same as expected(="..textutils.serialise(callbackList1)..")")
 
     -- cleanup test
 end
@@ -230,9 +230,9 @@ function T_WIPQueue.T_isTypeOf()
     -- cleanup test
 end
 
-function T_WIPQueue.T_isSame()
+function T_WIPQueue.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:isSame() tests")
+    corelog.WriteToLog("* WIPQueue:isEqual() tests")
     local obj1 = WIPQueue:new({
         _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
@@ -248,22 +248,22 @@ function T_WIPQueue.T_isSame()
     }) assert(callbackList2)
 
     -- test same
-    local isSame = obj1:isSame(obj2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _workList
     obj2._workList = workListCopy(workList2)
-    isSame = obj1:isSame(obj2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj2._workList = workListCopy(workList1)
 
     -- test different _callbackList
     obj2._callbackList = callbackList2:copy()
-    isSame = obj1:isSame(obj2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj2._callbackList = callbackList1:copy()
 
     -- cleanup test
@@ -279,7 +279,7 @@ function T_WIPQueue.T_copy()
 
     -- test
     local copy = obj1:copy()
-    assert(copy:isSame(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
+    assert(copy:isEqual(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
 
     -- cleanup test
 end

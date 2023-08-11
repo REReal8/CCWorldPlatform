@@ -27,7 +27,7 @@ function T_Turtle.T_All()
     -- base methods
     T_Turtle.T_Getters()
     T_Turtle.T_isTypeOf()
-    T_Turtle.T_isSame()
+    T_Turtle.T_isEqual()
     T_Turtle.T_copy()
 
     -- IItemSupplier methods
@@ -94,7 +94,7 @@ function T_Turtle.T_Getters()
     assert(objTurtle:getTurtleId() == turtleId, "gotten getTurtleId(="..objTurtle:getTurtleId()..") not the same as expected(="..turtleId..")")
     assert(objTurtle:getFuelPriorityKey() == fuelPriorityKey2, "gotten getFuelPriorityKey(="..objTurtle:getFuelPriorityKey() ..") not the same as expected(="..fuelPriorityKey2..")")
 --    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
---    assert(objTurtle:getInventory():isSame(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
+--    assert(objTurtle:getInventory():isEqual(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
 
     -- cleanup test
 end
@@ -132,23 +132,23 @@ function T_Turtle.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Turtle.T_isSame()
+function T_Turtle.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Turtle:isSame() tests")
+    corelog.WriteToLog("* Turtle:isEqual() tests")
     local id = "333"
     local obj = T_Turtle.CreateTurtle(id) if not obj then corelog.Error("failed obtaining Turtle") return end
 
     -- test same
     local obj1 = T_Turtle.CreateTurtle(id)
-    local isSame = obj1:isSame(obj)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _fuelPriorityKey
     obj._fuelPriorityKey = fuelPriorityKey2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._fuelPriorityKey = fuelPriorityKey1
 
     -- cleanup test
@@ -161,7 +161,7 @@ function T_Turtle.T_copy()
 
     -- test
     local copy = objTurtle:copy()
-    assert(copy:isSame(objTurtle), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objTurtle, compact)..")")
+    assert(copy:isEqual(objTurtle), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objTurtle, compact)..")")
 
     -- cleanup test
 end
@@ -224,7 +224,7 @@ function T_Turtle.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local itemDepotLocator = callbackData["itemDepotLocator"]
@@ -288,7 +288,7 @@ function T_Turtle.storeItemsFrom_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local itemsLocator = callbackData["itemsLocator"]

@@ -73,7 +73,7 @@ function ObjTable:isTypeOf(obj)
     return false
 end
 
-function ObjTable:isSame(obj)
+function ObjTable:isEqual(obj)
     -- check input
     if not ObjTable:isTypeOf(obj) then return false end
 
@@ -87,7 +87,7 @@ function ObjTable:isSame(obj)
             sizeA = sizeA + 1
             -- check same obj
             local elB = obj[key]
-            if not elA:isSame(elB) then return false end
+            if not elA:isEqual(elB) then return false end
         end
     end
 

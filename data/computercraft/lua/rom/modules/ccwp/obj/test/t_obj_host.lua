@@ -14,7 +14,7 @@ function T_Host.T_All()
     -- base methods
     T_Host.T_new()
     T_Host.T_isTypeOf()
-    T_Host.T_isSame()
+    T_Host.T_isEqual()
     T_Host.T_copy()
 
     -- specific methods
@@ -82,23 +82,23 @@ function T_Host.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Host.T_isSame()
+function T_Host.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Host:isSame() tests")
+    corelog.WriteToLog("* Host:isEqual() tests")
     local host2 = Host:new({
         _hostName   = hostName,
     })
 
     -- test same
-    local isSame = host1:isSame(host2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = host1:isEqual(host2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different hostName
     host2._hostName = hostName2
-    isSame = host1:isSame(host2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = host1:isEqual(host2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     host2._hostName = hostName
 
     -- cleanup test
@@ -110,7 +110,7 @@ function T_Host.T_copy()
 
     -- test
     local copy = host1:copy()
-    assert(copy:isSame(host1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(host1, compact)..")")
+    assert(copy:isEqual(host1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(host1, compact)..")")
 
     -- cleanup test
 end
@@ -154,7 +154,7 @@ function T_Host.T_getHostLocator()
     local hostLocator = host1:getHostLocator()
     local expectedLocator = URL:new()
     expectedLocator:setHost(hostName)
-    assert(hostLocator:isSame(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(hostLocator:isEqual(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- cleanup test
 end
@@ -189,7 +189,7 @@ function T_Host.T_getResourceLocator()
     local expectedLocator = URL:new()
     expectedLocator:setHost(hostName)
     expectedLocator:setPath(resourcePath1)
-    assert(resourceLocator:isSame(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- cleanup test
 end
@@ -208,7 +208,7 @@ function T_Host.T_get_save_delete_Resource()
     local expectedLocator = URL:new()
     expectedLocator:setHost(hostName)
     expectedLocator:setPath(resourcePath1)
-    assert(resourceLocator:isSame(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test getResource (now present)
     resourceGotten = host1:getResource(resourceLocator)
@@ -239,22 +239,22 @@ function T_Host.T_getObjectLocator()
     -- test with supplying className and id
     local objectLocator = host1:getObjectLocator(testObject, className, objectId)
     local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test without supplying id
     objectLocator = host1:getObjectLocator(testObject, className)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test without supplying className (but object has getClassName method) and id
     objectLocator = host1:getObjectLocator(testObject)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test without supplying className (but object has getClassName method) but with id
     objectLocator = host1:getObjectLocator(testObject, "", objectId)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- cleanup test
 end
@@ -267,28 +267,28 @@ function T_Host.T_saveObject()
     -- test with supplying className and id
     local objectLocator = host1:saveObject(testObject, className, objectId)
     local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
     -- test without supplying id
     objectLocator = host1:saveObject(testObject, className)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
     -- test without supplying className (but object has getClassName method) and id
     objectLocator = host1:saveObject(testObject)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
     -- test without supplying className (but object has getClassName method) but with id
     objectLocator = host1:saveObject(testObject, "", objectId)
     expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
-    assert(objectLocator:isSame(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
+    assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
@@ -302,7 +302,7 @@ function T_Host.T_getObject()
 
     -- test get object
     local object = host1:getObject(objectLocator)
-    assert(object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    assert(object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- cleanup test
     host1:deleteResource(objectLocator)
@@ -387,12 +387,12 @@ function T_Host.T_GetObject()
     -- test get object hosted by host1
     local objectLocator = host1:saveObject(testObject, className)
     local object = Host.GetObject(objectLocator)
-    assert(object and object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    assert(object and object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- test get host1 from itself
     local hostLocator = host1:getHostLocator()
     object = Host.GetObject(hostLocator)
-    assert(object and object:isSame(host1), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    assert(object and object:isEqual(host1), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- cleanup test
     host1:deleteResource(objectLocator)

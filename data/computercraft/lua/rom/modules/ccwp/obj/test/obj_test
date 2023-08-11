@@ -105,18 +105,18 @@ function TestObj:isTypeOf(obj)
     return false
 end
 
-function TestObj:isSame(obj)
+function TestObj:isEqual(obj)
     -- check input
     if not TestObj:isTypeOf(obj) then return false end
 
     -- check same
-    local isSame = self._field1 == obj._field1 and self._field2 == obj._field2
+    local isEqual = self._field1 == obj._field1 and self._field2 == obj._field2
     if self._field3 ~= nil then
-        isSame = isSame and self._field3 == obj._field3
+        isEqual = isEqual and self._field3 == obj._field3
     end
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function TestObj:copy()

@@ -143,7 +143,7 @@ function t_turtle.T_GetAnyTurtleLocator()
     -- test
     local locator = enterprise_turtle.GetAnyTurtleLocator()
     local expectedLocator = enterprise_turtle:getTurtleLocator("any")
-    assert(locator:isSame(expectedLocator), "gotten locator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
+    assert(locator:isEqual(expectedLocator), "gotten locator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
 
     -- cleanup test
 end
@@ -180,12 +180,12 @@ function t_turtle.T_getObject()
 
     -- test normal object works (similair to T_Host.T_getObject())
     local object = enterprise_turtle:getObject(objectLocator)
-    assert(object:isSame(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
+    assert(object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- test "any turtle" provides current turtle
     local getAnyTurtleLocator = enterprise_turtle.GetAnyTurtleLocator()
     object = enterprise_turtle:getObject(getAnyTurtleLocator)
-    assert(object:isSame(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
+    assert(object:isEqual(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
 
     -- cleanup test
     enterprise_turtle:deleteResource(objectLocator)

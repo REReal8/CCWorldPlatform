@@ -27,6 +27,10 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_shop
    R  mobj_turtle
 
+R  IObj
+   R  rename isSame to isEqual
+   (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
+
 R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
 
 R  Generalise test functions into "templates" to reduce duplication
@@ -200,10 +204,6 @@ G moveTo:
    - v2.0: (snel) wegen (veel)
 
 -  Bij inschrijven assigment controleren of er een pickaxe in de inventory zit (indien not equiped)
-
--  IObj
-   -  consider if isEqual is a better name for isSame
-   (continue literature study on identity and equality in OOP, look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop)
 
 -  Other ToDo's to be found everywhere in all code files
 

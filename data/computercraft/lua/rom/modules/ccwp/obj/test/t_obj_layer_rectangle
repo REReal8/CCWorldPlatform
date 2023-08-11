@@ -10,19 +10,19 @@ local LayerRectangle = require "obj_layer_rectangle"
 function T_LayerRectangle.T_All()
     -- helper functions
     T_LayerRectangle.T_IsCodeArray()
-    T_LayerRectangle.T_IsSameCodeArray()
+    T_LayerRectangle.T_IsEqualCodeArray()
     T_LayerRectangle.T_CodeArrayCopy()
     T_LayerRectangle.T_TransformToCodeArray()
 
     T_LayerRectangle.T_IsCodeMap()
-    T_LayerRectangle.T_IsSameCodeMap()
+    T_LayerRectangle.T_IsEqualCodeMap()
     T_LayerRectangle.T_CodeMapCopy()
 
     -- base methods
     T_LayerRectangle.T_new()
     T_LayerRectangle.T_getBlock()
     T_LayerRectangle.T_isTypeOf()
-    T_LayerRectangle.T_isSame()
+    T_LayerRectangle.T_isEqual()
     T_LayerRectangle.T_copy()
     T_LayerRectangle.T_ParseWithCheckInput()
 
@@ -77,9 +77,9 @@ function T_LayerRectangle.T_IsCodeArray()
     -- cleanup test
 end
 
-function T_LayerRectangle.T_IsSameCodeArray()
+function T_LayerRectangle.T_IsEqualCodeArray()
     -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsSameCodeArray() tests")
+    corelog.WriteToLog("* LayerRectangle.IsEqualCodeArray() tests")
     local codeArray2 = {
         ["T"]   = Block:new({ _name = torchItemName }),
         ["S"]   = Block:new({ _name = saplingItemName }),
@@ -91,22 +91,22 @@ function T_LayerRectangle.T_IsSameCodeArray()
     }
 
     -- test same
-    local isSame = LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = LayerRectangle.IsEqualCodeArray(codeArray1, codeArray2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeArray(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different
     codeArray2["T"] = Block:new({ _name = "minecraft:something"})
-    isSame = LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = LayerRectangle.IsEqualCodeArray(codeArray1, codeArray2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeArray(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     codeArray2["T"] = Block:new({ _name = "minecraft:torch" })
 
     -- test different (size)
     codeArray2["Z"] = Block:new({ _name = "minecraft:something"})
-    isSame = LayerRectangle.IsSameCodeArray(codeArray1, codeArray2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten IsSameCodeArray(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = LayerRectangle.IsEqualCodeArray(codeArray1, codeArray2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeArray(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     codeArray2["Z"] = nil
 
     -- cleanup test
@@ -120,7 +120,7 @@ function T_LayerRectangle.T_CodeArrayCopy()
 
     -- test
     local copy = LayerRectangle.CodeArrayCopy(codeArray1)
-    assert(LayerRectangle.IsSameCodeArray(copy, codeArray1), "gotten CodeArrayCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeArray1, compact)..")")
+    assert(LayerRectangle.IsEqualCodeArray(copy, codeArray1), "gotten CodeArrayCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeArray1, compact)..")")
 
     -- cleanup test
 end
@@ -187,9 +187,9 @@ function T_LayerRectangle.T_IsCodeMap()
     -- cleanup test
 end
 
-function T_LayerRectangle.T_IsSameCodeMap()
+function T_LayerRectangle.T_IsEqualCodeMap()
     -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsSameCodeMap() tests")
+    corelog.WriteToLog("* LayerRectangle.IsEqualCodeMap() tests")
     local codeMap2 = {
         [6] = "CD   ?",
         [5] = "      ",
@@ -200,22 +200,22 @@ function T_LayerRectangle.T_IsSameCodeMap()
     }
 
     -- test same
-    local isSame = LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = LayerRectangle.IsEqualCodeMap(codeMap1, codeMap2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeMap(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different
     codeMap2[4] = "TTTSTT"
-    isSame = LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = LayerRectangle.IsEqualCodeMap(codeMap1, codeMap2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeMap(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     codeMap2[4] = "T  S  "
 
     -- test different (size)
     codeMap2[7] = "TT  TT"
-    isSame = LayerRectangle.IsSameCodeMap(codeMap1, codeMap2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten IsSameCodeMap(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = LayerRectangle.IsEqualCodeMap(codeMap1, codeMap2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeMap(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     codeMap2[7] = nil
 
     -- cleanup test
@@ -227,7 +227,7 @@ function T_LayerRectangle.T_CodeMapCopy()
 
     -- test
     local copy = LayerRectangle.CodeMapCopy(codeMap1)
-    assert(LayerRectangle.IsSameCodeMap(copy, codeMap1), "gotten CodeMapCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeMap1, compact)..")")
+    assert(LayerRectangle.IsEqualCodeMap(copy, codeMap1), "gotten CodeMapCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeMap1, compact)..")")
 
     -- cleanup test
 end
@@ -287,22 +287,22 @@ function T_LayerRectangle.T_getBlock()
     })
     local block = layer:getBlock(4, 1)
     local expectedBlock = Block:new({ _name = torchItemName })
-    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 4)
     expectedBlock = Block:new({ _name = torchItemName })
-    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(4, 4)
     expectedBlock = Block:new({ _name = saplingItemName })
-    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 1)
     expectedBlock = Block:new({ _name = Block.NoneBlockName() })
-    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(3, 3)
     expectedBlock = Block:new({ _name = Block.AnyBlockName() })
-    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 6)
     expectedBlock = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 })
-    assert(block:isSame(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
 
     -- cleanup test
 end
@@ -328,26 +328,26 @@ function T_LayerRectangle.T_isTypeOf()
     -- cleanup test
 end
 
-function T_LayerRectangle.T_isSame()
+function T_LayerRectangle.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* LayerRectangle:isSame() tests")
+    corelog.WriteToLog("* LayerRectangle:isEqual() tests")
     local layer = LayerRectangle:new({
         _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
         _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
     })
 
     -- test same
-    local isSame = layer1:isSame(layer)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = layer1:isEqual(layer)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _codeArray
     layer._codeArray = {
         ["T"]   = "minecraft:torch",
     }
-    isSame = layer1:isSame(layer)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = layer1:isEqual(layer)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     layer._codeArray = LayerRectangle.CodeArrayCopy(codeArray1)
 
     -- test different _codeMap
@@ -355,9 +355,9 @@ function T_LayerRectangle.T_isSame()
         [2] = "      ",
         [1] = "   T  ",
     }
-    isSame = layer1:isSame(layer)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = layer1:isEqual(layer)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     layer._codeMap = LayerRectangle.CodeMapCopy(codeMap1)
 
     -- cleanup test
@@ -369,7 +369,7 @@ function T_LayerRectangle.T_copy()
 
     -- test
     local copy = layer1:copy()
-    assert(copy:isSame(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
+    assert(copy:isEqual(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
 
     -- cleanup test
 end
@@ -481,7 +481,7 @@ function T_LayerRectangle.T_transformToLayer()
             [1] = "???T??",
         },
     })
-    assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(transformLayer:isEqual(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test anyBlock added to _codeArray
     toLayer = LayerRectangle:new({
@@ -519,7 +519,7 @@ function T_LayerRectangle.T_transformToLayer()
             [1] = "???T??",
         },
     })
-    assert(transformLayer:isSame(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(transformLayer:isEqual(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end
@@ -549,7 +549,7 @@ function T_LayerRectangle.T_cleanCodeArray()
         ["T"]   = Block:new({ _name = torchItemName }),
         [" "]   = Block:new({ _name = Block.NoneBlockName() }),
     }
-    assert(LayerRectangle.IsSameCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
+    assert(LayerRectangle.IsEqualCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
 
     -- cleanup test
 end
@@ -577,7 +577,7 @@ function T_LayerRectangle.T_removeRow()
             [1] = "   T  ",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test a mid
     layer = layer1:copy()
@@ -599,7 +599,7 @@ function T_LayerRectangle.T_removeRow()
             [1] = "   T  ",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test bottom
     layer = layer1:copy()
@@ -622,7 +622,7 @@ function T_LayerRectangle.T_removeRow()
             [1] = "   K  ",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end
@@ -665,7 +665,7 @@ function T_LayerRectangle.T_removeColumn()
             [1] = "   T ",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test mid
     layer = layer1:copy()
@@ -687,7 +687,7 @@ function T_LayerRectangle.T_removeColumn()
             [1] = "     ",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test left
     layer = layer1:copy()
@@ -710,7 +710,7 @@ function T_LayerRectangle.T_removeColumn()
             [1] = "  T  ",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end
@@ -755,7 +755,7 @@ function T_LayerRectangle.T_removeBoundariesWithOnly()
             [1] = "? T",
         },
     })
-    assert(layer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end
@@ -799,7 +799,7 @@ function T_LayerRectangle.T_buildData()
             [1] = "? T",
         },
     })
-    assert(buildLayer:isSame(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
+    assert(buildLayer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end

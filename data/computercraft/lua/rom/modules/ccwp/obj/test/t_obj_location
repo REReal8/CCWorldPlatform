@@ -8,7 +8,7 @@ function T_Location.T_All()
     -- base methods
     T_Location.T_new()
     T_Location.T_isTypeOf()
-    T_Location.T_isSame()
+    T_Location.T_isEqual()
     T_Location.T_copy()
 
     -- specific methods
@@ -102,9 +102,9 @@ function T_Location.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Location.T_isSame()
+function T_Location.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Location:isSame() tests")
+    corelog.WriteToLog("* Location:isEqual() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -121,43 +121,43 @@ function T_Location.T_isSame()
     })
 
     -- test same
-    local isSame = location1:isSame(location2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = location1:isEqual(location2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different x
     location2:setX(x2)
-    isSame = location1:isSame(location2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = location1:isEqual(location2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     location2:setX(x1)
 
     -- test different y
     location2:setY(y2)
-    isSame = location1:isSame(location2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = location1:isEqual(location2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     location2:setY(y1)
 
     -- test different z
     location2:setZ(z2)
-    isSame = location1:isSame(location2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = location1:isEqual(location2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     location2:setZ(z1)
 
     -- test different dx
     location2:setDX(dx2)
-    isSame = location1:isSame(location2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = location1:isEqual(location2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     location2:setDX(dx1)
 
     -- test different dy
     location2:setDY(dy2)
-    isSame = location1:isSame(location2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = location1:isEqual(location2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     location2:setDY(dy1)
 
     -- cleanup test
@@ -176,7 +176,7 @@ function T_Location.T_copy()
 
     -- test
     local copy = location1:copy()
-    assert(copy:isSame(location1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(copy:isEqual(location1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
 
     -- cleanup test
 end
