@@ -8,7 +8,7 @@ function T_CallDef.T_All()
     -- base methods
     T_CallDef.T_new()
     T_CallDef.T_isTypeOf()
-    T_CallDef.T_isSame()
+    T_CallDef.T_isEqual()
     T_CallDef.T_copy()
 
     -- specific methods
@@ -83,9 +83,9 @@ function T_CallDef.T_isTypeOf()
     -- cleanup test
 end
 
-function T_CallDef.T_isSame()
+function T_CallDef.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* CallDef:isSame() tests")
+    corelog.WriteToLog("* CallDef:isEqual() tests")
     local callback2 = CallDef:new({
         _moduleName     = moduleName1,
         _methodName     = methodName1,
@@ -93,29 +93,29 @@ function T_CallDef.T_isSame()
     })
 
     -- test same
-    local isSame = callback1:isSame(callback2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = callback1:isEqual(callback2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different moduleName
     callback2:setModuleName(moduleName2)
-    isSame = callback1:isSame(callback2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = callback1:isEqual(callback2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     callback2:setModuleName(moduleName1)
 
     -- test different methodName
     callback2:setMethodName(methodName2)
-    isSame = callback1:isSame(callback2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = callback1:isEqual(callback2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     callback2:setMethodName(methodName1)
 
     -- test different data
     callback2:setData(data2)
-    isSame = callback1:isSame(callback2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = callback1:isEqual(callback2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     callback2:setData(data1)
 
     -- cleanup test
@@ -127,7 +127,7 @@ function T_CallDef.T_copy()
 
     -- test
     local copy = callback1:copy()
-    assert(copy:isSame(callback1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(callback1, compact)..")")
+    assert(copy:isEqual(callback1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(callback1, compact)..")")
 
     -- cleanup test
 end

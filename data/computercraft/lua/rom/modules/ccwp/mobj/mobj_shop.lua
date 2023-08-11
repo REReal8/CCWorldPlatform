@@ -90,16 +90,16 @@ function Shop:isTypeOf(obj)
     return false
 end
 
-function Shop:isSame(obj)
+function Shop:isEqual(obj)
     -- check input
     if not Shop:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
-                and self._itemSuppliersLocators:isSame(obj._itemSuppliersLocators)
+    local isEqual =  self._id == obj._id
+                and self._itemSuppliersLocators:isEqual(obj._itemSuppliersLocators)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Shop:copy()

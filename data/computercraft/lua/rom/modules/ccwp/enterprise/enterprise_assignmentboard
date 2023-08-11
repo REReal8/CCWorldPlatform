@@ -97,7 +97,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         -- min
         local minLocation = Location:new(statistics.minLocation)
         local newMinLocation = minLocation:minLocation(location)
-        if not minLocation:isSame(newMinLocation) then
+        if not minLocation:isEqual(newMinLocation) then
             -- set new value
             statistics.minLocation = newMinLocation
             statisticsChanged = true
@@ -106,7 +106,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
         -- max
         local maxLocation = Location:new(statistics.maxLocation)
         local newMaxLocation = maxLocation:maxLocation(location)
-        if not maxLocation:isSame(newMaxLocation) then
+        if not maxLocation:isEqual(newMaxLocation) then
             -- set new value
             statistics.maxLocation = newMaxLocation
             statisticsChanged = true
@@ -455,15 +455,23 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
             end
         end
 
-        -- check items in inventory
+        -- check itemsNeeded
         local inventoryItems = turtleResume.inventoryItems
         for itemName, itemCount in pairs(metaData.itemsNeeded) do
             -- get items in inventory
-            local inventoryItemCount = inventoryItems[itemName] or 0
+            local availableItemCount = inventoryItems[itemName] or 0
+
+            -- add possibly equiped items (i.e., tools)
+            if turtleResume.leftEquiped == itemName then
+                availableItemCount = availableItemCount + 1
+            end
+            if turtleResume.rightEquiped == itemName then
+                availableItemCount = availableItemCount + 1
+            end
 
             -- enough?
-            if inventoryItemCount < itemCount then
-                return false, "turtle does not have(="..inventoryItemCount..") enough(="..itemCount..") "..itemName.." in inventory"
+            if availableItemCount < itemCount then
+                return false, "turtle does not have(="..availableItemCount..") enough(="..itemCount..") "..itemName.." available"
             end
         end
     end

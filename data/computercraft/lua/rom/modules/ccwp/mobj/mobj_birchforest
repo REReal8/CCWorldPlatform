@@ -2,7 +2,7 @@ local BirchForest = {
     _id                     = "",
     _level                  = 0,
 
-    _location               = nil,
+    _baseLocation           = nil,
     _nTrees                 = 0,
 
     _localLogsLocator       = nil,
@@ -54,15 +54,15 @@ function BirchForest:setLevel(level)
     self._level = level
 end
 
-function BirchForest:getLocation()
-    return self._location
+function BirchForest:getBaseLocation()
+    return self._baseLocation
 end
 
 function BirchForest:setLocation(location)
     -- check input
     if not Location:isTypeOf(location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
 
-    self._location = location
+    self._baseLocation = location
 end
 
 function BirchForest:getNTrees()
@@ -129,11 +129,11 @@ function BirchForest:new(...)
         Construct a BirchForest.
 
         Parameters:
-            o                           + (table, {}) table with object fields
-                _id                     - (string) id of the forest
+            o                           + (table, {}) with object fields
+                _id                     - (string) id of the BirchForest
                 _level                  - (number) level of the forest
-                _location               - (Location) base location of the forest
-                _nTrees                 - (number) # trees in the forest
+                _baseLocation           - (Location) base location of the BirchForest
+                _nTrees                 - (number) # trees in the BirchForest
                 _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
                 _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
     ]], table.unpack(arg))
@@ -162,20 +162,20 @@ function BirchForest:isTypeOf(obj)
     return false
 end
 
-function BirchForest:isSame(obj)
+function BirchForest:isEqual(obj)
     -- check input
     if not BirchForest:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
+    local isEqual =  self._id == obj._id
                 and self._level == obj._level
-                and self._location:isSame(obj._location)
+                and self._baseLocation:isEqual(obj._baseLocation)
                 and self._nTrees == obj._nTrees
-                and self._localLogsLocator:isSame(obj._localLogsLocator)
-                and self._localSaplingsLocator:isSame(obj._localSaplingsLocator)
+                and self._localLogsLocator:isEqual(obj._localLogsLocator)
+                and self._localSaplingsLocator:isEqual(obj._localSaplingsLocator)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function BirchForest:copy()
@@ -183,7 +183,7 @@ function BirchForest:copy()
         _id                     = self._id,
         _level                  = self._level,
 
-        _location               = self._location:copy(),
+        _baseLocation           = self._baseLocation:copy(),
         _nTrees                 = self._nTrees,
 
         _localLogsLocator       = self._localLogsLocator:copy(),
@@ -480,7 +480,7 @@ end
 --       |_|
 
 function BirchForest:getFirstTreeLocation()
-    return self:getLocation():getRelativeLocation(3, 2, 0)
+    return self:getBaseLocation():getRelativeLocation(3, 2, 0)
 end
 
 function Tree_layerLm1()

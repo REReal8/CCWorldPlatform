@@ -66,7 +66,7 @@ function t_builder.T_BuildLayer_MetaData()
     local metaData = role_builder.BuildLayer_MetaData(buildData)
     local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
     local expectedLocation = testStartLocation:getRelativeLocation(0, 0, deltaZ)
-    assert(metaData.location:isSame(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
     local expectedFuelNeeded = size_x1*size_y1 - 1
@@ -94,7 +94,7 @@ function t_builder.T_BuildBlueprint_MetaData()
     -- test
     local metaData = role_builder.BuildBlueprint_MetaData(blueprintBuildData)
     local expectedLocation = testStartLocation:getRelativeLocation(6, 0, 0)
-    assert(metaData.location:isSame(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+    assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
     local expectedFuelNeeded = 47

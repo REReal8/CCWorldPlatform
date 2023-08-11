@@ -69,20 +69,24 @@ end
 --                    _/ |
 --                   |__/
 
-function TestObj:new(o)
-    --[[
+function TestObj:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
         Constructs a TestObj.
 
         Parameters:
-            o               - (table) table with
+            o               + (table, {}) table with object fields
                 _field1     - (string) field
                 _field2     - (number) field
-                _field3     - (number) (optional) field
-    --]]
+                _field3     - (number, nil) (optional) field
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
 
-    o = o or {}   -- create object if user does not provide one
+    -- set class info
     setmetatable(o, self)
     self.__index = self
+
+    -- end
     return o
 end
 
@@ -101,18 +105,18 @@ function TestObj:isTypeOf(obj)
     return false
 end
 
-function TestObj:isSame(obj)
+function TestObj:isEqual(obj)
     -- check input
     if not TestObj:isTypeOf(obj) then return false end
 
     -- check same
-    local isSame = self._field1 == obj._field1 and self._field2 == obj._field2
+    local isEqual = self._field1 == obj._field1 and self._field2 == obj._field2
     if self._field3 ~= nil then
-        isSame = isSame and self._field3 == obj._field3
+        isEqual = isEqual and self._field3 == obj._field3
     end
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function TestObj:copy()

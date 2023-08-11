@@ -19,6 +19,8 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
+local T_Obj = require "test.t_obj"
+
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local t_turtle = require "test.t_turtle"
@@ -31,7 +33,7 @@ function T_Shop.T_All()
     -- base methods
     T_Shop.T_Getters()
     T_Shop.T_isTypeOf()
-    T_Shop.T_isSame()
+    T_Shop.T_isEqual()
     T_Shop.T_copy()
 
     -- specific methods
@@ -105,7 +107,7 @@ function T_Shop.T_Getters()
     -- test
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getItemSuppliersLocators():isSame(itemSuppliersLocators1), "gotten getItemSuppliersLocators(="..textutils.serialize(obj:getItemSuppliersLocators())..") not the same as expected(="..textutils.serialize(itemSuppliersLocators1)..")")
+    assert(obj:getItemSuppliersLocators():isEqual(itemSuppliersLocators1), "gotten getItemSuppliersLocators(="..textutils.serialize(obj:getItemSuppliersLocators())..") not the same as expected(="..textutils.serialize(itemSuppliersLocators1)..")")
 
     -- cleanup test
 end
@@ -144,23 +146,23 @@ function T_Shop.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Shop.T_isSame()
+function T_Shop.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Shop:isSame() tests")
+    corelog.WriteToLog("* Shop:isEqual() tests")
     local id = coreutils.NewId()
     local obj = T_Shop.CreateShop(itemSuppliersLocators1, id) if not obj then corelog.Error("failed obtaining Shop") return end
 
     -- test same
     local obj1 = T_Shop.CreateShop(itemSuppliersLocators1, id)
-    local isSame = obj1:isSame(obj)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _itemSuppliersLocators
     obj._itemSuppliersLocators = itemSuppliersLocators2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._itemSuppliersLocators = itemSuppliersLocators1
 
     -- cleanup test
@@ -173,7 +175,7 @@ function T_Shop.T_copy()
 
     -- test
     local copy = obj:copy()
-    assert(copy:isSame(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
+    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
 
     -- cleanup test
 end
@@ -233,9 +235,11 @@ function T_Shop.T_delistAllItemSuppliers()
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
-    local chest = T_Chest.CreateChest(location1) if not chest then corelog.Error("failed obtaining Chest") return end
+
+    local chest = T_Obj.createObj("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
     local chestLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = chestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
+
     nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 2, "Shop "..obj:getId().." does not have 2 ItemSupplier's")
 
     -- test
@@ -259,23 +263,23 @@ function T_Shop.T_bestItemSupplier()
     }
     local ingredientsItemSupplierLocator = objectLocator
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
-    local chest = T_Chest.CreateChest(location1) if not chest then corelog.Error("failed obtaining Chest") return end
+    local chest = T_Obj.createObj("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
     local itemDepotLocator = enterprise_chests:saveObject(chest)
 
     -- test lowest fuelNeed
     local closeLocation = location1:getRelativeLocation(1, 1, 0)
-    chest = T_Chest.CreateChest(closeLocation) if not chest then corelog.Error("failed obtaining Chest") return end
+    chest = T_Obj.createObj("Chest", T_Chest.NewOTable(closeLocation)) assert(chest, "failed obtaining Chest")
     local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local farLocation = location1:getRelativeLocation(99999, 1, 0)
-    chest = T_Chest.CreateChest(farLocation) if not chest then corelog.Error("failed obtaining Chest") return end
+    chest = T_Obj.createObj("Chest", T_Chest.NewOTable(farLocation)) assert(chest, "failed obtaining Chest")
     local farItemSupplierLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local bestItemSupplierLocator = obj:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, farItemSupplierLocator, closeItemSupplierLocator)
     local expectedItemSupplierLocator = closeItemSupplierLocator
-    assert(bestItemSupplierLocator:isSame(expectedItemSupplierLocator), "gotten bestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
+    assert(bestItemSupplierLocator:isEqual(expectedItemSupplierLocator), "gotten bestItemSupplier(="..textutils.serialize(bestItemSupplierLocator, compact)..") not the same as expected(="..textutils.serialize(expectedItemSupplierLocator, compact)..")")
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator)
@@ -321,7 +325,7 @@ function T_Shop.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
     local objectLocator = callbackData["objectLocator"]

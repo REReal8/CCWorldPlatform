@@ -64,15 +64,15 @@ function Inventory:isTypeOf(obj)
     return false
 end
 
-function Inventory:isSame(obj)
+function Inventory:isEqual(obj)
     -- check input
     if not Inventory:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame = Inventory.IsSameSlotTable(self._slotTable, obj._slotTable)
+    local isEqual = Inventory.IsEqualSlotTable(self._slotTable, obj._slotTable)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Inventory:copy()
@@ -226,7 +226,7 @@ function Inventory.IsItemTable(itemTable)
     return true
 end
 
-function Inventory.IsSameItemTable(itemTableA, itemTableB)
+function Inventory.IsEqualItemTable(itemTableA, itemTableB)
     -- check input
     if not Inventory.IsItemTable(itemTableA) or not Inventory.IsItemTable(itemTableB) then return false end
 
@@ -282,7 +282,7 @@ function Inventory.IsSlotTable(slotTable)
     return true
 end
 
-function Inventory.IsSameSlotTable(slotTableA, slotTableB)
+function Inventory.IsEqualSlotTable(slotTableA, slotTableB)
     -- check input
     if not Inventory.IsSlotTable(slotTableA) or not Inventory.IsSlotTable(slotTableB) then return false end
 

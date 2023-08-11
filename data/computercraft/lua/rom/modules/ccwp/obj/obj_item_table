@@ -48,7 +48,7 @@ function ItemTable:isTypeOf(obj)
     return false
 end
 
-function ItemTable:isSame(obj)
+function ItemTable:isEqual(obj)
     -- check input
     if not ItemTable:isTypeOf(obj) then return false end
 

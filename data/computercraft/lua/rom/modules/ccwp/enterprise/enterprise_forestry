@@ -63,7 +63,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         _id                     = coreutils.NewId(),
         _level                  = forestLevel,
 
-        _location               = baseLocation:copy(),
+        _baseLocation           = baseLocation:copy(),
         _nTrees                 = 0,
 
         _localLogsLocator       = enterprise_turtle.GetAnyTurtleLocator(),
@@ -226,7 +226,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                     -- add build tree step
                 iStep = iStep + 1
                 local iStepStr = tostring(iStep)
-                local treeBaseLocation = forest:getLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
+                local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
                 local treeBaseLocationStr = "treeBaseLocation"..iStepStr
                 table.insert(projectSteps,
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
@@ -267,7 +267,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             -- add build tree step
             iStep = iStep + 1
             local iStepStr = tostring(iStep)
-            local treeBaseLocation = forest:getLocation():getRelativeLocation(0, 6 * (iTree - 1), 0)
+            local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(0, 6 * (iTree - 1), 0)
             local treeBaseLocationStr = "treeBaseLocation"..iStepStr
             table.insert(projectSteps,
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {

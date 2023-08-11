@@ -197,7 +197,7 @@ function enterprise_energy.GetFuelNeed_Refuel_Att()
         local fuelNeed_Production = factory:getFuelNeed_Production_Att(items)
 
         -- determine fuelNeed for traveling
-        local forestLocation = forest:getLocation()
+        local forestLocation = forest:getBaseLocation()
         local factoryLocation = factory:getProductionLocation_Att(items)
         local fuelNeed_ForestFactoryTravel = role_fuel_worker.NeededFuelToFrom(factoryLocation, forestLocation)
 

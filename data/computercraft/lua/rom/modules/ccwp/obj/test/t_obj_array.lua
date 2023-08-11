@@ -12,7 +12,7 @@ function T_ObjArray.T_All()
     T_ObjArray.T_ImplementsIObj()
     T_ObjArray.T_new()
     T_ObjArray.T_isTypeOf()
-    T_ObjArray.T_isSame()
+    T_ObjArray.T_isEqual()
     T_ObjArray.T_copy()
 
     -- specific methods
@@ -66,8 +66,8 @@ function T_ObjArray.T_new()
     assert(objArray:getObjClassName() == objClassName1, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..objClassName1..")")
     local expectedNElements = 2
     assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
-    assert(objArray[1]:isSame(testObj1), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray[2]:isSame(testObj2), "obj 2 in objArray(="..textutils.serialise(objArray[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    assert(objArray[1]:isEqual(testObj1), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray[2]:isEqual(testObj2), "obj 2 in objArray(="..textutils.serialise(objArray[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
 
     -- test default
     objArray = ObjArray:new() if not objArray then return end
@@ -102,9 +102,9 @@ function T_ObjArray.T_isTypeOf()
     -- cleanup test
 end
 
-function T_ObjArray.T_isSame()
+function T_ObjArray.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* ObjArray:isSame() tests")
+    corelog.WriteToLog("* ObjArray:isEqual() tests")
     local objArray1 = ObjArray:new({
         _objClassName   = objClassName1,
 
@@ -119,24 +119,24 @@ function T_ObjArray.T_isSame()
     })
 
     -- test same
-    local isSame = objArray1:isSame(objArray2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = objArray1:isEqual(objArray2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different className
     local objClassName2 = "ProductionSpot"
     objArray2._objClassName = objClassName2
-    isSame = objArray1:isSame(objArray2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = objArray1:isEqual(objArray2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     objArray2._objClassName = objClassName1
 
     -- test different # objects
     local testObj3 = testObj1:copy()
     objArray2[3] = testObj3
-    isSame = objArray1:isSame(objArray2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = objArray1:isEqual(objArray2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     objArray2[3] = nil
 
     -- cleanup test
@@ -154,7 +154,7 @@ function T_ObjArray.T_copy()
 
     -- test
     local copy = objArray1:copy()
-    assert(copy:isSame(objArray1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objArray1, compact)..")")
+    assert(copy:isEqual(objArray1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objArray1, compact)..")")
 
     -- cleanup test
 end
@@ -191,8 +191,8 @@ function T_ObjArray.T_transformObjectTables()
     objArray2:transformObjectTables()
     local expectedNElements = 2
     assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
-    assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
     objArray2[2] = nil
 
@@ -203,8 +203,8 @@ function T_ObjArray.T_transformObjectTables()
     objArray2:transformObjectTables(true)
     expectedNElements = 2
     assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
-    assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
     objArray2[2] = nil
     objArray2[3] = nil
@@ -213,8 +213,8 @@ function T_ObjArray.T_transformObjectTables()
     objArray2[1] = testObject1Table
     objArray2[2] = testObject2Table
     objArray2:transformObjectTables()
-    assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
     objArray2[2] = nil
 
@@ -227,8 +227,8 @@ function T_ObjArray.T_transformObjectTables()
     objArray2[1] = testObj1
     objArray2[2] = testObject2Table
     objArray2:transformObjectTables()
-    assert(objArray2[1]:isSame(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isSame(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
     objArray2[1] = nil
     objArray2[2] = nil
 

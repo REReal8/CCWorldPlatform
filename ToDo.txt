@@ -22,36 +22,64 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
    R  mobj_chest              (done)
    R  mobj_factory
-   G  mobj_mine
-   G  mobj_silo
+   -  mobj_mine
+   R  mobj_silo               (done)
    R  mobj_shop
    R  mobj_turtle
+
+R  IObj
+   R  rename isSame to isEqual
+   (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
+
+R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
+
+R  Generalise test functions into "templates" to reduce duplication
+   R  generalise (I)Obj test functions                            (done)
+   R  generalise (I)ItemSupplier test functions
+   R  generalise (I)ItemDepot test functions
+   R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
+   R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
+
+R  Use generalised test functions for MObj's
+   -  in mobj_birchforest
+   R  in mobj_chest
+   -  in mobj_factory
+   -  in mobj_mine
+   R  in mobj_silo
+   -  in mobj_shop
+   -  in mobj_turtle
 
 R  use MObjHost class
    R  enterprise_forestry
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
+      R  use generalised test functions
    R  enterprise_chest
       R  upgrade to a MObjHost                                    (done)
       R  use new MObjHost methods instead of current equivalent   (done)
+      R  use generalised test functions
       -  merge into enterprise_storage
    R  enterprise_manufacturing
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
+      R  use generalised test functions
    -  enterprise_gathering
       -  upgrade into an MObjHost
       -  use new MObjHost methods instead of current equivalent
-   -  enterprise_storage
-      -  upgrade into an MObjHost
-      -  use new MObjHost methods instead of current equivalent
+      -  use generalised test functions
+   R  enterprise_storage
+      R  upgrade into an MObjHost                                 (done)
+      R  use new MObjHost methods instead of current equivalent   (done)
+      R  use generalised test functions
    R  enterprise_shop
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
+      R  use generalised test functions
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
    R  enterprise_turtle
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
-   -  see if we can make (or refactor existing) general test (template) functions for MObj's; i.e. for hosting, building, releasing, etc
+      R  use generalised test functions
 
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
@@ -158,12 +186,8 @@ G  player station
    -  items (in suppliers)
    -  free slots (in depot's)
 
--  IObj logic semi-automatic
-   -  copy
-   -  isSame
-   -  etc
-
 -  enterprise_energy
+   -  Investigate + possibly fix why we relatively soon need to go to L3 enterprise_energy in enterprise_colonization
    -  coal fuel (v5 enterprise)
 
 -  tool management

@@ -275,6 +275,14 @@ function coreinventory.CanEquip(itemName)
 
 end
 
+function coreinventory.LeftEquiped()
+    return db.left
+end
+
+function coreinventory.RightEquiped()
+    return db.right
+end
+
 function coreinventory.Equip(itemName, requestedSide)
     local slot = nil
 

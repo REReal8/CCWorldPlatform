@@ -131,7 +131,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
                 hostLocator         = enterprise_chests:getHostLocator(),
                 className           = "Chest",
                 constructParameters = {
-                    location        = testStartLocation:getRelativeLocation(2, 5, 0),
+                    baseLocation    = testStartLocation:getRelativeLocation(2, 5, 0),
                     accessDirection = "top",
                 }
             },

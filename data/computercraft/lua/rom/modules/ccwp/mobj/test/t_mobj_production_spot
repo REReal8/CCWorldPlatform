@@ -13,7 +13,7 @@ function T_ProductionSpot.T_All()
     -- base methods
     T_ProductionSpot.T_new()
     T_ProductionSpot.T_isTypeOf()
-    T_ProductionSpot.T_isSame()
+    T_ProductionSpot.T_isEqual()
     T_ProductionSpot.T_copy()
 
     -- specific methods
@@ -23,7 +23,7 @@ local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local isCraftingSpot1 = true
 local isCraftingSpot2 = false
 local obj1 = ProductionSpot:new({
-    _location       = location1,
+    _baseLocation   = location1,
     _isCraftingSpot = isCraftingSpot1,
 })
 
@@ -40,7 +40,7 @@ function T_ProductionSpot.T_ImplementsIObj()
     -- prepare test
     corelog.WriteToLog("* ProductionSpot IObj interface test")
     local obj = ProductionSpot:new({
-        _location       = location1,
+        _baseLocation   = location1,
         _isCraftingSpot = isCraftingSpot1,
     }) if not obj then corelog.Error("failed obtaining ProductionSpot") return end
 
@@ -64,10 +64,10 @@ function T_ProductionSpot.T_new()
 
     -- test
     local obj = ProductionSpot:new({
-        _location       = location1,
+        _baseLocation   = location1,
         _isCraftingSpot = isCraftingSpot1,
     })
-    assert(location1:isSame(obj:getLocation()), "gotten getLocation(="..textutils.serialise(obj:getLocation(), compact)..") not the same as expected(="..textutils.serialise(location1, compact)..")")
+    assert(location1:isEqual(obj:getBaseLocation()), "gotten getBaseLocation(="..textutils.serialise(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialise(location1, compact)..")")
     assert(isCraftingSpot1 == obj:isCraftingSpot(), "gotten isCraftingSpot(="..textutils.serialise(obj:isCraftingSpot(), compact)..") not the same as expected(="..textutils.serialise(isCraftingSpot1, compact)..")")
 
     -- cleanup test
@@ -77,7 +77,7 @@ function T_ProductionSpot.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* ProductionSpot:isTypeOf() tests")
     local obj2 = ProductionSpot:new({
-        _location       = location1,
+        _baseLocation   = location1,
         _isCraftingSpot = isCraftingSpot1,
     })
 
@@ -94,31 +94,31 @@ function T_ProductionSpot.T_isTypeOf()
     -- cleanup test
 end
 
-function T_ProductionSpot.T_isSame()
+function T_ProductionSpot.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* ProductionSpot:isSame() tests")
+    corelog.WriteToLog("* ProductionSpot:isEqual() tests")
     local obj2 = ProductionSpot:new({
-        _location       = location1,
+        _baseLocation   = location1,
         _isCraftingSpot = isCraftingSpot1,
     })
 
     -- test same
-    local isSame = obj1:isSame(obj2)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj2)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
-    -- test different _location
-    obj2._location = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
-    isSame = obj1:isSame(obj2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
-    obj2._location = location1
+    -- test different _baseLocation
+    obj2._baseLocation = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
+    isEqual = obj1:isEqual(obj2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+    obj2._baseLocation = location1
 
     -- test different _isCraftingSpot
     obj2._isCraftingSpot = isCraftingSpot2
-    isSame = obj1:isSame(obj2)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj2)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj2._isCraftingSpot = isCraftingSpot1
 
     -- cleanup test
@@ -130,7 +130,7 @@ function T_ProductionSpot.T_copy()
 
     -- test
     local copy = obj1:copy()
-    assert(copy:isSame(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
+    assert(copy:isEqual(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
 
     -- cleanup test
 end

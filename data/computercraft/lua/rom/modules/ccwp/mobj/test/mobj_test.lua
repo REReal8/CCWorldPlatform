@@ -53,7 +53,7 @@ function TestMObj:new(...)
         Construct a TestMObj.
 
         Parameters:
-            o                           + (table, {}) table with object fields
+            o                           + (table, {}) with object fields
                 _id                     - (string) id of the TestMObj
                 _baseLocation           - (Location) base location of the TestMObj
                 _field1                 - (string) field
@@ -83,20 +83,23 @@ function TestMObj:isTypeOf(obj)
     return false
 end
 
-function TestMObj:isSame(obj)
+function TestMObj:isEqual(obj)
     -- check input
     if not TestMObj:isTypeOf(obj) then return false end
 
     -- check same
-    local isSame = self._field1 == obj._field1
+    local isEqual = self._field1 == obj._field1
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function TestMObj:copy()
     local copy = TestMObj:new({
-        _field1 = self._field1,
+        _id             = self._id,
+
+        _field1         = self._field1,
+        _baseLocation   = self._baseLocation,
     })
 
     return copy

@@ -2,7 +2,7 @@ local Silo = {
     _id                     = "",
     _version                = 1,
 
-    _location               = nil,
+    _baseLocation           = nil,
     _entryLocation          = nil,
 
     _dropLocation           = 0,
@@ -16,28 +16,21 @@ local Silo = {
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
+
 local ObjArray = require "obj_array"
 local Host = require "obj_host"
 
 local Location = require "obj_location"
-local Inventory = require "obj_inventory"
+local Block = require "obj_block"
+local LayerRectangle = require "obj_layer_rectangle"
 
-local role_fuel_worker = require "role_fuel_worker"
-local role_chests_worker = require "role_chests_worker"
-
-local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage
-
--- usefull
-local dthSiloRoot   = "mobj_silo"
-
 
 
 --[[
@@ -52,86 +45,6 @@ local dthSiloRoot   = "mobj_silo"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Silo:NewSilo(...)
-    -- get & check input from description
-    local checkSuccess, location, topChests, layers = InputChecker.Check([[
-        Construct a Silo.
-
-        Parameters:
-            siteData                    - (table) data about this silo, like type and layout
-                location                + (Location) location of site
-                topChests               + (number, 2) # of top chests
-                layers                  + (number, 2) # of layers
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
-
-    -- better safe then sorry, maybe flexible one day
-    location:setDX(0)
-    location:setDY(1)
-
-    -- main var
-    local siteData  = {
-        _id             = coreutils.NewId(),
-
-        -- might be userfull later
-        _version        = 1,
-
-        -- locations
-        _location       = location,
-        _entryLocation  = location:getRelativeLocation(3, 3, 0),
-
-        -- pickup and drop
-        _dropLocation   = 0,
-        _pickupLocation = 0,
-
-        -- chests
-        _topChests      = ObjArray:new({
-            _objClassName = "URL",
-        }),
-        _storageChests  = ObjArray:new({
-            _objClassName = "URL",
-        }),
-
-        -- is this silo accepting requests?
-        _operational    = false,
-    }
-
-    -- what kind of new silo is this?
-    corelog.WriteToLog(">Starting silo at "..textutils.serialise(location, { compact = true }))
-
-    -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 2 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 3 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 4 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 5 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 6 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 7 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
-    if topChests >= 8 then table.insert(siteData._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=location:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
-
-    -- set the defaults (basic setup)
-    if topChests >= 1 then siteData._dropLocation   = 1 end
-    if topChests >= 2 then siteData._pickupLocation = 2 end
-
-    -- loop the layers
-    for i=1, layers, 1 do
-
-        -- do the floor
-        local shaft = siteData._entryLocation:getRelativeLocation(0, 0, -1 - i)
-        table.insert(siteData._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}}).mobjLocator)
-        table.insert(siteData._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
-        table.insert(siteData._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}}).mobjLocator)
-        table.insert(siteData._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={location=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
-    end
-
-    -- set class info
-    setmetatable(siteData, self)
-    self.__index = self
-
-    -- end
-    return siteData
-end
-
 function Silo:Activate()
     self._operational = true
     self:update()
@@ -142,12 +55,26 @@ function Silo:Deactivate()
     self:update()
 end
 
-function Silo:getId()
-    return self._id
+function Silo:getBaseLocation()
+    return self._baseLocation
 end
 
-function Silo:getLocation()
-    return self._location
+function Silo:getNTopChests()
+    --[[
+        Returns the # top Chest's in the Silo.
+    ]]
+
+    -- end
+    return #(self._topChests)
+end
+
+function Silo:getNStorageLayers()
+    --[[
+        Returns the # storage layers in the Silo.
+    ]]
+
+    -- end
+    return #(self._storageChests)/ 4
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -165,10 +92,10 @@ function Silo:new(...)
         Construct a Silo.
 
         Parameters:
-            o                           + (table) data about this silo, like type and layout
+            o                           + (table, {}) with object fields
                 _id                     - (string) id of the Silo
                 _version                - (number) version of the Silo
-                _location               - (Location) location of the Silo
+                _baseLocation           - (Location) base location of the Silo
                 _entryLocation          - (Location) entry location of the Silo
                 _dropLocation           - (number) top chest index
                 _pickupLocation         - (number) top chest index
@@ -200,25 +127,27 @@ function Silo:isTypeOf(obj)
     return false
 end
 
-function Silo:isSame(obj)
+function Silo:isEqual(obj)
     -- check input
     if not Silo:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
+    local isEqual =  self._id == obj._id
                 and self._version == obj._version
 
-                and self._location:isSame(obj._location)
-                and self._entryLocation:isSame(obj._entryLocation)
+                and self._baseLocation:isEqual(obj._baseLocation)
+                and self._entryLocation:isEqual(obj._entryLocation)
 
                 and self._dropLocation == obj._dropLocation
                 and self._pickupLocation == obj._pickupLocation
 
-                and self._topChests:isSame(obj._topChests)
-                and self._storageChests:isSame(obj._storageChests)
+                and self._topChests:isEqual(obj._topChests)
+                and self._storageChests:isEqual(obj._storageChests)
+
+                and self._operational == obj._operational
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Silo:copy()
@@ -226,7 +155,7 @@ function Silo:copy()
         _id             = self._id,
         _version        = self._version,
 
-        _location       = self._location:copy(),
+        _baseLocation   = self._baseLocation:copy(),
         _entryLocation  = self._entryLocation:copy(),
 
         -- pickup and drop
@@ -239,6 +168,318 @@ function Silo:copy()
     })
 
     return copy
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+function Silo:construct(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, topChests, layers = InputChecker.Check([[
+        This method constructs a Silo instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
+
+        It also ensures all child MObj's the Silo spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+
+        The constructed Silo is not yet saved in the Host.
+
+        Return value:
+                                        - (Silo) the constructed Silo
+
+        Parameters:
+            constructParameters         - (table) parameters for constructing the Silo
+                baseLocation            + (Location) base location of the Silo
+                topChests               + (number, 2) # of top chests
+                layers                  + (number, 2) # of layers
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:construct: Invalid input") return nil end
+
+    -- better safe then sorry, maybe flexible one day
+    baseLocation:setDX(0)
+    baseLocation:setDY(1)
+
+    -- make object table
+    local oTable  = {
+        _id             = coreutils.NewId(),
+
+        -- might be userfull later
+        _version        = 1,
+
+        -- locations
+        _baseLocation   = baseLocation:copy(),
+        _entryLocation  = baseLocation:getRelativeLocation(3, 3, 0),
+
+        -- pickup and drop
+        _dropLocation   = 0,
+        _pickupLocation = 0,
+
+        -- chests
+        _topChests      = ObjArray:new({
+            _objClassName = "URL",
+        }),
+        _storageChests  = ObjArray:new({
+            _objClassName = "URL",
+        }),
+
+        -- is this silo accepting requests?
+        _operational    = false,
+    }
+
+    -- log
+--    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))
+
+    -- add our top chests, depending how many we have
+    if topChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if topChests >= 2 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if topChests >= 3 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
+    if topChests >= 4 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
+    if topChests >= 5 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if topChests >= 6 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if topChests >= 7 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
+    if topChests >= 8 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
+
+    -- set the defaults (basic setup)
+    if topChests >= 1 then oTable._dropLocation   = 1 end
+    if topChests >= 2 then oTable._pickupLocation = 2 end
+
+    -- loop the layers
+    for i=1, layers, 1 do
+
+        -- do the floor
+        local shaft = oTable._entryLocation:getRelativeLocation(0, 0, -1 - i)
+        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
+    end
+
+    -- create new Silo
+    return Silo:new(oTable)
+end
+
+function Silo:destruct()
+    --[[
+        This method destructs a Silo instance.
+
+        It also ensures all child MObj's the Silo is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+
+        The Silo is not yet deleted from the Host.
+
+        Return value:
+                                        - (boolean) whether the Silo was succesfully destructed.
+
+        Parameters:
+    ]]
+
+    -- for debugging only
+--    corelog.WriteToLog("Oh no, someone is deleting a Silo!!!")
+
+    -- Why would you ever want to delete such a magnificent structure.
+    local childsSuccesfullyReleased = true
+    for i, mobjLocator in ipairs(self._topChests) do
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("Silo:destruct(): failed releasing top Chest "..mobjLocator:getURI()) childsSuccesfullyReleased = false end
+    end
+    for i, mobjLocator in ipairs(self._storageChests) do
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("Silo:destruct(): failed releasing storage Chest "..mobjLocator:getURI()) childsSuccesfullyReleased = false end
+    end
+
+    -- end
+    return childsSuccesfullyReleased
+end
+
+function Silo:getId()
+    --[[
+        Return the unique Id of the Silo.
+    ]]
+
+    return self._id
+end
+
+function Silo:getWIPId()
+    --[[
+        Returns the unique Id of the Silo used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
+end
+
+local function TopL0_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["T"]   = Block:new({ _name = "minecraft:torch" }),
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =0, _dy = 1 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "  C C ",
+            [5] = "      ",
+            [4] = "T     ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        },
+    })
+end
+
+local function Shaft_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [1] = " ",
+        },
+    })
+end
+
+local function Storage_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
+            ["D"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy = 1 }),
+            ["E"]   = Block:new({ _name = "minecraft:chest", _dx = 0, _dy =-1 }),
+            ["F"]   = Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "DDF",
+            [2] = "C F",
+            [1] = "CEE",
+        },
+    })
+end
+
+function Silo:getBuildBlueprint()
+    --[[
+        This method returns a blueprint for building the Silo in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- construct layer list
+    local nTopChests = self:getNTopChests()
+    if nTopChests ~= 2 then corelog.Warning("Silo:getBuildBlueprint: Not yet implemented for other (="..nTopChests..") than 2 top chests") end
+    local layerList = {
+        { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use nTopChests
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = false, layer = Shaft_layer()},
+    }
+    local nLayers = self:getNStorageLayers()
+    for i=1, nLayers, 1 do
+        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = Storage_layer()})
+    end
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+            Location:new({ _x= 3, _y= 3, _z=  1}),
+        }
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
+end
+
+local function StorageDismantle_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["D"]   = Block:new({ _name = "minecraft:dirt" }),
+            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+        },
+        _codeMap    = {
+            [3] = "DDD",
+            [2] = "D?D",
+            [1] = "DDD",
+        },
+    })
+end
+
+local function ShaftDismantle_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            ["D"]   = Block:new({ _name = "minecraft:dirt" }),
+        },
+        _codeMap    = {
+            [1] = "D",
+        },
+    })
+end
+
+local function TopDismantle_layer()
+    return LayerRectangle:new({
+        _codeArray  = {
+            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        },
+        _codeMap    = {
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "      ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "      ",
+        },
+    })
+end
+
+function Silo:getDismantleBlueprint()
+    --[[
+        This method returns a blueprint for dismantling the Silo in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- construct layer list
+    local layerList = {
+        -- dismantle top layer
+        { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove = true, layer = TopDismantle_layer()},
+        -- position in shaft of first storage layer
+        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = false, layer = Shaft_layer()},
+    }
+    local nLayers = self:getNStorageLayers()
+    for i=1, nLayers, 1 do
+        -- dismantle storage layer i
+        table.insert(layerList, { startpoint = Location:new({ _x= 2, _y= 2, _z= -1-i}), buildFromAbove = false, layer = StorageDismantle_layer()})
+    end
+    -- position in shaft below last storage layer
+    table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -1-nLayers}), buildFromAbove = false, layer = Shaft_layer()})
+    for i=1, nLayers+1, 1 do
+        -- dismantle shaft layer i
+        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -2-nLayers+i}), buildFromAbove = true, layer = ShaftDismantle_layer()})
+    end
+
+    -- note: this dismantle blueprint does not restore the layer below the last storage layer
+
+    -- construct blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = {
+            Location:new({ _x= 3, _y= 3, _z=  1}),
+        }
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
 end
 
 --    _____ _____ _                  _____                   _ _                            _   _               _
@@ -546,21 +787,6 @@ end
 function Silo:getPickupLocation()
     -- easy
     return self._topChests[self._pickupLocation]
-end
-
-function Silo:Delete()
-    -- for debugging only
-    corelog.WriteToLog("Oh no, someone is deleting a silo!!!")
-
-    -- Why would you ever want to delete such a magnificent structure. Only written for testing purposes
-    for i, chestLocator in ipairs(self._topChests) do enterprise_chests:deleteResource(chestLocator) end
-    for i, chestLocator in ipairs(self._storageChests) do enterprise_chests:deleteResource(chestLocator) end
-
-    -- remove from the data storage
-    coredht.SaveData(nil, dthSiloRoot, self._id)
-
-    -- we no longer exist
-    self._id = nil
 end
 
 --                        _                           _   _               _

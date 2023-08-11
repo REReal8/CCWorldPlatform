@@ -280,16 +280,16 @@ function URL:isTypeOf(obj)
     return false
 end
 
-function URL:isSame(obj)
+function URL:isEqual(obj)
     -- check input
     if not URL:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self:getBaseURI() == obj:getBaseURI()
+    local isEqual =  self:getBaseURI() == obj:getBaseURI()
                 and self:sameQuery(obj)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function URL:copy()

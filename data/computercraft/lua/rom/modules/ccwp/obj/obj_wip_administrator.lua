@@ -68,12 +68,12 @@ function WIPAdministrator:isTypeOf(obj)
     return false
 end
 
-function WIPAdministrator:isSame(obj)
+function WIPAdministrator:isEqual(obj)
     -- check input
     if not WIPAdministrator:isTypeOf(obj) then return false end
 
     -- check same object
-    if not self._wipQueues:isSame(obj._wipQueues) then return false end
+    if not self._wipQueues:isEqual(obj._wipQueues) then return false end
 
     -- end
     return true

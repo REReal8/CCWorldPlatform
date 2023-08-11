@@ -18,8 +18,10 @@ local Factory = require "mobj_factory"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
-local t_turtle = require "test.t_turtle"
+local T_Obj = require "test.t_obj"
+
 local T_Chest = require "test.t_mobj_chest"
+local t_turtle = require "test.t_turtle"
 
 function T_Factory.T_All()
     -- interfaces
@@ -29,7 +31,7 @@ function T_Factory.T_All()
     -- base methods
     T_Factory.T_new()
     T_Factory.T_isTypeOf()
-    T_Factory.T_isSame()
+    T_Factory.T_isEqual()
     T_Factory.T_copy()
 
     -- specific methods
@@ -90,9 +92,9 @@ local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLoc
 local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
-local craftingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+local craftingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
 local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
-local smeltingSpot1 = ProductionSpot:new({ _location = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
 local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
 
 function T_Factory.T_new()
@@ -105,11 +107,11 @@ function T_Factory.T_new()
     local obj = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id) if not obj then corelog.Error("failed obtaining Factory") return end
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getBaseLocation():isSame(location1), "gotten getBaseLocation(="..textutils.serialise(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialise(location1, compact)..")")
-    assert(obj:getInputLocators()[1]:isSame(inputLocator1), "gotten getInputLocators()[1](="..textutils.serialise(obj:getInputLocators()[1], compact)..") not the same as expected(="..textutils.serialise(inputLocator1, compact)..")")
-    assert(obj:getOutputLocators()[1]:isSame(outputLocator1), "gotten getOutputLocators()[1](="..textutils.serialise(obj:getOutputLocators()[1], compact)..") not the same as expected(="..textutils.serialise(outputLocator1, compact)..")")
-    assert(obj:getCraftingSpots()[1]:isSame(craftingSpot1), "gotten getCraftingSpots()[1](="..textutils.serialise(obj:getCraftingSpots()[1], compact)..") not the same as expected(="..textutils.serialise(craftingSpot1, compact)..")")
-    assert(obj:getSmeltingSpots()[1]:isSame(smeltingSpot1), "gotten getSmeltingSpots()[1](="..textutils.serialise(obj:getSmeltingSpots()[1], compact)..") not the same as expected(="..textutils.serialise(smeltingSpot1, compact)..")")
+    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialise(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialise(location1, compact)..")")
+    assert(obj:getInputLocators()[1]:isEqual(inputLocator1), "gotten getInputLocators()[1](="..textutils.serialise(obj:getInputLocators()[1], compact)..") not the same as expected(="..textutils.serialise(inputLocator1, compact)..")")
+    assert(obj:getOutputLocators()[1]:isEqual(outputLocator1), "gotten getOutputLocators()[1](="..textutils.serialise(obj:getOutputLocators()[1], compact)..") not the same as expected(="..textutils.serialise(outputLocator1, compact)..")")
+    assert(obj:getCraftingSpots()[1]:isEqual(craftingSpot1), "gotten getCraftingSpots()[1](="..textutils.serialise(obj:getCraftingSpots()[1], compact)..") not the same as expected(="..textutils.serialise(craftingSpot1, compact)..")")
+    assert(obj:getSmeltingSpots()[1]:isEqual(smeltingSpot1), "gotten getSmeltingSpots()[1](="..textutils.serialise(obj:getSmeltingSpots()[1], compact)..") not the same as expected(="..textutils.serialise(smeltingSpot1, compact)..")")
 
     -- cleanup test
 end
@@ -160,60 +162,60 @@ function T_Factory.T_isTypeOf()
     -- cleanup test
 end
 
-function T_Factory.T_isSame()
+function T_Factory.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* Factory:isSame() tests")
+    corelog.WriteToLog("* Factory:isEqual() tests")
     local id = coreutils.NewId()
     local obj = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id) if not obj then corelog.Error("failed obtaining Factory") return end
     local location2  = Location:new({_x= 100, _y= 0, _z= 100, _dx=1, _dy=0})
-    local inputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(2, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
+    local inputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(2, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
     local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, inputLocator2, })
-    local outputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ location = location2:getRelativeLocation(4, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
+    local outputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(4, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
     local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, outputLocator2, })
-    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
     local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
 
     -- test same
     local obj1 = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id)
-    local isSame = obj1:isSame(obj)
-    local expectedIsSame = true
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    local isEqual = obj1:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different _baseLocation
     obj._baseLocation = location2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._baseLocation = location1
 
     -- test different _inputLocators
     obj._inputLocators = inputLocators2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._inputLocators = inputLocators1
 
     -- test different _outputLocators
     obj._outputLocators = outputLocators2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._outputLocators = outputLocators1
 
     -- test different _craftingSpots
     obj._craftingSpots = craftingSpots2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._craftingSpots = craftingSpots1
 
     -- test different _smeltingSpots
     obj._smeltingSpots = smeltingSpots2
-    isSame = obj1:isSame(obj)
-    expectedIsSame = false
-    assert(isSame == expectedIsSame, "gotten isSame(="..tostring(isSame)..") not the same as expected(="..tostring(expectedIsSame)..")")
+    isEqual = obj1:isEqual(obj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj._smeltingSpots = smeltingSpots1
 
     -- cleanup test
@@ -227,7 +229,7 @@ function T_Factory.T_copy()
 
     -- test
     local copy = obj:copy()
-    assert(copy:isSame(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
+    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
 
     -- cleanup test
 end
@@ -248,7 +250,7 @@ function T_Factory.T_getAvailableInputLocator()
 
     -- test
     local locator = obj:getAvailableInputLocator()
-    assert(locator:isSame(inputLocator1), "gotten getAvailableInputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(inputLocator1, compact)..")")
+    assert(locator:isEqual(inputLocator1), "gotten getAvailableInputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(inputLocator1, compact)..")")
 
     -- cleanup test
 end
@@ -260,7 +262,7 @@ function T_Factory.T_getAvailableOutputLocator()
 
     -- test
     local locator = obj:getAvailableOutputLocator()
-    assert(locator:isSame(outputLocator1), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator1, compact)..")")
+    assert(locator:isEqual(outputLocator1), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator1, compact)..")")
 
     -- cleanup test
 end
@@ -272,7 +274,7 @@ function T_Factory.T_getAvailableCraftSpot()
 
     -- test
     local spot = obj:getAvailableCraftSpot()
-    assert(spot:isSame(craftingSpot1), "gotten getAvailableCraftSpot(="..textutils.serialise(spot, compact)..") not the same as expected(="..textutils.serialise(craftingSpot1, compact)..")")
+    assert(spot:isEqual(craftingSpot1), "gotten getAvailableCraftSpot(="..textutils.serialise(spot, compact)..") not the same as expected(="..textutils.serialise(craftingSpot1, compact)..")")
 
     -- cleanup test
 end
@@ -284,7 +286,7 @@ function T_Factory.T_getAvailableSmeltSpot()
 
     -- test
     local spot = obj:getAvailableSmeltSpot()
-    assert(spot:isSame(smeltingSpot1), "gotten getAvailableSmeltSpot(="..textutils.serialise(spot, compact)..") not the same as expected(="..textutils.serialise(smeltingSpot1, compact)..")")
+    assert(spot:isEqual(smeltingSpot1), "gotten getAvailableSmeltSpot(="..textutils.serialise(spot, compact)..") not the same as expected(="..textutils.serialise(smeltingSpot1, compact)..")")
 
     -- cleanup test
 end
@@ -300,9 +302,9 @@ function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test
     corelog.WriteToLog("* Factory:getFuelNeed_Production_Att() tests")
     local location2 = Location:new(coremove.GetLocation())
-    local craftingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:new({ _location = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
     local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
     local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("failed obtaining Factory") return end
 
@@ -324,15 +326,15 @@ function T_Factory.T_getProductionLocation_Att()
     local itemName = "minecraft:birch_planks"
     local itemCount = 10
     local productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
-    local expectedLocation = craftingSpot1:getLocation()
-    assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
+    local expectedLocation = craftingSpot1:getBaseLocation()
+    assert(productionLocation:isEqual(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
 
     -- test smelt
     itemName = "minecraft:charcoal"
     itemCount = 5
     productionLocation = obj:getProductionLocation_Att({ [itemName] = itemCount})
-    expectedLocation = smeltingSpot1:getLocation()
-    assert(productionLocation:isSame(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
+    expectedLocation = smeltingSpot1:getBaseLocation()
+    assert(productionLocation:isEqual(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
 
     -- cleanup test
 end
@@ -402,7 +404,8 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
-    local chest2 = T_Chest.CreateChest(location1:getRelativeLocation(0, 0, -1)) if not chest2 then corelog.Error("failed obtaining Chest 2") return end
+    local chest2 = T_Obj.createObj("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "failed obtaining Chest 2")
+
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 --    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
@@ -447,7 +450,7 @@ function T_Factory.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
 
     local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
     local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isSame(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
 
     -- cleanup test
 

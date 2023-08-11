@@ -30,7 +30,7 @@ function IMObj:construct(...)
     local checkSuccess, param1, param2 = InputChecker.Check([[
         This method constructs a XXXMObj instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also registers all child MObj's the XXXMObj spawns (by calling hostMObj_SSrv on the appropriate MObjHost).
+        It also ensures all child MObj's the XXXMObj spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
         The constructed XXXMObj is not yet saved in the Host.
 
@@ -38,7 +38,7 @@ function IMObj:construct(...)
                                         - (XXXMObj) the constructed XXXMObj
 
         Parameters:
-            constructParameters         - (table) parameters for constructing the MObj
+            constructParameters         - (table) parameters for constructing the XXXMObj
                 param1                  + (Location) location of XXXMObj
                 param2                  + (number, 2) ...
                 ...
@@ -52,7 +52,7 @@ function IMObj:destruct()
     --[[
         This method destructs a XXXMObj instance.
 
-        It also delists all child MObj's the XXXMObj is the parent of (by calling releaseMObj_SSrv on the appropriate MObjHost).
+        It also ensures all child MObj's the XXXMObj is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
         The XXXMObj is not yet deleted from the Host.
 

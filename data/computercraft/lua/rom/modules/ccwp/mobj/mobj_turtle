@@ -134,16 +134,16 @@ function Turtle:isTypeOf(obj)
     return false
 end
 
-function Turtle:isSame(obj)
+function Turtle:isEqual(obj)
     -- check input
     if not Turtle:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
+    local isEqual =  self._id == obj._id
                 and self._fuelPriorityKey == obj._fuelPriorityKey
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Turtle:copy()

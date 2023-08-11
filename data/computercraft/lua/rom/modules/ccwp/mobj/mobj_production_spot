@@ -1,5 +1,5 @@
 local ProductionSpot = {
-    _location       = nil,
+    _baseLocation   = nil,
     _isCraftingSpot = true,
 }
 
@@ -26,8 +26,8 @@ local role_alchemist = require "role_alchemist"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function ProductionSpot:getLocation()
-    return self._location
+function ProductionSpot:getBaseLocation()
+    return self._baseLocation
 end
 
 function ProductionSpot:isCraftingSpot()
@@ -49,8 +49,8 @@ function ProductionSpot:new(...)
         Construct a ProductionSpot.
 
         Parameters:
-            o                       + (table, {}) table with object fields
-                _location           - (Location) world location of spot
+            o                       + (table, {}) with object fields
+                _baseLocation       - (Location) base location of the ProductionSpot
                 _isCraftingSpot     - (boolean) if it is a crafting spot
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("ProductionSpot:new: Invalid input") return {} end
@@ -74,7 +74,7 @@ end
 function ProductionSpot.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
-    if not Location:isTypeOf(obj._location) then return false end
+    if not Location:isTypeOf(obj._baseLocation) then return false end
     if type(obj._isCraftingSpot) ~= "boolean" then return false end
 
     -- end
@@ -92,22 +92,22 @@ function ProductionSpot:isTypeOf(obj)
     return false
 end
 
-function ProductionSpot:isSame(obj)
+function ProductionSpot:isEqual(obj)
     -- check input
     if not ProductionSpot:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._location:isSame(obj._location)
+    local isEqual =  self._baseLocation:isEqual(obj._baseLocation)
                 and self._isCraftingSpot == obj._isCraftingSpot
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function ProductionSpot:copy()
     -- create copy
     local copy = ProductionSpot:new({
-        _location       = self._location:copy(),
+        _baseLocation   = self._baseLocation:copy(),
         _isCraftingSpot = self._isCraftingSpot,
     })
 

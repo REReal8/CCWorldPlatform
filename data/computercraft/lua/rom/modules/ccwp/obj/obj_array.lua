@@ -71,7 +71,7 @@ function ObjArray:isTypeOf(obj)
     return false
 end
 
-function ObjArray:isSame(obj)
+function ObjArray:isEqual(obj)
     -- check input
     if not ObjArray:isTypeOf(obj) then return false end
 
@@ -85,7 +85,7 @@ function ObjArray:isSame(obj)
     for i, elA in ipairs(self) do
         -- check same obj
         local elB = obj[i]
-        if not elA:isSame(elB) then return false end
+        if not elA:isEqual(elB) then return false end
     end
 
     -- end
@@ -114,6 +114,10 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function ObjArray:nObjs()
+    return #self
+end
 
 function ObjArray:transformObjectTables(suppressWarning)
     --[[

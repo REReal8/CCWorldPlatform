@@ -1,7 +1,7 @@
 local Chest = {
     _id                     = "",
 
-    _location               = nil,
+    _baseLocation           = nil,
     _accessDirection        = "",
     _inventory              = {},
 }
@@ -39,8 +39,8 @@ local enterprise_chests
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Chest:getLocation()
-    return self._location
+function Chest:getBaseLocation()
+    return self._baseLocation
 end
 
 function Chest:getAccessDirection()
@@ -66,9 +66,9 @@ function Chest:new(...)
         Construct a Chest.
 
         Parameters:
-            o                           + (table, {}) table with object fields
+            o                           + (table, {}) with object fields
                 _id                     - (string) id of the Chest
-                _location               - (Location) location of the Chest
+                _baseLocation           - (Location) base location of the Chest
                 _accessDirection        - (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 _inventory              - (Inventory) inventory of Chest
     ]], table.unpack(arg))
@@ -97,25 +97,25 @@ function Chest:isTypeOf(obj)
     return false
 end
 
-function Chest:isSame(obj)
+function Chest:isEqual(obj)
     -- check input
     if not Chest:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  self._id == obj._id
-                and self._location:isSame(obj._location)
+    local isEqual =  self._id == obj._id
+                and self._baseLocation:isEqual(obj._baseLocation)
                 and self._accessDirection == obj._accessDirection
-                and self._inventory:isSame(obj._inventory)
+                and self._inventory:isEqual(obj._inventory)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Chest:copy()
     local copy = Chest:new({
         _id             = self._id,
 
-        _location       = self._location:copy(),
+        _baseLocation   = self._baseLocation:copy(),
         _accessDirection= self._accessDirection,
         _inventory      = self._inventory:copy(),
     })
@@ -134,17 +134,17 @@ end
 
 function Chest:construct(...)
     -- get & check input from description
-    local checkSuccess, location, accessDirection = InputChecker.Check([[
+    local checkSuccess, baseLocation, accessDirection = InputChecker.Check([[
         This method constructs a Chest instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed Chest is not activated or saved in the Host.
+        The constructed Chest is not yet saved in the Host.
 
         Return value:
                                         - (Chest) the constructed Chest
 
         Parameters:
-            constructParameters         - (table) parameters for constructing the MObj
-                location                + (Location) location of the Chest
+            constructParameters         - (table) parameters for constructing the Chest
+                baseLocation            + (Location) base location of the Chest
                 accessDirection         + (string, "top") whether to access chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:construct: Invalid input") return nil end
@@ -153,7 +153,7 @@ function Chest:construct(...)
     local oTable = {
         _id             = coreutils.NewId(),
 
-        _location       = location:copy(),
+        _baseLocation   = baseLocation:copy(),
         _accessDirection= accessDirection,
 
         _inventory      = Inventory:new(), -- assumed to be empty
@@ -219,7 +219,7 @@ function Chest:getBuildBlueprint()
 
     -- construct layer list
     local layerList = {
-        { startpoint = self._location:copy(), buildFromAbove = true, layer = Chest_layer()},
+        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = Chest_layer()},
     }
 
     -- construct blueprint
@@ -230,7 +230,7 @@ function Chest:getBuildBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._location:copy()
+    local buildLocation = self._baseLocation:copy()
 
     -- end
     return buildLocation, blueprint
@@ -260,7 +260,7 @@ function Chest:getDismantleBlueprint()
 
     -- construct layer list
     local layerList = {
-        { startpoint = self._location:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
+        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
     }
 
     -- construct blueprint
@@ -271,7 +271,7 @@ function Chest:getDismantleBlueprint()
     }
 
     -- determine buildLocation
-    local buildLocation = self._location:copy()
+    local buildLocation = self._baseLocation:copy()
 
     -- end
     return buildLocation, blueprint
@@ -308,7 +308,7 @@ function Chest:updateChestRecord_AOSrv(...)
 
     -- create project definition
     local taskData = {
-        location = self:getLocation():copy(),
+        location = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
     }
     local projectData = {
@@ -388,7 +388,7 @@ function Chest:provideItemsTo_AOSrv(...)
 
     -- create project definition
     local taskData = {
-        location        = self:getLocation():copy(),
+        location        = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
         itemsQuery      = provideItems,
 
@@ -490,7 +490,7 @@ function Chest:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Chest:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get location
-    local chestLocation = self:getLocation()
+    local chestLocation = self:getBaseLocation()
 
     -- loop on items
     local fuelNeed = 0
@@ -567,7 +567,7 @@ function Chest:storeItemsFrom_AOSrv(...)
     local taskData = {
         turtleId        = -1,
         itemsQuery      = coreutils.DeepCopy(itemsLocator:getQuery()),
-        location        = self:getLocation():copy(),
+        location        = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
 
         priorityKey     = assignmentsPriorityKey,

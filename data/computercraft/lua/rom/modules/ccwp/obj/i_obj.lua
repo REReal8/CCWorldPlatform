@@ -1,17 +1,17 @@
 local IObj = {
 }
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the interface IObj.
 
-    The IObj interface defines basic methods all objects should adhere to.
+    It defines a set of methods that classes adhering to this interface must implement.
 
-    Objects of a class implementing the interface are called Obj's.
+    Objects adhering to this interface are referred to as Obj's.
 --]]
+
+local function unimplementedMethodError(methodName)
+    error("Method "..methodName.."() should be implemented in Obj classes. It should not be called directly on IObj interface.")
+end
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -23,8 +23,7 @@ local InputChecker = require "input_checker"
 --                   |__/
 
 function IObj:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
+    --[[
         This method constructs a XXXObj instance from an objectTable with all necessary fields as defined in the class.
 
         Return value:
@@ -35,10 +34,9 @@ function IObj:new(...)
                 field1                  - (Location) location of XXXObj
                 field2                  - (number, 2) ...
                 ...
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("XXXMObj:new: Invalid input") return {} end
+    ]]
 
-    corelog.Error("Method new() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("new")
 end
 
 function IObj:getClassName()
@@ -46,7 +44,7 @@ function IObj:getClassName()
         Method that returns the className of the Obj (i.e. self).
     ]]
 
-    corelog.Error("Method getClassName() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("getClassName")
 
     return "???"
 end
@@ -56,18 +54,18 @@ function IObj:isTypeOf(obj)
         Method that returns if an object 'obj' is of type of this class.
     ]]
 
-    corelog.Error("Method isTypeOf() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("isTypeOf")
 
     -- end
     return false
 end
 
-function IObj:isSame(obj)
+function IObj:isEqual(otherObj)
     --[[
-        Method that returns if the Obj (i.e. self) is the same as the object 'obj'.
+        Method that returns if the current Obj is equal to another Obj.
     ]]
 
-    corelog.Error("Method isSame() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("isEqual")
 
     -- end
     return false
@@ -78,7 +76,7 @@ function IObj:copy()
         Method that returns a copy of the Obj (i.e. self).
     ]]
 
-    corelog.Error("Method copy() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("copy")
 
     return nil
 end
@@ -99,7 +97,7 @@ function IObj.ImplementsInterface(obj)
     if not obj.new then return false end
     if not obj.getClassName then return false end
     if not obj.isTypeOf then return false end
-    if not obj.isSame then return false end
+    if not obj.isEqual then return false end
     if not obj.copy then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.
 

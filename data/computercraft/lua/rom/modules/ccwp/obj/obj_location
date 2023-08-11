@@ -113,15 +113,15 @@ function Location:hasSameDirection(obj)
     return self._dx == obj._dx and self._dy == obj._dy
 end
 
-function Location:isSame(obj)
+function Location:isEqual(obj)
     -- check input
     if not Location:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame = self:hasSamePosition(obj) and self:hasSameDirection(obj)
+    local isEqual = self:hasSamePosition(obj) and self:hasSameDirection(obj)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Location:copy()

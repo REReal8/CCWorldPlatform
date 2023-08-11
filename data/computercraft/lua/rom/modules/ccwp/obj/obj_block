@@ -99,18 +99,18 @@ function Block:isTypeOf(obj)
     return isTypeOf
 end
 
-function Block:isSame(obj)
+function Block:isEqual(obj)
     -- check input
     if not Block:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame = self._name == obj._name
+    local isEqual = self._name == obj._name
     if self._dx ~= nil and self._dy ~= nil then
-        isSame = isSame and self._dx == obj._dx and self._dy == obj._dy
+        isEqual = isEqual and self._dx == obj._dx and self._dy == obj._dy
     end
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function Block:copy()
@@ -178,7 +178,7 @@ function Block.IsBlockList(blockList)
     return true
 end
 
-function Block.IsSameBlockList(blockListA, blockListB)
+function Block.IsEqualBlockList(blockListA, blockListB)
     -- check input
     if not Block.IsBlockList(blockListA) or not Block.IsBlockList(blockListB) then return false end
 
@@ -190,8 +190,8 @@ function Block.IsSameBlockList(blockListA, blockListB)
         local blockB = blockListB[i]
 
         -- check same block
-        local isSame = blockA:isSame(blockB)
-        if not isSame then return false end
+        local isEqual = blockA:isEqual(blockB)
+        if not isEqual then return false end
     end
 
     -- end

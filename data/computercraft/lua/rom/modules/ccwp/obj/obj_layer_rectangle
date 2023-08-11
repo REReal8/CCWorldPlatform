@@ -126,16 +126,16 @@ function LayerRectangle:isTypeOf(obj)
     return false
 end
 
-function LayerRectangle:isSame(obj)
+function LayerRectangle:isEqual(obj)
     -- check input
     if not LayerRectangle:isTypeOf(obj) then return false end
 
     -- check same object
-    local isSame =  LayerRectangle.IsSameCodeArray(self._codeArray, obj._codeArray) and
-                    LayerRectangle.IsSameCodeMap(self._codeMap, obj._codeMap)
+    local isEqual =  LayerRectangle.IsEqualCodeArray(self._codeArray, obj._codeArray) and
+                    LayerRectangle.IsEqualCodeMap(self._codeMap, obj._codeMap)
 
     -- end
-    return isSame
+    return isEqual
 end
 
 function LayerRectangle:copy()
@@ -460,7 +460,7 @@ function LayerRectangle.CodeArrayValid(codeArray, warn)
     return true
 end
 
-function LayerRectangle.IsSameCodeArray(codeArrayA, codeArrayB)
+function LayerRectangle.IsEqualCodeArray(codeArrayA, codeArrayB)
     -- check input
     if not LayerRectangle.IsCodeArray(codeArrayA) or not LayerRectangle.IsCodeArray(codeArrayB) then return false end
 
@@ -470,7 +470,7 @@ function LayerRectangle.IsSameCodeArray(codeArrayA, codeArrayB)
         sizeA = sizeA + 1
         -- check same blockName
         local blockB = codeArrayB[codeA]
-        if not blockA:isSame(blockB) then return false end
+        if not blockA:isEqual(blockB) then return false end
     end
 
     -- check no other elements in B
@@ -582,15 +582,15 @@ function LayerRectangle.CodeMapValid(codeArray, codeMap, warn)
     return true
 end
 
-function LayerRectangle.IsSameCodeMap(codeMapA, codeMapB)
+function LayerRectangle.IsEqualCodeMap(codeMapA, codeMapB)
     -- check input
     if not LayerRectangle.IsCodeMap(codeMapA) or not LayerRectangle.IsCodeMap(codeMapB) then return false end
 
     -- end
-	return LayerRectangle.IsSameMap(codeMapA, codeMapB)
+	return LayerRectangle.IsEqualMap(codeMapA, codeMapB)
 end
 
-function LayerRectangle.IsSameMap(mapA, mapB)
+function LayerRectangle.IsEqualMap(mapA, mapB)
     -- check same elements as in A
     local sizeA = 0
     for iRow, rowA in ipairs(mapA) do
