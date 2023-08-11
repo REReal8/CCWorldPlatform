@@ -60,9 +60,9 @@ function IObj:isTypeOf(obj)
     return false
 end
 
-function IObj:isSame(obj)
+function IObj:isSame(otherObj)
     --[[
-        Method that returns if the Obj (i.e. self) is the same as the object 'obj'.
+        Method that returns if the current Obj is equal to another Obj.
     ]]
 
     unimplementedMethodError("isSame")
