@@ -29,6 +29,26 @@ local enterprise_turtle
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Turtle:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Turtle.
+
+        Parameters:
+            o                           + (table, {}) table with object fields
+                _id                     - (string, "any") id of the Turtle
+                _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
 function Turtle:getId()
     return self._id
 end
@@ -82,26 +102,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function Turtle:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a Turtle.
-
-        Parameters:
-            o                           + (table, {}) table with object fields
-                _id                     - (string, "any") id of the Turtle
-                _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function Turtle:getClassName()
     return "Turtle"

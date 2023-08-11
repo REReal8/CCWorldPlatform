@@ -49,6 +49,28 @@ local dthMineRoot   = "mobj_mine"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function Mine:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Mine.
+
+        Parameters:
+            o                           + (table) with object fields
+                _id                     - (string) id of the Mine
+                _version                - (number) version of the Mine
+                _baseLocation           - (Location) base location of the Mine
+                _topChests              - (ObjArray) with top chests
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Mine:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
 function Mine:NewMine(...)
     -- get & check input from description
     local checkSuccess, baseLocation, topChests = InputChecker.Check([[
@@ -131,28 +153,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function Mine:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a Mine.
-
-        Parameters:
-            o                           + (table) with object fields
-                _id                     - (string) id of the Mine
-                _version                - (number) version of the Mine
-                _baseLocation           - (Location) base location of the Mine
-                _topChests              - (ObjArray) with top chests
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Mine:new: Invalid input") return {} end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function Mine:getClassName()
     return "Mine"

@@ -23,6 +23,27 @@ local InputChecker = require "input_checker"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function TestMObj:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a TestMObj.
+
+        Parameters:
+            o                           + (table, {}) with object fields
+                _id                     - (string) id of the TestMObj
+                _baseLocation           - (Location) base location of the TestMObj
+                _field1                 - (string) field
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestMObj:new: Invalid input") return nil end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
 function TestMObj:getField1()
     return self._field1
 end
@@ -46,27 +67,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function TestMObj:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a TestMObj.
-
-        Parameters:
-            o                           + (table, {}) with object fields
-                _id                     - (string) id of the TestMObj
-                _baseLocation           - (Location) base location of the TestMObj
-                _field1                 - (string) field
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestMObj:new: Invalid input") return nil end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function TestMObj:getClassName()
     return "TestMObj"

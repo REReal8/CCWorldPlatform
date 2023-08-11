@@ -38,23 +38,6 @@ local enterprise_shop
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function Shop:getId()
-    return self._id
-end
-
-function Shop:getItemSuppliersLocators()
-    return self._itemSuppliersLocators
-end
-
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                    _/ |
---                   |__/
-
 function Shop:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -74,6 +57,23 @@ function Shop:new(...)
     -- end
     return o
 end
+
+function Shop:getId()
+    return self._id
+end
+
+function Shop:getItemSuppliersLocators()
+    return self._itemSuppliersLocators
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
 
 function Shop:getClassName()
     return "Shop"

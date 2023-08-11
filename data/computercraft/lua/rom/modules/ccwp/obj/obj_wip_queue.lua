@@ -24,6 +24,26 @@ local InputChecker = require "input_checker"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function WIPQueue:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a WIPQueue.
+
+        Parameters:
+            o                           + (table) table with object fields
+                _workList               - (table) with workId's
+                _callbackList           - (ObjArray) with Callback's
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("WIPQueue:new: Invalid input") return nil end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
 function WIPQueue:addWork(...)
     -- get & check input from description
     local checkSuccess, workId = InputChecker.Check([[
@@ -114,26 +134,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function WIPQueue:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a WIPQueue.
-
-        Parameters:
-            o                           + (table) table with object fields
-                _workList               - (table) with workId's
-                _callbackList           - (ObjArray) with Callback's
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("WIPQueue:new: Invalid input") return nil end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function WIPQueue:getClassName()
     return "WIPQueue"

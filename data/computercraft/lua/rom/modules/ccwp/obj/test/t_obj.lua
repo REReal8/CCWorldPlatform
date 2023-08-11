@@ -70,15 +70,6 @@ function T_Obj.CheckOTableFieldsSame(oTableA, oTableB)
     return true
 end
 
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                    _/ |
---                   |__/
-
 function T_Obj.createObj(className, oTable)
     --[[
         This test helper method creates and returns an Obj of class 'className' from an object table 'oTable'.
@@ -111,6 +102,15 @@ function T_Obj.T_new(className, oTable)
 
     -- cleanup test
 end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
 
 function T_Obj.T_ImplementsInterface(className, oTable)
     assert(className, "no className provided")

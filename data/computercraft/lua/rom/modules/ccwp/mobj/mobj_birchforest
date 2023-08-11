@@ -39,6 +39,30 @@ local enterprise_projects = require "enterprise_projects"
 --   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function BirchForest:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a BirchForest.
+
+        Parameters:
+            o                           + (table, {}) with object fields
+                _id                     - (string) id of the BirchForest
+                _level                  - (number) level of the forest
+                _baseLocation           - (Location) base location of the BirchForest
+                _nTrees                 - (number) # trees in the BirchForest
+                _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
+                _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("BirchForest:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
+
 function BirchForest:getId()
     return self._id
 end
@@ -122,30 +146,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function BirchForest:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a BirchForest.
-
-        Parameters:
-            o                           + (table, {}) with object fields
-                _id                     - (string) id of the BirchForest
-                _level                  - (number) level of the forest
-                _baseLocation           - (Location) base location of the BirchForest
-                _nTrees                 - (number) # trees in the BirchForest
-                _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
-                _localSaplingsLocator   - (URL) locating the local ItemSupplier of saplings (e.g. a chest)
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("BirchForest:new: Invalid input") return {} end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function BirchForest:getClassName()
     return "BirchForest"
