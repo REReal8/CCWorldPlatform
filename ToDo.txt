@@ -166,6 +166,15 @@ R  Factory:
 
 -  improve IItemDepot and IItemSupplier interfaces
 
+-  enterprise management
+   -  for claiming manament execution time
+
+-  mobj advanced chest
+   -  different class like mobj chest
+   -  handles orders with item reservation
+   -  handles waste with free space reservation
+   -  when items are pickup up / delivered, reservation is complete
+
 G  player station
    -  v1.0: input & output chest UI
 
