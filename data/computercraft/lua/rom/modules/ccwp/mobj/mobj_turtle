@@ -12,6 +12,7 @@ local Callback = require "obj_callback"
 local Location = require "obj_location"
 
 local Inventory = require "obj_inventory"
+local ItemTable = require "obj_item_table"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -72,6 +73,21 @@ function Turtle:getInventory()
 
     -- end
     return inventory
+end
+
+function Turtle:getInventoryAsItemTable()
+    -- check current Turtle
+    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+
+--    -- get current Turtle inventory slots
+--    return ItemTable:new(Turtle:getInventory():getItemTable())
+
+    -- why multiline when it can be done in a single line? Well, for readablilty and debugging ofcourse!
+    local inventory = Turtle:getInventory()
+    local itemTable = inventory:getItemTable()
+
+    -- return the table as an object ItemTable
+    return ItemTable:new(itemTable)
 end
 
 --    _____ ____  _     _                  _   _               _
