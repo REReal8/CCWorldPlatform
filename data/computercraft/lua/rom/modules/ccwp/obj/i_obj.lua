@@ -1,8 +1,6 @@
 local IObj = {
 }
 
-local corelog = require "corelog"
-
 --[[
     This module implements the interface IObj.
 
@@ -10,6 +8,10 @@ local corelog = require "corelog"
 
     Objects of a class implementing the interface are called Obj's.
 --]]
+
+local function unimplementedMethodError(methodName)
+    error("Method "..methodName.."() should be implemented in Obj classes. It should not be called directly on IObj interface.")
+end
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -34,7 +36,7 @@ function IObj:new(...)
                 ...
     ]]
 
-    corelog.Error("Method new() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("new")
 end
 
 function IObj:getClassName()
@@ -42,7 +44,7 @@ function IObj:getClassName()
         Method that returns the className of the Obj (i.e. self).
     ]]
 
-    corelog.Error("Method getClassName() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("getClassName")
 
     return "???"
 end
@@ -52,7 +54,7 @@ function IObj:isTypeOf(obj)
         Method that returns if an object 'obj' is of type of this class.
     ]]
 
-    corelog.Error("Method isTypeOf() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("isTypeOf")
 
     -- end
     return false
@@ -63,7 +65,7 @@ function IObj:isSame(obj)
         Method that returns if the Obj (i.e. self) is the same as the object 'obj'.
     ]]
 
-    corelog.Error("Method isSame() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("isSame")
 
     -- end
     return false
@@ -74,7 +76,7 @@ function IObj:copy()
         Method that returns a copy of the Obj (i.e. self).
     ]]
 
-    corelog.Error("Method copy() should be implemented in classes implementing the IObj interface. It should not be called directly.")
+    unimplementedMethodError("copy")
 
     return nil
 end
