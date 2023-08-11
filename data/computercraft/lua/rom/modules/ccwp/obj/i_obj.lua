@@ -4,9 +4,9 @@ local IObj = {
 --[[
     This module implements the interface IObj.
 
-    The IObj interface defines basic methods all objects should adhere to.
+    It defines a set of methods that classes adhering to this interface must implement.
 
-    Objects of a class implementing the interface are called Obj's.
+    Objects adhering to this interface are referred to as Obj's.
 --]]
 
 local function unimplementedMethodError(methodName)
