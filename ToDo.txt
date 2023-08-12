@@ -204,10 +204,6 @@ G  player station
 
 -  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
 
-G  Display verbeteren
-   G  display blijft na kiezen van een test optie in de groep waar de test gekozen is (done)
-   G  display gebruikt 2 kolommen als er veel tests zijn (done)
-
 G moveTo:
    - v2.0: (snel) wegen (veel)
 
@@ -234,4 +230,8 @@ G  display station (Yahoo!!, working (except for building it)) (done)
    -  logging                                                  (done)
 
 G  turtle without db/inventory.lua file should check for tool present (done)
+
+G  Display verbeteren
+   G  display blijft na kiezen van een test optie in de groep waar de test gekozen is (done)
+   G  display gebruikt 2 kolommen als er veel tests zijn (done)
 
