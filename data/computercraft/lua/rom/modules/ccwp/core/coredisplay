@@ -17,15 +17,6 @@ local db    = {
 }
 local screen    = {}
 
--- init function for the display
-function coredisplay.Init()
-	-- get current position
-    db.x, db.y = term.getSize()
-
-    -- set default screen
-    MainMenu(DefaultMainMenu())
-end
-
 -- setup function for the display
 function coredisplay.Setup()
 end
@@ -40,11 +31,11 @@ function coredisplay.Run()
 	-- only continue as long as there is a main menu defined
 	while db.mainmenu ~= nil and coresystem.IsRunning() do
 		-- get de next screen definition
-		local n = NextScreen()
+		local nextScreenData = NextScreen()
 
 		-- custom screen?
-		if n.custom	then n.custom(n)
-					else DoScreen(n)
+		if nextScreenData.custom	then nextScreenData.custom(nextScreenData)
+									else DoScreen(nextScreenData)
 		end
 	end
 
@@ -53,26 +44,26 @@ function coredisplay.Run()
 end
 
 -- function to get or set the main menu
-function MainMenu(t)
+local function MainMenu(t)
 	if t then db.mainmenu = t
 	else return db.mainmenu
 	end
 end
 
 -- a nice default main menu, very usefull
-function DefaultMainMenu()
+local function DefaultMainMenu()
 	if turtle then
 		return {
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "1", desc = "Execute code",  			func = ExecuteCode,	    		param = {step = 1}},
-				{key = "2", desc = "Execute tests", 			func = ExecuteTest,	    		param = {}},
-				{key = "3", desc = "Execute core tests", 		func = ExecuteCoreTest,	    	param = {}},
-				{key = "4", desc = "Execute role tests",		func = ExecuteRoleTest,			param = {}},
-				{key = "5", desc = "Execute obj tests",			func = ExecuteObjTest,			param = {}},
-				{key = "6", desc = "Execute mobj tests",		func = ExecuteMObjTest,			param = {}},
-				{key = "7", desc = "Execute enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
+				{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
+				{key = "2", desc = "Exec tests", 				func = ExecuteTest,	    		param = {}},
+				{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
+				{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
+				{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
+				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
+				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
 				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
 				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
 				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
@@ -115,7 +106,49 @@ function DoScreen(t)
 	if t.intro then print(t.intro) end
 
 	-- print the list
-	if t.option then for i=1,#t.option do print(t.option[i].key, t.option[i].desc) end end
+	if t.option then
+
+		-- fixed for now
+		local rightOffset	= 10
+
+		-- might look nicer this way
+		if #t.option > 10 and #t.option < 20 then rightOffset = 1 + math.floor(#t.option / 2) end
+
+		-- we have max 10 lines
+		for i=1,10 do
+			local keyLeft	= ""
+			local keyRight	= ""
+			local textLeft	= ""
+			local textRight	= ""
+
+			-- left side is easy
+			if t.option[i] and i <= rightOffset then
+				keyLeft			= t.option[i].key
+				textLeft		= t.option[i].desc
+			end
+
+			-- right side just as easy
+			if t.option[i + rightOffset] then
+				keyRight		= t.option[i + rightOffset].key
+				textRight		= t.option[i + rightOffset].desc
+			end
+
+			-- print the damn line
+			print(string.format("%-1.1s %-17.17s %-1.1s %-17.17s", keyLeft, textLeft, keyRight, textRight))
+		end
+
+--[[ 		-- too many options?
+		if #t.option < 10 then
+			-- one big list
+			for i=1,#t.option do print(t.option[i].key, t.option[i].desc) end
+		else
+			-- two coloums
+			for i=1,#t.option do
+				print(string.format("%-1.1s %-17.17s %-1.1s %-17.17s", t.option[i].key, t.option[i].desc, t.option[i].key, t.option[i].desc))
+			end
+		end
+--]]
+	end
 
 	-- print the final question
 	if t.question then write(t.question.." ") end
@@ -441,6 +474,15 @@ function coredisplay.UpdateToDisplay(update, alive)
 
 	-- resotre cursor
 	term.setCursorPos( x, y )
+end
+
+-- init function for the display
+function coredisplay.Init()
+	-- get current position
+    db.x, db.y = term.getSize()
+
+    -- set default screen
+    MainMenu(DefaultMainMenu())
 end
 
 return coredisplay
