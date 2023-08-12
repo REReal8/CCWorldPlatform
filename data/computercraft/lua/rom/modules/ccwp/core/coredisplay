@@ -108,37 +108,45 @@ function DoScreen(t)
 	-- print the list
 	if t.option then
 
-		-- fixed for now
-		local rightOffset	= 10
+		-- weinig opties, dan de oude werkwijze?
+		if #t.option < 11 then
 
-		-- might look nicer this way
-		if #t.option > 10 and #t.option < 20 then rightOffset = 1 + math.floor(#t.option / 2) end
+			-- one big list
+			for i=1,#t.option do print(t.option[i].key, t.option[i].desc) end
+		else
 
-		-- we have max 10 lines
-		for i=1,10 do
-			local keyLeft	= ""
-			local keyRight	= ""
-			local textLeft	= ""
-			local textRight	= ""
+			-- fixed for now
+			local rightOffset	= 10
 
-			-- left side is easy
-			if t.option[i] and i <= rightOffset then
-				keyLeft			= t.option[i].key
-				textLeft		= t.option[i].desc
+			-- might look nicer this way
+			if #t.option > 10 and #t.option < 20 then rightOffset = 1 + math.floor(#t.option / 2) end
+
+			-- we have max 10 lines
+			for i=1,10 do
+				local keyLeft	= ""
+				local keyRight	= ""
+				local textLeft	= ""
+				local textRight	= ""
+
+				-- left side is easy
+				if t.option[i] and i <= rightOffset then
+					keyLeft			= t.option[i].key
+					textLeft		= t.option[i].desc
+				end
+
+				-- right side just as easy
+				if t.option[i + rightOffset] then
+					keyRight		= t.option[i + rightOffset].key
+					textRight		= t.option[i + rightOffset].desc
+				end
+
+				-- print the damn line
+				print(string.format("%-1.1s %-17.17s %-1.1s %-17.17s", keyLeft, textLeft, keyRight, textRight))
 			end
-
-			-- right side just as easy
-			if t.option[i + rightOffset] then
-				keyRight		= t.option[i + rightOffset].key
-				textRight		= t.option[i + rightOffset].desc
-			end
-
-			-- print the damn line
-			print(string.format("%-1.1s %-17.17s %-1.1s %-17.17s", keyLeft, textLeft, keyRight, textRight))
 		end
 
 --[[ 		-- too many options?
-		if #t.option < 10 then
+		if #t.option < 11 then
 			-- one big list
 			for i=1,#t.option do print(t.option[i].key, t.option[i].desc) end
 		else
