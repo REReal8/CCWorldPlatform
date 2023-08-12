@@ -79,13 +79,14 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
 
     -- test fields
     for fieldName, fieldValue in pairs(otherObj) do
-        corelog.WriteToLog("->test field "..fieldName.." type="..type(fieldValue))
+        corelog.WriteToLog("->test field "..fieldName)
         -- figure out anotherFieldValue
         local anotherFieldValue = nil
         if type(fieldValue) == "nil" then anotherFieldValue = "not nil" -- will probably never occur because key wouldn't be present
         elseif type(fieldValue) == "number" then anotherFieldValue = fieldValue + 1
-        elseif type(fieldValue) == "string" then anotherFieldValue = fieldValue.."_extra"
+        elseif type(fieldValue) == "string" then anotherFieldValue = fieldValue..", a longer string"
         elseif type(fieldValue) == "boolean" then anotherFieldValue = not fieldValue
+        elseif type(fieldValue) == "table" then anotherFieldValue = "a string instead of a table"
         else
             assert(false, "testing field of type "..type(fieldValue).." not supported (yet)")
         end
