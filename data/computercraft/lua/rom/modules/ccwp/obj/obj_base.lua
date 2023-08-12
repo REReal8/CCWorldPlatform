@@ -72,9 +72,12 @@ function ObjBase:isEqual(otherObj)
         Method that returns if the Obj is equal to another Obj.
     ]]
 
+--    local corelog = require "corelog"
+
     -- check classes equal
     local selfClass = getmetatable(self)
     if not selfClass:isTypeOf(otherObj) then
+--        corelog.WriteToLog("not of type")
         return false
     end
 
@@ -86,14 +89,17 @@ function ObjBase:isEqual(otherObj)
             if type(fieldValue) == "table" and Object.IsInstanceOf(fieldValue, IObj) then
                 -- check nested IObj field equal
                 if not fieldValue:isEqual(otherObj[fieldName]) then
+--                    corelog.WriteToLog("nested obj not of type")
                     return false
                 end
             else
+--                corelog.WriteToLog("field "..fieldName.." not equal")
                 return false
             end
         end
     end
 
+--    corelog.WriteToLog("ok")
     return true
 end
 
