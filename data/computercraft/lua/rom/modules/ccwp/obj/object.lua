@@ -1,13 +1,13 @@
 local Object = {}
 
-function Object.IsInstanceOf(object, class)
+function Object.IsInstanceOf(object, prototype)
     --[[
-        Function that returns if a given object is an instance of the specified class (or interface).
+        Function that returns if a given object is an instance of a specified (proto)type (class or interface).
     ]]
 
     local mt = getmetatable(object)
     while mt do
-        if mt == class then
+        if mt == prototype then
             return true
         end
         mt = getmetatable(mt)
