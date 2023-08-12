@@ -18,6 +18,18 @@ end
 --               _/ |
 --              |__/
 
+function T_Object.pt_IsInstanceOf(className, object, prototypeName, prototype)
+    -- prepare test
+    assert(className, "no className provided")
+    assert(object, "no object provided")
+    assert(prototypeName, "no prototypeName provided")
+    assert(prototype, "no prototype provided")
+    corelog.WriteToLog("* "..className.." IsInstanceOf "..prototypeName.." type test")
+
+    -- test
+    assert(Object.IsInstanceOf(object, prototype), "Failed: object is expected to be an instance of "..prototypeName)
+end
+
 function T_Object.T_IsInstanceOf()
     -- prepare test
     corelog.WriteToLog("* Object.IsInstanceOf() tests")
