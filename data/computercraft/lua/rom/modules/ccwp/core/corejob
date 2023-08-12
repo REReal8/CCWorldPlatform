@@ -175,6 +175,8 @@ end
 function DoJob(job)
     local taskId    = nil
 
+    corelog.WriteToLog("corejob still working (Guido want's to know)")
+
     -- we have taken this job!
     TakeJob(job.jobId)
 
