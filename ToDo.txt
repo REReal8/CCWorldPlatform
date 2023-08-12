@@ -205,7 +205,7 @@ G  player station
 -  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
 
 G  Display verbeteren
-   G  display blijft na kiezen van een test optie in de groep waar de test gekozen is
+   G  display blijft na kiezen van een test optie in de groep waar de test gekozen is (done)
    G  display gebruikt 2 kolommen als er veel tests zijn (done)
 
 G moveTo:
