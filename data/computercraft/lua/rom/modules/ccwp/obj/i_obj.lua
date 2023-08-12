@@ -24,7 +24,7 @@ end
 
 function IObj:getClassName()
     --[[
-        Method that returns the className of the Obj (i.e. self).
+        Method that returns the concrete className of an Obj.
     ]]
 
     unimplementedMethodError("getClassName")
@@ -45,7 +45,7 @@ end
 
 function IObj:isEqual(otherObj)
     --[[
-        Method that returns if the current Obj is equal to another Obj.
+        Method that returns if the Obj is equal to another Obj.
     ]]
 
     unimplementedMethodError("isEqual")
@@ -56,7 +56,7 @@ end
 
 function IObj:copy()
     --[[
-        Method that returns a copy of the Obj (i.e. self).
+        Method that returns a copy of the Obj.
     ]]
 
     unimplementedMethodError("copy")
