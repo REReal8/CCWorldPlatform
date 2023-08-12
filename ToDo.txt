@@ -165,6 +165,8 @@ R  Factory:
    -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
 
 -  improve IItemDepot and IItemSupplier interfaces
+   -  claiming items (in IItemSupplier)
+   -  free slots (in IItemDepot's)
 
 -  enterprise management
    -  for claiming manament execution time
@@ -172,7 +174,9 @@ R  Factory:
 -  mobj advanced chest
    -  different class like mobj chest
    -  handles orders with item reservation
+      -  discuss: should this be part of/ handled via improved IItemSupplier interface (i.e. be applicable to all ItemSupplier's)?
    -  handles waste with free space reservation
+      -  discuss: should this be part of/ handled via improved IItemDepot interface  (i.e. be applicable to all ItemDepot's)?
    -  when items are pickup up / delivered, reservation is complete
 
 G  player station
@@ -190,10 +194,6 @@ G  player station
 
 -  availability
    -  e.g. no 2 turtles into 1 silo shaft
-
--  claiming
-   -  items (in suppliers)
-   -  free slots (in depot's)
 
 -  enterprise_energy
    -  Investigate + possibly fix why we relatively soon need to go to L3 enterprise_energy in enterprise_colonization
