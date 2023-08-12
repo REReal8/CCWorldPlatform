@@ -1,8 +1,6 @@
 local T_IObj = {}
 local corelog = require "corelog"
 
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
