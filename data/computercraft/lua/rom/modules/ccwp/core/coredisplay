@@ -83,10 +83,9 @@ local function DefaultMainMenu()
 			question	= "Make your choice",
 		}
 	end
-
 end
 
--- get the next screen
+-- gets or sets the next screen
 function NextScreen(t)
 	if t				then screen[#screen + 1] = t
 	elseif #screen > 0	then return table.remove(screen)
