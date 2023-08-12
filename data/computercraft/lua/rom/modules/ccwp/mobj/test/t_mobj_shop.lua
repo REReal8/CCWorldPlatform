@@ -90,12 +90,12 @@ function T_Shop.T_ImplementsIItemSupplier()
     ImplementsInterface("IItemSupplier")
 end
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 function T_Shop.T_Getters()
     -- prepare test
@@ -236,7 +236,7 @@ function T_Shop.T_delistAllItemSuppliers()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
 
-    local chest = T_Obj.createObj("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
+    local chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
     local chestLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = chestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
@@ -263,17 +263,17 @@ function T_Shop.T_bestItemSupplier()
     }
     local ingredientsItemSupplierLocator = objectLocator
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
-    local chest = T_Obj.createObj("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
+    local chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
     local itemDepotLocator = enterprise_chests:saveObject(chest)
 
     -- test lowest fuelNeed
     local closeLocation = location1:getRelativeLocation(1, 1, 0)
-    chest = T_Obj.createObj("Chest", T_Chest.NewOTable(closeLocation)) assert(chest, "failed obtaining Chest")
+    chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(closeLocation)) assert(chest, "failed obtaining Chest")
     local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local farLocation = location1:getRelativeLocation(99999, 1, 0)
-    chest = T_Obj.createObj("Chest", T_Chest.NewOTable(farLocation)) assert(chest, "failed obtaining Chest")
+    chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(farLocation)) assert(chest, "failed obtaining Chest")
     local farItemSupplierLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 

@@ -76,12 +76,38 @@ function T_WIPQueue.T_ImplementsIObj()
     ImplementsInterface("IObj")
 end
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+local function workListCopy(workList)
+    local copy = {}
+    for i, aWorkId in ipairs(workList) do
+        copy[i] = aWorkId
+    end
+
+    -- end
+    return copy
+end
+
+function T_WIPQueue.T_new()
+    -- prepare test
+    corelog.WriteToLog("* WIPQueue:new() tests")
+
+    -- test full
+    local obj = WIPQueue:new({
+        _workList       = workListCopy(workList1),
+        _callbackList   = callbackList1:copy(),
+    }) assert(obj)
+    assert(obj._workList[1] == workId1, "no workId1")
+    assert(obj._workList[2] == workId2, "no workId2")
+    assert(obj._callbackList:isEqual(callbackList1), "gotten _callbackList(="..textutils.serialise(obj._callbackList)..") not the same as expected(="..textutils.serialise(callbackList1)..")")
+
+    -- cleanup test
+end
 
 local function hasWork(workList, someWorkId)
     for i, aWorkId in ipairs(workList) do
@@ -92,16 +118,6 @@ local function hasWork(workList, someWorkId)
 
     -- end
     return false
-end
-
-local function workListCopy(workList)
-    local copy = {}
-    for i, aWorkId in ipairs(workList) do
-        copy[i] = aWorkId
-    end
-
-    -- end
-    return copy
 end
 
 function T_WIPQueue.T_addWork()
@@ -192,22 +208,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function T_WIPQueue.T_new()
-    -- prepare test
-    corelog.WriteToLog("* WIPQueue:new() tests")
-
-    -- test full
-    local obj = WIPQueue:new({
-        _workList       = workListCopy(workList1),
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj)
-    assert(obj._workList[1] == workId1, "no workId1")
-    assert(obj._workList[2] == workId2, "no workId2")
-    assert(obj._callbackList:isEqual(callbackList1), "gotten _callbackList(="..textutils.serialise(obj._callbackList)..") not the same as expected(="..textutils.serialise(callbackList1)..")")
-
-    -- cleanup test
-end
 
 function T_WIPQueue.T_isTypeOf()
     -- prepare test

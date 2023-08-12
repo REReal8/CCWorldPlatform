@@ -20,12 +20,33 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
     A TestObj object can be used for testing object related functionality.
 --]]
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+function TestObj:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Constructs a TestObj.
+
+        Parameters:
+            o               + (table, {}) table with object fields
+                _field1     - (string) field
+                _field2     - (number) field
+                _field3     - (number, nil) (optional) field
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
 
 function TestObj:getField1()
     return self._field1
@@ -68,27 +89,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function TestObj:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Constructs a TestObj.
-
-        Parameters:
-            o               + (table, {}) table with object fields
-                _field1     - (string) field
-                _field2     - (number) field
-                _field3     - (number, nil) (optional) field
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function TestObj:getClassName()
     return "TestObj"

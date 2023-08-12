@@ -47,12 +47,36 @@ local enterprise_manufacturing
     also be a full fledged local ItemDepot site.
 --]]
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+function Factory:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Factory.
+
+        Parameters:
+            o                           + (table, {}) with object fields
+                _id                     - (string) id of the Factory
+                _baseLocation           - (Location) location of the Factory
+                _inputLocators          - (ObjArray) with input locators
+                _outputLocators         - (ObjArray) with output locators
+                _craftingSpots          - (ObjArray) with crafting spots
+                _smeltingSpots          - (ObjArray) with smelting spots
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
 
 function Factory:getId()
     return self._id
@@ -86,30 +110,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function Factory:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a Factory.
-
-        Parameters:
-            o                           + (table, {}) with object fields
-                _id                     - (string) id of the Factory
-                _baseLocation           - (Location) location of the Factory
-                _inputLocators          - (ObjArray) with input locators
-                _outputLocators         - (ObjArray) with output locators
-                _craftingSpots          - (ObjArray) with crafting spots
-                _smeltingSpots          - (ObjArray) with smelting spots
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Factory:new: Invalid input") return {} end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function Factory:getClassName()
     return "Factory"

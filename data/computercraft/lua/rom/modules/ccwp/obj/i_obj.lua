@@ -2,7 +2,7 @@ local IObj = {
 }
 
 --[[
-    This module implements the interface IObj.
+    This module specifies the IObj interface.
 
     It defines a set of methods that classes adhering to this interface must implement.
 
@@ -21,23 +21,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function IObj:new(...)
-    --[[
-        This method constructs a XXXObj instance from an objectTable with all necessary fields as defined in the class.
-
-        Return value:
-                o                       - (XXXObj) the constructed XXXObj
-
-        Parameters:
-            o                           + (table) objectTable of this XXXObj
-                field1                  - (Location) location of XXXObj
-                field2                  - (number, 2) ...
-                ...
-    ]]
-
-    unimplementedMethodError("new")
-end
 
 function IObj:getClassName()
     --[[
@@ -94,7 +77,6 @@ function IObj.ImplementsInterface(obj)
     ]]
 
     -- check
-    if not obj.new then return false end
     if not obj.getClassName then return false end
     if not obj.isTypeOf then return false end
     if not obj.isEqual then return false end

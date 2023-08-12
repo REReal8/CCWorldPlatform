@@ -78,12 +78,12 @@ function T_Factory.T_ImplementsIItemSupplier()
     ImplementsInterface("IItemSupplier")
 end
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
 local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
@@ -404,7 +404,7 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
-    local chest2 = T_Obj.createObj("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "failed obtaining Chest 2")
 
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 --    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()

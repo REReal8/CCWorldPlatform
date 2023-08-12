@@ -73,12 +73,12 @@ function T_Turtle.T_ImplementsIItemDepot()
     ImplementsInterface("IItemDepot")
 end
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 function T_Turtle.T_Getters()
     -- prepare test
@@ -211,7 +211,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.createObj("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
     local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
@@ -275,7 +275,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.createObj("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
     local itemsLocator = enterprise_chests:saveObject(chest2)
 
     -- test

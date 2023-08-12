@@ -38,12 +38,38 @@ local enterprise_storage
         - The actual Silo's should never be accessed directly but only via the services of this mobj.
 --]]
 
---    _                                     _   _               _
---   | |                                   | | | |             | |
---   | |__   __ _ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | '_ \ / _` / __|/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |_) | (_| \__ \  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_.__/ \__,_|___/\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+function Silo:new(...)
+    -- get & check input from description
+    local checkSuccess, o = InputChecker.Check([[
+        Construct a Silo.
+
+        Parameters:
+            o                           + (table, {}) with object fields
+                _id                     - (string) id of the Silo
+                _version                - (number) version of the Silo
+                _baseLocation           - (Location) base location of the Silo
+                _entryLocation          - (Location) entry location of the Silo
+                _dropLocation           - (number) top chest index
+                _pickupLocation         - (number) top chest index
+                _topChests              - (ObjArray) with top chests
+                _storageChests          - (ObjArray) with storage chests
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
+
+    -- set class info
+    setmetatable(o, self)
+    self.__index = self
+
+    -- end
+    return o
+end
 
 function Silo:Activate()
     self._operational = true
@@ -85,32 +111,6 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
-
-function Silo:new(...)
-    -- get & check input from description
-    local checkSuccess, o = InputChecker.Check([[
-        Construct a Silo.
-
-        Parameters:
-            o                           + (table, {}) with object fields
-                _id                     - (string) id of the Silo
-                _version                - (number) version of the Silo
-                _baseLocation           - (Location) base location of the Silo
-                _entryLocation          - (Location) entry location of the Silo
-                _dropLocation           - (number) top chest index
-                _pickupLocation         - (number) top chest index
-                _topChests              - (ObjArray) with top chests
-                _storageChests          - (ObjArray) with storage chests
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
-
-    -- set class info
-    setmetatable(o, self)
-    self.__index = self
-
-    -- end
-    return o
-end
 
 function Silo:getClassName()
     return "Silo"
