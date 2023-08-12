@@ -324,6 +324,10 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		-- executing the code as wordt
 		coretask.AddWork(f)
 		coredisplay.UpdateToDisplay(t.filename.."."..t.func.." is queued for execution")
+
+		-- stay on the testing screen when executing an command
+		return false
+
 	elseif type(t) == "table" and type(t.filename) == "string" then
 		-- test functions screen
 
