@@ -1,4 +1,5 @@
 local T_Object = {}
+
 local corelog = require "corelog"
 
 local Object = require "object"
@@ -57,6 +58,24 @@ function T_Object.T_IsInstanceOf()
     assert(Object.IsInstanceOf(employeeObj, Employee), "Failed: employeeObj is an instance of Employee")
     assert(Object.IsInstanceOf(employeeObj, Person), "Failed: employeeObj is an instance of Person")
     assert(Object.IsInstanceOf(employeeObj, Interface), "Failed: employeeObj is an instance of Interface")
+
+    -- AnotherClass
+    -- (this class uses a slightly different initialisation logic as the other ones)
+    local AnotherClass = {}
+    function AnotherClass:new()
+        -- set class info
+        local instance = {}
+        setmetatable(instance, self)
+        self.__index = self
+
+        -- end
+        return instance
+    end
+    setmetatable(AnotherClass, Interface)
+
+    -- Test on AnotherClass
+    local anotherObj = AnotherClass:new()
+    assert(Object.IsInstanceOf(anotherObj, Interface), "Failed: anotherObj is expected to be an instance of Interface")
 
     -- cleanup test
 end
