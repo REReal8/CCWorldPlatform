@@ -1,9 +1,10 @@
 local coredisplay = {}
-local coresystem = require "coresystem"
-local corelog = require "corelog"
-local coreutils = require "coreutils"
-local coretask = require "coretask"
-local coremove = require "coremove"
+local coresystem	= require "coresystem"
+local coredht		= require "coredht"
+local corelog		= require "corelog"
+local coreutils		= require "coreutils"
+local coretask		= require "coretask"
+local coremove		= require "coremove"
 
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
@@ -28,6 +29,13 @@ end
 
 -- endless loop function for the display
 function coredisplay.Run()
+    -- is de dth al beschikbaar?
+    while not coredht.IsReady() do
+
+        -- gewoon ff wachten
+        os.sleep(0.25)
+    end
+
 	-- only continue as long as there is a main menu defined
 	while db.mainmenu ~= nil and coresystem.IsRunning() do
 		-- get de next screen definition
