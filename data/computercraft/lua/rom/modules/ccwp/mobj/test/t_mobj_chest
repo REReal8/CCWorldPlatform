@@ -144,38 +144,12 @@ end
 
 function T_Chest.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":isEqual() tests")
     local id = coreutils.NewId()
     local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
+    local otherObj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
 
-    -- test same
-    local obj1 = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
-    local isEqual = obj1:isEqual(obj)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _baseLocation
-    obj._baseLocation = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._baseLocation = location1
-
-    -- test different _accessDirection
-    obj._accessDirection = "bottom"
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._accessDirection = accessDirection1
-
-    -- test different _itemsInventory
-    obj._inventory = { "ToDo: add some elements here" } -- ToDo
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._inventory = inventory1
-
-    -- cleanup test
+    -- test
+    T_IObj.pt_isEqual(testClassName, obj, otherObj)
 end
 
 function T_Chest.T_copy()
