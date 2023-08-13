@@ -2,11 +2,11 @@ ToDo List
 ---------
 
 R  finish MObjHost
-   R  test delistMObj_SSrv                                        (done)
-   R  test removeMObj_ASrv                                        (done)
-   R  remove completeRunningBusiness_AOSrv from IMObj interface   (done)
+   R  test delistMObj_SSrv                                                                                              (done)
+   R  test removeMObj_ASrv                                                                                              (done)
+   R  remove completeRunningBusiness_AOSrv from IMObj interface                                                         (done)
    R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
-   R  (re)consider relevant method naming:                        (done)
+   R  (re)consider relevant method naming:                                                                              (done)
                   MObjHost          MObjHost       (MObj)Host  MObj           MObj        -  MObjHost                MObjHost    (MObj)Host     MObj                 MObj        -  ent_constr
       - now:      addMObj           registerMObj   saveObject  buildBlueprint construct   -  removeMObj              delistMObj  deleteResource dismantleBlueprint   destruct    -  build
       - option1:  createNew         ?              ?           buildBlueprint construct   -  destroy                 ?           ?              dismantleBlueprint   destruct    -  build
@@ -14,18 +14,18 @@ R  finish MObjHost
       - based on the following conversation I have chosen option 2: https://chat.openai.com/share/65d3e63b-7618-4522-a436-e88964f4d293
    -  Support updating of MObj's
 
-R  Dummy callback             (done)
-   R  in more logical class   (done)
-   R  easier way to obtain    (done)
+R  Dummy callback                                                                                                       (done)
+   R  in more logical class                                                                                             (done)
+   R  easier way to obtain                                                                                              (done)
 
 R  IObj
-   R  rename isSame to isEqual                                                   (done)
+   R  rename isSame to isEqual                                                                                          (done)
    (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
 
-R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface  (done)
+R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
 
 R  Generalise test functions into "templates" to reduce duplication
-   R  generalise (I)Obj test functions                            (done)
+   R  generalise (I)Obj test functions                                                                                  (done)
    R  generalise (I)ItemSupplier test functions
    R  generalise (I)ItemDepot test functions
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
@@ -33,10 +33,10 @@ R  Generalise test functions into "templates" to reduce duplication
 
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
-   R  mobj_chest              (done)
+   R  mobj_chest                                                                                                        (done)
    R  mobj_factory
    -  mobj_mine
-   R  mobj_silo               (done)
+   R  mobj_silo                                                                                                         (done)
    R  mobj_shop
    R  mobj_turtle
 
@@ -55,8 +55,8 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
    R  enterprise_chest
-      R  upgrade to a MObjHost                                    (done)
-      R  use new MObjHost methods instead of current equivalent   (done)
+      R  upgrade to a MObjHost                                                                                          (done)
+      R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions
       -  merge into enterprise_storage
    R  enterprise_manufacturing
@@ -68,8 +68,8 @@ R  use MObjHost class
       -  use new MObjHost methods instead of current equivalent
       -  use generalised test functions
    R  enterprise_storage
-      R  upgrade into an MObjHost                                 (done)
-      R  use new MObjHost methods instead of current equivalent   (done)
+      R  upgrade into an MObjHost                                                                                       (done)
+      R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions
    R  enterprise_shop
       R  upgrade into an MObjHost
@@ -82,8 +82,8 @@ R  use MObjHost class
       R  use generalised test functions
 
 -  Obj(ect) Initialisation & Destruction: improve
-   R  rename section base methods => initialisation                              (done)
-   R  remove new from IObj (+ move most implementations to correct section)      (done)
+   R  rename section base methods => initialisation                                                                     (done)
+   R  remove new from IObj (+ move most implementations to correct section)                                             (done)
    -  Consider revising Initialisation, some aspects to consider
       -  Serialising and deserialising objects
          -  consider introducting methods (new)FromTable and serialiseToTable
