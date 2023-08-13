@@ -1,9 +1,8 @@
-local IObj = require "i_obj"
-
 -- define class
 local ObjBase = {}
 
 -- set class inheritance structure
+local IObj = require "i_obj"
 setmetatable(ObjBase, IObj)
 
 --[[
