@@ -180,10 +180,10 @@ end
 
 function T_Chest.T_copy()
     -- prepare test
-    local oTable = T_Chest.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_Obj.T_copy(testClassName, oTable)
+    T_IObj.pt_copy(testClassName, obj)
 end
 
 --    _____ __  __  ____  _     _                  _   _               _

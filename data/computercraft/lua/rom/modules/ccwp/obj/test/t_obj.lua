@@ -117,18 +117,4 @@ function T_Obj.T_ImplementsInterface(className, oTable)
     T_Obj.ImplementsInterface("IObj", className, oTable)
 end
 
-function T_Obj.T_copy(className, oTable)
-    -- prepare test
-    assert(className, "no className provided")
-    corelog.WriteToLog("* "..className..":copy() tests")
-
-    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
-
-    -- test
-    local copy = obj:copy()
-    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
-
-    -- cleanup test
-end
-
 return T_Obj
