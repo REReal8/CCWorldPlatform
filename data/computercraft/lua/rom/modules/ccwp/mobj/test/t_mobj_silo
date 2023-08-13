@@ -44,7 +44,7 @@ function T_Silo.T_All()
     T_Silo.T_ImplementsIItemDepot()
 end
 
-local className = "Silo"
+local testClassName = "Silo"
 local location1  = Location:new({_x= 12, _y= 12, _z= 1, _dx=0, _dy=1})
 
 local compact = { compact = true }
@@ -96,7 +96,7 @@ function T_Silo.T_new()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_new(className, oTable)
+    T_Obj.T_new(testClassName, oTable)
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -113,7 +113,7 @@ function T_Silo.T_ImplementsIObj()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_ImplementsInterface(className, oTable)
+    T_Obj.T_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Silo.T_getClassName()
@@ -121,7 +121,7 @@ function T_Silo.T_getClassName()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_getClassName(className, oTable)
+    T_Obj.T_getClassName(testClassName, oTable)
 end
 
 function T_Silo.T_isTypeOf()
@@ -129,12 +129,12 @@ function T_Silo.T_isTypeOf()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_isTypeOf(className, oTable)
+    T_Obj.T_isTypeOf(testClassName, oTable)
 end
 
 function T_Silo.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* "..className..":isEqual() tests")
+    corelog.WriteToLog("* "..testClassName..":isEqual() tests")
     local id = coreutils.NewId()
     local topChests1 = ObjArray:new({ _objClassName = "URL", })
 
@@ -145,10 +145,10 @@ function T_Silo.T_isEqual()
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests2 = ObjArray:new({ _objClassName = "URL", chestLocator2 })
 
-    local obj = T_Obj.createObjFromTable(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..testClassName)
 
     -- test same
-    local obj1 = T_Obj.createObjFromTable(className, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..className)
+    local obj1 = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..testClassName)
     local isEqual = obj1:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -175,7 +175,7 @@ function T_Silo.T_copy()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_copy(className, oTable)
+    T_Obj.T_copy(testClassName, oTable)
 end
 
 --    _____ __  __  ____  _     _                  _   _               _
@@ -192,12 +192,12 @@ function T_Silo.T_ImplementsIMObj()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_MObj.T_ImplementsInterface(className, oTable)
+    T_MObj.T_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Silo.T_destruct()
     -- prepare test
-    corelog.WriteToLog("* "..className..":destruct() tests")
+    corelog.WriteToLog("* "..testClassName..":destruct() tests")
     local mobj = Silo:construct({
         baseLocation    = location1,
         topChests       = 0,
@@ -206,12 +206,12 @@ function T_Silo.T_destruct()
 
     -- test
     local destructSuccess = mobj:destruct()
-    assert(destructSuccess, className..":destruct not a success")
+    assert(destructSuccess, testClassName..":destruct not a success")
 end
 
 function T_Silo.T_construct()
     -- prepare test
-    corelog.WriteToLog("* "..className..":construct() tests")
+    corelog.WriteToLog("* "..testClassName..":construct() tests")
     local topChests1 = 4
     local layers1 = 3
 
@@ -268,7 +268,7 @@ function T_Silo.T_ImplementsIItemSupplier()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_ItemSupplier.T_ImplementsInterface(className, oTable)
+    T_ItemSupplier.T_ImplementsInterface(testClassName, oTable)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
@@ -343,7 +343,7 @@ function T_Silo.T_ImplementsIItemDepot()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_ItemDepot.T_ImplementsInterface(className, oTable)
+    T_ItemDepot.T_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Silo.T_storeItemsFrom_AOSrv()
