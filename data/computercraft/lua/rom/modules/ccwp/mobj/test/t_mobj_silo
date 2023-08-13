@@ -73,7 +73,7 @@ function T_Silo.NewOTable(baseLocation, topChests, storageChests, id)
         _version        = 1,
 
         -- locations
-        _baseLocation   = baseLocation,
+        _baseLocation   = baseLocation:copy(),
         _entryLocation  = baseLocation:getRelativeLocation(3, 3, 0),
 
         -- pickup and drop
@@ -81,8 +81,8 @@ function T_Silo.NewOTable(baseLocation, topChests, storageChests, id)
         _pickupLocation = 0,
 
         -- chests
-        _topChests      = topChests,
-        _storageChests  = storageChests,
+        _topChests      = topChests:copy(),
+        _storageChests  = storageChests:copy(),
 
         -- is this silo accepting requests?
         _operational    = false,
@@ -135,40 +135,18 @@ end
 
 function T_Silo.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":isEqual() tests")
     local id = coreutils.NewId()
-    local topChests1 = ObjArray:new({ _objClassName = "URL", })
-
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests2 = ObjArray:new({ _objClassName = "URL", chestLocator1 })
-    local storageChests1 = ObjArray:new({ _objClassName = "URL", })
+    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 })
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests2 = ObjArray:new({ _objClassName = "URL", chestLocator2 })
+    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 })
 
     local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..testClassName)
+    local otherObj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..testClassName)
 
-    -- test same
-    local obj1 = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1, storageChests1, id)) assert(obj, "failed obtaining "..testClassName)
-    local isEqual = obj1:isEqual(obj)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _topChests
-    obj._topChests = topChests2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._topChests = topChests1
-
-    -- test different storageChests1
-    obj._storageChests = storageChests2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._storageChests = storageChests1
-
-    -- cleanup test
+    -- test
+    T_IObj.pt_isEqual(testClassName, obj, otherObj)
 end
 
 function T_Silo.T_copy()

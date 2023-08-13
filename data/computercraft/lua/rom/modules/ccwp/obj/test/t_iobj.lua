@@ -66,7 +66,7 @@ local function pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, 
     -- test not equal
     local isEqual = obj:isEqual(otherObj)
     local expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName.." of type "..type(fieldValue))
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName.." of type "..type(fieldValue).." with original value "..textutils.serialise(fieldValue))
 
     -- restore original value (for follow up tests)
     otherTable[fieldName] = fieldValue
