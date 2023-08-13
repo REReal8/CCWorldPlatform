@@ -121,7 +121,7 @@ function T_Chest.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
-    local otherObj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
+    local otherObj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
