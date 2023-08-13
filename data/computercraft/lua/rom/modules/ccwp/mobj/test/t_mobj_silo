@@ -23,10 +23,10 @@ local T_ItemDepot = require "test.t_item_depot"
 local t_turtle = require "test.t_turtle"
 
 function T_Silo.T_All()
-    -- base methods
+    -- initialisation
+    T_Silo.T_new()
 
     -- IObj methods
-    T_Silo.T_new()
     T_Silo.T_ImplementsIObj()
     T_Silo.T_getClassName()
     T_Silo.T_isTypeOf()

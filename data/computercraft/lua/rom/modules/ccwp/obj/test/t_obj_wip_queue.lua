@@ -9,17 +9,15 @@ local ObjArray = require "obj_array"
 local WIPQueue = require "obj_wip_queue"
 
 function T_WIPQueue.T_All()
-    -- interfaces
-    T_WIPQueue.T_ImplementsIObj()
-
-    -- base methods
+    -- initialisation
+    T_WIPQueue.T_new()
     T_WIPQueue.T_addWork()
     T_WIPQueue.T_removeWork()
     T_WIPQueue.T_noWIP()
     T_WIPQueue.T_addCallback()
 
     -- IObj methods
-    T_WIPQueue.T_new()
+    T_WIPQueue.T_ImplementsIObj()
     T_WIPQueue.T_isTypeOf()
     T_WIPQueue.T_isEqual()
     T_WIPQueue.T_copy()

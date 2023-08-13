@@ -8,9 +8,11 @@ local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
 function T_ObjTable.T_All()
-    -- base methods
-    T_ObjTable.T_ImplementsIObj()
+    -- initialisation
     T_ObjTable.T_new()
+
+    -- IObj methods
+    T_ObjTable.T_ImplementsIObj()
     T_ObjTable.T_isTypeOf()
     T_ObjTable.T_isEqual()
     T_ObjTable.T_copy()
@@ -40,18 +42,6 @@ local testObj2 = TestObj:new({
 })
 local wrongTestObj1 = Location:new()
 
-function T_ObjTable.T_ImplementsIObj()
-    -- prepare test
-    corelog.WriteToLog("* ObjTable IObj interface test")
-    local obj = ObjTable:new() if not obj then corelog.Error("failed obtaining ObjTable") return end
-
-    -- test
-    local implementsInterface = IObj.ImplementsInterface(obj)
-    assert(implementsInterface, "ObjTable class does not (fully) implement IObj interface")
-
-    -- cleanup test
-end
-
 function T_ObjTable.T_new()
     -- prepare test
     corelog.WriteToLog("* ObjTable:new() tests")
@@ -75,6 +65,27 @@ function T_ObjTable.T_new()
     assert(objTable:getObjClassName() == defaultName, "gotten getObjClassName(="..objTable:getObjClassName()..") not the same as expected(="..defaultName..")")
     expectedNElements = 0
     assert(objTable:nObjs() == expectedNElements, " # elements(="..objTable:nObjs()..") not the same as expected(="..expectedNElements..")")
+
+    -- cleanup test
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function T_ObjTable.T_ImplementsIObj()
+    -- prepare test
+    corelog.WriteToLog("* ObjTable IObj interface test")
+    local obj = ObjTable:new() if not obj then corelog.Error("failed obtaining ObjTable") return end
+
+    -- test
+    local implementsInterface = IObj.ImplementsInterface(obj)
+    assert(implementsInterface, "ObjTable class does not (fully) implement IObj interface")
 
     -- cleanup test
 end

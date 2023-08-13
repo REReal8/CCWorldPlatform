@@ -24,12 +24,11 @@ local T_Chest = require "test.t_mobj_chest"
 local t_turtle = require "test.t_turtle"
 
 function T_Factory.T_All()
-    -- interfaces
-    T_Factory.T_ImplementsIObj()
-    T_Factory.T_ImplementsIItemSupplier()
-
-    -- base methods
+    -- initialisation
     T_Factory.T_new()
+
+    -- IObj methods
+    T_Factory.T_ImplementsIObj()
     T_Factory.T_isTypeOf()
     T_Factory.T_isEqual()
     T_Factory.T_copy()
@@ -45,6 +44,7 @@ function T_Factory.T_All()
     T_Factory.T_getProductionLocation_Att()
 
     -- IItemSupplier methods
+    T_Factory.T_ImplementsIItemSupplier()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
@@ -68,14 +68,6 @@ local function ImplementsInterface(interfaceName)
     assert(implementsInterface, "Factory class does not (fully) implement "..interfaceName.." interface")
 
     -- cleanup test
-end
-
-function T_Factory.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_Factory.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
 end
 
 --    _       _ _   _       _ _           _   _
@@ -142,6 +134,19 @@ function T_Factory.CreateFactory(baseLocation, inputLocators, outputLocators, cr
 
     -- end
     return obj
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function T_Factory.T_ImplementsIObj()
+    ImplementsInterface("IObj")
 end
 
 function T_Factory.T_isTypeOf()
@@ -337,6 +342,19 @@ function T_Factory.T_getProductionLocation_Att()
     assert(productionLocation:isEqual(expectedLocation), "gotten getProductionLocation_Att(="..textutils.serialise(productionLocation, compact)..") not the same as expected(="..textutils.serialise(expectedLocation, compact)..")")
 
     -- cleanup test
+end
+
+--    _____ _____ _                  _____                   _ _                            _   _               _
+--   |_   _|_   _| |                / ____|                 | (_)                          | | | |             | |
+--     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __   _ __ ___   ___| |_| |__   ___   __| |___
+--     | |   | | | __/ _ \ '_ ` _ \ \___ \| | | | '_ \| '_ \| | |/ _ \ '__| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_ _| |_| ||  __/ | | | | |____) | |_| | |_) | |_) | | |  __/ |    | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|    |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                                              | |   | |
+--                                              |_|   |_|
+
+function T_Factory.T_ImplementsIItemSupplier()
+    ImplementsInterface("IItemSupplier")
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()

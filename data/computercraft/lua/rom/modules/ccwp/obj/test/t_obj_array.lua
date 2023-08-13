@@ -8,9 +8,11 @@ local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
 function T_ObjArray.T_All()
-    -- base methods
-    T_ObjArray.T_ImplementsIObj()
+    -- initialisation
     T_ObjArray.T_new()
+
+    -- IObj methods
+    T_ObjArray.T_ImplementsIObj()
     T_ObjArray.T_isTypeOf()
     T_ObjArray.T_isEqual()
     T_ObjArray.T_copy()
@@ -40,18 +42,6 @@ local testObj2 = TestObj:new({
 })
 local wrongTestObj1 = Location:new()
 
-function T_ObjArray.T_ImplementsIObj()
-    -- prepare test
-    corelog.WriteToLog("* ObjArray IObj interface test")
-    local obj = ObjArray:new() if not obj then corelog.Error("failed obtaining ObjArray") return end
-
-    -- test
-    local implementsInterface = IObj.ImplementsInterface(obj)
-    assert(implementsInterface, "ObjArray class does not (fully) implement IObj interface")
-
-    -- cleanup test
-end
-
 function T_ObjArray.T_new()
     -- prepare test
     corelog.WriteToLog("* ObjArray:new() tests")
@@ -75,6 +65,27 @@ function T_ObjArray.T_new()
     assert(objArray:getObjClassName() == defaultName, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..defaultName..")")
     expectedNElements = 0
     assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
+
+    -- cleanup test
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function T_ObjArray.T_ImplementsIObj()
+    -- prepare test
+    corelog.WriteToLog("* ObjArray IObj interface test")
+    local obj = ObjArray:new() if not obj then corelog.Error("failed obtaining ObjArray") return end
+
+    -- test
+    local implementsInterface = IObj.ImplementsInterface(obj)
+    assert(implementsInterface, "ObjArray class does not (fully) implement IObj interface")
 
     -- cleanup test
 end

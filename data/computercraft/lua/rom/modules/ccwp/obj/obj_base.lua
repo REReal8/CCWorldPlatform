@@ -19,7 +19,6 @@ local Object = require "object"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-
 function ObjBase:new()
     --[[
         Constructor of ObjBase class.

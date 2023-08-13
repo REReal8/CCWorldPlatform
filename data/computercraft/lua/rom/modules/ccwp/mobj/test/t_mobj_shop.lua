@@ -26,12 +26,11 @@ local T_BirchForest = require "test.t_mobj_birchforest"
 local t_turtle = require "test.t_turtle"
 
 function T_Shop.T_All()
-    -- interfaces
-    T_Shop.T_ImplementsIObj()
-    T_Shop.T_ImplementsIItemSupplier()
-
-    -- base methods
+    -- initialisation
     T_Shop.T_Getters()
+
+    -- IObj methods
+    T_Shop.T_ImplementsIObj()
     T_Shop.T_isTypeOf()
     T_Shop.T_isEqual()
     T_Shop.T_copy()
@@ -45,6 +44,7 @@ function T_Shop.T_All()
     T_Shop.T_bestItemSupplier()
 
     -- IItemSupplier methods
+    T_Shop.T_ImplementsIItemSupplier()
     T_Shop.T_can_ProvideItems_QOSrv()
     T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
 end
@@ -80,14 +80,6 @@ local function ImplementsInterface(interfaceName)
     assert(implementsInterface, "Shop class does not (fully) implement "..interfaceName.." interface")
 
     -- cleanup test
-end
-
-function T_Shop.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_Shop.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
 end
 
 --    _       _ _   _       _ _           _   _
@@ -126,6 +118,19 @@ function T_Shop.CreateShop(itemSuppliersLocators, id)
 
     -- end
     return obj
+end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function T_Shop.T_ImplementsIObj()
+    ImplementsInterface("IObj")
 end
 
 function T_Shop.T_isTypeOf()
@@ -286,6 +291,19 @@ function T_Shop.T_bestItemSupplier()
     enterprise_chests:deleteResource(itemDepotLocator)
     enterprise_chests:deleteResource(closeItemSupplierLocator)
     enterprise_chests:deleteResource(farItemSupplierLocator)
+end
+
+--    _____ _____ _                  _____                   _ _                            _   _               _
+--   |_   _|_   _| |                / ____|                 | (_)                          | | | |             | |
+--     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __   _ __ ___   ___| |_| |__   ___   __| |___
+--     | |   | | | __/ _ \ '_ ` _ \ \___ \| | | | '_ \| '_ \| | |/ _ \ '__| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_ _| |_| ||  __/ | | | | |____) | |_| | |_) | |_) | | |  __/ |    | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_____|\__\___|_| |_| |_|_____/ \__,_| .__/| .__/|_|_|\___|_|    |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                                              | |   | |
+--                                              |_|   |_|
+
+function T_Shop.T_ImplementsIItemSupplier()
+    ImplementsInterface("IItemSupplier")
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

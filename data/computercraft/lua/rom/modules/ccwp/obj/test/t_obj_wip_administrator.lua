@@ -11,13 +11,11 @@ local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
 
 function T_WIPAdministrator.T_All()
-    -- interfaces
-    T_WIPAdministrator.T_ImplementsIObj()
-
-    -- base methods
+    -- initialisation
+    T_WIPAdministrator.T_new()
 
     -- IObj methods
-    T_WIPAdministrator.T_new()
+    T_WIPAdministrator.T_ImplementsIObj()
     T_WIPAdministrator.T_isTypeOf()
     T_WIPAdministrator.T_isEqual()
     T_WIPAdministrator.T_copy()
@@ -66,10 +64,6 @@ local function ImplementsInterface(interfaceName)
     -- cleanup test
 end
 
-function T_WIPAdministrator.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
@@ -98,6 +92,10 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function T_WIPAdministrator.T_ImplementsIObj()
+    ImplementsInterface("IObj")
+end
 
 function T_WIPAdministrator.T_isTypeOf()
     -- prepare test

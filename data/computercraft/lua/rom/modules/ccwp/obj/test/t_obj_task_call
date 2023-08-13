@@ -5,7 +5,7 @@ local corelog = require "corelog"
 local TaskCall = require "obj_task_call"
 
 function T_TaskCall.T_All()
-    -- base methods
+    -- initialisation methods
 
     -- specific methods
     T_TaskCall.T_call()

@@ -11,8 +11,10 @@ local Host = require "obj_host"
 local TestObj = require "test.obj_test"
 
 function T_Host.T_All()
-    -- base methods
+    -- initialisation
     T_Host.T_new()
+
+    -- IObj methods
     T_Host.T_isTypeOf()
     T_Host.T_isEqual()
     T_Host.T_copy()
@@ -61,6 +63,15 @@ function T_Host.T_new()
 
     -- cleanup test
 end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
 
 function T_Host.T_isTypeOf()
     -- prepare test

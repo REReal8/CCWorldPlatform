@@ -24,11 +24,11 @@ local T_ItemDepot = require "test.t_item_depot"
 local t_turtle = require "test.t_turtle"
 
 function T_Chest.T_All()
-    -- base methods
+    -- initialisation
     T_Chest.T_Getters()
+    T_Chest.T_new()
 
     -- IObj methods
-    T_Chest.T_new()
     T_Chest.T_ImplementsIObj()
     T_Chest.T_getClassName()
     T_Chest.T_isTypeOf()
