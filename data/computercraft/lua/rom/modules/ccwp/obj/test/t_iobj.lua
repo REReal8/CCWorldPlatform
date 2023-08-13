@@ -80,27 +80,33 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
     -- test fields
     for fieldName, fieldValue in pairs(otherTable) do
         corelog.WriteToLog(indent.."->test different field "..fieldName)
-        -- figure out anotherFieldValue
-        local anotherFieldValue = nil
-        if type(fieldValue) == "nil" then anotherFieldValue = "not nil" -- will probably never occur because key wouldn't be present
-        elseif type(fieldValue) == "number" then anotherFieldValue = fieldValue + 1
-        elseif type(fieldValue) == "string" then anotherFieldValue = fieldValue..", a longer string"
-        elseif type(fieldValue) == "boolean" then anotherFieldValue = not fieldValue
-        elseif type(fieldValue) == "table" then
-            if Object.IsInstanceOf(fieldValue, IObj) or IObj.ImplementsInterface(fieldValue) then
-                anotherFieldValue = "a string instead of an IObj"
+        -- check for table
+        if type(fieldValue) == "table" then
+            if Object.IsInstanceOf(fieldValue, IObj) then -- or IObj.ImplementsInterface(fieldValue) then
+                local anotherFieldValue = "a string instead of an IObj"
                 -- note: the actual class of the IObj field should have it's own isEqual test so we only need to test here it's inequality with something else (a string in this case)
+
+                -- test anotherValue
+                pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
             else
-                -- trigger test of equality of table fields
-                -- ToDo: implement
-                assert(false, "testing table field that is not an IObj is not supported (yet)")
+                -- trigger test of equality of plane table fields
+                pt_isNotEqual_tableField(obj, otherObj, fieldValue, indent.."  ")
             end
         else
-            assert(false, "testing field of type "..type(fieldValue).." not supported (yet)")
-        end
+            -- figure out anotherFieldValue
+            local anotherFieldValue = nil
+            if type(fieldValue) == "nil" then
+                anotherFieldValue = "not nil" -- will probably never occur because key wouldn't be present
+            elseif type(fieldValue) == "number" then anotherFieldValue = fieldValue + 1
+            elseif type(fieldValue) == "string" then anotherFieldValue = fieldValue..", a longer string"
+            elseif type(fieldValue) == "boolean" then anotherFieldValue = not fieldValue
+            else
+                assert(false, "testing field of type "..type(fieldValue).." not supported (yet)")
+            end
 
-        -- test anotherValue
-        pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
+            -- test anotherValue
+            pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
+        end
     end
 end
 

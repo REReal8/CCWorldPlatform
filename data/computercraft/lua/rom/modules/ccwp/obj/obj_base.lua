@@ -109,21 +109,28 @@ function ObjBase:isEqual(otherObj)
     return true
 end
 
+local function tableCopy(origTable, copyTable)
+    for fieldName, fieldValue in pairs(origTable) do
+        if type(fieldValue) == "table" and fieldValue.isInstanceOf and fieldValue:isInstanceOf(IObj) then
+            copyTable[fieldName] = fieldValue:copy()  -- Recursively copy nested objects
+        else
+            copyTable[fieldName] = fieldValue
+        end
+    end
+end
+
 function ObjBase:copy()
     --[[
         Method that returns a copy of the Obj.
     ]]
 
+    -- construct Obj
     local copy = setmetatable({}, getmetatable(self))
 
-    for fieldName, fieldValue in pairs(self) do
-        if type(fieldValue) == "table" and fieldValue.isInstanceOf and fieldValue:isInstanceOf(IObj) then
-            copy[fieldName] = fieldValue:copy()  -- Recursively copy nested objects
-        else
-            copy[fieldName] = fieldValue
-        end
-    end
+    -- copy table elelements
+    tableCopy(self, copy)
 
+    -- end
     return copy
 end
 
