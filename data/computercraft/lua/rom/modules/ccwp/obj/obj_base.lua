@@ -10,6 +10,8 @@ local ObjBase = {}
     Classes inherting from ObjBase automatically have the default implementation of IObj and do not need to (but can) specify their own.
 --]]
 
+local corelog = require "corelog"
+
 local Object = require "object"
 
 --    _       _ _   _       _ _           _   _
@@ -71,8 +73,6 @@ function ObjBase:isEqual(otherObj)
         Method that returns if the Obj is equal to another Obj.
     ]]
 
---    local corelog = require "corelog"
-
     -- check classes equal
     local selfClass = getmetatable(self)
     if not selfClass:isTypeOf(otherObj) then
@@ -80,18 +80,25 @@ function ObjBase:isEqual(otherObj)
         return false
     end
 
-    -- check fields equal
+    -- check all fields equal
     for fieldName, fieldValue in pairs(self) do
-        -- check field identity
+        -- check field equal
         if fieldValue ~= otherObj[fieldName] then
-            -- is field nested IObj?
-            if type(fieldValue) == "table" and Object.IsInstanceOf(fieldValue, IObj) then
-                -- check nested IObj field equal
-                if not fieldValue:isEqual(otherObj[fieldName]) then
---                    corelog.WriteToLog("nested obj not of type")
+            -- check table
+            if type(fieldValue) == "table" then
+                -- is field nested IObj?
+                if Object.IsInstanceOf(fieldValue, IObj) then
+                    -- check nested IObj field equal
+                    if not fieldValue:isEqual(otherObj[fieldName]) then
+--                        corelog.WriteToLog("nested obj not of type")
+                        return false
+                    end
+                else
+                    corelog.Warning("ObjBase:isEqual: none IObj table field (=fieldName="..fieldName..") not supported (yet) by ObjBase")
                     return false
                 end
             else
+                -- field not equal
 --                corelog.WriteToLog("field "..fieldName.." not equal")
                 return false
             end
