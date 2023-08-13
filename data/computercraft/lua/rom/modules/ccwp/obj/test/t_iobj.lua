@@ -77,7 +77,7 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
 
     -- test fields
     for fieldName, fieldValue in pairs(otherObj) do
-        corelog.WriteToLog("->test field "..fieldName)
+        corelog.WriteToLog("->test different field "..fieldName)
         -- figure out anotherFieldValue
         local anotherFieldValue = nil
         if type(fieldValue) == "nil" then anotherFieldValue = "not nil" -- will probably never occur because key wouldn't be present
@@ -90,7 +90,7 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
         end
 
         -- change value
-        obj[fieldName] = anotherFieldValue
+        otherObj[fieldName] = anotherFieldValue
 
         -- test not equal
         isEqual = obj:isEqual(otherObj)
@@ -98,7 +98,7 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
         assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName)
 
         -- restore original value (for follow up tests)
-        obj[fieldName] = fieldValue
+        otherObj[fieldName] = fieldValue
     end
 
     -- cleanup test
