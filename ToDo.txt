@@ -24,6 +24,13 @@ R  IObj
 
 R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface  (done)
 
+R  Generalise test functions into "templates" to reduce duplication
+   R  generalise (I)Obj test functions                            (done)
+   R  generalise (I)ItemSupplier test functions
+   R  generalise (I)ItemDepot test functions
+   R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
+   R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
+
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
    R  mobj_chest              (done)
@@ -32,13 +39,6 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_silo               (done)
    R  mobj_shop
    R  mobj_turtle
-
-R  Generalise test functions into "templates" to reduce duplication
-   R  generalise (I)Obj test functions                            (done)
-   R  generalise (I)ItemSupplier test functions
-   R  generalise (I)ItemDepot test functions
-   R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
-   R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
 
 R  Use generalised test functions for MObj's
    -  in mobj_birchforest
