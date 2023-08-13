@@ -8,7 +8,7 @@ local T_IObj = require "test.t_iobj"
 
 function T_ObjBase.T_All()
     -- IObj methods
-    T_ObjBase.T_IsInstanceOfIObj()
+    T_ObjBase.T_IsInstanceOf_IObj()
     T_ObjBase.T_getClassName()
     T_ObjBase.T_isTypeOf()
     T_ObjBase.T_isEqual()
@@ -38,7 +38,7 @@ end
 --                    _/ |
 --                   |__/
 
-function T_ObjBase.T_IsInstanceOfIObj()
+function T_ObjBase.T_IsInstanceOf_IObj()
     -- prepare test
     local obj = createTestObj()
 
