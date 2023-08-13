@@ -117,19 +117,6 @@ function T_Obj.T_ImplementsInterface(className, oTable)
     T_Obj.ImplementsInterface("IObj", className, oTable)
 end
 
-function T_Obj.T_getClassName(className, oTable)
-    -- prepare test
-    assert(className, "no className provided")
-    corelog.WriteToLog("* "..className..":getClassName() tests")
-
-    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
-
-    -- test
-    assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
-
-    -- cleanup test
-end
-
 function T_Obj.T_isTypeOf(className, oTable)
     -- prepare test
     assert(className, "no className provided")

@@ -14,6 +14,7 @@ local Silo = require "mobj_silo"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
 
+local T_IObj = require "test.t_iobj"
 local T_Obj = require "test.t_obj"
 local T_MObj = require "test.t_mobj"
 local T_ItemSupplier = require "test.t_item_supplier"
@@ -118,10 +119,10 @@ end
 
 function T_Silo.T_getClassName()
     -- prepare test
-    local oTable = T_Silo.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_Obj.T_getClassName(testClassName, oTable)
+    T_IObj.pt_getClassName(testClassName, obj)
 end
 
 function T_Silo.T_isTypeOf()
