@@ -68,7 +68,7 @@ end
 --                    _/ |
 --                   |__/
 
-function T_Obj.T_ImplementsInterface(className, oTable)
+function T_Obj.pt_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
     T_Obj.ImplementsInterface("IObj", className, oTable)
 end

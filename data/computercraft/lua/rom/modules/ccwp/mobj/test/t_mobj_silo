@@ -114,7 +114,7 @@ function T_Silo.T_ImplementsIObj()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_ImplementsInterface(testClassName, oTable)
+    T_Obj.pt_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Silo.T_getClassName()
