@@ -7,6 +7,8 @@ local role_fuel_worker = require "role_fuel_worker"
 
 local Callback = require "obj_callback"
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local URL = require "obj_url"
@@ -15,6 +17,7 @@ local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
 
+local T_Object = require "test.t_object"
 local T_IObj = require "test.t_iobj"
 local T_Obj = require "test.t_obj"
 local T_MObj = require "test.t_mobj"
@@ -29,11 +32,7 @@ function T_Chest.T_All()
     T_Chest.T_new()
 
     -- IObj methods
-    T_Chest.T_ImplementsIObj()
-    T_Chest.T_getClassName()
-    T_Chest.T_isTypeOf()
-    T_Chest.T_isEqual()
-    T_Chest.T_copy()
+    T_Chest.T_IObj_All()
 
     -- IMObj methods
     T_Chest.T_ImplementsIMObj()
@@ -118,46 +117,16 @@ end
 --                    _/ |
 --                   |__/
 
-function T_Chest.T_ImplementsIObj()
-    -- prepare test
-    local oTable = T_Chest.NewOTable()
-
-    -- test
-    T_Obj.pt_ImplementsInterface(testClassName, oTable)
-end
-
-function T_Chest.T_getClassName()
-    -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
-
-    -- test
-    T_IObj.pt_getClassName(testClassName, obj)
-end
-
-function T_Chest.T_isTypeOf()
-    -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
-
-    -- test
-    T_IObj.pt_isTypeOf(testClassName, obj)
-end
-
-function T_Chest.T_isEqual()
+function T_Chest.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
     local otherObj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_IObj.pt_isEqual(testClassName, obj, otherObj)
-end
-
-function T_Chest.T_copy()
-    -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
-
-    -- test
-    T_IObj.pt_copy(testClassName, obj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --    _____ __  __  ____  _     _                  _   _               _

@@ -1,10 +1,6 @@
-local Chest = {
-    _id                     = "",
-
-    _baseLocation           = nil,
-    _accessDirection        = "",
-    _inventory              = {},
-}
+-- define class
+local ObjBase = require "obj_base"
+local Chest = ObjBase:new()
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -84,43 +80,6 @@ end
 
 function Chest:getClassName()
     return "Chest"
-end
-
-function Chest:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Chest:isEqual(obj)
-    -- check input
-    if not Chest:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._baseLocation:isEqual(obj._baseLocation)
-                and self._accessDirection == obj._accessDirection
-                and self._inventory:isEqual(obj._inventory)
-
-    -- end
-    return isEqual
-end
-
-function Chest:copy()
-    local copy = Chest:new({
-        _id             = self._id,
-
-        _baseLocation   = self._baseLocation:copy(),
-        _accessDirection= self._accessDirection,
-        _inventory      = self._inventory:copy(),
-    })
-
-    return copy
 end
 
 --    _____ __  __  ____  _     _                  _   _               _
