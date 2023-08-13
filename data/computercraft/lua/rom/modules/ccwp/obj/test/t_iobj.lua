@@ -59,28 +59,14 @@ function T_IObj.pt_isTypeOf(className, obj)
     -- cleanup test
 end
 
-function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj are assumed to be the same at the start of the test
-    -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    assert(otherObj, "no otherObj provided")
-    corelog.WriteToLog("* "..className..":isEqual() tests")
-
-    -- test identical obj equal
-    corelog.WriteToLog("->test identical obj")
-    local isEqual = obj:isEqual(obj)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test equal obj equal
-    corelog.WriteToLog("->test equal obj")
-    isEqual = obj:isEqual(otherObj)
-    expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
+    --[[
+        This function tests obj and otherObj are not the same if a field in otherTable is changed w.r.t. the input.
+    ]]
 
     -- test fields
-    for fieldName, fieldValue in pairs(otherObj) do
-        corelog.WriteToLog("->test different field "..fieldName)
+    for fieldName, fieldValue in pairs(otherTable) do
+        corelog.WriteToLog(indent.."->test different field "..fieldName)
         -- figure out anotherFieldValue
         local anotherFieldValue = nil
         if type(fieldValue) == "nil" then anotherFieldValue = "not nil" -- will probably never occur because key wouldn't be present
@@ -101,16 +87,39 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
         end
 
         -- change value
-        otherObj[fieldName] = anotherFieldValue
+        otherTable[fieldName] = anotherFieldValue
 
         -- test not equal
-        isEqual = obj:isEqual(otherObj)
-        expectedIsEqual = false
-        assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName)
+        local isEqual = obj:isEqual(otherObj)
+        local expectedIsEqual = false
+        assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName.." of type "..type(fieldValue))
 
         -- restore original value (for follow up tests)
-        otherObj[fieldName] = fieldValue
+        otherTable[fieldName] = fieldValue
     end
+end
+
+function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj are assumed to be the same at the start of the test
+    -- prepare test
+    assert(className, "no className provided")
+    assert(obj, "no obj provided")
+    assert(otherObj, "no otherObj provided")
+    corelog.WriteToLog("* "..className..":isEqual() tests")
+
+    -- test identical obj equal
+    corelog.WriteToLog("->test identical obj")
+    local isEqual = obj:isEqual(obj)
+    local expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+
+    -- test equal obj equal
+    corelog.WriteToLog("->test equal obj")
+    isEqual = obj:isEqual(otherObj)
+    expectedIsEqual = true
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+
+    -- test different fields not equal
+    pt_isNotEqual_tableField(obj, otherObj, otherObj, "")
 
     -- cleanup test
 end
