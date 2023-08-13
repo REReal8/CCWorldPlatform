@@ -77,9 +77,9 @@ function T_Chest.NewOTable(baseLocation, accessDirection, inventory, id)
     local oTable = {
         _id                     = id,
 
-        _baseLocation           = baseLocation,
+        _baseLocation           = baseLocation:copy(),
         _accessDirection        = accessDirection,
-        _inventory              = inventory,
+        _inventory              = inventory:copy(),
     }
 
     -- end
