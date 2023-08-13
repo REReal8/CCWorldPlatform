@@ -48,7 +48,7 @@ function T_Chest.T_All()
     T_Chest.T_ImplementsIItemDepot()
 end
 
-local className = "Chest"
+local testClassName = "Chest"
 local mobjHostName = "enterprise_chests"
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
 local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
@@ -90,14 +90,14 @@ function T_Chest.T_new()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Obj.T_new(className, oTable)
+    T_Obj.T_new(testClassName, oTable)
 end
 
 function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest getter tests")
     local id = coreutils.NewId()
-    local obj = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
 
     -- test
     assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
@@ -122,7 +122,7 @@ function T_Chest.T_ImplementsIObj()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Obj.T_ImplementsInterface(className, oTable)
+    T_Obj.T_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Chest.T_getClassName()
@@ -130,7 +130,7 @@ function T_Chest.T_getClassName()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Obj.T_getClassName(className, oTable)
+    T_Obj.T_getClassName(testClassName, oTable)
 end
 
 function T_Chest.T_isTypeOf()
@@ -138,17 +138,17 @@ function T_Chest.T_isTypeOf()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Obj.T_isTypeOf(className, oTable)
+    T_Obj.T_isTypeOf(testClassName, oTable)
 end
 
 function T_Chest.T_isEqual()
     -- prepare test
-    corelog.WriteToLog("* "..className..":isEqual() tests")
+    corelog.WriteToLog("* "..testClassName..":isEqual() tests")
     local id = coreutils.NewId()
-    local obj = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
 
     -- test same
-    local obj1 = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..className)
+    local obj1 = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory1, id)) assert(obj, "failed obtaining "..testClassName)
     local isEqual = obj1:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -182,7 +182,7 @@ function T_Chest.T_copy()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Obj.T_copy(className, oTable)
+    T_Obj.T_copy(testClassName, oTable)
 end
 
 --    _____ __  __  ____  _     _                  _   _               _
@@ -199,7 +199,7 @@ function T_Chest.T_ImplementsIMObj()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_MObj.T_ImplementsInterface(className, oTable)
+    T_MObj.T_ImplementsInterface(testClassName, oTable)
 end
 
 local constructParameters1 = {
@@ -209,7 +209,7 @@ local constructParameters1 = {
 
 function T_Chest.T_construct()
     -- prepare test
-    corelog.WriteToLog("* "..className..":construct() tests")
+    corelog.WriteToLog("* "..testClassName..":construct() tests")
 
     -- test
     local mobj = Chest:construct(constructParameters1)
@@ -220,12 +220,12 @@ end
 
 function T_Chest.T_destruct()
     -- prepare test
-    corelog.WriteToLog("* "..className..":destruct() tests")
+    corelog.WriteToLog("* "..testClassName..":destruct() tests")
     local mobj = Chest:construct(constructParameters1)
 
     -- test
     local destructSuccess = mobj:destruct()
-    assert(destructSuccess, className..":destruct not a success")
+    assert(destructSuccess, testClassName..":destruct not a success")
 end
 
 --                        _                           _   _               _
@@ -238,7 +238,7 @@ end
 function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local obj = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..testClassName)
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local callback = Callback:new({
@@ -282,7 +282,7 @@ function T_Chest.T_ImplementsIItemSupplier()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_ItemSupplier.T_ImplementsInterface(className, oTable)
+    T_ItemSupplier.T_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
@@ -300,7 +300,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     }
 
     -- test
-    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
+    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
@@ -310,7 +310,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
         accessDirection = accessDirection1,
     }
 
-    local obj2 = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
+    local obj2 = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..testClassName.." 2")
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
 
     local provideItems = {
@@ -318,13 +318,13 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
     }
 
     -- test
-    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
+    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local obj = T_Obj.createObjFromTable(className, T_Chest.NewOTable()) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -352,7 +352,7 @@ function T_Chest.T_can_ProvideItems_QOSrv()
             { name = "minecraft:dirt", count = 20 },
         }
     })
-    local obj = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location1, accessDirection1, inventory)) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location1, accessDirection1, inventory)) assert(obj, "failed obtaining "..testClassName)
 
     -- test can
     local itemName = "minecraft:dirt"
@@ -383,13 +383,13 @@ function T_Chest.T_ImplementsIItemDepot()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_ItemDepot.T_ImplementsInterface(className, oTable)
+    T_ItemDepot.T_ImplementsInterface(testClassName, oTable)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local obj = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..className)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj, "failed obtaining "..testClassName)
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -427,7 +427,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Obj.createObjFromTable(className, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..className.." 2")
+    local obj2 = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(obj2, "failed obtaining "..testClassName.." 2")
     local itemsLocator = enterprise_chests:saveObject(obj2)
 
     -- test
