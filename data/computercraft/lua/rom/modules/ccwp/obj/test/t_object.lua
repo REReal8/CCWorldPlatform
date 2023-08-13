@@ -75,7 +75,7 @@ function T_Object.T_IsInstanceOf()
     -- (this class uses a slightly different initialisation logic as the other ones)
     local AnotherClass = {}
     function AnotherClass:new()
-        -- set class info
+        -- set instance class info
         local instance = {}
         setmetatable(instance, self)
         self.__index = self

@@ -26,7 +26,7 @@ function ObjBase:new()
         Constructor of ObjBase class.
     ]]
 
-    -- set class info
+    -- set instance class info
     local obj = {}
     setmetatable(obj, self)
     self.__index = self
