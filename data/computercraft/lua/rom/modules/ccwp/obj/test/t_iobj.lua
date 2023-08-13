@@ -59,6 +59,19 @@ function T_IObj.pt_isTypeOf(className, obj)
     -- cleanup test
 end
 
+local function pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
+    -- change value
+    otherTable[fieldName] = anotherFieldValue
+
+    -- test not equal
+    local isEqual = obj:isEqual(otherObj)
+    local expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName.." of type "..type(fieldValue))
+
+    -- restore original value (for follow up tests)
+    otherTable[fieldName] = fieldValue
+end
+
 local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
     --[[
         This function tests obj and otherObj are not the same if a field in otherTable is changed w.r.t. the input.
@@ -86,16 +99,8 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
             assert(false, "testing field of type "..type(fieldValue).." not supported (yet)")
         end
 
-        -- change value
-        otherTable[fieldName] = anotherFieldValue
-
-        -- test not equal
-        local isEqual = obj:isEqual(otherObj)
-        local expectedIsEqual = false
-        assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..") for field "..fieldName.." of type "..type(fieldValue))
-
-        -- restore original value (for follow up tests)
-        otherTable[fieldName] = fieldValue
+        -- test anotherValue
+        pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
     end
 end
 
