@@ -10,6 +10,23 @@ local ObjBase = require "obj_base"
 local T_Object = require "test.t_object"
 local T_IObj = require "test.t_iobj"
 
+function T_URL.T_All()
+    -- initialisation
+    T_URL.T_new()
+    T_URL.T_GettersURI()
+    T_URL.T_Setters()
+    T_URL.T_SettersFromURI()
+    T_URL.T_NewFromURI()
+
+    -- IObj methods
+    T_URL.T_IsInstanceOf_IObj()
+    T_URL.T_getClassName()
+    T_URL.T_IsInstanceOf_ObjBase()
+
+    -- specific methods
+    T_URL.T_SameURLComponents()
+    T_URL.T_baseCopy()
+end
 
 local scheme = "ccwprp"
 local host = "enterprise_forestry"
@@ -39,24 +56,6 @@ local portURI = ":1"
 local pathURI = "/"..pathSegments[1].."/"..pathSegments[2].."/"..pathSegments[3]
 local queryURI = "?"..itemName2.."="..itemCount2.."&"..itemName1.."="..itemCount1
 local expectedQueryURI = "?"..itemName1.."="..itemCount1.."&"..itemName2.."="..itemCount2
-
-function T_URL.T_All()
-    -- initialisation
-    T_URL.T_new()
-    T_URL.T_GettersURI()
-    T_URL.T_Setters()
-    T_URL.T_SettersFromURI()
-    T_URL.T_NewFromURI()
-
-    -- IObj methods
-    T_URL.T_IsInstanceOf_IObj()
-    T_URL.T_getClassName()
-    T_URL.T_IsInstanceOf_ObjBase()
-
-    -- specific methods
-    T_URL.T_SameURLComponents()
-    T_URL.T_baseCopy()
-end
 
 local compact = { compact = true }
 
