@@ -18,6 +18,12 @@ R  Dummy callback             (done)
    R  in more logical class   (done)
    R  easier way to obtain    (done)
 
+R  IObj
+   R  rename isSame to isEqual                                                   (done)
+   (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
+
+R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface  (done)
+
 RG ensure all MObj's follow IMObj interface
    R  mobj_birchforest
    R  mobj_chest              (done)
@@ -26,12 +32,6 @@ RG ensure all MObj's follow IMObj interface
    R  mobj_silo               (done)
    R  mobj_shop
    R  mobj_turtle
-
-R  IObj
-   R  rename isSame to isEqual
-   (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
-
-R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
 
 R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)Obj test functions                            (done)
@@ -80,6 +80,21 @@ R  use MObjHost class
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
+
+-  Obj(ect) Initialisation & Destruction: improve
+   R  rename section base methods => initialisation                              (done)
+   R  remove new from IObj (+ move most implementations to correct section)      (done)
+   -  Consider revising Initialisation, some aspects to consider
+      -  Serialising and deserialising objects
+         -  consider introducting methods (new)FromTable and serialiseToTable
+         -  provide a default implementing class
+         -  replace current new method in almost all current objects with the above
+      -  Consider introducing normal "new" method that takes a list of parameters (not as a table) from which objects are initialissed
+      -  construct method (and destruct methods) currently in IMObj
+         -  adopt/ change to the above "new" method, i.e.
+            -  it should not take a table with the parameters + the parameters itself (change MObjHost to reflect this change)
+            -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
+      -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
 
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
