@@ -127,10 +127,10 @@ end
 
 function T_Silo.T_isTypeOf()
     -- prepare test
-    local oTable = T_Silo.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_Obj.T_isTypeOf(testClassName, oTable)
+    T_IObj.pt_isTypeOf(testClassName, obj)
 end
 
 function T_Silo.T_isEqual()

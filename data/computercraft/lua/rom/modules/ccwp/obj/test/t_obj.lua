@@ -117,29 +117,6 @@ function T_Obj.T_ImplementsInterface(className, oTable)
     T_Obj.ImplementsInterface("IObj", className, oTable)
 end
 
-function T_Obj.T_isTypeOf(className, oTable)
-    -- prepare test
-    assert(className, "no className provided")
-    corelog.WriteToLog("* "..className..":isTypeOf() tests")
-
-    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
-
-    local class = objectFactory:getClass(className)
-    assert (class, "Class "..className.." not found in objectFactory")
-
-    -- test valid
-    local isTypeOf = class:isTypeOf(obj)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten "..className..":isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = class:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten "..className..":isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
 function T_Obj.T_copy(className, oTable)
     -- prepare test
     assert(className, "no className provided")
