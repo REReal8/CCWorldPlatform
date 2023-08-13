@@ -2,7 +2,12 @@ local T_Inventory = {}
 
 local corelog = require "corelog"
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local Inventory = require "obj_inventory"
+
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_iobj"
 
 function T_Inventory.T_All()
     -- helper functions
@@ -18,9 +23,7 @@ function T_Inventory.T_All()
     T_Inventory.T_new()
 
     -- IObj methods
-    T_Inventory.T_isTypeOf()
-    T_Inventory.T_isEqual()
-    T_Inventory.T_copy()
+    T_Inventory.T_IObj_All()
 
     -- specific methods
     T_Inventory.T_isEmpty()
@@ -200,9 +203,14 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local inventory1 = Inventory:new({
-    _slotTable  = slotTable1,
-})
+local testClassName = "Inventory"
+local function createTestObj()
+    local testObj = Inventory:new({
+        _slotTable  = Inventory.SlotTableCopy(slotTable1),
+    })
+
+    return testObj
+end
 
 function T_Inventory.T_new()
     -- prepare test
@@ -230,57 +238,15 @@ end
 --                    _/ |
 --                   |__/
 
-function T_Inventory.T_isTypeOf()
+function T_Inventory.T_IObj_All()
     -- prepare test
-    corelog.WriteToLog("* Inventory:isTypeOf() tests")
-    local inventory = Inventory:new({
-        _slotTable  = Inventory.SlotTableCopy(slotTable1),
-    })
-
-    -- test valid
-    local isTypeOf = Inventory:isTypeOf(inventory)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = Inventory:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_Inventory.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* Inventory:isEqual() tests")
-    local inventory2 = Inventory:new({
-        _slotTable  = Inventory.SlotTableCopy(slotTable1),
-    })
-
-    -- test same
-    local isEqual = inventory1:isEqual(inventory2)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different
-    inventory2:setSlotTable(slotTable2)
-    isEqual = inventory1:isEqual(inventory2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    inventory2:setSlotTable(slotTable1)
-
-    -- cleanup test
-end
-
-function T_Inventory.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* Inventory:copy() tests")
+    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
-    local copy = inventory1:copy()
-    assert(copy:isEqual(inventory1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
-
-    -- cleanup test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --                        _  __ _                       _   _               _
@@ -336,7 +302,7 @@ function T_Inventory.T_hasNoItems()
 
     -- test not empty
     inventory = Inventory:new({
-        _slotTable  = slotTable1,
+        _slotTable  = Inventory.SlotTableCopy(slotTable1),
     })
     hasNoItems = inventory:hasNoItems()
     expectedHasNoItems = false
@@ -367,7 +333,7 @@ function T_Inventory.T_getItemTable()
 
     -- test
     local inventory = Inventory:new({
-        _slotTable  = slotTable1,
+        _slotTable  = Inventory.SlotTableCopy(slotTable1),
     })
     local itemTable = inventory:getItemTable()
     local isEqual = Inventory.IsEqualItemTable(itemTable, itemTable1)
