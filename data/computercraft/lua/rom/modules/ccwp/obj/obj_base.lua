@@ -1,9 +1,7 @@
 -- define class
 local ObjBase = {}
-
--- set class inheritance structure
 local IObj = require "i_obj"
-setmetatable(ObjBase, IObj)
+setmetatable(ObjBase, IObj) -- inheritance from IObj
 
 --[[
     This module implements the ObjBase class.
