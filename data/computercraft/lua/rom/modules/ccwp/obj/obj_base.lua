@@ -72,9 +72,22 @@ function ObjBase:isTypeOf(obj)
     return false
 end
 
+local function nFields(table)
+    -- count
+    local size = 0
+    for key, el in pairs(table) do
+        size = size + 1
+    end
+
+    -- end
+    return size
+end
+
 local function tablesEqual(table1, table2)
-    -- check all fields equal
+    -- check all fields table1 in table2
+    local nFields1 = 0
     for fieldName, fieldValue in pairs(table1) do
+        nFields1 = nFields1 + 1
         -- check field equal
         if fieldValue ~= table2[fieldName] then
             -- check table
@@ -106,6 +119,15 @@ local function tablesEqual(table1, table2)
                 return false
             end
         end
+    end
+
+    -- count elements table2
+    local nFields2 = nFields(table2)
+
+    -- check same size
+    if nFields1 ~= nFields2 then
+--        corelog.WriteToLog("# fields table1(="..nFields1..") not same as for table2(="..nFields2..")")
+        return false
     end
 
     -- end

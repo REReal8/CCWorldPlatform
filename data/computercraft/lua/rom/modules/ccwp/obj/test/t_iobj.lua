@@ -86,7 +86,7 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
 
     -- test fields
     for fieldName, fieldValue in pairs(otherTable) do
-        corelog.WriteToLog(indent.."->test different field "..fieldName)
+        corelog.WriteToLog(indent.."->test different field "..fieldName.." not equal")
         -- check for table
         if type(fieldValue) == "table" then
             if Object.IsInstanceOf(fieldValue, IObj) then
@@ -117,6 +117,22 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
             pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
         end
     end
+
+    -- test extra original field not equal
+    corelog.WriteToLog(indent.."->test _extraStrField not equal")
+    obj._extraStrField = "extra string field"
+    local isEqual = obj:isEqual(otherObj)
+    local expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+    obj._extraStrField = nil
+
+    -- test extra other field not equal
+    corelog.WriteToLog(indent.."->test _extraStrField (other) not equal")
+    otherObj._extraStrField = "extra string field"
+    isEqual = obj:isEqual(otherObj)
+    expectedIsEqual = false
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+    otherObj._extraStrField = nil
 end
 
 function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj are assumed to be the same at the start of the test
@@ -127,13 +143,13 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
     corelog.WriteToLog("* "..className..":isEqual() tests")
 
     -- test identical obj equal
-    corelog.WriteToLog("->test identical obj")
+    corelog.WriteToLog("->test identical obj equal")
     local isEqual = obj:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test equal obj equal
-    corelog.WriteToLog("->test equal obj")
+    corelog.WriteToLog("->test equal obj equal")
     isEqual = obj:isEqual(otherObj)
     expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
