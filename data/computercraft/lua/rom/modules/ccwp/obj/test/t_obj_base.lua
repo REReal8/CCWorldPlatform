@@ -71,7 +71,6 @@ function T_ObjBase.T_isEqual()
     obj._aBoolean = true
     obj._anIObj = createTestObj()
     obj._anIObj._aSubStr = "another string"
-    --[[
     obj._aNormalTable = {
         _aSubStr = "a sub string",
         _aSubNumber = 100,
@@ -79,7 +78,6 @@ function T_ObjBase.T_isEqual()
         _aSubIObj = createTestObj(),
     }
     obj._aNormalTable._aSubIObj._aSubStr = "another sub string"
-    ]]
 
     local otherObj = createTestObj()
     otherObj._aNil = obj._aNil
@@ -88,7 +86,6 @@ function T_ObjBase.T_isEqual()
     otherObj._aBoolean = obj._aBoolean
     otherObj._anIObj = createTestObj()
     otherObj._anIObj._aSubStr = obj._anIObj._aSubStr
-    --[[
     otherObj._aNormalTable = {
         _aSubStr = "a sub string",
         _aSubNumber = 100,
@@ -96,7 +93,6 @@ function T_ObjBase.T_isEqual()
         _aSubIObj = createTestObj(),
     }
     otherObj._aNormalTable._aSubIObj._aSubStr = "another sub string"
-    --]]
 
     -- test
     T_IObj.pt_isEqual(testClassName, obj, otherObj)
@@ -110,6 +106,14 @@ function T_ObjBase.T_copy()
     obj._aBoolean = true
     obj._anIObj = createTestObj()
     obj._anIObj._aSubStr = "another string"
+    obj._aNormalTable = {
+        _aSubStr = "a sub string",
+        _aSubNumber = 100,
+        _aSubBoolean = true,
+        _aSubIObj = createTestObj(),
+    }
+    obj._aNormalTable._aSubIObj._aSubStr = "another sub string"
+
 
     -- test
     T_IObj.pt_copy(testClassName, obj)

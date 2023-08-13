@@ -68,6 +68,38 @@ function ObjBase:isTypeOf(obj)
     return false
 end
 
+local function tablesEqual(table1, table2)
+    -- check all fields equal
+    for fieldName, fieldValue in pairs(table1) do
+        -- check field equal
+        if fieldValue ~= table2[fieldName] then
+            -- check table
+            if type(fieldValue) == "table" then
+                -- is field nested IObj?
+                if Object.IsInstanceOf(fieldValue, IObj) then
+                    -- check nested IObj field equal
+                    if not fieldValue:isEqual(table2[fieldName]) then
+--                        corelog.WriteToLog("nested obj not of type")
+                        return false
+                    end
+                else
+                    -- check nested tables equal
+                    if not tablesEqual(fieldValue, table2[fieldName]) then
+                        return false
+                    end
+                end
+            else
+                -- field not equal
+--                corelog.WriteToLog("field "..fieldName.." not equal")
+                return false
+            end
+        end
+    end
+
+    -- end
+    return true
+end
+
 function ObjBase:isEqual(otherObj)
     --[[
         Method that returns if the Obj is equal to another Obj.
@@ -81,28 +113,9 @@ function ObjBase:isEqual(otherObj)
     end
 
     -- check all fields equal
-    for fieldName, fieldValue in pairs(self) do
-        -- check field equal
-        if fieldValue ~= otherObj[fieldName] then
-            -- check table
-            if type(fieldValue) == "table" then
-                -- is field nested IObj?
-                if Object.IsInstanceOf(fieldValue, IObj) then
-                    -- check nested IObj field equal
-                    if not fieldValue:isEqual(otherObj[fieldName]) then
---                        corelog.WriteToLog("nested obj not of type")
-                        return false
-                    end
-                else
-                    corelog.Warning("ObjBase:isEqual: none IObj table field (=fieldName="..fieldName..") not supported (yet) by ObjBase")
-                    return false
-                end
-            else
-                -- field not equal
---                corelog.WriteToLog("field "..fieldName.." not equal")
-                return false
-            end
-        end
+    if not tablesEqual(self, otherObj) then
+--        corelog.WriteToLog("no all fields equal")
+        return false
     end
 
 --    corelog.WriteToLog("ok")
@@ -111,8 +124,16 @@ end
 
 local function tableCopy(origTable, copyTable)
     for fieldName, fieldValue in pairs(origTable) do
-        if type(fieldValue) == "table" and Object.IsInstanceOf(fieldValue, IObj) then
-            copyTable[fieldName] = fieldValue:copy()  -- Recursively copy nested objects
+        if type(fieldValue) == "table" then
+            -- check if it's another IObj
+            if Object.IsInstanceOf(fieldValue, IObj) then
+                -- recursively copy nested IObj
+                copyTable[fieldName] = fieldValue:copy()
+            else
+                -- recursively copy nested plane table
+                copyTable[fieldName] = {}
+                tableCopy(fieldValue, copyTable[fieldName])
+            end
         else
             copyTable[fieldName] = fieldValue
         end
