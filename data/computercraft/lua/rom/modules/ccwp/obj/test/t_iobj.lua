@@ -7,6 +7,13 @@ local objectFactory = ObjectFactory:getInstance()
 local Object = require "object"
 local IObj = require "i_obj"
 
+function T_IObj.pt_all(className, obj, otherObj)
+    T_IObj.pt_getClassName(className, obj)
+    T_IObj.pt_isTypeOf(className, obj)
+    T_IObj.pt_isEqual(className, obj, otherObj)
+    T_IObj.pt_copy(className, obj)
+end
+
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
