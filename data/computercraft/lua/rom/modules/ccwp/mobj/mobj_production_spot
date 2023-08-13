@@ -1,7 +1,6 @@
-local ProductionSpot = {
-    _baseLocation   = nil,
-    _isCraftingSpot = true,
-}
+-- define class
+local ObjBase = require "obj_base"
+local ProductionSpot = ObjBase:new()
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -79,40 +78,6 @@ function ProductionSpot.HasFieldsOfType(obj)
 
     -- end
     return true
-end
-
-function ProductionSpot:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function ProductionSpot:isEqual(obj)
-    -- check input
-    if not ProductionSpot:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._baseLocation:isEqual(obj._baseLocation)
-                and self._isCraftingSpot == obj._isCraftingSpot
-
-    -- end
-    return isEqual
-end
-
-function ProductionSpot:copy()
-    -- create copy
-    local copy = ProductionSpot:new({
-        _baseLocation   = self._baseLocation:copy(),
-        _isCraftingSpot = self._isCraftingSpot,
-    })
-
-    -- end
-    return copy
 end
 
 --                        _  __ _                       _   _               _
