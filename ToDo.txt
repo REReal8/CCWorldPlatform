@@ -18,10 +18,10 @@ R  Dummy callback                                                               
    R  in more logical class                                                                                             (done)
    R  easier way to obtain                                                                                              (done)
 
-R  (t_)object.lua
+R  (t_)object.lua                                                                                                       (done)
    R  introduce general IsInstanceOf function                                                                           (done)
 
-R  IObj
+R  IObj                                                                                                                 (done)
    R  rename isSame to isEqual                                                                                          (done)
    (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
 
