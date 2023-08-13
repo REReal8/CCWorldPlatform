@@ -134,7 +134,7 @@ local function tableCopy(origTable, copyTable)
                 -- recursively copy nested IObj
                 copyTable[fieldName] = fieldValue:copy()
             else
-                -- recursively copy nested plane table
+                -- recursively copy nested plain table
                 copyTable[fieldName] = {}
                 tableCopy(fieldValue, copyTable[fieldName])
             end
