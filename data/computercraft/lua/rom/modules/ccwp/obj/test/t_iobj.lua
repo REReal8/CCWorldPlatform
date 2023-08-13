@@ -119,20 +119,21 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
     end
 
     -- test extra original field not equal
-    corelog.WriteToLog(indent.."->test _extraStrField not equal")
-    obj._extraStrField = "extra string field"
+    local extraFieldName = "_extraStrField"
+    corelog.WriteToLog(indent.."->test extra field "..extraFieldName.." not equal")
+    obj[extraFieldName] = "extra string field"
     local isEqual = obj:isEqual(otherObj)
     local expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._extraStrField = nil
+    obj[extraFieldName]  = nil
 
     -- test extra other field not equal
-    corelog.WriteToLog(indent.."->test _extraStrField (other) not equal")
-    otherObj._extraStrField = "extra string field"
+    corelog.WriteToLog(indent.."->test extra other field "..extraFieldName.." not equal")
+    otherObj[extraFieldName]  = "extra string field"
     isEqual = obj:isEqual(otherObj)
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    otherObj._extraStrField = nil
+    otherObj[extraFieldName]  = nil
 end
 
 function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj are assumed to be the same at the start of the test
