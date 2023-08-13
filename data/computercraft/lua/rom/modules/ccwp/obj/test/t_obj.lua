@@ -47,7 +47,7 @@ function T_Obj.createObjFromTable(className, oTable)
     return obj
 end
 
-function T_Obj.T_new(className, oTable)
+function T_Obj.pt_new(className, oTable)
     -- prepare test
     assert(className, "no className provided")
     corelog.WriteToLog("* "..className..":new() tests")

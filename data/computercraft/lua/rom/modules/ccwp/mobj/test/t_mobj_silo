@@ -97,7 +97,7 @@ function T_Silo.T_new()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_Obj.T_new(testClassName, oTable)
+    T_Obj.pt_new(testClassName, oTable)
 end
 
 --    _____ ____  _     _                  _   _               _

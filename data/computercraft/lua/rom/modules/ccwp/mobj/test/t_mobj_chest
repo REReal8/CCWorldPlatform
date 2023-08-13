@@ -91,7 +91,7 @@ function T_Chest.T_new()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_Obj.T_new(testClassName, oTable)
+    T_Obj.pt_new(testClassName, oTable)
 end
 
 function T_Chest.T_Getters()
