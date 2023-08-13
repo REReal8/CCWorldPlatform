@@ -1,10 +1,6 @@
-local Location = {
-    _x  = 0,
-    _y  = 0,
-    _z	= 0,
-    _dx = 0,
-    _dy = 1,
-}
+-- define class
+local ObjBase = require "obj_base"
+local Location = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -99,50 +95,6 @@ end
 
 function Location:getClassName()
     return "Location"
-end
-
-function Location:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Location:hasSamePosition(obj)
-    -- check same
-    return self._x == obj._x and self._y == obj._y and self._z == obj._z
-end
-
-function Location:hasSameDirection(obj)
-    -- check same
-    return self._dx == obj._dx and self._dy == obj._dy
-end
-
-function Location:isEqual(obj)
-    -- check input
-    if not Location:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual = self:hasSamePosition(obj) and self:hasSameDirection(obj)
-
-    -- end
-    return isEqual
-end
-
-function Location:copy()
-    local copy = Location:new({
-        _x  = self._x,
-        _y  = self._y,
-        _z	= self._z,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
-
-    return copy
 end
 
 --                        _  __ _                       _   _               _
