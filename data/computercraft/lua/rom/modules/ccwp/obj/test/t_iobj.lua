@@ -4,7 +4,6 @@ local corelog = require "corelog"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-local compact = { compact = true }
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -12,6 +11,8 @@ local compact = { compact = true }
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+local compact = { compact = true }
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
