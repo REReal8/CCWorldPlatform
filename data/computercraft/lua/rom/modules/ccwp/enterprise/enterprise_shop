@@ -100,6 +100,10 @@ function enterprise_shop.GetShopLocator()
     return shopLocator
 end
 
+function enterprise_shop:deleteShop()
+    enterprise_shop:deleteObjects("Shop")
+end
+
 function enterprise_shop:reset()
     -- get Shop
     local shop = enterprise_shop:getShop()
