@@ -89,7 +89,7 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
         corelog.WriteToLog(indent.."->test different field "..fieldName)
         -- check for table
         if type(fieldValue) == "table" then
-            if Object.IsInstanceOf(fieldValue, IObj) then -- or IObj.ImplementsInterface(fieldValue) then
+            if Object.IsInstanceOf(fieldValue, IObj) then
 --                corelog.WriteToLog("type=IObj")
                 local anotherFieldValue = "a string instead of an IObj"
                 -- note: the actual class of the IObj field should have it's own isEqual test so we only need to test here it's inequality with something else (a string in this case)
