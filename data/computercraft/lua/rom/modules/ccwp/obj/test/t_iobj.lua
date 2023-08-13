@@ -46,12 +46,12 @@ function T_IObj.pt_isTypeOf(className, obj)
     local class = objectFactory:getClass(className)
     assert (class, "Class "..className.." not found in objectFactory")
 
-    -- test valid
+    -- test class isTypeOf obj
     local isTypeOf = class:isTypeOf(obj)
     local expectedIsTypeOf = true
     assert(isTypeOf == expectedIsTypeOf, "gotten "..className..":isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
-    -- test different object
+    -- test class is not type of a different object
     isTypeOf = class:isTypeOf("a atring")
     expectedIsTypeOf = false
     assert(isTypeOf == expectedIsTypeOf, "gotten "..className..":isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")

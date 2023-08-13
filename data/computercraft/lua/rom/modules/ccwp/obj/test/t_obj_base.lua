@@ -58,7 +58,10 @@ function T_ObjBase.T_isTypeOf()
     -- prepare test
     local obj = createTestObj()
 
-    -- test
+    -- test ObjBase is type of itself
+    T_IObj.pt_isTypeOf(testClassName, ObjBase)
+
+    -- test obj from ObjBase is type of ObjBase
     T_IObj.pt_isTypeOf(testClassName, obj)
 end
 
