@@ -4,6 +4,8 @@ local corelog = require "corelog"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
+local Object = require "object"
+local IObj = require "i_obj"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -85,7 +87,15 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
         elseif type(fieldValue) == "number" then anotherFieldValue = fieldValue + 1
         elseif type(fieldValue) == "string" then anotherFieldValue = fieldValue..", a longer string"
         elseif type(fieldValue) == "boolean" then anotherFieldValue = not fieldValue
-        elseif type(fieldValue) == "table" then anotherFieldValue = "a string instead of a table"
+        elseif type(fieldValue) == "table" then
+            if Object.IsInstanceOf(fieldValue, IObj) or IObj.ImplementsInterface(fieldValue) then
+                anotherFieldValue = "a string instead of an IObj"
+                -- note: the actual class of the IObj field should have it's own isEqual test so we only need to test here it's inequality with something else (a string in this case)
+            else
+                -- trigger test of equality of table fields
+                -- ToDo: implement
+                assert(false, "testing table field that is not an IObj is not supported (yet)")
+            end
         else
             assert(false, "testing field of type "..type(fieldValue).." not supported (yet)")
         end
