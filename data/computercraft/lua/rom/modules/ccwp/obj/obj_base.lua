@@ -1,6 +1,10 @@
 local IObj = require "i_obj"
 
+-- define class
 local ObjBase = {}
+
+-- set class inheritance structure
+setmetatable(ObjBase, IObj)
 
 --[[
     This module implements the ObjBase class.
@@ -157,8 +161,5 @@ function ObjBase:copy()
     -- end
     return copy
 end
-
--- Set up metatable for ObjBase class to inherit the IObj interface.
-setmetatable(ObjBase, IObj)
 
 return ObjBase
