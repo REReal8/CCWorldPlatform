@@ -57,6 +57,9 @@ function ObjBase:isTypeOf(obj)
         Method that returns if an object 'obj' is of type of this class.
     ]]
 
+    -- ToDo: investigate if we can simply this using Object.IsInstanceOf, e.g.
+--    return Object.IsInstanceOf(obj, self)
+
     local mt = getmetatable(obj)
     while mt do
         if mt.__index == self or obj == self then
