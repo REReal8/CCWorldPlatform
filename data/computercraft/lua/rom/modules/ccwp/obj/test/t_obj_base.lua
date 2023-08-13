@@ -105,6 +105,11 @@ end
 function T_ObjBase.T_copy()
     -- prepare test
     local obj = createTestObj()
+    obj._aStr = "a string"
+    obj._aNumber = 10
+    obj._aBoolean = true
+    obj._anIObj = createTestObj()
+    obj._anIObj._aSubStr = "another string"
 
     -- test
     T_IObj.pt_copy(testClassName, obj)

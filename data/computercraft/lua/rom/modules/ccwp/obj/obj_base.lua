@@ -111,7 +111,7 @@ end
 
 local function tableCopy(origTable, copyTable)
     for fieldName, fieldValue in pairs(origTable) do
-        if type(fieldValue) == "table" and fieldValue.isInstanceOf and fieldValue:isInstanceOf(IObj) then
+        if type(fieldValue) == "table" and Object.IsInstanceOf(fieldValue, IObj) then
             copyTable[fieldName] = fieldValue:copy()  -- Recursively copy nested objects
         else
             copyTable[fieldName] = fieldValue
