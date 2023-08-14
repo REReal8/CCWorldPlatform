@@ -16,7 +16,7 @@ local compact = { compact = true }
 
 function T_ItemDepot.T_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IItemDepot", className, oTable)
+    T_Obj.pt_ImplementsInterface("IItemDepot", className, oTable)
 end
 
 return T_ItemDepot

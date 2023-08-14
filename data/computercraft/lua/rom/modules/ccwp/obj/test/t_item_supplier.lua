@@ -23,7 +23,7 @@ local compact = { compact = true }
 
 function T_ItemSupplier.T_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IItemSupplier", className, oTable)
+    T_Obj.pt_ImplementsInterface("IItemSupplier", className, oTable)
 end
 
 function T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)

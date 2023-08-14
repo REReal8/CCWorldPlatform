@@ -16,7 +16,7 @@ local compact = { compact = true }
 
 function T_MObj.T_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IMObj", className, oTable)
+    T_Obj.pt_ImplementsInterface("IMObj", className, oTable)
 end
 
 return T_MObj

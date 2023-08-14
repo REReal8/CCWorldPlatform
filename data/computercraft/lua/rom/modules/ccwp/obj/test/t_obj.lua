@@ -6,12 +6,10 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-local IObj = require "i_obj"
-
 local compact = { compact = true }
 
 -- ToDo: consider moving to more generic place (i.e. not coupled to IObj)
-function T_Obj.ImplementsInterface(interfaceName, className, oTable)
+function T_Obj.pt_ImplementsInterface(interfaceName, className, oTable)
     -- prepare test
     assert(className, "no className provided")
     corelog.WriteToLog("* "..className.." "..interfaceName.." interface test")
