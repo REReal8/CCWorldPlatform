@@ -6,6 +6,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
+local Object = require "object"
 local IObj = require "i_obj"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
@@ -128,19 +129,36 @@ function ObjTable:transformObjectTables(suppressWarning)
     local objClassName = self:getObjClassName()
     local objClass = self:getObjClass()
     if not objClass then corelog.Error("ObjTable:transformObjectTables(): failed obtaining objClass "..objClassName) return end
-    if not IObj.ImplementsInterface(objClass) then corelog.Error("ObjTable:transformObjectTables(): objClass "..objClassName.." does not implement IObj interface") return end
+    if Object.IsInstanceOf(objClass, IObj) then
+        -- ok
+    elseif IObj.ImplementsInterface(objClass) then
+        -- ToDo: covert all classes and remove this
+        corelog.Warning("ObjTable:transformObjectTables(): using old style IObj objClass "..objClassName.." => consider converting it to a proper IObj")
+    else
+        corelog.Error("ObjTable:transformObjectTables(): objClass "..objClassName.." does not implement IObj interface") return
+    end
 
     -- transform objectTable's
     for key, objectTable in pairs(self) do
         if key ~= "_objClassName" then
             -- check if objectTable already an Obj
+            local objectTableClassName = nil
+            if Object.IsInstanceOf(objectTable, IObj) then
+                objectTableClassName = objectTable:getClassName()
+            elseif IObj.ImplementsInterface(objectTable) then
+                -- ToDo: covert all classes and remove this
+                objectTableClassName = objectTable:getClassName()
+                corelog.Warning("ObjTable:transformObjectTables(): using old style IObj objectTableClassName "..objectTableClassName.." => consider converting it to a proper IObj")
+            end
+
+            -- determine obj
             local obj = nil
-            if IObj.ImplementsInterface(objectTable) then
+            if objectTableClassName then
                 -- check Obj of correct type
-                if objClassName == objectTable:getClassName() then
+                if objClassName == objectTableClassName then
                     obj = objectTable -- already an object of type 'class'
                 else
-                    if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): objectTable class (="..objectTable:getClassName()..") different from objClassName(="..objClassName..")") end
+                    if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): objectTable class (="..objectTableClassName..") different from objClassName(="..objClassName..")") end
                 end
             else
                 obj = objClass:new(objectTable) -- transform
