@@ -1,4 +1,4 @@
-local T_ItemSupplier = {}
+local T_IItemSupplier = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
@@ -7,8 +7,6 @@ local URL = require "obj_url"
 local Host = require "obj_host"
 
 local enterprise_chests = require "enterprise_chests"
-
-local T_Obj = require "test.t_obj"
 
 local compact = { compact = true }
 
@@ -21,7 +19,7 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
+function T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
     -- prepare test (cont)
     assert(mobjHostName, "no mobjHostName provided")
     assert(className, "no className provided")
@@ -34,7 +32,7 @@ function T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, const
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
     local callback = Callback:new({
-        _moduleName     = "T_ItemSupplier",
+        _moduleName     = "T_IItemSupplier",
         _methodName     = "provideItemsTo_AOSrv_Callback",
         _data           = {
             ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
@@ -52,7 +50,7 @@ function T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, const
     assert(scheduleResult == true, "failed to schedule async service")
 end
 
-function T_ItemSupplier.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
+function T_IItemSupplier.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
     -- test (cont)
     assert(serviceResults.success, "failed executing async service")
 
@@ -75,4 +73,4 @@ function T_ItemSupplier.provideItemsTo_AOSrv_Callback(callbackData, serviceResul
     return true
 end
 
-return T_ItemSupplier
+return T_IItemSupplier

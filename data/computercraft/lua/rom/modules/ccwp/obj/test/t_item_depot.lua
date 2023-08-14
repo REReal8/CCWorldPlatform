@@ -1,9 +1,4 @@
-local T_ItemDepot = {}
-local corelog = require "corelog"
-
-local T_Obj = require "test.t_obj"
-
-local compact = { compact = true }
+local T_IItemDepot = {}
 
 --    _____ _____ _                 _____                   _                    _   _               _
 --   |_   _|_   _| |               |  __ \                 | |                  | | | |             | |
@@ -14,4 +9,4 @@ local compact = { compact = true }
 --                                             | |
 --                                             |_|
 
-return T_ItemDepot
+return T_IItemDepot

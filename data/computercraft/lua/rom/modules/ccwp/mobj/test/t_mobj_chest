@@ -20,8 +20,8 @@ local enterprise_chests = require "enterprise_chests"
 local T_Object = require "test.t_object"
 local T_IObj = require "test.t_iobj"
 local T_Obj = require "test.t_obj"
-local T_ItemSupplier = require "test.t_item_supplier"
-local T_ItemDepot = require "test.t_item_depot"
+local T_IItemSupplier = require "test.t_item_supplier"
+local T_IItemDepot = require "test.t_item_depot"
 
 local t_turtle = require "test.t_turtle"
 
@@ -243,7 +243,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     }
 
     -- test
-    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
+    T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
@@ -261,7 +261,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
     }
 
     -- test
-    T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
+    T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
