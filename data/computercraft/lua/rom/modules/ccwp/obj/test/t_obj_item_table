@@ -98,7 +98,7 @@ end
 
 function T_ItemTable.T_isEmpty()
     -- prepare test
-    corelog.WriteToLog("* T_ItemTable.T_isEmpty() tests")
+    corelog.WriteToLog("* ItemTable:isEmpty() tests")
 
     -- test same
     functionResult = testTable1:isEmpty()
@@ -120,7 +120,7 @@ end
 
 function T_ItemTable.T_hasNoItems()
     -- prepare test
-    corelog.WriteToLog("* T_ItemTable.T_hasNoItems() tests")
+    corelog.WriteToLog("* ItemTable:hasNoItems() tests")
 
     -- test same
     functionResult = testTable1:hasNoItems()
@@ -142,7 +142,7 @@ end
 
 function T_ItemTable.T_combine()
     -- prepare test
-    corelog.WriteToLog("* T_ItemTable.T_combine() tests")
+    corelog.WriteToLog("* ItemTable:combine() tests")
 
     -- usefull
     local testTable = {}
@@ -166,7 +166,7 @@ end
 
 function T_ItemTable.T_compare()
     -- prepare test
-    corelog.WriteToLog("* T_ItemTable.T_compare() tests")
+    corelog.WriteToLog("* ItemTable:compare() tests")
 
     -- usefull
     local t1 = {}

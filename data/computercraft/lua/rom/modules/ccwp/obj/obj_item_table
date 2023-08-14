@@ -163,8 +163,6 @@ function ItemTable.compare(...)
     return ItemTable:new(uniqueFirst), ItemTable:new(common), ItemTable:new(uniqueSecond)
 end
 
-
-
 --    _          _                    __                  _   _
 --   | |        | |                  / _|                | | (_)
 --   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
