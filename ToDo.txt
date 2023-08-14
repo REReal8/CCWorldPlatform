@@ -41,7 +41,7 @@ R  IObj                                                                         
    -  convert LayerRectangle to a proper IObj
    R  convert ItemTable to a proper IObj                                                                                (done)
    R  convert WIPAdministrator to a proper IObj                                                                         (done)
-   -  convert TestMObj to a proper IObj
+   R  convert TestMObj to a proper IObj                                                                                 (done)
    -  convert BirchForest to a proper IObj
    -  convert Factory to a proper IObj
    -  convert Mine to a proper IObj

@@ -1,9 +1,6 @@
-local TestMObj = {
-    _id             = "",
-
-    _baseLocation   = nil,
-    _field1         = "",
-}
+-- define class
+local ObjBase = require "obj_base"
+local TestMObj = ObjBase:new()
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -70,39 +67,6 @@ end
 
 function TestMObj:getClassName()
     return "TestMObj"
-end
-
-function TestMObj:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function TestMObj:isEqual(obj)
-    -- check input
-    if not TestMObj:isTypeOf(obj) then return false end
-
-    -- check same
-    local isEqual = self._field1 == obj._field1
-
-    -- end
-    return isEqual
-end
-
-function TestMObj:copy()
-    local copy = TestMObj:new({
-        _id             = self._id,
-
-        _field1         = self._field1,
-        _baseLocation   = self._baseLocation,
-    })
-
-    return copy
 end
 
 --    _____ __  __  ____  _     _                  _   _               _
