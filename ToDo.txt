@@ -37,20 +37,18 @@ R  IObj                                                                         
    R  convert Silo to a proper IObj                                                                                     (done)
    R  convert CallDef to a proper IObj                                                                                  (done)
    R  convert WIPQueue to a proper IObj                                                                                 (done)
+   -  convert Block to a proper IObj
+   -  convert LayerRectangle to a proper IObj
+   -  convert ItemTable to a proper IObj
+   -  convert WIPAdministrator to a proper IObj
+   -  convert TestMObj to a proper IObj
    -  convert BirchForest to a proper IObj
    -  convert Factory to a proper IObj
    -  convert Mine to a proper IObj
    -  convert Shop to a proper IObj
    -  convert Turtle to a proper IObj
-   -  convert TestMObj to a proper IObj
-   -  convert Block to a proper IObj
    -  convert Host to a proper IObj
-   -  convert ItemTable to a proper IObj
-   -  convert LayerRectangle to a proper IObj
-   -  convert WIPAdministrator to a proper IObj
-   -  convert Host to a proper IObj
-   -  convert Host to a proper IObj
-   -  convert Host to a proper IObj
+   -  convert MObjHost to a proper IObj
 
 R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)Obj test functions                                                                                  (done)
