@@ -140,7 +140,7 @@ function T_Silo.T_ImplementsIMObj()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_MObj.T_ImplementsInterface(testClassName, oTable)
+    T_MObj.pt_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Silo.T_destruct()

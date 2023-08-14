@@ -14,7 +14,7 @@ local compact = { compact = true }
 --                            _/ |
 --                           |__/
 
-function T_MObj.T_ImplementsInterface(className, oTable)
+function T_MObj.pt_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
     T_Obj.pt_ImplementsInterface("IMObj", className, oTable)
 end
