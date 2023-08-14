@@ -17,7 +17,6 @@ function T_ObjTable.T_All()
 
     -- IObj methods
     T_ObjTable.T_IObj_All()
---    T_ObjTable.T_isEqual()
 
     -- specific methods
     T_ObjTable.T_transformObjectTables()
@@ -101,46 +100,6 @@ function T_ObjTable.T_IObj_All()
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
-end
-
-function T_ObjTable.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* ObjTable:isEqual() tests")
-    local objTable1 = ObjTable:new({
-        _objClassName   = objClassName1,
-
-        testObj1Key     = testObj1,
-        testObj2Key     = testObj2,
-    }) if not objTable1 then corelog.Warning("objTable1 unexpectedly nil") return end
-    local objTable2 = ObjTable:new({
-        _objClassName   = objClassName1,
-
-        testObj1Key     = testObj1,
-        testObj2Key     = testObj2,
-    })
-
-    -- test same
-    local isEqual = objTable1:isEqual(objTable2)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different className
-    local objClassName2 = "ProductionSpot"
-    objTable2._objClassName = objClassName2
-    isEqual = objTable1:isEqual(objTable2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    objTable2._objClassName = objClassName1
-
-    -- test different # objects
-    local testObj3 = testObj1:copy()
-    objTable2.testObj3Key = testObj3
-    isEqual = objTable1:isEqual(objTable2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    objTable2.testObj3Key = nil
-
-    -- cleanup test
 end
 
 --                        _  __ _                       _   _               _

@@ -62,34 +62,6 @@ function ObjTable:getClassName()
     return "ObjTable"
 end
 
-function ObjTable:isEqual(obj)
-    -- check input
-    if not ObjTable:isTypeOf(obj) then return false end
-
-    -- check same class
-    if self._objClassName ~= obj._objClassName then return false end
-
-    -- check same elements as in A
-    local sizeA = 0
-    for key, elA in pairs(self) do
-        if key ~= "_objClassName"then
-            sizeA = sizeA + 1
-            -- check same obj
-            local elB = obj[key]
-            if not elA.isEqual or not elA:isEqual(elB) then return false end
-        end
-    end
-
-    -- count elements B
-    local sizeB = obj:nObjs()
-
-    -- check same size
-    if sizeA ~= sizeB then return false end
-
-    -- end
-    return true
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___

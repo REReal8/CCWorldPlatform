@@ -26,6 +26,17 @@ R  IObj                                                                         
    (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
 
 R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
+   R  convert Location to a proper IObj                                                                                 (done)
+   R  convert URL to a proper IObj                                                                                      (done)
+   R  convert Chest to a proper IObj                                                                                    (done)
+   R  convert Inventory to a proper IObj                                                                                (done)
+   R  convert ProductionSpot to a proper IObj                                                                           (done)
+   R  convert ObjTable to a proper IObj                                                                                 (done)
+   R  convert ObjArray to a proper IObj                                                                                 (done)
+   R  convert TestObj to a proper IObj                                                                                  (done)
+   R  convert Silo to a proper IObj                                                                                     (done)
+   R  convert CallDef to a proper IObj                                                                                  (done)
+   R  convert WIPQueue to a proper IObj                                                                                 (done)
 
 R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)Obj test functions                                                                                  (done)
