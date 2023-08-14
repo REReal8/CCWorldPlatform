@@ -327,7 +327,7 @@ function T_Chest.T_ImplementsIItemDepot()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_ItemDepot.T_ImplementsInterface(testClassName, oTable)
+    T_ItemDepot.pt_ImplementsInterface(testClassName, oTable)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

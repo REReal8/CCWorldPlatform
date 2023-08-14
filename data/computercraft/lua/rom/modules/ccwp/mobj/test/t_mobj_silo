@@ -291,7 +291,7 @@ function T_Silo.T_ImplementsIItemDepot()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_ItemDepot.T_ImplementsInterface(testClassName, oTable)
+    T_ItemDepot.pt_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Silo.T_storeItemsFrom_AOSrv()
