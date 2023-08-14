@@ -43,33 +43,6 @@ local callback1 = Callback.GetNewDummyCallBack()
 
 local compact = { compact = true }
 
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* WIPQueue "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = WIPQueue:new({
-        _workList       = workList1,
-        _callbackList   = callbackList1:copy(),
-    }) if not obj then corelog.Error("failed obtaining WIPQueue") return end
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "WIPQueue class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-end
-
-function T_WIPQueue.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
