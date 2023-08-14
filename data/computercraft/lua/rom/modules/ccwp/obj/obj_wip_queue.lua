@@ -1,7 +1,6 @@
-local WIPQueue = {
-    _workList       = {},
-    _callbackList   = nil,
-}
+-- define class
+local ObjBase = require "obj_base"
+local WIPQueue = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -137,53 +136,6 @@ end
 
 function WIPQueue:getClassName()
     return "WIPQueue"
-end
-
-function WIPQueue:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function WIPQueue:isEqual(obj)
-    -- check input
-    if not WIPQueue:isTypeOf(obj) then return false end
-
-    -- check same _callbackList
-    if not self._callbackList:isEqual(obj._callbackList) then return false end
-
-    -- check same _workList
-    if table.getn(self._workList) ~= table.getn(obj._workList) then return false end
-    for i, workIdA in ipairs(self._workList) do
-        -- check same work
-        local workIdB = obj._workList[i]
-        if workIdA ~= workIdB then return false end
-    end
-
-    -- end
-    return true
-end
-
-function WIPQueue:copy()
-    -- copy _workList
-    local workListCopy = {}
-    for i, workId in ipairs(self._workList) do
-        workListCopy[i] = workId
-    end
-
-    -- copy WIPQueue
-    local copy = WIPQueue:new({
-        _workList       = workListCopy,
-
-        _callbackList   = self._callbackList:copy(),
-    })
-
-    return copy
 end
 
 --                        _  __ _                       _   _               _
