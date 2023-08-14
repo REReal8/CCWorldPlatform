@@ -129,7 +129,7 @@ function t_builder.T_BuildLayer_Task()
     -- prepare test
     corelog.WriteToLog("* role_builder BuildLayer_Task test")
     local testBuildLayer = testBuildLayer3:copy()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = true, layer = testBuildLayer}
+    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = false, layer = testBuildLayer}
 
     -- test
     role_builder.BuildLayer_Task(buildData)
