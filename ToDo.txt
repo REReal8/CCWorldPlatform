@@ -25,7 +25,7 @@ R  IObj                                                                         
    R  rename isSame to isEqual                                                                                          (done)
    (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
 
-R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
+-  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
    R  convert Location to a proper IObj                                                                                 (done)
    R  convert URL to a proper IObj                                                                                      (done)
    R  convert Chest to a proper IObj                                                                                    (done)
@@ -37,6 +37,20 @@ R  Introduce ObjBase, a class that can be used as the base class for any class i
    R  convert Silo to a proper IObj                                                                                     (done)
    R  convert CallDef to a proper IObj                                                                                  (done)
    R  convert WIPQueue to a proper IObj                                                                                 (done)
+   -  convert BirchForest to a proper IObj
+   -  convert Factory to a proper IObj
+   -  convert Mine to a proper IObj
+   -  convert Shop to a proper IObj
+   -  convert Turtle to a proper IObj
+   -  convert TestMObj to a proper IObj
+   -  convert Block to a proper IObj
+   -  convert Host to a proper IObj
+   -  convert ItemTable to a proper IObj
+   -  convert LayerRectangle to a proper IObj
+   -  convert WIPAdministrator to a proper IObj
+   -  convert Host to a proper IObj
+   -  convert Host to a proper IObj
+   -  convert Host to a proper IObj
 
 R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)Obj test functions                                                                                  (done)
