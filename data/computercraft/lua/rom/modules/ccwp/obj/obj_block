@@ -36,10 +36,6 @@ function Block:new(o)
     return o
 end
 
-function Block:getClassName()
-    return "Block"
-end
-
 function Block:getDx()
     return self._dx
 end
@@ -81,6 +77,10 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function Block:getClassName()
+    return "Block"
+end
 
 function Block.HasFieldsOfType(obj)
     -- check
