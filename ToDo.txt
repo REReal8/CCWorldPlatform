@@ -37,7 +37,7 @@ R  IObj                                                                         
    R  convert Silo to a proper IObj                                                                                     (done)
    R  convert CallDef to a proper IObj                                                                                  (done)
    R  convert WIPQueue to a proper IObj                                                                                 (done)
-   -  convert Block to a proper IObj
+   R  convert Block to a proper IObj                                                                                    (done)
    -  convert LayerRectangle to a proper IObj
    R  convert ItemTable to a proper IObj                                                                                (done)
    R  convert WIPAdministrator to a proper IObj                                                                         (done)

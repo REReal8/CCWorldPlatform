@@ -1,8 +1,6 @@
-local Block = {
-    _dx     = 0,
-    _dy     = 0,
-    _name   = "",
-}
+-- define class
+local ObjBase = require "obj_base"
+local Block = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -85,6 +83,7 @@ function Block:getClassName()
     return "Block"
 end
 
+-- ToDo: consider making changes such that this can be removed
 function Block.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
@@ -95,6 +94,7 @@ function Block.HasFieldsOfType(obj)
     return true
 end
 
+-- ToDo: consider making changes such that this can be removed
 function Block.HasClassNameOfType(obj)
     -- check
     if not obj.getClassName or obj:getClassName() ~= Block:getClassName() then return false end
@@ -103,37 +103,13 @@ function Block.HasClassNameOfType(obj)
     return true
 end
 
+-- ToDo: consider making changes such that this can fallback to the defailt from ObjBase
 function Block:isTypeOf(obj)
     -- check
     local isTypeOf = Block.HasFieldsOfType(obj) and Block.HasClassNameOfType(obj)
 
     -- end
     return isTypeOf
-end
-
-function Block:isEqual(obj)
-    -- check input
-    if not Block:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual = self._name == obj._name
-    if self._dx ~= nil and self._dy ~= nil then
-        isEqual = isEqual and self._dx == obj._dx and self._dy == obj._dy
-    end
-
-    -- end
-    return isEqual
-end
-
-function Block:copy()
-    local copy = Block:new({
-        _dx     = self._dx,
-        _dy     = self._dy,
-
-        _name   = self._name,
-    })
-
-    return copy
 end
 
 --                        _  __ _                       _   _               _
