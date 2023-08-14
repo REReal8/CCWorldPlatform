@@ -216,7 +216,7 @@ function T_Silo.T_ImplementsIItemSupplier()
     local oTable = T_Silo.NewOTable()
 
     -- test
-    T_ItemSupplier.T_ImplementsInterface(testClassName, oTable)
+    T_ItemSupplier.pt_ImplementsInterface(testClassName, oTable)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

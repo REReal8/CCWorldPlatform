@@ -21,7 +21,7 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_ItemSupplier.T_ImplementsInterface(className, oTable)
+function T_ItemSupplier.pt_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
     T_Obj.pt_ImplementsInterface("IItemSupplier", className, oTable)
 end

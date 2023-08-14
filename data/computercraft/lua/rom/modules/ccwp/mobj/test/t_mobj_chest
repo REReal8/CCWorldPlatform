@@ -226,7 +226,7 @@ function T_Chest.T_ImplementsIItemSupplier()
     local oTable = T_Chest.NewOTable()
 
     -- test
-    T_ItemSupplier.T_ImplementsInterface(testClassName, oTable)
+    T_ItemSupplier.pt_ImplementsInterface(testClassName, oTable)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
