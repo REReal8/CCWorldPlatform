@@ -19,7 +19,6 @@ local enterprise_storage = require "enterprise_storage"
 local T_Object = require "test.t_object"
 local T_IObj = require "test.t_iobj"
 local T_Obj = require "test.t_obj"
-local T_MObj = require "test.t_mobj"
 local T_ItemSupplier = require "test.t_item_supplier"
 local T_ItemDepot = require "test.t_item_depot"
 
@@ -137,10 +136,10 @@ end
 
 function T_Silo.T_ImplementsIMObj()
     -- prepare test
-    local oTable = T_Silo.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_MObj.pt_ImplementsInterface(testClassName, oTable)
+    T_Obj.pt_ImplementsInterface("IMObj", testClassName, obj)
 end
 
 function T_Silo.T_destruct()
