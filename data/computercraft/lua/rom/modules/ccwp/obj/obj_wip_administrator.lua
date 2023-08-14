@@ -1,6 +1,6 @@
-local WIPAdministrator = {
-    _wipQueues = nil,
-}
+-- define class
+local ObjBase = require "obj_base"
+local WIPAdministrator = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -55,36 +55,6 @@ end
 
 function WIPAdministrator:getClassName()
     return "WIPAdministrator"
-end
-
-function WIPAdministrator:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function WIPAdministrator:isEqual(obj)
-    -- check input
-    if not WIPAdministrator:isTypeOf(obj) then return false end
-
-    -- check same object
-    if not self._wipQueues:isEqual(obj._wipQueues) then return false end
-
-    -- end
-    return true
-end
-
-function WIPAdministrator:copy()
-    local copy = WIPAdministrator:new({
-        _wipQueues  = self._wipQueues:copy(),
-    })
-
-    return copy
 end
 
 --                        _  __ _                       _   _               _

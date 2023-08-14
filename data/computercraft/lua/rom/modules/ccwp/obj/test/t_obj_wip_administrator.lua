@@ -5,20 +5,23 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local Callback = require "obj_callback"
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local ObjTable = require "obj_table"
 local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
+
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_iobj"
+local T_WIPQueue = require "test.t_obj_wip_queue"
 
 function T_WIPAdministrator.T_All()
     -- initialisation
     T_WIPAdministrator.T_new()
 
     -- IObj methods
-    T_WIPAdministrator.T_ImplementsIObj()
-    T_WIPAdministrator.T_isTypeOf()
-    T_WIPAdministrator.T_isEqual()
-    T_WIPAdministrator.T_copy()
+    T_WIPAdministrator.T_IObj_All()
 
     -- specific methods
     T_WIPAdministrator.T_removeWIPQueue()
@@ -42,34 +45,28 @@ local wipQueues1 = ObjTable:new({
 
 local compact = { compact = true }
 
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* WIPAdministrator "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) if not obj then corelog.Error("failed obtaining WIPAdministrator") return end
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "WIPAdministrator class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-end
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+local testClassName = "WIPAdministrator"
+local function createTestObj()
+    local wipQueue = T_WIPQueue.createTestObj() assert(wipQueue, "failed obtaining WIPQueue")
+    local wipQueues = ObjTable:new({
+        _objClassName   = wipQueueClassName,
+
+        wipQueue,
+    }) assert(wipQueues1)
+
+    local testObj = WIPAdministrator:new({
+        _wipQueues  = wipQueues,
+    })
+
+    return testObj
+end
 
 function T_WIPAdministrator.T_new()
     -- prepare test
@@ -93,82 +90,15 @@ end
 --                    _/ |
 --                   |__/
 
-function T_WIPAdministrator.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_WIPAdministrator.T_isTypeOf()
+function T_WIPAdministrator.T_IObj_All()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:isTypeOf() tests")
-    local obj2 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    })
-
-    -- test valid
-    local isTypeOf = WIPAdministrator:isTypeOf(obj2)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = WIPAdministrator:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_WIPAdministrator.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:isEqual() tests")
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(obj1)
-
-    local obj2 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(obj2)
-
-    local workList1 = {
-        workId1,
-        workId2,
-    }
-    local wipQueue1 = WIPQueue:new({
-        _workList       = workList1,
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj1)
-    local wipQueues2 = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-
-        wipQueue1,
-    }) assert(wipQueues2)
-
-    -- test same
-    local isEqual = obj1:isEqual(obj2)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _wipQueues
-    obj2._wipQueues = wipQueues2:copy()
-    isEqual = obj1:isEqual(obj2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj2._workList = wipQueues1:copy()
-
-    -- cleanup test
-end
-
-function T_WIPAdministrator.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:copy() tests")
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(obj1)
+    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
-    local copy = obj1:copy()
-    assert(copy:isEqual(obj1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj1, compact)..")")
-
-    -- cleanup test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --                        _  __ _                       _   _               _
