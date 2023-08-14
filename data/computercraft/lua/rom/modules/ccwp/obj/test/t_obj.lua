@@ -59,18 +59,4 @@ function T_Obj.pt_new(className, oTable)
     -- cleanup test
 end
 
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                    _/ |
---                   |__/
-
-function T_Obj.pt_ImplementsInterface(className, oTable)
-    assert(className, "no className provided")
-    T_Obj.ImplementsInterface("IObj", className, oTable)
-end
-
 return T_Obj
