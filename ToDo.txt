@@ -39,7 +39,7 @@ R  IObj                                                                         
    R  convert WIPQueue to a proper IObj                                                                                 (done)
    -  convert Block to a proper IObj
    -  convert LayerRectangle to a proper IObj
-   -  convert ItemTable to a proper IObj
+   R  convert ItemTable to a proper IObj                                                                                (done)
    R  convert WIPAdministrator to a proper IObj                                                                         (done)
    -  convert TestMObj to a proper IObj
    -  convert BirchForest to a proper IObj

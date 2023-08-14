@@ -1,5 +1,6 @@
-local ItemTable = {
-}
+-- define class
+local ObjBase = require "obj_base"
+local ItemTable = ObjBase:new()
 
 local corelog = require "corelog"
 local InputChecker = require "input_checker"
@@ -43,42 +44,6 @@ end
 
 function ItemTable:getClassName()
     return "ItemTable"
-end
-
-function ItemTable:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function ItemTable:isEqual(obj)
-    -- check input
-    if not ItemTable:isTypeOf(obj) then return false end
-
-    -- check same object
-    for itemName, itemCount in pairs(self) do if type(obj[ itemName ])  ~= "number" or obj[ itemName ]  ~= itemCount then return false end end
-    for itemName, itemCount in pairs(obj)  do if type(self[ itemName ]) ~= "number" or self[ itemName ] ~= itemCount then return false end end
-
-    -- still here? Then we are fine
-    return true
-end
-
-function ItemTable:copy()
-    local copiedObject = {}
-
-    -- create new table
-    for itemName, itemCount in pairs(self) do copiedObject[ itemName ] = itemCount end
-
-    -- make it an item table object
-    copiedObject = ItemTable:new(copiedObject)
-
-    -- make it an object
-    return copiedObject
 end
 
 --                        _  __ _                       _   _               _
