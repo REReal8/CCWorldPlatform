@@ -14,12 +14,4 @@ local compact = { compact = true }
 --                                             | |
 --                                             |_|
 
-function T_ItemDepot.pt_ImplementsInterface(className, oTable)
-    assert(className, "no className provided")
-    assert(oTable, "no oTable provided")
-    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
-
-    T_Obj.pt_ImplementsInterface("IItemDepot", className, obj)
-end
-
 return T_ItemDepot

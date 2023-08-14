@@ -212,10 +212,10 @@ end
 
 function T_Silo.T_ImplementsIItemSupplier()
     -- prepare test
-    local oTable = T_Silo.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_ItemSupplier.pt_ImplementsInterface(testClassName, oTable)
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
@@ -287,10 +287,10 @@ end
 
 function T_Silo.T_ImplementsIItemDepot()
     -- prepare test
-    local oTable = T_Silo.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_ItemDepot.pt_ImplementsInterface(testClassName, oTable)
+    T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
 end
 
 function T_Silo.T_storeItemsFrom_AOSrv()

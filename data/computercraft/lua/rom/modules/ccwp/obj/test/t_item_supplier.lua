@@ -21,14 +21,6 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_ItemSupplier.pt_ImplementsInterface(className, oTable)
-    assert(className, "no className provided")
-    assert(oTable, "no oTable provided")
-    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
-
-    T_Obj.pt_ImplementsInterface("IItemSupplier", className, obj)
-end
-
 function T_ItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
     -- prepare test (cont)
     assert(mobjHostName, "no mobjHostName provided")

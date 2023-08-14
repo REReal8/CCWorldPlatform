@@ -222,10 +222,10 @@ end
 
 function T_Chest.T_ImplementsIItemSupplier()
     -- prepare test
-    local oTable = T_Chest.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_ItemSupplier.pt_ImplementsInterface(testClassName, oTable)
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
@@ -323,10 +323,10 @@ end
 
 function T_Chest.T_ImplementsIItemDepot()
     -- prepare test
-    local oTable = T_Chest.NewOTable()
+    local obj = T_Obj.createObjFromTable(testClassName, T_Chest.NewOTable()) assert(obj, "failed obtaining "..testClassName)
 
     -- test
-    T_ItemDepot.pt_ImplementsInterface(testClassName, oTable)
+    T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
