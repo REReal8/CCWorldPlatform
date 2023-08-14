@@ -9,13 +9,12 @@ local objectFactory = ObjectFactory:getInstance()
 local compact = { compact = true }
 
 -- ToDo: consider moving to more generic place (i.e. not coupled to IObj)
-function T_Obj.pt_ImplementsInterface(interfaceName, className, oTable)
+function T_Obj.pt_ImplementsInterface(interfaceName, className, obj)
     -- prepare test
     assert(className, "no className provided")
+    assert(obj, "no obj provided")
     corelog.WriteToLog("* "..className.." "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-
-    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)

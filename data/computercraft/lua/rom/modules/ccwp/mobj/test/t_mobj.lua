@@ -1,5 +1,4 @@
 local T_MObj = {}
-local corelog = require "corelog"
 
 local T_Obj = require "test.t_obj"
 
@@ -16,7 +15,10 @@ local compact = { compact = true }
 
 function T_MObj.pt_ImplementsInterface(className, oTable)
     assert(className, "no className provided")
-    T_Obj.pt_ImplementsInterface("IMObj", className, oTable)
+    assert(oTable, "no oTable provided")
+    local obj = T_Obj.createObjFromTable(className, oTable) assert(obj, "failed obtaining "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
+
+    T_Obj.pt_ImplementsInterface("IMObj", className, obj)
 end
 
 return T_MObj
