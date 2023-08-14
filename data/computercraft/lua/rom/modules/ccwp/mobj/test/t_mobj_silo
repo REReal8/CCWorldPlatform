@@ -17,10 +17,10 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
 
 local T_Object = require "test.t_object"
-local T_IObj = require "test.t_iobj"
+local T_IObj = require "test.t_i_obj"
 local T_Obj = require "test.t_obj"
-local T_IItemSupplier = require "test.t_iitem_supplier"
-local T_IItemDepot = require "test.t_iitem_depot"
+local T_IItemSupplier = require "test.t_i_item_supplier"
+local T_IItemDepot = require "test.t_i_item_depot"
 
 local t_turtle = require "test.t_turtle"
 

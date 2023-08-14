@@ -4,7 +4,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
 local T_Object = require "test.t_object"
-local T_IObj = require "test.t_iobj"
+local T_IObj = require "test.t_i_obj"
 
 function T_ObjBase.T_All()
     -- IObj methods

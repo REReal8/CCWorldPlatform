@@ -11,7 +11,7 @@ local ObjArray = require "obj_array"
 local WIPQueue = require "obj_wip_queue"
 
 local T_Object = require "test.t_object"
-local T_IObj = require "test.t_iobj"
+local T_IObj = require "test.t_i_obj"
 
 function T_WIPQueue.T_All()
     -- initialisation

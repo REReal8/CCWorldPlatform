@@ -7,7 +7,7 @@ local ObjBase = require "obj_base"
 local Inventory = require "obj_inventory"
 
 local T_Object = require "test.t_object"
-local T_IObj = require "test.t_iobj"
+local T_IObj = require "test.t_i_obj"
 
 function T_Inventory.T_All()
     -- helper functions
