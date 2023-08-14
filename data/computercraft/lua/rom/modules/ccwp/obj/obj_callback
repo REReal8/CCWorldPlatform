@@ -1,5 +1,5 @@
+-- define class
 local CallDef = require "obj_call_def"
-
 local Callback = CallDef:new()
 
 local corelog = require "corelog"
