@@ -20,8 +20,8 @@ local enterprise_chests = require "enterprise_chests"
 local T_Object = require "test.t_object"
 local T_IObj = require "test.t_iobj"
 local T_Obj = require "test.t_obj"
-local T_IItemSupplier = require "test.t_item_supplier"
-local T_IItemDepot = require "test.t_item_depot"
+local T_IItemSupplier = require "test.t_iitem_supplier"
+local T_IItemDepot = require "test.t_iitem_depot"
 
 local t_turtle = require "test.t_turtle"
 
