@@ -20,7 +20,8 @@ function T_Block.T_All()
     T_Block.T_isAnyBlock()
     T_Block.T_isNoneBlock()
     T_Block.T_isComputercraftItem()
-    T_Block.T_ParseWithCheckInput()
+    T_Block.T_hasValidDirection()
+    T_Block.T_ParseWithCheckInput() -- ToDo: consider removing
 
     -- helper functions
     T_Block.T_IsBlockList()
@@ -72,14 +73,14 @@ function T_Block.T_new()
     block = Block:new({
         _name   = saplingItemName,
     })
-    assert(block:getDx() == nil, "gotten getDx(="..(block:getDx() or "nil")..") not the same as expected(=nil)")
-    assert(block:getDy() == nil, "gotten getDy(="..(block:getDy() or "nil")..") not the same as expected(=nil)")
+    assert(block:getDx() == 0, "gotten getDx(="..(block:getDx() or 0)..") not the same as expected(=0)")
+    assert(block:getDy() == 0, "gotten getDy(="..(block:getDy() or 0)..") not the same as expected(=0)")
     assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
 
     -- test default
     block = Block:new()
-    assert(block:getDx() == nil, "gotten getDx(="..(block:getDx() or "nil")..") not the same as expected(=nil)")
-    assert(block:getDy() == nil, "gotten getDy(="..(block:getDy() or "nil")..") not the same as expected(=nil)")
+    assert(block:getDx() == 0, "gotten getDx(="..(block:getDx() or 0)..") not the same as expected(=0)")
+    assert(block:getDy() == 0, "gotten getDy(="..(block:getDy() or 0)..") not the same as expected(=0)")
     local dedaultName = ""
     assert(block:getName() == dedaultName, "gotten getName(="..block:getName()..") not the same as expected(="..dedaultName..")")
 
@@ -285,6 +286,67 @@ function T_Block.T_isComputercraftItem()
     -- cleanup test
 end
 
+function T_Block.T_hasValidDirection()
+    -- prepare test
+    corelog.WriteToLog("* Block:hasValidDirection() tests")
+    local blockName = chestItemName
+    local obj = Block:new({
+        _dx     = 0,
+        _dy     = 0,
+
+        _name   = blockName,
+    })
+
+    -- test default (0,0)
+    local expectedDirectionValid = false
+    local directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- test (0,1)
+    expectedDirectionValid = true
+    obj._dx = 0
+    obj._dy = 1
+    directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- test (0,-1)
+    expectedDirectionValid = true
+    obj._dx = 0
+    obj._dy = -1
+    directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- test (1,0)
+    expectedDirectionValid = true
+    obj._dx = 1
+    obj._dy = 0
+    directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- test (-1,0)
+    expectedDirectionValid = true
+    obj._dx = -1
+    obj._dy = 0
+    directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- test (0,9)
+    expectedDirectionValid = false
+    obj._dx = 0
+    obj._dy = 9
+    directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- test (9,0)
+    expectedDirectionValid = false
+    obj._dx = 9
+    obj._dy = 0
+    directionValid = obj:hasValidDirection()
+    assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
+
+    -- cleanup test
+end
+
 function T_Block.T_ParseWithCheckInput()
     -- prepare test
     corelog.WriteToLog("* Block parsing with CheckInput tests")
@@ -319,19 +381,19 @@ function T_Block.T_IsBlockList()
     })
 
     -- test two valid blocks
-    local isBlockList = Block.IsBlockList( { block1:copy(), block2:copy() } )
+    local isBlockList = Block.IsBlockList( { block1, block2 } )
     local expectedIsBlockList = true
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
 
     -- test one valid block + one almost valid block
     block2._name = 10
-    isBlockList = Block.IsBlockList( { block1:copy(), block2:copy() } )
+    isBlockList = Block.IsBlockList( { block1, block2 } )
     expectedIsBlockList = false
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
     block2._name = furnaceItemName
 
     -- test two valid blocks + different object
-    isBlockList = Block.IsBlockList( { block1:copy(), block2:copy(), "a string" } )
+    isBlockList = Block.IsBlockList( { block1, block2, "a string" } )
     expectedIsBlockList = false
     assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
 

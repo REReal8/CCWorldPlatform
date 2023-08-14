@@ -236,7 +236,7 @@ function role_builder.BuildLayer_Task(...)
             -- check block type
             if block:isMinecraftItem() or block:isComputercraftItem() then
                 -- optionally turn in specific direction
-                if block:getDx() ~= nil or block:getDy() ~= nil then
+                if block:hasValidDirection() then
                     -- turn in the right direction
                     coremove.TurnTo({_dx = block:getDx(), _dy = block:getDy()})
                 end
