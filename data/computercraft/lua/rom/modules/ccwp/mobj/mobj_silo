@@ -1,18 +1,6 @@
-local Silo = {
-    _id                     = "",
-    _version                = 1,
-
-    _baseLocation           = nil,
-    _entryLocation          = nil,
-
-    _dropLocation           = 0,
-    _pickupLocation         = 0,
-
-    _topChests              = nil,
-    _storageChests          = nil,
-
-    _operational            = false,
-}
+-- define class
+local ObjBase = require "obj_base"
+local Silo = ObjBase:new()
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -114,60 +102,6 @@ end
 
 function Silo:getClassName()
     return "Silo"
-end
-
-function Silo:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Silo:isEqual(obj)
-    -- check input
-    if not Silo:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._version == obj._version
-
-                and self._baseLocation:isEqual(obj._baseLocation)
-                and self._entryLocation:isEqual(obj._entryLocation)
-
-                and self._dropLocation == obj._dropLocation
-                and self._pickupLocation == obj._pickupLocation
-
-                and self._topChests:isEqual(obj._topChests)
-                and self._storageChests:isEqual(obj._storageChests)
-
-                and self._operational == obj._operational
-
-    -- end
-    return isEqual
-end
-
-function Silo:copy()
-    local copy = Silo:new({
-        _id             = self._id,
-        _version        = self._version,
-
-        _baseLocation   = self._baseLocation:copy(),
-        _entryLocation  = self._entryLocation:copy(),
-
-        -- pickup and drop
-        _dropLocation   = self._dropLocation,
-        _pickupLocation = self._pickupLocation,
-
-        -- chests
-        _topChests      = self._topChests:copy(),
-        _storageChests  = self._storageChests:copy(),
-    })
-
-    return copy
 end
 
 --    _____ __  __  ____  _     _                  _   _               _

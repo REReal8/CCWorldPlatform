@@ -1,6 +1,6 @@
-local ObjArray = {
-    _objClassName   = "",
-}
+-- define class
+local ObjBase = require "obj_base"
+local ObjArray = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -45,10 +45,6 @@ function ObjArray:new(...)
     return o
 end
 
-function ObjArray:getClassName()
-    return "ObjArray"
-end
-
 function ObjArray:getObjClassName()
     return self._objClassName
 end
@@ -60,6 +56,20 @@ function ObjArray:getObjClass()
     return objClass
 end
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function ObjArray:getClassName()
+    return "ObjArray"
+end
+
+--[[
 function ObjArray:isTypeOf(obj)
     local metatable = getmetatable(obj)
     while metatable do
@@ -105,6 +115,7 @@ function ObjArray:copy()
 
     return copy
 end
+]]
 
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |

@@ -3,15 +3,21 @@ local T_ObjArray = {}
 local corelog = require "corelog"
 
 local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
+
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_iobj"
 
 function T_ObjArray.T_All()
     -- initialisation
     T_ObjArray.T_new()
 
     -- IObj methods
+    T_ObjArray.T_IObj_All()
+
     T_ObjArray.T_ImplementsIObj()
     T_ObjArray.T_isTypeOf()
     T_ObjArray.T_isEqual()
@@ -41,6 +47,18 @@ local testObj2 = TestObj:new({
     _field2 = 2,
 })
 local wrongTestObj1 = Location:new()
+
+local testClassName = "ObjArray"
+local function createTestObj()
+    local testObj = ObjArray:new({
+        _objClassName   = objClassName1,
+
+        testObj1:copy(),
+        testObj2:copy(),
+    })
+
+    return testObj
+end
 
 function T_ObjArray.T_new()
     -- prepare test
@@ -77,6 +95,17 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function T_ObjArray.T_IObj_All()
+    -- prepare test
+    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
+
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
+end
 
 function T_ObjArray.T_ImplementsIObj()
     -- prepare test

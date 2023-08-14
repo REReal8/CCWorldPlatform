@@ -1,6 +1,6 @@
-local ObjTable = {
-    _objClassName   = "",
-}
+-- define class
+local ObjBase = require "obj_base"
+local ObjTable = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -62,17 +62,6 @@ function ObjTable:getClassName()
     return "ObjTable"
 end
 
-function ObjTable:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
 function ObjTable:isEqual(obj)
     -- check input
     if not ObjTable:isTypeOf(obj) then return false end
@@ -87,7 +76,7 @@ function ObjTable:isEqual(obj)
             sizeA = sizeA + 1
             -- check same obj
             local elB = obj[key]
-            if not elA:isEqual(elB) then return false end
+            if not elA.isEqual or not elA:isEqual(elB) then return false end
         end
     end
 
@@ -99,22 +88,6 @@ function ObjTable:isEqual(obj)
 
     -- end
     return true
-end
-
-function ObjTable:copy()
-    -- create new ObjTable
-    local copy = ObjTable:new({
-        _objClassName   = self._objClassName,
-    })
-
-    -- copy elements
-    for key, el in pairs(self) do
-        if key ~= "_objClassName" then
-            copy[key] = el:copy()
-        end
-    end
-
-    return copy
 end
 
 --                        _  __ _                       _   _               _

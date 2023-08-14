@@ -3,19 +3,21 @@ local T_ObjTable = {}
 local corelog = require "corelog"
 
 local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local ObjTable = require "obj_table"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
+
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_iobj"
 
 function T_ObjTable.T_All()
     -- initialisation
     T_ObjTable.T_new()
 
     -- IObj methods
-    T_ObjTable.T_ImplementsIObj()
-    T_ObjTable.T_isTypeOf()
-    T_ObjTable.T_isEqual()
-    T_ObjTable.T_copy()
+    T_ObjTable.T_IObj_All()
+--    T_ObjTable.T_isEqual()
 
     -- specific methods
     T_ObjTable.T_transformObjectTables()
@@ -41,6 +43,18 @@ local testObj2 = TestObj:new({
     _field2 = 2,
 })
 local wrongTestObj1 = Location:new()
+
+local testClassName = "ObjTable"
+local function createTestObj()
+    local testObj = ObjTable:new({
+        _objClassName   = objClassName1,
+
+        testObj1Key     = testObj1:copy(),
+        testObj2Key     = testObj2:copy(),
+    })
+
+    return testObj
+end
 
 function T_ObjTable.T_new()
     -- prepare test
@@ -78,39 +92,15 @@ end
 --                    _/ |
 --                   |__/
 
-function T_ObjTable.T_ImplementsIObj()
+function T_ObjTable.T_IObj_All()
     -- prepare test
-    corelog.WriteToLog("* ObjTable IObj interface test")
-    local obj = ObjTable:new() if not obj then corelog.Error("failed obtaining ObjTable") return end
+    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
-    local implementsInterface = IObj.ImplementsInterface(obj)
-    assert(implementsInterface, "ObjTable class does not (fully) implement IObj interface")
-
-    -- cleanup test
-end
-
-function T_ObjTable.T_isTypeOf()
-    -- prepare test
-    corelog.WriteToLog("* ObjTable:isTypeOf() tests")
-    local objTable2 = ObjTable:new({
-        _objClassName   = objClassName1,
-
-        testObj1,
-        testObj2,
-    })
-
-    -- test valid
-    local isTypeOf = ObjTable:isTypeOf(objTable2)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = ObjTable:isTypeOf("a string")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 function T_ObjTable.T_isEqual()
@@ -149,23 +139,6 @@ function T_ObjTable.T_isEqual()
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     objTable2.testObj3Key = nil
-
-    -- cleanup test
-end
-
-function T_ObjTable.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* ObjTable:copy() tests")
-    local objTable1 = ObjTable:new({
-        _objClassName   = objClassName1,
-
-        testObj1Key     = testObj1,
-        testObj2Key     = testObj2,
-    }) if not objTable1 then corelog.Warning("objTable1 unexpectedly nil") return end
-
-    -- test
-    local copy = objTable1:copy()
-    assert(copy:isEqual(objTable1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objTable1, compact)..")")
 
     -- cleanup test
 end
