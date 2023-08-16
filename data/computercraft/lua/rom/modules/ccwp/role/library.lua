@@ -2,7 +2,7 @@ local library = {}
 
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/role/?"
+    package.path = package.path..";/rom/modules/ccwp/role/?"..";/rom/modules/ccwp/role/?.lua"
 end
 
 function library.Setup()
