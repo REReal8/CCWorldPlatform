@@ -193,7 +193,6 @@ function coredht.GetData(...)
 
     -- follow the nodes
     for i, node in ipairs(arg) do
----@diagnostic disable-next-line: cast-local-type
         if type(ldb) == "table" and ldb[node] ~= nil    then ldb = ldb[node]
                                                         else return nil
         end
