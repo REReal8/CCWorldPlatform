@@ -1,29 +1,8 @@
 ToDo List
 ---------
 
-R  finish MObjHost
-   R  test delistMObj_SSrv                                                                                              (done)
-   R  test removeMObj_ASrv                                                                                              (done)
-   R  remove completeRunningBusiness_AOSrv from IMObj interface                                                         (done)
-   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
-   R  (re)consider relevant method naming:                                                                              (done)
-                  MObjHost          MObjHost       (MObj)Host  MObj           MObj        -  MObjHost                MObjHost    (MObj)Host     MObj                 MObj        -  ent_constr
-      - now:      addMObj           registerMObj   saveObject  buildBlueprint construct   -  removeMObj              delistMObj  deleteResource dismantleBlueprint   destruct    -  build
-      - option1:  createNew         ?              ?           buildBlueprint construct   -  destroy                 ?           ?              dismantleBlueprint   destruct    -  build
-      - option2:  hostAndBuildMObj  hostMObj       saveObject  buildBlueprint construct   -  dismantleAndReleaseMObj releaseMObj deleteResource dismantleBlueprint   destruct    -  build
-      - based on the following conversation I have chosen option 2: https://chat.openai.com/share/65d3e63b-7618-4522-a436-e88964f4d293
+-  Improve MObjHost
    -  Support updating of MObj's
-
-R  Dummy callback                                                                                                       (done)
-   R  in more logical class                                                                                             (done)
-   R  easier way to obtain                                                                                              (done)
-
-R  (t_)object.lua                                                                                                       (done)
-   R  introduce general IsInstanceOf function                                                                           (done)
-
-R  IObj                                                                                                                 (done)
-   R  rename isSame to isEqual                                                                                          (done)
-   (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
 
 -  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
    R  convert Location to a proper IObj                                                                                 (done)
@@ -51,6 +30,7 @@ R  IObj                                                                         
    -  convert MObjHost to a proper IObj
 
 R  Generalise test functions into "templates" to reduce duplication
+   R  adtopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                         (done)
    R  generalise (I)Obj test functions                                                                                  (done)
    R  generalise (I)ItemSupplier test functions
    R  generalise (I)ItemDepot test functions
@@ -134,7 +114,7 @@ G  blueprint
    G  used to pass to project step (zodat het in de status schermen te zien is)
    -  Introduce Blueprint objects
 
--  Construction
+-  Construction from front
    -  Support building blueprints (layers) from front
 
 G  enterprise_project
@@ -255,6 +235,29 @@ G moveTo:
 
 ToDo history
 ------------
+
+R  IObj                                                                                                                 (done)
+   R  rename isSame to isEqual                                                                                          (done)
+   (based on a chat with chatgpt as well as literature study on identity and equality in OOP (e.g. look here: https://stackoverflow.com/questions/1692863/what-is-the-difference-between-identity-and-equality-in-oop) )
+
+R  (t_)object.lua                                                                                                       (done)
+   R  introduce general IsInstanceOf function                                                                           (done)
+
+R  Dummy callback                                                                                                       (done)
+   R  in more logical class                                                                                             (done)
+   R  easier way to obtain (via Callback.GetNewDummyCallBack())                                                         (done)
+
+R  finish MObjHost
+   R  test delistMObj_SSrv                                                                                              (done)
+   R  test removeMObj_ASrv                                                                                              (done)
+   R  remove completeRunningBusiness_AOSrv from IMObj interface                                                         (done)
+   R  rewrite waiting for completion of running business (remove usage of completeRunningBusiness_AOSrv + use WIPAdministrator)  (done)
+   R  (re)consider relevant method naming:                                                                              (done)
+                  MObjHost          MObjHost       (MObj)Host  MObj           MObj        -  MObjHost                MObjHost    (MObj)Host     MObj                 MObj        -  ent_constr
+      - now:      addMObj           registerMObj   saveObject  buildBlueprint construct   -  removeMObj              delistMObj  deleteResource dismantleBlueprint   destruct    -  build
+      - option1:  createNew         ?              ?           buildBlueprint construct   -  destroy                 ?           ?              dismantleBlueprint   destruct    -  build
+      - option2:  hostAndBuildMObj  hostMObj       saveObject  buildBlueprint construct   -  dismantleAndReleaseMObj releaseMObj deleteResource dismantleBlueprint   destruct    -  build
+      - based on the following conversation I have chosen option 2: https://chat.openai.com/share/65d3e63b-7618-4522-a436-e88964f4d293
 
 R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
    R  introduce enterprise_administration                      (done)
