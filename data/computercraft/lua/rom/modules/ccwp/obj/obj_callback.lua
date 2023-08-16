@@ -65,11 +65,11 @@ function Callback.ErrorCall(callback)
     -- check for callback
     if not Callback:isTypeOf(callback) then
 --        corelog.Warning("Callback.ErrorCall: Invalid callback (type="..type(callback)..")")
-        return nil
+        return false -- schedule result
     end
 
     -- call method
-    return callback:call({success = false})
+    return callback:call({success = false}) -- call result
 end
 
 function Callback.GetNewDummyCallBack()
