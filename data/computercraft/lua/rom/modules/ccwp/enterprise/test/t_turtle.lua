@@ -141,9 +141,9 @@ function t_turtle.T_GetAnyTurtleLocator()
     corelog.WriteToLog("* enterprise_turtle.GetAnyTurtleLocator() tests")
 
     -- test
-    local locator = enterprise_turtle.GetAnyTurtleLocator()
+    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator() assert(turtleLocator, "t_turtle.T_GetAnyTurtleLocator: Failed obtaining turtleLocator")
     local expectedLocator = enterprise_turtle:getTurtleLocator("any")
-    assert(locator:isEqual(expectedLocator), "gotten locator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
+    assert(turtleLocator:isEqual(expectedLocator), "gotten locator(="..textutils.serialise(turtleLocator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
 
     -- cleanup test
 end
@@ -179,12 +179,12 @@ function t_turtle.T_getObject()
     local currentTurtle = enterprise_turtle:getObject(currentTurtleLocator)
 
     -- test normal object works (similair to T_Host.T_getObject())
-    local object = enterprise_turtle:getObject(objectLocator)
+    local object = enterprise_turtle:getObject(objectLocator) assert(object, "t_turtle.T_getObject: Failed obtaining object")
     assert(object:isEqual(testObject), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(testObject, compact)..")")
 
     -- test "any turtle" provides current turtle
     local getAnyTurtleLocator = enterprise_turtle.GetAnyTurtleLocator()
-    object = enterprise_turtle:getObject(getAnyTurtleLocator)
+    object = enterprise_turtle:getObject(getAnyTurtleLocator) assert(object, "t_turtle.T_getObject: Failed obtaining object")
     assert(object:isEqual(currentTurtle), "object(="..textutils.serialise(object, compact)..") not the same as expected(="..textutils.serialise(currentTurtle, compact)..")")
 
     -- cleanup test
