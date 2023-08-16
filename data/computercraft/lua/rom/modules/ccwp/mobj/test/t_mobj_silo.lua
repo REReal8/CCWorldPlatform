@@ -149,7 +149,7 @@ function T_Silo.T_destruct()
         baseLocation    = location1,
         topChests       = 0,
         layers          = 0,
-    })
+    }) assert(mobj, "Failed obtaining mobj")
 
     -- test
     local destructSuccess = mobj:destruct()
@@ -167,7 +167,7 @@ function T_Silo.T_construct()
         baseLocation    = location1,
         topChests       = topChests1,
         layers          = layers1,
-    })
+    }) assert(mobj, "Failed obtaining mobj")
     assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
     assert(mobj._topChests:nObjs() == topChests1, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
     assert(mobj._storageChests:nObjs() == layers1*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
@@ -176,7 +176,7 @@ function T_Silo.T_construct()
     -- test default
     mobj = Silo:construct({
         baseLocation    = location1,
-    })
+    }) assert(mobj, "Failed obtaining mobj")
     assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
     assert(mobj._topChests:nObjs() == 2, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(=2)")
     assert(mobj._storageChests:nObjs() == 2*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(=8)")
@@ -227,7 +227,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     obj:Activate()
 
     local siloLocator = enterprise_storage:getObjectLocator(obj)
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
@@ -296,7 +296,7 @@ end
 function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
-    local itemsLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
     local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
     local siloLocator = enterprise_storage:saveObject(obj)
 
@@ -350,7 +350,7 @@ end
 
 function T_Silo.T_GetRandomSilo()
     local data = coredht.GetData("enterprise_storage", "objects", "class=Silo")
-    if not data then return nil end
+    if type(data) ~= "table" then return nil end
     local id = next(data)
     if not id then return nil end
     local silo = Silo:new(data[id])

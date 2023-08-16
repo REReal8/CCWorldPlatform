@@ -296,7 +296,7 @@ function enterprise_assignmentboard.AssignmentSelectionProcedure(...)
     if type(assignment) == "table" and assignment.status == "open" then
         -- get applications to assignment
         local applications = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId, "applications")
-        if not applications then corelog.Error("enterprise_assignmentboard.ApplyToAssignment: failed obtaining applications to assignment") return nil end
+        if type(applications) ~= "table" then corelog.Error("enterprise_assignmentboard.ApplyToAssignment: failed obtaining applications to assignment") return nil end
 
         -- see who got the highest dice
         local highestDiceTurtle = nil
@@ -323,7 +323,7 @@ function enterprise_assignmentboard.TakeAssignment(assignmentId) -- ToDo: make t
     local assignment = coredht.GetData(db.dhtRoot, db.dhtList, assignmentId)
 
     -- see if this assignment is still open
-    if assignment.status == "open" then
+    if type(assignment) == "table" and assignment.status == "open" then
         -- mark as staffed
         coredht.SaveData("staffed", db.dhtRoot, db.dhtList, assignmentId, "status")
 

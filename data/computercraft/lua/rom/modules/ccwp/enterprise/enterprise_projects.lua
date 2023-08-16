@@ -258,6 +258,7 @@ end
 local function EndProject(internalProjectData)
     -- get the project informatino
     local project   = coredht.GetData(db.dhtRoot, internalProjectData.projectId)
+    if type(project) ~= "table" then corelog.Error("enterprise_projects:EndProject: Failed obtaining project") return false end
     local projectId = internalProjectData.projectId
     local projectMeta = project.projectMeta
     local projectResults = {}

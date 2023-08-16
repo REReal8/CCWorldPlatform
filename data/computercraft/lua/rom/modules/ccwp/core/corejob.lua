@@ -153,7 +153,7 @@ function JobSelectionProcedure(jobId)
 --    corelog.WriteToLog("Running JobSelectionProcedure")
 
     -- data van de job ophalen
-    local job = coredht.GetData(db.dhtRoot, jobId)
+    local job = coredht.GetData(db.dhtRoot, jobId) if not job then return nil end
 
     -- see if this job is still open, better selection later
     if job.status == "open" then return job end

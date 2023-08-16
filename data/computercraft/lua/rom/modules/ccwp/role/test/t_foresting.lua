@@ -102,7 +102,7 @@ end
 function t_foresting.T_BirchGrowToFile()
     -- get the data
     local filename  = '/log/birchgrow.csv'
-    local data = coredht.GetData("test", "BirchGrow")
+    local data = coredht.GetData("test", "BirchGrow") if type(data) ~= "table" then corelog.Error("Failed obtaining data") return nil end
 
     corelog.WriteToLog("data:")
     corelog.WriteToLog(data)

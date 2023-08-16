@@ -440,7 +440,7 @@ function Host:getNumberOfObjects(...)
 
     -- get objects
     local objects = self:getObjects(className)
-    if not objects then corelog.Error("Host:getNumberOfObjects: Failed obtaining objects of class "..className) return nil end
+    if type(objects) ~= "table" then corelog.Error("Host:getNumberOfObjects: Failed obtaining objects of class "..className) return nil end
 
     -- loop on objects
     local count = 0
@@ -465,7 +465,7 @@ function Host:deleteObjects(...)
 
     -- get objects
     local objects = self:getObjects(className)
-    if not objects then corelog.Error("Host:deleteObjects: Failed obtaining objects of class "..className) return nil end
+    if type(objects) ~= "table" then corelog.Error("Host:deleteObjects: Failed obtaining objects of class "..className) return nil end
 
     -- delete all objects
 --    corelog.Warning("All objects of class "..className.." are being deleted!")
