@@ -244,7 +244,7 @@ end
 local layer1 = LayerRectangle:new({
     _codeArray  = codeArray1,
     _codeMap    = codeMap1,
-})
+}) assert(layer1, "Failed obtaining layer")
 
 function T_LayerRectangle.T_new()
     -- prepare test
@@ -254,7 +254,7 @@ function T_LayerRectangle.T_new()
     local layer = LayerRectangle:new({
         _codeArray  = codeArray1,
         _codeMap    = codeMap1,
-    })
+    }) assert(layer, "Failed obtaining layer")
     local expectedNColumns = 6
     assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     local expectedNRows = 6
@@ -269,7 +269,7 @@ function T_LayerRectangle.T_new()
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
 
     -- test default
-    layer = LayerRectangle:new()
+    layer = LayerRectangle:new() assert(layer, "Failed obtaining layer")
     expectedNColumns = 0
     assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     expectedNRows = 0
@@ -286,7 +286,7 @@ function T_LayerRectangle.T_getBlock()
     local layer = LayerRectangle:new({
         _codeArray  = codeArray1,
         _codeMap    = codeMap1,
-    })
+    }) assert(layer, "Failed obtaining layer")
     local block = layer:getBlock(4, 1)
     local expectedBlock = Block:new({ _name = torchItemName })
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
@@ -345,7 +345,7 @@ function T_LayerRectangle.T_isEqual()
     local layer = LayerRectangle:new({
         _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
         _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
-    })
+    }) assert(layer, "Failed obtaining layer")
 
     -- test same
     local isEqual = layer1:isEqual(layer)
@@ -453,7 +453,7 @@ function T_LayerRectangle.T_transformToLayer()
             [2] = "   ?  ",
             [1] = "   ?  ",
         },
-    })
+    }) assert(fromLayer, "Failed obtaining layer")
     local toLayer = LayerRectangle:new({
         _codeArray  = {
             ["T"]   = Block:new({ _name = torchItemName }),
@@ -469,7 +469,7 @@ function T_LayerRectangle.T_transformToLayer()
             [2] = "   ?  ",
             [1] = "   T  ",
         },
-    })
+    }) assert(toLayer, "Failed obtaining layer")
 
     -- test
     local transformLayer = fromLayer:transformToLayer(toLayer)
@@ -552,7 +552,7 @@ function T_LayerRectangle.T_cleanCodeArray()
             [2] = "    ",
             [1] = " T  ",
         },
-    })
+    }) assert(layer, "Failed obtaining layer")
 
     -- test
     layer:cleanCodeArray()
@@ -746,7 +746,7 @@ function T_LayerRectangle.T_removeBoundariesWithOnly()
             [2] = "??? T?",
             [1] = "??????",
         },
-    })
+    }) assert(layer, "Failed obtaining layer")
     local code = "?"
     local colOffset, rowOffset = layer:removeBoundariesWithOnly(code)
     local expectedOffset = 1
@@ -791,7 +791,7 @@ function T_LayerRectangle.T_buildData()
             [2] = "??? T?",
             [1] = "??????",
         },
-    })
+    }) assert(layer, "Failed obtaining layer")
     local colOffset, rowOffset, buildLayer = layer:buildData()
     local expectedOffset = 1
     assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
