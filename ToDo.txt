@@ -89,6 +89,8 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
 
+-  return nil after a CheckInput failure (instead of empty table): goed testen dat alles nog goed gaat.
+
 -  Obj(ect) Initialisation & Destruction: improve
    R  rename section base methods => initialisation                                                                     (done)
    R  remove new from IObj (+ move most implementations to correct section)                                             (done)
