@@ -88,11 +88,11 @@ function enterprise_projects.StartProject_ASrv(...)
     -- possibly inform WIPAdministrator
     if type(projectMeta.wipId) == "string" then
         -- get WIPAdministrator
-        local wipHandler = enterprise_administration:getWIPAdministrator()
-        if not wipHandler then corelog.Error("enterprise_projects:StartProject_ASrv: Failed obtaining WIPAdministrator") return Callback.ErrorCall(callback) end
+        local wipAdministrator = enterprise_administration:getWIPAdministrator()
+        if not wipAdministrator then corelog.Error("enterprise_projects:StartProject_ASrv: Failed obtaining WIPAdministrator") return Callback.ErrorCall(callback) end
 
         -- administer work started
-        wipHandler:administerWorkStarted(projectMeta.wipId, "Project "..project.projectId)
+        wipAdministrator:administerWorkStarted(projectMeta.wipId, "Project "..project.projectId)
     end
 
     -- let's start
