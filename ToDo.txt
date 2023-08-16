@@ -10,7 +10,7 @@ G  corejob: remove module (if possible)
 R  add .lua extension to almost all lua code files (besides being a good convention, it also helps in the VSC)          (done)
 
 -  CheckInput
-   -  add .lua to module file input_checker
+   R  add .lua to module file input_checker                                                                             (done)
    -  consider return nil after a CheckInput failure (instead of empty table).
    -  goed testen dat alles nog goed gaat.
 
