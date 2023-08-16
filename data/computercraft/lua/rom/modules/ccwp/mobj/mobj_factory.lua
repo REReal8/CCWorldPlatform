@@ -217,7 +217,7 @@ function Factory:getFuelNeed_Production_Att(...)
 
     -- create locator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator() if not turtleLocator then corelog.Error("Factory:getFuelNeed_Production_Att: Failed obtaining turtleLocator") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- determine fuelNeed
     local serviceResults = self:needsTo_ProvideItemsTo_SOSrv({
