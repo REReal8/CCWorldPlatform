@@ -259,7 +259,6 @@ function t_projects.T_StartProject_ASrv_registersWIP()
     local projectData = {
         testArgSource = testArgValue20,
     }
-    local administrator = enterprise_administration:getWIPAdministrator() assert(administrator)
     local wipId = "myWIPId"
     local projectServiceData = {
         projectDef  = projectDef,
@@ -273,7 +272,8 @@ function t_projects.T_StartProject_ASrv_registersWIP()
 
     -- test wipId queue created
     -- note: we rely here on the fact that the async test in the project is picked up with a delay, hence the project has not yet completed, hence the queue is not yet removed
-    local queue = administrator._wipQueues[wipId]
+    local wipAdministrator = enterprise_administration:getWIPAdministrator() assert(wipAdministrator)
+    local queue = wipAdministrator._wipQueues[wipId]
     assert(queue, "no wipId queue created")
 
     -- end
