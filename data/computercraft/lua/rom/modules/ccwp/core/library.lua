@@ -2,7 +2,7 @@ local library = {}
 
 function library.Init()
     -- add library to path
-    package.path = package.path..";/rom/modules/ccwp/core/?"
+    package.path = package.path..";/rom/modules/ccwp/core/?"..";/rom/modules/ccwp/core/?.lua"
 end
 
 function library.Setup()
