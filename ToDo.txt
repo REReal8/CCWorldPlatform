@@ -21,7 +21,7 @@ ToDo List
    R  convert ItemTable to a proper IObj                                                                                (done)
    R  convert WIPAdministrator to a proper IObj                                                                         (done)
    R  convert TestMObj to a proper IObj                                                                                 (done)
-   -  convert BirchForest to a proper IObj
+   R  convert BirchForest to a proper IObj                                                                              (done)
    -  convert Factory to a proper IObj
    -  convert Mine to a proper IObj
    -  convert Shop to a proper IObj

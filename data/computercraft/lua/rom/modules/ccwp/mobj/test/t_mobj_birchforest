@@ -9,6 +9,8 @@ local moduleRegistry = ModuleRegistry:getInstance()
 local Location = require "obj_location"
 local URL = require "obj_url"
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local BirchForest = require "mobj_birchforest"
 
 local role_forester = require "role_forester"
@@ -17,7 +19,9 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 
-local T_Obj = require "test.t_obj"
+local T_Obj = require "test.t_obj" -- should be gone at some point
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
 
 local t_turtle
 
@@ -27,10 +31,7 @@ function T_BirchForest.T_All()
     T_BirchForest.T_Setters()
 
     -- IObj methods
-    T_BirchForest.T_ImplementsIObj()
-    T_BirchForest.T_isTypeOf()
-    T_BirchForest.T_isEqual()
-    T_BirchForest.T_copy()
+    T_BirchForest.T_IObj_All()
 
     -- service methods
     T_BirchForest.T_getFuelNeed_Harvest_Att()
@@ -78,6 +79,27 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+local testClassName = "BirchForest"
+local function createTestObj(id)
+    id = id or coreutils.NewId()
+    local level = level0
+    local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
+
+    local testObj = BirchForest:new({
+        _id                     = id,
+        _level                  = level,
+
+        _baseLocation           = location1:copy(),
+        _nTrees                 = nTrees,
+
+        _localLogsLocator       = localLogsLocator,
+        _localSaplingsLocator   = localSaplingsLocator,
+    })
+
+    return testObj
+end
+
 function T_BirchForest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* BirchForest getter tests")
@@ -110,7 +132,7 @@ function T_BirchForest.CreateForest(level, baseLocation, id)
         _id                     = id,
         _level                  = level,
 
-        _baseLocation           = baseLocation,
+        _baseLocation           = baseLocation:copy(),
         _nTrees                 = nTrees,
 
         _localLogsLocator       = localLogsLocator,
@@ -153,94 +175,19 @@ end
 --                    _/ |
 --                   |__/
 
-function T_BirchForest.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_BirchForest.T_isTypeOf()
+function T_BirchForest.T_IObj_All()
     -- prepare test
-    corelog.WriteToLog("* BirchForest:isTypeOf() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
+    local id = coreutils.NewId()
+    local obj = createTestObj(id) assert(obj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj(id) assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
-    -- test valid
-    local isTypeOf = BirchForest:isTypeOf(forest)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = BirchForest:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 local compact = { compact = true }
-
-function T_BirchForest.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* BirchForest:isEqual() tests")
-    local id = coreutils.NewId()
-    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining BirchForest") return end
-    local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
-
-    -- test same
-    local forest1 = T_BirchForest.CreateForest(level0, location1, id)
-    local isEqual = forest1:isEqual(forest)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _level
-    forest._level = level2
-    isEqual = forest1:isEqual(forest)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    forest._level = level0
-
-    -- test different _baseLocation
-    forest._baseLocation = Location:new({_x= 100, _y= 0, _z= 100, _dx=0, _dy=1})
-    isEqual = forest1:isEqual(forest)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    forest._baseLocation = location1
-
-    -- test different _nTrees
-    forest._nTrees = nTrees + 1
-    isEqual = forest1:isEqual(forest)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    forest._nTrees = nTrees
-
-    -- test different _localLogsLocator
-    forest._localLogsLocator = localLogsLocator2
-    isEqual = forest1:isEqual(forest)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    forest._localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
-
-    -- test different _localSaplingsLocator
-    forest._localSaplingsLocator = localSaplingsLocator2
-    isEqual = forest1:isEqual(forest)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    forest._localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
-
-    -- cleanup test
-    return enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator2 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator2 })
-end
-
-function T_BirchForest.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* BirchForest:copy() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
-
-    -- test
-    local copy = forest:copy()
-    assert(copy:isEqual(forest), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(forest, compact)..")")
-
-    -- cleanup test
-end
 
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |

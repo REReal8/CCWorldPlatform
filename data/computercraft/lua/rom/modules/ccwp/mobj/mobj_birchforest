@@ -1,13 +1,6 @@
-local BirchForest = {
-    _id                     = "",
-    _level                  = 0,
-
-    _baseLocation           = nil,
-    _nTrees                 = 0,
-
-    _localLogsLocator       = nil,
-    _localSaplingsLocator   = nil,
-}
+-- define class
+local ObjBase = require "obj_base"
+local BirchForest = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -149,48 +142,6 @@ end
 
 function BirchForest:getClassName()
     return "BirchForest"
-end
-
-function BirchForest:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function BirchForest:isEqual(obj)
-    -- check input
-    if not BirchForest:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._level == obj._level
-                and self._baseLocation:isEqual(obj._baseLocation)
-                and self._nTrees == obj._nTrees
-                and self._localLogsLocator:isEqual(obj._localLogsLocator)
-                and self._localSaplingsLocator:isEqual(obj._localSaplingsLocator)
-
-    -- end
-    return isEqual
-end
-
-function BirchForest:copy()
-    local copy = BirchForest:new({
-        _id                     = self._id,
-        _level                  = self._level,
-
-        _baseLocation           = self._baseLocation:copy(),
-        _nTrees                 = self._nTrees,
-
-        _localLogsLocator       = self._localLogsLocator:copy(),
-        _localSaplingsLocator   = self._localSaplingsLocator:copy(),
-    })
-
-    return copy
 end
 
 --                        _                           _   _               _
