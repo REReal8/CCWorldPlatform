@@ -80,7 +80,7 @@ function ItemTable.combine(...)
             firstItemList   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
             secondItemList  + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
         --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("ItemTable.combine: Invalid input") return false end
+    if not checkSuccess then corelog.Error("ItemTable.combine: Invalid input") return nil end
 
     -- for the new list
     local combined      = {}
@@ -110,7 +110,7 @@ function ItemTable.compare(...)
             firstItemList   + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
             secondItemList  + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs)
         --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("ItemTable.compare: Invalid input") return false end
+    if not checkSuccess then corelog.Error("ItemTable.compare: Invalid input") return nil, nil, nil end
 
     -- this is what we will return
     local uniqueFirst   = {}

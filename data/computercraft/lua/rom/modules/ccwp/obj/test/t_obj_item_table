@@ -144,21 +144,18 @@ function T_ItemTable.T_combine()
     -- prepare test
     corelog.WriteToLog("* ItemTable:combine() tests")
 
-    -- usefull
-    local testTable = {}
-
     -- testing
-    testTable = ItemTable.combine(testTable1, testTable3)
+    local testTable = ItemTable.combine(testTable1, testTable3) assert(testTable, "failed combining tables")
     functionResult = testTable:isEqual(testTable1)
     expectedResult = true
     assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
-    testTable = ItemTable.combine(testTable1, testTable4)
+    testTable = ItemTable.combine(testTable1, testTable4) assert(testTable, "failed combining tables")
     functionResult = testTable:isEqual(testTable1)
     expectedResult = true
     assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
-    testTable = ItemTable.combine(testTable1, testTable2)
+    testTable = ItemTable.combine(testTable1, testTable2) assert(testTable, "failed combining tables")
     functionResult = testTable:isEqual(ItemTable:new({["minecraft:coal"] = 20, ["minecraft:torch"] = 11, ["minecraft:furnace"] = 27}))
     expectedResult = true
     assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
@@ -168,13 +165,8 @@ function T_ItemTable.T_compare()
     -- prepare test
     corelog.WriteToLog("* ItemTable:compare() tests")
 
-    -- usefull
-    local t1 = {}
-    local t2 = {}
-    local t3 = {}
-
     -- compare with itself
-    t1, t2, t3 = ItemTable.compare(testTable2, testTable2)
+    local t1, t2, t3 = ItemTable.compare(testTable2, testTable2) assert(t1 and t2 and t3, "failed comparing")
 
     functionResult = t1:isEmpty()
     expectedResult = true
@@ -187,7 +179,7 @@ function T_ItemTable.T_compare()
     assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     -- compare filled with empty table
-    t1, t2, t3 = ItemTable.compare(testTable1, testTable4)
+    t1, t2, t3 = ItemTable.compare(testTable1, testTable4) assert(t1 and t2 and t3, "failed comparing")
 
     functionResult = t1:isEqual(testTable1)
     expectedResult = true
@@ -200,7 +192,7 @@ function T_ItemTable.T_compare()
     assert(functionResult == expectedResult, "gotten IsEqualItemTable(="..tostring(functionResult)..") not the same as expected(="..tostring(expectedResult)..")")
 
     -- compare two filled tables
-    t1, t2, t3 = ItemTable.compare(testTable1, testTable2)
+    t1, t2, t3 = ItemTable.compare(testTable1, testTable2) assert(t1 and t2 and t3, "failed comparing")
 
     functionResult = t1:isEqual(ItemTable:new({["minecraft:torch"] = 11}))
     expectedResult = true
