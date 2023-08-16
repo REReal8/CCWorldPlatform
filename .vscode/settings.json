@@ -9,7 +9,9 @@
         "write",
         "peripheral",
         "sleep",
-        "parallel"
+        "parallel",
+        "pocket",
+        "commands"
     ],
     "Lua.diagnostics.disable": [
         "deprecated",
