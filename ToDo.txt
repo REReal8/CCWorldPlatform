@@ -7,7 +7,12 @@ G  Debug: Modem events send but not received
 
 G  corejob: remove module (if possible)
 
-R  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
+R  add .lua extension to almost all lua code files (besides being a good convention, it also helps in the VSC)          (done)
+
+-  CheckInput
+   -  add .lua to module file input_checker
+   -  consider return nil after a CheckInput failure (instead of empty table).
+   -  goed testen dat alles nog goed gaat.
 
 -  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
    R  convert Location to a proper IObj                                                                                 (done)
@@ -172,7 +177,6 @@ RG mine v2
             -  it should not take a table with the parameters + the parameters itself (change MObjHost to reflect this change)
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
-      -  return nil after a CheckInput failure (instead of empty table): goed testen dat alles nog goed gaat.
 
 -  Revise modules/ libraries file directory structure
 
