@@ -11,14 +11,9 @@ function InputChecker.Check(description, ...)
 --    corelog.WriteToLog("InputChecker.Check: callingFunctionInfo.source = "..callingFunctionInfo.source)
     local callingFunctionStr = (callingFunctionInfo.source or "?").."."..(callingFunctionInfo.name or "?")
 
-    -- create dummy result
-    -- note: returning below variable tricks the editor (and lua?) to expect a 2nd value of unknown type. This prevents a lot of warnings in the callers of this function.
-    -- ToDo: investigate if this is the proper way to do this, or if there is even a better way.
-    ---@type unknown
-    local dummyUnknownResult
-
     -- controle of description wel een string is
-    if type(description) ~= "string" then corelog.Error("CheckInput:"..callingFunctionStr..": description is not a string") return false, dummyUnknownResult end
+    local returns           = {}
+    if type(description) ~= "string" then corelog.Error("CheckInput:"..callingFunctionStr..": description is not a string") return false, table.unpack(returns) end
 
     -- dit hebben we nodig om de tekst te lezen
     local parameterStart    = nil
@@ -26,7 +21,6 @@ function InputChecker.Check(description, ...)
     local lastIndent        = 0
     local lastArgument      = 0
     local indenting         = {}
-    local returns           = {}
 
     -- regel voor regels langs lopen
     local result = true
@@ -62,7 +56,7 @@ function InputChecker.Check(description, ...)
                 local indent = math.floor((string.len(start) - parameterStart) / indentSize)
 
                 -- controle
-                if indent < 1 or indent > lastIndent + 1 then corelog.Error("CheckInput:"..callingFunctionStr..": indent error (indent = "..indent..", lastIndent = "..lastIndent..")") return false, dummyUnknownResult end
+                if indent < 1 or indent > lastIndent + 1 then corelog.Error("CheckInput:"..callingFunctionStr..": indent error (indent = "..indent..", lastIndent = "..lastIndent..")") return false, table.unpack(returns) end
 
                 -- argument opzoeken
                 local argument
@@ -75,7 +69,7 @@ function InputChecker.Check(description, ...)
 
                     -- komt blijkbaar uit een van de andere argumenten
                     if type(indenting[ indent - 1 ]) == "table" then argument = indenting[ indent - 1 ][ parameter ]
-                                                                else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false, dummyUnknownResult
+                                                                else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false, table.unpack(returns)
                     end
                 end
 
@@ -111,7 +105,7 @@ function InputChecker.Check(description, ...)
                 if argumentChanged and (indent > 1) then
                     if type(indenting[ indent - 1 ]) == "table" then
                         indenting[ indent - 1 ][ parameter ] = argument
-                    else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false, dummyUnknownResult end
+                    else corelog.Error("CheckInput:"..callingFunctionStr..": indent parent not a table") return false, table.unpack(returns) end
                 end
 
                 -- is deze gewenst om terug te geven?
