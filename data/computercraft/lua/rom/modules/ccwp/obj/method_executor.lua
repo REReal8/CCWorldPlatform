@@ -24,7 +24,11 @@ function MethodExecutor.DoSyncService(...)
     if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return {success = false} end
 
     -- call method
-    return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData })
+    local results = MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData })
+    if type(results) ~= "table" then corelog.Error("MethodExecutor.DoSyncService: service function return value not a table(type="..type(results)..")") return {success = false} end
+
+    -- end
+    return results
 end
 
 function MethodExecutor.DoSyncObjService(...)

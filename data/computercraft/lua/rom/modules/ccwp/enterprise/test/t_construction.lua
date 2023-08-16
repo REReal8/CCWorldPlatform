@@ -32,7 +32,7 @@ local testBuildLayer1 = LayerRectangle:new({
         [2] = "    ",
         [1] = "   T",
     },
-})
+}) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
     _codeArray  = {
@@ -47,7 +47,7 @@ local testBuildLayer2 = LayerRectangle:new({
         [2] = "C F",
         [1] = "CEE",
     },
-})
+}) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:new({
     _codeArray  = {
@@ -63,7 +63,7 @@ local testBuildLayer3 = LayerRectangle:new({
         [2] = "      ",
         [1] = "   T  ",
     },
-})
+}) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local testBuildLayer4 = LayerRectangle:new({
     _codeArray  = {
@@ -72,7 +72,7 @@ local testBuildLayer4 = LayerRectangle:new({
     _codeMap    = {
         [1] = " ",
     },
-})
+}) assert(testBuildLayer4, "Failed obtaining testBuildLayer4")
 
 function t_construction.T_BuildLayer_ASrv_FromTurtle()
     -- test service 1
