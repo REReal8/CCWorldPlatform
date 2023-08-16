@@ -72,7 +72,9 @@ function enterprise_gathering.AddNewMine_ASrv(...)
     -- insert buildingn project here
 
     -- start project
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+--    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+    corelog.Error("enterprise_gathering.AddNewMine_ASrv: not yet fully implemented")
+    return Callback.ErrorCall(callback) -- ToDo: implement
 end
 
 --    _       _                        _                       _                                _   _               _
