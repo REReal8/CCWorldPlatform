@@ -8,7 +8,6 @@ local coredht = require "coredht"
 local coreinventory = require "coreinventory"
 local corejob = require "corejob"
 local coreassignment = require "coreassignment"
-local coremap = require "coremap"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
 local coretask = require "coretask"
@@ -32,7 +31,6 @@ function core.Init()
 	coreinventory.Init()
 	corejob.Init()
 	coreassignment.Init()
-	coremap.Init()
 	coremove.Init()
 	coretask.Init()
 	coreutils.Init()
@@ -54,7 +52,6 @@ function core.Setup()
 	coreinventory.Setup()
 	corejob.Setup()
 	coreassignment.Setup()
-	coremap.Setup()
 	coremove.Setup()
 	coretask.Setup()
 	coreutils.Setup()
