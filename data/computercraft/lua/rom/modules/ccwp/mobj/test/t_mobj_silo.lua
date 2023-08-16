@@ -195,7 +195,7 @@ end
 function T_Silo.T_integrity()
     -- do the new test
     corelog.WriteToLog("* Silo:construct() tests")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     obj:IntegretyCheck()
@@ -221,7 +221,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "failed obtaining "..testClassName)
 
     -- activate the silo
     obj:Activate()
@@ -297,7 +297,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("failed constructing Silo") return end
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     local provideItems = {

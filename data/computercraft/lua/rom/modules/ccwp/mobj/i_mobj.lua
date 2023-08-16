@@ -43,7 +43,7 @@ function IMObj:construct(...)
                 param2                  + (number, 2) ...
                 ...
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("XXXMObj:construct: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("XXXMObj:construct: Invalid input") return nil end
 
     corelog.Error("Method construct() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
 end
