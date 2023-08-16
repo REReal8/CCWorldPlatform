@@ -29,6 +29,8 @@ ToDo List
    -  convert Host to a proper IObj
    -  convert MObjHost to a proper IObj
 
+G  corejob: remove module (if possible)
+
 R  Generalise test functions into "templates" to reduce duplication
    R  adtopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                         (done)
    R  generalise (I)Obj test functions                                                                                  (done)
