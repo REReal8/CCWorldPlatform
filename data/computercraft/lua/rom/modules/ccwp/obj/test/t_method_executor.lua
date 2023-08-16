@@ -119,6 +119,7 @@ function T_MethodExecutor.T_DoSyncService()
 
     -- test
     local results = MethodExecutor.DoSyncService(moduleName, serviceName, serviceData)
+    assert(type(results) == "table" , "no result table returned")
     assert(results.input == testValue, "Unexpected result from service: " .. tostring(results.input))
 
     -- cleanup test
@@ -140,6 +141,7 @@ function T_MethodExecutor.T_DoSyncObjService()
 
     -- test
     local results = MethodExecutor.DoSyncObjService(className, objData, serviceName, serviceData)
+    assert(type(results) == "table" , "no result table returned")
     assert(results.input == testValue, "Unexpected result from service: " .. tostring(results.input))
 
     -- cleanup test

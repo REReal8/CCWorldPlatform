@@ -21,7 +21,7 @@ function MethodExecutor.DoSyncService(...)
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("MethodExecutor.DoSyncService: Invalid input") return {success = false} end
 
     -- call method
     return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData })
