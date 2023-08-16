@@ -363,7 +363,7 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     -- prepare test
     corelog.WriteToLog("* Factory:provideItemsTo_AOSrv() tests ("..productionMethod..")")
     local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "failed obtaining Chest 2")

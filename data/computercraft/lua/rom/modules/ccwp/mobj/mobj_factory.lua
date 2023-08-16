@@ -60,7 +60,7 @@ function Factory:new(...)
                 _craftingSpots          - (ObjArray) with crafting spots
                 _smeltingSpots          - (ObjArray) with smelting spots
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Factory:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("Factory:new: Invalid input") return nil end
 
     -- set class info
     setmetatable(o, self)

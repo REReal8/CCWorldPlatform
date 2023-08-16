@@ -47,7 +47,7 @@ function Chest:new(...)
                 _accessDirection        - (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
                 _inventory              - (Inventory) inventory of Chest
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("Chest:new: Invalid input") return nil end
 
     -- set class info
     setmetatable(o, self)

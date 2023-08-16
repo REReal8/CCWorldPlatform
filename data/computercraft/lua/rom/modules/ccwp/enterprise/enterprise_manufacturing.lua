@@ -266,7 +266,7 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
 
         _craftingSpots  = siteStartData.craftingSpots,
         _smeltingSpots  = siteStartData.smeltingSpots,
-    })
+    }) if not factory then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv:failed obtaining Factory") return {success = false} end
 
     -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)
 
