@@ -222,6 +222,7 @@ function enterprise_turtle.RegisterTurtle_SSrv(...)
     local obj = Turtle:new({
         _id = tostring(turtleId),
     })
+    if not obj then corelog.Error("enterprise_turtle.RegisterTurtle_SSrv: Failed creating Obj") return {success = false} end
 
     -- save the Obj
     corelog.WriteToLog(">Registering Turtle "..obj:getId().." in enterprise_turtle.")
