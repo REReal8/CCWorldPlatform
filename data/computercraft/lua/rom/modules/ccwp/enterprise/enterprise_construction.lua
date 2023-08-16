@@ -75,7 +75,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- set local output location
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildBlueprint_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
 
     -- create project service data
     local buildBlueprintProjectDef = {
@@ -176,7 +176,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
     --          the service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildLayer_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
 
     -- create project service data
     local buildRectangularPatternProjectDef = {
