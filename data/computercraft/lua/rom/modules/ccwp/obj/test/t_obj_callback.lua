@@ -73,9 +73,9 @@ function T_Callback.T_ErrorCall()
         _data           = data1,
     })
 
-    -- test no callback returns nil
+    -- test no callback returns false
     local callResult = callback.ErrorCall(nil)
-    local expectedCallResult = nil
+    local expectedCallResult = false
     assert(callResult == expectedCallResult, "gotten callResult(="..tostring(callResult)..") not the same as expected(="..tostring(expectedCallResult)..")")
 
     -- test callback
