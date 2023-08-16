@@ -1,3 +1,4 @@
+-- define class
 local LayerRectangle = {
     _codeMap            = {},
     _codeArray          = {},
@@ -136,6 +137,25 @@ function LayerRectangle:isTypeOf(obj)
     return false
 end
 
+-- temp helper function, can be removed if we replace LayerRectangle:isEqual by default behavior of ObjBase. Keep it for not to get T_IObj.pt_isEqual test working.
+local function onlyHasLayerRectangleFields(obj)
+    -- check only
+    local codeArrayFound = false
+    local codeMapFound = false
+    for fieldName, fieldValue in pairs(obj) do
+        if fieldName == "_codeArray" then
+            codeArrayFound = true
+        elseif fieldName == "_codeMap" then
+            codeMapFound = true
+        else
+            return false
+        end
+    end
+
+    -- end
+    return codeArrayFound and codeMapFound
+end
+
 function LayerRectangle:isEqual(obj)
     -- check input
     if not LayerRectangle:isTypeOf(obj) then return false end
@@ -143,6 +163,9 @@ function LayerRectangle:isEqual(obj)
     -- check same object
     local isEqual =  LayerRectangle.IsEqualCodeArray(self._codeArray, obj._codeArray) and
                     LayerRectangle.IsEqualCodeMap(self._codeMap, obj._codeMap)
+
+    -- has no other fields
+    isEqual = isEqual and onlyHasLayerRectangleFields(self) and onlyHasLayerRectangleFields(obj)
 
     -- end
     return isEqual
