@@ -298,7 +298,7 @@ local function t_provideItemsTo_AOSrv(provideItems)
     local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("failed obtaining BirchForest") return end
     local objLocator = enterprise_forestry:saveObject(obj)
     t_turtle = t_turtle or require "test.t_turtle"
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local T_Chest = require "test.t_mobj_chest"

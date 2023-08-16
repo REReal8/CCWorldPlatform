@@ -68,7 +68,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
         _localLogsLocator       = enterprise_turtle.GetAnyTurtleLocator(),
         _localSaplingsLocator   = enterprise_turtle.GetAnyTurtleLocator(),
-    })
+    }) if not forest then corelog.Error("enterprise_forestry.AddNewSite_ASrv:failed obtaining BirchForest") return Callback.ErrorCall(callback) end
 
     -- save the BirchForest
     corelog.WriteToLog(">Adding forest "..forest:getId()..".")
