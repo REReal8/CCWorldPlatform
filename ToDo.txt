@@ -1,8 +1,13 @@
 ToDo List
 ---------
 
--  Improve MObjHost
-   -  Support updating of MObj's
+G  Debug: Modem events send but not received
+   - understand
+   - resolve/ workaround
+
+G  corejob: remove module (if possible)
+
+R  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
 
 -  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
    R  convert Location to a proper IObj                                                                                 (done)
@@ -17,7 +22,7 @@ ToDo List
    R  convert CallDef to a proper IObj                                                                                  (done)
    R  convert WIPQueue to a proper IObj                                                                                 (done)
    R  convert Block to a proper IObj                                                                                    (done)
-   -  convert LayerRectangle to a proper IObj
+   R  convert LayerRectangle to a proper IObj                                                                           (....)
    R  convert ItemTable to a proper IObj                                                                                (done)
    R  convert WIPAdministrator to a proper IObj                                                                         (done)
    R  convert TestMObj to a proper IObj                                                                                 (done)
@@ -25,13 +30,9 @@ ToDo List
    G  convert Factory to a proper IObj                                                                                  (done)
    -  convert Mine to a proper IObj
    -  convert Shop to a proper IObj
-   -  convert Turtle to a proper IObj
+   R  convert Turtle to a proper IObj
    -  convert Host to a proper IObj
    -  convert MObjHost to a proper IObj
-
-G  corejob: remove module (if possible)
-
-G  Debug: Modem events send but not received
 
 R  Generalise test functions into "templates" to reduce duplication
    R  adtopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                         (done)
@@ -41,14 +42,14 @@ R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
 
-RG ensure all MObj's follow IMObj interface
-   R  mobj_birchforest
+-  ensure all MObj's follow IMObj interface
+   -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
-   R  mobj_factory
+   -  mobj_factory
    -  mobj_mine
    R  mobj_silo                                                                                                         (done)
-   R  mobj_shop
-   R  mobj_turtle
+   -  mobj_shop
+   -  mobj_turtle
 
 R  Use generalised test functions for MObj's
    -  in mobj_birchforest
@@ -91,12 +92,76 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
 
--  return nil after a CheckInput failure (instead of empty table): goed testen dat alles nog goed gaat.
+G  Descriptions for blueprints and project steps
+   G  Blueprint layer holds a desription / name
+   G  used to pass to project step (zodat het in de status schermen te zien is)
+   G  description field for debugging (done, use projectMeta.title and projectMeta.description)
+   G  project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
+         { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
+                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
+         }},
+      en worden gebruikt voor sourceStep's, e.g.
+         { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
+
+R  Factory:
+   -  remove static method style code (remaining from before it was a mobj)
+   -  ensure no longer need to register it as a module in the mobj library
+   -  split into CraftSpot & SmeltSpot MObj's
+
+-  blueprint
+   -  Introduce Blueprint objects
+
+-  Improve MObjHost
+   -  Support updating of MObj's
+
+-  ItemSupplierGroup & ItemDepotGroup
+   -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.
+      -  in the Shop (or WasteHandler)
+      -  for top chests
+      -  for storage "chests" in the Silo
+      -  in the Factory?
+   -  part of this code is/ seems to be the same
+   -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
+
+-  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
+   -  v1
+      RG adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument                      (done)
+      R  add wasteItemDepotLocator to methods where (p|P)rovideItemsTo_AOSrv, and the parent methods of those, are used    (done)
+      -  gebruik wasteItemDepotLocator in factory (done)
+      -  gebruik wasteItemDepotLocator in forest, contruction
+      G  forrester return havested items so waste can be calculated
+   -  v2
+      -  create obj_wastehandler and enterprise_wastehandling
+      -  turtle registers in (m)obj_wastehandler
+      -  rename enterprise_storage into enterprise_warehousing
+      -  silo registers in (m)obj_wastehandler
+   -  v3
+      -  registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
+      -  ensure it takes the closest
+
+-  Availability of space (e.g. no 2 turtles into 1 silo shaft)
+   - denk richting:
+      -  silo managed de beweging door de shaft
+      -  oplossingrichting:
+         -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
+         -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
+
+-  mobj advanced chest
+   -  different class like mobj chest
+   -  handles orders with item reservation
+      -  discuss: should this be part of/ handled via improved IItemSupplier interface (i.e. be applicable to all ItemSupplier's)?
+   -  handles waste with free space reservation
+      -  discuss: should this be part of/ handled via improved IItemDepot interface  (i.e. be applicable to all ItemDepot's)?
+   -  when items are pickup up / delivered, reservation is complete
+
+RG mine v2
+   -  uitdenken
+   -  maken
 
 -  Obj(ect) Initialisation & Destruction: improve
    R  rename section base methods => initialisation                                                                     (done)
    R  remove new from IObj (+ move most implementations to correct section)                                             (done)
-   -  Consider revising Initialisation, some aspects to consider
+   -  ToDiscuss: Consider revising Initialisation, some aspects to consider
       -  Serialising and deserialising objects
          -  consider introducting methods (new)FromTable and serialiseToTable
          -  provide a default implementing class
@@ -107,6 +172,9 @@ R  use MObjHost class
             -  it should not take a table with the parameters + the parameters itself (change MObjHost to reflect this change)
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
+      -  return nil after a CheckInput failure (instead of empty table): goed testen dat alles nog goed gaat.
+
+-  Revise modules/ libraries file directory structure
 
 -  hosting/ releasing, building/ dismantling v2.0
    -  There are several aspects that could be taken into account in an upgraded version. Likely good to discuss:
@@ -115,23 +183,11 @@ R  use MObjHost class
       -  the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
       -  should we introduce some intermediate abstraction between IObj and IMObj, e.g. IHObj (hostable Obj), or IWObj (Workable Obj), or IAObj (async Obj)?
 
-G  blueprint
-   G  Blueprint layer holds a desription / name
-   G  used to pass to project step (zodat het in de status schermen te zien is)
-   -  Introduce Blueprint objects
-
 -  Construction from front
    -  Support building blueprints (layers) from front
 
-G  enterprise_project
+-  enterprise_project
    !  consider introducing a Project object (class)!, and using that in enterprise_project
-   G  description field for debugging (done, use projectMeta.title and projectMeta.description)
-   G  project stappen kunnen een naam krijgen, add e.g stepName = "kaas" field to step block, e.g.
-         { stepType = "SSrv", stepName = "kaas", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
-                { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTable4" },
-         }},
-      en worden gebruikt voor sourceStep's, e.g.
-         { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
    -  (nested?) sequential projectStep
             { stepType = "SerialSteps", stepTypeDef = { aoWIPId = "myId", }, stepDataDef = {                                        -- sourceStep = 10 (or stepName)
                 { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {   -- sourceStep = 10.1
@@ -159,38 +215,6 @@ G  enterprise_project
             }},
    -  error handling (no_error, ignored errors, failed on error)
 
--  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
-   -  v1
-      RG adjust part of IItemSupplier:provideItemsTo_AOSrv to get a wasteItemDepotLocator as argument                      (done)
-      R  add wasteItemDepotLocator to methods where (p|P)rovideItemsTo_AOSrv, and the parent methods of those, are used    (done)
-      -  gebruik wasteItemDepotLocator in factory (done)
-      -  gebruik wasteItemDepotLocator in forest, contruction
-      G  forrester return havested items so waste can be calculated
-   -  v2
-      -  create obj_wastehandler and enterprise_wastehandling
-      -  turtle registers in (m)obj_wastehandler
-      -  rename enterprise_storage into enterprise_warehousing
-      -  silo registers in (m)obj_wastehandler
-   -  v3
-      -  registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
-      -  ensure it takes the closest
-
-G  mine v2 maken
-
-R  Factory:
-   -  remove static method style code (remaining from before it was a mobj)
-   -  ensure no longer need to register it as a module in the mobj library
-   -  split into CraftSpot & SmeltSpot MObj's
-
--  ItemSupplierGroup & ItemDepotGroup
-   -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.
-      -  in the Shop (or WasteHandler)
-      -  for top chests
-      -  for storage "chests" in the Silo
-      -  in the Factory?
-   -  part of this code is/ seems to be the same
-   -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
-
 -  improve IItemDepot and IItemSupplier interfaces
    -  claiming items (in IItemSupplier)
    -  free slots (in IItemDepot's)
@@ -198,29 +222,21 @@ R  Factory:
 -  enterprise management
    -  for claiming manament execution time
 
--  mobj advanced chest
-   -  different class like mobj chest
-   -  handles orders with item reservation
-      -  discuss: should this be part of/ handled via improved IItemSupplier interface (i.e. be applicable to all ItemSupplier's)?
-   -  handles waste with free space reservation
-      -  discuss: should this be part of/ handled via improved IItemDepot interface  (i.e. be applicable to all ItemDepot's)?
-   -  when items are pickup up / delivered, reservation is complete
-
-G  player station
+-  player station
    -  v1.0: input & output chest UI
 
 -  IItemSupplier & IItemDepot interface
    -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
    -  don't do anything when itemList is empty --> where do check?
 
+-  World Master
+   -  Wil 1 ding: upgrade to the next level (via using (mobj)enterprises)
+
 -  recipe book
 
 -  Bug: Factory:provideItemsTo_AOSrv meerdere items zorgt voor meerdere keren aanroepen van callback terwijl het er maar 1 moet zijn
 
 -  create (& use) multiple turtles
-
--  availability
-   -  e.g. no 2 turtles into 1 silo shaft
 
 -  enterprise_energy
    -  Investigate + possibly fix why we relatively soon need to go to L3 enterprise_energy in enterprise_colonization
@@ -229,12 +245,10 @@ G  player station
 -  tool management
    -  does a turtle have it's own tools?
 
--  add .lua extension to all lua code files (besides being a good convention, it also helps in the VSC)
-
-G moveTo:
-   - v2.0: (snel) wegen (veel)
-
 -  Bij inschrijven assigment controleren of er een pickaxe in de inventory zit (indien not equiped)
+
+-  moveTo:
+   - v2.0: (snel) wegen (veel)
 
 -  Other ToDo's to be found everywhere in all code files
 
@@ -272,7 +286,7 @@ R  WIPAdministrator (formerly knows as AdministrationOffice)   (done)
    R  enterprise_project: optionally administer project started and completed in WIPAdministrator  (done)
    R  write WIPAdministrator tests                             (done)
 
-G moveTo:
+G  moveTo:
    G v1.2: boven maaiveld even wat intilligenter dan nu        (done)
 
 G  display station (Yahoo!!, working (except for building it)) (done)
