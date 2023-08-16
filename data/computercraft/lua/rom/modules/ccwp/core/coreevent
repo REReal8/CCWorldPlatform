@@ -140,11 +140,9 @@ function coreevent.SendMessage(t)
         -- do we have a channel? if not, use id of the receiver
 		if not currentChannel then currentChannel = to[i] end
 
-        -- usefull logging
-		-- corelog.WriteToLog("message out: to = "..to[i]..", currentChannel = "..currentChannel..", protocol = "..protocol..", subject = "..subject..", messageId = "..message.messageId, "a")
-
         -- actuall sending the message
 		if modem then
+--			coreutils.WriteToFile(db.logfile, "Sending data, message.version = "..(message.version or "unknown"), "a")
 
 			-- this sends the message
 			modem.transmit(currentChannel, from, textutils.serialize({
@@ -169,7 +167,8 @@ function coreevent.SendMessage(t)
 				})
 			})
 
-			-- corelog.WriteToLog("Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")")
+			-- bla
+			coreutils.WriteToFile(db.logfile, "Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")", "a")
 			-- don't write to log, since that will send a message and get's us in a loop
 		end
 	end
