@@ -12,13 +12,17 @@ local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
-local T_Obj = require "test.t_obj"
+local T_Obj = require "test.t_obj" -- should be gone at some point
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
 
 local T_Chest = require "test.t_mobj_chest"
 local t_turtle = require "test.t_turtle"
@@ -28,10 +32,7 @@ function T_Factory.T_All()
     T_Factory.T_new()
 
     -- IObj methods
-    T_Factory.T_ImplementsIObj()
-    T_Factory.T_isTypeOf()
-    T_Factory.T_isEqual()
-    T_Factory.T_copy()
+    T_Factory.T_IObj_All()
 
     -- specific methods
     T_Factory.T_getAvailableInputLocator()
@@ -47,6 +48,18 @@ function T_Factory.T_All()
     T_Factory.T_ImplementsIItemSupplier()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
+
+local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
+local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
+local locatorClassName = "URL"
+local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
+local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
+local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
+local productionSpotClassName = "ProductionSpot"
+local craftingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
+local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
 
 local compact = { compact = true }
 
@@ -77,17 +90,30 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
-local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local locatorClassName = "URL"
-local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
-local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
-local productionSpotClassName = "ProductionSpot"
-local craftingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
-local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
-local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
-local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
+local testClassName = "Factory"
+local function createTestObj(id)
+
+    -- nil check
+    assert(location1, "failed obtaining location1 for "..testClassName)
+    assert(inputLocators1, "failed obtaining inputLocators1 for "..testClassName)
+    assert(outputLocators1, "failed obtaining outputLocators1 for "..testClassName)
+    assert(craftingSpots1, "failed obtaining craftingSpots1 for "..testClassName)
+    assert(smeltingSpots1, "failed obtaining smeltingSpots1 for "..testClassName)
+
+    local testObj = Factory:new({
+        _id             = id or coreutils.NewId(),
+
+        _baseLocation   = location1:copy(),
+
+        _inputLocators  = inputLocators1:copy(),
+        _outputLocators = outputLocators1:copy(),
+
+        _craftingSpots  = craftingSpots1:copy(),
+        _smeltingSpots  = smeltingSpots1:copy(),
+    })
+
+    return testObj
+end
 
 function T_Factory.T_new()
     -- prepare test
@@ -125,7 +151,7 @@ function T_Factory.CreateFactory(baseLocation, inputLocators, outputLocators, cr
 
         _baseLocation   = baseLocation,
 
-        _inputLocators  = inputLocators,
+        _inputLocators  = inputLocators:copy(),
         _outputLocators = outputLocators,
 
         _craftingSpots  = craftingSpots,
@@ -145,98 +171,16 @@ end
 --                    _/ |
 --                   |__/
 
-function T_Factory.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_Factory.T_isTypeOf()
+function T_Factory.T_IObj_All()
     -- prepare test
-    corelog.WriteToLog("* Factory:isTypeOf() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
-
-    -- test valid
-    local isTypeOf = Factory:isTypeOf(obj)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = Factory:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_Factory.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* Factory:isEqual() tests")
     local id = coreutils.NewId()
-    local obj = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id) if not obj then corelog.Error("failed obtaining Factory") return end
-    local location2  = Location:new({_x= 100, _y= 0, _z= 100, _dx=1, _dy=0})
-    local inputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(2, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
-    local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, inputLocator2, })
-    local outputLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(4, 5, 0), }}).mobjLocator if not inputLocator2 then corelog.Error("failed registering Chest") return end
-    local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, outputLocator2, })
-    local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
-    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
-    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
-
-    -- test same
-    local obj1 = T_Factory.CreateFactory(location1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1, id)
-    local isEqual = obj1:isEqual(obj)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _baseLocation
-    obj._baseLocation = location2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._baseLocation = location1
-
-    -- test different _inputLocators
-    obj._inputLocators = inputLocators2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._inputLocators = inputLocators1
-
-    -- test different _outputLocators
-    obj._outputLocators = outputLocators2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._outputLocators = outputLocators1
-
-    -- test different _craftingSpots
-    obj._craftingSpots = craftingSpots2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._craftingSpots = craftingSpots1
-
-    -- test different _smeltingSpots
-    obj._smeltingSpots = smeltingSpots2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._smeltingSpots = smeltingSpots1
-
-    -- cleanup test
-    return enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputLocator2 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputLocator2 })
-end
-
-function T_Factory.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* Factory:copy() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("failed obtaining Factory") return end
+    local obj = createTestObj(id) assert(obj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj(id) assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
-    local copy = obj:copy()
-    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
-
-    -- cleanup test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --                        _  __ _                       _   _               _

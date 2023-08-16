@@ -22,7 +22,7 @@ ToDo List
    R  convert WIPAdministrator to a proper IObj                                                                         (done)
    R  convert TestMObj to a proper IObj                                                                                 (done)
    R  convert BirchForest to a proper IObj                                                                              (done)
-   -  convert Factory to a proper IObj
+   G  convert Factory to a proper IObj                                                                                  (done)
    -  convert Mine to a proper IObj
    -  convert Shop to a proper IObj
    -  convert Turtle to a proper IObj

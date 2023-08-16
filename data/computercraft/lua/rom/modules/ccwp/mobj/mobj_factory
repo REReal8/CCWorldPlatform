@@ -1,14 +1,6 @@
-local Factory = {
-    _id             = "",
-
-    _baseLocation   = nil,
-
-    _inputLocators  = {},
-    _outputLocators = {},
-
-    _craftingSpots  = {},
-    _smeltingSpots  = {},
-}
+-- define class
+local ObjBase = require "obj_base"
+local Factory = ObjBase:new()
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -113,49 +105,6 @@ end
 
 function Factory:getClassName()
     return "Factory"
-end
-
-function Factory:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Factory:isEqual(obj)
-    -- check input
-    if not Factory:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._baseLocation:isEqual(obj._baseLocation)
-                and self._inputLocators:isEqual(obj._inputLocators)
-                and self._outputLocators:isEqual(obj._outputLocators)
-                and self._craftingSpots:isEqual(obj._craftingSpots)
-                and self._smeltingSpots:isEqual(obj._smeltingSpots)
-
-    -- end
-    return isEqual
-end
-
-function Factory:copy()
-    -- create copy
-    local copy = Factory:new({
-        _id             = self._id,
-
-        _baseLocation   = self._baseLocation:copy(),
-        _inputLocators  = self._inputLocators:copy(),
-        _outputLocators = self._outputLocators:copy(),
-        _craftingSpots  = self._craftingSpots:copy(),
-        _smeltingSpots  = self._smeltingSpots:copy(),
-    })
-
-    -- end
-    return copy
 end
 
 --                        _  __ _                       _   _               _
