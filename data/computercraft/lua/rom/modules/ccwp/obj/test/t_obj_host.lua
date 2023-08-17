@@ -35,11 +35,11 @@ function T_Host.T_All()
     T_Host.T_GetObject()
 end
 
-local hostName = "TestHost"
+local hostName1 = "TestHost"
 local hostName2 = "TestHost2"
 
 local host1 = Host:new({
-    _hostName   = hostName,
+    _hostName   = hostName1,
 })
 
 local compact = { compact = true }
@@ -57,9 +57,9 @@ function T_Host.T_new()
 
     -- test full
     local host = Host:new({
-        _hostName   = hostName,
+        _hostName   = hostName1,
     })
-    assert(host:getHostName() == hostName, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..hostName..")")
+    assert(host:getHostName() == hostName1, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..hostName1..")")
 
     -- cleanup test
 end
@@ -77,7 +77,7 @@ function T_Host.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* Host:isTypeOf() tests")
     local host2 = Host:new({
-        _hostName   = hostName,
+        _hostName   = hostName1,
     })
 
     -- test valid
@@ -97,7 +97,7 @@ function T_Host.T_isEqual()
     -- prepare test
     corelog.WriteToLog("* Host:isEqual() tests")
     local host2 = Host:new({
-        _hostName   = hostName,
+        _hostName   = hostName1,
     })
 
     -- test same
@@ -110,7 +110,7 @@ function T_Host.T_isEqual()
     isEqual = host1:isEqual(host2)
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    host2._hostName = hostName
+    host2._hostName = hostName1
 
     -- cleanup test
 end
@@ -164,7 +164,7 @@ function T_Host.T_getHostLocator()
     -- test
     local hostLocator = host1:getHostLocator()
     local expectedLocator = URL:new()
-    expectedLocator:setHost(hostName)
+    expectedLocator:setHost(hostName1)
     assert(hostLocator:isEqual(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- cleanup test
@@ -198,7 +198,7 @@ function T_Host.T_getResourceLocator()
     -- test
     local resourceLocator = host1:getResourceLocator(resourcePath1)
     local expectedLocator = URL:new()
-    expectedLocator:setHost(hostName)
+    expectedLocator:setHost(hostName1)
     expectedLocator:setPath(resourcePath1)
     assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
@@ -217,7 +217,7 @@ function T_Host.T_get_save_delete_Resource()
     -- test save
     resourceLocator = host1:saveResource(resource, resourcePath1)
     local expectedLocator = URL:new()
-    expectedLocator:setHost(hostName)
+    expectedLocator:setHost(hostName1)
     expectedLocator:setPath(resourcePath1)
     assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
@@ -249,22 +249,22 @@ function T_Host.T_getObjectLocator()
 
     -- test with supplying className and id
     local objectLocator = host1:getObjectLocator(testObject, className, objectId)
-    local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
+    local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test without supplying id
     objectLocator = host1:getObjectLocator(testObject, className)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test without supplying className (but object has getClassName method) and id
     objectLocator = host1:getObjectLocator(testObject)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- test without supplying className (but object has getClassName method) but with id
     objectLocator = host1:getObjectLocator(testObject, "", objectId)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
     -- cleanup test
@@ -277,28 +277,28 @@ function T_Host.T_saveObject()
 
     -- test with supplying className and id
     local objectLocator = host1:saveObject(testObject, className, objectId)
-    local expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
+    local expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
     -- test without supplying id
     objectLocator = host1:saveObject(testObject, className)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
     -- test without supplying className (but object has getClassName method) and id
     objectLocator = host1:saveObject(testObject)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
 
     -- test without supplying className (but object has getClassName method) but with id
     objectLocator = host1:saveObject(testObject, "", objectId)
-    expectedLocator = URL:newFromURI("ccwprp://"..hostName.."/objects/class="..className.."/id="..objectId)
+    expectedLocator = URL:newFromURI("ccwprp://"..hostName1.."/objects/class="..className.."/id="..objectId)
     assert(objectLocator:isEqual(expectedLocator), "objectLocator(="..objectLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
     host1:deleteResource(objectLocator)
     assert(not host1:getResource(objectLocator), "resource not deleted")
@@ -363,18 +363,18 @@ end
 function T_Host.T_GetHost()
     -- prepare test
     corelog.WriteToLog("* Host.GetHost(...) tests")
-    local module = moduleRegistry:getModule(hostName)
-    assert(not module, "a module with name="..hostName.." already registered")
+    local module = moduleRegistry:getModule(hostName1)
+    assert(not module, "a module with name="..hostName1.." already registered")
 
     -- test not registered host
-    local host = Host.GetHost(hostName, true)
-    assert(not host, "unexpectedly got a host with hostName="..hostName)
+    local host = Host.GetHost(hostName1, true)
+    assert(not host, "unexpectedly got a host with hostName="..hostName1)
 
     -- test registered host
-    moduleRegistry:registerModule(hostName, host1)
-    host = Host.GetHost(hostName)
-    assert(host, "host with hostName="..hostName.." not gotten")
-    moduleRegistry:delistModule(hostName)
+    moduleRegistry:registerModule(hostName1, host1)
+    host = Host.GetHost(hostName1)
+    assert(host, "host with hostName="..hostName1.." not gotten")
+    moduleRegistry:delistModule(hostName1)
 
     -- test other registered object
     local testObj = TestObj:new({
@@ -393,7 +393,7 @@ end
 function T_Host.T_GetObject()
     -- prepare test
     corelog.WriteToLog("* Host.GetObject(...) tests")
-    moduleRegistry:registerModule(hostName, host1)
+    moduleRegistry:registerModule(hostName1, host1)
 
     -- test get object hosted by host1
     local objectLocator = host1:saveObject(testObject, className)
@@ -407,7 +407,7 @@ function T_Host.T_GetObject()
 
     -- cleanup test
     host1:deleteResource(objectLocator)
-    moduleRegistry:delistModule(hostName)
+    moduleRegistry:delistModule(hostName1)
 end
 
 return T_Host
