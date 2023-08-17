@@ -28,6 +28,7 @@ function T_Mine.T_All()
     T_Mine.T_IObj_All()
 
     -- IMObj methods
+--    T_Mine.T_ImplementsIMObj()    -- ToDo: implement
 --    T_Mine.T_NewMine() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
     -- IItemSupplier methods
@@ -116,6 +117,14 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
+
+function T_Mine.T_ImplementsIMObj()
+    -- prepare test
+    local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IMObj", testClassName, obj)
+end
 
 -- ToDo: rename to a construct test
 function T_Mine.T_NewMine()
