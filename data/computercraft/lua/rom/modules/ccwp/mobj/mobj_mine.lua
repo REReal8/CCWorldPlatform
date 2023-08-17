@@ -126,7 +126,7 @@ end
 
 function Mine:Activate()
     self._operational = true
-    self:update()
+--    self:update() -- note: does not exist, so removed for now
 end
 
 function Mine:Deactivate()
