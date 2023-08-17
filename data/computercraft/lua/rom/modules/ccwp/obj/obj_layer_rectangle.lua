@@ -1,8 +1,6 @@
 -- define class
-local LayerRectangle = {
-    _codeMap            = {},
-    _codeArray          = {},
-}
+local ObjBase = require "obj_base"
+local LayerRectangle = ObjBase:new()
 
 local corelog = require "corelog"
 
