@@ -43,6 +43,7 @@ function T_Silo.T_All()
     T_Silo.T_ImplementsIItemDepot()
 end
 
+local testClassName = "Silo"
 local location1  = Location:new({_x= 12, _y= -12, _z= 1, _dx=0, _dy=1})
 
 local compact = { compact = true }
@@ -54,26 +55,23 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "Silo"
-
-function T_Silo.NewOTable(baseLocation, topChests, storageChests, id)
+function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storageChests)
     -- check input
+    id = id or coreutils.NewId()
     baseLocation = baseLocation or location1
-
+    entryLocation = entryLocation or baseLocation:getRelativeLocation(3, 3, 0)
     topChests = topChests or ObjArray:new({ _objClassName = "URL", })
     storageChests = storageChests or ObjArray:new({ _objClassName = "URL", })
 
-    id = id or coreutils.NewId()
-
-    -- create new oTable
-    local oTable  = {
+    -- create testObj
+    local testObj = Silo:new({
         _id             = id,
 
         _version        = 1,
 
         -- locations
         _baseLocation   = baseLocation:copy(),
-        _entryLocation  = baseLocation:getRelativeLocation(3, 3, 0),
+        _entryLocation  = entryLocation:copy(),
 
         -- pickup and drop
         _dropLocation   = 0,
@@ -82,13 +80,9 @@ function T_Silo.NewOTable(baseLocation, topChests, storageChests, id)
         -- chests
         _topChests      = topChests:copy(),
         _storageChests  = storageChests:copy(),
+    })
 
-        -- is this silo accepting requests?
-        _operational    = false,
-    }
-
-    -- end
-    return oTable
+    return testObj
 end
 
 function T_Silo.T_new()
@@ -100,7 +94,7 @@ function T_Silo.T_new()
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id))
+    local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy())
     local expectedFieldValues = {
         _id                 = id,
 
@@ -137,8 +131,8 @@ function T_Silo.T_IObj_All()
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id)) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id)) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy()) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy()) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -157,7 +151,7 @@ end
 
 function T_Silo.T_ImplementsIMObj()
     -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Obj.pt_ImplementsInterface("IMObj", testClassName, obj)
@@ -233,7 +227,7 @@ end
 
 function T_Silo.T_ImplementsIItemSupplier()
     -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
@@ -308,7 +302,7 @@ end
 
 function T_Silo.T_ImplementsIItemDepot()
     -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
