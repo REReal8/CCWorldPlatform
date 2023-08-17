@@ -56,7 +56,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* Turtle "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("Failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTestObj() if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -72,26 +72,7 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_Turtle.T_Getters()
-    -- prepare test
-    corelog.WriteToLog("* Turtle getter tests")
-    local turtleId = 111
-    local id = tostring(turtleId)
-    local className = "Turtle"
-    local objTurtle = T_Turtle.CreateTurtle(id, fuelPriorityKey2) if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
-
-    -- test
-    assert(objTurtle:getClassName() == className, "gotten className(="..objTurtle:getClassName()..") not the same as expected(="..className..")")
-    assert(objTurtle:getId() == id, "gotten getId(="..objTurtle:getId()..") not the same as expected(="..id..")")
-    assert(objTurtle:getTurtleId() == turtleId, "gotten getTurtleId(="..objTurtle:getTurtleId()..") not the same as expected(="..turtleId..")")
-    assert(objTurtle:getFuelPriorityKey() == fuelPriorityKey2, "gotten getFuelPriorityKey(="..objTurtle:getFuelPriorityKey() ..") not the same as expected(="..fuelPriorityKey2..")")
---    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
---    assert(objTurtle:getInventory():isEqual(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
-
-    -- cleanup test
-end
-
-function T_Turtle.CreateTurtle(id, fuelPriorityKey)
+function T_Turtle.CreateTestObj(id, fuelPriorityKey)
     -- check input
     id = id or tostring(os.getComputerID())
     fuelPriorityKey = fuelPriorityKey or fuelPriorityKey1
@@ -104,6 +85,25 @@ function T_Turtle.CreateTurtle(id, fuelPriorityKey)
 
     -- end
     return turtle
+end
+
+function T_Turtle.T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* Turtle getter tests")
+    local turtleId = 111
+    local id = tostring(turtleId)
+    local className = "Turtle"
+    local objTurtle = T_Turtle.CreateTestObj(id, fuelPriorityKey2) if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
+
+    -- test
+    assert(objTurtle:getClassName() == className, "gotten className(="..objTurtle:getClassName()..") not the same as expected(="..className..")")
+    assert(objTurtle:getId() == id, "gotten getId(="..objTurtle:getId()..") not the same as expected(="..id..")")
+    assert(objTurtle:getTurtleId() == turtleId, "gotten getTurtleId(="..objTurtle:getTurtleId()..") not the same as expected(="..turtleId..")")
+    assert(objTurtle:getFuelPriorityKey() == fuelPriorityKey2, "gotten getFuelPriorityKey(="..objTurtle:getFuelPriorityKey() ..") not the same as expected(="..fuelPriorityKey2..")")
+--    local expectedInventory = -- ToDo: consider testing the inventory is correctly obtained
+--    assert(objTurtle:getInventory():isEqual(expectedInventory), "gotten getInventory(="..textutils.serialize(objTurtle:getInventory(), compact)..") not the same as expected(="..textutils.serialize(expectedInventory, compact)..")")
+
+    -- cleanup test
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -122,7 +122,7 @@ end
 function T_Turtle.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* Turtle:isTypeOf() tests")
-    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("Failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTestObj() if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test valid
     local isTypeOf = Turtle:isTypeOf(obj)
@@ -141,10 +141,10 @@ function T_Turtle.T_isEqual()
     -- prepare test
     corelog.WriteToLog("* Turtle:isEqual() tests")
     local id = "333"
-    local obj = T_Turtle.CreateTurtle(id) if not obj then corelog.Error("Failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTestObj(id) if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test same
-    local obj1 = T_Turtle.CreateTurtle(id) assert(obj1, "Failed obtaining "..testClassName)
+    local obj1 = T_Turtle.CreateTestObj(id) assert(obj1, "Failed obtaining "..testClassName)
     local isEqual = obj1:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -162,7 +162,7 @@ end
 function T_Turtle.T_copy()
     -- prepare test
     corelog.WriteToLog("* Turtle:copy() tests")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
 
     -- test
     local copy = objTurtle:copy()
@@ -194,7 +194,7 @@ end
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:provideItemsTo_AOSrv() test (to "..toStr..")")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
     local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId()))
 
     local provideItems = {
@@ -270,7 +270,7 @@ end
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
     local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId())) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
 
     local provideItems = {
