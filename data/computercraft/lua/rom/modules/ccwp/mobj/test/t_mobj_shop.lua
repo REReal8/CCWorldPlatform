@@ -111,13 +111,8 @@ end
 function T_Shop.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
-
-    local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
-    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Shop.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Shop.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
