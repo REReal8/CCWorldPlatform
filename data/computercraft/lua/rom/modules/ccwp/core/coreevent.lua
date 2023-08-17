@@ -13,6 +13,7 @@ local db = {
     reply		= {},		-- the reply envelopes by message id (serial)
 	toSend		= {},		-- list of messages that still need to be send
 	toProcess	= {},		-- list of messages that still needs processsing
+	bulkMode	= false,	-- send messages in bulk per tick, not one by one
     logfile		= "/log/core.event.log",
 }
 
@@ -23,11 +24,11 @@ local eventready	= {}	-- list of functions to run when ready
 
 -- event init
 function coreevent.Init()
-	corelog = corelog or require "corelog"
-	coretask = coretask or require "coretask"
-	coredisplay = coredisplay or require "coredisplay"
-	coreutils = coreutils or require "coreutils"
-	coreinventory = coreinventory or require "coreinventory"
+	corelog			= corelog		or require "corelog"
+	coretask		= coretask		or require "coretask"
+	coredisplay		= coredisplay	or require "coredisplay"
+	coreutils		= coreutils		or require "coreutils"
+	coreinventory	= coreinventory	or require "coreinventory"
 
 	-- activate the modem
 	ActivateModem()
@@ -169,7 +170,7 @@ function coreevent.SendMessage(t)
 				})
 			})
 
-			-- bla
+			-- not very likely to happen, we can recover from this minor issue
 			coreutils.WriteToFile(db.logfile, "Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")", "a")
 			-- don't write to log, since that will send a message and get's us in a loop
 		end
