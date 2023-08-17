@@ -94,7 +94,7 @@ function T_Silo.T_new()
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
-    local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy())
+    local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1, storageChests1)
     local expectedFieldValues = {
         _id                 = id,
 
