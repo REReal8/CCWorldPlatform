@@ -1,10 +1,14 @@
 local T_Turtle = {}
+
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -14,6 +18,8 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
 local T_Obj = require "test.t_obj"
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
 local T_Chest = require "test.t_mobj_chest"
 
 local t_turtle = require "test.t_turtle"
@@ -23,6 +29,8 @@ function T_Turtle.T_All()
     T_Turtle.T_Getters()
 
     -- IObj methods
+    T_Turtle.T_IObj_All()
+
     T_Turtle.T_ImplementsIObj()
     T_Turtle.T_isTypeOf()
     T_Turtle.T_isEqual()
@@ -114,6 +122,17 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function T_Turtle.T_IObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Turtle.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Turtle.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+end
 
 function T_Turtle.T_ImplementsIObj()
     ImplementsInterface("IObj")

@@ -1,7 +1,6 @@
-local Turtle = {
-    _id                     = "any",
-    _fuelPriorityKey        = "",
-}
+-- define class
+local ObjBase = require "obj_base"
+local Turtle = ObjBase:new()
 
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
