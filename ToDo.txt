@@ -33,7 +33,7 @@ R  CheckInput                                                                   
    G  convert Factory to a proper IObj                                                                                  (done)
    R  convert Mine to a proper IObj                                                                                     (done)
    R  convert Shop to a proper IObj                                                                                     (done)
-   R  convert Turtle to a proper IObj
+   R  convert Turtle to a proper IObj                                                                                   (done)
    R  convert Host to a proper IObj                                                                                     (done)
    R  convert MObjHost to a proper IObj                                                                                 (done)
 
