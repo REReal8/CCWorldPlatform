@@ -79,7 +79,7 @@ local function pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, 
     otherTable[fieldName] = fieldValue
 end
 
-local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
+local function pt_isNotEqual_tableField(origObj, otherObj, otherTable, indent)
     --[[
         This function tests obj and otherObj are not the same if a field in otherTable is changed w.r.t. the input.
     ]]
@@ -95,11 +95,11 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
                 -- note: the actual class of the IObj field should have it's own isEqual test so we only need to test here it's inequality with something else (a string in this case)
 
                 -- test anotherValue
-                pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
+                pt_isNotEqual_anotherValue(origObj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
             else
-                pt_isNotEqual_tableField(obj, otherObj, fieldValue, indent.."  ")
 --                corelog.WriteToLog(indent.."type=plain table")
                 -- trigger test of equality of plain table fields
+                pt_isNotEqual_tableField(origObj, otherObj, fieldValue, indent.."  ")
             end
         else
 --            corelog.WriteToLog(indent.."type="..type(fieldValue)..", value="..textutils.serialise(fieldValue))
@@ -121,15 +121,15 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
     -- test extra original field not equal
     local extraFieldName = "_extraStrField"
     corelog.WriteToLog(indent.."->test Obj's with extra field "..extraFieldName.." are not equal")
-    obj[extraFieldName] = "extra string field"
-    local isEqual = obj:isEqual(otherObj)
+    origObj[extraFieldName] = "extra string field"
+    local isEqual = origObj:isEqual(otherObj)
     local expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     obj[extraFieldName]  = nil
 
     -- test extra other field not equal
     otherObj[extraFieldName]  = "extra string field"
-    isEqual = obj:isEqual(otherObj)
+    isEqual = origObj:isEqual(otherObj)
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     otherObj[extraFieldName]  = nil
