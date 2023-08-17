@@ -71,6 +71,7 @@ function T_Chest.CreateTestObj(id, baseLocation, accessDirection, inventory)
     accessDirection = accessDirection or accessDirection1
     inventory = inventory or inventory1
 
+    -- create testObj
     local testObj = Chest:new({
         _id                     = id,
 
