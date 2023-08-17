@@ -126,6 +126,13 @@ local function pt_isNotEqual_tableField(origObj, origTable, otherObj, otherTable
     origTable[extraFieldName] = "extra string field"
     local isEqual = origObj:isEqual(otherObj)
     local expectedIsEqual = false
+    if isEqual ~= expectedIsEqual then -- ToDo: consider removing this at some point. It is however usefull for debugging at the moment
+        corelog.Warning("Gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+        corelog.WriteToLog("origObj:")
+        corelog.WriteToLog(origObj)
+        corelog.WriteToLog("otherObj:")
+        corelog.WriteToLog(otherObj)
+    end
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     origTable[extraFieldName]  = nil
 
