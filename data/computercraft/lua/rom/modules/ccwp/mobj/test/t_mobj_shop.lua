@@ -3,8 +3,6 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
 
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
@@ -63,26 +61,6 @@ local itemSuppliersLocators2 = ObjArray:new({
 })
 
 local compact = { compact = true }
-
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* Shop "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "Shop class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-end
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -265,7 +243,11 @@ end
 --                                              |_|   |_|
 
 function T_Shop.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
+    -- prepare test
+    local obj = T_Shop.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
