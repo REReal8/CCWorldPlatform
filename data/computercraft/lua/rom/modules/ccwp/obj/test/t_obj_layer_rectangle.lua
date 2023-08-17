@@ -30,11 +30,6 @@ function T_LayerRectangle.T_All()
     -- IObj methods
     T_LayerRectangle.T_IObj_All()
 
-    T_LayerRectangle.T_isTypeOf()
-    T_LayerRectangle.T_isEqual()
-    T_LayerRectangle.T_copy()
-    T_LayerRectangle.T_ParseWithCheckInput() -- ToDo: consider removing
-
     -- specific methods
     T_LayerRectangle.T_itemsNeeded()
     T_LayerRectangle.T_transformToLayer()
@@ -363,90 +358,6 @@ function T_LayerRectangle.T_IObj_All()
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
-end
-
-function T_LayerRectangle.T_isTypeOf()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:isTypeOf() tests")
-    local layer = LayerRectangle:new({
-        _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
-        _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
-    })
-
-    -- test valid
-    local isTypeOf = LayerRectangle:isTypeOf(layer)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = LayerRectangle:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:isEqual() tests")
-    local layer = LayerRectangle:new({
-        _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
-        _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
-    }) assert(layer, "Failed obtaining layer")
-
-    -- test same
-    local isEqual = layer1:isEqual(layer)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _codeArray
-    layer._codeArray = {
-        ["T"]   = "minecraft:torch",
-    }
-    isEqual = layer1:isEqual(layer)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    layer._codeArray = LayerRectangle.CodeArrayCopy(codeArray1)
-
-    -- test different _codeMap
-    layer._codeMap = {
-        [2] = "      ",
-        [1] = "   T  ",
-    }
-    isEqual = layer1:isEqual(layer)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    layer._codeMap = LayerRectangle.CodeMapCopy(codeMap1)
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:copy() tests")
-
-    -- test
-    local copy = layer1:copy()
-    assert(copy:isEqual(layer1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(layer1, compact)..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_ParseWithCheckInput()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle parsing with CheckInput tests")
-
-    -- test
-    local checkSuccess, layer = InputChecker.Check([[
-        Parameters:
-            layer   + (LayerRectangle) object to retrieve from arg
-    ]], table.unpack({ textutils.unserialize(textutils.serialize(layer1)) }))
-    if not checkSuccess then corelog.Error("t_obj_layer_rectangle.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isTypeOf = LayerRectangle:isTypeOf(layer)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
 end
 
 --                        _  __ _                       _   _               _
