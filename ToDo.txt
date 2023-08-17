@@ -35,7 +35,7 @@ R  CheckInput                                                                   
    R  convert Shop to a proper IObj                                                                                     (done)
    R  convert Turtle to a proper IObj
    R  convert Host to a proper IObj                                                                                     (done)
-   -  convert MObjHost to a proper IObj
+   R  convert MObjHost to a proper IObj                                                                                 (done)
 
 R  Generalise test functions into "templates" to reduce duplication
    R  adtopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                         (done)

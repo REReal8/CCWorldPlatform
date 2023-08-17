@@ -2,16 +2,22 @@ local T_MObjHost = {}
 
 local corelog = require "corelog"
 
+local IObj = require "i_obj"
 local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local InputChecker = require "input_checker"
+local ObjBase = require "obj_base"
 
 local URL = require "obj_url"
 local Location = require "obj_location"
+local Host = require "obj_host"
 
 local MObjHost = require "eobj_mobj_host"
 local enterprise_projects = require "enterprise_projects"
+
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
 
 local t_turtle = require "test.t_turtle"
 
@@ -20,6 +26,7 @@ function T_MObjHost.T_All()
     T_MObjHost.T_new()
 
     -- IObj methods
+    T_MObjHost.T_IObj_All()
 
     -- service methods
     T_MObjHost.T_hostMObj_SSrv()
@@ -38,6 +45,7 @@ function T_MObjHost.T_AllPhysical()
         }, returnData  = { }}, }, Callback.GetNewDummyCallBack())
 end
 
+local testClassName = "MObjHost"
 local test_mobjHostName1 = "TestMObjHost"
 local test_mobjHost1 = MObjHost:new({
     _hostName   = test_mobjHostName1,
@@ -49,6 +57,18 @@ local test_mobjHost1 = MObjHost:new({
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+function T_MObjHost.CreateTestObj(hostName)
+    -- check input
+    hostName = test_mobjHostName1 or hostName
+
+    -- create testObj
+    local testObj = MObjHost:new({
+        _hostName   = hostName,
+    })
+
+    return testObj
+end
 
 function T_MObjHost.T_new()
     -- prepare test
@@ -71,6 +91,18 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function T_MObjHost.T_IObj_All()
+    -- prepare test
+    local obj = T_MObjHost.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_MObjHost.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "Host", Host)
+    T_IObj.pt_all(testClassName, obj, otherObj)
+end
 
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |

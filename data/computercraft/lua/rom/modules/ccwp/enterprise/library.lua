@@ -6,11 +6,16 @@ function library.Init()
 end
 
 function library.Setup()
+    -- register library classes
+    local ObjectFactory = require "object_factory"
+    local objectFactory = ObjectFactory:getInstance()
+    objectFactory:registerClass("MObjHost", require "eobj_mobj_host")
+
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
     moduleRegistry:requireAndRegisterModule("enterprise_assignmentboard")
-    moduleRegistry:requireAndRegisterModule("eobj_mobj_host")
+    moduleRegistry:requireAndRegisterModule("eobj_mobj_host") -- ToDo: beetje dubbel op met ook in ObjectFactory...
     moduleRegistry:requireAndRegisterModule("enterprise_chests")
     moduleRegistry:requireAndRegisterModule("enterprise_construction")
     moduleRegistry:requireAndRegisterModule("enterprise_energy")
