@@ -12,10 +12,6 @@ R  add .lua extension to almost all lua code files (besides being a good convent
 R  CheckInput                                                                                                           (done)
    R  add .lua to module file input_checker                                                                             (done)
 
-R  object new methods:                                                                                                  (....)
-   -  consider return nil after a CheckInput failure (instead of empty table).
-   -  goed testen dat alles nog goed gaat.
-
 -  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
    R  convert Location to a proper IObj                                                                                 (done)
    R  convert URL to a proper IObj                                                                                      (done)
@@ -164,6 +160,12 @@ R  Factory:
 RG mine v2
    -  uitdenken
    -  maken
+
+-  object new methods:
+   -  consider return nil after a CheckInput failure (instead of empty table).
+      -  this propably depends on the usage of new. In case of constructing an instance we DO want to return a table. And we should set it's fields.
+      -  this might change if we implement the toTable and fromTable serialise/ deserialising logic
+   -  goed testen dat alles nog goed gaat.
 
 -  Obj(ect) Initialisation & Destruction: improve
    R  rename section base methods => initialisation                                                                     (done)
