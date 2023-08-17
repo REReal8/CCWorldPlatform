@@ -2,8 +2,6 @@ local T_LayerRectangle = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local InputChecker = require "input_checker"
-
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Block = require "obj_block"

@@ -107,23 +107,6 @@ function LayerRectangle:getClassName()
     return "LayerRectangle"
 end
 
-function LayerRectangle.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if not LayerRectangle.IsCodeArray(obj._codeArray) or not LayerRectangle.IsCodeMap(obj._codeMap) then return false end
-
-    -- end
-    return true
-end
-
-function LayerRectangle.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= LayerRectangle:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
