@@ -89,13 +89,14 @@ local function tablesEqual(table1, table2)
     for fieldName, fieldValue in pairs(table1) do
         nFields1 = nFields1 + 1
         -- check field equal
-        if fieldValue ~= table2[fieldName] then
+        local fieldValue2 = table2[fieldName]
+        if fieldValue ~= fieldValue2 then
             -- check table
             if type(fieldValue) == "table" then
                 -- is field nested IObj?
                 if Object.IsInstanceOf(fieldValue, IObj) then
                     -- check nested IObj field equal
-                    if not fieldValue:isEqual(table2[fieldName]) then
+                    if not fieldValue:isEqual(fieldValue2) then
 --                        corelog.WriteToLog("nested obj not of type")
                         return false
                     end
@@ -103,14 +104,15 @@ local function tablesEqual(table1, table2)
                     -- ToDo: remove when all old style IObj's have been removed!
                     corelog.Warning("ObjBase:tablesEqual comparing old style IObj field "..fieldName.." => consider converting class "..fieldValue:getClassName().." to a proper IObj")
                     -- check nested IObj field equal
-                    if not fieldValue:isEqual(table2[fieldName]) then
+                    if not fieldValue:isEqual(fieldValue2) then
 --                        corelog.WriteToLog("nested obj not of type")
                         return false
                     end
                 else
                     -- check nested tables equal
-                    if not tablesEqual(fieldValue, table2[fieldName]) then
+                    if not tablesEqual(fieldValue, fieldValue2) then
                         return false
+                    else
                     end
                 end
             else
