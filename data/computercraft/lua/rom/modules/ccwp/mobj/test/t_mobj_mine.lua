@@ -1,6 +1,5 @@
 local T_Mine = {}
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
@@ -11,28 +10,22 @@ local URL = require "obj_url"
 
 local Mine = require "mobj_mine"
 
-local enterprise_chests = require "enterprise_chests"
 local enterprise_storage = require "enterprise_storage"
 
 local t_turtle = require "test.t_turtle"
 
 function T_Mine.T_All()
-    -- ToDo: proper cleanup of Chests before enabling
-
     -- initialisation
-    -- ToDo: "All" tests are supposed to have no side-effect and should cause the system (typically the dht) be cleared of any changes it made. This seems
-    -- not the case for ensure T_new() test. Hence it is commented for now.
---    T_Mine.T_new()
---    T_Mine.T_Load()
 
     -- IObj methods
---    T_Mine.T_ImplementsIObj()
+--    T_Mine.T_ImplementsIObj() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
     -- IItemSupplier methods
---    T_Mine.T_ImplementsIItemSupplier()
+--    T_Mine.T_ImplementsIItemSupplier() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
+--    T_Mine.T_ProvideMultipleItems() -- note: Mine:provideItemsTo_AOSrv not yet fully implemented, hence disabled
 
     -- IItemDepot methods
---    T_Mine.T_ImplementsIItemDepot()
+--    T_Mine.T_ImplementsIItemDepot() -- note: Mine does not implemented IItemDepot, hence disabled
 end
 
 -- handy
@@ -66,11 +59,16 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+-- ToDo: rename to construct test
+-- ToDo: introduce IMObj section and move it there (analogues to tests of other MObj's)
 function T_Mine.T_NewMine()
+    -- prepare test
 
-    -- do the new test
+    -- test
     corelog.WriteToLog("* Mine:NewMine() tests")
     local obj = Mine:NewMine({baseLocation=location1, topChests=2})
+
+    -- cleanup test
 end
 
 local compact = { compact = true }

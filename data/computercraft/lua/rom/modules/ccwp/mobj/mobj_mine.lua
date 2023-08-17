@@ -34,9 +34,6 @@ local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage
 
--- usefull
-local dthMineRoot   = "mobj_mine"
-
 --[[
     The following design decisions are made
         - The mine has full control of all area with z coordinate -32 and lower.
@@ -129,7 +126,7 @@ end
 
 function Mine:Activate()
     self._operational = true
-    self:update()
+--    self:update() -- note: does not exist, so removed for now
 end
 
 function Mine:Deactivate()
@@ -234,7 +231,7 @@ function Mine:provideItemsTo_AOSrv(...)
 
     -- start project
     corelog.WriteToLog(">Retrieve "..textutils.serialise(provideItems).." from Mine (!!NOT IMPLEMENTEND!!)")
-    return {success = false}
+    return Callback.ErrorCall(callback)
 end
 
 function Mine:can_ProvideItems_QOSrv(...)
