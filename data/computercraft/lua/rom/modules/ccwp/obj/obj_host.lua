@@ -72,36 +72,6 @@ function Host:getClassName()
     return "Host"
 end
 
-function Host:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Host:isEqual(obj)
-    -- check input
-    if not Host:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._hostName == obj._hostName
-
-    -- end
-    return isEqual
-end
-
-function Host:copy()
-    local copy = Host:new({
-        _hostName   = self._hostName,
-    })
-
-    return copy
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___

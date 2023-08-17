@@ -22,10 +22,6 @@ function T_Host.T_All()
     -- IObj methods
     T_Host.T_IObj_All()
 
-    T_Host.T_isTypeOf()
-    T_Host.T_isEqual()
-    T_Host.T_copy()
-
     -- specific methods
     T_Host.T_getHostLocator()
     T_Host.T_isLocatorFromHost()
@@ -101,60 +97,7 @@ function T_Host.T_IObj_All()
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
-end
-
-
-function T_Host.T_isTypeOf()
-    -- prepare test
-    corelog.WriteToLog("* Host:isTypeOf() tests")
-    local host2 = Host:new({
-        _hostName   = hostName1,
-    })
-
-    -- test valid
-    local isTypeOf = Host:isTypeOf(host2)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = Host:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_Host.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* Host:isEqual() tests")
-    local host2 = Host:new({
-        _hostName   = hostName1,
-    })
-
-    -- test same
-    local isEqual = host1:isEqual(host2)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different hostName
-    host2._hostName = hostName2
-    isEqual = host1:isEqual(host2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    host2._hostName = hostName1
-
-    -- cleanup test
-end
-
-function T_Host.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* Host:copy() tests")
-
-    -- test
-    local copy = host1:copy()
-    assert(copy:isEqual(host1), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(host1, compact)..")")
-
-    -- cleanup test
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --                        _  __ _                       _   _               _
