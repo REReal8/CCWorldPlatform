@@ -1,38 +1,21 @@
-local Mine = {
-    _id                     = "",
-    _version                = 1,
-
-    _baseLocation           = nil,
-
-    _topChests              = nil,
-
-    _operational            = false,
-}
+-- define class
+local ObjBase = require "obj_base"
+local Mine = ObjBase:new()
 
 -- includes / requires
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coredht = require "coredht"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
-local Host = require "obj_host"
 
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local Location = require "obj_location"
-local Inventory = require "obj_inventory"
 
-local role_fuel_worker = require "role_fuel_worker"
-local role_chests_worker = require "role_chests_worker"
-
-local enterprise_isp = require "enterprise_isp"
-local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
-local enterprise_storage
 
 --[[
     The following design decisions are made
@@ -153,46 +136,6 @@ end
 
 function Mine:getClassName()
     return "Mine"
-end
-
-function Mine:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Mine:isEqual(obj)
-    -- check input
-    if not Mine:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._version == obj._version
-
-                and self._baseLocation:isEqual(obj._baseLocation)
-
-                and self._topChests:isEqual(obj._topChests)
-
-    -- end
-    return isEqual
-end
-
-function Mine:copy()
-    local copy = Mine:new({
-        _id             = self._id,
-        _version        = self._version,
-
-        _baseLocation   = self._baseLocation:copy(),
-
-        _topChests      = self._topChests:copy(),
-    })
-
-    return copy
 end
 
 --    _____ _____ _                  _____                   _ _                            _   _               _

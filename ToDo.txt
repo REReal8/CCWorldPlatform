@@ -31,7 +31,7 @@ R  CheckInput                                                                   
    R  convert TestMObj to a proper IObj                                                                                 (done)
    R  convert BirchForest to a proper IObj                                                                              (done)
    G  convert Factory to a proper IObj                                                                                  (done)
-   -  convert Mine to a proper IObj
+   R  convert Mine to a proper IObj                                                                                     (done)
    -  convert Shop to a proper IObj
    R  convert Turtle to a proper IObj
    -  convert Host to a proper IObj
@@ -49,7 +49,7 @@ R  Generalise test functions into "templates" to reduce duplication
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
    -  mobj_factory
-   -  mobj_mine
+   R  mobj_mine                                                                                                         (done)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle

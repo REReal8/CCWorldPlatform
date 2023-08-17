@@ -1,10 +1,12 @@
 local T_Mine = {}
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
+local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -12,45 +14,29 @@ local Mine = require "mobj_mine"
 
 local enterprise_storage = require "enterprise_storage"
 
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
+local T_Obj = require "test.t_obj"
+
 local t_turtle = require "test.t_turtle"
 
 function T_Mine.T_All()
     -- initialisation
+    T_Mine.T_new()
 
     -- IObj methods
---    T_Mine.T_ImplementsIObj() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
+    T_Mine.T_IObj_All()
+
+    -- IMObj methods
+--    T_Mine.T_NewMine() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
     -- IItemSupplier methods
---    T_Mine.T_ImplementsIItemSupplier() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
+    T_Mine.T_ImplementsIItemSupplier()
 --    T_Mine.T_ProvideMultipleItems() -- note: Mine:provideItemsTo_AOSrv not yet fully implemented, hence disabled
-
-    -- IItemDepot methods
---    T_Mine.T_ImplementsIItemDepot() -- note: Mine does not implemented IItemDepot, hence disabled
 end
 
--- handy
+local testClassName = "Mine"
 local location1  = Location:new({_x= 12, _y= -6, _z= 1, _dx=0, _dy=1})
-
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* Mine "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = Mine:NewMine({baseLocation=location1, topChests=2, layers=2}) if not obj then corelog.Error("Failed obtaining Mine") return end
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "Mine class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-    -- ToDo: proper cleanup of Chests
-end
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -59,16 +45,44 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
--- ToDo: rename to construct test
--- ToDo: introduce IMObj section and move it there (analogues to tests of other MObj's)
-function T_Mine.T_NewMine()
+function T_Mine.CreateTestObj(id, baseLocation, topChests)
+    -- check input
+    id = id or coreutils.NewId()
+    baseLocation = baseLocation or location1
+    topChests = topChests or ObjArray:new({ _objClassName = "URL", })
+
+    -- create testObj
+    local testObj = Mine:new({
+        _id                     = id,
+        _version                = 1,
+
+        _baseLocation           = baseLocation:copy(),
+
+        _topChests              = topChests:copy(),
+    })
+
+    return testObj
+end
+
+function T_Mine.T_new()
     -- prepare test
+    local id = coreutils.NewId()
+    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+
+    local obj = T_Mine.CreateTestObj(id, location1, topChests1)
+    local expectedFieldValues = {
+        _id                 = id,
+
+        _version            = 1,
+
+        _baseLocation       = location1,
+
+        _topChests          = topChests1,
+    }
 
     -- test
-    corelog.WriteToLog("* Mine:NewMine() tests")
-    local obj = Mine:NewMine({baseLocation=location1, topChests=2})
-
-    -- cleanup test
+    T_Obj.pt_new(testClassName, obj, expectedFieldValues)
 end
 
 local compact = { compact = true }
@@ -82,8 +96,36 @@ local compact = { compact = true }
 --                    _/ |
 --                   |__/
 
-function T_Mine.T_ImplementsIObj()
-    ImplementsInterface("IObj")
+function T_Mine.T_IObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Mine.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Mine.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+-- ToDo: rename to a construct test
+function T_Mine.T_NewMine()
+    -- prepare test
+
+    -- test
+    corelog.WriteToLog("* Mine:NewMine() tests")
+    local obj = Mine:NewMine({baseLocation=location1, topChests=2})
+
+    -- cleanup test
 end
 
 --    _____ _____ _                  _____                   _ _                            _   _               _
@@ -96,7 +138,11 @@ end
 --                                              |_|   |_|
 
 function T_Mine.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
+    -- prepare test
+    local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
@@ -156,19 +202,6 @@ function T_Mine.T_ProvideMultipleItems()
 
     -- test
     provideItemsTo_AOSrv_Test(provideItems)
-end
-
---    _____ _____ _                 _____                   _                    _   _               _
---   |_   _|_   _| |               |  __ \                 | |                  | | | |             | |
---     | |   | | | |_ ___ _ __ ___ | |  | | ___ _ __   ___ | |_   _ __ ___   ___| |_| |__   ___   __| |___
---     | |   | | | __/ _ \ '_ ` _ \| |  | |/ _ \ '_ \ / _ \| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| |_ _| |_| ||  __/ | | | | | |__| |  __/ |_) | (_) | |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____|_____|\__\___|_| |_| |_|_____/ \___| .__/ \___/ \__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                                             | |
---                                             |_|
-
-function T_Mine.T_ImplementsIItemDepot()
-    ImplementsInterface("IItemDepot")
 end
 
 return T_Mine
