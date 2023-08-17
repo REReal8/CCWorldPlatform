@@ -362,6 +362,7 @@ function T_LayerRectangle.T_IObj_All()
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 function T_LayerRectangle.T_isTypeOf()
