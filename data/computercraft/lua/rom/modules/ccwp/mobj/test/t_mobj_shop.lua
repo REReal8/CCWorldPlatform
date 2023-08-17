@@ -6,6 +6,8 @@ local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local URL = require "obj_url"
 local Location = require "obj_location"
@@ -19,6 +21,8 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
 local T_Obj = require "test.t_obj"
 
 local T_Chest = require "test.t_mobj_chest"
@@ -30,6 +34,8 @@ function T_Shop.T_All()
     T_Shop.T_Getters()
 
     -- IObj methods
+    T_Shop.T_IObj_All()
+
     T_Shop.T_ImplementsIObj()
     T_Shop.T_isTypeOf()
     T_Shop.T_isEqual()
@@ -128,6 +134,22 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function T_Shop.T_IObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+
+    local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
+    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(otherObj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+end
 
 function T_Shop.T_ImplementsIObj()
     ImplementsInterface("IObj")

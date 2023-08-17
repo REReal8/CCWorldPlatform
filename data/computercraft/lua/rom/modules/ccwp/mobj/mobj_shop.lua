@@ -1,8 +1,6 @@
-local Shop = {
-    _id                     = "",
-
-    _itemSuppliersLocators  = nil,
-}
+-- define class
+local ObjBase = require "obj_base"
+local Shop = ObjBase:new()
 
 local corelog = require "corelog"
 
@@ -24,7 +22,7 @@ local enterprise_shop
     The Shop is an ItemSupplier, hence it implements the required services.
 
     This allows for the Shop to be passed as ingredientsItemSupplierLocator to an ItemSupplier. The effect of that is that the ItemSupplier can request
-    the ingredients from the Shop. The Shop than (by a recursive call to the OrderItems service) tries retrieving the ingredients from an ItemSupplier.
+    the ingredients from the Shop. The Shop than (by a recursive call to provideItemsTo_AOSrv) tries retrieving the ingredients from an ItemSupplier.
     This recursive order call will result in a successfull items order if the (sub, and sub-sub, etc) ingredients are present and/ or can be provided
     by a registered ItemSupplier.
 
