@@ -119,7 +119,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         siloHostLocator                 = enterprise_storage:getHostLocator(),
         siloClassName                   = "Silo",
         siloConstructParameters         = {
-            baseLocation                    = Location:new({_x=12, _y=12, _z= 1, _dx=0, _dy=1}),
+            baseLocation                    = Location:new({_x= 12, _y= -12, _z= 1, _dx=0, _dy=1}),
             topChests                       = 2,
             layers                          = 2,
         },

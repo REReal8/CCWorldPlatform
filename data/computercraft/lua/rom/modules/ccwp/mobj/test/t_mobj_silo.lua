@@ -43,7 +43,7 @@ function T_Silo.T_All()
     T_Silo.T_ImplementsIItemDepot()
 end
 
-local location1  = Location:new({_x= 12, _y= 12, _z= 1, _dx=0, _dy=1})
+local location1  = Location:new({_x= 12, _y= -12, _z= 1, _dx=0, _dy=1})
 
 local compact = { compact = true }
 
