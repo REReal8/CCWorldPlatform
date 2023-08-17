@@ -12,6 +12,7 @@ local db = {
     timer		= {},		-- list of all known timers
     reply		= {},		-- the reply envelopes by message id (serial)
 	toSend		= {},		-- list of messages that still need to be send
+	toProcess	= {},		-- list of messages that still needs processsing
     logfile		= "/log/core.event.log",
 }
 
