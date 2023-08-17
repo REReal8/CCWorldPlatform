@@ -125,7 +125,7 @@ local function pt_isNotEqual_tableField(origObj, otherObj, otherTable, indent)
     local isEqual = origObj:isEqual(otherObj)
     local expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj[extraFieldName]  = nil
+    origTable[extraFieldName]  = nil
 
     -- test extra other field not equal
     otherObj[extraFieldName]  = "extra string field"
