@@ -122,38 +122,6 @@ function Turtle:getClassName()
     return "Turtle"
 end
 
-function Turtle:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Turtle:isEqual(obj)
-    -- check input
-    if not Turtle:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._fuelPriorityKey == obj._fuelPriorityKey
-
-    -- end
-    return isEqual
-end
-
-function Turtle:copy()
-    local copy = Turtle:new({
-        _id             = self._id,
-        _fuelPriorityKey= self._fuelPriorityKey,
-    })
-
-    return copy
-end
-
 --    _____ _____ _                  _____                   _ _                            _   _               _
 --   |_   _|_   _| |                / ____|                 | (_)                          | | | |             | |
 --     | |   | | | |_ ___ _ __ ___ | (___  _   _ _ __  _ __ | |_  ___ _ __   _ __ ___   ___| |_| |__   ___   __| |___

@@ -31,11 +31,6 @@ function T_Turtle.T_All()
     -- IObj methods
     T_Turtle.T_IObj_All()
 
-    T_Turtle.T_ImplementsIObj()
-    T_Turtle.T_isTypeOf()
-    T_Turtle.T_isEqual()
-    T_Turtle.T_copy()
-
     -- IItemSupplier methods
     T_Turtle.T_ImplementsIItemSupplier()
 --    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
@@ -132,62 +127,7 @@ function T_Turtle.T_IObj_All()
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
-end
-
-function T_Turtle.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_Turtle.T_isTypeOf()
-    -- prepare test
-    corelog.WriteToLog("* Turtle:isTypeOf() tests")
-    local obj = T_Turtle.CreateTestObj() if not obj then corelog.Error("Failed obtaining Turtle") return end
-
-    -- test valid
-    local isTypeOf = Turtle:isTypeOf(obj)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = Turtle:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_Turtle.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* Turtle:isEqual() tests")
-    local id = "333"
-    local obj = T_Turtle.CreateTestObj(id) if not obj then corelog.Error("Failed obtaining Turtle") return end
-
-    -- test same
-    local obj1 = T_Turtle.CreateTestObj(id) assert(obj1, "Failed obtaining "..testClassName)
-    local isEqual = obj1:isEqual(obj)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _fuelPriorityKey
-    obj._fuelPriorityKey = fuelPriorityKey2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._fuelPriorityKey = fuelPriorityKey1
-
-    -- cleanup test
-end
-
-function T_Turtle.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* Turtle:copy() tests")
-    local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
-
-    -- test
-    local copy = objTurtle:copy()
-    assert(copy:isEqual(objTurtle), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(objTurtle, compact)..")")
-
-    -- cleanup test
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --                        _                           _   _               _
