@@ -4,11 +4,9 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
-
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
+
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -46,26 +44,6 @@ local fuelPriorityKey2 = "99:111"
 local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
 
 local compact = { compact = true }
-
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* Turtle "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Turtle.CreateTestObj() if not obj then corelog.Error("Failed obtaining Turtle") return end
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "Turtle class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-end
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -146,7 +124,11 @@ end
 --                                              |_|   |_|
 
 function T_Turtle.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
+    -- prepare test
+    local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
@@ -222,7 +204,11 @@ end
 --                                             |_|
 
 function T_Turtle.T_ImplementsIItemDepot()
-    ImplementsInterface("IItemDepot")
+    -- prepare test
+    local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

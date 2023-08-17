@@ -5,15 +5,13 @@ local coreutils = require "coreutils"
 local coremove = require "coremove"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
-
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
+
 local Location = require "obj_location"
 local URL = require "obj_url"
 
-local IObj = require "i_obj"
-local ObjBase = require "obj_base"
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
@@ -62,26 +60,6 @@ local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelative
 local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
 
 local compact = { compact = true }
-
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* Factory "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "Factory class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-end
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -298,7 +276,11 @@ end
 --                                              |_|   |_|
 
 function T_Factory.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
+    -- prepare test
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()

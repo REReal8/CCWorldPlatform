@@ -1,16 +1,15 @@
 local T_BirchForest = {}
+
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
+local IObj = require "i_obj"
+local ObjBase = require "obj_base"
 
 local Location = require "obj_location"
 local URL = require "obj_url"
 
-local IObj = require "i_obj"
-local ObjBase = require "obj_base"
 local BirchForest = require "mobj_birchforest"
 
 local role_forester = require "role_forester"
@@ -51,26 +50,6 @@ local nTrees = 1
 local level2 = 1
 local location2 = Location:new({_x= 6, _y= 12, _z= 1, _dx=0, _dy=1})
 local nTrees2 = 2
-
---    _       _             __
---   (_)     | |           / _|
---    _ _ __ | |_ ___ _ __| |_ __ _  ___ ___  ___
---   | | '_ \| __/ _ \ '__|  _/ _` |/ __/ _ \/ __|
---   | | | | | ||  __/ |  | || (_| | (_|  __/\__ \
---   |_|_| |_|\__\___|_|  |_| \__,_|\___\___||___/
-
-local function ImplementsInterface(interfaceName)
-    -- prepare test
-    corelog.WriteToLog("* BirchForest "..interfaceName.." interface test")
-    local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local implementsInterface = Interface.ImplementsInterface(obj)
-    assert(implementsInterface, "BirchForest class does not (fully) implement "..interfaceName.." interface")
-
-    -- cleanup test
-end
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -220,7 +199,11 @@ end
 --                                              |_|   |_|
 
 function T_BirchForest.T_ImplementsIItemSupplier()
-    ImplementsInterface("IItemSupplier")
+    -- prepare test
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
