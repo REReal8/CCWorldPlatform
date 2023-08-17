@@ -94,12 +94,12 @@ function corelog.WriteToLog(message, writeMode)
 		corelog.WriteToMonitor("me: "..(message or "nil message"))
 	else
 
-		-- send message two whoever is loggin our stuff
+--[[ 		-- send message two whoever is loggin our stuff
 		coreevent.SendMessage({
 			channel		= db.loggerChannel,
 			protocol	= db.protocol,
 			subject		= "write to log",
-			message		= {text = message} })
+			message		= {text = message} }) ]]
 	end
 end
 

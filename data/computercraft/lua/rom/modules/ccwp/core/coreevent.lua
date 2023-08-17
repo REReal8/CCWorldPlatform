@@ -142,7 +142,8 @@ function coreevent.SendMessage(t)
 
         -- actuall sending the message
 		if modem then
---			coreutils.WriteToFile(db.logfile, "Sending data, message.version = "..(message.version or "unknown"), "a")
+			-- log all messages send
+--			coreutils.WriteToFile(db.logfile, "Sending message("..protocol..", "..subject..")", "a")
 
 			-- this sends the message
 			modem.transmit(currentChannel, from, textutils.serialize({
