@@ -25,27 +25,6 @@ function T_Obj.pt_ImplementsInterface(interfaceName, className, obj)
     -- cleanup test
 end
 
-function T_Obj.createObjFromTable(className, oTable)
-    --[[
-        This test helper method creates and returns an Obj of class 'className' from an object table 'oTable'.
-    ]]
-
-    -- check input
-    assert(className, "no className provided")
-    assert(oTable, "no oTable for "..className.." provided")
-
-    -- get class
-    local class = objectFactory:getClass(className)
-    assert (class, "Class "..className.." not found in objectFactory")
-
-    -- create Obj from oTable
-    local obj = objectFactory:create(className, oTable)
-    if not obj then corelog.Warning("failed creating "..className.." Obj from oTable "..textutils.serialise(oTable, compact)) end
-
-    -- end
-    return obj
-end
-
 function T_Obj.pt_new(testClassName, obj, expectedFieldValues)
     -- prepare test
     assert(testClassName, "no className provided")
