@@ -37,6 +37,8 @@ function T_Turtle.T_All()
     T_Turtle.T_ImplementsIItemDepot()
 end
 
+
+local testClassName = "Turtle"
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
 local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
@@ -142,7 +144,7 @@ function T_Turtle.T_isEqual()
     local obj = T_Turtle.CreateTurtle(id) if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test same
-    local obj1 = T_Turtle.CreateTurtle(id)
+    local obj1 = T_Turtle.CreateTurtle(id) assert(obj1, "Failed obtaining "..testClassName)
     local isEqual = obj1:isEqual(obj)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -227,7 +229,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "Failed obtaining Chest 2")
+    local chest2 = T_Chest.CreateTestObj(nil, location2:getRelativeLocation(2, 5, 0)) assert(chest2, "Failed obtaining Chest 2")
     local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
@@ -269,7 +271,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:storeItemsFrom_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId()))
+    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId())) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -304,7 +306,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "Failed obtaining Chest 2")
+    local chest2 = T_Chest.CreateTestObj(nil, location2:getRelativeLocation(2, 5, 0)) assert(chest2, "Failed obtaining Chest 2")
     local itemsLocator = enterprise_chests:saveObject(chest2)
 
     -- test

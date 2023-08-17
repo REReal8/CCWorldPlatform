@@ -280,7 +280,7 @@ local function t_provideItemsTo_AOSrv(provideItems)
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local T_Chest = require "test.t_mobj_chest"
-    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "Failed obtaining Chest 2")
+    local chest2 = T_Chest.CreateTestObj(nil, location1:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
 
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 --    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
