@@ -34,7 +34,7 @@ R  CheckInput                                                                   
    R  convert Mine to a proper IObj                                                                                     (done)
    R  convert Shop to a proper IObj                                                                                     (done)
    R  convert Turtle to a proper IObj
-   -  convert Host to a proper IObj
+   R  convert Host to a proper IObj                                                                                     (done)
    -  convert MObjHost to a proper IObj
 
 R  Generalise test functions into "templates" to reduce duplication
