@@ -97,9 +97,9 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
                 -- test anotherValue
                 pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
             else
-                -- trigger test of equality of plane table fields
                 pt_isNotEqual_tableField(obj, otherObj, fieldValue, indent.."  ")
 --                corelog.WriteToLog(indent.."type=plain table")
+                -- trigger test of equality of plain table fields
             end
         else
 --            corelog.WriteToLog(indent.."type="..type(fieldValue)..", value="..textutils.serialise(fieldValue))
