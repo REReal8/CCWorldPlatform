@@ -92,9 +92,9 @@ function corelog.WriteToLog(message, writeMode)
 	if monitorLeft then
 		-- we are the logging station, don't send message
 		corelog.WriteToMonitor("me: "..(message or "nil message"))
-	else
+--[[ 	else
 
---[[ 		-- send message two whoever is loggin our stuff
+		-- send message two whoever is loggin our stuff
 		coreevent.SendMessage({
 			channel		= db.loggerChannel,
 			protocol	= db.protocol,
