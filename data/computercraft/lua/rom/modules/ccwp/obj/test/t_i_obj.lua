@@ -86,23 +86,23 @@ local function pt_isNotEqual_tableField(obj, otherObj, otherTable, indent)
 
     -- test fields
     for fieldName, fieldValue in pairs(otherTable) do
-        corelog.WriteToLog(indent.."->test Obj's with different field "..fieldName.." are not equal")
+        corelog.WriteToLog(indent.."->test Obj's with different field "..fieldName.." are not equal, value="..textutils.serialise(fieldValue, compact))
         -- check for table
         if type(fieldValue) == "table" then
             if Object.IsInstanceOf(fieldValue, IObj) then
---                corelog.WriteToLog("type=IObj")
+--                corelog.WriteToLog(indent.."type=IObj")
                 local anotherFieldValue = "a string instead of an IObj"
                 -- note: the actual class of the IObj field should have it's own isEqual test so we only need to test here it's inequality with something else (a string in this case)
 
                 -- test anotherValue
                 pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
             else
---                corelog.WriteToLog("type=plain table")
                 -- trigger test of equality of plane table fields
                 pt_isNotEqual_tableField(obj, otherObj, fieldValue, indent.."  ")
+--                corelog.WriteToLog(indent.."type=plain table")
             end
         else
---            corelog.WriteToLog("type="..type(fieldValue)..", value="..textutils.serialise(fieldValue))
+--            corelog.WriteToLog(indent.."type="..type(fieldValue)..", value="..textutils.serialise(fieldValue))
             -- figure out anotherFieldValue
             local anotherFieldValue = nil
             if type(fieldValue) == "nil" then anotherFieldValue = "not nil" -- will probably never occur because key wouldn't be present
