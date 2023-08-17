@@ -288,6 +288,13 @@ function RemoveEventListener(protocol, subject)
 	end
 end
 
+local function MyPullEvent()
+	-- do we have any messages left we need to process?
+	if #db.toProcess > 0	then return table.remove(db.toProcess, 1)	-- process a message from the bulk
+							else return os.pullEvent()					-- no, mormal pull event
+	end
+end
+
 -- listener to every event incoming
 function coreevent.Run()
     -- events we ignore in the global event listener
@@ -311,7 +318,7 @@ function coreevent.Run()
 	while coresystem.IsRunning() do
 
         -- listen for new messages, remember the time
-		local event, p1, p2, p3, p4, p5 = os.pullEvent()
+		local event, p1, p2, p3, p4, p5 = MyPullEvent()
 		local now                       = os.clock()
 		local originalEvent             = event
 
