@@ -91,7 +91,7 @@ end
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local testClassName = "Factory"
-local function createTestObj(id)
+function T_Factory.CreateTestObj(id)
 
     -- nil check
     assert(location1, "Failed obtaining location1 for "..testClassName)
@@ -174,8 +174,8 @@ end
 function T_Factory.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = createTestObj(id) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj(id) assert(obj, "Failed obtaining "..testClassName) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Factory.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Factory.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

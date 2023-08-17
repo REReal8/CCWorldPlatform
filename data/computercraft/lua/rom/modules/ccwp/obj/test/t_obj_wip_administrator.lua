@@ -53,8 +53,8 @@ local compact = { compact = true }
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local testClassName = "WIPAdministrator"
-local function createTestObj()
-    local wipQueue = T_WIPQueue.createTestObj() assert(wipQueue, "Failed obtaining WIPQueue")
+function T_WIPAdministrator.CreateTestObj()
+    local wipQueue = T_WIPQueue.CreateTestObj() assert(wipQueue, "Failed obtaining WIPQueue")
     local wipQueues = ObjTable:new({
         _objClassName   = wipQueueClassName,
 
@@ -92,8 +92,8 @@ end
 
 function T_WIPAdministrator.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_WIPAdministrator.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_WIPAdministrator.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

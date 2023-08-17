@@ -62,7 +62,7 @@ local function workListCopy(workList)
     return copy
 end
 
-function T_WIPQueue.createTestObj()
+function T_WIPQueue.CreateTestObj()
     local testObj = WIPQueue:new({
         _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
@@ -189,8 +189,8 @@ end
 
 function T_WIPQueue.T_IObj_All()
     -- prepare test
-    local obj = T_WIPQueue.createTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_WIPQueue.createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_WIPQueue.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_WIPQueue.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

@@ -44,7 +44,7 @@ local testObj2 = TestObj:new({
 local wrongTestObj1 = Location:new()
 
 local testClassName = "ObjTable"
-local function createTestObj()
+function T_ObjTable.CreateTestObj()
     local testObj = ObjTable:new({
         _objClassName   = objClassName1,
 
@@ -93,8 +93,8 @@ end
 
 function T_ObjTable.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_ObjTable.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_ObjTable.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

@@ -63,7 +63,7 @@ local expectedQueryURI = "?"..itemName1.."="..itemCount1.."&"..itemName2.."="..i
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local testClassName = "URL"
-local function createTestObj()
+function T_URL.CreateTestObj()
     local testObj = URL:new({
         _host = host,
         _port = port,
@@ -252,8 +252,8 @@ end
 
 function T_URL.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_URL.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_URL.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

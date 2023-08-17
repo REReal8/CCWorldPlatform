@@ -33,7 +33,7 @@ local compact = { compact = true }
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local testClassName = "CallDef"
-local function createTestObj()
+function T_CallDef.CreateTestObj()
     local testObj = CallDef:new({
         _moduleName     = moduleName1,
         _methodName     = methodName1,
@@ -79,8 +79,8 @@ end
 
 function T_CallDef.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_CallDef.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_CallDef.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

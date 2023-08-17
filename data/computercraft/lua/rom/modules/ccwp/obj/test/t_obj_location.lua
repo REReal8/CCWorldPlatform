@@ -55,7 +55,7 @@ local compact = { compact = true }
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local testClassName = "Location"
-local function createTestObj()
+function T_Location.CreateTestObj()
     local testObj = Location:new({
         _x  = x1,
         _y  = y1,
@@ -107,8 +107,8 @@ end
 
 function T_Location.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Location.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Location.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
