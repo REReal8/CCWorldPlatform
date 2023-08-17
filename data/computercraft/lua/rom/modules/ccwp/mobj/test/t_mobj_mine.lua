@@ -110,7 +110,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     obj:Activate()
 
     local mineLocator = enterprise_storage:getObjectLocator(obj)
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
