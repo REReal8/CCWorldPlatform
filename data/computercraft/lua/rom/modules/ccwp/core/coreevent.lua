@@ -73,7 +73,6 @@ function ActivateModem()
     if modem 	then for i, messageData in ipairs(db.toSend) do modem.transmit(messageData.channel, messageData.replyChannel, messageData.message) end db.toSend = nil
 				else error("No modem found!")
 	end
-
 end
 
 -- opens a channel for a specific protocol
@@ -122,10 +121,7 @@ function coreevent.SendMessage(t)
 	local message   = t.message
 
 	-- input controleren
-	if protocol == "" or subject == "" then
-		corelog.WriteToLog("SendMessage(): invalid parameters: protocol = "..protocol..", subject = "..subject, "a")
-		return nil
-	end
+	if protocol == "" or subject == "" then corelog.WriteToLog("SendMessage(): invalid parameters: protocol = "..protocol..", subject = "..subject) return nil end
 
 	-- make sure our message is a table
 	if type(message)	~= "table"  then message    = {}                    end -- message moet altijd een table zijn, dan maar een leeg
@@ -142,13 +138,14 @@ function coreevent.SendMessage(t)
         -- do we have a channel? if not, use id of the receiver
 		if not currentChannel then currentChannel = to[i] end
 
-        -- actuall sending the message
-		if modem then
-			-- log all messages send
---			coreutils.WriteToFile(db.logfile, "Sending message("..protocol..", "..subject..")", "a")
+		-- are we sending in bulk mode?
+		if db.bulkMode then
 
-			-- this sends the message
-			modem.transmit(currentChannel, from, textutils.serialize({
+			-- we need an array table to insert, make sure there is one
+			if type(db.toProcess[currentChannel]) ~= "table" then db.toProcess[currentChannel] = {} end
+
+			-- message not actually send now, stored for sending at a later moment
+			table.insert(db.toProcess[currentChannel], textutils.serialize({
 				from        = from,
 				to			= to[i],
 				protocol	= protocol,
@@ -157,22 +154,40 @@ function coreevent.SendMessage(t)
 			}))
 		else
 
-			-- no modem, just wait for a better moment
-			table.insert(db.toSend, {
-				channel 		= currentChannel,
-				replyChannel	= from,
-				message			= textutils.serialize({
+			-- actuall sending the message
+			if modem then
+				-- log all messages send
+				local serializedMessage = textutils.serialize({
 					from        = from,
 					to			= to[i],
 					protocol	= protocol,
 					subject		= subject,
 					message		= message
 				})
-			})
+				--coreutils.WriteToFile(db.logfile, os.time() .." - Sending message("..protocol..", "..subject.."), size = "..string.len(serializedMessage), "a")
+				--if protocol == "core:dht" and subject == "save data" then coreutils.WriteToFile(db.logfile, "	It was about '"..(message["arg"][1] or "").."'") end
 
-			-- not very likely to happen, we can recover from this minor issue
-			coreutils.WriteToFile(db.logfile, "Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")", "a")
-			-- don't write to log, since that will send a message and get's us in a loop
+				-- this sends the message
+				modem.transmit(currentChannel, from, serializedMessage)
+			else
+
+				-- no modem, just wait for a better moment
+				table.insert(db.toSend, {
+					channel 		= currentChannel,
+					replyChannel	= from,
+					message			= textutils.serialize({
+						from        = from,
+						to			= to[i],
+						protocol	= protocol,
+						subject		= subject,
+						message		= message
+					})
+				})
+
+				-- not very likely to happen, we can recover from this minor issue
+				coreutils.WriteToFile(db.logfile, "Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")", "a")
+				-- don't write to log, since that will send a message and get's us in a loop
+			end
 		end
 	end
 
