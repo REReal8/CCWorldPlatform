@@ -36,7 +36,7 @@ end
 
 function T_ObjBase.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
+    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
     obj._aStr = "a string"
     obj._aNumber = 10
     obj._aBoolean = true
@@ -50,7 +50,7 @@ function T_ObjBase.T_IObj_All()
     }
     obj._aNormalTable._aSubIObj._aSubStr = "another sub string"
 
-    local otherObj = createTestObj() assert(otherObj, "failed obtaining "..testClassName)
+    local otherObj = createTestObj() assert(otherObj, "Failed obtaining "..testClassName)
     otherObj._aNil = obj._aNil
     otherObj._aStr = obj._aStr
     otherObj._aNumber = obj._aNumber

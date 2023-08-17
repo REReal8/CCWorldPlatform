@@ -107,8 +107,8 @@ end
 
 function T_Location.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
+    local obj = createTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = createTestObj() assert(obj, "Failed obtaining "..testClassName) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

@@ -112,12 +112,12 @@ function T_Silo.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "failed obtaining ObjArray")
+    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "failed obtaining ObjArray")
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id)) assert(obj, "failed obtaining "..testClassName)
-    local otherObj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id)) assert(otherObj, "failed obtaining "..testClassName)
+    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id)) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id)) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -136,7 +136,7 @@ end
 
 function T_Silo.T_ImplementsIMObj()
     -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Obj.pt_ImplementsInterface("IMObj", testClassName, obj)
@@ -195,7 +195,7 @@ end
 function T_Silo.T_integrity()
     -- do the new test
     corelog.WriteToLog("* Silo:construct() tests")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     obj:IntegretyCheck()
@@ -212,7 +212,7 @@ end
 
 function T_Silo.T_ImplementsIItemSupplier()
     -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
@@ -221,7 +221,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
 
     -- activate the silo
     obj:Activate()
@@ -287,7 +287,7 @@ end
 
 function T_Silo.T_ImplementsIItemDepot()
     -- prepare test
-    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "failed obtaining "..testClassName)
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable()) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
@@ -297,7 +297,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     local provideItems = {

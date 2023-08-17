@@ -73,7 +73,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* Shop "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -94,7 +94,7 @@ function T_Shop.T_Getters()
     corelog.WriteToLog("* Shop getter tests")
     local id = coreutils.NewId()
     local className = "Shop"
-    local obj = T_Shop.CreateShop(itemSuppliersLocators1, id) if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop(itemSuppliersLocators1, id) if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
@@ -136,7 +136,7 @@ end
 function T_Shop.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* Shop:isTypeOf() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test valid
     local isTypeOf = Shop:isTypeOf(obj)
@@ -155,7 +155,7 @@ function T_Shop.T_isEqual()
     -- prepare test
     corelog.WriteToLog("* Shop:isEqual() tests")
     local id = coreutils.NewId()
-    local obj = T_Shop.CreateShop(itemSuppliersLocators1, id) if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop(itemSuppliersLocators1, id) if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test same
     local obj1 = T_Shop.CreateShop(itemSuppliersLocators1, id)
@@ -176,7 +176,7 @@ end
 function T_Shop.T_copy()
     -- prepare test
     corelog.WriteToLog("* Shop:copy() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test
     local copy = obj:copy()
@@ -195,7 +195,7 @@ end
 function T_Shop.T_registerItemSupplier_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Shop:registerItemSupplier_SOSrv() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
@@ -214,7 +214,7 @@ end
 function T_Shop.T_delistItemSupplier_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Shop:delistItemSupplier_SOSrv() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
@@ -234,14 +234,14 @@ end
 function T_Shop.T_delistAllItemSuppliers()
     -- prepare test
     corelog.WriteToLog("* Shop:delistAllItemSuppliers() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
 
-    local chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
+    local chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1)) assert(chest, "Failed obtaining Chest")
     local chestLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = chestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
@@ -261,24 +261,24 @@ end
 function T_Shop.T_bestItemSupplier()
     -- prepare test
     corelog.WriteToLog("* Shop:bestItemSupplier() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local item = {
         ["minecraft:birch_log"]  = 5,
     }
     local ingredientsItemSupplierLocator = objectLocator
     local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
-    local chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1)) assert(chest, "failed obtaining Chest")
+    local chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1)) assert(chest, "Failed obtaining Chest")
     local itemDepotLocator = enterprise_chests:saveObject(chest)
 
     -- test lowest fuelNeed
     local closeLocation = location1:getRelativeLocation(1, 1, 0)
-    chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(closeLocation)) assert(chest, "failed obtaining Chest")
+    chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(closeLocation)) assert(chest, "Failed obtaining Chest")
     local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     local farLocation = location1:getRelativeLocation(99999, 1, 0)
-    chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(farLocation)) assert(chest, "failed obtaining Chest")
+    chest = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(farLocation)) assert(chest, "Failed obtaining Chest")
     local farItemSupplierLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
@@ -309,7 +309,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Shop:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining Shop") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemDepotLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
@@ -387,9 +387,9 @@ end
 function T_Shop.T_can_ProvideItems_QOSrv()
     -- prepare test
     corelog.WriteToLog("* Shop:can_ProvideItems_QOSrv() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining obj") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining obj") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
     local forestLocator = enterprise_forestry:saveObject(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
@@ -417,11 +417,11 @@ end
 function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* Shop:needsTo_ProvideItemsTo_SOSrv() tests")
-    local obj = T_Shop.CreateShop() if not obj then corelog.Error("failed obtaining obj") return end
+    local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining obj") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local ingredientsItemSupplierLocator = objectLocator
     local nTrees = 1
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
     local forestLocator = enterprise_forestry:saveObject(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 

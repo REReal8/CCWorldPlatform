@@ -54,7 +54,7 @@ end
 function t_turtle.T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local location = Location:new(coremove.GetLocation())
@@ -93,9 +93,9 @@ function t_turtle.T_RegisterTurtle_SSrv()
     local result = enterprise_turtle.RegisterTurtle_SSrv(objParameters)
     assert(result.success, "failed registering Obj")
     local objLocator = result.turtleLocator
-    assert(objLocator, "failed obtaining objLocator")
+    assert(objLocator, "Failed obtaining objLocator")
     local obj = enterprise_turtle:getObject(objLocator)
-    assert(obj, "failed obtaining obj")
+    assert(obj, "Failed obtaining obj")
 
     -- cleanup test
     enterprise_turtle:deleteResource(objLocator)

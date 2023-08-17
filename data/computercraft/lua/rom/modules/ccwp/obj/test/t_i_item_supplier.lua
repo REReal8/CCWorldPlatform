@@ -25,9 +25,9 @@ function T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, cons
     assert(className, "no className provided")
     corelog.WriteToLog("* "..className..":provideItemsTo_AOSrv() test ("..textutils.serialize(provideItems, compact).." to "..itemDepotLocator:getURI()..")")
 
-    local mobjHost = Host.GetHost(mobjHostName) assert(mobjHost, "failed obtaining MObjHost "..mobjHostName)
+    local mobjHost = Host.GetHost(mobjHostName) assert(mobjHost, "Failed obtaining MObjHost "..mobjHostName)
     local mobjLocator = mobjHost:hostMObj_SSrv({ className = className, constructParameters = constructParameters }).mobjLocator assert(mobjLocator, "failed hosting "..className.." on "..mobjHostName)
-    local mobj = mobjHost:getObject(mobjLocator) assert(mobj, "failed obtaining "..className.." from mobjLocator "..mobjLocator:getURI())
+    local mobj = mobjHost:getObject(mobjLocator) assert(mobj, "Failed obtaining "..className.." from mobjLocator "..mobjLocator:getURI())
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
@@ -60,7 +60,7 @@ function T_IItemSupplier.provideItemsTo_AOSrv_Callback(callbackData, serviceResu
 
     -- cleanup test
     local mobjHostName = callbackData["mobjHostName"]
-    local mobjHost = Host.GetHost(mobjHostName) assert(mobjHost, "failed obtaining MObjHost "..mobjHostName)
+    local mobjHost = Host.GetHost(mobjHostName) assert(mobjHost, "Failed obtaining MObjHost "..mobjHostName)
     local mobjLocator = callbackData["mobjLocator"]
     mobjHost:releaseMObj_SSrv({ mobjLocator = mobjLocator})
 

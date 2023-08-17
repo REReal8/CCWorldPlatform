@@ -53,7 +53,7 @@ function AddNewSite_ASrv_Callback(callbackData, serviceResults)
     -- test (cont))
     assert(serviceResults.success, "failed adding forest")
     local forestLocator = serviceResults.forestLocator
-    assert(forestLocator ~= nil, "failed obtaining forestLocator")
+    assert(forestLocator ~= nil, "Failed obtaining forestLocator")
     local nForests = enterprise_forestry:getNumberOfObjects("BirchForest")
     local expectedNForests = callbackData.originalNForests + 1
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")

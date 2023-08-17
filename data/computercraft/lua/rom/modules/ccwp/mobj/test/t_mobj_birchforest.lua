@@ -63,7 +63,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* BirchForest "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("failed obtaining BirchForest") return end
+    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("Failed obtaining BirchForest") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -105,7 +105,7 @@ function T_BirchForest.T_Getters()
     corelog.WriteToLog("* BirchForest getter tests")
     local id = coreutils.NewId()
     local className = "BirchForest"
-    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("failed obtaining BirchForest") return end
+    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("Failed obtaining BirchForest") return end
 
     -- test
     assert(forest:getClassName() == className, "gotten className(="..forest:getClassName()..") not the same as expected(="..className..")")
@@ -146,7 +146,7 @@ end
 function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining BirchForest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining BirchForest") return end
     local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
     local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
@@ -178,8 +178,8 @@ end
 function T_BirchForest.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = createTestObj(id) assert(obj, "failed obtaining "..testClassName)
-    local otherObj = createTestObj(id) assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
+    local obj = createTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = createTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -199,7 +199,7 @@ local compact = { compact = true }
 function T_BirchForest.T_getFuelNeed_Harvest_Att()
     -- prepare test
     corelog.WriteToLog("* BirchForest:getFuelNeed_Harvest_Att() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
 
     -- test
     local fuelNeed = forest:getFuelNeed_Harvest_Att()
@@ -217,7 +217,7 @@ end
 function T_BirchForest.T_getFuelNeedExtraTree_Att()
     -- prepare test
     corelog.WriteToLog("* BirchForest:getFuelNeedExtraTree_Att() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
 
     -- test
     local fuelNeed = forest:getFuelNeedExtraTree_Att()
@@ -248,7 +248,7 @@ end
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* BirchForest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -271,7 +271,7 @@ end
 function T_BirchForest.T_can_ProvideItems_QOSrv()
     -- prepare test
     corelog.WriteToLog("* BirchForest:can_ProvideItems_QOSrv() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("failed obtaining forest") return end
+    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
 
     -- test
     local itemName = "minecraft:birch_log"
@@ -295,14 +295,14 @@ end
 local function t_provideItemsTo_AOSrv(provideItems)
     -- prepare test
     corelog.WriteToLog("* BirchForest:provideItemsTo_AOSrv() tests ("..next(provideItems)..")")
-    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("failed obtaining BirchForest") return end
+    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("Failed obtaining BirchForest") return end
     local objLocator = enterprise_forestry:saveObject(obj)
     t_turtle = t_turtle or require "test.t_turtle"
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "failed obtaining itemDepotLocator")
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local T_Chest = require "test.t_mobj_chest"
-    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location1:getRelativeLocation(0, 0, -1))) assert(chest2, "Failed obtaining Chest 2")
 
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 --    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()

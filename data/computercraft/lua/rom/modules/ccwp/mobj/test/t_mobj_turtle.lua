@@ -54,7 +54,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* Turtle "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -76,7 +76,7 @@ function T_Turtle.T_Getters()
     local turtleId = 111
     local id = tostring(turtleId)
     local className = "Turtle"
-    local objTurtle = T_Turtle.CreateTurtle(id, fuelPriorityKey2) if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTurtle(id, fuelPriorityKey2) if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
 
     -- test
     assert(objTurtle:getClassName() == className, "gotten className(="..objTurtle:getClassName()..") not the same as expected(="..className..")")
@@ -120,7 +120,7 @@ end
 function T_Turtle.T_isTypeOf()
     -- prepare test
     corelog.WriteToLog("* Turtle:isTypeOf() tests")
-    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTurtle() if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test valid
     local isTypeOf = Turtle:isTypeOf(obj)
@@ -139,7 +139,7 @@ function T_Turtle.T_isEqual()
     -- prepare test
     corelog.WriteToLog("* Turtle:isEqual() tests")
     local id = "333"
-    local obj = T_Turtle.CreateTurtle(id) if not obj then corelog.Error("failed obtaining Turtle") return end
+    local obj = T_Turtle.CreateTurtle(id) if not obj then corelog.Error("Failed obtaining Turtle") return end
 
     -- test same
     local obj1 = T_Turtle.CreateTurtle(id)
@@ -160,7 +160,7 @@ end
 function T_Turtle.T_copy()
     -- prepare test
     corelog.WriteToLog("* Turtle:copy() tests")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
 
     -- test
     local copy = objTurtle:copy()
@@ -192,7 +192,7 @@ end
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:provideItemsTo_AOSrv() test (to "..toStr..")")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
     local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId()))
 
     local provideItems = {
@@ -227,7 +227,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "Failed obtaining Chest 2")
     local itemDepotLocator = enterprise_chests:saveObject(chest2)
 
     -- test
@@ -268,7 +268,7 @@ end
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Turtle:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("failed obtaining Turtle") return end
+    local objTurtle = T_Turtle.CreateTurtle() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
     local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId()))
 
     local provideItems = {
@@ -304,7 +304,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "failed obtaining Chest 2")
+    local chest2 = T_Obj.createObjFromTable("Chest", T_Chest.NewOTable(location2:getRelativeLocation(2, 5, 0))) assert(chest2, "Failed obtaining Chest 2")
     local itemsLocator = enterprise_chests:saveObject(chest2)
 
     -- test

@@ -78,9 +78,9 @@ function t_chests.T_hostMObj_SSrv_Chest()
     local result = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters,})
     assert(result.success, "failed hosting "..className)
     local mobjLocator = result.mobjLocator
-    assert(mobjLocator, "failed obtaining mobjLocator")
+    assert(mobjLocator, "Failed obtaining mobjLocator")
     local mobj = enterprise_chests:getObject(mobjLocator)
-    assert(mobj, "failed obtaining mobj")
+    assert(mobj, "Failed obtaining mobj")
 
     -- cleanup test
     mobj:destruct()
