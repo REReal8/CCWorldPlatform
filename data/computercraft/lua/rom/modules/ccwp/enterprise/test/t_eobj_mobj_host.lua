@@ -16,8 +16,10 @@ local enterprise_projects = require "enterprise_projects"
 local t_turtle = require "test.t_turtle"
 
 function T_MObjHost.T_All()
-    -- IObj methods
+    -- initialisation
     T_MObjHost.T_new()
+
+    -- IObj methods
 
     -- service methods
     T_MObjHost.T_hostMObj_SSrv()
@@ -40,6 +42,13 @@ local test_mobjHostName1 = "TestMObjHost"
 local test_mobjHost1 = MObjHost:new({
     _hostName   = test_mobjHostName1,
 })
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 function T_MObjHost.T_new()
     -- prepare test
