@@ -13,7 +13,7 @@ local db = {
     reply		= {},		-- the reply envelopes by message id (serial)
 	toSend		= {},		-- list of messages that still need to be send
 	toProcess	= {},		-- list of messages that still needs processsing
-	bulkMode	= false,	-- send messages in bulk per tick, not one by one
+	bulkMode	= false,	-- send messages in bulk per tick, not one by one (NOT YET WORKING, KEEP ON VALUE false)
     logfile		= "/log/core.event.log",
 }
 
