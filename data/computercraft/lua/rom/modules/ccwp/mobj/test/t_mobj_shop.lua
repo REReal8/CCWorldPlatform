@@ -36,11 +36,6 @@ function T_Shop.T_All()
     -- IObj methods
     T_Shop.T_IObj_All()
 
-    T_Shop.T_ImplementsIObj()
-    T_Shop.T_isTypeOf()
-    T_Shop.T_isEqual()
-    T_Shop.T_copy()
-
     -- specific methods
 
     -- service methods
@@ -149,62 +144,7 @@ function T_Shop.T_IObj_All()
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
-end
-
-function T_Shop.T_ImplementsIObj()
-    ImplementsInterface("IObj")
-end
-
-function T_Shop.T_isTypeOf()
-    -- prepare test
-    corelog.WriteToLog("* Shop:isTypeOf() tests")
-    local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-
-    -- test valid
-    local isTypeOf = Shop:isTypeOf(obj)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test different object
-    isTypeOf = Shop:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
-function T_Shop.T_isEqual()
-    -- prepare test
-    corelog.WriteToLog("* Shop:isEqual() tests")
-    local id = coreutils.NewId()
-    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) if not obj then corelog.Error("Failed obtaining Shop") return end
-
-    -- test same
-    local obj1 = T_Shop.CreateTestObj(id, itemSuppliersLocators1)
-    local isEqual = obj1:isEqual(obj)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different _itemSuppliersLocators
-    obj._itemSuppliersLocators = itemSuppliersLocators2
-    isEqual = obj1:isEqual(obj)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    obj._itemSuppliersLocators = itemSuppliersLocators1
-
-    -- cleanup test
-end
-
-function T_Shop.T_copy()
-    -- prepare test
-    corelog.WriteToLog("* Shop:copy() tests")
-    local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
-
-    -- test
-    local copy = obj:copy()
-    assert(copy:isEqual(obj), "gotten copy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(obj, compact)..")")
-
-    -- cleanup test
+    T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 --                        _                           _   _               _

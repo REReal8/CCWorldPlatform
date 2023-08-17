@@ -77,39 +77,6 @@ function Shop:getClassName()
     return "Shop"
 end
 
-function Shop:isTypeOf(obj)
-    local metatable = getmetatable(obj)
-    while metatable do
-        if metatable.__index == self or obj == self then
-            return true
-        end
-        metatable = getmetatable(metatable.__index)
-    end
-    return false
-end
-
-function Shop:isEqual(obj)
-    -- check input
-    if not Shop:isTypeOf(obj) then return false end
-
-    -- check same object
-    local isEqual =  self._id == obj._id
-                and self._itemSuppliersLocators:isEqual(obj._itemSuppliersLocators)
-
-    -- end
-    return isEqual
-end
-
-function Shop:copy()
-    local copy = Shop:new({
-        _id                     = self._id,
-
-        _itemSuppliersLocators  = self._itemSuppliersLocators:copy(),
-    })
-
-    return copy
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
