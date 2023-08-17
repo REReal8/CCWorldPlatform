@@ -54,7 +54,7 @@ end
 function t_turtle.T_GetFuelLevels_Att()
     -- prepare test
     corelog.WriteToLog("# Test GetFuelLevels_Att")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local location = Location:new(coremove.GetLocation())

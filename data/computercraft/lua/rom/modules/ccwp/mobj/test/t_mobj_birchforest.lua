@@ -43,6 +43,8 @@ function T_BirchForest.T_All()
     T_BirchForest.T_can_ProvideItems_QOSrv()
 end
 
+local testClassName = "BirchForest"
+
 local level0 = 0
 local location1 = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
 local nTrees = 1
@@ -61,7 +63,7 @@ local function ImplementsInterface(interfaceName)
     -- prepare test
     corelog.WriteToLog("* BirchForest "..interfaceName.." interface test")
     local Interface = moduleRegistry:getModule(interfaceName)
-    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("Failed obtaining BirchForest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local implementsInterface = Interface.ImplementsInterface(obj)
@@ -77,7 +79,6 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "BirchForest"
 function T_BirchForest.CreateTestObj(id, level, baseLocation, localLogsLocator, localSaplingsLocator)
     id = id or coreutils.NewId()
     level = level or level0
@@ -120,48 +121,24 @@ function T_BirchForest.T_Getters()
     -- cleanup test
 end
 
-function T_BirchForest.CreateForest(level, baseLocation, id)
-    -- check input
-    level = level or level0
-    baseLocation = baseLocation or location1
-    id = id or coreutils.NewId()
-    local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
-    local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
-
-    -- create forest object
-    local forest = BirchForest:new({
-        _id                     = id,
-        _level                  = level,
-
-        _baseLocation           = baseLocation:copy(),
-        _nTrees                 = nTrees,
-
-        _localLogsLocator       = localLogsLocator,
-        _localSaplingsLocator   = localSaplingsLocator,
-    })
-
-    -- end
-    return forest
-end
-
 function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* BirchForest setter tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining BirchForest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
     local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
     -- test
-    forest:setLevel(level2)
-    assert(forest:getLevel() == level2, "gotten level(="..forest:getLevel()..") not the same as expected(="..level2..")")
-    forest:setLocation(location2)
-    assert(forest:getBaseLocation():isEqual(location2), "gotten getBaseLocation(="..textutils.serialize(forest:getBaseLocation())..") not the same as expected(="..textutils.serialize(location2)..")")
-    forest:setNTrees(nTrees2)
-    assert(forest:getNTrees() == nTrees2, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees2..")")
-    forest:setLocalLogsLocator(localLogsLocator2)
-    assert(forest:getLocalLogsLocator():isEqual(localLogsLocator2), "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator2:getURI()..")")
-    forest:setLocalSaplingsLocator(localSaplingsLocator2)
-    assert(forest:getLocalSaplingsLocator():isEqual(localSaplingsLocator2), "gotten localLogsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator2:getURI()..")")
+    obj:setLevel(level2)
+    assert(obj:getLevel() == level2, "gotten level(="..obj:getLevel()..") not the same as expected(="..level2..")")
+    obj:setLocation(location2)
+    assert(obj:getBaseLocation():isEqual(location2), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation())..") not the same as expected(="..textutils.serialize(location2)..")")
+    obj:setNTrees(nTrees2)
+    assert(obj:getNTrees() == nTrees2, "gotten nTrees(="..obj:getNTrees()..") not the same as expected(="..nTrees2..")")
+    obj:setLocalLogsLocator(localLogsLocator2)
+    assert(obj:getLocalLogsLocator():isEqual(localLogsLocator2), "gotten localLogsLocator(="..obj:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator2:getURI()..")")
+    obj:setLocalSaplingsLocator(localSaplingsLocator2)
+    assert(obj:getLocalSaplingsLocator():isEqual(localSaplingsLocator2), "gotten localLogsLocator(="..obj:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator2:getURI()..")")
 
     -- cleanup test
     return enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator2 }) and enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator2 })
@@ -200,15 +177,15 @@ local compact = { compact = true }
 function T_BirchForest.T_getFuelNeed_Harvest_Att()
     -- prepare test
     corelog.WriteToLog("* BirchForest:getFuelNeed_Harvest_Att() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    local fuelNeed = forest:getFuelNeed_Harvest_Att()
+    local fuelNeed = obj:getFuelNeed_Harvest_Att()
     local expectedFuelNeed = 36
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
 
-    forest:setNTrees(nTrees2)
-    fuelNeed = forest:getFuelNeed_Harvest_Att()
+    obj:setNTrees(nTrees2)
+    fuelNeed = obj:getFuelNeed_Harvest_Att()
     expectedFuelNeed = 2*36 + 2 * 6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
 
@@ -218,15 +195,15 @@ end
 function T_BirchForest.T_getFuelNeedExtraTree_Att()
     -- prepare test
     corelog.WriteToLog("* BirchForest:getFuelNeedExtraTree_Att() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    local fuelNeed = forest:getFuelNeedExtraTree_Att()
+    local fuelNeed = obj:getFuelNeedExtraTree_Att()
     local expectedFuelNeed = 36 + 2*6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees.."trees not the same as expected(="..expectedFuelNeed..")")
 
-    forest:setNTrees(nTrees2)
-    fuelNeed = forest:getFuelNeedExtraTree_Att()
+    obj:setNTrees(nTrees2)
+    fuelNeed = obj:getFuelNeedExtraTree_Att()
     expectedFuelNeed = 36 + 2*6
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for "..nTrees2.."trees not the same as expected(="..expectedFuelNeed..")")
 
@@ -249,7 +226,7 @@ end
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
     corelog.WriteToLog("* BirchForest:needsTo_ProvideItemsTo_SOSrv() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
@@ -257,7 +234,7 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
-    local needsTo_Provide = forest:needsTo_ProvideItemsTo_SOSrv({
+    local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
@@ -272,22 +249,22 @@ end
 function T_BirchForest.T_can_ProvideItems_QOSrv()
     -- prepare test
     corelog.WriteToLog("* BirchForest:can_ProvideItems_QOSrv() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local itemName = "minecraft:birch_log"
     local itemCount = 20
-    local serviceResults = forest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    local serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:birch_sapling"
     itemCount = 2
-    serviceResults = forest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:dirt"
     itemCount = 10
-    serviceResults = forest:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
+    serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
@@ -296,7 +273,7 @@ end
 local function t_provideItemsTo_AOSrv(provideItems)
     -- prepare test
     corelog.WriteToLog("* BirchForest:provideItemsTo_AOSrv() tests ("..next(provideItems)..")")
-    local obj = T_BirchForest.CreateForest() if not obj then corelog.Error("Failed obtaining BirchForest") return end
+    local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local objLocator = enterprise_forestry:saveObject(obj)
     t_turtle = t_turtle or require "test.t_turtle"
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")

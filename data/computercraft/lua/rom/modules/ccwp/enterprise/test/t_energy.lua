@@ -35,7 +35,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     corelog.WriteToLog("* enterprise_energy.GetFuelNeed_Refuel_Att() tests")
     local turtleLocation = Location:new(coremove.GetLocation())
     local forestLocation = turtleLocation:getRelativeLocation(-3, -2, 0)
-    local forest = T_BirchForest.CreateForest(levelm1, forestLocation) if not forest then corelog.Error("Failed obtaining forest") return end
+    local forest = T_BirchForest.CreateTestObj(nil, levelm1, forestLocation) assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local factoryLocation1 = turtleLocation:copy()
@@ -100,7 +100,7 @@ end
 function t_energy.T_GetRefuelAmount_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetRefuelAmount_Att() tests")
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
 
     local turtleLocation = Location:new(coremove.GetLocation())

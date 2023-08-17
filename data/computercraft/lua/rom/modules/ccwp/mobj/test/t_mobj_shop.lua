@@ -311,7 +311,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     corelog.WriteToLog("* Shop:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
     local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemDepotLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local ingredientsItemSupplierLocator = objectLocator
     local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
@@ -389,7 +389,7 @@ function T_Shop.T_can_ProvideItems_QOSrv()
     corelog.WriteToLog("* Shop:can_ProvideItems_QOSrv() tests")
     local obj = T_Shop.CreateShop() if not obj then corelog.Error("Failed obtaining obj") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
@@ -421,7 +421,7 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local ingredientsItemSupplierLocator = objectLocator
     local nTrees = 1
-    local forest = T_BirchForest.CreateForest() if not forest then corelog.Error("Failed obtaining forest") return end
+    local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = forestLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
