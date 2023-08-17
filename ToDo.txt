@@ -13,7 +13,7 @@ R  add .lua extension to almost all lua code files (besides being a good convent
 R  CheckInput                                                                                                           (done)
    R  add .lua to module file input_checker                                                                             (done)
 
--  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface
+R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
    R  convert Location to a proper IObj                                                                                 (done)
    R  convert URL to a proper IObj                                                                                      (done)
    R  convert Chest to a proper IObj                                                                                    (done)
@@ -26,7 +26,7 @@ R  CheckInput                                                                   
    R  convert CallDef to a proper IObj                                                                                  (done)
    R  convert WIPQueue to a proper IObj                                                                                 (done)
    R  convert Block to a proper IObj                                                                                    (done)
-   R  convert LayerRectangle to a proper IObj                                                                           (....)
+   R  convert LayerRectangle to a proper IObj                                                                           (done)
    R  convert ItemTable to a proper IObj                                                                                (done)
    R  convert WIPAdministrator to a proper IObj                                                                         (done)
    R  convert TestMObj to a proper IObj                                                                                 (done)
