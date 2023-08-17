@@ -3,18 +3,25 @@ local T_Host = {}
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
+local IObj = require "i_obj"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
+local ObjBase = require "obj_base"
 local URL = require "obj_url"
 local Host = require "obj_host"
 
 local TestObj = require "test.obj_test"
+
+local T_Object = require "test.t_object"
+local T_IObj = require "test.t_i_obj"
 
 function T_Host.T_All()
     -- initialisation
     T_Host.T_new()
 
     -- IObj methods
+    T_Host.T_IObj_All()
+
     T_Host.T_isTypeOf()
     T_Host.T_isEqual()
     T_Host.T_copy()
@@ -35,6 +42,7 @@ function T_Host.T_All()
     T_Host.T_GetObject()
 end
 
+local testClassName = "Host"
 local hostName1 = "TestHost"
 local hostName2 = "TestHost2"
 
@@ -50,6 +58,18 @@ local compact = { compact = true }
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+function T_Host.CreateTestObj(hostName)
+    -- check input
+    hostName = hostName1 or hostName
+
+    -- create testObj
+    local testObj = Host:new({
+        _hostName   = hostName,
+    })
+
+    return testObj
+end
 
 function T_Host.T_new()
     -- prepare test
@@ -72,6 +92,17 @@ end
 --   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                    _/ |
 --                   |__/
+
+function T_Host.T_IObj_All()
+    -- prepare test
+    local obj = T_Host.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Host.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+end
+
 
 function T_Host.T_isTypeOf()
     -- prepare test

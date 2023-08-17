@@ -1,6 +1,6 @@
-local Host = {
-    _hostName = ""
-}
+-- define class
+local ObjBase = require "obj_base"
+local Host = ObjBase:new()
 
 local corelog = require "corelog"
 local coredht = require "coredht"
