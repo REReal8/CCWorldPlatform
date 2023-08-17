@@ -49,8 +49,6 @@ local nTrees = 1
 local level2 = 1
 local location2 = Location:new({_x= 6, _y= 12, _z= 1, _dx=0, _dy=1})
 local nTrees2 = 2
-local localLogsLocator
-local localSaplingsLocator
 
 --    _       _             __
 --   (_)     | |           / _|
@@ -80,17 +78,18 @@ end
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local testClassName = "BirchForest"
-local function createTestObj(id)
+function T_BirchForest.CreateTestObj(id, level, baseLocation, localLogsLocator, localSaplingsLocator)
     id = id or coreutils.NewId()
-    local level = level0
-    local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
-    local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
+    level = level or level0
+    baseLocation = baseLocation or location1
+    localLogsLocator = localLogsLocator or enterprise_turtle.GetAnyTurtleLocator()
+    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetAnyTurtleLocator()
 
     local testObj = BirchForest:new({
         _id                     = id,
         _level                  = level,
 
-        _baseLocation           = location1:copy(),
+        _baseLocation           = baseLocation:copy(),
         _nTrees                 = nTrees,
 
         _localLogsLocator       = localLogsLocator,
@@ -105,16 +104,18 @@ function T_BirchForest.T_Getters()
     corelog.WriteToLog("* BirchForest getter tests")
     local id = coreutils.NewId()
     local className = "BirchForest"
-    local forest = T_BirchForest.CreateForest(level0, location1, id) if not forest then corelog.Error("Failed obtaining BirchForest") return end
+    local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(localLogsLocator, "Failed obtaining localLogsLocator")
+    local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(localSaplingsLocator, "Failed obtaining localLogsLocator")
+    local obj = T_BirchForest.CreateTestObj(id, level0, location1, localLogsLocator, localSaplingsLocator) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    assert(forest:getClassName() == className, "gotten className(="..forest:getClassName()..") not the same as expected(="..className..")")
-    assert(forest:getId() == id, "gotten id(="..forest:getId()..") not the same as expected(="..id..")")
-    assert(forest:getLevel() == level0, "gotten level(="..forest:getLevel()..") not the same as expected(="..level0..")")
-    assert(forest:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(forest:getBaseLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
-    assert(forest:getNTrees() == nTrees, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..nTrees..")")
-    assert(forest:getLocalLogsLocator():isEqual(localLogsLocator), "gotten localLogsLocator(="..forest:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
-    assert(forest:getLocalSaplingsLocator():isEqual(localSaplingsLocator), "gotten localSaplingsLocator(="..forest:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator:getURI()..")")
+    assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
+    assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
+    assert(obj:getLevel() == level0, "gotten level(="..obj:getLevel()..") not the same as expected(="..level0..")")
+    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
+    assert(obj:getNTrees() == nTrees, "gotten nTrees(="..obj:getNTrees()..") not the same as expected(="..nTrees..")")
+    assert(obj:getLocalLogsLocator():isEqual(localLogsLocator), "gotten localLogsLocator(="..obj:getLocalLogsLocator():getURI()..") not the same as expected(="..localLogsLocator:getURI()..")")
+    assert(obj:getLocalSaplingsLocator():isEqual(localSaplingsLocator), "gotten localSaplingsLocator(="..obj:getLocalSaplingsLocator():getURI()..") not the same as expected(="..localSaplingsLocator:getURI()..")")
 
     -- cleanup test
 end
@@ -124,8 +125,8 @@ function T_BirchForest.CreateForest(level, baseLocation, id)
     level = level or level0
     baseLocation = baseLocation or location1
     id = id or coreutils.NewId()
-    localLogsLocator = localLogsLocator or enterprise_turtle.GetAnyTurtleLocator()
-    localSaplingsLocator = localSaplingsLocator or enterprise_turtle.GetAnyTurtleLocator()
+    local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
 
     -- create forest object
     local forest = BirchForest:new({
@@ -178,8 +179,8 @@ end
 function T_BirchForest.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = createTestObj(id) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = createTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_BirchForest.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_BirchForest.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
