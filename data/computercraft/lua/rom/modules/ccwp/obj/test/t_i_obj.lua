@@ -79,7 +79,7 @@ local function pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, 
     otherTable[fieldName] = fieldValue
 end
 
-local function pt_isNotEqual_tableField(origObj, otherObj, otherTable, indent)
+local function pt_isNotEqual_tableField(origObj, origTable, otherObj, otherTable, indent)
     --[[
         This function tests obj and otherObj are not the same if a field in otherTable is changed w.r.t. the input.
     ]]
@@ -99,7 +99,8 @@ local function pt_isNotEqual_tableField(origObj, otherObj, otherTable, indent)
             else
 --                corelog.WriteToLog(indent.."type=plain table")
                 -- trigger test of equality of plain table fields
-                pt_isNotEqual_tableField(origObj, otherObj, fieldValue, indent.."  ")
+                local origFieldValue = origTable[fieldName]
+                pt_isNotEqual_tableField(origObj, origFieldValue, otherObj, fieldValue, indent.."  ")
             end
         else
 --            corelog.WriteToLog(indent.."type="..type(fieldValue)..", value="..textutils.serialise(fieldValue))
@@ -114,25 +115,25 @@ local function pt_isNotEqual_tableField(origObj, otherObj, otherTable, indent)
             end
 
             -- test anotherValue
-            pt_isNotEqual_anotherValue(obj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
+            pt_isNotEqual_anotherValue(origObj, otherObj, otherTable, fieldName, fieldValue, anotherFieldValue)
         end
     end
 
     -- test extra original field not equal
     local extraFieldName = "_extraStrField"
     corelog.WriteToLog(indent.."->test Obj's with extra field "..extraFieldName.." are not equal")
-    origObj[extraFieldName] = "extra string field"
+    origTable[extraFieldName] = "extra string field"
     local isEqual = origObj:isEqual(otherObj)
     local expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual).."), origTable="..textutils.serialise(origTable, compact))
     origTable[extraFieldName]  = nil
 
     -- test extra other field not equal
-    otherObj[extraFieldName]  = "extra string field"
+    otherTable[extraFieldName]  = "extra string field"
     isEqual = origObj:isEqual(otherObj)
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    otherObj[extraFieldName]  = nil
+    otherTable[extraFieldName]  = nil
 end
 
 function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj are assumed to be the same at the start of the test
@@ -155,7 +156,7 @@ function T_IObj.pt_isEqual(className, obj, otherObj) -- note: obj and otherObj a
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different fields not equal
-    pt_isNotEqual_tableField(obj, otherObj, otherObj, "")
+    pt_isNotEqual_tableField(obj, obj, otherObj, otherObj, "")
 
     -- cleanup test
 end
