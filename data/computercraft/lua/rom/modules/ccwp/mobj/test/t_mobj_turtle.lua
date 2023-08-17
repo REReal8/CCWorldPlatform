@@ -40,7 +40,6 @@ function T_Turtle.T_All()
     T_Turtle.T_ImplementsIItemDepot()
 end
 
-
 local testClassName = "Turtle"
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
