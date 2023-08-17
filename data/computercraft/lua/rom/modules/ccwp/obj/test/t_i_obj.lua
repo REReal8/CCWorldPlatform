@@ -86,7 +86,8 @@ local function pt_isNotEqual_tableField(origObj, origTable, otherObj, otherTable
 
     -- test fields
     for fieldName, fieldValue in pairs(otherTable) do
-        corelog.WriteToLog(indent.."->test Obj's with different field "..fieldName.." are not equal, value="..textutils.serialise(fieldValue, compact))
+--        corelog.WriteToLog(indent.."->test Obj's with different field "..fieldName.." are not equal, value="..textutils.serialise(fieldValue, compact))
+        corelog.WriteToLog(indent.."->test Obj's with different field "..fieldName.." are not equal")
         -- check for table
         if type(fieldValue) == "table" then
             if Object.IsInstanceOf(fieldValue, IObj) then
@@ -125,7 +126,7 @@ local function pt_isNotEqual_tableField(origObj, origTable, otherObj, otherTable
     origTable[extraFieldName] = "extra string field"
     local isEqual = origObj:isEqual(otherObj)
     local expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual).."), origTable="..textutils.serialise(origTable, compact))
+    assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
     origTable[extraFieldName]  = nil
 
     -- test extra other field not equal
