@@ -83,6 +83,8 @@ local function nFields(table)
     return size
 end
 
+--local compact = { compact = true }
+
 local function tablesEqual(table1, table2)
     -- check all fields table1 in table2
     local nFields1 = 0
@@ -111,8 +113,10 @@ local function tablesEqual(table1, table2)
                 else
                     -- check nested tables equal
                     if not tablesEqual(fieldValue, fieldValue2) then
+--                        corelog.WriteToLog("nested tables not equal")
                         return false
                     else
+--                        corelog.WriteToLog("nested tables equal")
                     end
                 end
             else
@@ -127,6 +131,7 @@ local function tablesEqual(table1, table2)
     local nFields2 = nFields(table2)
 
     -- check same size
+--    corelog.WriteToLog("# fields table1(="..textutils.serialise(table1, compact)..") and table2(="..textutils.serialise(table2, compact)..") ")
     if nFields1 ~= nFields2 then
 --        corelog.WriteToLog("# fields table1(="..nFields1..") not same as for table2(="..nFields2..")")
         return false
