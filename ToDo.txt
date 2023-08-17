@@ -32,7 +32,7 @@ R  CheckInput                                                                   
    R  convert BirchForest to a proper IObj                                                                              (done)
    G  convert Factory to a proper IObj                                                                                  (done)
    R  convert Mine to a proper IObj                                                                                     (done)
-   -  convert Shop to a proper IObj
+   R  convert Shop to a proper IObj                                                                                     (done)
    R  convert Turtle to a proper IObj
    -  convert Host to a proper IObj
    -  convert MObjHost to a proper IObj
