@@ -27,8 +27,8 @@ local t_turtle = require "test.t_turtle"
 
 function T_Chest.T_All()
     -- initialisation
-    T_Chest.T_Getters()
     T_Chest.T_new()
+    T_Chest.T_Getters()
 
     -- IObj methods
     T_Chest.T_IObj_All()
@@ -82,32 +82,19 @@ function T_Chest.CreateTestObj(id, baseLocation, accessDirection, inventory)
     return testObj
 end
 
-function T_Chest.NewOTable(baseLocation, accessDirection, inventory, id)
-    -- check input
-    baseLocation = baseLocation or location1
-    id = id or coreutils.NewId()
-    accessDirection = accessDirection or accessDirection1
-    inventory = inventory or inventory1
-
-    -- create new oTable
-    local oTable = {
-        _id                     = id,
-
-        _baseLocation           = baseLocation:copy(),
-        _accessDirection        = accessDirection,
-        _inventory              = inventory:copy(),
-    }
-
-    -- end
-    return oTable
-end
-
 function T_Chest.T_new()
     -- prepare test
-    local oTable = T_Chest.NewOTable()
+    local id = coreutils.NewId()
+    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1)
+    local expectedFieldValues = {
+        _id                 = id,
+        _baseLocation       = location1,
+        _accessDirection    = accessDirection1,
+        _inventory          = inventory1,
+    }
 
     -- test
-    T_Obj.pt_new(testClassName, oTable)
+    T_Obj.pt_new(testClassName, obj, expectedFieldValues)
 end
 
 function T_Chest.T_Getters()

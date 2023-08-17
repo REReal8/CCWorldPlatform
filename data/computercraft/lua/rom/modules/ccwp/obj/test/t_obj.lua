@@ -5,6 +5,8 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+local Object = require "object"
+local IObj = require "i_obj"
 
 local compact = { compact = true }
 
@@ -44,14 +46,24 @@ function T_Obj.createObjFromTable(className, oTable)
     return obj
 end
 
-function T_Obj.pt_new(className, oTable)
+function T_Obj.pt_new(testClassName, obj, expectedFieldValues)
     -- prepare test
-    assert(className, "no className provided")
-    corelog.WriteToLog("* "..className..":new() tests")
+    assert(testClassName, "no className provided")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
-    -- test
-    local obj = T_Obj.createObjFromTable(className, oTable)
-    assert(obj, "failed creating "..className.." Obj from oTable "..textutils.serialise(oTable, compact))
+    -- test initialised
+    assert(obj, "Failed obtaining "..testClassName)
+
+    -- test fields initialised
+    assert(expectedFieldValues, "no expectedFieldValues provided")
+    for fieldName, expectedValue in pairs(expectedFieldValues) do
+        local fieldValue = obj[fieldName]
+        if Object.IsInstanceOf(fieldValue, IObj) then
+            assert(fieldValue:isEqual(expectedValue), "Failed initialising "..testClassName.." field "..fieldName.." to "..textutils.serialise(expectedValue).." (obtained ="..textutils.serialise(fieldValue) ..")")
+        else
+            assert(fieldValue == expectedValue, "Failed initialising "..testClassName.." field "..fieldName.." to "..textutils.serialise(expectedValue).." (obtained ="..textutils.serialise(fieldValue) ..")")
+        end
+    end
 
     -- cleanup test
 end

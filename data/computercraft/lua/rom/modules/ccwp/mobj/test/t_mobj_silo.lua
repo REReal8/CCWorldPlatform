@@ -93,10 +93,31 @@ end
 
 function T_Silo.T_new()
     -- prepare test
-    local oTable = T_Silo.NewOTable()
+    local id = coreutils.NewId()
+    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+
+    local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
+
+    local obj = T_Obj.createObjFromTable(testClassName, T_Silo.NewOTable(location1, topChests1:copy(), storageChests1:copy(), id))
+    local expectedFieldValues = {
+        _id                 = id,
+
+        _version            = 1,
+
+        _baseLocation       = location1,
+        _entryLocation      = location1:getRelativeLocation(3, 3, 0),
+
+        _dropLocation       = 0,
+        _pickupLocation     = 0,
+
+        _topChests          = topChests1,
+        _storageChests      = storageChests1,
+    }
 
     -- test
-    T_Obj.pt_new(testClassName, oTable)
+    T_Obj.pt_new(testClassName, obj, expectedFieldValues)
 end
 
 --    _____ ____  _     _                  _   _               _
