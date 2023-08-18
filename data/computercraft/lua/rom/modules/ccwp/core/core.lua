@@ -6,7 +6,7 @@ local corelog = require "corelog"
 local coredisplay = require "coredisplay"
 local coredht = require "coredht"
 local coreinventory = require "coreinventory"
-local corejob = require "corejob"
+--local corejob = require "corejob"
 local coreassignment = require "coreassignment"
 local coreutils = require "coreutils"
 local coremove = require "coremove"
@@ -29,7 +29,7 @@ function core.Init()
 	coredisplay.Init()
 	coreevent.Init()
 	coreinventory.Init()
-	corejob.Init()
+--	corejob.Init()
 	coreassignment.Init()
 	coremove.Init()
 	coretask.Init()
@@ -50,7 +50,7 @@ function core.Setup()
 	coredisplay.Setup()
 	coreevent.Setup()
 	coreinventory.Setup()
-	corejob.Setup()
+--	corejob.Setup()
 	coreassignment.Setup()
 	coremove.Setup()
 	coretask.Setup()
@@ -74,7 +74,7 @@ function core.Run()
 		coresystem.setStatus("running")
 
     	-- run some functions in parallel
-    	parallel.waitForAll(coreevent.Run, coretask.Run, corejob.Run, coreassignment.Run, coredisplay.Run)
+    	parallel.waitForAll(coreevent.Run, coretask.Run, --[[corejob.Run,]] coreassignment.Run, coredisplay.Run)
 
         -- no longer running, we're done
 		coresystem.setStatus("ready")

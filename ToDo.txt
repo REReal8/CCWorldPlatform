@@ -6,7 +6,7 @@ G  Debug: Modem events send but not received
    - resolve/ workaround
    - option to bundle messages, reduces count, not size.
 
-G  corejob: remove module (if possible)
+G  corejob: remove module (if possible) (removed)
 
 R  add .lua extension to almost all lua code files (besides being a good convention, it also helps in the VSC)          (done)
 

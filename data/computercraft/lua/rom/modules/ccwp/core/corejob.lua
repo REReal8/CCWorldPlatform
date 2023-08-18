@@ -1,4 +1,4 @@
-local corejob = {}
+--[[ local corejob = {}
 local coresystem = require "coresystem"
 local coredht = require "coredht"
 local corelog = require "corelog"
@@ -215,3 +215,4 @@ function QuitJob(jobId)
 end
 
 return corejob
+ ]]
