@@ -317,6 +317,62 @@ local function CoreEventPullEvent()
 	end
 end
 
+-- local function to decompile a modem message
+local function ProcessModemMessageEvent(side, frequency, replyFrequency, message, distance)
+	-- this is our message
+	local me		= os.getComputerID()
+	local envelope	= textutils.unserialize(message)
+
+	-- is this message for me?
+	if envelope and envelope.to and (envelope.to == 65535 or envelope.to == me) and envelope.from and envelope.protocol then
+		-- add data
+		envelope.distance   = distance
+		envelope.received   = os.clock()
+		envelope.subject    = envelope.subject or '<<no subject>>'
+
+		-- write message to file, for debugging and documentation
+--		coreutils.WriteToFile("/log/system.txt", "    message in: from = "..envelope.from..", protocol = "..envelope.protocol..", subject = "..envelope.subject, "a")
+		coreutils.WriteToFile("/event/"..envelope.protocol.."/"..envelope.subject, envelope, "overwrite")
+
+		-- log to monitor screen
+--		corelog.WriteToMonitor(me..": Modem event from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)
+
+		-- continue with this event
+		return envelope.protocol, envelope.subject, envelope, nil, nil, nil
+	else
+		local msg	= message
+
+		-- not our message, continue without ajusting anything
+		coredisplay.UpdateToDisplay("Unknown modem_message", 5)
+		corelog.WriteToLog("Unknown modem_message:")
+		corelog.WriteToLog("    side           = "..side)
+		corelog.WriteToLog("    frequency      = "..frequency)
+		corelog.WriteToLog("    replyFrequency = "..replyFrequency)
+		corelog.WriteToLog("    message        = "..message)
+		corelog.WriteToLog("    distance       = "..distance)
+		return 'modem_message', side, frequency, replyFrequency, message, distance
+	end
+end
+
+-- local function to process a timer event
+local function ProcessTimerEvent(id)
+    local timer = db.timer
+
+	-- is it a known timer?
+	if timer[id] ~= nil then
+		-- return a new event
+		local tmp = timer[id]
+		timer[id] = nil
+		return tmp.protocol, tmp.p1, tmp.p2, tmp.p3, tmp.p4, tmp.p5
+	else
+		-- could be our idle timer, then create a new one
+--    		if db.idleId == id then db.idleId	= os.startTimer(5) end -- part of task? !!!
+
+		-- we don't know this timer, continue with the event as it was
+		return 'timer', id
+	end
+end
+
 -- listener to every event incoming
 function coreevent.Run()
     -- events we ignore in the global event listener
@@ -371,62 +427,6 @@ function coreevent.Run()
 	end
 end
 
--- local function to decompile a modem message
-function ProcessModemMessageEvent(side, frequency, replyFrequency, message, distance)
-	-- this is our message
-	local me		= os.getComputerID()
-	local envelope	= textutils.unserialize(message)
-
-	-- is this message for me?
-	if envelope and envelope.to and (envelope.to == 65535 or envelope.to == me) and envelope.from and envelope.protocol then
-		-- add data
-		envelope.distance   = distance
-		envelope.received   = os.clock()
-		envelope.subject    = envelope.subject or '<<no subject>>'
-
-		-- write message to file, for debugging and documentation
---		coreutils.WriteToFile("/log/system.txt", "    message in: from = "..envelope.from..", protocol = "..envelope.protocol..", subject = "..envelope.subject, "a")
-		coreutils.WriteToFile("/event/"..envelope.protocol.."/"..envelope.subject, envelope, "overwrite")
-
-		-- log to monitor screen
---		corelog.WriteToMonitor(me..": Modem event from: "..envelope.from..", about: "..envelope.protocol..":"..envelope.subject)
-
-		-- continue with this event
-		return envelope.protocol, envelope.subject, envelope, nil, nil, nil
-	else
-		local msg	= message
-
-		-- not our message, continue without ajusting anything
-		coredisplay.UpdateToDisplay("Unknown modem_message", 5)
-		corelog.WriteToLog("Unknown modem_message:")
-		corelog.WriteToLog("    side           = "..side)
-		corelog.WriteToLog("    frequency      = "..frequency)
-		corelog.WriteToLog("    replyFrequency = "..replyFrequency)
-		corelog.WriteToLog("    message        = "..message)
-		corelog.WriteToLog("    distance       = "..distance)
-		return 'modem_message', side, frequency, replyFrequency, message, distance
-	end
-end
-
--- local function to process a timer event
-function ProcessTimerEvent(id)
-    local timer = db.timer
-
-	-- is it a known timer?
-	if timer[id] ~= nil then
-		-- return a new event
-		local tmp = timer[id]
-		timer[id] = nil
-		return tmp.protocol, tmp.p1, tmp.p2, tmp.p3, tmp.p4, tmp.p5
-	else
-		-- could be our idle timer, then create a new one
---    		if db.idleId == id then db.idleId	= os.startTimer(5) end -- part of task? !!!
-
-		-- we don't know this timer, continue with the event as it was
-		return 'timer', id
-	end
-end
-
 -- idle thing for event
 function DoIdle()
 	-- usefull for debugging, what's waiting in the reply (if anything is)
@@ -451,16 +451,15 @@ end
 
 function coreevent.DoEventTickTimer(subject, envelope)
 	-- check for new tick (should never fail though)
-	if db.lastKnownTime < os.clock() then
-
-		-- send bulk messages
-		if #db.toProcess > 0 then corelog.WriteToLog("processing bulk messages") end
-
-	else
+	if db.lastKnownTime == os.clock() then
 
 		-- funny, tick timer ran twice on the same tick
 		corelog.WriteToLog("coreevent.DoEventTickTimer(): funny, tick timer ran twice on the same tick")
+
 	end
+
+	-- send bulk messages
+	if #db.toProcess > 0 then corelog.WriteToLog("processing bulk messages") end
 
 	-- set new timer for the next tick
 	db.lastKnownTime = os.clock()
