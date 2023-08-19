@@ -9,6 +9,7 @@ local IObj = require "i_obj"
 -- ToDo: consider moving to more generic place for interfaces
 function T_Obj.pt_ImplementsInterface(interfaceName, className, obj)
     -- prepare test
+    assert(interfaceName, "no interfaceName provided")
     assert(className, "no className provided")
     assert(obj, "no obj provided")
     corelog.WriteToLog("* "..className.." "..interfaceName.." interface test")
