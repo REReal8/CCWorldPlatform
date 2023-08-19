@@ -54,8 +54,14 @@ R  Introduce ObjBase, a class that can be used as the base class for any class i
    R  convert Host to a proper IObj                                                                                     (done)
    R  convert MObjHost to a proper IObj                                                                                 (done)
 
+R  IInterface (test) module                                                                                             (....)
+   R  Introduce IInterface module file with functions other interfaces can use                                          (done)
+      R  Adopt IInterface in all interfaces                                                                             (....)
+   R  Introduce T_IInterface test module with test functions other tests on interfaces can use                          (done)
+      R  Adopt T_IInterface for all interface related tests                                                             (done)
+
 R  Generalise test functions into "templates" to reduce duplication
-   R  adtopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                         (done)
+   R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
    R  generalise (I)Obj test functions                                                                                  (done)
    R  generalise (I)ItemSupplier test functions
    R  generalise (I)ItemDepot test functions
