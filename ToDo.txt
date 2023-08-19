@@ -148,6 +148,12 @@ RG mine v2
    -  uitdenken
    -  maken
 
+-  Consider creating and using order objects
+   -  order object that holds an outstanding order
+   -  order object holds the items concerned
+   -  order object can hold more information, like description
+   -  this will make an overview of outstanding orders possible
+
 -  object new methods:
    -  consider return nil after a CheckInput failure (instead of empty table).
       -  this propably depends on the usage of new. In case of constructing an instance we DO want to return a table. And we should set it's fields.
