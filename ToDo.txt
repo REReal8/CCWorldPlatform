@@ -24,11 +24,6 @@ G  Debug: Modem events send but not received
    - resolve/ workaround
    - option to bundle messages, reduces count, not size.
 
-R  add .lua extension to almost all lua code files (besides being a good convention, it also helps in the VSC)          (done)
-
-R  CheckInput                                                                                                           (done)
-   R  add .lua to module file input_checker                                                                             (done)
-
 R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
    R  convert Location to a proper IObj                                                                                 (done)
    R  convert URL to a proper IObj                                                                                      (done)
@@ -293,6 +288,11 @@ ToDo history
    ToDo History conventions:
    -  Newly completed and acknowledged ToDo's should be added at the top of this list. Hence, older ToDo's will be lower on the list.
 ]]
+
+R  add .lua extension to almost all lua code files (besides being a good convention, it also helps in the VSC)          (done)
+
+R  CheckInput                                                                                                           (done)
+   R  add .lua to module file input_checker                                                                             (done)
 
 G  corejob: remove module (if possible) (done)
 
