@@ -1,10 +1,6 @@
 local IMObj = {
 }
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the interface IMObj.
 
@@ -15,6 +11,11 @@ local InputChecker = require "input_checker"
     MObj's should make sure that any async work is registered in the WIPAdministrator with the MObj id as wipId.
     For async work via projects this can be done by setting the 'wipId' key in the projectMeta to the MObj id.
 --]]
+
+local corelog = require "corelog"
+
+local IInterface = require "i_interface"
+local InputChecker = require "input_checker"
 
 --    _____ __  __  ____  _     _                  _   _               _
 --   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
@@ -45,7 +46,10 @@ function IMObj:construct(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("XXXMObj:construct: Invalid input") return nil end
 
-    corelog.Error("Method construct() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    IInterface.UnimplementedMethodError("IMObj", "construct")
+
+    -- end
+    return nil
 end
 
 function IMObj:destruct()
@@ -62,7 +66,9 @@ function IMObj:destruct()
         Parameters:
     ]]
 
-    corelog.Error("Method destruct() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    IInterface.UnimplementedMethodError("IMObj", "destruct")
+
+    -- end
     return false
 end
 
@@ -71,7 +77,10 @@ function IMObj:getId()
         Return the unique Id of the XXXMObj.
     ]]
 
-    corelog.Error("Method getId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    IInterface.UnimplementedMethodError("IMObj", "getId")
+
+    -- end
+    return "???"
 end
 
 function IMObj:getWIPId()
@@ -79,7 +88,10 @@ function IMObj:getWIPId()
         Returns the unique Id of the XXXMObj used for administering WIP.
     ]]
 
-    corelog.Error("Method getWIPId() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    IInterface.UnimplementedMethodError("IMObj", "getWIPId")
+
+    -- end
+    return "???"
 end
 
 function IMObj:getBuildBlueprint()
@@ -93,7 +105,10 @@ function IMObj:getBuildBlueprint()
         Parameters:
     ]]
 
-    corelog.Error("Method getBuildBlueprint() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    IInterface.UnimplementedMethodError("IMObj", "getBuildBlueprint")
+
+    -- end
+    return nil, nil
 end
 
 function IMObj:getDismantleBlueprint()
@@ -107,7 +122,10 @@ function IMObj:getDismantleBlueprint()
         Parameters:
     ]]
 
-    corelog.Error("Method getDismantleBlueprint() should be implemented in classes implementing the IMObj interface. It should not be called directly.")
+    IInterface.UnimplementedMethodError("IMObj", "getDismantleBlueprint")
+
+    -- end
+    return nil, nil
 end
 
 --        _        _   _                       _   _               _

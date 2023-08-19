@@ -15,7 +15,7 @@ local IInterface = {
 --   |_____|_____|_| |_|\__\___|_|  |_| \__,_|\___\___|
 
 function IInterface.UnimplementedMethodError(interfaceName, methodName)
-    error("Method "..methodName.."() should be implemented in Obj classes. It should not be called directly on "..interfaceName.." interface.")
+    error("Method "..interfaceName..":"..methodName.."(): should be implemented in concrete classes. It should not be called directly on the "..interfaceName.." interface.")
 end
 
 return IInterface

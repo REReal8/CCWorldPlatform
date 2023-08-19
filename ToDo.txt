@@ -49,9 +49,9 @@ R  Introduce ObjBase, a class that can be used as the base class for any class i
    R  convert Host to a proper IObj                                                                                     (done)
    R  convert MObjHost to a proper IObj                                                                                 (done)
 
-R  IInterface (test) module                                                                                             (....)
+R  IInterface (test) module                                                                                             (done)
    R  Introduce IInterface module file with functions other interfaces can use                                          (done)
-      R  Adopt IInterface in all interfaces                                                                             (....)
+      R  Adopt IInterface in all interfaces                                                                             (done)
    R  Introduce T_IInterface test module with test functions other tests on interfaces can use                          (done)
       R  Adopt T_IInterface for all interface related tests                                                             (done)
 

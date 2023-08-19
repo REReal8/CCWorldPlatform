@@ -1,11 +1,6 @@
 local IItemDepot = {
 }
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-
 --[[
     This module implements the interface IItemDepot.
 
@@ -13,6 +8,12 @@ local Callback = require "obj_callback"
 
     Objects of a class implementing the interface are called ItemSupplier's.
 --]]
+
+local corelog = require "corelog"
+
+local IInterface = require "i_interface"
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 
 --    _____ _____ _                 _____                   _                    _   _               _
 --   |_   _|_   _| |               |  __ \                 | |                  | | | |             | |
@@ -50,8 +51,9 @@ function IItemDepot:storeItemsFrom_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("IItemDepot:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    IInterface.UnimplementedMethodError("IItemDepot", "storeItemsFrom_AOSrv")
+
     -- end
-    corelog.Error("IItemDepot:storeItemsFrom_AOSrv: Method should be implemented in classes implementing the IItemDepot interface. It should not be called directly.")
     return Callback.ErrorCall(callback)
 end
 
@@ -72,8 +74,9 @@ function IItemDepot:can_StoreItems_QOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:can_StoreItems_QOSrv: Invalid input") return {success = false} end
 
+    IInterface.UnimplementedMethodError("IItemDepot", "can_StoreItems_QOSrv")
+
     -- end
-    corelog.Error("IItemDepot:can_StoreItems_QOSrv: Method should be implemented in classes implementing the IItemDepot interface. It should not be called directly.")
     return {success = false}
 end
 
@@ -95,8 +98,9 @@ function IItemDepot:needsTo_StoreItemsFrom_SOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
 
+    IInterface.UnimplementedMethodError("IItemDepot", "needsTo_StoreItemsFrom_SOSrv")
+
     -- end
-    corelog.Error("IItemDepot:needsTo_StoreItemsFrom_SOSrv: Method should be implemented in classes implementing the IItemDepot interface. It should not be called directly.")
     return {success = false}
 end
 

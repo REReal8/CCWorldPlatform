@@ -27,6 +27,7 @@ function IObj:getClassName()
 
     IInterface.UnimplementedMethodError("IObj", "getClassName")
 
+    -- end
     return "???"
 end
 
@@ -59,6 +60,7 @@ function IObj:copy()
 
     IInterface.UnimplementedMethodError("IObj", "copy")
 
+    -- end
     return nil
 end
 

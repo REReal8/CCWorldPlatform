@@ -1,11 +1,6 @@
 local IItemSupplier = {
 }
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-
 --[[
     This module implements the interface IItemSupplier.
 
@@ -13,6 +8,12 @@ local Callback = require "obj_callback"
 
     Objects of a class implementing the interface are called ItemSupplier's.
 --]]
+
+local corelog = require "corelog"
+
+local IInterface = require "i_interface"
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 
 --    _____ _____ _                  _____                   _ _                            _   _               _
 --   |_   _|_   _| |                / ____|                 | (_)                          | | | |             | |
@@ -49,8 +50,9 @@ function IItemSupplier:provideItemsTo_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("IItemSupplier:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    IInterface.UnimplementedMethodError("IItemSupplier", "provideItemsTo_AOSrv")
+
     -- end
-    corelog.Error("IItemSupplier:provideItemsTo_AOSrv: Method should be implemented in classes implementing the IItemSupplier interface. It should not be called directly.")
     return Callback.ErrorCall(callback)
 end
 
@@ -69,8 +71,9 @@ function IItemSupplier:can_ProvideItems_QOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("IItemSupplier:can_ProvideItems_QOSrv: Invalid input") return {success = false} end
 
+    IInterface.UnimplementedMethodError("IItemSupplier", "can_ProvideItems_QOSrv")
+
     -- end
-    corelog.Error("IItemSupplier:can_ProvideItems_QOSrv: Method should be implemented in classes implementing the IItemSupplier interface. It should not be called directly.")
     return {success = false}
 end
 
@@ -93,8 +96,9 @@ function IItemSupplier:needsTo_ProvideItemsTo_SOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("IItemSupplier:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
+    IInterface.UnimplementedMethodError("IItemSupplier", "needsTo_ProvideItemsTo_SOSrv")
+
     -- end
-    corelog.Error("IItemSupplier:needsTo_ProvideItemsTo_SOSrv: Method should be implemented in classes implementing the IItemSupplier interface. It should not be called directly.")
     return {success = false}
 end
 
