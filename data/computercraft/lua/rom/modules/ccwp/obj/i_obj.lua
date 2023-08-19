@@ -9,9 +9,7 @@ local IObj = {
     Objects adhering to this interface are referred to as Obj's.
 --]]
 
-local function unimplementedMethodError(methodName)
-    error("Method "..methodName.."() should be implemented in Obj classes. It should not be called directly on IObj interface.")
-end
+local IInterface = require "i_interface"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -27,7 +25,7 @@ function IObj:getClassName()
         Method that returns the concrete className of an Obj.
     ]]
 
-    unimplementedMethodError("getClassName")
+    IInterface.UnimplementedMethodError("IObj", "getClassName")
 
     return "???"
 end
@@ -37,7 +35,7 @@ function IObj:isTypeOf(obj)
         Method that returns if an object 'obj' is of type of this class.
     ]]
 
-    unimplementedMethodError("isTypeOf")
+    IInterface.UnimplementedMethodError("IObj", "isTypeOf")
 
     -- end
     return false
@@ -48,7 +46,7 @@ function IObj:isEqual(otherObj)
         Method that returns if the Obj is equal to another Obj.
     ]]
 
-    unimplementedMethodError("isEqual")
+    IInterface.UnimplementedMethodError("IObj", "isEqual")
 
     -- end
     return false
@@ -59,7 +57,7 @@ function IObj:copy()
         Method that returns a copy of the Obj.
     ]]
 
-    unimplementedMethodError("copy")
+    IInterface.UnimplementedMethodError("IObj", "copy")
 
     return nil
 end
