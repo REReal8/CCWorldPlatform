@@ -14,8 +14,7 @@ local db = {
 	toSend			= {},		-- list of messages that still need to be send because the modem was down
 	toBulkSend		= {},		-- list of messages that still need to be send because of bulk sending
 	toProcess		= {},		-- list of messages that still needs processsing
-	lastKnownTime	= 0.000,	-- On a new tick bulk messages are send
-	bulkMode		= true,		-- send messages in bulk per tick, not one by one (NOT YET WORKING, KEEP ON VALUE false)
+	bulkMode		= true,		-- send messages in bulk per tick, not one by one
     logfile			= "/log/core.event.log",
 	protocol		= "coreevent",
 }
@@ -490,19 +489,11 @@ function coreevent.DoEventBulkMessagse(subject, envelope)
 end
 
 function coreevent.DoEventTickTimer(subject, envelope)
-	-- check for new tick (should never fail though)
-	if db.lastKnownTime == os.clock() then
-
-		-- funny, tick timer ran twice on the same tick
-		corelog.WriteToLog("coreevent.DoEventTickTimer(): funny, tick timer ran twice on the same tick")
-
-	end
 
 	-- send bulk messages
 	SendBulkMessages()
 
 	-- set new timer for the next tick
-	db.lastKnownTime = os.clock()
 	coreevent.CreateTimeEvent(1, db.protocol, "tick timer")
 end
 
