@@ -247,6 +247,17 @@ function corelog.Warning(message)
 	-- write to the logfile
 	coreutils.WriteToFile(db.logfile, "WARNING:", "append") -- ToDo: consider calling WriteToLog
 	coreutils.WriteToFile(db.logfile, message, "append") -- ToDo: consider calling WriteToLog
+
+	-- format the warning
+	if type(message) == "table" then message = textutils.serialize(message) end
+	message = "WARNING: "..message
+
+	-- send message two whoever is loggin our stuff
+	coreevent.SendMessage({
+		channel		= db.loggerChannel,
+		protocol	= db.protocol,
+		subject		= "write to log",
+		message		= {text = message} })
 end
 
 function corelog.Error(message)
