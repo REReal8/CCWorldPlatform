@@ -8,13 +8,15 @@ local coreinventory
 
 -- allemaal event spullen
 local db = {
-    channel		= {},		-- list of open channels, and which protocol wanted the channel
-    timer		= {},		-- list of all known timers
-    reply		= {},		-- the reply envelopes by message id (serial)
-	toSend		= {},		-- list of messages that still need to be send
-	toProcess	= {},		-- list of messages that still needs processsing
-	bulkMode	= false,	-- send messages in bulk per tick, not one by one (NOT YET WORKING, KEEP ON VALUE false)
-    logfile		= "/log/core.event.log",
+    channel			= {},		-- list of open channels, and which protocol wanted the channel
+    timer			= {},		-- list of all known timers
+    reply			= {},		-- the reply envelopes by message id (serial)
+	toSend			= {},		-- list of messages that still need to be send
+	toProcess		= {},		-- list of messages that still needs processsing
+	lastKnownTime	= 0.000,	-- On a new tick bulk messages are send
+	bulkMode		= false,	-- send messages in bulk per tick, not one by one (NOT YET WORKING, KEEP ON VALUE false)
+    logfile			= "/log/core.event.log",
+	protocol		= "coreevent",
 }
 
 -- object / function references
@@ -40,6 +42,10 @@ end
 
 -- event setup
 function coreevent.Setup()
+	-- tick timer
+	coreevent.AddEventListener(coreevent.DoEventTickTimer, db.protocol, "tick timer")
+	coreevent.DoEventTickTimer(nil, nil)
+
 	-- idle handler
 	coretask.AddIdleHandler("event", 300, DoIdle)
 
@@ -432,6 +438,33 @@ function EventToLog(eventName, p1)
 --	if db.logChannel then
 --		SendMessage({to=db.logChannel, proto="util", subject="event to log", message={event=eventName, p1=p1}})
 --	end
+end
+
+--                         _
+--                        | |
+--     _____   _____ _ __ | |_ ___
+--    / _ \ \ / / _ \ '_ \| __/ __|
+--   |  __/\ V /  __/ | | | |_\__ \
+--    \___| \_/ \___|_| |_|\__|___/
+--
+--
+
+function coreevent.DoEventTickTimer(subject, envelope)
+	-- check for new tick (should never fail though)
+	if db.lastKnownTime < os.clock() then
+
+		-- send bulk messages
+		if #db.toProcess > 0 then corelog.WriteToLog("processing bulk messages") end
+
+	else
+
+		-- funny, tick timer ran twice on the same tick
+		corelog.WriteToLog("coreevent.DoEventTickTimer(): funny, tick timer ran twice on the same tick")
+	end
+
+	-- set new timer for the next tick
+	db.lastKnownTime = os.clock()
+	coreevent.CreateTimeEvent(1, db.protocol, "tick timer")
 end
 
 return coreevent
