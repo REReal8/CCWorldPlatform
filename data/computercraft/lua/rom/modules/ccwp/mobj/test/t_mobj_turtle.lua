@@ -15,8 +15,8 @@ local Turtle = require "mobj_turtle"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
-local T_Obj = require "test.t_obj"
 local T_Object = require "test.t_object"
+local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Chest = require "test.t_mobj_chest"
 
@@ -128,7 +128,7 @@ function T_Turtle.T_ImplementsIItemSupplier()
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
@@ -208,7 +208,7 @@ function T_Turtle.T_ImplementsIItemDepot()
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

@@ -19,6 +19,7 @@ local enterprise_shop = require "enterprise_shop"
 local enterprise_storage = require "enterprise_storage"
 
 local T_Object = require "test.t_object"
+local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Obj = require "test.t_obj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
@@ -156,7 +157,7 @@ function T_Silo.T_ImplementsIMObj()
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
 end
 
 function T_Silo.T_destruct()
@@ -232,7 +233,7 @@ function T_Silo.T_ImplementsIItemSupplier()
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
@@ -307,7 +308,7 @@ function T_Silo.T_ImplementsIItemDepot()
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
 end
 
 function T_Silo.T_storeItemsFrom_AOSrv()

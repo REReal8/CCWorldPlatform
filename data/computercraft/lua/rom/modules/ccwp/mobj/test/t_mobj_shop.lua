@@ -20,8 +20,8 @@ local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
 local T_Object = require "test.t_object"
+local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
-local T_Obj = require "test.t_obj"
 
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
@@ -242,7 +242,7 @@ function T_Shop.T_ImplementsIItemSupplier()
     local obj = T_Shop.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

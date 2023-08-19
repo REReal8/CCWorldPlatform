@@ -18,8 +18,8 @@ local Factory = require "mobj_factory"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
-local T_Obj = require "test.t_obj" -- should be gone at some point
 local T_Object = require "test.t_object"
+local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 
 local T_Chest = require "test.t_mobj_chest"
@@ -280,7 +280,7 @@ function T_Factory.T_ImplementsIItemSupplier()
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()
