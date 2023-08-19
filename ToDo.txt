@@ -20,9 +20,9 @@ ToDo List
 ]]
 
 G  Debug: Modem events send but not received
-   - understand
-   - resolve/ workaround
-   - option to bundle messages, reduces count, not size.
+   - understand (seems buffer issue inside computercraft)
+   - resolve/ workaround (workaround)
+   - option to bundle messages, reduces count, not size. (done)
 
 R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
    R  convert Location to a proper IObj                                                                                 (done)
