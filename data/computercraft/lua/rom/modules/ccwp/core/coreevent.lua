@@ -11,10 +11,11 @@ local db = {
     channel			= {},		-- list of open channels, and which protocol wanted the channel
     timer			= {},		-- list of all known timers
     reply			= {},		-- the reply envelopes by message id (serial)
-	toSend			= {},		-- list of messages that still need to be send
+	toSend			= {},		-- list of messages that still need to be send because the modem was down
+	toBulkSend		= {},		-- list of messages that still need to be send because of bulk sending
 	toProcess		= {},		-- list of messages that still needs processsing
 	lastKnownTime	= 0.000,	-- On a new tick bulk messages are send
-	bulkMode		= false,	-- send messages in bulk per tick, not one by one (NOT YET WORKING, KEEP ON VALUE false)
+	bulkMode		= true,		-- send messages in bulk per tick, not one by one (NOT YET WORKING, KEEP ON VALUE false)
     logfile			= "/log/core.event.log",
 	protocol		= "coreevent",
 }
@@ -45,6 +46,9 @@ function coreevent.Setup()
 	-- tick timer
 	coreevent.AddEventListener(coreevent.DoEventTickTimer, db.protocol, "tick timer")
 	coreevent.DoEventTickTimer(nil, nil)
+
+	-- bukl handler
+	coreevent.AddEventListener(coreevent.DoEventBulkMessagse, db.protocol, "bulk message")
 
 	-- idle handler
 	coretask.AddIdleHandler("event", 300, DoIdle)
@@ -145,23 +149,24 @@ function coreevent.SendMessage(t)
 		if not currentChannel then currentChannel = to[i] end
 
 		-- are we sending in bulk mode?
-		if db.bulkMode then
+		if db.bulkMode and not (protocol == db.protocol or subject == "bulk message") then
 
 			-- we need an array table to insert, make sure there is one
-			if type(db.toProcess[currentChannel]) ~= "table" then db.toProcess[currentChannel] = {} end
+			if type(db.toBulkSend[currentChannel]) ~= "table" then db.toBulkSend[currentChannel] = {} end
 
 			-- message not actually send now, stored for sending at a later moment
-			table.insert(db.toProcess[currentChannel], textutils.serialize({
+			table.insert(db.toBulkSend[currentChannel], textutils.serialize({
 				from        = from,
 				to			= to[i],
 				protocol	= protocol,
 				subject		= subject,
 				message		= message
-			}))
+			}, {compact = true}))
 		else
 
 			-- actuall sending the message
 			if modem then
+
 				-- log all messages send
 				local serializedMessage = textutils.serialize({
 					from        = from,
@@ -312,8 +317,8 @@ end
 
 local function CoreEventPullEvent()
 	-- do we have any messages left we need to process?
-	if #db.toProcess > 0	then return table.remove(db.toProcess, 1)	-- process a message from the bulk
-							else return os.pullEvent()					-- no, mormal pull event
+	if #db.toProcess > 0	then return unpack(table.remove(db.toProcess, 1))	-- process a message from the bulk
+							else return os.pullEvent()							-- no, mormal pull event
 	end
 end
 
@@ -324,7 +329,7 @@ local function ProcessModemMessageEvent(side, frequency, replyFrequency, message
 	local envelope	= textutils.unserialize(message)
 
 	-- is this message for me?
-	if envelope and envelope.to and (envelope.to == 65535 or envelope.to == me) and envelope.from and envelope.protocol then
+	if envelope and envelope.to and (envelope.to > 65000 or envelope.to == me) and type(envelope.from) == "number" and envelope.protocol then
 		-- add data
 		envelope.distance   = distance
 		envelope.received   = os.clock()
@@ -427,6 +432,31 @@ function coreevent.Run()
 	end
 end
 
+local function SendBulkMessages()
+	-- only when working in bulk mode
+	if db.bulkMode == false then return end
+
+	-- send the bulk messages
+	for channel, data in pairs(db.toBulkSend) do
+
+		-- only when there are more then 1, to make sure all works
+--		if #data > 1 then
+
+			-- send data as array of messages
+			coreevent.SendMessage({
+				to			= channel,
+				channel		= channel,
+				protocol	= db.protocol,
+				subject		= "bulk message",
+				message		= { messageList = data }
+			})
+
+			-- done with this one
+			db.toBulkSend[ channel ] = nil
+--		end
+	end
+end
+
 -- idle thing for event
 function DoIdle()
 	-- usefull for debugging, what's waiting in the reply (if anything is)
@@ -449,6 +479,20 @@ end
 --
 --
 
+function coreevent.DoEventBulkMessagse(subject, envelope)
+	-- parse bulk message to local messages
+	for i, messageString in ipairs(envelope.message.messageList) do
+
+		-- this is our message
+		local insideEnvelope = textutils.unserialize(messageString)
+
+		-- this the result, an entry in the table
+		table.insert(db.toProcess, {
+			insideEnvelope.protocol, insideEnvelope.subject, insideEnvelope, nil, nil, nil
+		})
+	end
+end
+
 function coreevent.DoEventTickTimer(subject, envelope)
 	-- check for new tick (should never fail though)
 	if db.lastKnownTime == os.clock() then
@@ -459,7 +503,7 @@ function coreevent.DoEventTickTimer(subject, envelope)
 	end
 
 	-- send bulk messages
-	if #db.toProcess > 0 then corelog.WriteToLog("processing bulk messages") end
+	SendBulkMessages()
 
 	-- set new timer for the next tick
 	db.lastKnownTime = os.clock()
