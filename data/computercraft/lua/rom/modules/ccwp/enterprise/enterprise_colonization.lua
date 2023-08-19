@@ -97,9 +97,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         forestFirstTree                 = 1,
 
         forestL0                        = 0,
-
         forestL1                        = 1,
         forestL2                        = 2,
+
         nTreeswanted                    = nTreeswanted,
 
         energyL0                        = 0,

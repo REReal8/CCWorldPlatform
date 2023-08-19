@@ -14,6 +14,8 @@ local URL = require "obj_url"
 local Silo = require "mobj_silo"
 
 local enterprise_chests = require "enterprise_chests"
+local enterprise_isp = require "enterprise_isp"
+local enterprise_shop = require "enterprise_shop"
 local enterprise_storage = require "enterprise_storage"
 
 local T_Object = require "test.t_object"
@@ -382,7 +384,7 @@ function T_Silo.T_GetRandomSilo()
 --    corelog.WriteToLog("can_ProvideItems_QOSrv test")
 --    corelog.WriteToLog(silo:can_ProvideItems_QOSrv({provideItems = {["minecraft:coal"] = 7}}))
 
-    -- prepare test
+--[[     -- prepare test
     local provideItems = {
         ["minecraft:birch_planks"]  = 5,
         ["minecraft:birch_log"]     = 3,
@@ -391,6 +393,28 @@ function T_Silo.T_GetRandomSilo()
 
     -- test
     silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_turtle.GetCurrentTurtleLocator()}, Callback.GetNewDummyCallBack())
+ ]]
+--[[
+    -- da silo
+    local daSilo    = silo:getObjectLocator()
+
+    -- da shop
+    local daShop = enterprise_shop.GetShopLocator()             assert(daShop, "Oops")
+    local daTurtle = t_turtle.GetCurrentTurtleLocator()         assert(daTurtle, "Oops")
+    local turtleLocator = daTurtle.GetCurrentTurtleLocator()
+    local daCallback = Callback.GetNewDummyCallBack()
+
+    -- da command
+    --enterprise_isp.ProvideItemsTo_ASrv(...)
+
+    -- test
+    return daShop:provideItemsTo_AOSrv({
+        provideItems                    = { [""] = 64},
+        itemDepotLocator                = daSilo,
+        ingredientsItemSupplierLocator  = turtleLocator,
+        wasteItemDepotLocator           = turtleLocator,
+    }, daCallback)
+ ]]
 end
 
 return T_Silo
