@@ -489,6 +489,7 @@ function coreevent.DoEventBulkMessagse(subject, envelope)
 end
 
 function coreevent.DoEventTickTimer(subject, envelope)
+	-- todo: consider working with handlers
 
 	-- send bulk messages
 	SendBulkMessages()
