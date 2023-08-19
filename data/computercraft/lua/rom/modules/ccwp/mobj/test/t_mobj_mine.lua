@@ -15,6 +15,7 @@ local Mine = require "mobj_mine"
 local enterprise_storage = require "enterprise_storage"
 
 local T_Object = require "test.t_object"
+local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Obj = require "test.t_obj"
 
@@ -123,7 +124,7 @@ function T_Mine.T_ImplementsIMObj()
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
 end
 
 -- ToDo: rename to a construct test
@@ -151,7 +152,7 @@ function T_Mine.T_ImplementsIItemSupplier()
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

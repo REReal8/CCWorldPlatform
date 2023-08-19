@@ -18,7 +18,7 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 
-local T_Obj = require "test.t_obj" -- should be gone at some point
+local T_IInterface = require "test.t_i_interface"
 local T_Object = require "test.t_object"
 local T_IObj = require "test.t_i_obj"
 
@@ -203,7 +203,7 @@ function T_BirchForest.T_ImplementsIItemSupplier()
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Obj.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
 end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
