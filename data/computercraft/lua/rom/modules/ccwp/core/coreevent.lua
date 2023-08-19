@@ -439,21 +439,17 @@ local function SendBulkMessages()
 	-- send the bulk messages
 	for channel, data in pairs(db.toBulkSend) do
 
-		-- only when there are more then 1, to make sure all works
---		if #data > 1 then
+		-- send data as array of messages
+		coreevent.SendMessage({
+			to			= channel,
+			channel		= channel,
+			protocol	= db.protocol,
+			subject		= "bulk message",
+			message		= { messageList = data }
+		})
 
-			-- send data as array of messages
-			coreevent.SendMessage({
-				to			= channel,
-				channel		= channel,
-				protocol	= db.protocol,
-				subject		= "bulk message",
-				message		= { messageList = data }
-			})
-
-			-- done with this one
-			db.toBulkSend[ channel ] = nil
---		end
+		-- done with this one
+		db.toBulkSend[ channel ] = nil
 	end
 end
 
