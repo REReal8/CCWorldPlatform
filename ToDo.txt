@@ -21,7 +21,7 @@ ToDo List
 
 G  Debug: Modem events send but not received
    - understand (seems buffer issue inside computercraft)
-   - resolve/ workaround (workaround)
+   - resolve/ workaround (workaround, not solved. Sync code should consider yielding)
    - option to bundle messages, reduces count, not size. (done)
 
 R  Generalise test functions into "templates" to reduce duplication
