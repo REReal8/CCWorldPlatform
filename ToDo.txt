@@ -232,6 +232,7 @@ RG mine v2
 
 -  World Master
    -  Wil 1 ding: upgrade to the next level (via using (mobj)enterprises)
+   -  Or other alternative without scripting (via levels)
 
 -  recipe book
 
