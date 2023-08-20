@@ -9,6 +9,7 @@ function T_Object.T_All()
     T_Object.T_IsInstanceOf_A()
     T_Object.T_IsInstanceOf_B()
     T_Object.T_IsInstanceOf_C()
+    T_Object.T_IsInstanceOf_D()
 end
 
 --     ____  _     _           _
@@ -272,6 +273,86 @@ function T_Object.T_IsInstanceOf_C()
 
     -- Test IsInstanceOf
     T_Object.at_IsInstanceOf("C", IHuman, PersonClass, EmployeeClass)
+
+    -- cleanup test
+end
+
+function T_Object.T_IsInstanceOf_D()
+    --[[
+        *** Approach D ***
+
+        This approach uses relative to approach C:
+        -   Introduce and use meta class Class
+    ]]
+
+    -- Define functions for a meta class Class
+    local Class = {}
+    function Class.NewClass(...)
+        --[[
+            Define a new class (?? or even type). Optional arguments are the (proto)types the class should inherit from.
+        ]]
+
+        -- single inheritance: take first argument for now (ToDo: implement multiple inheritance later)
+        local firstPrototype = select(1, ...)
+        -- ToDo: implement multiple inheritance. Possibly by using a functon for __index
+
+        -- set class info
+        local cls = {}
+        setmetatable(cls, firstPrototype)
+        firstPrototype.__index = firstPrototype
+
+        -- end
+        return cls
+    end
+
+    -- Define an interface IHuman
+    local IHuman = {}
+
+    function IHuman:isSelfAware()
+    end
+
+    function IHuman:getAge()
+    end
+
+    -- Define a class "PersonClass" inheriting from IHuman
+    local PersonClass = Class.NewClass(IHuman) -- Make PersonClass inherit from IHuman
+
+    function PersonClass:new(...)
+        -- set instance class info
+        local instance = {}
+        setmetatable(instance, self)
+        self.__index = self
+
+        -- initialisation
+        if ... then
+            if not instance._init then corelog.Error("_init does not exist") return nil end
+            instance:_init(...)
+        end
+
+        -- end
+        return instance
+    end
+
+    function PersonClass:_init(age, name)
+        self.age = age
+        self.name = name
+    end
+
+    function PersonClass:getAge()
+        return self.age
+    end
+
+    -- Define a class "EmployeeClass" inheriting from PersonClass
+    local EmployeeClass = Class.NewClass(PersonClass) -- Make EmployeeClass inherit from both PersonClass
+
+    function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
+        -- initialisation
+        PersonClass:_init(age, name) -- note: now call PersonClass __init directly
+        self.employeeId = employeeId
+    end
+
+    -- Test IsInstanceOf
+    T_Object.at_IsInstanceOf("D", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
