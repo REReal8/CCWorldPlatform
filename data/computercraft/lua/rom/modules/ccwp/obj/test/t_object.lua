@@ -33,6 +33,11 @@ end
 
 
 function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, EmployeeClass)
+    assert(approachName, "no approachName provided")
+    assert(HumanInterface, "no HumanInterface provided")
+    assert(PersonClass, "no PersonClass provided")
+    assert(EmployeeClass, "no EmployeeClass provided")
+
     -- prepare test (cont)
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
