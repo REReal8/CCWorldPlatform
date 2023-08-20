@@ -34,47 +34,56 @@ function T_Object.T_IsInstanceOf()
     -- prepare test
     corelog.WriteToLog("* Object.IsInstanceOf() tests")
 
+    -- *** Approach A ***
+
     -- prepare test: Define a simple interface
-    local Interface = {}
-    function Interface:foo()
+    local InterfaceA = {}
+    function InterfaceA:foo()
     end
 
-    -- prepare test: Define a class "Person" inheriting from Interface
-    local Person = {}
-    Person.__index = Person
-    setmetatable(Person, Interface)  -- Make Person inherit from Interface
-    function Person:new(name)
-        local instance  = setmetatable({}, Person)
+    -- prepare test: Define a class "PersonClassA" inheriting from InterfaceA
+    local PersonClassA = {}
+    PersonClassA.__index = PersonClassA
+    setmetatable(PersonClassA, InterfaceA)  -- Make PersonClassA inherit from InterfaceA
+    function PersonClassA:new(name)
+        local instance  = setmetatable({}, PersonClassA)
         instance.name = name
         return instance
     end
 
-    -- prepare test: Define a class "Employee" inheriting from Person
-    local Employee = {}
-    Employee.__index = Employee
-    setmetatable(Employee, Person)  -- Make Employee inherit from Person
-    function Employee:new(name, employeeId)
-        local instance  = setmetatable({}, Employee)
+    -- prepare test: Define a class "EmployeeClassA" inheriting from PersonClassA
+    local EmployeeClassA = {}
+    EmployeeClassA.__index = EmployeeClassA
+    setmetatable(EmployeeClassA, PersonClassA)  -- Make EmployeeClassA inherit from PersonClassA
+    function EmployeeClassA:new(name, employeeId)
+        local instance  = setmetatable({}, EmployeeClassA)
         instance.name = name
         instance.employeeId = employeeId
         return instance
     end
 
-    -- Test IsInstanceOf with class and interface
-    local personObj = Person:new("Alice")
-    assert(Object.IsInstanceOf(personObj, Person), "Failed: personObj is an instance of Person")
-    assert(Object.IsInstanceOf(personObj, Interface), "Failed: personObj is an instance of Interface")
-    assert(not Object.IsInstanceOf(personObj, Employee), "Failed: personObj is not an instance of Employee")
+    -- Test IsInstanceOf on approach A
+    local personAObj = PersonClassA:new("Alice")
+    assert(Object.IsInstanceOf(personAObj, PersonClassA), "Failed: personAObj is an instance of PersonClassA")
+    assert(Object.IsInstanceOf(personAObj, InterfaceA), "Failed: personAObj is an instance of InterfaceA")
+    assert(not Object.IsInstanceOf(personAObj, EmployeeClassA), "Failed: personAObj is not an instance of EmployeeClassA")
 
-    local employeeObj = Employee:new("Bob", 123)
-    assert(Object.IsInstanceOf(employeeObj, Employee), "Failed: employeeObj is an instance of Employee")
-    assert(Object.IsInstanceOf(employeeObj, Person), "Failed: employeeObj is an instance of Person")
-    assert(Object.IsInstanceOf(employeeObj, Interface), "Failed: employeeObj is an instance of Interface")
+    local employeeAObj = EmployeeClassA:new("Bob", 123)
+    assert(Object.IsInstanceOf(employeeAObj, EmployeeClassA), "Failed: employeeAObj is an instance of EmployeeClassA")
+    assert(Object.IsInstanceOf(employeeAObj, PersonClassA), "Failed: employeeAObj is an instance of PersonClassA")
+    assert(Object.IsInstanceOf(employeeAObj, InterfaceA), "Failed: employeeAObj is an instance of InterfaceA")
 
-    -- AnotherClass
-    -- (this class uses a slightly different initialisation logic as the other ones)
-    local AnotherClass = {}
-    function AnotherClass:new()
+    -- *** Approach B ***
+    -- (this approach uses a slightly different initialisation logic as approach A)
+
+    -- prepare test: Define a simple interface
+    local InterfaceB = {}
+    function InterfaceB:foo()
+    end
+
+    -- prepare test: Define a class "PersonClassB" inheriting from InterfaceB
+    local PersonClassB = {}
+    function PersonClassB:new()
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
@@ -83,11 +92,12 @@ function T_Object.T_IsInstanceOf()
         -- end
         return instance
     end
-    setmetatable(AnotherClass, Interface)
+    setmetatable(PersonClassB, InterfaceB)
 
-    -- Test on AnotherClass
-    local anotherObj = AnotherClass:new()
-    assert(Object.IsInstanceOf(anotherObj, Interface), "Failed: anotherObj is expected to be an instance of Interface")
+    -- Test IsInstanceOf on approach B
+    local personBObj = PersonClassB:new()
+    assert(Object.IsInstanceOf(personBObj, PersonClassB), "Failed: personBObj is an instance of PersonClassB")
+    assert(Object.IsInstanceOf(personBObj, InterfaceB), "Failed: personBObj is expected to be an instance of InterfaceB")
 
     -- cleanup test
 end
