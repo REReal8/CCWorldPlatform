@@ -108,7 +108,7 @@ function T_Object.T_IsInstanceOf_A()
 
     function PersonClass:new(age, name)
         -- set instance class info
-        local instance  = setmetatable({}, PersonClass)
+        local instance = setmetatable({}, PersonClass)
 
         -- initialisation
         instance.age = age
