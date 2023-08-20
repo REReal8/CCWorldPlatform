@@ -50,12 +50,12 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
 
     -- Test IsInstanceOf on EmployeeClass
-    local name2 = "Alice"
+    local name2 = "Bob"
     local employeeId1 = 123
     local employeeObj = EmployeeClass:new(name2, employeeId1)
     assert(Object.IsInstanceOf(employeeObj, HumanInterface), "Failed: employeeObj should be an instance of HumanInterface")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
-    assert(employeeObj.name == name1, "Failed: name of employeeObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
+    assert(employeeObj.name == name2, "Failed: name of employeeObj should be "..name2.." (while it is "..textutils.serialise(employeeObj.name)..")")
     assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
     assert(employeeObj.employeeId == employeeId1, "Failed: employeeId of employeeObj should be "..employeeId1.." (while it is "..textutils.serialise(employeeObj.employeeId)..")")
 
