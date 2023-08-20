@@ -70,8 +70,13 @@ function T_Object.T_IsInstanceOf_A()
     PersonClass.__index = PersonClass
     setmetatable(PersonClass, HumanInterface)  -- Make PersonClass inherit from HumanInterface
     function PersonClass:new(name)
+        -- set instance class info
         local instance  = setmetatable({}, PersonClass)
+
+        -- initialisation
         instance.name = name
+
+        -- end
         return instance
     end
 
@@ -80,9 +85,14 @@ function T_Object.T_IsInstanceOf_A()
     EmployeeClass.__index = EmployeeClass
     setmetatable(EmployeeClass, PersonClass)  -- Make EmployeeClass inherit from PersonClass
     function EmployeeClass:new(name, employeeId)
-        local instance  = setmetatable({}, EmployeeClass)
+        -- set instance class info
+        local instance = setmetatable({}, EmployeeClass)
+
+        -- initialisation
         instance.name = name
         instance.employeeId = employeeId
+
+        -- end
         return instance
     end
 
