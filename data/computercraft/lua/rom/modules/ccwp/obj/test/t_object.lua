@@ -57,7 +57,7 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     -- Test (IsInstanceOf with) PersonClass instance
     local age1 = 16
     local name1 = "Alice"
-    local personObj = PersonClass:new(age1, name1)
+    local personObj = PersonClass:new(age1, name1) assert(personObj, "Failed creating personObj")
     assert(Object.IsInstanceOf(personObj, IHuman), "Failed: personObj should be an instance of IHuman")
     assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
@@ -76,7 +76,7 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     local age2 = 50
     local name2 = "Bob"
     local employeeId1 = 123
-    local employeeObj = EmployeeClass:new(age2, name2, employeeId1)
+    local employeeObj = EmployeeClass:new(age2, name2, employeeId1) assert(employeeObj, "Failed creating employeeObj")
     assert(Object.IsInstanceOf(employeeObj, IHuman), "Failed: employeeObj should be an instance of IHuman")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
     assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
