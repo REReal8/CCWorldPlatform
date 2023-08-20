@@ -231,8 +231,13 @@ RG mine v2
    -  don't do anything when itemList is empty --> where do check?
 
 -  World Master
-   -  Wil 1 ding: upgrade to the next level (via using (mobj)enterprises)
-   -  Or other alternative without scripting (via levels)
+   -  Operates at the (currently for seen) highest (abstraction) layer in ccwp
+      -  Operates on the (mobj)enterprise layer types
+   -  Implementation option 1: upgrade the world using levels
+      -  It requests all enterprises to upgrade to the next world level
+         -  A level of an enterprise is determined by KPI's like e.g. wood capacity, forest size, # forests, etc
+      -  Once all enterprises have been upgraded, it upgrades the world to the next world level
+   -  Implementation option 2: alternative without scripting via levels
 
 -  recipe book
 
