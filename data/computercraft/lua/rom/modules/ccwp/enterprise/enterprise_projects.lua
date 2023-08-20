@@ -401,7 +401,15 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
     -- update status before doing the step
     local stepDesc  = "Stepname: (todo)"
-    if type(step.description) == "string" then stepDesc = step.description end
+    if type(step.description) == "string" then
+        -- set the stepname for the status update
+        stepDesc = step.description
+
+        -- write to project log file
+        corelog.WriteToProjectsLog("Starting step with description '"..stepDesc.."'", projectId)
+    end
+
+    -- update the status
     corelog.SetStatus("project", project.projectMeta.title, "Doing step "..project.currentStep.." of "..#project.projectDef.steps, stepDesc)
 
     -- select and do stepType
