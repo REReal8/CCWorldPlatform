@@ -257,6 +257,7 @@ RG mine v2
    -  turtle does one job, no rotation (like forestry or mining)
    -  turtle stops when output chest is full / low on fuel
    -  turtle continues when output chest is cleared / fuel is delivered
+   -  optional computer nearby for information hub, maybe wired connected
    +++can be build with materials found, no given modems needed
    ---differs alot from current implementation
 
