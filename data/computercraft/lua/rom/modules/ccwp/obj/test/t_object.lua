@@ -42,29 +42,47 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     -- prepare test (cont)
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
-    -- Test IsInstanceOf on HumanInterface
-    assert(HumanInterface:getAge() == nil, "Failed: getAge of personObj should return nil (while it is "..textutils.serialise(HumanInterface:getAge())..")")
+    -- Test (IsInstanceOf with) HumanInterface
+    assert(HumanInterface.isSelfAware, "Failed: HumanInterface should specify isSelfAware method")
+    assert(HumanInterface.getAge, "Failed: HumanInterface should specify getAge method")
+    assert(HumanInterface:isSelfAware() == nil, "Failed: isSelfAware of HumanInterface should return nil (while it is "..textutils.serialise(HumanInterface:isSelfAware())..")")
+    assert(HumanInterface:getAge() == nil, "Failed: getAge of HumanInterface return nil (while it is "..textutils.serialise(HumanInterface:getAge())..")")
 
-    -- Test IsInstanceOf on PersonClass
+    -- Test (IsInstanceOf with) PersonClass
+    assert(Object.IsInstanceOf(PersonClass, HumanInterface), "Failed: PersonClass should be an instance of HumanInterface")
+    assert(PersonClass.isSelfAware, "Failed: PersonClass should inherit isSelfAware from HumanInterface")
+    assert(PersonClass.getAge, "Failed: PersonClass should inherit getAge from HumanInterface")
+
+    -- Test (IsInstanceOf with) PersonClass instance
     local age1 = 16
     local name1 = "Alice"
     local personObj = PersonClass:new(age1, name1)
     assert(Object.IsInstanceOf(personObj, HumanInterface), "Failed: personObj should be an instance of HumanInterface")
-    assert(personObj:getAge() == age1, "Failed: getAge of personObj should return "..age1.." (while it is "..textutils.serialise(personObj:getAge())..")")
     assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
-    assert(personObj.name == name1, "Failed: name of personObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
+    assert(personObj.isSelfAware, "Failed: personObj should inherit isSelfAware from PersonClass")
+    assert(personObj.getAge, "Failed: personObj should inherit getAge from PersonClass")
+    assert(personObj:getAge() == age1, "Failed: getAge of personObj should return "..age1.." (while it is "..textutils.serialise(personObj:getAge())..")")
+    assert(personObj.name == name1, "Failed: name of personObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
 
-    -- Test IsInstanceOf on EmployeeClass
+    -- Test (IsInstanceOf with) EmployeeClass
+    assert(Object.IsInstanceOf(EmployeeClass, HumanInterface), "Failed: EmployeeClass should be an instance of HumanInterface")
+    assert(Object.IsInstanceOf(EmployeeClass, PersonClass), "Failed: EmployeeClass should be an instance of PersonClass")
+    assert(EmployeeClass.isSelfAware, "Failed: EmployeeClass should inherit isSelfAware from PersonClass")
+    assert(EmployeeClass.getAge, "Failed: EmployeeClass should inherit getAge from PersonClass")
+
+    -- Test (IsInstanceOf with) EmployeeClass instance
     local age2 = 50
     local name2 = "Bob"
     local employeeId1 = 123
     local employeeObj = EmployeeClass:new(age2, name2, employeeId1)
     assert(Object.IsInstanceOf(employeeObj, HumanInterface), "Failed: employeeObj should be an instance of HumanInterface")
-    assert(employeeObj:getAge() == age2, "Failed: getAge of employeeObj should return "..age2.." (while it is "..textutils.serialise(employeeObj:getAge())..")")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
-    assert(employeeObj.name == name2, "Failed: name of employeeObj should be "..name2.." (while it is "..textutils.serialise(employeeObj.name)..")")
     assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
+    assert(employeeObj.isSelfAware, "Failed: employeeObj should inherit isSelfAware from EmployeeClass")
+    assert(employeeObj.getAge, "Failed: employeeObj should inherit getAge from EmployeeClass")
+    assert(employeeObj:getAge() == age2, "Failed: getAge of employeeObj should return "..age2.." (while it is "..textutils.serialise(employeeObj:getAge())..")")
+    assert(employeeObj.name == name2, "Failed: name of employeeObj should be "..name2.." (while it is "..textutils.serialise(employeeObj.name)..")")
     assert(employeeObj.employeeId == employeeId1, "Failed: employeeId of employeeObj should be "..employeeId1.." (while it is "..textutils.serialise(employeeObj.employeeId)..")")
 
     -- cleanup test
@@ -75,6 +93,11 @@ function T_Object.T_IsInstanceOf_A()
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
+    HumanInterface.__index = HumanInterface
+
+    function HumanInterface:isSelfAware()
+    end
+
     function HumanInterface:getAge()
     end
 
@@ -129,7 +152,12 @@ function T_Object.T_IsInstanceOf_B()
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
+    HumanInterface.__index = HumanInterface
+
     function HumanInterface:getAge()
+    end
+
+    function HumanInterface:isSelfAware()
     end
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
@@ -187,6 +215,11 @@ function T_Object.T_IsInstanceOf_C()
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
+    HumanInterface.__index = HumanInterface
+
+    function HumanInterface:isSelfAware()
+    end
+
     function HumanInterface:getAge()
     end
 
