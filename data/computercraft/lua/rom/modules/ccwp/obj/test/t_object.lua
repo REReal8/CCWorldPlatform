@@ -33,32 +33,32 @@ function T_Object.pt_IsInstanceOf(className, object, prototypeName, prototype)
 end
 
 
-function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, EmployeeClass)
+function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
     assert(approachName, "no approachName provided")
-    assert(HumanInterface, "no HumanInterface provided")
+    assert(IHuman, "no IHuman provided")
     assert(PersonClass, "no PersonClass provided")
     assert(EmployeeClass, "no EmployeeClass provided")
 
     -- prepare test (cont)
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
-    -- Test HumanInterface
-    assert(not Object.IsInstanceOf(HumanInterface, HumanInterface), "Failed: HumanInterface should not be any instance (even not of HumanInterface)")
-    assert(HumanInterface.isSelfAware, "Failed: HumanInterface should specify isSelfAware method")
-    assert(HumanInterface.getAge, "Failed: HumanInterface should specify getAge method")
-    assert(HumanInterface:isSelfAware() == nil, "Failed: isSelfAware of HumanInterface should return nil (while it is "..textutils.serialise(HumanInterface:isSelfAware())..")")
-    assert(HumanInterface:getAge() == nil, "Failed: getAge of HumanInterface return nil (while it is "..textutils.serialise(HumanInterface:getAge())..")")
+    -- Test IHuman
+    assert(not Object.IsInstanceOf(IHuman, IHuman), "Failed: IHuman should not be any instance (even not of IHuman)")
+    assert(IHuman.isSelfAware, "Failed: IHuman should specify isSelfAware method")
+    assert(IHuman.getAge, "Failed: IHuman should specify getAge method")
+    assert(IHuman:isSelfAware() == nil, "Failed: isSelfAware of IHuman should return nil (while it is "..textutils.serialise(IHuman:isSelfAware())..")")
+    assert(IHuman:getAge() == nil, "Failed: getAge of IHuman return nil (while it is "..textutils.serialise(IHuman:getAge())..")")
 
     -- Test (IsInstanceOf with) PersonClass
-    assert(Object.IsInstanceOf(PersonClass, HumanInterface), "Failed: PersonClass should be an instance of HumanInterface")
-    assert(PersonClass.isSelfAware, "Failed: PersonClass should inherit isSelfAware from HumanInterface")
-    assert(PersonClass.getAge, "Failed: PersonClass should inherit getAge from HumanInterface")
+    assert(Object.IsInstanceOf(PersonClass, IHuman), "Failed: PersonClass should be an instance of IHuman")
+    assert(PersonClass.isSelfAware, "Failed: PersonClass should inherit isSelfAware from IHuman")
+    assert(PersonClass.getAge, "Failed: PersonClass should inherit getAge from IHuman")
 
     -- Test (IsInstanceOf with) PersonClass instance
     local age1 = 16
     local name1 = "Alice"
     local personObj = PersonClass:new(age1, name1)
-    assert(Object.IsInstanceOf(personObj, HumanInterface), "Failed: personObj should be an instance of HumanInterface")
+    assert(Object.IsInstanceOf(personObj, IHuman), "Failed: personObj should be an instance of IHuman")
     assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
     assert(personObj.isSelfAware, "Failed: personObj should inherit isSelfAware from PersonClass")
@@ -67,7 +67,7 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     assert(personObj.name == name1, "Failed: name of personObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
 
     -- Test (IsInstanceOf with) EmployeeClass
-    assert(Object.IsInstanceOf(EmployeeClass, HumanInterface), "Failed: EmployeeClass should be an instance of HumanInterface")
+    assert(Object.IsInstanceOf(EmployeeClass, IHuman), "Failed: EmployeeClass should be an instance of IHuman")
     assert(Object.IsInstanceOf(EmployeeClass, PersonClass), "Failed: EmployeeClass should be an instance of PersonClass")
     assert(EmployeeClass.isSelfAware, "Failed: EmployeeClass should inherit isSelfAware from PersonClass")
     assert(EmployeeClass.getAge, "Failed: EmployeeClass should inherit getAge from PersonClass")
@@ -77,7 +77,7 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     local name2 = "Bob"
     local employeeId1 = 123
     local employeeObj = EmployeeClass:new(age2, name2, employeeId1)
-    assert(Object.IsInstanceOf(employeeObj, HumanInterface), "Failed: employeeObj should be an instance of HumanInterface")
+    assert(Object.IsInstanceOf(employeeObj, IHuman), "Failed: employeeObj should be an instance of IHuman")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
     assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
     assert(employeeObj.isSelfAware, "Failed: employeeObj should inherit isSelfAware from EmployeeClass")
@@ -95,19 +95,19 @@ function T_Object.T_IsInstanceOf_A()
     ]]
 
     -- prepare test: Define a simple interface
-    local HumanInterface = {}
-    HumanInterface.__index = HumanInterface
+    local IHuman = {}
+    IHuman.__index = IHuman
 
-    function HumanInterface:isSelfAware()
+    function IHuman:isSelfAware()
     end
 
-    function HumanInterface:getAge()
+    function IHuman:getAge()
     end
 
-    -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
+    -- prepare test: Define a class "PersonClass" inheriting from IHuman
     local PersonClass = {}
     PersonClass.__index = PersonClass
-    setmetatable(PersonClass, HumanInterface)  -- Make PersonClass inherit from HumanInterface
+    setmetatable(PersonClass, IHuman)  -- Make PersonClass inherit from IHuman
 
     function PersonClass:new(age, name)
         -- set instance class info
@@ -144,7 +144,7 @@ function T_Object.T_IsInstanceOf_A()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("A", HumanInterface, PersonClass, EmployeeClass)
+    T_Object.at_IsInstanceOf("A", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -158,18 +158,18 @@ function T_Object.T_IsInstanceOf_B()
     ]]
 
     -- prepare test: Define a simple interface
-    local HumanInterface = {}
-    HumanInterface.__index = HumanInterface
+    local IHuman = {}
+    IHuman.__index = IHuman
 
-    function HumanInterface:getAge()
+    function IHuman:getAge()
     end
 
-    function HumanInterface:isSelfAware()
+    function IHuman:isSelfAware()
     end
 
-    -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
+    -- prepare test: Define a class "PersonClass" inheriting from IHuman
     local PersonClass = {}
-    setmetatable(PersonClass, HumanInterface)
+    setmetatable(PersonClass, IHuman)
 
     function PersonClass:new(age, name)
         -- set instance class info
@@ -209,7 +209,7 @@ function T_Object.T_IsInstanceOf_B()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("B", HumanInterface, PersonClass, EmployeeClass)
+    T_Object.at_IsInstanceOf("B", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -224,18 +224,18 @@ function T_Object.T_IsInstanceOf_C()
     ]]
 
     -- prepare test: Define a simple interface
-    local HumanInterface = {}
-    HumanInterface.__index = HumanInterface
+    local IHuman = {}
+    IHuman.__index = IHuman
 
-    function HumanInterface:isSelfAware()
+    function IHuman:isSelfAware()
     end
 
-    function HumanInterface:getAge()
+    function IHuman:getAge()
     end
 
-    -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
+    -- prepare test: Define a class "PersonClass" inheriting from IHuman
     local PersonClass = {}
-    setmetatable(PersonClass, HumanInterface) -- Make PersonClass inherit from HumanInterface
+    setmetatable(PersonClass, IHuman) -- Make PersonClass inherit from IHuman
 
     function PersonClass:new(...)
         -- set instance class info
@@ -262,7 +262,7 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = PersonClass:new() -- Make EmployeeClass inherit from HumanInterface
+    local EmployeeClass = PersonClass:new() -- Make EmployeeClass inherit from IHuman
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
@@ -271,7 +271,7 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("C", HumanInterface, PersonClass, EmployeeClass)
+    T_Object.at_IsInstanceOf("C", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
