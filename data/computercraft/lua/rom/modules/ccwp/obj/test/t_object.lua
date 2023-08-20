@@ -37,16 +37,22 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
     -- Test IsInstanceOf on PersonClass
-    local personObj = PersonClass:new("Alice")
-    assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
+    local name1 = "Alice"
+    local personObj = PersonClass:new(name1)
     assert(Object.IsInstanceOf(personObj, HumanInterface), "Failed: personObj should be an instance of HumanInterface")
+    assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
+    assert(personObj.name == name1, "Failed: name of personObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
 
     -- Test IsInstanceOf on EmployeeClass
-    local employeeObj = EmployeeClass:new("Bob", 123)
-    assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
+    local name2 = "Alice"
+    local employeeId1 = 123
+    local employeeObj = EmployeeClass:new(name2, employeeId1)
     assert(Object.IsInstanceOf(employeeObj, HumanInterface), "Failed: employeeObj should be an instance of HumanInterface")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
+    assert(employeeObj.name == name1, "Failed: name of employeeObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
+    assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
+    assert(employeeObj.employeeId == employeeId1, "Failed: employeeId of employeeObj should be "..employeeId1.." (while it is "..textutils.serialise(employeeObj.employeeId)..")")
 
     -- cleanup test
 end
@@ -97,11 +103,14 @@ function T_Object.T_IsInstanceOf_B()
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
-    function PersonClass:new()
+    function PersonClass:new(name)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
         self.__index = self
+
+        -- initialisation
+        instance.name = name
 
         -- end
         return instance
@@ -110,11 +119,15 @@ function T_Object.T_IsInstanceOf_B()
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
     local EmployeeClass = {}
-    function EmployeeClass:new()
+    function EmployeeClass:new(name, employeeId)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
         self.__index = self
+
+        -- initialisation
+        instance.name = name
+        instance.employeeId = employeeId
 
         -- end
         return instance
