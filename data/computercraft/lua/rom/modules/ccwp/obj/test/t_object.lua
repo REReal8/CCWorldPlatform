@@ -42,19 +42,26 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     -- prepare test (cont)
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
+    -- Test IsInstanceOf on HumanInterface
+    assert(HumanInterface:getAge() == nil, "Failed: getAge of personObj should return nil (while it is "..textutils.serialise(HumanInterface:getAge())..")")
+
     -- Test IsInstanceOf on PersonClass
+    local age1 = 16
     local name1 = "Alice"
-    local personObj = PersonClass:new(name1)
+    local personObj = PersonClass:new(age1, name1)
     assert(Object.IsInstanceOf(personObj, HumanInterface), "Failed: personObj should be an instance of HumanInterface")
+    assert(personObj:getAge() == age1, "Failed: getAge of personObj should return "..age1.." (while it is "..textutils.serialise(personObj:getAge())..")")
     assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
     assert(personObj.name == name1, "Failed: name of personObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
 
     -- Test IsInstanceOf on EmployeeClass
+    local age2 = 50
     local name2 = "Bob"
     local employeeId1 = 123
-    local employeeObj = EmployeeClass:new(name2, employeeId1)
+    local employeeObj = EmployeeClass:new(age2, name2, employeeId1)
     assert(Object.IsInstanceOf(employeeObj, HumanInterface), "Failed: employeeObj should be an instance of HumanInterface")
+    assert(employeeObj:getAge() == age2, "Failed: getAge of employeeObj should return "..age2.." (while it is "..textutils.serialise(employeeObj:getAge())..")")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
     assert(employeeObj.name == name2, "Failed: name of employeeObj should be "..name2.." (while it is "..textutils.serialise(employeeObj.name)..")")
     assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
@@ -68,33 +75,41 @@ function T_Object.T_IsInstanceOf_A()
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
-    function HumanInterface:isSelfAware()
+    function HumanInterface:getAge()
     end
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
     PersonClass.__index = PersonClass
     setmetatable(PersonClass, HumanInterface)  -- Make PersonClass inherit from HumanInterface
-    function PersonClass:new(name)
+
+    function PersonClass:new(age, name)
         -- set instance class info
         local instance  = setmetatable({}, PersonClass)
 
         -- initialisation
+        instance.age = age
         instance.name = name
 
         -- end
         return instance
     end
 
+    function PersonClass:getAge()
+        return self.age
+    end
+
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
     local EmployeeClass = {}
     EmployeeClass.__index = EmployeeClass
     setmetatable(EmployeeClass, PersonClass)  -- Make EmployeeClass inherit from PersonClass
-    function EmployeeClass:new(name, employeeId)
+
+    function EmployeeClass:new(age, name, employeeId)
         -- set instance class info
         local instance = setmetatable({}, EmployeeClass)
 
         -- initialisation
+        instance.age = age
         instance.name = name
         instance.employeeId = employeeId
 
@@ -114,37 +129,43 @@ function T_Object.T_IsInstanceOf_B()
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
-    function HumanInterface:isSelfAware()
+    function HumanInterface:getAge()
     end
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
     setmetatable(PersonClass, HumanInterface)
 
-    function PersonClass:new(name)
+    function PersonClass:new(age, name)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
         self.__index = self
 
         -- initialisation
+        instance.age = age
         instance.name = name
 
         -- end
         return instance
     end
 
+    function PersonClass:getAge()
+        return self.age
+    end
+
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
     local EmployeeClass = {}
     setmetatable(EmployeeClass, PersonClass)
 
-    function EmployeeClass:new(name, employeeId)
+    function EmployeeClass:new(age, name, employeeId)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
         self.__index = self
 
         -- initialisation
+        instance.age = age
         instance.name = name
         instance.employeeId = employeeId
 
@@ -166,7 +187,7 @@ function T_Object.T_IsInstanceOf_C()
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
-    function HumanInterface:isSelfAware()
+    function HumanInterface:getAge()
     end
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
@@ -188,16 +209,21 @@ function T_Object.T_IsInstanceOf_C()
         return instance
     end
 
-    function PersonClass:_init(name)
+    function PersonClass:_init(age, name)
+        self.age = age
         self.name = name
+    end
+
+    function PersonClass:getAge()
+        return self.age
     end
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
     local EmployeeClass = PersonClass:new()
 
-    function EmployeeClass:_init(name, employeeId) -- note: "overrides" PersonClass:__init
+    function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
-        PersonClass:_init(name) -- note: call PersonClass __init directly
+        PersonClass:_init(age, name) -- note: call PersonClass __init directly
         self.employeeId = employeeId
     end
 
