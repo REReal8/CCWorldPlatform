@@ -240,7 +240,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "siteLocator"                    , sourceStep = 11, sourceKeyDef = "siteLocator" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }},
+            }, description = "Upgrading the factory to L2"},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 18, sourceKeyDef = "siteLocator" },
             }},
