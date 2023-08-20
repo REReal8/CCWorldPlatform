@@ -32,37 +32,37 @@ function T_Object.pt_IsInstanceOf(className, object, prototypeName, prototype)
 end
 
 
-function T_Object.at_IsInstanceOf(approachName, Interface, PersonClass, EmployeeClass)
+function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, EmployeeClass)
     -- prepare test (cont)
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
-    -- Test IsInstanceOf on approach A
+    -- Test IsInstanceOf on PersonClass
     local personObj = PersonClass:new("Alice")
-    assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj is an instance of PersonClass")
-    assert(Object.IsInstanceOf(personObj, Interface), "Failed: personObj is an instance of Interface")
-    assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj is not an instance of EmployeeClass")
+    assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
+    assert(Object.IsInstanceOf(personObj, HumanInterface), "Failed: personObj should be an instance of HumanInterface")
+    assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
 
+    -- Test IsInstanceOf on EmployeeClass
     local employeeObj = EmployeeClass:new("Bob", 123)
-    assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj is an instance of EmployeeClass")
-    assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj is an instance of PersonClass")
-    assert(Object.IsInstanceOf(employeeObj, Interface), "Failed: employeeObj is an instance of Interface")
+    assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
+    assert(Object.IsInstanceOf(employeeObj, HumanInterface), "Failed: employeeObj should be an instance of HumanInterface")
+    assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
 
     -- cleanup test
 end
-
 
 function T_Object.T_IsInstanceOf_A()
     -- *** Approach A ***
 
     -- prepare test: Define a simple interface
-    local Interface = {}
-    function Interface:foo()
+    local HumanInterface = {}
+    function HumanInterface:isSelfAware()
     end
 
-    -- prepare test: Define a class "PersonClass" inheriting from Interface
+    -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
     PersonClass.__index = PersonClass
-    setmetatable(PersonClass, Interface)  -- Make PersonClass inherit from Interface
+    setmetatable(PersonClass, HumanInterface)  -- Make PersonClass inherit from HumanInterface
     function PersonClass:new(name)
         local instance  = setmetatable({}, PersonClass)
         instance.name = name
@@ -81,7 +81,7 @@ function T_Object.T_IsInstanceOf_A()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("A", Interface, PersonClass, EmployeeClass)
+    T_Object.at_IsInstanceOf("A", HumanInterface, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -91,11 +91,11 @@ function T_Object.T_IsInstanceOf_B()
     -- (this approach uses a slightly different initialisation logic as approach A)
 
     -- prepare test: Define a simple interface
-    local Interface = {}
-    function Interface:foo()
+    local HumanInterface = {}
+    function HumanInterface:isSelfAware()
     end
 
-    -- prepare test: Define a class "PersonClass" inheriting from Interface
+    -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
     function PersonClass:new()
         -- set instance class info
@@ -106,7 +106,7 @@ function T_Object.T_IsInstanceOf_B()
         -- end
         return instance
     end
-    setmetatable(PersonClass, Interface)
+    setmetatable(PersonClass, HumanInterface)
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
     local EmployeeClass = {}
@@ -122,7 +122,7 @@ function T_Object.T_IsInstanceOf_B()
     setmetatable(EmployeeClass, PersonClass)
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("B", Interface, PersonClass, EmployeeClass)
+    T_Object.at_IsInstanceOf("B", HumanInterface, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
