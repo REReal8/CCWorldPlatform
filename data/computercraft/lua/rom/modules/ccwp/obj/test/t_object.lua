@@ -90,7 +90,9 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
 end
 
 function T_Object.T_IsInstanceOf_A()
-    -- *** Approach A ***
+    --[[
+        *** Approach A ***
+    ]]
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
@@ -148,8 +150,12 @@ function T_Object.T_IsInstanceOf_A()
 end
 
 function T_Object.T_IsInstanceOf_B()
-    -- *** Approach B ***
-    -- (this approach uses a slightly different initialisation logic as approach A)
+    --[[
+        *** Approach B ***
+
+        This approach uses relative to approach A:
+        - slightly different initialisation logic
+    ]]
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
@@ -209,10 +215,13 @@ function T_Object.T_IsInstanceOf_B()
 end
 
 function T_Object.T_IsInstanceOf_C()
-    -- *** Approach C ***
-    -- (this approach uses relative to approach B
-    --  -   a init method for initialisation
-    --  -   the new method for inheriting from a super class (in EmployeeClass)
+    --[[
+        *** Approach C ***`
+
+        This approach uses relative to approach B:
+        -   a init method for initialisation
+        -   the new method for inheriting from a super class (in EmployeeClass)
+    ]]
 
     -- prepare test: Define a simple interface
     local HumanInterface = {}
