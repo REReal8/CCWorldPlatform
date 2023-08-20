@@ -89,7 +89,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingMetaData" },
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingTaskCall" },
-            }}
+            }, description = "Planting sappling"}
         )
 
         -- add step data
@@ -107,7 +107,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
                 { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }}
+            }, description = "Building forest"}
         )
 
         -- add step data
