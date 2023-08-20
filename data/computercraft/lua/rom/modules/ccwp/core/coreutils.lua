@@ -113,10 +113,6 @@ function coreutils.UniversalTime()
 	return 24 * os.day() + os.time() -- https://computercraft.info/wiki/Os.time (waarde tussen 0 en 23.999)
 end
 
-function CoreUtilsProtocolName() -- ToDo: is this used? If not consider removing (including protocol variable from db)
-	return db.protocol
-end
-
 function coreutils.DeepCopy(orig)
     local orig_type = type(orig)
     local copy
