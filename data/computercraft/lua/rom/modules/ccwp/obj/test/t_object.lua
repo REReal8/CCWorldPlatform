@@ -262,7 +262,7 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = PersonClass:new() -- Make EmployeeClass inherit from IHuman
+    local EmployeeClass = PersonClass:new() -- Make EmployeeClass inherit from PersonClass
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
