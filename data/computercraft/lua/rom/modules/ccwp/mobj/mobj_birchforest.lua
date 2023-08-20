@@ -271,7 +271,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                         { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
                         { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
-                    }},
+                    }, description = "Doing Harvesting task"},
                     -- ToDo: consider storing the harvested goods in the local localItemSupplierLocator's for birch_log and birchSapling
                     --          (or will this be part of harvestForest?)
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
@@ -281,7 +281,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                         { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                         { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                    }},
+                    }, description = "Providing more logs recursively"},
                 },
                 returnData  = {
                     { keyDef = "destinationItemsLocator"            , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },

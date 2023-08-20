@@ -616,7 +616,7 @@ function Factory.ProduceItem_ASrv(...)
             { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
             { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-        }},
+        }, description = "Getting items into turtle"},
     }
 
     -- add production steps
@@ -631,7 +631,7 @@ function Factory.ProduceItem_ASrv(...)
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
                 { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }}
+            }, description = "Crafting items"}
         )
     else
         -- add smelting step
@@ -642,7 +642,7 @@ function Factory.ProduceItem_ASrv(...)
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
                 { keyDef = "productionRecipe"       , sourceStep = 0, sourceKeyDef = "productionRecipe" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }}
+            }, description = "Smelting items"}
         )
 
         -- add pickup step
@@ -653,7 +653,7 @@ function Factory.ProduceItem_ASrv(...)
                 { keyDef = "productItemName"        , sourceStep = 0, sourceKeyDef = "productItemName" },
                 { keyDef = "productItemCount"       , sourceStep = 0, sourceKeyDef = "productItemCount" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }}
+            }, description = "Pickup items"}
         )
 
         extraStep = 1
@@ -665,7 +665,7 @@ function Factory.ProduceItem_ASrv(...)
             { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
             { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-        }}
+        }, description = "Storing items into local output"}
     )
 
     -- create project service data
@@ -691,7 +691,7 @@ function Factory.ProduceItem_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "We are a factory", description = "Time to make stuff" },
+        projectMeta = { title = "Factory.ProduceItem_ASrv", description = "Time to make stuff" },
     }
 
     -- start project
