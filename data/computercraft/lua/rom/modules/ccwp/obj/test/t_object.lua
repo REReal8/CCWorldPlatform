@@ -262,7 +262,7 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("with __call to initialise", HumanInterface, PersonClass, EmployeeClass)
+    T_Object.at_IsInstanceOf("C", HumanInterface, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
