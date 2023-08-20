@@ -118,6 +118,8 @@ function T_Object.T_IsInstanceOf_B()
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
+    setmetatable(PersonClass, HumanInterface)
+
     function PersonClass:new(name)
         -- set instance class info
         local instance = {}
@@ -130,10 +132,11 @@ function T_Object.T_IsInstanceOf_B()
         -- end
         return instance
     end
-    setmetatable(PersonClass, HumanInterface)
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
     local EmployeeClass = {}
+    setmetatable(EmployeeClass, PersonClass)
+
     function EmployeeClass:new(name, employeeId)
         -- set instance class info
         local instance = {}
@@ -147,7 +150,6 @@ function T_Object.T_IsInstanceOf_B()
         -- end
         return instance
     end
-    setmetatable(EmployeeClass, PersonClass)
 
     -- Test IsInstanceOf
     T_Object.at_IsInstanceOf("B", HumanInterface, PersonClass, EmployeeClass)
