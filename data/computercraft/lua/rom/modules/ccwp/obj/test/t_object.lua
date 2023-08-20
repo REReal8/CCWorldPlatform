@@ -8,6 +8,7 @@ function T_Object.T_All()
     -- Object methods
     T_Object.T_IsInstanceOf_A()
     T_Object.T_IsInstanceOf_B()
+    T_Object.T_IsInstanceOf_C()
 end
 
 --     ____  _     _           _
@@ -153,6 +154,55 @@ function T_Object.T_IsInstanceOf_B()
 
     -- Test IsInstanceOf
     T_Object.at_IsInstanceOf("B", HumanInterface, PersonClass, EmployeeClass)
+
+    -- cleanup test
+end
+
+function T_Object.T_IsInstanceOf_C()
+    -- *** Approach C ***
+    -- (this approach uses relative to approach B
+    --  -   a init method for initialisation
+    --  -   the new method for inheriting from a super class (in EmployeeClass)
+
+    -- prepare test: Define a simple interface
+    local HumanInterface = {}
+    function HumanInterface:isSelfAware()
+    end
+
+    -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
+    local PersonClass = {}
+    setmetatable(PersonClass, HumanInterface)
+
+    function PersonClass:new(...)
+        -- set instance class info
+        local instance = {}
+        setmetatable(instance, self)
+        self.__index = self
+
+        -- initialisation
+        if ... then
+            instance:_init(...)
+        end
+
+        -- end
+        return instance
+    end
+
+    function PersonClass:_init(name)
+        self.name = name
+    end
+
+    -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
+    local EmployeeClass = PersonClass:new()
+
+    function EmployeeClass:_init(name, employeeId) -- note: "overrides" PersonClass:__init
+        -- initialisation
+        PersonClass:_init(name) -- note: call PersonClass __init directly
+        self.employeeId = employeeId
+    end
+
+    -- Test IsInstanceOf
+    T_Object.at_IsInstanceOf("with __call to initialise", HumanInterface, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
