@@ -42,7 +42,8 @@ function T_Object.at_IsInstanceOf(approachName, HumanInterface, PersonClass, Emp
     -- prepare test (cont)
     corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
 
-    -- Test (IsInstanceOf with) HumanInterface
+    -- Test HumanInterface
+    assert(not Object.IsInstanceOf(HumanInterface, HumanInterface), "Failed: HumanInterface should not be any instance (even not of HumanInterface)")
     assert(HumanInterface.isSelfAware, "Failed: HumanInterface should specify isSelfAware method")
     assert(HumanInterface.getAge, "Failed: HumanInterface should specify getAge method")
     assert(HumanInterface:isSelfAware() == nil, "Failed: isSelfAware of HumanInterface should return nil (while it is "..textutils.serialise(HumanInterface:isSelfAware())..")")
@@ -225,7 +226,7 @@ function T_Object.T_IsInstanceOf_C()
 
     -- prepare test: Define a class "PersonClass" inheriting from HumanInterface
     local PersonClass = {}
-    setmetatable(PersonClass, HumanInterface)
+    setmetatable(PersonClass, HumanInterface) -- Make PersonClass inherit from HumanInterface
 
     function PersonClass:new(...)
         -- set instance class info
@@ -252,7 +253,7 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = PersonClass:new()
+    local EmployeeClass = PersonClass:new() -- Make EmployeeClass inherit from HumanInterface
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
