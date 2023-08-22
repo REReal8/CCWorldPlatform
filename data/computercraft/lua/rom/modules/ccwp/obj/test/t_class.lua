@@ -357,110 +357,6 @@ function T_Class.T_IsInstanceOf_D()
     -- cleanup test
 end
 
--- Define class MetaClass
-local MetaClass = {}
-
-function MetaClass:newInstance(...)
-    --[[
-        Function that creates and returns new instance from the calling class (i.e. self).
-
-        An initialisation function _init of the calling class is called if it is present with the varargs as arguments.
-    ]]
-
-    -- create instance
-    local instance = {}
-
-    -- set instance class info
-    setmetatable(instance, self)
-    self.__index = self
-
-    -- initialisation
-    if instance._init then
-        instance:_init(...)
-    end
-
-    -- end
-    return instance
-end
-
-function MetaClass.IsInstanceOf(object, class)
-    --[[
-        Function that returns if a given object is an instance of a specified class (or interface).
-    ]]
-
-    local mt = getmetatable(object)
-    while mt do
-        -- check inheritance is mixedin
-        if mt.__mixinClasses then
-            -- loop on mixinClasses
-            for _i, mixinClass in ipairs(mt.__mixinClasses) do
-                if mixinClass == class then
-                    return true
-                else
-                    if MetaClass.IsInstanceOf(mixinClass, class) == true then
-                        return true
-                    end
-                end
-            end
-            return false
-        else -- normal inheritance
-            if mt == class then
-                return true
-            end
-            mt = getmetatable(mt)
-        end
-    end
-
-    -- end
-    return false
-end
-
-function MetaClass.NewClass(...)
-    --[[
-        This function creates and returns a new class that inherts behaviour from the supplied classes.
-    ]]
-
-    -- create class
-    local class = {}
-
-    -- remember mixins
-    local mixinClasses = {...}
-
-    -- create metatable
-    local mt = {
-        -- remember mixinClasses
-        __mixinClasses  = mixinClasses,
-
-        -- define property and method inheritance behavior
-        __index         = function(self, key)
-            -- walk inheritance chain: return property or method of first class containing key, starting from the class itself
-            if rawget(class, key) then
---                corelog.WriteToLog("    key="..key.." direct")
-                return class[key]
-            else
---                corelog.WriteToLog("    key="..key.." on "..#mixinClasses.." parent(s)")
-                -- loop on mixinClass
-                for _i, mixinClass in ipairs(mixinClasses) do
---                    if mixinClass.getClassName then corelog.WriteToLog("    mixinClass="..mixinClass:getClassName()) end
---                    corelog.WriteToLog("    _i=".._i)
-                    local value = mixinClass[key]
-                    if value then
-                        return value
-                    end
-                end
-
-                return nil -- print some warning, or do we want/ expect it to fail here?
-            end
-        end
-    }
-
-    -- set metatable
-    setmetatable(class, mt)
-
-    -- end
-    return class
-end
-
 function T_Class.T_IsInstanceOf_Mixin_ccwp()
     --[[
     ]]
@@ -492,7 +388,7 @@ function T_Class.T_IsInstanceOf_Mixin_ccwp()
 
     -- ObjBase definition
     corelog.WriteToLog("->define ObjBase")
-    ObjBase = MetaClass.NewClass(MetaClass, IObj)
+    ObjBase = Class.NewClass(Class, IObj)
 
     function ObjBase:getClassName()
         return "ObjBase"
@@ -512,9 +408,9 @@ function T_Class.T_IsInstanceOf_Mixin_ccwp()
 
     -- ObjBase tests
     corelog.WriteToLog("->test ObjBase")
-    assert(MetaClass.IsInstanceOf(ObjBase, MetaClass), "Failed: ObjBase should be an instance of MetaClass")
-    assert(MetaClass.IsInstanceOf(ObjBase, IObj), "Failed: ObjBase should be an instance of IObj")
-    assert(ObjBase.newInstance, "Failed: ObjBase should inherit newInstance from MetaClass")
+    assert(Class.IsInstanceOf(ObjBase, Class), "Failed: ObjBase should be an instance of Class")
+    assert(Class.IsInstanceOf(ObjBase, IObj), "Failed: ObjBase should be an instance of IObj")
+    assert(ObjBase.newInstance, "Failed: ObjBase should inherit newInstance from Class")
     assert(ObjBase.getClassName, "Failed: ObjBase should inherit getClassName from IObj")
     assert(ObjBase.isTypeOf, "Failed: ObjBase should inherit isTypeOf from IObj")
     assert(ObjBase.isEqual, "Failed: ObjBase should inherit isEqual from IObj")
@@ -522,7 +418,7 @@ function T_Class.T_IsInstanceOf_Mixin_ccwp()
 
     -- Location definition
     corelog.WriteToLog("->define Location")
-    Location = MetaClass.NewClass(ObjBase)
+    Location = Class.NewClass(ObjBase)
 
     function Location:_init(x, y, z, dx, dy)
         self._x = x
@@ -544,14 +440,14 @@ function T_Class.T_IsInstanceOf_Mixin_ccwp()
     end
 
     -- Location test
-    assert(MetaClass.IsInstanceOf(Location, ObjBase), "Failed: Location should be an instance of ObjBase")
-    assert(MetaClass.IsInstanceOf(Location, MetaClass), "Failed: Location should be an instance of MetaClass")
-    assert(MetaClass.IsInstanceOf(Location, IObj), "Failed: Location should be an instance of IObj")
-    assert(Location.newInstance, "Failed: Location should inherit newInstance from MetaClass")
+    assert(Class.IsInstanceOf(Location, ObjBase), "Failed: Location should be an instance of ObjBase")
+    assert(Class.IsInstanceOf(Location, Class), "Failed: Location should be an instance of Class")
+    assert(Class.IsInstanceOf(Location, IObj), "Failed: Location should be an instance of IObj")
+    assert(Location.newInstance, "Failed: Location should inherit newInstance from Class")
     corelog.WriteToLog("->test Location")
     local loc1 = Location:newInstance(10, 20, 10, 0, 1)
-    assert(MetaClass.IsInstanceOf(loc1, Location), "Failed: loc1 should be an instance of Location")
-    assert(MetaClass.IsInstanceOf(loc1, IObj), "Failed: loc1 should be an instance of Location")
+    assert(Class.IsInstanceOf(loc1, Location), "Failed: loc1 should be an instance of Location")
+    assert(Class.IsInstanceOf(loc1, IObj), "Failed: loc1 should be an instance of Location")
     local loc2 = Location:newInstance(20, 20, 10, 0, 1)
     local blockDistance = loc1:blockDistanceTo(loc2)
     assert(blockDistance == 10, "Failed: blockDistance should be 10 but was "..blockDistance)
@@ -565,7 +461,7 @@ function T_Class.T_IsInstanceOf_Mixin_ccwp()
 
     -- IItemSupplier test
     corelog.WriteToLog("->test IItemSupplier")
-    assert(not MetaClass.IsInstanceOf(ObjBase, IItemSupplier), "Failed: ObjBase should not be an instance of IItemSupplier") -- tests not an instance returns false
+    assert(not Class.IsInstanceOf(ObjBase, IItemSupplier), "Failed: ObjBase should not be an instance of IItemSupplier") -- tests not an instance returns false
 
     -- IItemDepot definition
     corelog.WriteToLog("->define IItemDepot")
@@ -586,17 +482,17 @@ function T_Class.T_IsInstanceOf_Mixin_ccwp()
 
     -- Chest definition
     corelog.WriteToLog("->define Chest")
-    Chest = MetaClass.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
+    Chest = Class.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
 
     function Chest:provideItemsTo_AOSrv()
     end
 
     -- Chest test
     corelog.WriteToLog("->test Chest")
-    assert(MetaClass.IsInstanceOf(Chest, ObjBase), "Failed: Chest should be an instance of ObjBase")
-    assert(MetaClass.IsInstanceOf(Chest, IItemSupplier), "Failed: Chest should be an instance of IItemSupplier")
-    assert(MetaClass.IsInstanceOf(Chest, IItemDepot), "Failed: Chest should be an instance of IItemDepot")
-    assert(MetaClass.IsInstanceOf(Chest, IMObj), "Failed: Chest should be an instance of IMObj")
+    assert(Class.IsInstanceOf(Chest, ObjBase), "Failed: Chest should be an instance of ObjBase")
+    assert(Class.IsInstanceOf(Chest, IItemSupplier), "Failed: Chest should be an instance of IItemSupplier")
+    assert(Class.IsInstanceOf(Chest, IItemDepot), "Failed: Chest should be an instance of IItemDepot")
+    assert(Class.IsInstanceOf(Chest, IMObj), "Failed: Chest should be an instance of IMObj")
     assert(Chest.provideItemsTo_AOSrv, "Failed: Chest should inherit provideItemsTo_AOSrv from IItemSupplier")
     assert(Chest.storeItemsFrom_AOSrv, "Failed: Chest should inherit storeItemsFrom_AOSrv from IItemDepot")
     assert(Chest.getBuildBlueprint, "Failed: Chest should inherit getBuildBlueprint from IMObj")
