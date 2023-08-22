@@ -33,7 +33,6 @@ function T_Object.pt_IsInstanceOf(className, object, prototypeName, prototype)
     assert(Object.IsInstanceOf(object, prototype), "Failed: object is expected to be an instance of "..prototypeName)
 end
 
-
 function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
     assert(approachName, "no approachName provided")
     assert(IHuman, "no IHuman provided")
@@ -58,7 +57,7 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     -- Test (IsInstanceOf with) PersonClass instance
     local age1 = 16
     local name1 = "Alice"
-    local personObj = PersonClass:new(age1, name1) assert(personObj, "Failed creating personObj")
+    local personObj = PersonClass:newInstance(age1, name1) assert(personObj, "Failed creating personObj")
     assert(Object.IsInstanceOf(personObj, IHuman), "Failed: personObj should be an instance of IHuman")
     assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
     assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
@@ -77,7 +76,7 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     local age2 = 50
     local name2 = "Bob"
     local employeeId1 = 123
-    local employeeObj = EmployeeClass:new(age2, name2, employeeId1) assert(employeeObj, "Failed creating employeeObj")
+    local employeeObj = EmployeeClass:newInstance(age2, name2, employeeId1) assert(employeeObj, "Failed creating employeeObj")
     assert(Object.IsInstanceOf(employeeObj, IHuman), "Failed: employeeObj should be an instance of IHuman")
     assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
     assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
@@ -110,7 +109,7 @@ function T_Object.T_IsInstanceOf_A()
     PersonClass.__index = PersonClass
     setmetatable(PersonClass, IHuman)  -- Make PersonClass inherit from IHuman
 
-    function PersonClass:new(age, name)
+    function PersonClass:newInstance(age, name)
         -- set instance class info
         local instance = setmetatable({}, PersonClass)
 
@@ -131,7 +130,7 @@ function T_Object.T_IsInstanceOf_A()
     EmployeeClass.__index = EmployeeClass
     setmetatable(EmployeeClass, PersonClass)  -- Make EmployeeClass inherit from PersonClass
 
-    function EmployeeClass:new(age, name, employeeId)
+    function EmployeeClass:newInstance(age, name, employeeId)
         -- set instance class info
         local instance = setmetatable({}, EmployeeClass)
 
@@ -172,7 +171,7 @@ function T_Object.T_IsInstanceOf_B()
     local PersonClass = {}
     setmetatable(PersonClass, IHuman)
 
-    function PersonClass:new(age, name)
+    function PersonClass:newInstance(age, name)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
@@ -194,7 +193,7 @@ function T_Object.T_IsInstanceOf_B()
     local EmployeeClass = {}
     setmetatable(EmployeeClass, PersonClass)
 
-    function EmployeeClass:new(age, name, employeeId)
+    function EmployeeClass:newInstance(age, name, employeeId)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
@@ -238,7 +237,7 @@ function T_Object.T_IsInstanceOf_C()
     local PersonClass = {}
     setmetatable(PersonClass, IHuman) -- Make PersonClass inherit from IHuman
 
-    function PersonClass:new(...)
+    function PersonClass:newInstance(...)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
@@ -263,7 +262,7 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = PersonClass:new() -- Make EmployeeClass inherit from PersonClass
+    local EmployeeClass = PersonClass:newInstance() -- Make EmployeeClass inherit from PersonClass
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
@@ -317,7 +316,7 @@ function T_Object.T_IsInstanceOf_D()
     -- Define a class "PersonClass" inheriting from IHuman
     local PersonClass = Class.NewClass(IHuman) -- Make PersonClass inherit from IHuman
 
-    function PersonClass:new(...)
+    function PersonClass:newInstance(...)
         -- set instance class info
         local instance = {}
         setmetatable(instance, self)
