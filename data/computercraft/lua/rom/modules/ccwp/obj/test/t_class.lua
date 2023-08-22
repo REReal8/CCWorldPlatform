@@ -22,16 +22,16 @@ end
 --               _/ |
 --              |__/
 
-function T_Class.pt_IsInstanceOf(className, object, prototypeName, prototype)
+function T_Class.pt_IsInstanceOf(objectName, object, className, class)
     -- prepare test
-    assert(className, "no className provided")
+    assert(objectName, "no objectName provided")
     assert(object, "no object provided")
-    assert(prototypeName, "no prototypeName provided")
-    assert(prototype, "no prototype provided")
-    corelog.WriteToLog("* "..className.." IsInstanceOf "..prototypeName.." type test")
+    assert(className, "no className provided")
+    assert(class, "no class provided")
+    corelog.WriteToLog("* "..objectName.." IsInstanceOf "..className.." type test")
 
     -- test
-    assert(Class.IsInstanceOf(object, prototype), "Failed: object is expected to be an instance of "..prototypeName)
+    assert(Class.IsInstanceOf(object, class), "Failed: "..objectName.." is expected to be an instance of "..className)
 end
 
 function T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
@@ -41,7 +41,7 @@ function T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClas
     assert(EmployeeClass, "no EmployeeClass provided")
 
     -- prepare test (cont)
-    corelog.WriteToLog("* Class.IsInstanceOf() tests (approach "..approachName..")")
+    corelog.WriteToLog("* Class.IsInstanceOf() tests ("..approachName..")")
 
     -- Test IHuman
     assert(not Class.IsInstanceOf(IHuman, IHuman), "Failed: IHuman should not be any instance (even not of IHuman)")
@@ -95,6 +95,8 @@ function T_Class.T_IsInstanceOf_A()
         *** Approach A ***
     ]]
 
+    local approachName = "A"
+
     -- prepare test: Define a simple interface
     local IHuman = {}
     IHuman.__index = IHuman
@@ -145,7 +147,7 @@ function T_Class.T_IsInstanceOf_A()
     end
 
     -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf("A", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -157,6 +159,8 @@ function T_Class.T_IsInstanceOf_B()
         This approach uses relative to approach A:
         - slightly different initialisation logic
     ]]
+
+    local approachName = "B"
 
     -- prepare test: Define a simple interface
     local IHuman = {}
@@ -210,7 +214,7 @@ function T_Class.T_IsInstanceOf_B()
     end
 
     -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf("B", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -223,6 +227,8 @@ function T_Class.T_IsInstanceOf_C()
         -   a init method for initialisation
         -   the new method for inheriting from a super class (in EmployeeClass)
     ]]
+
+    local approachName = "C"
 
     -- prepare test: Define a simple interface
     local IHuman = {}
@@ -272,7 +278,7 @@ function T_Class.T_IsInstanceOf_C()
     end
 
     -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf("C", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -284,6 +290,8 @@ function T_Class.T_IsInstanceOf_D()
         This approach uses relative to approach C:
         -   Introduce and use meta class MetaClass
     ]]
+
+    local approachName = "D"
 
     -- Define functions for a meta class MetaClass
     local MetaClass = {}
@@ -352,7 +360,7 @@ function T_Class.T_IsInstanceOf_D()
     end
 
     -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf("D", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
