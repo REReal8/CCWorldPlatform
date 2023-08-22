@@ -6,11 +6,10 @@ local Class = require "class"
 
 function T_Class.T_All()
     -- Class methods
-    T_Class.T_IsInstanceOf_A()
-    T_Class.T_IsInstanceOf_B()
-    T_Class.T_IsInstanceOf_C()
-    T_Class.T_IsInstanceOf_D()
-    T_Class.T_IsInstanceOf_Mixin_ccwp()
+    T_Class.T_IsInstanceOf_Simple()
+    T_Class.T_IsInstanceOf_initAndNewInstance()
+    T_Class.T_IsInstanceOf_NewClass()
+    T_Class.T_IsInstanceOf_ccwp()
 end
 
 --     ____  _     _           _
@@ -90,12 +89,12 @@ function T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClas
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_A()
+function T_Class.T_IsInstanceOf_Simple()
     --[[
-        *** Approach A ***
+        Test with a simple inheritance approach.
     ]]
 
-    local approachName = "A"
+    local approachName = "simple"
 
     -- prepare test: Define a simple interface
     local IHuman = {}
@@ -152,83 +151,14 @@ function T_Class.T_IsInstanceOf_A()
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_B()
+function T_Class.T_IsInstanceOf_initAndNewInstance()
     --[[
-        *** Approach B ***
-
-        This approach uses relative to approach A:
-        - slightly different initialisation logic
-    ]]
-
-    local approachName = "B"
-
-    -- prepare test: Define a simple interface
-    local IHuman = {}
-    IHuman.__index = IHuman
-
-    function IHuman:getAge()
-    end
-
-    function IHuman:isSelfAware()
-    end
-
-    -- prepare test: Define a class "PersonClass" inheriting from IHuman
-    local PersonClass = {}
-    setmetatable(PersonClass, IHuman)
-
-    function PersonClass:newInstance(age, name)
-        -- set instance class info
-        local instance = {}
-        setmetatable(instance, self)
-        self.__index = self
-
-        -- initialisation
-        instance.age = age
-        instance.name = name
-
-        -- end
-        return instance
-    end
-
-    function PersonClass:getAge()
-        return self.age
-    end
-
-    -- prepare test: Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = {}
-    setmetatable(EmployeeClass, PersonClass)
-
-    function EmployeeClass:newInstance(age, name, employeeId)
-        -- set instance class info
-        local instance = {}
-        setmetatable(instance, self)
-        self.__index = self
-
-        -- initialisation
-        instance.age = age
-        instance.name = name
-        instance.employeeId = employeeId
-
-        -- end
-        return instance
-    end
-
-    -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
-
-    -- cleanup test
-end
-
-function T_Class.T_IsInstanceOf_C()
-    --[[
-        *** Approach C ***`
-
-        This approach uses relative to approach B:
+        Test with a simple inheritance approach, adding
         -   a init method for initialisation
-        -   the new method for inheriting from a super class (in EmployeeClass)
+        -   the newInstance method for inheriting from a super class (in EmployeeClass)
     ]]
 
-    local approachName = "C"
+    local approachName = "_init"
 
     -- prepare test: Define a simple interface
     local IHuman = {}
@@ -283,35 +213,12 @@ function T_Class.T_IsInstanceOf_C()
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_D()
+function T_Class.T_IsInstanceOf_NewClass()
     --[[
-        *** Approach D ***
-
-        This approach uses relative to approach C:
-        -   Introduce and use meta class MetaClass
+        Test approach using Class.NewClass
     ]]
 
-    local approachName = "D"
-
-    -- Define functions for a meta class MetaClass
-    local MetaClass = {}
-    function MetaClass.NewClass(...)
-        --[[
-            Define a new class (?? or even type). Optional arguments are the (proto)types the class should inherit from.
-        ]]
-
-        -- single inheritance: take first argument for now (ToDo: implement multiple inheritance later)
-        local firstPrototype = select(1, ...)
-        -- ToDo: implement multiple inheritance. Possibly by using a functon for __index
-
-        -- set class info
-        local cls = {}
-        setmetatable(cls, firstPrototype)
-        firstPrototype.__index = firstPrototype
-
-        -- end
-        return cls
-    end
+    local approachName = "NewClass"
 
     -- Define an interface IHuman
     local IHuman = {}
@@ -323,7 +230,7 @@ function T_Class.T_IsInstanceOf_D()
     end
 
     -- Define a class "PersonClass" inheriting from IHuman
-    local PersonClass = MetaClass.NewClass(IHuman) -- Make PersonClass inherit from IHuman
+    local PersonClass = Class.NewClass(IHuman) -- Make PersonClass inherit from IHuman
 
     function PersonClass:newInstance(...)
         -- set instance class info
@@ -351,7 +258,7 @@ function T_Class.T_IsInstanceOf_D()
     end
 
     -- Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = MetaClass.NewClass(PersonClass) -- Make EmployeeClass inherit from both PersonClass
+    local EmployeeClass = Class.NewClass(PersonClass) -- Make EmployeeClass inherit from both PersonClass
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
@@ -365,12 +272,13 @@ function T_Class.T_IsInstanceOf_D()
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_Mixin_ccwp()
+function T_Class.T_IsInstanceOf_ccwp()
     --[[
+        Test approach using mimic CCWP classes inline.
     ]]
 
-    local approachName = "Mixin CCWP"
-    corelog.WriteToLog("* Class.IsInstanceOf() tests (approach "..approachName..")")
+    local approachName = "CCWP"
+    corelog.WriteToLog("* Class.IsInstanceOf() tests ("..approachName..")")
 
     -- IObj definition
     corelog.WriteToLog("->define IObj")
