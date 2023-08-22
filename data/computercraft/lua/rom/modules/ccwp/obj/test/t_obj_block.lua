@@ -1,6 +1,5 @@
 local T_Block = {}
 local corelog = require "corelog"
-local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 
@@ -24,13 +23,6 @@ function T_Block.T_All()
     T_Block.T_isNoneBlock()
     T_Block.T_isComputercraftItem()
     T_Block.T_hasValidDirection()
-    T_Block.T_ParseWithCheckInput() -- ToDo: consider removing
-
-    -- helper functions
-    T_Block.T_IsBlockList()
-    T_Block.T_IsEqualBlockList()
-    T_Block.T_BlockListCopy()
-    T_Block.T_BlockListTransform()
 end
 
 local dx1 = 0
@@ -296,143 +288,6 @@ function T_Block.T_hasValidDirection()
     obj._dy = 0
     directionValid = obj:hasValidDirection()
     assert(directionValid == expectedDirectionValid, "gotten hasValidDirection(="..tostring(directionValid)..") for "..blockName.." not the same as expected("..tostring(expectedDirectionValid)..")")
-
-    -- cleanup test
-end
-
-function T_Block.T_ParseWithCheckInput()
-    -- prepare test
-    corelog.WriteToLog("* Block parsing with CheckInput tests")
-
-    -- test
-    local checkSuccess, block = InputChecker.Check([[
-        Parameters:
-            block   + (Block) object to retrieve from arg
-    ]], table.unpack({ textutils.unserialize(textutils.serialize(block1)) }))
-    if not checkSuccess then corelog.Error("T_Block.T_ParseWithCheckInput: Invalid input") return {success = false} end
-    local isTypeOf = Block:isTypeOf(block)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- cleanup test
-end
-
---    _          _                    __                  _   _
---   | |        | |                  / _|                | | (_)
---   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---                | |
---                |_|
-
-function T_Block.T_IsBlockList()
-    -- prepare test
-    corelog.WriteToLog("* Block.IsBlockList() tests")
-    local block2 = Block:new({
-        _name   = furnaceItemName,
-    })
-
-    -- test two valid blocks
-    local isBlockList = Block.IsBlockList( { block1, block2 } )
-    local expectedIsBlockList = true
-    assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
-
-    -- test one valid block + one almost valid block
-    block2._name = 10
-    isBlockList = Block.IsBlockList( { block1, block2 } )
-    expectedIsBlockList = false
-    assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
-    block2._name = furnaceItemName
-
-    -- test two valid blocks + different object
-    isBlockList = Block.IsBlockList( { block1, block2, "a string" } )
-    expectedIsBlockList = false
-    assert(isBlockList == expectedIsBlockList, "gotten IsBlockList(="..tostring(isBlockList)..") not the same as expected(="..tostring(expectedIsBlockList)..")")
-
-    -- cleanup test
-end
-
-function T_Block.T_IsEqualBlockList()
-    -- prepare test
-    corelog.WriteToLog("* Block.IsEqualBlockList() tests")
-    local block2 = Block:new({
-        _name   = furnaceItemName,
-    })
-
-    -- test with same blocks in same order
-    local isEqualBlockList = Block.IsEqualBlockList(
-        { block1:copy(), block2:copy() },
-        { block1:copy(), block2:copy() }
-    )
-    local expectedIsEqualBlockList = true
-    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
-
-    -- test with 2 empty lists
-    isEqualBlockList = Block.IsEqualBlockList(
-        { },
-        { }
-    )
-    expectedIsEqualBlockList = true
-    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
-
-    -- test with same blocks in different order
-    isEqualBlockList = Block.IsEqualBlockList(
-        { block1:copy(), block2:copy() },
-        { block2:copy(), block1:copy() }
-    )
-    expectedIsEqualBlockList = false
-    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
-
-    -- test with different blocks
-    isEqualBlockList = Block.IsEqualBlockList(
-        { block1:copy(), block2:copy() },
-        { block1:copy(), Block:new({ _name = chestItemName,}) }
-    )
-    expectedIsEqualBlockList = false
-    assert(isEqualBlockList == expectedIsEqualBlockList, "gotten IsEqualBlockList(="..tostring(isEqualBlockList)..") not the same as expected(="..tostring(expectedIsEqualBlockList)..")")
-
-    -- cleanup test
-end
-
-function T_Block.T_BlockListCopy()
-    -- prepare test
-    corelog.WriteToLog("* Block.BlockListCopy() tests")
-    local block2 = Block:new({
-        _name   = furnaceItemName,
-    })
-
-    -- test
-    local copy = Block.BlockListCopy({ block1:copy(), block2:copy() })
-    local expectedCopy = { block1:copy(), block2:copy() }
-    assert(Block.IsEqualBlockList(copy, expectedCopy), "gotten BlockListCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(expectedCopy, compact)..")")
-
-    -- cleanup test
-end
-
-function T_Block.T_BlockListTransform()
-    -- prepare test
-    corelog.WriteToLog("* Block.BlockListTransform() tests")
-    local block1Table = {
-        _dx     = dx1,
-        _dy     = dy1,
-        _name   = saplingItemName,
-    }
-    local block2Table = {
-        _name   = furnaceItemName,
-    }
-
-    -- test full
-    local blockListTable = { coreutils.DeepCopy(block1Table), coreutils.DeepCopy(block2Table) }
-    assert(not Block.IsBlockList(blockListTable), "prepared blockList already a BlockList")
-    local transformedBlockList = Block.BlockListTransform(blockListTable)
-    assert(Block.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
-
-    -- test partial
-    blockListTable = { block1, coreutils.DeepCopy(block2Table) }
-    assert(not Block.IsBlockList(blockListTable), "prepared blockList already a BlockList")
-    transformedBlockList = Block.BlockListTransform(blockListTable)
-    assert(Block.IsBlockList(transformedBlockList), "transformed blockList not a BlockList")
 
     -- cleanup test
 end

@@ -87,17 +87,6 @@ function T_ObjBase.T_getClassName()
     T_IObj.pt_getClassName(testClassName, obj)
 end
 
-function T_ObjBase.T_isTypeOf()
-    -- prepare test
-    local obj = T_ObjBase.CreateTestObj()
-
-    -- test ObjBase is type of itself
-    T_IObj.pt_isTypeOf(testClassName, ObjBase)
-
-    -- test obj from ObjBase is type of ObjBase
-    T_IObj.pt_isTypeOf(testClassName, obj)
-end
-
 function T_ObjBase.T_isEqual()
     -- prepare test
     local obj = T_ObjBase.CreateTestObj()

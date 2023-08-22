@@ -2,6 +2,7 @@ local T_ObjArray = {}
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
@@ -126,8 +127,8 @@ function T_ObjArray.T_transformObjectTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj:isTypeOf(testObject1Table), "testObject1Table incorrectly of type "..objClassName1)
-    assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject1Table, TestObj), "testObject1Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
     objArray2[1] = testObj1
@@ -167,7 +168,8 @@ function T_ObjArray.T_transformObjectTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
+
     objArray2[1] = testObj1
     objArray2[2] = testObject2Table
     objArray2:transformObjectTables()
@@ -203,8 +205,9 @@ function T_ObjArray.T_new_transformsObjTables()
     local expectedNElements = 2
     assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
     local objClass = objArray:getObjClass()
-    assert(objClass:isTypeOf(objArray[1]), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
-    assert(objClass:isTypeOf(objArray[2]), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
+
+    assert(Class.IsInstanceOf(objArray[1], objClass), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
+    assert(Class.IsInstanceOf(objArray[2], objClass), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
 
     -- cleanup test
 end

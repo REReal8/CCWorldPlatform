@@ -53,25 +53,6 @@ function ObjBase:getClassName()
     return "ObjBase"
 end
 
-function ObjBase:isTypeOf(obj)
-    --[[
-        Method that returns if an object 'obj' is of type of this class.
-    ]]
-
-    -- ToDo: investigate if we can simply this using Class.IsInstanceOf, e.g.
---    return Class.IsInstanceOf(obj, self)
-
-    local mt = getmetatable(obj)
-    while mt do
-        if mt.__index == self or obj == self then
-            return true
-        end
-        mt = getmetatable(mt.__index)
-    end
-
-    return false
-end
-
 local function nFields(table)
     -- count
     local size = 0
@@ -148,7 +129,7 @@ function ObjBase:isEqual(otherObj)
 
     -- check classes equal
     local selfClass = getmetatable(self)
-    if not selfClass:isTypeOf(otherObj) then
+    if not Class.IsInstanceOf(otherObj, selfClass) then
 --        corelog.WriteToLog("not of type")
         return false
     end

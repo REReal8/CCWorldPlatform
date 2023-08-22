@@ -4,6 +4,7 @@ local BirchForest = ObjBase:new()
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
@@ -77,7 +78,7 @@ end
 
 function BirchForest:setLocation(location)
     -- check input
-    if not Location:isTypeOf(location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
+    if not Class.IsInstanceOf(location, Location) then corelog.Error("BirchForest:setLocation: invalid location: "..type(location)) return end
 
     self._baseLocation = location
 end
@@ -99,7 +100,7 @@ end
 
 function BirchForest:setLocalLogsLocator(localLocator)
     -- check input
-    if not URL:isTypeOf(localLocator) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
+    if not Class.IsInstanceOf(localLocator, URL) then corelog.Error("BirchForest:setLocalLogsLocator: Invalid localLocator "..type(localLocator)) return end
 
     self._localLogsLocator = localLocator
 end
@@ -110,7 +111,7 @@ end
 
 function BirchForest:setLocalSaplingsLocator(localLocator)
     -- check input
-    if not URL:isTypeOf(localLocator) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
+    if not Class.IsInstanceOf(localLocator, URL) then corelog.Error("BirchForest:setLocalSaplingsLocator: Invalid localLocator "..type(localLocator)) return end
 
     self._localSaplingsLocator = localLocator
 end

@@ -4,6 +4,7 @@ local Location = ObjBase:new()
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local InputChecker = require "input_checker"
 
 --[[
@@ -277,7 +278,7 @@ end
 
 function Location:blockDistanceTo(o)
     -- check input
-    if not Location:isTypeOf(o) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
+    if not Class.IsInstanceOf(o, Location) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
 
     return math.abs(o._x - self._x) + math.abs(o._y - self._y) + math.abs(o._z - self._z)
 end

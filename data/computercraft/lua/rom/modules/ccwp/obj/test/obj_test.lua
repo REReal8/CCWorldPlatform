@@ -5,6 +5,7 @@ local TestObj = ObjBase:new()
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
+local Class = require "class"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
@@ -136,7 +137,7 @@ function TestObj:getTestArg(...)
     if not checkSuccess then corelog.Error("TestObj:getTestArg: Invalid input") return {success = false} end
 
     -- verify true object
-    assert(TestObj:isTypeOf(self), "TestObj:getTestArg: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(Class.IsInstanceOf(self, TestObj), "TestObj:getTestArg: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- end
     return testArg
@@ -165,7 +166,7 @@ function TestObj:test_SOSrv(...)
     if not checkSuccess then corelog.Error("TestObj:test_SOSrv: Invalid input") return {success = false} end
 
     -- verify true object
-    assert(TestObj:isTypeOf(self), "TestObj:test_SOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(Class.IsInstanceOf(self, TestObj), "TestObj:test_SOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- determine result to return
     local serviceResult = {
@@ -201,7 +202,7 @@ function TestObj:test_AOSrv(...)
     if not checkSuccess then corelog.Error("TestObj:test_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- verify true object
-    assert(TestObj:isTypeOf(self), "TestObj:test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
+    assert(Class.IsInstanceOf(self, TestObj), "TestObj:test_AOSrv: self(="..textutils.serialise(self)..") not of type TestObj")
 
     -- create assignment arguments
     local taskData = {

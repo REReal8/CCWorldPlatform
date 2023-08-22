@@ -2,6 +2,7 @@ local T_ObjTable = {}
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local ObjTable = require "obj_table"
@@ -125,8 +126,8 @@ function T_ObjTable.T_transformObjectTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj:isTypeOf(testObject1Table), "testObject1Table incorrectly of type "..objClassName1)
-    assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject1Table, TestObj), "testObject1Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
     objTable2.testObj1Key = testObj1
@@ -166,7 +167,8 @@ function T_ObjTable.T_transformObjectTables()
         _field1 = "field1_2",
         _field2 = 2,
     }
-    assert(not TestObj:isTypeOf(testObject2Table), "testObject2Table incorrectly of type "..objClassName1)
+    assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
+
     objTable2.testObj1Key = testObj1
     objTable2.testObj2Key = testObject2Table
     objTable2:transformObjectTables()
@@ -202,8 +204,8 @@ function T_ObjTable.T_new_transformsObjTables()
     local expectedNElements = 2
     assert(table.getn(objTable) == expectedNElements, " # elements(="..table.getn(objTable)..") not the same as expected(="..expectedNElements..")")
     local objClass = objTable:getObjClass()
-    assert(objClass:isTypeOf(objTable[1]), "obj 1 in objTable(="..textutils.serialise(objTable[1], compact)..") not of type "..objClassName1)
-    assert(objClass:isTypeOf(objTable[2]), "obj 2 in objTable(="..textutils.serialise(objTable[1], compact)..") not of type "..objClassName1)
+    assert(Class.IsInstanceOf(objTable[1], objClass), "obj 1 in objTable(="..textutils.serialise(objTable[1], compact)..") not of type "..objClassName1)
+    assert(Class.IsInstanceOf(objTable[2], objClass), "obj 2 in objTable(="..textutils.serialise(objTable[2], compact)..") not of type "..objClassName1)
 
     -- cleanup test
 end

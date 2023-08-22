@@ -88,7 +88,7 @@ function Block.HasFieldsOfType(obj)
     -- check
     if type(obj) ~= "table" then return false end
     if type(obj._name) ~= "string" then return false end
-    if (type(obj._dx) ~= "nil" and type(obj._dx) ~= "number") or (type(obj._dy) ~= "nil" and type(obj._dy) ~= "number") then return false end
+    if type(obj._dx) ~= "number" or type(obj._dy) ~= "number" then return false end
 
     -- end
     return true
@@ -101,15 +101,6 @@ function Block.HasClassNameOfType(obj)
 
     -- end
     return true
-end
-
--- ToDo: consider making changes such that this can fallback to the defailt from ObjBase
-function Block:isTypeOf(obj)
-    -- check
-    local isTypeOf = Block.HasFieldsOfType(obj) and Block.HasClassNameOfType(obj)
-
-    -- end
-    return isTypeOf
 end
 
 --                        _  __ _                       _   _               _
@@ -163,96 +154,6 @@ function Block:hasValidDirection()
 
     -- end
     return not directionNotValid
-end
-
---    _          _                    __                  _   _
---   | |        | |                  / _|                | | (_)
---   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---                | |
---                |_|
-
-function Block.IsBlockList(blockList)
-    -- check table
-    if type(blockList) ~= "table" then return false end
-
-    -- check elements
-    for i, block in ipairs(blockList) do
-        if not Block:isTypeOf(block) then return false end
-    end
-
-    -- end
-    return true
-end
-
-function Block.IsEqualBlockList(blockListA, blockListB)
-    -- check input
-    if not Block.IsBlockList(blockListA) or not Block.IsBlockList(blockListB) then return false end
-
-    -- check same size
-    if table.getn(blockListA) ~= table.getn(blockListB) then return false end
-
-    -- check same elements
-    for i, blockA in ipairs(blockListA) do
-        local blockB = blockListB[i]
-
-        -- check same block
-        local isEqual = blockA:isEqual(blockB)
-        if not isEqual then return false end
-    end
-
-    -- end
-	return true
-end
-
-function Block.BlockListCopy(blockList)
-    -- check input
-    if not Block.IsBlockList(blockList) then corelog.Error("Block.BlockListCopy: invalid blockList: "..type(blockList)) return end
-
-    local blockListCopy = {}
-    -- copy elements
-    for i, block in ipairs(blockList) do
-        blockListCopy[i] = block:copy()
-    end
-
-    -- end
-	return blockListCopy
-end
-
-function Block.BlockListTransform(blockList)
-    --[[
-        Transforms all block tables in the blockList to Block objects.
-
-        i.e. each block table like {
-            _dx     = nil,
-            _dy     = nil,
-            _name   = "",
-        }
-        is transformed into a block object Block with the same fields
-    ]]
-
-    -- check table
-    if type(blockList) ~= "table" then return false end
-
-    local blockListTransform = {}
-    -- copy elements
-    for i, block in ipairs(blockList) do
-        -- ToDo: consider doing this similair to, or using ObjArray:transformObjectTables => also making HasFieldsOfType and HasClassNameOfType methods obsolete (like was done for the other classes)
-        if Block.HasFieldsOfType(block) then
-            if Block.HasClassNameOfType(block) then
-                blockListTransform[i] = block -- already a Block
-            else
-                blockListTransform[i] = Block:new(block) -- transform
-            end
-        else
-            corelog.Warning("Block.BlockListTransform: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
-        end
-    end
-
-    -- end
-	return blockListTransform
 end
 
 return Block

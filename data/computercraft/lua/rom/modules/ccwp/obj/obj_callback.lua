@@ -4,6 +4,7 @@ local Callback = CallDef:new()
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 
@@ -63,7 +64,7 @@ end
 
 function Callback.ErrorCall(callback)
     -- check for callback
-    if not Callback:isTypeOf(callback) then
+    if not Class.IsInstanceOf(callback, Callback) then
 --        corelog.Warning("Callback.ErrorCall: Invalid callback (type="..type(callback)..")")
         return false -- schedule result
     end

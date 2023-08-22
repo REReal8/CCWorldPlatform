@@ -329,10 +329,6 @@ function T_Class.T_OnCCWPClasses()
         IInterface.UnimplementedMethodError("IObj", "getClassName")
     end
 
-    function IObj:isTypeOf(obj)
-        IInterface.UnimplementedMethodError("IObj", "isTypeOf")
-    end
-
     function IObj:isEqual(otherObj)
         IInterface.UnimplementedMethodError("IObj", "isEqual")
     end
@@ -349,25 +345,12 @@ function T_Class.T_OnCCWPClasses()
         return "ObjBase"
     end
 
-    function ObjBase:isTypeOf(obj)
-        local mt = getmetatable(obj)
-        while mt do
-            if mt.__index == self or obj == self then
-                return true
-            end
-            mt = getmetatable(mt.__index)
-        end
-
-        return false
-    end
-
     -- ObjBase tests
     corelog.WriteToLog("->test ObjBase")
     assert(Class.IsInstanceOf(ObjBase, Class), "Failed: ObjBase should be an instance of Class")
     assert(Class.IsInstanceOf(ObjBase, IObj), "Failed: ObjBase should be an instance of IObj")
     assert(ObjBase.newInstance, "Failed: ObjBase should inherit newInstance from Class")
     assert(ObjBase.getClassName, "Failed: ObjBase should inherit getClassName from IObj")
-    assert(ObjBase.isTypeOf, "Failed: ObjBase should inherit isTypeOf from IObj")
     assert(ObjBase.isEqual, "Failed: ObjBase should inherit isEqual from IObj")
     assert(ObjBase.copy, "Failed: ObjBase should inherit copy from IObj")
 
@@ -389,7 +372,7 @@ function T_Class.T_OnCCWPClasses()
 
     function Location:blockDistanceTo(o)
         -- check input
-        if not Location:isTypeOf(o) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
+        if not Class.IsInstanceOf(o, Location) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
 
         return math.abs(o._x - self._x) + math.abs(o._y - self._y) + math.abs(o._z - self._z)
     end

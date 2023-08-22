@@ -4,6 +4,7 @@ local LayerRectangle = ObjBase:new()
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local InputChecker = require "input_checker"
 
 local Block = require "obj_block"
@@ -413,7 +414,7 @@ function LayerRectangle.CodeArrayValid(codeArray, warn)
     if type(codeArray) ~= "table" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid codeArray (type="..type(codeArray)..")") end return false end
     for code, block in pairs(codeArray) do
         if type(code) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid code (type="..type(code)..")") end return false end
-        if not Block:isTypeOf(block) then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid block (type="..type(block)..")") end return false end
+        if not Class.IsInstanceOf(block, Block) then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid block (type="..type(block)..")") end return false end
     end
 
     -- end

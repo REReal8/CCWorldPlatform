@@ -31,17 +31,6 @@ function IObj:getClassName()
     return "???"
 end
 
-function IObj:isTypeOf(obj)
-    --[[
-        Method that returns if an object 'obj' is of type of this class.
-    ]]
-
-    IInterface.UnimplementedMethodError("IObj", "isTypeOf")
-
-    -- end
-    return false
-end
-
 function IObj:isEqual(otherObj)
     --[[
         Method that returns if the Obj is equal to another Obj.
@@ -78,7 +67,6 @@ function IObj.ImplementsInterface(obj)
 
     -- check
     if not obj.getClassName then return false end
-    if not obj.isTypeOf then return false end
     if not obj.isEqual then return false end
     if not obj.copy then return false end
     -- ToDo: consider adding checks for method (parameter) signatures.

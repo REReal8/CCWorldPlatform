@@ -5,6 +5,7 @@ local Host = ObjBase:new()
 local corelog = require "corelog"
 local coredht = require "coredht"
 
+local Class = require "class"
 local InputChecker = require "input_checker"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
@@ -496,7 +497,7 @@ function Host.GetHost(...)
     -- get Host
     local host = moduleRegistry:getModule(hostName)
     if not host then if not suppressWarning then corelog.Warning("Host.GetHost: No module registered with hostName="..hostName) end return nil end
-    if not Host:isTypeOf(host) then if not suppressWarning then corelog.Warning("Host.GetHost: Module "..hostName.." is not of type Host") end return nil end
+    if not Class.IsInstanceOf(host, Host) then if not suppressWarning then corelog.Warning("Host.GetHost: Module "..hostName.." is not of type Host") end return nil end
 
     -- end
     return host

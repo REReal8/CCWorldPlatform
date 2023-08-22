@@ -2,6 +2,7 @@ local T_MObjHost = {}
 
 local corelog = require "corelog"
 
+local Class = require "class"
 local IObj = require "i_obj"
 local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
@@ -135,7 +136,7 @@ function T_MObjHost.T_hostMObj_SSrv()
 
     -- check mobjLocator returned
     local mobjLocator = serviceResults.mobjLocator
-    assert(URL:isTypeOf(mobjLocator), "incorrect mobjLocator returned")
+    assert(Class.IsInstanceOf(mobjLocator, URL), "incorrect mobjLocator returned")
 
     -- check mobj saved
     local mobj = test_mobjHost1:getObject(mobjLocator)

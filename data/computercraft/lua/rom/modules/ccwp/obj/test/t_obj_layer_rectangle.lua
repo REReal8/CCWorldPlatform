@@ -2,6 +2,7 @@ local T_LayerRectangle = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
+local Class = require "class"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Block = require "obj_block"
@@ -67,14 +68,14 @@ function T_LayerRectangle.T_IsCodeArray()
     corelog.WriteToLog("* LayerRectangle.IsCodeArray tests")
 
     -- test valid
-    local isTypeOf = LayerRectangle.IsCodeArray(codeArray1)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeArray(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    local isCodeArray = LayerRectangle.IsCodeArray(codeArray1)
+    local expectedIsCodeArray = true
+    assert(isCodeArray == expectedIsCodeArray, "gotten IsCodeArray(="..tostring(isCodeArray)..") not the same as expected(="..tostring(expectedIsCodeArray)..")")
 
     -- test different object
-    isTypeOf = LayerRectangle.IsCodeArray("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeArray(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    isCodeArray = LayerRectangle.IsCodeArray("a atring")
+    expectedIsCodeArray = false
+    assert(isCodeArray == expectedIsCodeArray, "gotten IsCodeArray(="..tostring(isCodeArray)..") not the same as expected(="..tostring(expectedIsCodeArray)..")")
 
     -- cleanup test
 end
@@ -140,6 +141,8 @@ function T_LayerRectangle.T_TransformToCodeArray()
     }
     local block2Table = {
         _name   = "minecraft:birch_sapling",
+        _dx     = dx1,
+        _dy     = dy1,
     }
 
     -- test full
@@ -177,14 +180,14 @@ function T_LayerRectangle.T_IsCodeMap()
     corelog.WriteToLog("* LayerRectangle.IsCodeMap tests")
 
     -- test valid
-    local isTypeOf = LayerRectangle.IsCodeMap(codeMap1)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeMap(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    local isCodeMap = LayerRectangle.IsCodeMap(codeMap1)
+    local expectedIsCodeMap = true
+    assert(isCodeMap == expectedIsCodeMap, "gotten IsCodeMap(="..tostring(isCodeMap)..") not the same as expected(="..tostring(expectedIsCodeMap)..")")
 
     -- test different object
-    isTypeOf = LayerRectangle.IsCodeMap("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten IsCodeMap(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    isCodeMap = LayerRectangle.IsCodeMap("a atring")
+    expectedIsCodeMap = false
+    assert(isCodeMap == expectedIsCodeMap, "gotten IsCodeMap(="..tostring(isCodeMap)..") not the same as expected(="..tostring(expectedIsCodeMap)..")")
 
     -- cleanup test
 end
@@ -429,9 +432,9 @@ function T_LayerRectangle.T_transformToLayer()
 
     -- test
     local transformLayer = fromLayer:transformToLayer(toLayer)
-    local isTypeOf = LayerRectangle:isTypeOf(transformLayer)
-    local expectedIsTypeOf = true
-    assert(isTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    local isInstanceOf = Class.IsInstanceOf(transformLayer, LayerRectangle)
+    local expectedIsInstanceOf = true
+    assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
             ["T"]   = Block:new({ _name = torchItemName }),
@@ -467,9 +470,9 @@ function T_LayerRectangle.T_transformToLayer()
         },
     })
     transformLayer = fromLayer:transformToLayer(toLayer)
-    isTypeOf = LayerRectangle:isTypeOf(transformLayer)
-    expectedIsTypeOf = true
-    assert(isTypeOf, "gotten isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
+    isInstanceOf = Class.IsInstanceOf(transformLayer, LayerRectangle)
+    expectedIsInstanceOf = true
+    assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
             ["T"]   = Block:new({ _name = torchItemName }),

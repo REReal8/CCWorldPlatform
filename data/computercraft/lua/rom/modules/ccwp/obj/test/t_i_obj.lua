@@ -1,15 +1,11 @@
 local T_IObj = {}
 local corelog = require "corelog"
 
-local ObjectFactory = require "object_factory"
-local objectFactory = ObjectFactory:getInstance()
-
 local Class = require "class"
 local IObj = require "i_obj"
 
 function T_IObj.pt_all(className, obj, otherObj)
     T_IObj.pt_getClassName(className, obj)
-    T_IObj.pt_isTypeOf(className, obj)
     T_IObj.pt_isEqual(className, obj, otherObj)
     T_IObj.pt_copy(className, obj)
 end
@@ -40,28 +36,6 @@ function T_IObj.pt_getClassName(className, obj)
 
     -- test
     assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
-
-    -- cleanup test
-end
-
-function T_IObj.pt_isTypeOf(className, obj)
-    -- prepare test
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    corelog.WriteToLog("* "..className..":isTypeOf() tests")
-
-    local class = objectFactory:getClass(className)
-    assert (class, "Class "..className.." not found in objectFactory")
-
-    -- test class isTypeOf obj
-    local isTypeOf = class:isTypeOf(obj)
-    local expectedIsTypeOf = true
-    assert(isTypeOf == expectedIsTypeOf, "gotten "..className..":isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
-
-    -- test class is not type of a different object
-    isTypeOf = class:isTypeOf("a atring")
-    expectedIsTypeOf = false
-    assert(isTypeOf == expectedIsTypeOf, "gotten "..className..":isTypeOf(="..tostring(isTypeOf)..") not the same as expected(="..tostring(expectedIsTypeOf)..")")
 
     -- cleanup test
 end
