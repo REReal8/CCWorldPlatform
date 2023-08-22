@@ -2,7 +2,7 @@ local T_Class = {}
 
 local corelog = require "corelog"
 
-local Class = require "object"
+local Class = require "class"
 
 function T_Class.T_All()
     -- Class methods

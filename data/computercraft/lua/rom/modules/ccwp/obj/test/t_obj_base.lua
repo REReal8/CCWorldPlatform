@@ -3,7 +3,7 @@ local T_ObjBase = {}
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ObjBase.T_All()

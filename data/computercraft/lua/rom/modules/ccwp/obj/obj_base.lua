@@ -13,7 +13,7 @@ setmetatable(ObjBase, IObj) -- inheritance from IObj
 
 local corelog = require "corelog"
 
-local Class = require "object"
+local Class = require "class"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

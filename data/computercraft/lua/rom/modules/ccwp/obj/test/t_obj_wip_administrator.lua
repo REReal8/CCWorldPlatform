@@ -12,7 +12,7 @@ local ObjTable = require "obj_table"
 local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 local T_WIPQueue = require "test.t_obj_wip_queue"
 

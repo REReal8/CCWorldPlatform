@@ -6,7 +6,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local CallDef = require "obj_call_def"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_CallDef.T_All()

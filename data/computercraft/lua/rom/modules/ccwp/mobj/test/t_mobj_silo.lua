@@ -18,7 +18,7 @@ local enterprise_isp = require "enterprise_isp"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_storage = require "enterprise_storage"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Obj = require "test.t_obj"

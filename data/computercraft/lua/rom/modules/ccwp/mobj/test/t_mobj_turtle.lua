@@ -15,7 +15,7 @@ local Turtle = require "mobj_turtle"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Chest = require "test.t_mobj_chest"

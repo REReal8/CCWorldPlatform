@@ -7,7 +7,7 @@ local Location = require "obj_location"
 
 local ProductionSpot = require "mobj_production_spot"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ProductionSpot.T_All()

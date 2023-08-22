@@ -10,7 +10,7 @@ local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local WIPQueue = require "obj_wip_queue"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_WIPQueue.T_All()

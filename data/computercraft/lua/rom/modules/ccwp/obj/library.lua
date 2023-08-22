@@ -38,7 +38,7 @@ function library.Setup()
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_ModuleRegistry", "test.t_module_registry")
-    moduleRegistry:requireAndRegisterModule("T_Class", "test.t_object")
+    moduleRegistry:requireAndRegisterModule("T_Class", "test.t_class")
     moduleRegistry:requireAndRegisterModule("T_ObjectFactory", "test.t_object_factory")
     moduleRegistry:requireAndRegisterModule("T_ObjBase", "test.t_obj_base")
     moduleRegistry:requireAndRegisterModule("T_ObjArray", "test.t_obj_array")

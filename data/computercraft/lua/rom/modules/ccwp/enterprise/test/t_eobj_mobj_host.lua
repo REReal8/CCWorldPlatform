@@ -16,7 +16,7 @@ local Host = require "obj_host"
 local MObjHost = require "eobj_mobj_host"
 local enterprise_projects = require "enterprise_projects"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 local t_turtle = require "test.t_turtle"

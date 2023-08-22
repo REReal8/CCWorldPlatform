@@ -7,7 +7,7 @@ local ObjBase = require "obj_base"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_LayerRectangle.T_All()

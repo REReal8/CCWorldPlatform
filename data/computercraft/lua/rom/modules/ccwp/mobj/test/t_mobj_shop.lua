@@ -19,7 +19,7 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 

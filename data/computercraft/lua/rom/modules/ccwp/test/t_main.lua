@@ -12,7 +12,7 @@ local t_builder = require "test.t_builder"
 local t_foresting = require "test.t_foresting"
 
 local T_ModuleRegistry = require "test.t_module_registry"
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_ObjectFactory = require "test.t_object_factory"
 local T_ObjBase = require "test.t_obj_base"
 local T_ObjArray = require "test.t_obj_array"

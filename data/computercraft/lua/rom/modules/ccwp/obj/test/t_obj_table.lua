@@ -8,7 +8,7 @@ local ObjTable = require "obj_table"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ObjTable.T_All()

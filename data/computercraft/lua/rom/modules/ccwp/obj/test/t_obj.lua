@@ -1,7 +1,7 @@
 local T_Obj = {}
 local corelog = require "corelog"
 
-local Class = require "object"
+local Class = require "class"
 local IObj = require "i_obj"
 
 -- ToDo: consider moving to a new tests module for initialisation/ construction of objects, e.g. t_i_initialisation

@@ -12,7 +12,7 @@ local Host = require "obj_host"
 
 local TestObj = require "test.obj_test"
 
-local T_Class = require "test.t_object"
+local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_Host.T_All()

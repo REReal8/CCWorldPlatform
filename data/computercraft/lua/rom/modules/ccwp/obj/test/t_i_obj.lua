@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-local Class = require "object"
+local Class = require "class"
 local IObj = require "i_obj"
 
 function T_IObj.pt_all(className, obj, otherObj)
