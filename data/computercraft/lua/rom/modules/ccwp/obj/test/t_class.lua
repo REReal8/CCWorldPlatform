@@ -9,6 +9,7 @@ function T_Class.T_All()
     T_Class.T_IsInstanceOf_Simple()
     T_Class.T_IsInstanceOf_initAndNewInstance()
     T_Class.T_IsInstanceOf_NewClass()
+    T_Class.T_IsInstanceOf_newInstance()
     T_Class.T_IsInstanceOf_ccwp()
 end
 
@@ -247,6 +248,49 @@ function T_Class.T_IsInstanceOf_NewClass()
         -- end
         return instance
     end
+
+    function PersonClass:_init(age, name)
+        self.age = age
+        self.name = name
+    end
+
+    function PersonClass:getAge()
+        return self.age
+    end
+
+    -- Define a class "EmployeeClass" inheriting from PersonClass
+    local EmployeeClass = Class.NewClass(PersonClass) -- Make EmployeeClass inherit from both PersonClass
+
+    function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
+        -- initialisation
+        PersonClass:_init(age, name) -- note: now call PersonClass __init directly
+        self.employeeId = employeeId
+    end
+
+    -- Test IsInstanceOf
+    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
+
+    -- cleanup test
+end
+
+function T_Class.T_IsInstanceOf_newInstance()
+    --[[
+        Test approach using Class.newInstance
+    ]]
+
+    local approachName = "newInstance"
+
+    -- Define an interface IHuman
+    local IHuman = {}
+
+    function IHuman:isSelfAware()
+    end
+
+    function IHuman:getAge()
+    end
+
+    -- Define a class "PersonClass" inheriting from IHuman
+    local PersonClass = Class.NewClass(Class, IHuman) -- Make PersonClass inherit from IHuman
 
     function PersonClass:_init(age, name)
         self.age = age
