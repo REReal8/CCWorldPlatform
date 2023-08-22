@@ -49,6 +49,8 @@ end
 function ObjectFactory:registerClass(className, class)
     if class.new then
         self.classes[className] = class
+--    else
+--        error("ObjectFactory:registerClass: class "..className.." does not have new method: are we implementing newInstance instead?")
     end
 
     return self:isRegistered(className)
