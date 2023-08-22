@@ -17,7 +17,7 @@ local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
 
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Obj = require "test.t_obj"
@@ -130,8 +130,8 @@ function T_Chest.T_IObj_All()
     local otherObj = T_Chest.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
-    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 

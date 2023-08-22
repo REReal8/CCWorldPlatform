@@ -12,7 +12,7 @@ local t_builder = require "test.t_builder"
 local t_foresting = require "test.t_foresting"
 
 local T_ModuleRegistry = require "test.t_module_registry"
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_ObjectFactory = require "test.t_object_factory"
 local T_ObjBase = require "test.t_obj_base"
 local T_ObjArray = require "test.t_obj_array"
@@ -78,7 +78,7 @@ function t_main.T_All()
 
     -- obj tests
     T_ModuleRegistry.T_All()
-    T_Object.T_All()
+    T_Class.T_All()
     T_ObjectFactory.T_All()
     T_ObjBase.T_All()
     T_ObjArray.T_All()

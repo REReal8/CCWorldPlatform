@@ -6,7 +6,7 @@ local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 
-local Object = require "object"
+local Class = require "object"
 local IObj = require "i_obj"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
@@ -129,7 +129,7 @@ function ObjTable:transformObjectTables(suppressWarning)
     local objClassName = self:getObjClassName()
     local objClass = self:getObjClass()
     if not objClass then corelog.Error("ObjTable:transformObjectTables(): failed obtaining objClass "..objClassName) return end
-    if Object.IsInstanceOf(objClass, IObj) then
+    if Class.IsInstanceOf(objClass, IObj) then
         -- ok
     elseif IObj.ImplementsInterface(objClass) then
         -- ToDo: covert all classes and remove this
@@ -143,7 +143,7 @@ function ObjTable:transformObjectTables(suppressWarning)
         if key ~= "_objClassName" then
             -- check if objectTable already an Obj
             local objectTableClassName = nil
-            if Object.IsInstanceOf(objectTable, IObj) then
+            if Class.IsInstanceOf(objectTable, IObj) then
                 objectTableClassName = objectTable:getClassName()
             elseif IObj.ImplementsInterface(objectTable) then
                 -- ToDo: covert all classes and remove this

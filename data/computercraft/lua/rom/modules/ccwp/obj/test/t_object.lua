@@ -1,16 +1,16 @@
-local T_Object = {}
+local T_Class = {}
 
 local corelog = require "corelog"
 
-local Object = require "object"
+local Class = require "object"
 
-function T_Object.T_All()
-    -- Object methods
-    T_Object.T_IsInstanceOf_A()
-    T_Object.T_IsInstanceOf_B()
-    T_Object.T_IsInstanceOf_C()
-    T_Object.T_IsInstanceOf_D()
-    T_Object.T_IsInstanceOf_Mixin_ccwp()
+function T_Class.T_All()
+    -- Class methods
+    T_Class.T_IsInstanceOf_A()
+    T_Class.T_IsInstanceOf_B()
+    T_Class.T_IsInstanceOf_C()
+    T_Class.T_IsInstanceOf_D()
+    T_Class.T_IsInstanceOf_Mixin_ccwp()
 end
 
 --     ____  _     _           _
@@ -22,7 +22,7 @@ end
 --               _/ |
 --              |__/
 
-function T_Object.pt_IsInstanceOf(className, object, prototypeName, prototype)
+function T_Class.pt_IsInstanceOf(className, object, prototypeName, prototype)
     -- prepare test
     assert(className, "no className provided")
     assert(object, "no object provided")
@@ -31,27 +31,27 @@ function T_Object.pt_IsInstanceOf(className, object, prototypeName, prototype)
     corelog.WriteToLog("* "..className.." IsInstanceOf "..prototypeName.." type test")
 
     -- test
-    assert(Object.IsInstanceOf(object, prototype), "Failed: object is expected to be an instance of "..prototypeName)
+    assert(Class.IsInstanceOf(object, prototype), "Failed: object is expected to be an instance of "..prototypeName)
 end
 
-function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
+function T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
     assert(approachName, "no approachName provided")
     assert(IHuman, "no IHuman provided")
     assert(PersonClass, "no PersonClass provided")
     assert(EmployeeClass, "no EmployeeClass provided")
 
     -- prepare test (cont)
-    corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
+    corelog.WriteToLog("* Class.IsInstanceOf() tests (approach "..approachName..")")
 
     -- Test IHuman
-    assert(not Object.IsInstanceOf(IHuman, IHuman), "Failed: IHuman should not be any instance (even not of IHuman)")
+    assert(not Class.IsInstanceOf(IHuman, IHuman), "Failed: IHuman should not be any instance (even not of IHuman)")
     assert(IHuman.isSelfAware, "Failed: IHuman should specify isSelfAware method")
     assert(IHuman.getAge, "Failed: IHuman should specify getAge method")
     assert(IHuman:isSelfAware() == nil, "Failed: isSelfAware of IHuman should return nil (while it is "..textutils.serialise(IHuman:isSelfAware())..")")
     assert(IHuman:getAge() == nil, "Failed: getAge of IHuman return nil (while it is "..textutils.serialise(IHuman:getAge())..")")
 
     -- Test (IsInstanceOf with) PersonClass
-    assert(Object.IsInstanceOf(PersonClass, IHuman), "Failed: PersonClass should be an instance of IHuman")
+    assert(Class.IsInstanceOf(PersonClass, IHuman), "Failed: PersonClass should be an instance of IHuman")
     assert(PersonClass.isSelfAware, "Failed: PersonClass should inherit isSelfAware from IHuman")
     assert(PersonClass.getAge, "Failed: PersonClass should inherit getAge from IHuman")
 
@@ -59,17 +59,17 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     local age1 = 16
     local name1 = "Alice"
     local personObj = PersonClass:newInstance(age1, name1) assert(personObj, "Failed creating personObj")
-    assert(Object.IsInstanceOf(personObj, IHuman), "Failed: personObj should be an instance of IHuman")
-    assert(Object.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
-    assert(not Object.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
+    assert(Class.IsInstanceOf(personObj, IHuman), "Failed: personObj should be an instance of IHuman")
+    assert(Class.IsInstanceOf(personObj, PersonClass), "Failed: personObj should be an instance of PersonClass")
+    assert(not Class.IsInstanceOf(personObj, EmployeeClass), "Failed: personObj should not be an instance of EmployeeClass")
     assert(personObj.isSelfAware, "Failed: personObj should inherit isSelfAware from PersonClass")
     assert(personObj.getAge, "Failed: personObj should inherit getAge from PersonClass")
     assert(personObj:getAge() == age1, "Failed: getAge of personObj should return "..age1.." (while it is "..textutils.serialise(personObj:getAge())..")")
     assert(personObj.name == name1, "Failed: name of personObj should be "..name1.." (while it is "..textutils.serialise(personObj.name)..")")
 
     -- Test (IsInstanceOf with) EmployeeClass
-    assert(Object.IsInstanceOf(EmployeeClass, IHuman), "Failed: EmployeeClass should be an instance of IHuman")
-    assert(Object.IsInstanceOf(EmployeeClass, PersonClass), "Failed: EmployeeClass should be an instance of PersonClass")
+    assert(Class.IsInstanceOf(EmployeeClass, IHuman), "Failed: EmployeeClass should be an instance of IHuman")
+    assert(Class.IsInstanceOf(EmployeeClass, PersonClass), "Failed: EmployeeClass should be an instance of PersonClass")
     assert(EmployeeClass.isSelfAware, "Failed: EmployeeClass should inherit isSelfAware from PersonClass")
     assert(EmployeeClass.getAge, "Failed: EmployeeClass should inherit getAge from PersonClass")
 
@@ -78,9 +78,9 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     local name2 = "Bob"
     local employeeId1 = 123
     local employeeObj = EmployeeClass:newInstance(age2, name2, employeeId1) assert(employeeObj, "Failed creating employeeObj")
-    assert(Object.IsInstanceOf(employeeObj, IHuman), "Failed: employeeObj should be an instance of IHuman")
-    assert(Object.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
-    assert(Object.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
+    assert(Class.IsInstanceOf(employeeObj, IHuman), "Failed: employeeObj should be an instance of IHuman")
+    assert(Class.IsInstanceOf(employeeObj, PersonClass), "Failed: employeeObj should be an instance of PersonClass")
+    assert(Class.IsInstanceOf(employeeObj, EmployeeClass), "Failed: employeeObj should be an instance of EmployeeClass")
     assert(employeeObj.isSelfAware, "Failed: employeeObj should inherit isSelfAware from EmployeeClass")
     assert(employeeObj.getAge, "Failed: employeeObj should inherit getAge from EmployeeClass")
     assert(employeeObj:getAge() == age2, "Failed: getAge of employeeObj should return "..age2.." (while it is "..textutils.serialise(employeeObj:getAge())..")")
@@ -90,7 +90,7 @@ function T_Object.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeCla
     -- cleanup test
 end
 
-function T_Object.T_IsInstanceOf_A()
+function T_Class.T_IsInstanceOf_A()
     --[[
         *** Approach A ***
     ]]
@@ -145,12 +145,12 @@ function T_Object.T_IsInstanceOf_A()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("A", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf("A", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
 
-function T_Object.T_IsInstanceOf_B()
+function T_Class.T_IsInstanceOf_B()
     --[[
         *** Approach B ***
 
@@ -210,12 +210,12 @@ function T_Object.T_IsInstanceOf_B()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("B", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf("B", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
 
-function T_Object.T_IsInstanceOf_C()
+function T_Class.T_IsInstanceOf_C()
     --[[
         *** Approach C ***`
 
@@ -272,12 +272,12 @@ function T_Object.T_IsInstanceOf_C()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("C", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf("C", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
 
-function T_Object.T_IsInstanceOf_D()
+function T_Class.T_IsInstanceOf_D()
     --[[
         *** Approach D ***
 
@@ -352,7 +352,7 @@ function T_Object.T_IsInstanceOf_D()
     end
 
     -- Test IsInstanceOf
-    T_Object.at_IsInstanceOf("D", IHuman, PersonClass, EmployeeClass)
+    T_Class.at_IsInstanceOf("D", IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -461,12 +461,12 @@ function MetaClass.NewClass(...)
     return class
 end
 
-function T_Object.T_IsInstanceOf_Mixin_ccwp()
+function T_Class.T_IsInstanceOf_Mixin_ccwp()
     --[[
     ]]
 
     local approachName = "Mixin CCWP"
-    corelog.WriteToLog("* Object.IsInstanceOf() tests (approach "..approachName..")")
+    corelog.WriteToLog("* Class.IsInstanceOf() tests (approach "..approachName..")")
 
     -- IObj definition
     corelog.WriteToLog("->define IObj")
@@ -605,4 +605,4 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
     corelog.WriteToLog("ok")
 end
 
-return T_Object
+return T_Class

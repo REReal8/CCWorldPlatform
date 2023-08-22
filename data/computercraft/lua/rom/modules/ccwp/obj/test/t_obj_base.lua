@@ -3,7 +3,7 @@ local T_ObjBase = {}
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_IObj = require "test.t_i_obj"
 
 function T_ObjBase.T_All()
@@ -67,7 +67,7 @@ function T_ObjBase.T_IObj_All()
     otherObj._aNormalTable._aSubIObj._aSubStr = "another sub string"
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
@@ -76,7 +76,7 @@ function T_ObjBase.T_IsInstanceOf_IObj()
     local obj = T_ObjBase.CreateTestObj()
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
 end
 
 function T_ObjBase.T_getClassName()

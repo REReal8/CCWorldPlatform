@@ -6,7 +6,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local ItemTable = require "obj_item_table"
 
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_IObj = require "test.t_i_obj"
 
 function T_ItemTable.T_All()
@@ -82,8 +82,8 @@ function T_ItemTable.T_IObj_All()
     local otherObj = T_ItemTable.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
-    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 

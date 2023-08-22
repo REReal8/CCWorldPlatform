@@ -16,7 +16,7 @@ local Host = require "obj_host"
 local MObjHost = require "eobj_mobj_host"
 local enterprise_projects = require "enterprise_projects"
 
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_IObj = require "test.t_i_obj"
 
 local t_turtle = require "test.t_turtle"
@@ -98,9 +98,9 @@ function T_MObjHost.T_IObj_All()
     local otherObj = T_MObjHost.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
-    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
-    T_Object.pt_IsInstanceOf(testClassName, obj, "Host", Host)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "Host", Host)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 

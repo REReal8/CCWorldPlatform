@@ -259,7 +259,7 @@ function ExecuteObjTest(t)
 	-- forward call with options
 	local options	= {
 		{key = "m", desc = "ModuleRegistry", 	func = ExecuteObjTest, param = {filename = "T_ModuleRegistry"}},
-		{key = "1", desc = "Object", 			func = ExecuteObjTest, param = {filename = "T_Object"}},
+		{key = "1", desc = "Class", 			func = ExecuteObjTest, param = {filename = "T_Class"}},
 		{key = "f", desc = "ObjectFactory", 	func = ExecuteObjTest, param = {filename = "T_ObjectFactory"}},
 		{key = "2", desc = "ObjBase", 			func = ExecuteObjTest, param = {filename = "T_ObjBase"}},
 		{key = "a", desc = "ObjArray", 			func = ExecuteObjTest, param = {filename = "T_ObjArray"}},

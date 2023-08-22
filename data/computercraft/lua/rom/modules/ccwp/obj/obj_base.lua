@@ -13,7 +13,7 @@ setmetatable(ObjBase, IObj) -- inheritance from IObj
 
 local corelog = require "corelog"
 
-local Object = require "object"
+local Class = require "object"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -58,8 +58,8 @@ function ObjBase:isTypeOf(obj)
         Method that returns if an object 'obj' is of type of this class.
     ]]
 
-    -- ToDo: investigate if we can simply this using Object.IsInstanceOf, e.g.
---    return Object.IsInstanceOf(obj, self)
+    -- ToDo: investigate if we can simply this using Class.IsInstanceOf, e.g.
+--    return Class.IsInstanceOf(obj, self)
 
     local mt = getmetatable(obj)
     while mt do
@@ -96,7 +96,7 @@ local function tablesEqual(table1, table2)
             -- check table
             if type(fieldValue) == "table" then
                 -- is field nested IObj?
-                if Object.IsInstanceOf(fieldValue, IObj) then
+                if Class.IsInstanceOf(fieldValue, IObj) then
                     -- check nested IObj field equal
                     if not fieldValue:isEqual(fieldValue2) then
 --                        corelog.WriteToLog("nested obj not of type")
@@ -167,7 +167,7 @@ local function tableCopy(origTable, copyTable)
     for fieldName, fieldValue in pairs(origTable) do
         if type(fieldValue) == "table" then
             -- check if it's another IObj
-            if Object.IsInstanceOf(fieldValue, IObj) then
+            if Class.IsInstanceOf(fieldValue, IObj) then
                 -- recursively copy nested IObj
                 copyTable[fieldName] = fieldValue:copy()
             elseif IObj.ImplementsInterface(fieldValue) then

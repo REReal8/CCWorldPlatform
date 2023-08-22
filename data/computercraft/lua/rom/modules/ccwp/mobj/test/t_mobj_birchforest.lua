@@ -19,7 +19,7 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 
 local T_IInterface = require "test.t_i_interface"
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_IObj = require "test.t_i_obj"
 
 local t_turtle
@@ -139,8 +139,8 @@ function T_BirchForest.T_IObj_All()
     local otherObj = T_BirchForest.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
-    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 

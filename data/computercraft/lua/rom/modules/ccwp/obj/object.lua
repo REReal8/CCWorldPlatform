@@ -1,6 +1,6 @@
-local Object = {}
+local Class = {}
 
-function Object.IsInstanceOf(object, prototype)
+function Class.IsInstanceOf(object, prototype)
     --[[
         Function that returns if a given object is an instance of a specified (proto)type (class or interface).
     ]]
@@ -16,4 +16,4 @@ function Object.IsInstanceOf(object, prototype)
     return false
 end
 
-return Object
+return Class

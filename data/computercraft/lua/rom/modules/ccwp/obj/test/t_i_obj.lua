@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
-local Object = require "object"
+local Class = require "object"
 local IObj = require "i_obj"
 
 function T_IObj.pt_all(className, obj, otherObj)
@@ -90,7 +90,7 @@ local function pt_isNotEqual_tableField(origObj, origTable, otherObj, otherTable
         corelog.WriteToLog(indent.."->test Obj's with different field "..fieldName.." are not equal")
         -- check for table
         if type(fieldValue) == "table" then
-            if Object.IsInstanceOf(fieldValue, IObj) then
+            if Class.IsInstanceOf(fieldValue, IObj) then
 --                corelog.WriteToLog(indent.."type=IObj")
                 local anotherFieldValue = "a string instead of an IObj"
                 -- note: the actual class of the IObj field should have it's own isEqual test so we only need to test here it's inequality with something else (a string in this case)

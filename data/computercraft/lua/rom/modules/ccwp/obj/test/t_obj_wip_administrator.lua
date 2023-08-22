@@ -12,7 +12,7 @@ local ObjTable = require "obj_table"
 local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
 
-local T_Object = require "test.t_object"
+local T_Class = require "test.t_object"
 local T_IObj = require "test.t_i_obj"
 local T_WIPQueue = require "test.t_obj_wip_queue"
 
@@ -96,8 +96,8 @@ function T_WIPAdministrator.T_IObj_All()
     local otherObj = T_WIPAdministrator.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
-    T_Object.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
-    T_Object.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
