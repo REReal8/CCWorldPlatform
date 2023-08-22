@@ -8,9 +8,9 @@ function T_Class.T_All()
     -- Class methods
     T_Class.T_IsInstanceOf_Simple()
     T_Class.T_IsInstanceOf_initAndNewInstance()
-    T_Class.T_IsInstanceOf_NewClass()
-    T_Class.T_IsInstanceOf_newInstance()
-    T_Class.T_IsInstanceOf_ccwp()
+    T_Class.T_NewClass()
+    T_Class.T_newInstance()
+    T_Class.T_OnCCWPClasses()
 end
 
 --     ____  _     _           _
@@ -34,14 +34,10 @@ function T_Class.pt_IsInstanceOf(objectName, object, className, class)
     assert(Class.IsInstanceOf(object, class), "Failed: "..objectName.." is expected to be an instance of "..className)
 end
 
-function T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
-    assert(approachName, "no approachName provided")
+local function testSequence(IHuman, PersonClass, EmployeeClass)
     assert(IHuman, "no IHuman provided")
     assert(PersonClass, "no PersonClass provided")
     assert(EmployeeClass, "no EmployeeClass provided")
-
-    -- prepare test (cont)
-    corelog.WriteToLog("* Class.IsInstanceOf() tests ("..approachName..")")
 
     -- Test IHuman
     assert(not Class.IsInstanceOf(IHuman, IHuman), "Failed: IHuman should not be any instance (even not of IHuman)")
@@ -95,7 +91,7 @@ function T_Class.T_IsInstanceOf_Simple()
         Test with a simple inheritance approach.
     ]]
 
-    local approachName = "simple"
+    corelog.WriteToLog("* Class.IsInstanceOf() tests (simple classes)")
 
     -- prepare test: Define a simple interface
     local IHuman = {}
@@ -146,8 +142,8 @@ function T_Class.T_IsInstanceOf_Simple()
         return instance
     end
 
-    -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
+    -- Perform test sequence
+    testSequence(IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
@@ -159,7 +155,7 @@ function T_Class.T_IsInstanceOf_initAndNewInstance()
         -   the newInstance method for inheriting from a super class (in EmployeeClass)
     ]]
 
-    local approachName = "_init"
+    corelog.WriteToLog("* Class.IsInstanceOf() tests (_init & nested newInstance)")
 
     -- prepare test: Define a simple interface
     local IHuman = {}
@@ -208,18 +204,18 @@ function T_Class.T_IsInstanceOf_initAndNewInstance()
         self.employeeId = employeeId
     end
 
-    -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
+    -- Perform test sequence
+    testSequence(IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_NewClass()
+function T_Class.T_NewClass()
     --[[
         Test approach using Class.NewClass
     ]]
 
-    local approachName = "NewClass"
+    corelog.WriteToLog("* Class.NewClass() tests")
 
     -- Define an interface IHuman
     local IHuman = {}
@@ -267,18 +263,18 @@ function T_Class.T_IsInstanceOf_NewClass()
         self.employeeId = employeeId
     end
 
-    -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
+    -- Perform test sequence
+    testSequence(IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_newInstance()
+function T_Class.T_newInstance()
     --[[
         Test approach using Class.newInstance
     ]]
 
-    local approachName = "newInstance"
+    corelog.WriteToLog("* Class:newInstance() tests")
 
     -- Define an interface IHuman
     local IHuman = {}
@@ -310,19 +306,18 @@ function T_Class.T_IsInstanceOf_newInstance()
         self.employeeId = employeeId
     end
 
-    -- Test IsInstanceOf
-    T_Class.at_IsInstanceOf(approachName, IHuman, PersonClass, EmployeeClass)
+    -- Perform test sequence
+    testSequence(IHuman, PersonClass, EmployeeClass)
 
     -- cleanup test
 end
 
-function T_Class.T_IsInstanceOf_ccwp()
+function T_Class.T_OnCCWPClasses()
     --[[
-        Test approach using mimic CCWP classes inline.
+        Test approach using dummy CCWP classes inline.
     ]]
 
-    local approachName = "CCWP"
-    corelog.WriteToLog("* Class.IsInstanceOf() tests ("..approachName..")")
+    corelog.WriteToLog("* Class all tests using some dummy CCWP classes")
 
     -- IObj definition
     corelog.WriteToLog("->define IObj")
