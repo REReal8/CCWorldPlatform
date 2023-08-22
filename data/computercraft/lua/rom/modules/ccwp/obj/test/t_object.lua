@@ -282,12 +282,12 @@ function T_Object.T_IsInstanceOf_D()
         *** Approach D ***
 
         This approach uses relative to approach C:
-        -   Introduce and use meta class Class
+        -   Introduce and use meta class MetaClass
     ]]
 
-    -- Define functions for a meta class Class
-    local Class = {}
-    function Class.NewClass(...)
+    -- Define functions for a meta class MetaClass
+    local MetaClass = {}
+    function MetaClass.NewClass(...)
         --[[
             Define a new class (?? or even type). Optional arguments are the (proto)types the class should inherit from.
         ]]
@@ -315,7 +315,7 @@ function T_Object.T_IsInstanceOf_D()
     end
 
     -- Define a class "PersonClass" inheriting from IHuman
-    local PersonClass = Class.NewClass(IHuman) -- Make PersonClass inherit from IHuman
+    local PersonClass = MetaClass.NewClass(IHuman) -- Make PersonClass inherit from IHuman
 
     function PersonClass:newInstance(...)
         -- set instance class info
@@ -343,7 +343,7 @@ function T_Object.T_IsInstanceOf_D()
     end
 
     -- Define a class "EmployeeClass" inheriting from PersonClass
-    local EmployeeClass = Class.NewClass(PersonClass) -- Make EmployeeClass inherit from both PersonClass
+    local EmployeeClass = MetaClass.NewClass(PersonClass) -- Make EmployeeClass inherit from both PersonClass
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
@@ -357,10 +357,10 @@ function T_Object.T_IsInstanceOf_D()
     -- cleanup test
 end
 
--- Define class Class
-local Class = {}
+-- Define class MetaClass
+local MetaClass = {}
 
-function Class:newInstance(...)
+function MetaClass:newInstance(...)
     --[[
         Function that creates and returns new instance from the calling class (i.e. self).
 
@@ -383,7 +383,7 @@ function Class:newInstance(...)
     return instance
 end
 
-function Class.IsInstanceOf(object, class)
+function MetaClass.IsInstanceOf(object, class)
     --[[
         Function that returns if a given object is an instance of a specified class (or interface).
     ]]
@@ -397,7 +397,7 @@ function Class.IsInstanceOf(object, class)
                 if mixinClass == class then
                     return true
                 else
-                    if Class.IsInstanceOf(mixinClass, class) == true then
+                    if MetaClass.IsInstanceOf(mixinClass, class) == true then
                         return true
                     end
                 end
@@ -415,7 +415,7 @@ function Class.IsInstanceOf(object, class)
     return false
 end
 
-function Class.NewClass(...)
+function MetaClass.NewClass(...)
     --[[
         This function creates and returns a new class that inherts behaviour from the supplied classes.
     ]]
@@ -492,7 +492,7 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
 
     -- ObjBase definition
     corelog.WriteToLog("->define ObjBase")
-    ObjBase = Class.NewClass(Class, IObj)
+    ObjBase = MetaClass.NewClass(MetaClass, IObj)
 
     function ObjBase:getClassName()
         return "ObjBase"
@@ -512,9 +512,9 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
 
     -- ObjBase tests
     corelog.WriteToLog("->test ObjBase")
-    assert(Class.IsInstanceOf(ObjBase, Class), "Failed: ObjBase should be an instance of Class")
-    assert(Class.IsInstanceOf(ObjBase, IObj), "Failed: ObjBase should be an instance of IObj")
-    assert(ObjBase.newInstance, "Failed: ObjBase should inherit newInstance from Class")
+    assert(MetaClass.IsInstanceOf(ObjBase, MetaClass), "Failed: ObjBase should be an instance of MetaClass")
+    assert(MetaClass.IsInstanceOf(ObjBase, IObj), "Failed: ObjBase should be an instance of IObj")
+    assert(ObjBase.newInstance, "Failed: ObjBase should inherit newInstance from MetaClass")
     assert(ObjBase.getClassName, "Failed: ObjBase should inherit getClassName from IObj")
     assert(ObjBase.isTypeOf, "Failed: ObjBase should inherit isTypeOf from IObj")
     assert(ObjBase.isEqual, "Failed: ObjBase should inherit isEqual from IObj")
@@ -522,7 +522,7 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
 
     -- Location definition
     corelog.WriteToLog("->define Location")
-    Location = Class.NewClass(ObjBase)
+    Location = MetaClass.NewClass(ObjBase)
 
     function Location:_init(x, y, z, dx, dy)
         self._x = x
@@ -544,14 +544,14 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
     end
 
     -- Location test
-    assert(Class.IsInstanceOf(Location, ObjBase), "Failed: Location should be an instance of ObjBase")
-    assert(Class.IsInstanceOf(Location, Class), "Failed: Location should be an instance of Class")
-    assert(Class.IsInstanceOf(Location, IObj), "Failed: Location should be an instance of IObj")
-    assert(Location.newInstance, "Failed: Location should inherit newInstance from Class")
+    assert(MetaClass.IsInstanceOf(Location, ObjBase), "Failed: Location should be an instance of ObjBase")
+    assert(MetaClass.IsInstanceOf(Location, MetaClass), "Failed: Location should be an instance of MetaClass")
+    assert(MetaClass.IsInstanceOf(Location, IObj), "Failed: Location should be an instance of IObj")
+    assert(Location.newInstance, "Failed: Location should inherit newInstance from MetaClass")
     corelog.WriteToLog("->test Location")
     local loc1 = Location:newInstance(10, 20, 10, 0, 1)
-    assert(Class.IsInstanceOf(loc1, Location), "Failed: loc1 should be an instance of Location")
-    assert(Class.IsInstanceOf(loc1, IObj), "Failed: loc1 should be an instance of Location")
+    assert(MetaClass.IsInstanceOf(loc1, Location), "Failed: loc1 should be an instance of Location")
+    assert(MetaClass.IsInstanceOf(loc1, IObj), "Failed: loc1 should be an instance of Location")
     local loc2 = Location:newInstance(20, 20, 10, 0, 1)
     local blockDistance = loc1:blockDistanceTo(loc2)
     assert(blockDistance == 10, "Failed: blockDistance should be 10 but was "..blockDistance)
@@ -565,7 +565,7 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
 
     -- IItemSupplier test
     corelog.WriteToLog("->test IItemSupplier")
-    assert(not Class.IsInstanceOf(ObjBase, IItemSupplier), "Failed: ObjBase should not be an instance of IItemSupplier") -- tests not an instance returns false
+    assert(not MetaClass.IsInstanceOf(ObjBase, IItemSupplier), "Failed: ObjBase should not be an instance of IItemSupplier") -- tests not an instance returns false
 
     -- IItemDepot definition
     corelog.WriteToLog("->define IItemDepot")
@@ -586,17 +586,17 @@ function T_Object.T_IsInstanceOf_Mixin_ccwp()
 
     -- Chest definition
     corelog.WriteToLog("->define Chest")
-    Chest = Class.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
+    Chest = MetaClass.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
 
     function Chest:provideItemsTo_AOSrv()
     end
 
     -- Chest test
     corelog.WriteToLog("->test Chest")
-    assert(Class.IsInstanceOf(Chest, ObjBase), "Failed: Chest should be an instance of ObjBase")
-    assert(Class.IsInstanceOf(Chest, IItemSupplier), "Failed: Chest should be an instance of IItemSupplier")
-    assert(Class.IsInstanceOf(Chest, IItemDepot), "Failed: Chest should be an instance of IItemDepot")
-    assert(Class.IsInstanceOf(Chest, IMObj), "Failed: Chest should be an instance of IMObj")
+    assert(MetaClass.IsInstanceOf(Chest, ObjBase), "Failed: Chest should be an instance of ObjBase")
+    assert(MetaClass.IsInstanceOf(Chest, IItemSupplier), "Failed: Chest should be an instance of IItemSupplier")
+    assert(MetaClass.IsInstanceOf(Chest, IItemDepot), "Failed: Chest should be an instance of IItemDepot")
+    assert(MetaClass.IsInstanceOf(Chest, IMObj), "Failed: Chest should be an instance of IMObj")
     assert(Chest.provideItemsTo_AOSrv, "Failed: Chest should inherit provideItemsTo_AOSrv from IItemSupplier")
     assert(Chest.storeItemsFrom_AOSrv, "Failed: Chest should inherit storeItemsFrom_AOSrv from IItemDepot")
     assert(Chest.getBuildBlueprint, "Failed: Chest should inherit getBuildBlueprint from IMObj")
