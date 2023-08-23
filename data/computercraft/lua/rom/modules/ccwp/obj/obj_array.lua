@@ -100,9 +100,6 @@ function ObjArray:transformObjectTables(suppressWarning)
     if not objClass then corelog.Error("ObjArray:transformObjectTables(): failed obtaining objClass "..objClassName) return end
     if Class.IsInstanceOf(objClass, IObj) then
         -- ok
-    elseif IObj.ImplementsInterface(objClass) then
-        -- ToDo: covert all classes and remove this
-        corelog.Warning("ObjArray:transformObjectTables(): using old style IObj objClass "..objClassName.." => consider converting it to a proper IObj")
     else
         corelog.Error("ObjArray:transformObjectTables(): objClass "..objClassName.." does not implement IObj interface") return
     end
@@ -114,10 +111,6 @@ function ObjArray:transformObjectTables(suppressWarning)
         local objectTableClassName = nil
         if Class.IsInstanceOf(objectTable, IObj) then
             objectTableClassName = objectTable:getClassName()
-        elseif IObj.ImplementsInterface(objectTable) then
-            -- ToDo: covert all classes and remove this
-            objectTableClassName = objectTable:getClassName()
-            corelog.Warning("ObjArray:transformObjectTables(): using old style IObj objectTableClassName "..objectTableClassName.." => consider converting it to a proper IObj")
         end
 
         -- determine obj

@@ -75,14 +75,6 @@ local function tablesEqual(table1, table2)
 --                        corelog.WriteToLog("nested obj not of type")
                         return false
                     end
-                elseif IObj.ImplementsInterface(fieldValue) then
-                    -- ToDo: remove when all old style IObj's have been removed!
-                    corelog.Warning("ObjBase:tablesEqual comparing old style IObj field "..fieldName.." => consider converting class "..fieldValue:getClassName().." to a proper IObj")
-                    -- check nested IObj field equal
-                    if not fieldValue:isEqual(fieldValue2) then
---                        corelog.WriteToLog("nested obj not of type")
-                        return false
-                    end
                 else
                     -- check nested tables equal
                     if not tablesEqual(fieldValue, fieldValue2) then
@@ -142,11 +134,6 @@ local function tableCopy(origTable, copyTable)
             -- check if it's another IObj
             if Class.IsInstanceOf(fieldValue, IObj) then
                 -- recursively copy nested IObj
-                copyTable[fieldName] = fieldValue:copy()
-            elseif IObj.ImplementsInterface(fieldValue) then
-                -- ToDo: remove when all old style IObj's have been removed!
-                -- recursively copy nested (old style) IObj
-                corelog.Warning("ObjBase:tableCopy copying old style IObj field "..fieldName.." => consider converting class "..fieldValue:getClassName().." to a proper IObj")
                 copyTable[fieldName] = fieldValue:copy()
             else
                 -- recursively copy nested plain table
