@@ -150,7 +150,7 @@ function MObjHost:hostMObj_SSrv(...)
     -- get class
     local class = objectFactory:getClass(className)
     if not class then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." not found in objectFactory") return {success = false} end
-    if not IMObj.ImplementsInterface(class) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." does not (fully) implement IMObj interface") return {success = false} end
+    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." is not an IMObj") return {success = false} end
 
     -- construct new MObj
     local mobj = class:construct(constructParameters)
@@ -199,7 +199,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaing an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getDismantleBlueprint()
@@ -274,7 +274,7 @@ function MObjHost:releaseMObj_SSrv(...)
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaing an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
 
     -- destuct MObj
     local success = mobj:destruct()
