@@ -3,22 +3,19 @@ local Class = require "class"
 local Host = require "obj_host"
 local enterprise_gathering = Class.NewClass(Host)
 
-local coreutils = require "coreutils"
+--[[
+    The gathering enterprise provides services for building and using sites where materials can be gathered, like mines and on the surface.
+--]]
+
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
-local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
 
 local mobj_mine = require "mobj_mine"
 
-local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_construction = require "enterprise_construction"
-
---[[
-    The gathering enterprise provides services for building and using sites where materials can be gathered, like mines and on the surface.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

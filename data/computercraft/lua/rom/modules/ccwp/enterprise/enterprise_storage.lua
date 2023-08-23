@@ -3,6 +3,10 @@ local Class = require "class"
 local MObjHost = require "eobj_mobj_host"
 local enterprise_storage = Class.NewClass(MObjHost)
 
+--[[
+    The enterprise_storage is a MObjHost. It hosts storage MObj's (e.g. Silo).
+--]]
+
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"

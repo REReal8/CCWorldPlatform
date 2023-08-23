@@ -3,6 +3,10 @@ local Class = require "class"
 local Host = require "obj_host"
 local enterprise_shop = Class.NewClass(Host)
 
+--[[
+    The enterprise_shop is a Host. It hosts one ItemSupplier Shop to provide items.
+--]]
+
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
@@ -11,10 +15,6 @@ local InputChecker = require "input_checker"
 local ObjArray = require "obj_array"
 
 local Shop = require "mobj_shop"
-
---[[
-    The enterprise_shop is a Host. It hosts one ItemSupplier Shop to provide items.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

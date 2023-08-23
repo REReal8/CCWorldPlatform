@@ -3,15 +3,14 @@ local Class = require "class"
 local Host = require "obj_host"
 local enterprise_administration = Class.NewClass(Host)
 
-local corelog = require "corelog"
-
-local ObjTable = require "obj_table"
-
-local WIPAdministrator = require "obj_wip_administrator"
-
 --[[
     The enterprise_administration is a Host. It hosts administration administrators.
 --]]
+
+local corelog = require "corelog"
+
+local ObjTable = require "obj_table"
+local WIPAdministrator = require "obj_wip_administrator"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

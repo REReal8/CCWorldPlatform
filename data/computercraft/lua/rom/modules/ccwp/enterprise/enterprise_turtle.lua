@@ -3,6 +3,13 @@ local Class = require "class"
 local Host = require "obj_host"
 local enterprise_turtle = Class.NewClass(Host)
 
+--[[
+    The enterprise_turtle provides services related to turtles.
+
+    Furthermore it provides the following additional services
+        GetItemsLocator_SSrv   - provide the URL of items in a turtle
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
@@ -12,7 +19,6 @@ local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
-
 local Location = require "obj_location"
 
 local Turtle = require "mobj_turtle"
@@ -20,13 +26,6 @@ local Turtle = require "mobj_turtle"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
-
---[[
-    The enterprise_turtle provides services related to turtles.
-
-    Furthermore it provides the following additional services
-        GetItemsLocator_SSrv   - provide the URL of items in a turtle
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

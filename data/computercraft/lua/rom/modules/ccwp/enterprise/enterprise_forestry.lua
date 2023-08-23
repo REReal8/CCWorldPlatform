@@ -3,6 +3,10 @@ local Class = require "class"
 local Host = require "obj_host"
 local enterprise_forestry = Class.NewClass(Host)
 
+--[[
+    The forestry enterprise provides services for building and using forest production sites.
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
@@ -17,10 +21,6 @@ local BirchForest = require "mobj_birchforest"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_construction = require "enterprise_construction"
-
---[[
-    The forestry enterprise provides services for building and using forest production sites.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

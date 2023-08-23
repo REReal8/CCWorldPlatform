@@ -3,6 +3,12 @@ local Class = require "class"
 local Host = require "obj_host"
 local MObjHost = Class.NewClass(Host)
 
+--[[
+    The MObjHost is a Host that hosts MObj objects and provides additional services on and with these MObj's.
+
+    This class typically is used as a base class for enterprise classes.
+--]]
+
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
@@ -14,12 +20,6 @@ local IMObj = require "i_mobj"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_administration = require "enterprise_administration"
-
---[[
-    The MObjHost is a Host that hosts MObj objects and provides additional services on and with these MObj's.
-
-    This class typically is used as a base class for enterprise classes.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

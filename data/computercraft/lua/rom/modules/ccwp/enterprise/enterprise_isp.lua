@@ -1,13 +1,6 @@
+-- define module
 local enterprise_isp = {}
 local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-local MethodExecutor = require "method_executor"
-local URL = require "obj_url"
-local Host = require "obj_host"
-
-local role_fuel_worker = require "role_fuel_worker"
 
 --[[
     The Item Service Provider (ISP) is an enterprise that provides services to handle items. From the perspective of an enterprise that needs
@@ -21,6 +14,14 @@ local role_fuel_worker = require "role_fuel_worker"
         NeedsTo_TransferItems_SSrv  - returns the (fuel) needs for the transfer of items from one ItemDepot to another.
         AddItemsLocators_SSrv       - adds the items of multiple itemsLocators into one itemsLocator. The itemsLocators should have the same host/ base component.
 --]]
+
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
+local MethodExecutor = require "method_executor"
+local URL = require "obj_url"
+local Host = require "obj_host"
+
+local role_fuel_worker = require "role_fuel_worker"
 
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |

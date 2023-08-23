@@ -3,17 +3,17 @@ local Class = require "class"
 local MObjHost = require "eobj_mobj_host"
 local enterprise_chests = Class.NewClass(MObjHost)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-
 --[[
-    The enterprise_chests is a Host. It hosts Chest's (i.e. Factory's).
+    The enterprise_chests is a MObjHost. It hosts Chest's.
 
     It provides the following specific enterprise services
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

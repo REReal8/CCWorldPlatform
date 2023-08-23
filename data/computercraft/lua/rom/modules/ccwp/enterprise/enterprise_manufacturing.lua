@@ -3,6 +3,14 @@ local Class = require "class"
 local Host = require "obj_host"
 local enterprise_manufacturing = Class.NewClass(Host)
 
+--[[
+    The enterprise_manufacturing is a Host. It hosts ItemSupplier's (i.e. Factory's) that can produce items.
+
+    There are (currently) two recipe types for producing items.
+        The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
+        The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
@@ -80,14 +88,6 @@ local db = {
 function enterprise_manufacturing.GetRecipes()
     return db.recipes
 end
-
---[[
-    The enterprise_manufacturing is a Host. It hosts ItemSupplier's (i.e. Factory's) that can produce items.
-
-    There are (currently) two recipe types for producing items.
-        The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
-        The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

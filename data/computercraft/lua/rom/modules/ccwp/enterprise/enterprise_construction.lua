@@ -1,4 +1,10 @@
+-- define module
 local enterprise_construction = {}
+
+--[[
+    The construction enterprise provides services to construct structures in the physical minecraft world.
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
@@ -11,10 +17,6 @@ local role_builder = require "role_builder"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_turtle
-
---[[
-    The construction enterprise provides services to construct structures in the physical minecraft world.
---]]
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)

@@ -1,4 +1,10 @@
+-- define module
 local enterprise_energy = {}
+
+--[[
+    The enterprise_energy offers services for handling energy (fuel).
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
@@ -15,10 +21,6 @@ local db = {
     dhtRoot         = "enterprise_energy",
     dhtParameters   = "fuelParameters",
 }
-
---[[
-    The enterprise_energy offers services for handling energy (fuel).
---]]
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
