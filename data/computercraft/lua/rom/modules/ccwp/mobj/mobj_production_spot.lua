@@ -1,6 +1,7 @@
 -- define class
+local Class = require "class"
 local ObjBase = require "obj_base"
-local ProductionSpot = ObjBase:new()
+local ProductionSpot = Class.NewClass(ObjBase)
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"

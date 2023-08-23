@@ -1,6 +1,7 @@
 -- define class
+local Class = require "class"
 local ObjBase = require "obj_base"
-local Mine = ObjBase:new()
+local Mine = Class.NewClass(ObjBase)
 
 -- includes / requires
 local coreutils = require "coreutils"

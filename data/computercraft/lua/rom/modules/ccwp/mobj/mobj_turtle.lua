@@ -1,6 +1,7 @@
 -- define class
+local Class = require "class"
 local ObjBase = require "obj_base"
-local Turtle = ObjBase:new()
+local Turtle = Class.NewClass(ObjBase)
 
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"

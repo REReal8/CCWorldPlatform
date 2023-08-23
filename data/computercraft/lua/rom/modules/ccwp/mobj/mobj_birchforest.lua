@@ -1,6 +1,7 @@
 -- define class
+local Class = require "class"
 local ObjBase = require "obj_base"
-local BirchForest = ObjBase:new()
+local BirchForest = Class.NewClass(ObjBase)
 
 local corelog = require "corelog"
 
