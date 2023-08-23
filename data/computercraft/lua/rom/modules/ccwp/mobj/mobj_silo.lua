@@ -1,7 +1,8 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Silo = Class.NewClass(ObjBase)
+local IMObj = require "i_mobj"
+local Silo = Class.NewClass(ObjBase, IMObj)
 
 --[[
     The Silo mobj represents a chest in the minecraft world and provides services to operate on that Silo.

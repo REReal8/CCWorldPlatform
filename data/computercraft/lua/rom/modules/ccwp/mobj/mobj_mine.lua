@@ -1,7 +1,8 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Mine = Class.NewClass(ObjBase)
+local IMObj = require "i_mobj"
+local Mine = Class.NewClass(ObjBase, IMObj)
 
 --[[
     The following design decisions are made

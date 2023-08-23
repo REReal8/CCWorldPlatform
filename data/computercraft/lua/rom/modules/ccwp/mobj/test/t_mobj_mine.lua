@@ -10,6 +10,7 @@ local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
+local IMObj = require "i_mobj"
 local Mine = require "mobj_mine"
 
 local enterprise_storage = require "enterprise_storage"
@@ -29,6 +30,7 @@ function T_Mine.T_All()
     T_Mine.T_IObj_All()
 
     -- IMObj methods
+    T_Mine.T_IsInstanceOf_IMObj()
 --    T_Mine.T_Implements_IMObj()    -- ToDo: implement
 --    T_Mine.T_NewMine() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
@@ -118,6 +120,14 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
+
+function T_Mine.T_IsInstanceOf_IMObj()
+    -- prepare test
+    local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
+end
 
 function T_Mine.T_Implements_IMObj()
     -- prepare test

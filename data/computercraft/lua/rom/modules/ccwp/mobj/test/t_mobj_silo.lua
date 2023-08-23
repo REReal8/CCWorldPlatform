@@ -11,6 +11,7 @@ local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
+local IMObj = require "i_mobj"
 local Silo = require "mobj_silo"
 
 local enterprise_chests = require "enterprise_chests"
@@ -35,6 +36,7 @@ function T_Silo.T_All()
     T_Silo.T_IObj_All()
 
     -- IMObj methods
+    T_Silo.T_IsInstanceOf_IMObj()
     T_Silo.T_Implements_IMObj()
     T_Silo.T_destruct()
     T_Silo.T_construct()
@@ -151,6 +153,14 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
+
+function T_Silo.T_IsInstanceOf_IMObj()
+    -- prepare test
+    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
+end
 
 function T_Silo.T_Implements_IMObj()
     -- prepare test
