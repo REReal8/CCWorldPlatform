@@ -1,18 +1,18 @@
 -- define class
-local CallDef = require "obj_call_def"
-local Callback = CallDef:new()
-
-local corelog = require "corelog"
-
 local Class = require "class"
-local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
+local CallDef = require "obj_call_def"
+local Callback = Class.NewClass(CallDef)
 
 --[[
     This module implements the class Callback.
 
     A Callback defines a callback function and (minimum) callback data.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local MethodExecutor = require "method_executor"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |

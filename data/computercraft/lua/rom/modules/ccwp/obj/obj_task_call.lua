@@ -1,8 +1,7 @@
+-- define class
+local Class = require "class"
 local CallDef = require "obj_call_def"
-
-local TaskCall = CallDef:new()
-
-local MethodExecutor = require "method_executor"
+local TaskCall = Class.NewClass(CallDef)
 
 --[[
     This module implements the class TaskCall.
@@ -14,6 +13,8 @@ local MethodExecutor = require "method_executor"
     and return
         taskResult              - (table) return data of the task function
 --]]
+
+local MethodExecutor = require "method_executor"
 
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
