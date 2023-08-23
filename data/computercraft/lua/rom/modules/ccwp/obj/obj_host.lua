@@ -40,7 +40,7 @@ local URL = require "obj_url"
 function Host:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
-        Construct a Host.
+        Construct a Host instance.
 
         Parameters:
             o                           + (table, {}) table with object fields

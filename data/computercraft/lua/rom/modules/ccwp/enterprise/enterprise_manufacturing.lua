@@ -1,8 +1,7 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
-
-local enterprise_manufacturing = Host:new({
-    _hostName   = "enterprise_manufacturing",
-})
+local enterprise_manufacturing = Class.NewClass(Host)
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -89,6 +88,20 @@ end
         The crafting recipe uses the crafting production technique to produce an output item from a set of input items (ingredients).
         The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
 --]]
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_manufacturing._hostName   = "enterprise_manufacturing"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |

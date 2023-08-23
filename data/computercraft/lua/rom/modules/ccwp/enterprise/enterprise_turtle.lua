@@ -1,8 +1,7 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
-
-local enterprise_turtle = Host:new({
-    _hostName   = "enterprise_turtle",
-})
+local enterprise_turtle = Class.NewClass(Host)
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -35,6 +34,13 @@ local enterprise_energy = require "enterprise_energy"
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_turtle._hostName   = "enterprise_turtle"
 
 function enterprise_turtle:getObject(...)
     -- get & check input from description

@@ -1,8 +1,7 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
-
-local MObjHost = Host:new({
-    _hostName   = "MObjHost",
-})
+local MObjHost = Class.NewClass(Host)
 
 local corelog = require "corelog"
 
@@ -28,6 +27,13 @@ local enterprise_administration = require "enterprise_administration"
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+MObjHost._hostName   = "MObjHost"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |

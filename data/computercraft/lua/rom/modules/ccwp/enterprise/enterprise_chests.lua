@@ -1,8 +1,7 @@
+-- define class
+local Class = require "class"
 local MObjHost = require "eobj_mobj_host"
-
-local enterprise_chests = MObjHost:new({
-    _hostName   = "enterprise_chests",
-})
+local enterprise_chests = Class.NewClass(MObjHost)
 
 local corelog = require "corelog"
 
@@ -15,6 +14,20 @@ local Callback = require "obj_callback"
     It provides the following specific enterprise services
         UpdateChestRecord_ASrv  - brings the records of a chest up-to-date by fetching parameters
 --]]
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enteprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_chests._hostName = "enterprise_chests"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
