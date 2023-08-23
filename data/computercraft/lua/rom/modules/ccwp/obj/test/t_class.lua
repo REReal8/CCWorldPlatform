@@ -321,7 +321,7 @@ function T_Class.T_OnCCWPClasses()
 
     -- IObj definition
     corelog.WriteToLog("->define IObj")
-    IObj = {}
+    local IObj = {}
 
     local IInterface = require "i_interface"
 
@@ -339,7 +339,7 @@ function T_Class.T_OnCCWPClasses()
 
     -- ObjBase definition
     corelog.WriteToLog("->define ObjBase")
-    ObjBase = Class.NewClass(Class, IObj)
+    local ObjBase = Class.NewClass(Class, IObj)
 
     function ObjBase:getClassName()
         return "ObjBase"
@@ -356,7 +356,7 @@ function T_Class.T_OnCCWPClasses()
 
     -- Location definition
     corelog.WriteToLog("->define Location")
-    Location = Class.NewClass(ObjBase)
+    local Location = Class.NewClass(ObjBase)
 
     function Location:_init(x, y, z, dx, dy)
         self._x = x
@@ -392,7 +392,7 @@ function T_Class.T_OnCCWPClasses()
 
     -- IItemSupplier definition
     corelog.WriteToLog("->define IItemSupplier")
-    IItemSupplier = {}
+    local IItemSupplier = {}
 
     function IItemSupplier:provideItemsTo_AOSrv()
     end
@@ -403,14 +403,14 @@ function T_Class.T_OnCCWPClasses()
 
     -- IItemDepot definition
     corelog.WriteToLog("->define IItemDepot")
-    IItemDepot = {}
+    local IItemDepot = {}
 
     function IItemDepot:storeItemsFrom_AOSrv()
     end
 
     -- IMObj definition
     corelog.WriteToLog("->define IMObj")
-    IMObj = {}
+    local IMObj = {}
 
     function IMObj:getBuildBlueprint()
     end
@@ -420,7 +420,7 @@ function T_Class.T_OnCCWPClasses()
 
     -- Chest definition
     corelog.WriteToLog("->define Chest")
-    Chest = Class.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
+    local Chest = Class.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
 
     function Chest:provideItemsTo_AOSrv()
     end
