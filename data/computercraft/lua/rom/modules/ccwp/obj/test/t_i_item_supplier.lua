@@ -19,7 +19,7 @@ local compact = { compact = true }
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
+function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, className, constructParameters, provideItems, itemDepotLocator)
     -- prepare test (cont)
     assert(mobjHostName, "no mobjHostName provided")
     assert(className, "no className provided")

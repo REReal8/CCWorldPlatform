@@ -44,12 +44,13 @@ function T_Chest.T_All()
     T_Chest.T_construct()
 
     -- IItemSupplier methods
-    T_Chest.T_Implements_IItemSupplier()
-    T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
-    T_Chest.T_can_ProvideItems_QOSrv()
+    T_Chest.T_IItemSupplier_All()
+
+    T_Chest.T_needsTo_ProvideItemsTo_SOSrv() -- ToDo: generalise
+    T_Chest.T_can_ProvideItems_QOSrv()  -- ToDo: generalise
 
     -- IItemDepot methods
-    T_Chest.T_Implements_IItemDepot()
+    T_Chest.T_IItemDepot_All()
 end
 
 local testClassName = "Chest"
@@ -239,11 +240,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Chest.T_Implements_IItemSupplier()
+function T_Chest.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
@@ -262,7 +264,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     }
 
     -- test
-    T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
@@ -280,7 +282,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
     }
 
     -- test
-    T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
@@ -340,11 +342,12 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Chest.T_Implements_IItemDepot()
+function T_Chest.T_IItemDepot_All()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
