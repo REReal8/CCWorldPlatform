@@ -3,17 +3,6 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Host = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-local coredht = require "coredht"
-
-local InputChecker = require "input_checker"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
-local ObjectFactory = require "object_factory"
-local objectFactory = ObjectFactory:getInstance()
-
-local URL = require "obj_url"
-
 --[[
     This module implements the Host class.
 
@@ -29,6 +18,16 @@ local URL = require "obj_url"
 
     Special kind of Resource's are objects they can also be "hosted" when the className and an optional objectId are available.
 --]]
+
+local corelog = require "corelog"
+local coredht = require "coredht"
+
+local InputChecker = require "input_checker"
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
+local URL = require "obj_url"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

@@ -1,3 +1,4 @@
+-- define interface
 local IObj = {
 }
 

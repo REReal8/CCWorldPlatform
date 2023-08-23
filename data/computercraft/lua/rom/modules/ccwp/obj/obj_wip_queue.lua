@@ -3,10 +3,6 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local WIPQueue = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the WIPQueue class.
 
@@ -16,6 +12,10 @@ local InputChecker = require "input_checker"
 
     It is typically used in combination with the WIPAdministrator.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

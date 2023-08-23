@@ -1,3 +1,4 @@
+-- define module
 local ObjectFactory = {
     classes = {},
 }

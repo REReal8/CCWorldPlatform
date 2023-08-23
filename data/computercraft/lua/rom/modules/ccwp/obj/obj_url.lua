@@ -3,15 +3,15 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local URL = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class URL.
 
     A URL object represents an CCWorldPlatform URL. See https://github.com/REReal8/CCWorldPlatform/wiki/Uniform-Resource-Locators for more on URL's.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

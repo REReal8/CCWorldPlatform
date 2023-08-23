@@ -3,16 +3,15 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Location = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local Class = require "class"
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class Location.
 
     A Location is a position and a direction in the minecraft world.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

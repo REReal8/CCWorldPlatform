@@ -3,20 +3,18 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local ObjTable = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
-local Class = require "class"
-local IObj = require "i_obj"
-local ObjectFactory = require "object_factory"
-local objectFactory = ObjectFactory:getInstance()
-
 --[[
     This module implements the class ObjTable.
 
     A ObjTable is a key-value pair table of Obj's of the same 'class'. The class should implement the IObj interface.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local IObj = require "i_obj"
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
