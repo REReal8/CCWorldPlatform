@@ -36,7 +36,7 @@ function T_Mine.T_All()
 --    T_Mine.T_NewMine() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
     -- IItemSupplier methods
-    T_Mine.T_Implements_IItemSupplier()
+    T_Mine.T_IItemSupplier_All()
 --    T_Mine.T_ProvideMultipleItems() -- note: Mine:provideItemsTo_AOSrv not yet fully implemented, hence disabled
 end
 
@@ -158,11 +158,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Mine.T_Implements_IItemSupplier()
+function T_Mine.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 

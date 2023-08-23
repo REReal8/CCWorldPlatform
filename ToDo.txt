@@ -53,7 +53,7 @@ R  Generalise test functions into "templates" to reduce duplication
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
    -  mobj_factory
-   R  mobj_mine                                                                                                         (....)
+   R  mobj_mine                                                                                                         (done)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
