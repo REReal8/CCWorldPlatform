@@ -1,4 +1,11 @@
+-- define role
 local role_alchemist = {}
+
+-- ToDo: add proper module description
+--[[
+    This role ...
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
@@ -6,10 +13,12 @@ local coreinventory = require "coreinventory"
 
 local enterprise_turtle
 
--- the table that stores the data
-local db = {
-    job         = "alchemist",
-}
+--    _______        _                   __  __      _        _____        _
+--   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
+--      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
+--      | |/ _` / __| |/ / __|  / _ \/\ | |\/| |/ _ \ __/ _` | |  | |/ _` | __/ _` |
+--      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
+--      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
 function role_alchemist.Craft_MetaData(craftData)
     --[[
