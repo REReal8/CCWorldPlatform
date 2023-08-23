@@ -45,7 +45,7 @@ R  Generalise test functions into "templates" to reduce duplication
    R  mobj_chest                                                                                                        (done)
    -  mobj_factory
    R  mobj_mine                                                                                                         (....)
-   R  mobj_silo                                                                                                         (....)
+   R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
 
@@ -54,13 +54,13 @@ R  Generalise test functions into "templates" to reduce duplication
    R  mobj_chest                                                                                                        (done)
    -  mobj_factory
    R  mobj_mine                                                                                                         (....)
-   R  mobj_silo                                                                                                         (....)
+   R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
 
 -  ensure all ItemDepot's implement ItemDepot interface
    R  mobj_chest                                                                                                        (done)
-   -  mobj_silo                                                                                                         (....)
+   R  mobj_silo                                                                                                         (done)
    -  mobj_turtle
 
 R  Use generalised test functions for MObj's

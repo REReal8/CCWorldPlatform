@@ -44,10 +44,10 @@ function T_Silo.T_All()
     T_Silo.T_construct()
 
     -- IItemSupplier methods
-    T_Silo.T_Implements_IItemSupplier()
+    T_Silo.T_IItemSupplier_All()
 
     -- IItemDepot methods
-    T_Silo.T_Implements_IItemDepot()
+    T_Silo.T_IItemDepot_All()
 end
 
 local testClassName = "Silo"
@@ -240,11 +240,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Silo.T_Implements_IItemSupplier()
+function T_Silo.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
@@ -315,11 +316,12 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Silo.T_Implements_IItemDepot()
+function T_Silo.T_IItemDepot_All()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
