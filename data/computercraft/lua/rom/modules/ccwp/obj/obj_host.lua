@@ -6,7 +6,6 @@ local Host = Class.NewClass(ObjBase)
 local corelog = require "corelog"
 local coredht = require "coredht"
 
-local Class = require "class"
 local InputChecker = require "input_checker"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
