@@ -31,6 +31,20 @@ R  Introduce multiple inheritance                                               
       R  Creating new instances (objects) of a Class.                                                                   (done)
    R  Use Class.NewClass for creating all classes                                                                       (done)
 
+-  ensure all ItemSupplier's inherit IItemSupplier interface
+   -  mobj_birchforest
+   R  mobj_chest                                                                                                        (done)
+   -  mobj_factory
+   R  mobj_mine                                                                                                         (done)
+   R  mobj_silo                                                                                                         (done)
+   -  mobj_shop
+   -  mobj_turtle
+
+-  ensure all ItemDepot's inherit ItemDepot interface
+   R  mobj_chest                                                                                                        (done)
+   R  mobj_silo                                                                                                         (done)
+   -  mobj_turtle
+
 R  Generalise test functions into "templates" to reduce duplication
    R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
    R  generalise (I)Obj test functions                                                                                  (done)
@@ -47,20 +61,6 @@ R  Generalise test functions into "templates" to reduce duplication
    R  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
-   -  mobj_turtle
-
--  ensure all ItemSupplier's implement IItemSupplier interface
-   -  mobj_birchforest
-   R  mobj_chest                                                                                                        (done)
-   -  mobj_factory
-   R  mobj_mine                                                                                                         (done)
-   R  mobj_silo                                                                                                         (done)
-   -  mobj_shop
-   -  mobj_turtle
-
--  ensure all ItemDepot's implement ItemDepot interface
-   R  mobj_chest                                                                                                        (done)
-   R  mobj_silo                                                                                                         (done)
    -  mobj_turtle
 
 R  Use generalised test functions for MObj's
