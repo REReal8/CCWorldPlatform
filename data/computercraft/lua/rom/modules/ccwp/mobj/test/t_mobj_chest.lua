@@ -13,6 +13,7 @@ local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local URL = require "obj_url"
 
+local IMObj = require "i_mobj"
 local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
@@ -35,17 +36,18 @@ function T_Chest.T_All()
     T_Chest.T_IObj_All()
 
     -- IMObj methods
-    T_Chest.T_ImplementsIMObj()
+    T_Chest.T_IsInstanceOf_IMObj()
+    T_Chest.T_Implements_IMObj()
     T_Chest.T_destruct()
     T_Chest.T_construct()
 
     -- IItemSupplier methods
-    T_Chest.T_ImplementsIItemSupplier()
+    T_Chest.T_Implements_IItemSupplier()
     T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     T_Chest.T_can_ProvideItems_QOSrv()
 
     -- IItemDepot methods
-    T_Chest.T_ImplementsIItemDepot()
+    T_Chest.T_Implements_IItemDepot()
 end
 
 local testClassName = "Chest"
@@ -144,7 +146,15 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Chest.T_ImplementsIMObj()
+function T_Chest.T_IsInstanceOf_IMObj()
+    -- prepare test
+    local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
+end
+
+function T_Chest.T_Implements_IMObj()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
@@ -227,7 +237,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Chest.T_ImplementsIItemSupplier()
+function T_Chest.T_Implements_IItemSupplier()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
@@ -328,7 +338,7 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Chest.T_ImplementsIItemDepot()
+function T_Chest.T_Implements_IItemDepot()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
