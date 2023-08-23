@@ -1,7 +1,7 @@
 -- define class
-local ObjBase = {}
+local Class = require "class"
 local IObj = require "i_obj"
-setmetatable(ObjBase, IObj) -- inheritance from IObj
+local ObjBase = Class.NewClass(Class, IObj)
 
 --[[
     This module implements the ObjBase class.
@@ -12,8 +12,6 @@ setmetatable(ObjBase, IObj) -- inheritance from IObj
 --]]
 
 local corelog = require "corelog"
-
-local Class = require "class"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -27,13 +25,7 @@ function ObjBase:new()
         Constructor of ObjBase class.
     ]]
 
-    -- set instance class info
-    local obj = {}
-    setmetatable(obj, self)
-    self.__index = self
-
-    -- end
-    return obj
+    return self:newInstance()
 end
 
 --    _____ ____  _     _                  _   _               _
