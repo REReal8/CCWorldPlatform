@@ -19,7 +19,7 @@ ToDo List
          to the ToDo history section of this file to indicate he/ she has taken notice of the completion of the ToDo.
 ]]
 
-G  Debug: Modem events send but not received
+G  Debug: Modem events send but not received                                                                            (....)
    - understand (seems buffer issue inside computercraft)
    - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))
    - option to bundle messages, reduces count, not size. (done)
