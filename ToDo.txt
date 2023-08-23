@@ -40,7 +40,7 @@ R  Generalise test functions into "templates" to reduce duplication
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
 
 -  ensure all MObj's implement and follow IMObj interface
-   -  mobj_test                                                                                                         (....)
+   R  mobj_test                                                                                                         (....)
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (....)
    -  mobj_factory
