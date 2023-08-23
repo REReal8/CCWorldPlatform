@@ -5,6 +5,7 @@ local coreutils = require "coreutils"
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local URL = require "obj_url"
@@ -242,7 +243,7 @@ function T_Shop.T_Implements_IItemSupplier()
     local obj = T_Shop.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

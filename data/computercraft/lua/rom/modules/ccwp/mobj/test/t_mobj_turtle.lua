@@ -3,10 +3,11 @@ local T_Turtle = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local Callback = require "obj_callback"
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
-
+local Callback = require "obj_callback"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -128,7 +129,7 @@ function T_Turtle.T_Implements_IItemSupplier()
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
@@ -208,7 +209,7 @@ function T_Turtle.T_Implements_IItemDepot()
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

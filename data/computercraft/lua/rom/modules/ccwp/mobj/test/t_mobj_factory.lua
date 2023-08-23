@@ -6,6 +6,7 @@ local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 
@@ -280,7 +281,7 @@ function T_Factory.T_Implements_IItemSupplier()
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()

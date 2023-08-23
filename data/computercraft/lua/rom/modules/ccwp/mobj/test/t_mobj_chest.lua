@@ -8,6 +8,8 @@ local role_fuel_worker = require "role_fuel_worker"
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
@@ -159,7 +161,7 @@ function T_Chest.T_Implements_IMObj()
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
 end
 
 local constructParameters1 = {
@@ -242,7 +244,7 @@ function T_Chest.T_Implements_IItemSupplier()
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
@@ -343,7 +345,7 @@ function T_Chest.T_Implements_IItemDepot()
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

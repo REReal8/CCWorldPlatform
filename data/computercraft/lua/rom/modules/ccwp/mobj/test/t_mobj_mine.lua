@@ -5,6 +5,7 @@ local coreutils = require "coreutils"
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
@@ -134,7 +135,7 @@ function T_Mine.T_Implements_IMObj()
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
 end
 
 -- ToDo: rename to a construct test
@@ -162,7 +163,7 @@ function T_Mine.T_Implements_IItemSupplier()
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

@@ -1,10 +1,8 @@
 local T_IInterface = {}
+
 local corelog = require "corelog"
 
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
-
-local function pt_ImplementsInterface(interfaceName, interface, className, class)
+function T_IInterface.pt_ImplementsInterface(interfaceName, interface, className, classOrInstance)
     --[[
         This function checks if a(n) (instance of) class inplements an interface.
 
@@ -15,19 +13,20 @@ local function pt_ImplementsInterface(interfaceName, interface, className, class
         address) to the functions with the same key in the class.
     ]]
 
-    -- check
+    -- prepare test
     assert(interfaceName, "no interfaceName provided")
     assert(interface, "no interface provided")
     assert(className, "no className provided")
-    assert(class, "no class provided")
+    assert(classOrInstance, "no class or instance provided")
+    corelog.WriteToLog("* "..className.." implements "..interfaceName.." interface test")
 
-    -- loop on all functions in the interface
+    -- test all functions in the interface
     for key, interface_func in pairs(interface) do
         -- check interface_func is a function
         assert(type(interface_func) == "function", "key "..key.." of interface "..interfaceName.." not a function (type="..type(interface_func)..")")
 
         -- check interface_func is present in class
-        local classFunc = class[key] -- rawget(class, key)
+        local classFunc = classOrInstance[key]
         assert(classFunc, "key "..key.." of interface "..interfaceName.." not present in class "..className)
 
         -- check classFunc is a function
@@ -36,18 +35,6 @@ local function pt_ImplementsInterface(interfaceName, interface, className, class
         -- check functions are not identical (as that implies classFunc is not overridden in class)
         assert(classFunc ~= interface_func, "key "..key.." of interface "..interfaceName.." not implemented in in class "..className)
     end
-end
-
-function T_IInterface.pt_ImplementsInterface(interfaceName, className, obj)
-    -- prepare test
-    assert(interfaceName, "no interfaceName provided")
-    assert(className, "no className provided")
-    assert(obj, "no obj provided")
-    corelog.WriteToLog("* "..className.." "..interfaceName.." interface test")
-    local interface = moduleRegistry:getModule(interfaceName)
-
-    -- test
-    pt_ImplementsInterface(interfaceName, interface, className, obj)
 
     -- cleanup test
 end

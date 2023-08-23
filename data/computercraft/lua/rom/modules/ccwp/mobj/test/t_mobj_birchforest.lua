@@ -5,8 +5,8 @@ local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
-
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -203,7 +203,7 @@ function T_BirchForest.T_Implements_IItemSupplier()
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
