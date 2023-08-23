@@ -21,6 +21,19 @@ local enterprise_construction = require "enterprise_construction"
     The gathering enterprise provides services for building and using sites where materials can be gathered, like mines and on the surface.
 --]]
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function enterprise_gathering:getClassName()
+    return "enterprise_gathering"
+end
+
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
 --    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___

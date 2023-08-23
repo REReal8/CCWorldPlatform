@@ -90,6 +90,19 @@ end
         The smelting recipe uses the smelting production technique to produce an output item from an input item (ingredient).
 --]]
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function enterprise_manufacturing:getClassName()
+    return "enterprise_manufacturing"
+end
+
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
 --    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___

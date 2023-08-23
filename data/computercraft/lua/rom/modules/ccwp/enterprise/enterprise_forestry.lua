@@ -23,6 +23,19 @@ local enterprise_construction = require "enterprise_construction"
     The forestry enterprise provides services for building and using forest production sites.
 --]]
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function enterprise_forestry:getClassName()
+    return "enterprise_forestry"
+end
+
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
 --    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
