@@ -105,26 +105,4 @@ function IItemDepot:needsTo_StoreItemsFrom_SOSrv(...)
     return {success = false}
 end
 
---        _        _   _                       _   _               _
---       | |      | | (_)                     | | | |             | |
---    ___| |_ __ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| __/ _` | __| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ || (_| | |_| | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/\__\__,_|\__|_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function IItemDepot.ImplementsInterface(obj)
-    --[[
-        Returns if object 'obj' implements the interface.
-    ]]
-
-    -- check
-    if not obj.storeItemsFrom_AOSrv then return false end
-    if not obj.can_StoreItems_QOSrv then return false end
-    if not obj.needsTo_StoreItemsFrom_SOSrv then return false end
-    -- ToDo: consider adding checks for method (parameter) signatures.
-
-    -- end
-    return true
-end
-
 return IItemDepot
