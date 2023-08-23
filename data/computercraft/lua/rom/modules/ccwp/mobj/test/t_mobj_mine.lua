@@ -29,11 +29,11 @@ function T_Mine.T_All()
     T_Mine.T_IObj_All()
 
     -- IMObj methods
---    T_Mine.T_ImplementsIMObj()    -- ToDo: implement
+--    T_Mine.T_Implements_IMObj()    -- ToDo: implement
 --    T_Mine.T_NewMine() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
     -- IItemSupplier methods
-    T_Mine.T_ImplementsIItemSupplier()
+    T_Mine.T_Implements_IItemSupplier()
 --    T_Mine.T_ProvideMultipleItems() -- note: Mine:provideItemsTo_AOSrv not yet fully implemented, hence disabled
 end
 
@@ -119,7 +119,7 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Mine.T_ImplementsIMObj()
+function T_Mine.T_Implements_IMObj()
     -- prepare test
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
@@ -147,7 +147,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Mine.T_ImplementsIItemSupplier()
+function T_Mine.T_Implements_IItemSupplier()
     -- prepare test
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 

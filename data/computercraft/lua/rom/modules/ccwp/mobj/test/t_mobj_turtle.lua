@@ -30,12 +30,12 @@ function T_Turtle.T_All()
     T_Turtle.T_IObj_All()
 
     -- IItemSupplier methods
-    T_Turtle.T_ImplementsIItemSupplier()
+    T_Turtle.T_Implements_IItemSupplier()
 --    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 --    T_Turtle.T_can_ProvideItems_QOSrv()
 
     -- IItemDepot methods
-    T_Turtle.T_ImplementsIItemDepot()
+    T_Turtle.T_Implements_IItemDepot()
 end
 
 local testClassName = "Turtle"
@@ -123,7 +123,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Turtle.T_ImplementsIItemSupplier()
+function T_Turtle.T_Implements_IItemSupplier()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
@@ -203,7 +203,7 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Turtle.T_ImplementsIItemDepot()
+function T_Turtle.T_Implements_IItemDepot()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 

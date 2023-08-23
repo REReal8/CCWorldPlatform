@@ -35,15 +35,15 @@ function T_Silo.T_All()
     T_Silo.T_IObj_All()
 
     -- IMObj methods
-    T_Silo.T_ImplementsIMObj()
+    T_Silo.T_Implements_IMObj()
     T_Silo.T_destruct()
     T_Silo.T_construct()
 
     -- IItemSupplier methods
-    T_Silo.T_ImplementsIItemSupplier()
+    T_Silo.T_Implements_IItemSupplier()
 
     -- IItemDepot methods
-    T_Silo.T_ImplementsIItemDepot()
+    T_Silo.T_Implements_IItemDepot()
 end
 
 local testClassName = "Silo"
@@ -152,7 +152,7 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Silo.T_ImplementsIMObj()
+function T_Silo.T_Implements_IMObj()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
@@ -228,7 +228,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Silo.T_ImplementsIItemSupplier()
+function T_Silo.T_Implements_IItemSupplier()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
@@ -303,7 +303,7 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Silo.T_ImplementsIItemDepot()
+function T_Silo.T_Implements_IItemDepot()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 

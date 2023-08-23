@@ -43,7 +43,7 @@ function T_Shop.T_All()
     T_Shop.T_bestItemSupplier()
 
     -- IItemSupplier methods
-    T_Shop.T_ImplementsIItemSupplier()
+    T_Shop.T_Implements_IItemSupplier()
     T_Shop.T_can_ProvideItems_QOSrv()
     T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
 end
@@ -237,7 +237,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Shop.T_ImplementsIItemSupplier()
+function T_Shop.T_Implements_IItemSupplier()
     -- prepare test
     local obj = T_Shop.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 

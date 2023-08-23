@@ -43,7 +43,7 @@ function T_Factory.T_All()
     T_Factory.T_getProductionLocation_Att()
 
     -- IItemSupplier methods
-    T_Factory.T_ImplementsIItemSupplier()
+    T_Factory.T_Implements_IItemSupplier()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
@@ -275,7 +275,7 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Factory.T_ImplementsIItemSupplier()
+function T_Factory.T_Implements_IItemSupplier()
     -- prepare test
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
