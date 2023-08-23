@@ -187,6 +187,7 @@ RG mine v2
             -  it should not take a table with the parameters + the parameters itself (change MObjHost to reflect this change)
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
+      -  Reimplement ObjectFactory based on these developments
 
 -  Revise modules/ libraries file directory structure
 

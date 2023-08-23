@@ -36,6 +36,7 @@ end
 --       | |
 --       |_|
 
+-- ToDo: consider revising using Class:newInstance
 function ObjectFactory:create(className, objectFieldsTable)
 --    local corelog = require "corelog"
 --    corelog.WriteToLog("about to create "..className.." with "..textutils.serialise(objectFieldsTable))
