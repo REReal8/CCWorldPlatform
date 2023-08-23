@@ -24,15 +24,13 @@ G  Debug: Modem events send but not received
    - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))
    - option to bundle messages, reduces count, not size. (done)
 
-R  Introduce multiple inheritance
+R  Introduce multiple inheritance                                                                                       (....)
    R  Introduce Class meta class with methods for                                                                       (done)
       R  Checking if an object (or class) is an instance of a class.                                                    (done)
       R  Creating a new class by inheriting functionality from a chain of other classes.                                (done)
       R  Creating new instances (objects) of a Class.                                                                   (done)
-   R  Use Class.NewClass for creating classes
-
--  Initialisation
-   -  Use Class:newInstance & instance:_init to create and initialise objects from a list of arguments
+   R  Use Class.NewClass for creating all classes                                                                       (done)
+   -  Inherit all interfaces in Class.NewClass statement of implementing classes
 
 R  Generalise test functions into "templates" to reduce duplication
    R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
@@ -91,6 +89,9 @@ R  use MObjHost class
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
+
+-  Initialisation
+   -  Use Class:newInstance & instance:_init to create and initialise objects from a list of arguments
 
 G  Descriptions for blueprints and project steps
    G  Blueprint layer holds a desription / name
