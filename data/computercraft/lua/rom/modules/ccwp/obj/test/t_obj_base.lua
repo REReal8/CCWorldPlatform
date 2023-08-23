@@ -3,6 +3,7 @@ local T_ObjBase = {}
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
+local T_IInterface = require "test.t_i_interface"
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
@@ -68,12 +69,13 @@ function T_ObjBase.T_IObj_All()
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
+    T_IInterface.pt_ImplementsInterface("IObj", IObj, testClassName, obj)
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
 function T_ObjBase.T_IsInstanceOf_IObj()
     -- prepare test
-    local obj = T_ObjBase.CreateTestObj()
+    local obj = T_ObjBase.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -81,7 +83,7 @@ end
 
 function T_ObjBase.T_getClassName()
     -- prepare test
-    local obj = T_ObjBase.CreateTestObj()
+    local obj = T_ObjBase.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     T_IObj.pt_getClassName(testClassName, obj)
@@ -89,7 +91,7 @@ end
 
 function T_ObjBase.T_isEqual()
     -- prepare test
-    local obj = T_ObjBase.CreateTestObj()
+    local obj = T_ObjBase.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     obj._aNil = nil
     obj._aStr = "a string"
     obj._aNumber = 10
@@ -104,7 +106,7 @@ function T_ObjBase.T_isEqual()
     }
     obj._aNormalTable._aSubIObj._aSubStr = "another sub string"
 
-    local otherObj = T_ObjBase.CreateTestObj()
+    local otherObj = T_ObjBase.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
     otherObj._aNil = obj._aNil
     otherObj._aStr = obj._aStr
     otherObj._aNumber = obj._aNumber
@@ -125,7 +127,7 @@ end
 
 function T_ObjBase.T_copy()
     -- prepare test
-    local obj = T_ObjBase.CreateTestObj()
+    local obj = T_ObjBase.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     obj._aStr = "a string"
     obj._aNumber = 10
     obj._aBoolean = true
@@ -138,7 +140,6 @@ function T_ObjBase.T_copy()
         _aSubIObj = T_ObjBase.CreateTestObj(),
     }
     obj._aNormalTable._aSubIObj._aSubStr = "another sub string"
-
 
     -- test
     T_IObj.pt_copy(testClassName, obj)
