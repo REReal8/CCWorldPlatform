@@ -1,4 +1,11 @@
+-- define module
 local coreevent = {}
+
+-- ToDo: add proper module description
+--[[
+    This module ...
+--]]
+
 local coresystem = require "coresystem"
 local corelog
 local coretask

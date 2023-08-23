@@ -1,18 +1,5 @@
+-- define module
 local coreassignment = {}
-local coresystem = require "coresystem"
-local coredht    = require "coredht"
-local corelog    = require "corelog"
-local coremove   = require "coremove"
-
-local Callback   = require "obj_callback"
-local TaskCall   = require "obj_task_call"
-
-local enterprise_assignmentboard = require "enterprise_assignmentboard"
-local enterprise_turtle
-
-local db = {
-    rejectAllAssignments    = false,
-}
 
 --[[
     coreassignment offers functionality to have turtles execute assignments advertised by enterprise_assignmentboard.
@@ -30,6 +17,21 @@ local db = {
         taskResult              - (table) with return data of the task function
     By convention a task function name should end with _Task (e.g. DoSomeWork_Task)
 --]]
+
+local coresystem = require "coresystem"
+local coredht    = require "coredht"
+local corelog    = require "corelog"
+local coremove   = require "coremove"
+
+local Callback   = require "obj_callback"
+local TaskCall   = require "obj_task_call"
+
+local enterprise_assignmentboard = require "enterprise_assignmentboard"
+local enterprise_turtle
+
+local db = {
+    rejectAllAssignments    = false,
+}
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)

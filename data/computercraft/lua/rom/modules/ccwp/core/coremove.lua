@@ -1,4 +1,11 @@
+-- define module
 local coremove = {}
+
+-- ToDo: add proper module description
+--[[
+    This module ...
+--]]
+
 local coreinventory = require "coreinventory"
 local coreutils = require "coreutils"
 local corelog = require "corelog"

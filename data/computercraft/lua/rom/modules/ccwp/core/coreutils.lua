@@ -1,5 +1,11 @@
+-- define module
 local coreutils = {}
-local coreevent = require "coreevent"
+
+-- ToDo: add proper module description
+--[[
+    This module ...
+--]]
+
 local corelog
 
 local db	= {

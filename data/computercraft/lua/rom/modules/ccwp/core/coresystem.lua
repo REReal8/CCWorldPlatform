@@ -1,4 +1,10 @@
+-- define module
 local coresystem = {}
+
+-- ToDo: add proper module description
+--[[
+    This module ...
+--]]
 
 local db	    = {
     systemStatus    = "booted",							-- booted, initialized, ready, running, shutting down

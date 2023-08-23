@@ -1,11 +1,14 @@
+-- define module
 local coreinventory = {}
+
+-- ToDo: add proper module description
+--[[
+    This module ...
+--]]
+
 local corelog = require "corelog"
 local coredht = require "coredht"
 local coreutils = require "coreutils"
-
-local InputChecker = require "input_checker"
-
-local Inventory = require "obj_inventory"
 
 local db	= {
 	dbFilename  = "/db/coreinventory.lua",
