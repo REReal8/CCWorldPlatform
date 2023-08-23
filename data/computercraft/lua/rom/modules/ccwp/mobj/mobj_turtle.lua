@@ -3,6 +3,10 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Turtle = Class.NewClass(ObjBase)
 
+--[[
+    The Turtle mobj represents a Turtle in the minecraft world and provides services to operate on that Turtle.
+--]]
+
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 local coremove = require "coremove"
@@ -10,7 +14,6 @@ local coremove = require "coremove"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local Location = require "obj_location"
-
 local Inventory = require "obj_inventory"
 local ItemTable = require "obj_item_table"
 
@@ -18,10 +21,6 @@ local role_fuel_worker = require "role_fuel_worker"
 
 local enterprise_isp = require "enterprise_isp"
 local enterprise_turtle
-
---[[
-    The Turtle mobj represents a Turtle in the minecraft world and provides services to operate on that Turtle.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

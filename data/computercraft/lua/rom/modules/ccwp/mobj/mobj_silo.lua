@@ -3,15 +3,20 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Silo = Class.NewClass(ObjBase)
 
+--[[
+    The Silo mobj represents a chest in the minecraft world and provides services to operate on that Silo.
+
+    The following design decisions are made
+        - The actual Silo's should never be accessed directly but only via the services of this mobj.
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-
 local ObjArray = require "obj_array"
 local Host = require "obj_host"
-
 local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -20,12 +25,6 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage
-
-
---[[
-    The following design decisions are made
-        - The actual Silo's should never be accessed directly but only via the services of this mobj.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

@@ -3,13 +3,6 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local ProductionSpot = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-local coreutils = require "coreutils"
-
-local InputChecker = require "input_checker"
-
-local role_alchemist = require "role_alchemist"
-
 --[[
     The ProductionSpot mobj represents a production spot in the minecraft world and provides production services to operate on that ProductionSpot.
 
@@ -17,6 +10,13 @@ local role_alchemist = require "role_alchemist"
         The crafting technique uses a crafting table to produce an output item from a set of input items (ingredients).
         The smelting technique uses a furnace to produce an output item from an input item (ingredient).
 --]]
+
+local corelog = require "corelog"
+local coreutils = require "coreutils"
+
+local InputChecker = require "input_checker"
+
+local role_alchemist = require "role_alchemist"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

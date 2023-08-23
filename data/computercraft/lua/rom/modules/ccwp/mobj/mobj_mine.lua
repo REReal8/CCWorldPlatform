@@ -3,25 +3,22 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Mine = Class.NewClass(ObjBase)
 
--- includes / requires
+--[[
+    The following design decisions are made
+        - The mine has full control of all area with z coordinate -32 and lower.
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
-
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
-
 local Location = require "obj_location"
 
 local enterprise_chests = require "enterprise_chests"
-
---[[
-    The following design decisions are made
-        - The mine has full control of all area with z coordinate -32 and lower.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
