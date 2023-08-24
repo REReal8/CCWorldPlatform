@@ -24,6 +24,7 @@ local corelog = require "corelog"
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local URL = require "obj_url"
+local Host = require "obj_host"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
@@ -204,7 +205,7 @@ end
 
 function Shop:registerItemSupplier_SOSrv(...)
     -- get & check input from description
-    local checkSuccess, itemSupplierLocator = InputChecker.Check([[
+    local checkSuccess, itemSupplierLocator, suppressWarning = InputChecker.Check([[
         This sync public service registers ("adds") an ItemSupplier in the Shop.
 
         Note that the ItemSupplier should already be available in the world.
@@ -216,8 +217,14 @@ function Shop:registerItemSupplier_SOSrv(...)
         Parameters:
             serviceData             - (table) data for the service
                 itemSupplierLocator + (URL) locating the ItemSupplier
+                suppressWarning     + (boolean, false) if Warning should be suppressed
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Shop:registerItemSupplier_SOSrv: Invalid input") return {success = false} end
+
+    -- get ItemSupplier
+    local itemSupplier = Host.GetObject(itemSupplierLocator)
+    if not itemSupplier then corelog.Error("Shop:registerItemSupplier_SOSrv: Failed obtaining an object from itemSupplierLocator "..itemSupplierLocator:getURI()) return {success = false} end
+    if not Class.IsInstanceOf(itemSupplier, IItemSupplier) then if not suppressWarning then corelog.Error("Shop:registerItemSupplier_SOSrv: Obtained object from locator "..itemSupplierLocator:getURI().." is not an IItemSupplier") end return {success = false} end
 
     -- register the ItemSupplier
     corelog.WriteToLog(">Registering ItemSupplier "..itemSupplierLocator:getURI().." at Shop "..self:getId()..".")

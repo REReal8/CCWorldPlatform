@@ -6,6 +6,8 @@ local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
+local ModuleRegistry = require "module_registry"
+local moduleRegistry = ModuleRegistry:getInstance()
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local URL = require "obj_url"
@@ -20,12 +22,15 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
 
+local TestObj = require "test.obj_test"
+
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
+local T_Host = require "test.t_obj_host"
 local t_turtle = require "test.t_turtle"
 
 function T_Shop.T_All()
@@ -136,15 +141,29 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
-    -- test
-    local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator})
+    local testObject = TestObj:new({
+        _field1 = "field1",
+        _field2 = 4,
+    })
+    local testHost = T_Host.CreateTestObj()
+    moduleRegistry:registerModule(testHost:getHostName(), testHost)
+    local nonItemSupplierLocator = testHost:saveObject(testObject)
+
+    -- test IItemSupplier
+    local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator })
     assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     nItemSuppliers = #obj:getItemSuppliersLocators()
     local expectedNItemSuppliers = 1
     assert(nItemSuppliers == expectedNItemSuppliers, "gotten nItemSuppliers(="..nItemSuppliers..") not the same as expected(="..expectedNItemSuppliers..")")
 
+    -- test non IItemSupplier
+    result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = nonItemSupplierLocator, suppressWarning = true })
+    assert(result.success == false, "registerItemSupplier_SOSrv services should fail with a non IItemSupplier")
+
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
+    moduleRegistry:delistModule(testHost:getHostName())
+    testHost:deleteResource(nonItemSupplierLocator)
 end
 
 function T_Shop.T_delistItemSupplier_SOSrv()
