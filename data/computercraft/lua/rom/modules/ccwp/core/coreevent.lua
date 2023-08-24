@@ -17,6 +17,8 @@ local db = {
 	bulkMode		= true,		-- send messages in bulk per tick, not one by one
     logfile			= "/log/core.event.log",
 	protocol		= "coreevent",
+
+	debug			= false,
 }
 
 -- object / function references
@@ -174,8 +176,12 @@ function coreevent.SendMessage(t)
 					subject		= subject,
 					message		= message
 				})
-				--coreutils.WriteToFile(db.logfile, os.time() .." - Sending message("..protocol..", "..subject.."), size = "..string.len(serializedMessage), "a")
-				--if protocol == "core:dht" and subject == "save data" then coreutils.WriteToFile(db.logfile, "	It was about '"..(message["arg"][1] or "").."'") end
+
+				-- usefull debugging
+				if db.debug then
+					coreutils.WriteToFile(db.logfile, os.time() .." - Sending message("..protocol..", "..subject.."), size = "..string.len(serializedMessage), "a")
+					if protocol == "core:dht" and subject == "save data" then coreutils.WriteToFile(db.logfile, "	It was about '"..(message["arg"][1] or "").."'") end
+				end
 
 				-- this sends the message
 				modem.transmit(currentChannel, from, serializedMessage)
@@ -195,7 +201,7 @@ function coreevent.SendMessage(t)
 				})
 
 				-- not very likely to happen, we can recover from this minor issue
-				coreutils.WriteToFile(db.logfile, "Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")", "a")
+				if db.debug then coreutils.WriteToFile(db.logfile, "Cannot transmit a message without a modem (protocol = "..protocol..", subject = "..subject..")", "a") end
 				-- don't write to log, since that will send a message and get's us in a loop
 			end
 		end
@@ -411,7 +417,7 @@ function coreevent.Run()
 		-- log not ignored events
 		if not ignore[event] then
  			-- log to file
-			coreutils.WriteToFile(db.logfile, tostring(coreutils.UniversalTime()) .. " " .. "event = " .. event .. ", p1 = " .. (p1 or ""), "a")
+			if db.debug then coreutils.WriteToFile(db.logfile, tostring(coreutils.UniversalTime()) .. " " .. "event = " .. event .. ", p1 = " .. (p1 or ""), "a") end
 
 			-- should we log this event
 			if originalEvent ~= "modem_message" or event == "modem_message" then EventToLog(event, p1) end
