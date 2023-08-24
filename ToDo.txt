@@ -136,7 +136,7 @@ R  Factory:
       -  for storage "chests" in the Silo
       -  in the Factory?
    -  part of this code is/ seems to be the same
-   -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
+   -  we should investigate if we can introduce a ItemSupplierGroup object (which itself is also an ItemSupplier?) that implements the common code that can subsequentyly be reused.
 
 -  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
    -  v1
@@ -154,13 +154,6 @@ R  Factory:
       -  registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
       -  ensure it takes the closest
 
--  Availability of space (e.g. no 2 turtles into 1 silo shaft)
-   - denk richting:
-      -  silo managed de beweging door de shaft
-      -  oplossingrichting:
-         -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
-         -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
-
 -  mobj advanced chest
    -  different class like mobj chest
    -  handles orders with item reservation
@@ -173,11 +166,31 @@ RG mine v2
    -  uitdenken
    -  maken
 
--  Consider creating and using order objects
+-  Consider creating and using "order" objects (maybe even generalise this)
    -  order object that holds an outstanding order
    -  order object holds the items concerned
    -  order object can hold more information, like description
    -  this will make an overview of outstanding orders possible
+   -  Discuss: maybe we should generalise the concept of an "order" further
+      -  if we set this up in a generic way it could be used to reserve/ claim
+         -  items
+         -  item space (stacks in an inventory)
+         -  physical turtle space (e.g. for no 2 turtles into 1 shaft)
+         -  turtle physical movement time (related to the concept of WIP)
+         -  (management) execution time
+         -  ?energy/ fuel
+         -  ?tools
+         -  ...
+      -  Discuss: what is the best name for this concept: ?order, ?claim, ?reservation, ...
+   -  improve IItemDepot and IItemSupplier interfaces
+      -  claiming items (in IItemSupplier)
+      -  free slots (in IItemDepot's)
+   -  availability of physical turtle space (e.g. no 2 turtles into 1 silo shaft)
+      - denk richting:
+         -  silo managed de beweging door de shaft
+         -  oplossingrichting:
+            -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
+            -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
 
 -  object new methods:
    -  consider return nil after a CheckInput failure (instead of empty table).
@@ -240,10 +253,6 @@ RG mine v2
                 -- additional steps to perform in parellel                                                                          -- sourceStep = 11.n
             }},
    -  error handling (no_error, ignored errors, failed on error)
-
--  improve IItemDepot and IItemSupplier interfaces
-   -  claiming items (in IItemSupplier)
-   -  free slots (in IItemDepot's)
 
 -  enterprise management
    -  for claiming manament execution time
