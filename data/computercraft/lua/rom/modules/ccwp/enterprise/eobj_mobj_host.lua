@@ -199,7 +199,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaing an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getDismantleBlueprint()
@@ -274,7 +274,7 @@ function MObjHost:releaseMObj_SSrv(...)
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaing an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
 
     -- destuct MObj
     local success = mobj:destruct()
