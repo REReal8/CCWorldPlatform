@@ -174,7 +174,7 @@ RG mine v2
    -  Discuss: maybe we should generalise the concept of an "order" further
       -  if we set this up in a generic way it could be used to reserve/ claim
          -  items
-         -  item space (stacks in an inventory)
+         -  item space (slots in a slot inventory)
          -  physical turtle space (e.g. for no 2 turtles into 1 shaft)
          -  turtle physical movement time (related to the concept of WIP)
          -  (management) execution time
