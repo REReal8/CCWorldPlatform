@@ -1,4 +1,11 @@
+-- define module
 local coredht = {}
+
+-- ToDo: add proper module description
+--[[
+    This module ...
+--]]
+
 local coreevent = require "coreevent"
 local corelog = require "corelog"
 local coreutils = require "coreutils"

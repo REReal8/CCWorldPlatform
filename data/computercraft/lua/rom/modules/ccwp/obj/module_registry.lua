@@ -1,10 +1,19 @@
+-- define module
 local ModuleRegistry = {
     modules = {},
 }
 
-function ModuleRegistry:getModule(name)
-    return self.modules[name]
-end
+-- ToDo: add proper description here
+--[[
+    The InputChecker ...
+--]]
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 local instance = nil
 function ModuleRegistry:getInstance()
@@ -12,6 +21,19 @@ function ModuleRegistry:getInstance()
         instance = setmetatable({}, { __index = ModuleRegistry })
     end
     return instance
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+function ModuleRegistry:getModule(name)
+    return self.modules[name]
 end
 
 function ModuleRegistry:registerModule(name, module)

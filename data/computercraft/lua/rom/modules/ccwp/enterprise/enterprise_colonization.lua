@@ -1,11 +1,15 @@
+-- define module
 local enterprise_colonization = {}
+
+--[[
+    The enterprise_colonization provides basic functionality for colonizing the world.
+--]]
 
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-
 local Location = require "obj_location"
 
 local role_settler = require "role_settler"

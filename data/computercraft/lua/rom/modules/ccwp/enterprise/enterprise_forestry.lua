@@ -1,8 +1,11 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
+local enterprise_forestry = Class.NewClass(Host)
 
-local enterprise_forestry = Host:new({
-    _hostName   = "enterprise_forestry",
-})
+--[[
+    The forestry enterprise provides services for building and using forest production sites.
+--]]
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -19,9 +22,19 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_construction = require "enterprise_construction"
 
---[[
-    The forestry enterprise provides services for building and using forest production sites.
---]]
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enteprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_forestry._hostName   = "enterprise_forestry"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |

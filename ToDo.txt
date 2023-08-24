@@ -19,20 +19,31 @@ ToDo List
          to the ToDo history section of this file to indicate he/ she has taken notice of the completion of the ToDo.
 ]]
 
-G  Debug: Modem events send but not received
+G  Debug: Modem events send but not received                                                                            (....)
    - understand (seems buffer issue inside computercraft)
    - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))
    - option to bundle messages, reduces count, not size. (done)
 
-R  Introduce multiple inheritance
+R  Introduce multiple inheritance                                                                                       (done)
    R  Introduce Class meta class with methods for                                                                       (done)
       R  Checking if an object (or class) is an instance of a class.                                                    (done)
       R  Creating a new class by inheriting functionality from a chain of other classes.                                (done)
       R  Creating new instances (objects) of a Class.                                                                   (done)
-   R  Use Class.NewClass for creating classes
+   R  Use Class.NewClass for creating all classes                                                                       (done)
 
--  Initialisation
-   -  Use Class:newInstance & instance:_init to create and initialise objects from a list of arguments
+R  ensure all ItemSupplier's inherit IItemSupplier interface                                                            (done)
+   R  mobj_birchforest                                                                                                  (done)
+   R  mobj_chest                                                                                                        (done)
+   R  mobj_factory                                                                                                      (done)
+   R  mobj_mine                                                                                                         (done)
+   R  mobj_silo                                                                                                         (done)
+   R  mobj_shop                                                                                                         (done)
+   R  mobj_turtle                                                                                                       (done)
+
+R  ensure all ItemDepot's inherit ItemDepot interface                                                                   (done)
+   R  mobj_chest                                                                                                        (done)
+   R  mobj_silo                                                                                                         (done)
+   R  mobj_turtle                                                                                                       (done)
 
 R  Generalise test functions into "templates" to reduce duplication
    R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
@@ -42,21 +53,22 @@ R  Generalise test functions into "templates" to reduce duplication
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
 
--  ensure all MObj's follow IMObj interface
+-  ensure all MObj's implement and follow IMObj interface
+   R  mobj_test                                                                                                         (done)
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
    -  mobj_factory
-   R  mobj_mine
+   R  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
 
 R  Use generalised test functions for MObj's
    -  in mobj_birchforest
-   R  in mobj_chest
+   R  in mobj_chest                                                                                                     (....)
    -  in mobj_factory
-   -  in mobj_mine
-   R  in mobj_silo
+   R  in mobj_mine                                                                                                      (....)
+   R  in mobj_silo                                                                                                      (....)
    -  in mobj_shop
    -  in mobj_turtle
 
@@ -92,6 +104,9 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
 
+-  Initialisation
+   -  Use Class:newInstance & instance:_init to create and initialise objects from a list of arguments
+
 G  Descriptions for blueprints and project steps
    G  Blueprint layer holds a desription / name
    G  used to pass to project step (zodat het in de status schermen te zien is)
@@ -121,7 +136,7 @@ R  Factory:
       -  for storage "chests" in the Silo
       -  in the Factory?
    -  part of this code is/ seems to be the same
-   -  we should investigate if we can introduce a ItemSupplierGroup object that implements the common code that can subsequentyly be reused.
+   -  we should investigate if we can introduce a ItemSupplierGroup object (which itself is also an ItemSupplier?) that implements the common code that can subsequentyly be reused.
 
 -  waste handling (equivalent aan de shop: enterprise_wastehandling + (m)obj_wastehandler) (enterprise_wastehandling?)
    -  v1
@@ -139,13 +154,6 @@ R  Factory:
       -  registers local chests of mobj's (forest, factory, etc) in (mo)bj_wastehandler
       -  ensure it takes the closest
 
--  Availability of space (e.g. no 2 turtles into 1 silo shaft)
-   - denk richting:
-      -  silo managed de beweging door de shaft
-      -  oplossingrichting:
-         -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
-         -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
-
 -  mobj advanced chest
    -  different class like mobj chest
    -  handles orders with item reservation
@@ -158,11 +166,35 @@ RG mine v2
    -  uitdenken
    -  maken
 
--  Consider creating and using order objects
+-  Consider creating and using "order" objects (maybe even generalise this to reservations)
    -  order object that holds an outstanding order
    -  order object holds the items concerned
    -  order object can hold more information, like description
    -  this will make an overview of outstanding orders possible
+   -  Discuss: maybe we should generalise the concept of an "order" further
+      -  if we set this up in a generic way it could be used to reserve/ claim
+         -  items
+         -  item space (slots in a slot inventory)
+         -  physical turtle space (e.g. for no 2 turtles into 1 shaft)
+         -  turtle physical movement time (related to the concept of WIP)
+         -  (management) execution time
+         -  ?energy/ fuel
+         -  ?tools
+         -  ...
+      -  Discuss: what is the best name for this concept: ?order, ?claim, ?reservation, ...
+      -  Next to having Reservation/ "order" objects, we likely need
+         -  reservationHandler objects (?IReservationHandler)
+            -  with methods to reserve, claim and release Reservation's
+         -  reservationId  (which likely is, resolves to or is related to a locator (URL))
+   -  improve IItemDepot and IItemSupplier interfaces
+      -  claiming items (in IItemSupplier)
+      -  free slots (in IItemDepot's)
+   -  availability of physical turtle space (e.g. no 2 turtles into 1 silo shaft)
+      - denk richting:
+         -  silo managed de beweging door de shaft
+         -  oplossingrichting:
+            -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
+            -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
 
 -  object new methods:
    -  consider return nil after a CheckInput failure (instead of empty table).
@@ -183,6 +215,7 @@ RG mine v2
             -  it should not take a table with the parameters + the parameters itself (change MObjHost to reflect this change)
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
+      -  Reimplement ObjectFactory based on these developments
 
 -  Revise modules/ libraries file directory structure
 
@@ -224,10 +257,6 @@ RG mine v2
                 -- additional steps to perform in parellel                                                                          -- sourceStep = 11.n
             }},
    -  error handling (no_error, ignored errors, failed on error)
-
--  improve IItemDepot and IItemSupplier interfaces
-   -  claiming items (in IItemSupplier)
-   -  free slots (in IItemDepot's)
 
 -  enterprise management
    -  for claiming manament execution time

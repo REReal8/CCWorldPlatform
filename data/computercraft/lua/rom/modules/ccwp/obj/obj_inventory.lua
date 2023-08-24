@@ -3,15 +3,15 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Inventory = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class Inventory.
 
     A Inventory object represents an inventory in the minecraft world.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

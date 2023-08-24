@@ -3,14 +3,14 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local ItemTable = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class ItemTabel.
 
     An item table object for comparing and calculating
 --]]
+
+local corelog = require "corelog"
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

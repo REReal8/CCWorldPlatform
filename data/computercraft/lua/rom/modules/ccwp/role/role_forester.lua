@@ -1,8 +1,22 @@
+-- define role
 local role_forester = {}
+
+-- ToDo: add proper module description
+--[[
+    This role ...
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
+
+--    _______        _                   __  __      _        _____        _
+--   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
+--      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
+--      | |/ _` / __| |/ / __|  / _ \/\ | |\/| |/ _ \ __/ _` | |  | |/ _` | __/ _` |
+--      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
+--      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
 function role_forester.PlantFirstSapling_MetaData(taskData)
     return {

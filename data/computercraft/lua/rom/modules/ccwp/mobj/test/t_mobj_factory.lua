@@ -6,6 +6,7 @@ local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 
@@ -43,7 +44,7 @@ function T_Factory.T_All()
     T_Factory.T_getProductionLocation_Att()
 
     -- IItemSupplier methods
-    T_Factory.T_ImplementsIItemSupplier()
+    T_Factory.T_IItemSupplier_All()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
@@ -275,12 +276,13 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Factory.T_ImplementsIItemSupplier()
+function T_Factory.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 function T_Factory.T_can_ProvideItems_QOSrv()

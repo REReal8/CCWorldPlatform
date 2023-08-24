@@ -1,4 +1,20 @@
+-- define module
 local enterprise_assignmentboard = {}
+
+--[[
+    The AssignmentBoard is an enterprise that offers services for the handling of Assignments.
+
+    Assignments allow for a sequence of things to be done (e.g. moving, rotating, placing etc) without interruption
+    by a turtle in the physical minecraft world.
+
+    The enterprise maintains a list of assignments that were posted to it. It offers services for finding, applying to,
+    selecting, taking and ending (removing) these assignments.
+
+    It does so by providing the following public services
+        DoAssignment_ASrv       - to post an Assignment for execution via the enterprise
+        FindBestAssignment_SSrv - finds the best available Assignment
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coredht = require "coredht"
@@ -16,20 +32,6 @@ local db = {
 
     skipReasons = {},
 }
-
---[[
-    The AssignmentBoard is an enterprise that offers services for the handling of Assignments.
-
-    Assignments allow for a sequence of things to be done (e.g. moving, rotating, placing etc) without interruption
-    by a turtle in the physical minecraft world.
-
-    The enterprise maintains a list of assignments that were posted to it. It offers services for finding, applying to,
-    selecting, taking and ending (removing) these assignments.
-
-    It does so by providing the following public services
-        DoAssignment_ASrv       - to post an Assignment for execution via the enterprise
-        FindBestAssignment_SSrv - finds the best available Assignment
---]]
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)

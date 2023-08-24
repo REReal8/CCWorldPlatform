@@ -1,4 +1,11 @@
+-- define module
 local UtilStation = {}
+-- ToDo: consider making this a class (inherting from at least ObjBase)
+
+-- ToDo: add proper description here
+--[[
+    The UtilStation ...
+--]]
 
 local coreutils         = require "coreutils"
 local corelog           = require "corelog"

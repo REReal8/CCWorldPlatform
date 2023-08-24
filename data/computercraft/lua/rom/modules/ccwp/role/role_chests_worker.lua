@@ -1,12 +1,25 @@
+-- define role
 local role_chests_worker = {}
+
+-- ToDo: add proper module description
+--[[
+    This role ...
+--]]
+
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
-
 local Inventory = require "obj_inventory"
+
+--    _______        _                   __  __      _        _____        _
+--   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
+--      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
+--      | |/ _` / __| |/ / __|  / _ \/\ | |\/| |/ _ \ __/ _` | |  | |/ _` | __/ _` |
+--      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
+--      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
 local function GetWorkingLocation(...)
     -- get & check input from description
@@ -476,14 +489,5 @@ function role_chests_worker.PutItemsFromTurtleIntoChest_Task(...)
     }
     return result
 end
-
---    _                 _    __                  _   _
---   | |               | |  / _|                | | (_)
---   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | |/ _ \ / __/ _` | | |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---
---
 
 return role_chests_worker

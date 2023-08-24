@@ -1,3 +1,4 @@
+-- define interface
 local IMObj = {
 }
 
@@ -126,31 +127,6 @@ function IMObj:getDismantleBlueprint()
 
     -- end
     return nil, nil
-end
-
---        _        _   _                       _   _               _
---       | |      | | (_)                     | | | |             | |
---    ___| |_ __ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| __/ _` | __| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ || (_| | |_| | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/\__\__,_|\__|_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function IMObj.ImplementsInterface(obj)
-    --[[
-        Returns if the object 'obj' implements this interface.
-    ]]
-
-    -- check
-    if not obj.construct then return false end
-    if not obj.destruct then return false end
-    if not obj.getId then return false end
-    if not obj.getWIPId then return false end
-    if not obj.getBuildBlueprint then return false end
-    if not obj.getDismantleBlueprint then return false end
-    -- ToDo: consider adding checks for method (parameter) signatures.
-
-    -- end
-    return true
 end
 
 return IMObj

@@ -1,4 +1,10 @@
+-- define role
 local role_settler = {}
+
+-- ToDo: add proper module description
+--[[
+    This role ...
+--]]
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -6,17 +12,14 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
-
 local Location = require "obj_location"
 
---                _     _ _         __                  _   _
---               | |   | (_)       / _|                | | (_)
---    _ __  _   _| |__ | |_  ___  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \| | | | '_ \| | |/ __| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | |_) | |_| | |_) | | | (__  | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   | .__/ \__,_|_.__/|_|_|\___| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---   | |
---   |_|
+--    _______        _                   __  __      _        _____        _
+--   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
+--      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
+--      | |/ _` / __| |/ / __|  / _ \/\ | |\/| |/ _ \ __/ _` | |  | |/ _` | __/ _` |
+--      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
+--      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
 function role_settler.InitialiseCoordinates_MetaData(taskData)
     local location = Location:new(coremove.GetLocation()) --> use the current location for proper bootstrapping

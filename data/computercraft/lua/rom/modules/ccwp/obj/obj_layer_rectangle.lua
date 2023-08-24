@@ -3,18 +3,16 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local LayerRectangle = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local Class = require "class"
-local InputChecker = require "input_checker"
-
-local Block = require "obj_block"
-
 --[[
     This module implements the class LayerRectangle.
 
     A LayerRectangle object represents a rectangular layer in the minecraft world.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local Block = require "obj_block"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

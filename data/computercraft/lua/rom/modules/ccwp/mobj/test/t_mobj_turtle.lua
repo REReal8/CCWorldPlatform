@@ -3,10 +3,11 @@ local T_Turtle = {}
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local Callback = require "obj_callback"
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
-
+local Callback = require "obj_callback"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
@@ -30,12 +31,12 @@ function T_Turtle.T_All()
     T_Turtle.T_IObj_All()
 
     -- IItemSupplier methods
-    T_Turtle.T_ImplementsIItemSupplier()
+    T_Turtle.T_IItemSupplier_All()
 --    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 --    T_Turtle.T_can_ProvideItems_QOSrv()
 
     -- IItemDepot methods
-    T_Turtle.T_ImplementsIItemDepot()
+    T_Turtle.T_IItemDepot_All()
 end
 
 local testClassName = "Turtle"
@@ -123,12 +124,13 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Turtle.T_ImplementsIItemSupplier()
+function T_Turtle.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
@@ -203,12 +205,13 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Turtle.T_ImplementsIItemDepot()
+function T_Turtle.T_IItemDepot_All()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

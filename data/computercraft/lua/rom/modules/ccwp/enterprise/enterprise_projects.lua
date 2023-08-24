@@ -1,19 +1,5 @@
+-- define module
 local enterprise_projects = {}
-local coreutils = require "coreutils"
-local corelog = require "corelog"
-local coredht = require "coredht"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-local MethodExecutor = require "method_executor"
-
-local Host = require "obj_host"
-
-local enterprise_administration = require "enterprise_administration"
-
-local db = {
-    dhtRoot     = "enterprise_projects",
-}
 
 --[[
     The projects enterprise offers services to group together multiple enterprise services based on a predefined project definition.
@@ -24,6 +10,21 @@ local db = {
 
     For another description of this enterprise and it's usage see https://github.com/REReal8/CCWorldPlatform/wiki/enterprise_projects
 --]]
+
+local coreutils = require "coreutils"
+local corelog = require "corelog"
+local coredht = require "coredht"
+
+local InputChecker = require "input_checker"
+local MethodExecutor = require "method_executor"
+local Callback = require "obj_callback"
+local Host = require "obj_host"
+
+local enterprise_administration = require "enterprise_administration"
+
+local db = {
+    dhtRoot     = "enterprise_projects",
+}
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)

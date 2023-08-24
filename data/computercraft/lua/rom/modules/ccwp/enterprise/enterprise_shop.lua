@@ -1,8 +1,11 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
+local enterprise_shop = Class.NewClass(Host)
 
-local enterprise_shop = Host:new({
-    _hostName   = "enterprise_shop",
-})
+--[[
+    The enterprise_shop is a Host. It hosts one ItemSupplier Shop to provide items.
+--]]
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -13,16 +16,19 @@ local ObjArray = require "obj_array"
 
 local Shop = require "mobj_shop"
 
---[[
-    The enterprise_shop is a Host. It hosts one ItemSupplier Shop to provide items.
---]]
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_shop._hostName   = "enterprise_shop"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |

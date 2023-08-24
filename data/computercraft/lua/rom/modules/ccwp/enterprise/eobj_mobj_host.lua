@@ -1,8 +1,13 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
+local MObjHost = Class.NewClass(Host)
 
-local MObjHost = Host:new({
-    _hostName   = "MObjHost",
-})
+--[[
+    The MObjHost is a Host that hosts MObj objects and provides additional services on and with these MObj's.
+
+    This class typically is used as a base class for enterprise classes.
+--]]
 
 local corelog = require "corelog"
 
@@ -16,18 +21,19 @@ local IMObj = require "i_mobj"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_administration = require "enterprise_administration"
 
---[[
-    The MObjHost is a Host that hosts MObj objects and provides additional services on and with these MObj's.
-
-    This class typically is used as a base class for enterprise classes.
---]]
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+MObjHost._hostName   = "MObjHost"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -144,7 +150,7 @@ function MObjHost:hostMObj_SSrv(...)
     -- get class
     local class = objectFactory:getClass(className)
     if not class then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." not found in objectFactory") return {success = false} end
-    if not IMObj.ImplementsInterface(class) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." does not (fully) implement IMObj interface") return {success = false} end
+    if not Class.IsInstanceOf(class, IMObj) then corelog.Error("MObjHost:hostMObj_SSrv: Class "..className.." is not an IMObj") return {success = false} end
 
     -- construct new MObj
     local mobj = class:construct(constructParameters)
@@ -193,7 +199,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:dismantleAndReleaseMObj_ASrv: Failed obtaing an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getDismantleBlueprint()
@@ -268,7 +274,7 @@ function MObjHost:releaseMObj_SSrv(...)
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
-    if not mobj or not IMObj.ImplementsInterface(mobj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaing a MObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:releaseMObj_SSrv: Failed obtaing an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
 
     -- destuct MObj
     local success = mobj:destruct()

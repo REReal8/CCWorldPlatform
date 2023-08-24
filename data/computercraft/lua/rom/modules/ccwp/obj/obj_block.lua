@@ -3,16 +3,15 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local Block = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class Block.
 
     A Block object represents a single block in the minecraft world.
 --]]
 
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __

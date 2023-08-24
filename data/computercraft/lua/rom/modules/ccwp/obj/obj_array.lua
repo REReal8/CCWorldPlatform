@@ -3,20 +3,18 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local ObjArray = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
-local Class = require "class"
-local IObj = require "i_obj"
-local ObjectFactory = require "object_factory"
-local objectFactory = ObjectFactory:getInstance()
-
 --[[
     This module implements the class ObjArray.
 
     A ObjArray is an array of Obj's of the same 'class'. The class should implement the IObj interface.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local IObj = require "i_obj"
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -102,9 +100,6 @@ function ObjArray:transformObjectTables(suppressWarning)
     if not objClass then corelog.Error("ObjArray:transformObjectTables(): failed obtaining objClass "..objClassName) return end
     if Class.IsInstanceOf(objClass, IObj) then
         -- ok
-    elseif IObj.ImplementsInterface(objClass) then
-        -- ToDo: covert all classes and remove this
-        corelog.Warning("ObjArray:transformObjectTables(): using old style IObj objClass "..objClassName.." => consider converting it to a proper IObj")
     else
         corelog.Error("ObjArray:transformObjectTables(): objClass "..objClassName.." does not implement IObj interface") return
     end
@@ -116,10 +111,6 @@ function ObjArray:transformObjectTables(suppressWarning)
         local objectTableClassName = nil
         if Class.IsInstanceOf(objectTable, IObj) then
             objectTableClassName = objectTable:getClassName()
-        elseif IObj.ImplementsInterface(objectTable) then
-            -- ToDo: covert all classes and remove this
-            objectTableClassName = objectTable:getClassName()
-            corelog.Warning("ObjArray:transformObjectTables(): using old style IObj objectTableClassName "..objectTableClassName.." => consider converting it to a proper IObj")
         end
 
         -- determine obj

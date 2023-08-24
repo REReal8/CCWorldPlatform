@@ -1,9 +1,24 @@
--- ToDo: add .lua to file name
+-- define module
 local InputChecker = {}
+
+-- ToDo: add proper description here
+--[[
+    The InputChecker ...
+--]]
+
 local corelog = require "corelog"
 
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
 
 function InputChecker.Check(description, ...)
     -- for debugging

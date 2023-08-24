@@ -6,11 +6,14 @@ local coredht = require "coredht"
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
+local IMObj = require "i_mobj"
 local Silo = require "mobj_silo"
 
 local enterprise_chests = require "enterprise_chests"
@@ -35,15 +38,16 @@ function T_Silo.T_All()
     T_Silo.T_IObj_All()
 
     -- IMObj methods
-    T_Silo.T_ImplementsIMObj()
+    T_Silo.T_IsInstanceOf_IMObj()
+    T_Silo.T_Implements_IMObj()
     T_Silo.T_destruct()
     T_Silo.T_construct()
 
     -- IItemSupplier methods
-    T_Silo.T_ImplementsIItemSupplier()
+    T_Silo.T_IItemSupplier_All()
 
     -- IItemDepot methods
-    T_Silo.T_ImplementsIItemDepot()
+    T_Silo.T_IItemDepot_All()
 end
 
 local testClassName = "Silo"
@@ -152,12 +156,20 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Silo.T_ImplementsIMObj()
+function T_Silo.T_IsInstanceOf_IMObj()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
+end
+
+function T_Silo.T_Implements_IMObj()
+    -- prepare test
+    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
 end
 
 function T_Silo.T_destruct()
@@ -228,12 +240,13 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Silo.T_ImplementsIItemSupplier()
+function T_Silo.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
@@ -303,12 +316,13 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Silo.T_ImplementsIItemDepot()
+function T_Silo.T_IItemDepot_All()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
 function T_Silo.T_storeItemsFrom_AOSrv()

@@ -1,15 +1,18 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local BirchForest = Class.NewClass(ObjBase)
+local IItemSupplier = require "i_item_supplier"
+local BirchForest = Class.NewClass(ObjBase, IItemSupplier)
+
+--[[
+    This module implements BirchForest.
+--]]
 
 local corelog = require "corelog"
 
-local Class = require "class"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
-
 local URL = require "obj_url"
 local Host = require "obj_host"
 local Location = require "obj_location"
@@ -20,12 +23,6 @@ local role_forester = require "role_forester"
 
 local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
-
---[[
-    This module implements BirchForest.
-
-    Note that the syntax used is such that it (prepares for) a more object oriented Lua approach. See more from here https://www.lua.org/pil/16.html .
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

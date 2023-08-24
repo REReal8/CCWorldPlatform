@@ -1,3 +1,4 @@
+-- define library
 local library = {}
 
 function library.Init()

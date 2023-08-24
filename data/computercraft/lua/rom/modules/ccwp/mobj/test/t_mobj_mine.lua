@@ -5,11 +5,13 @@ local coreutils = require "coreutils"
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
 local ObjArray = require "obj_array"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
+local IMObj = require "i_mobj"
 local Mine = require "mobj_mine"
 
 local enterprise_storage = require "enterprise_storage"
@@ -29,11 +31,12 @@ function T_Mine.T_All()
     T_Mine.T_IObj_All()
 
     -- IMObj methods
---    T_Mine.T_ImplementsIMObj()    -- ToDo: implement
+    T_Mine.T_IsInstanceOf_IMObj()
+--    T_Mine.T_Implements_IMObj()    -- ToDo: implement
 --    T_Mine.T_NewMine() -- ToDo: proper cleanup of Chests before enabling, "All tests should not have side effects"
 
     -- IItemSupplier methods
-    T_Mine.T_ImplementsIItemSupplier()
+    T_Mine.T_IItemSupplier_All()
 --    T_Mine.T_ProvideMultipleItems() -- note: Mine:provideItemsTo_AOSrv not yet fully implemented, hence disabled
 end
 
@@ -119,12 +122,20 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Mine.T_ImplementsIMObj()
+function T_Mine.T_IsInstanceOf_IMObj()
     -- prepare test
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
+end
+
+function T_Mine.T_Implements_IMObj()
+    -- prepare test
+    local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
 end
 
 -- ToDo: rename to a construct test
@@ -147,12 +158,13 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Mine.T_ImplementsIItemSupplier()
+function T_Mine.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Mine.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 local function provideItemsTo_AOSrv_Test(provideItems)

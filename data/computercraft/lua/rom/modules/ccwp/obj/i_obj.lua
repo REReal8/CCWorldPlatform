@@ -1,3 +1,4 @@
+-- define interface
 local IObj = {
 }
 
@@ -51,28 +52,6 @@ function IObj:copy()
 
     -- end
     return nil
-end
-
---        _        _   _                       _   _               _
---       | |      | | (_)                     | | | |             | |
---    ___| |_ __ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __| __/ _` | __| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \ || (_| | |_| | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/\__\__,_|\__|_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function IObj.ImplementsInterface(obj)
-    --[[
-        Returns if the object 'obj' implements this interface.
-    ]]
-
-    -- check
-    if not obj.getClassName then return false end
-    if not obj.isEqual then return false end
-    if not obj.copy then return false end
-    -- ToDo: consider adding checks for method (parameter) signatures.
-
-    -- end
-    return true
 end
 
 return IObj

@@ -1,8 +1,14 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
+local enterprise_turtle = Class.NewClass(Host)
 
-local enterprise_turtle = Host:new({
-    _hostName   = "enterprise_turtle",
-})
+--[[
+    The enterprise_turtle provides services related to turtles.
+
+    Furthermore it provides the following additional services
+        GetItemsLocator_SSrv   - provide the URL of items in a turtle
+--]]
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -13,7 +19,6 @@ local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
-
 local Location = require "obj_location"
 
 local Turtle = require "mobj_turtle"
@@ -22,19 +27,19 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_energy = require "enterprise_energy"
 
---[[
-    The enterprise_turtle provides services related to turtles.
-
-    Furthermore it provides the following additional services
-        GetItemsLocator_SSrv   - provide the URL of items in a turtle
---]]
-
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
 --    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
 --   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enterprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_turtle._hostName   = "enterprise_turtle"
 
 function enterprise_turtle:getObject(...)
     -- get & check input from description

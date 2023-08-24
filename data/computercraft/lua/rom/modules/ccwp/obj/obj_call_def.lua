@@ -3,15 +3,15 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local CallDef = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-
 --[[
     This module implements the class CallDef.
 
     A CallDef defines the function call of a Method of a Module, including a table with possible method arguments.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

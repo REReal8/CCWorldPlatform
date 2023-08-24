@@ -3,21 +3,20 @@ local Class = require "class"
 local ObjBase = require "obj_base"
 local WIPAdministrator = Class.NewClass(ObjBase)
 
-local corelog = require "corelog"
-
-local InputChecker = require "input_checker"
-local Callback = require "obj_callback"
-
-local ObjArray = require "obj_array"
-local WIPQueue = require "obj_wip_queue"
-
-local enterprise_administration
-
 --[[
     This module implements the WIPAdministrator class.
 
     The WIPAdministrator offers methods for administering Work In Progress (WIP) of entities.
 --]]
+
+local corelog = require "corelog"
+
+local InputChecker = require "input_checker"
+local Callback = require "obj_callback"
+local ObjArray = require "obj_array"
+local WIPQueue = require "obj_wip_queue"
+
+local enterprise_administration
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

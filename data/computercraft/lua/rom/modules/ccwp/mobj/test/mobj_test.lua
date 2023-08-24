@@ -1,7 +1,8 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local TestMObj = Class.NewClass(ObjBase)
+local IMObj = require "i_mobj"
+local TestMObj = Class.NewClass(ObjBase, IMObj)
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"

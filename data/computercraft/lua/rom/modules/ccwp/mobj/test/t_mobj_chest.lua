@@ -8,18 +8,21 @@ local role_fuel_worker = require "role_fuel_worker"
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local URL = require "obj_url"
 
+local IMObj = require "i_mobj"
 local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
 
-local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_Class = require "test.t_class"
 local T_Obj = require "test.t_obj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
@@ -35,17 +38,19 @@ function T_Chest.T_All()
     T_Chest.T_IObj_All()
 
     -- IMObj methods
-    T_Chest.T_ImplementsIMObj()
+    T_Chest.T_IsInstanceOf_IMObj()
+    T_Chest.T_Implements_IMObj()
     T_Chest.T_destruct()
     T_Chest.T_construct()
 
     -- IItemSupplier methods
-    T_Chest.T_ImplementsIItemSupplier()
-    T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
-    T_Chest.T_can_ProvideItems_QOSrv()
+    T_Chest.T_IItemSupplier_All()
+
+    T_Chest.T_needsTo_ProvideItemsTo_SOSrv() -- ToDo: generalise
+    T_Chest.T_can_ProvideItems_QOSrv()  -- ToDo: generalise
 
     -- IItemDepot methods
-    T_Chest.T_ImplementsIItemDepot()
+    T_Chest.T_IItemDepot_All()
 end
 
 local testClassName = "Chest"
@@ -144,12 +149,20 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Chest.T_ImplementsIMObj()
+function T_Chest.T_IsInstanceOf_IMObj()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
+end
+
+function T_Chest.T_Implements_IMObj()
+    -- prepare test
+    local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
 end
 
 local constructParameters1 = {
@@ -227,12 +240,13 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Chest.T_ImplementsIItemSupplier()
+function T_Chest.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemSupplier", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
+    T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
@@ -250,7 +264,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     }
 
     -- test
-    T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
@@ -268,7 +282,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Chest()
     }
 
     -- test
-    T_IItemSupplier.provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
+    T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, testClassName, constructParameters, provideItems, itemDepotLocator)
 end
 
 function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
@@ -328,12 +342,13 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Chest.T_ImplementsIItemDepot()
+function T_Chest.T_IItemDepot_All()
     -- prepare test
     local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    T_IInterface.pt_ImplementsInterface("IItemDepot", testClassName, obj)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
+    T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)

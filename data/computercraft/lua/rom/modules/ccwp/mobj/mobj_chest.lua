@@ -1,7 +1,17 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Chest = Class.NewClass(ObjBase)
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
+local IMObj = require "i_mobj"
+local Chest = Class.NewClass(ObjBase, IItemSupplier, IItemDepot, IMObj)
+
+--[[
+    The Chest mobj represents a Chest in the minecraft world and provides services to operate on that Chest.
+
+    The following design decisions are made
+        - The actual Chest's should never be accessed directly but only via the services of this mobj.
+--]]
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
@@ -9,7 +19,6 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-
 local Inventory = require "obj_inventory"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -21,13 +30,6 @@ local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_turtle
 local enterprise_chests
-
---[[
-    The Chest mobj represents a chest in the minecraft world and provides services to operate on that Chest.
-
-    The following design decisions are made
-        - The actual Chest's should never be accessed directly but only via the services of this mobj.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

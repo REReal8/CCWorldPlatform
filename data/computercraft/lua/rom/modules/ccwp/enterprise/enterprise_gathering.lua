@@ -1,25 +1,35 @@
+-- define class
+local Class = require "class"
 local Host = require "obj_host"
-
-local enterprise_gathering = Host:new({
-    _hostName   = "enterprise_gathering",
-})
-
-local coreutils = require "coreutils"
-local corelog = require "corelog"
-
-local Callback = require "obj_callback"
-local TaskCall = require "obj_task_call"
-local InputChecker = require "input_checker"
-
-local mobj_mine = require "mobj_mine"
-
-local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
-local enterprise_construction = require "enterprise_construction"
+local enterprise_gathering = Class.NewClass(Host)
 
 --[[
     The gathering enterprise provides services for building and using sites where materials can be gathered, like mines and on the surface.
 --]]
+
+local corelog = require "corelog"
+
+local Callback = require "obj_callback"
+local InputChecker = require "input_checker"
+
+local mobj_mine = require "mobj_mine"
+
+local enterprise_turtle
+local enterprise_construction = require "enterprise_construction"
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
+-- note: currently enterprise is treated like a singleton, but by directly using the name of the module
+-- ToDo: consider making changes to enteprise to
+--          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
+--          - properly initialise it (by adding and implementing the _init method)
+--          - adopt other classes to these changes
+enterprise_gathering._hostName  = "enterprise_gathering"
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |

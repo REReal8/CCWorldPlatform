@@ -1,19 +1,8 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Shop = Class.NewClass(ObjBase)
-
-local corelog = require "corelog"
-
-local Callback = require "obj_callback"
-local InputChecker = require "input_checker"
-local ObjArray = require "obj_array"
-
-local URL = require "obj_url"
-
-local enterprise_projects = require "enterprise_projects"
-local enterprise_isp = require "enterprise_isp"
-local enterprise_shop
+local IItemSupplier = require "i_item_supplier"
+local Shop = Class.NewClass(ObjBase, IItemSupplier)
 
 --[[
     This module implements a Shop.
@@ -29,6 +18,16 @@ local enterprise_shop
 
     <It is envisioned (but not yet implemented) that a shop can also "store" (i.e. the opposite of ordering) items.>
 --]]
+
+local corelog = require "corelog"
+
+local Callback = require "obj_callback"
+local InputChecker = require "input_checker"
+local URL = require "obj_url"
+
+local enterprise_projects = require "enterprise_projects"
+local enterprise_isp = require "enterprise_isp"
+local enterprise_shop
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)

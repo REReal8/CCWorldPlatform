@@ -1,4 +1,4 @@
--- define class Class
+-- define class
 local Class = {}
 
 --[[

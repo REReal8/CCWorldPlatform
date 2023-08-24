@@ -1,7 +1,21 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Factory = Class.NewClass(ObjBase)
+local IItemSupplier = require "i_item_supplier"
+local Factory = Class.NewClass(ObjBase, IItemSupplier)
+
+--[[
+    The Factory mobj represents a factory in the minecraft world and provides (production) services to operate on that Factory.
+
+    There are (currently) two production techniques for producing items.
+        The crafting technique uses a crafting table to produce an output item from a set of input items (ingredients).
+        The smelting technique uses a furnace to produce an output item from an input item (ingredient).
+
+    A Factory is comprised out of one or more crafting and/ or smelting spots. Furthermore a Factory specifies one or more item input and
+    one or more item output "spots". These input/ output spots locally locate the input and output of items by the site.
+    The most simple version of these input/ output "spots" are the inventory of a turtle. They however could in principle
+    also be a full fledged local ItemDepot site.
+--]]
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
@@ -26,19 +40,6 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing
-
---[[
-    The Factory mobj represents a factory in the minecraft world and provides (production) services to operate on that Factory.
-
-    There are (currently) two production techniques for producing items.
-        The crafting technique uses a crafting table to produce an output item from a set of input items (ingredients).
-        The smelting technique uses a furnace to produce an output item from an input item (ingredient).
-
-    A Factory is comprised out of one or more crafting and/ or smelting spots. Furthermore a Factory specifies one or more item input and
-    one or more item output "spots". These input/ output spots locally locate the input and output of items by the site.
-    The most simple version of these input/ output "spots" are the inventory of a turtle. They however could in principle
-    also be a full fledged local ItemDepot site.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
