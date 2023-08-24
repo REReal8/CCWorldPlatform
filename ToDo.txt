@@ -31,13 +31,13 @@ R  Introduce multiple inheritance                                               
       R  Creating new instances (objects) of a Class.                                                                   (done)
    R  Use Class.NewClass for creating all classes                                                                       (done)
 
--  ensure all ItemSupplier's inherit IItemSupplier interface
+R  ensure all ItemSupplier's inherit IItemSupplier interface                                                            (done)
    R  mobj_birchforest                                                                                                  (done)
    R  mobj_chest                                                                                                        (done)
-   -  mobj_factory
+   R  mobj_factory                                                                                                      (done)
    R  mobj_mine                                                                                                         (done)
    R  mobj_silo                                                                                                         (done)
-   -  mobj_shop
+   R  mobj_shop                                                                                                         (done)
    R  mobj_turtle                                                                                                       (done)
 
 R  ensure all ItemDepot's inherit ItemDepot interface                                                                   (done)

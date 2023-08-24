@@ -44,7 +44,7 @@ function T_Shop.T_All()
     T_Shop.T_bestItemSupplier()
 
     -- IItemSupplier methods
-    T_Shop.T_Implements_IItemSupplier()
+    T_Shop.T_IItemSupplier_All()
     T_Shop.T_can_ProvideItems_QOSrv()
     T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
 end
@@ -238,11 +238,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Shop.T_Implements_IItemSupplier()
+function T_Shop.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Shop.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 

@@ -1,7 +1,8 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Shop = Class.NewClass(ObjBase)
+local IItemSupplier = require "i_item_supplier"
+local Shop = Class.NewClass(ObjBase, IItemSupplier)
 
 --[[
     This module implements a Shop.
