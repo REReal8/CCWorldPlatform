@@ -45,15 +45,28 @@ R  ensure all ItemDepot's inherit ItemDepot interface                           
    R  mobj_silo                                                                                                         (done)
    R  mobj_turtle                                                                                                       (done)
 
-R  Generalise test functions into "templates" to reduce duplication
+R  Generalise IObj test functions into "templates" to reduce duplication                                                (done)
    R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
-   R  generalise (I)Obj test functions                                                                                  (done)
-   R  generalise (I)ItemSupplier test functions
-   R  generalise (I)ItemDepot test functions
-   R  generalise (I)MObj test functions; i.e. for construct, destruct, etc
-   R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
+   R  generalise IObj test functions                                                                                    (done)
+
+-  Generalised IItemSupplier test functions for MObj's
+   -  generalise IItemSupplier test functions
+   -  use in mobj_birchforest
+   -  use in mobj_chest
+   -  use in mobj_factory
+   -  use in mobj_mine
+   -  use in mobj_silo
+   -  use in mobj_shop
+   -  use in mobj_turtle
+
+-  Generalised IItemDepot test functions for MObj's
+   -  generalise IItemDepot test functions
+   -  use in mobj_chest
+   -  use in mobj_silo
+   -  use in mobj_turtle
 
 -  ensure all MObj's implement and follow IMObj interface
+   -  generalise (I)MObj test functions; i.e. for construct, destruct, etc
    R  mobj_test                                                                                                         (done)
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
@@ -63,16 +76,8 @@ R  Generalise test functions into "templates" to reduce duplication
    -  mobj_shop
    -  mobj_turtle
 
-R  Use generalised test functions for MObj's
-   -  in mobj_birchforest
-   R  in mobj_chest                                                                                                     (....)
-   -  in mobj_factory
-   R  in mobj_mine                                                                                                      (....)
-   R  in mobj_silo                                                                                                      (....)
-   -  in mobj_shop
-   -  in mobj_turtle
-
 R  use MObjHost class
+   -  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
    R  enterprise_forestry
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
