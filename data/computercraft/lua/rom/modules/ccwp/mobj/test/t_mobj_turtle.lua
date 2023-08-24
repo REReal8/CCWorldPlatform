@@ -31,12 +31,12 @@ function T_Turtle.T_All()
     T_Turtle.T_IObj_All()
 
     -- IItemSupplier methods
-    T_Turtle.T_Implements_IItemSupplier()
+    T_Turtle.T_IItemSupplier_All()
 --    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 --    T_Turtle.T_can_ProvideItems_QOSrv()
 
     -- IItemDepot methods
-    T_Turtle.T_Implements_IItemDepot()
+    T_Turtle.T_IItemDepot_All()
 end
 
 local testClassName = "Turtle"
@@ -124,11 +124,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_Turtle.T_Implements_IItemSupplier()
+function T_Turtle.T_IItemSupplier_All()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 
@@ -204,11 +205,12 @@ end
 --                                             | |
 --                                             |_|
 
-function T_Turtle.T_Implements_IItemDepot()
+function T_Turtle.T_IItemDepot_All()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemDepot", IItemDepot)
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 

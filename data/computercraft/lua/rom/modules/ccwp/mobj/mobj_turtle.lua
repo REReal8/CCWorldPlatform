@@ -1,7 +1,9 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local Turtle = Class.NewClass(ObjBase)
+local IItemSupplier = require "i_item_supplier"
+local IItemDepot = require "i_item_depot"
+local Turtle = Class.NewClass(ObjBase, IItemSupplier, IItemDepot)
 
 --[[
     The Turtle mobj represents a Turtle in the minecraft world and provides services to operate on that Turtle.

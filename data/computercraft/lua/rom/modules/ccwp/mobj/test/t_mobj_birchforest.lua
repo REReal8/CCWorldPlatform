@@ -37,7 +37,7 @@ function T_BirchForest.T_All()
     T_BirchForest.T_getFuelNeedExtraTree_Att()
 
     -- IItemSupplier methods
-    T_BirchForest.T_Implements_IItemSupplier()
+    T_BirchForest.T_IItemSupplier_All()
     T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     T_BirchForest.T_can_ProvideItems_QOSrv()
 end
@@ -198,11 +198,12 @@ end
 --                                              | |   | |
 --                                              |_|   |_|
 
-function T_BirchForest.T_Implements_IItemSupplier()
+function T_BirchForest.T_IItemSupplier_All()
     -- prepare test
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    T_Class.pt_IsInstanceOf(testClassName, obj, "IItemSupplier", IItemSupplier)
     T_IInterface.pt_ImplementsInterface("IItemSupplier", IItemSupplier, testClassName, obj)
 end
 

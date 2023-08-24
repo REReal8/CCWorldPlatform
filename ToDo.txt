@@ -32,18 +32,18 @@ R  Introduce multiple inheritance                                               
    R  Use Class.NewClass for creating all classes                                                                       (done)
 
 -  ensure all ItemSupplier's inherit IItemSupplier interface
-   -  mobj_birchforest
+   R  mobj_birchforest                                                                                                  (done)
    R  mobj_chest                                                                                                        (done)
    -  mobj_factory
    R  mobj_mine                                                                                                         (done)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
-   -  mobj_turtle
+   R  mobj_turtle                                                                                                       (done)
 
--  ensure all ItemDepot's inherit ItemDepot interface
+R  ensure all ItemDepot's inherit ItemDepot interface                                                                   (done)
    R  mobj_chest                                                                                                        (done)
    R  mobj_silo                                                                                                         (done)
-   -  mobj_turtle
+   R  mobj_turtle                                                                                                       (done)
 
 R  Generalise test functions into "templates" to reduce duplication
    R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
