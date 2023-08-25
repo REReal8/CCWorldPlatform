@@ -436,7 +436,7 @@ function T_Class.T_OnCCWPClasses()
     assert(Chest.getBuildBlueprint, "Failed: Chest should inherit getBuildBlueprint from IMObj")
     assert(Chest.getDismantleBlueprint, "Failed: Chest should inherit getDismantleBlueprint from IMObj")
 
-    corelog.WriteToLog("ok")
+--    corelog.WriteToLog("ok")
 end
 
 return T_Class
