@@ -214,9 +214,8 @@ function T_Chest.T_construct()
 
     -- test
     local mobj = Chest:construct(constructParameters1) assert(mobj, "Failed obtaining "..testClassName)
-    assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
-    assert(mobj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..mobj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
-    assert(mobj:getInventory():isEqual(emptyInventory), "gotten getInventory(="..textutils.serialize(mobj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(emptyInventory, compact)..")")
+    local initialisedTest = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
+    initialisedTest:test(mobj, "chest", "", debug)
 end
 
 function T_Chest.T_destruct()
