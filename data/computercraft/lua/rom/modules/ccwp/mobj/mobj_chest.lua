@@ -53,6 +53,7 @@ function Chest:_init(...)
     if not checkSuccess then corelog.Error("Chest:_init: Invalid input") return nil end
 
     -- initialisation
+    ObjBase._init(self)
     self._id                = id
     self._baseLocation      = baseLocation
     self._accessDirection   = accessDirection

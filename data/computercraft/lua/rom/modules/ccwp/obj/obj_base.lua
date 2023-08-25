@@ -20,12 +20,12 @@ local corelog = require "corelog"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function ObjBase:new()
+function ObjBase:_init()
     --[[
-        Constructor of ObjBase class.
+        Initialise an ObjBase.
     ]]
 
-    return self:newInstance()
+    -- initialisation
 end
 
 --    _____ ____  _     _                  _   _               _

@@ -58,7 +58,7 @@ function T_Chest.T_All()
     T_Chest.T_IItemDepot_All()
 end
 
-local debug = false
+local logOk = false
 local testClassName = "Chest"
 local mobjHostName = "enterprise_chests"
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -118,7 +118,7 @@ function T_Chest.T_init()
     -- test
     local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
     local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    initialisedTest:test(obj, "chest", "", debug)
+    initialisedTest:test(obj, "chest", "", logOk)
 
     -- cleanup test
 end
@@ -137,7 +137,7 @@ function T_Chest.T_new()
         _inventory              = inventory1:copy(),
     })
     local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    initialisedTest:test(obj, "chest", "", debug)
+    initialisedTest:test(obj, "chest", "", logOk)
 
     -- cleanup test
 end
@@ -215,7 +215,7 @@ function T_Chest.T_construct()
     -- test
     local mobj = Chest:construct(constructParameters1) assert(mobj, "Failed obtaining "..testClassName)
     local initialisedTest = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
-    initialisedTest:test(mobj, "chest", "", debug)
+    initialisedTest:test(mobj, "chest", "", logOk)
 end
 
 function T_Chest.T_destruct()

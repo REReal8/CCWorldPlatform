@@ -1,18 +1,27 @@
 local T_ObjBase = {}
 
+local corelog = require "corelog"
+
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
+
+local FieldsTest = require "fields_test"
+local FieldValueTypeTest = require "field_value_type_test"
 
 local T_IInterface = require "test.t_i_interface"
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ObjBase.T_All()
+    -- initialisation
+    T_ObjBase.T_init()
+
     -- IObj methods
     T_ObjBase.T_IObj_All()
 end
 
 local testClassName = "ObjBase"
+local logOk = false
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -22,9 +31,32 @@ local testClassName = "ObjBase"
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 function T_ObjBase.CreateTestObj()
-    local testObj = ObjBase:new()
+    local testObj = ObjBase:newInstance()
 
     return testObj
+end
+
+function T_ObjBase.CreateInitialisedTest()
+    -- check input
+
+    -- create test
+    local initialisedTest = FieldValueTypeTest:newInstance("_init", "function")
+    -- note: as ObjBase had not fields we check the existence of method ObjBase._init, normal classes should check the fields
+
+    -- end
+    return initialisedTest
+end
+
+function T_ObjBase.T_init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":init() tests")
+
+    -- test
+    local obj = T_ObjBase.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local initialisedTest = T_ObjBase.CreateInitialisedTest()
+    initialisedTest:test(obj, "objBase", "", logOk)
+
+    -- cleanup test
 end
 
 --    _____ ____  _     _                  _   _               _
