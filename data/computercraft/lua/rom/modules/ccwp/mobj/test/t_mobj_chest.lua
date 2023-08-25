@@ -114,9 +114,9 @@ function T_Chest.T_init()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":init() tests")
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
+    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
     local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
     initialisedTest:test(obj, "chest", "", debug)
 
@@ -127,6 +127,8 @@ function T_Chest.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
+
+    -- test
     local obj = Chest:new({
         _id                     = id,
 
@@ -134,8 +136,6 @@ function T_Chest.T_new()
         _accessDirection        = accessDirection1,
         _inventory              = inventory1:copy(),
     })
-
-    -- test
     local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
     initialisedTest:test(obj, "chest", "", debug)
 
