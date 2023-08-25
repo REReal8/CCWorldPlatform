@@ -38,6 +38,27 @@ local enterprise_chests
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+
+function Chest:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, baseLocation, accessDirection, inventory = InputChecker.Check([[
+        Initialise a Chest.
+
+        Parameters:
+            id                      + (string) id of the Chest
+            baseLocation            + (Location) base location of the Chest
+            accessDirection         + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
+            inventory               + (Inventory) inventory of Chest
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Chest:_init: Invalid input") return nil end
+
+    -- initialisation
+    self._id                = id
+    self._baseLocation      = baseLocation
+    self._accessDirection   = accessDirection
+    self._inventory         = inventory
+end
+
 function Chest:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -58,26 +79,6 @@ function Chest:new(...)
 
     -- end
     return o
-end
-
-function Chest:_init(...)
-    -- get & check input from description
-    local checkSuccess, id, baseLocation, accessDirection, inventory = InputChecker.Check([[
-        Initialise a Chest.
-
-        Parameters:
-            id                      + (string) id of the Chest
-            baseLocation            + (Location) base location of the Chest
-            accessDirection         + (string) whether to access Chest from "bottom", "top", "left", "right", "front" or "back" (relative to location)
-            inventory               + (Inventory) inventory of Chest
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Chest:_init: Invalid input") return nil end
-
-    -- initialisation
-    self._id                = id
-    self._baseLocation      = baseLocation
-    self._accessDirection   = accessDirection
-    self._inventory         = inventory
 end
 
 function Chest:getBaseLocation()
