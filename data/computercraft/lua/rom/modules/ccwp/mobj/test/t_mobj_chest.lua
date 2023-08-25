@@ -35,6 +35,7 @@ local t_turtle = require "test.t_turtle"
 
 function T_Chest.T_All()
     -- initialisation
+    T_Chest.T_init()
     T_Chest.T_new()
     T_Chest.T_Getters()
 
@@ -57,7 +58,7 @@ function T_Chest.T_All()
     T_Chest.T_IItemDepot_All()
 end
 
-local debug = true
+local debug = false
 local testClassName = "Chest"
 local mobjHostName = "enterprise_chests"
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -83,13 +84,7 @@ function T_Chest.CreateTestObj(id, baseLocation, accessDirection, inventory)
     inventory = inventory or inventory1
 
     -- create testObj
-    local testObj = Chest:new({
-        _id                     = id,
-
-        _baseLocation           = baseLocation:copy(),
-        _accessDirection        = accessDirection,
-        _inventory              = inventory:copy(),
-    })
+    local testObj = Chest:newInstance(id, baseLocation:copy(), accessDirection, inventory:copy())
 
     -- end
     return testObj
@@ -113,6 +108,19 @@ function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, invent
 
     -- end
     return initialisedTest
+end
+
+function T_Chest.T_init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":init() tests")
+    local id = coreutils.NewId()
+    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
+    initialisedTest:test(obj, "chest", "", debug)
+
+    -- cleanup test
 end
 
 function T_Chest.T_new()
