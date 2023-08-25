@@ -32,6 +32,9 @@ function ValueTypeTest:test(value, valueName, indent, logOk)
 
     -- prepare test
     local valueType = type(value)
+    if valueType == "table" and Class.IsInstanceOf(value, IObj) then
+        valueType = value:getClassName()
+    end
     local testContextStr = valueName.." type "..valueType
 
     -- test
