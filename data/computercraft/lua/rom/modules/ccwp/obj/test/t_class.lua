@@ -302,7 +302,7 @@ function T_Class.T_newInstance()
 
     function EmployeeClass:_init(age, name, employeeId) -- note: "overrides" PersonClass:__init
         -- initialisation
-        PersonClass:_init(age, name) -- note: now call PersonClass __init directly
+        PersonClass._init(self, age, name) -- note: now call PersonClass __init directly
         self.employeeId = employeeId
     end
 
