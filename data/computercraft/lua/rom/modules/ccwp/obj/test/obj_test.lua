@@ -6,7 +6,6 @@ local TestObj = Class.NewClass(ObjBase)
 local coreutils = require "coreutils"
 local corelog = require "corelog"
 
-local Class = require "class"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
