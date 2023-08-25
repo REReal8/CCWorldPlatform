@@ -57,6 +57,7 @@ function T_Chest.T_All()
     T_Chest.T_IItemDepot_All()
 end
 
+local debug = true
 local testClassName = "Chest"
 local mobjHostName = "enterprise_chests"
 local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
@@ -128,7 +129,7 @@ function T_Chest.T_new()
 
     -- test
     local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    initialisedTest:test(obj, "chest", "", true)
+    initialisedTest:test(obj, "chest", "", debug)
 
     -- cleanup test
 end
