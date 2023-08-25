@@ -30,7 +30,7 @@ function FieldValueTypeTest:test(testObj, testObjName, indent, logOk)
     local testFieldStr = testObjName.."."..self._fieldName.." field"
 
     local fieldValue = testObj[self._fieldName]
-    assert(fieldValue, indent..testFieldStr.." testObj does not have field")
+    assert(fieldValue, indent..testFieldStr..": testObj does not have field")
 
     -- test (via ValueTypeTest base)
     ValueTypeTest.test(self, fieldValue, testFieldStr, indent.."  ", logOk)
