@@ -20,6 +20,10 @@ local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local FieldValueTypeTest = require "field_value_type_test"
+
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Class = require "test.t_class"
@@ -86,22 +90,47 @@ function T_Chest.CreateTestObj(id, baseLocation, accessDirection, inventory)
         _inventory              = inventory:copy(),
     })
 
+    -- end
     return testObj
+end
+
+function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, inventory)
+    -- check input
+    baseLocation = baseLocation or location1
+    accessDirection = accessDirection or accessDirection1
+    inventory = inventory or inventory1
+
+    -- create test
+    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for only testing type
+    if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
+    local initialisedTest = FieldsTest:newInstance(
+        idTest,
+        FieldValueEqualTest:newInstance("_baseLocation", location1),
+        FieldValueEqualTest:newInstance("_accessDirection", accessDirection1),
+        FieldValueEqualTest:newInstance("_inventory", inventory1)
+    )
+
+    -- end
+    return initialisedTest
 end
 
 function T_Chest.T_new()
     -- prepare test
+    corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1)
-    local expectedFieldValues = {
-        _id                 = id,
-        _baseLocation       = location1,
-        _accessDirection    = accessDirection1,
-        _inventory          = inventory1,
-    }
+    local obj = Chest:new({
+        _id                     = id,
+
+        _baseLocation           = location1:copy(),
+        _accessDirection        = accessDirection1,
+        _inventory              = inventory1:copy(),
+    })
 
     -- test
-    T_Obj.pt_new(testClassName, obj, expectedFieldValues)
+    local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
+    initialisedTest:test(obj, "chest", "", true)
+
+    -- cleanup test
 end
 
 function T_Chest.T_Getters()
