@@ -5,7 +5,6 @@ local corelog = require "corelog"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
-local FieldsTest = require "fields_test"
 local FieldValueTypeTest = require "field_value_type_test"
 
 local T_IInterface = require "test.t_i_interface"
