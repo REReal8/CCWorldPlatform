@@ -14,8 +14,6 @@ local corelog = require "corelog"
 
 local IObj = require "i_obj"
 
-local compact = { compact = true }
-
 function ValueTypeTest:_init(expectedType)
     -- check input
     assert(type(expectedType) == "string", "expectedType not a string")
