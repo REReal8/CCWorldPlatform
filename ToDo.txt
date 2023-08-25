@@ -54,9 +54,30 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
       -  this approach should in the future be renamed to newFromTable
       -  it normally should only be used for loading from the dht
    -  adopt this approach for all classes
+      -  TestObj
+      -  Location
+      -  URL
+      -  Inventory
+      -  ObjTable
+      -  ObjArray
+      -  CallDef
+      -  WIPQueue
+      -  Block
+      -  LayerRectangle
+      -  ItemTable
+      -  WIPAdministrator
       R  ObjBase                                                                                                        (done)
+      -  TestMObj
       R  Chest                                                                                                          (done)
-      -  all other classes
+      -  ProductionSpot
+      -  Silo
+      -  BirchForest
+      -  Factory
+      -  Mine
+      -  Shop
+      -  Turtle
+      -  Host
+      -  MObjHost
 
 -  Generalised IItemSupplier test functions for MObj's
    -  generalise IItemSupplier test functions
