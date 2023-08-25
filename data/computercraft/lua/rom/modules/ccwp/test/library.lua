@@ -7,6 +7,13 @@ function library.Init()
 end
 
 function library.Setup()
+--[[
+    -- register library classes
+    local ObjectFactory = require "object_factory"
+    local objectFactory = ObjectFactory:getInstance()
+    objectFactory:registerClass("XxxYyy", require "xxx_yyy")
+ ]]
+
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
