@@ -92,18 +92,15 @@ end
 
 function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, inventory)
     -- check input
-    baseLocation = baseLocation or location1
-    accessDirection = accessDirection or accessDirection1
-    inventory = inventory or inventory1
 
     -- create test
-    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for only testing type
+    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
     if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
     local initialisedTest = FieldsTest:newInstance(
         idTest,
-        FieldValueEqualTest:newInstance("_baseLocation", location1),
-        FieldValueEqualTest:newInstance("_accessDirection", accessDirection1),
-        FieldValueEqualTest:newInstance("_inventory", inventory1)
+        FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
+        FieldValueEqualTest:newInstance("_accessDirection", accessDirection),
+        FieldValueEqualTest:newInstance("_inventory", inventory)
     )
 
     -- end
