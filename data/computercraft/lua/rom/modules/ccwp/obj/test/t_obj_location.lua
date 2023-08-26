@@ -110,7 +110,7 @@ end
 
 function T_Location.T_new()
     -- prepare test
-    corelog.WriteToLog("* Location:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
     local obj = Location:new({
@@ -162,7 +162,7 @@ end
 
 function T_Location.T_reset()
     -- prepare test
-    corelog.WriteToLog("* Location:reset() tests")
+    corelog.WriteToLog("* "..testClassName..":reset() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -184,7 +184,7 @@ end
 
 function T_Location.T_minLocation()
     -- prepare test
-    corelog.WriteToLog("* Location:minLocation() tests")
+    corelog.WriteToLog("* "..testClassName..":minLocation() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -218,7 +218,7 @@ end
 
 function T_Location.T_maxLocation()
     -- prepare test
-    corelog.WriteToLog("* Location:maxLocation() tests")
+    corelog.WriteToLog("* "..testClassName..":maxLocation() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -252,7 +252,7 @@ end
 
 function T_Location.T_getRelativeLocation()
     -- prepare test
-    corelog.WriteToLog("* Location:getRelativeLocation() tests")
+    corelog.WriteToLog("* "..testClassName..":getRelativeLocation() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -282,7 +282,7 @@ end
 
 function T_Location.T_getRelativeLocationFront()
     -- prepare test
-    corelog.WriteToLog("* Location:getRelativeLocationFront() tests")
+    corelog.WriteToLog("* "..testClassName..":getRelativeLocationFront() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -324,7 +324,7 @@ end
 
 function T_Location.T_getRelativeLocationUp()
     -- prepare test
-    corelog.WriteToLog("* Location:getRelativeLocationUp() tests")
+    corelog.WriteToLog("* "..testClassName..":getRelativeLocationUp() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -352,7 +352,7 @@ end
 
 function T_Location.T_getRelativeLocationDown()
     -- prepare test
-    corelog.WriteToLog("* Location:getRelativeLocationDown() tests")
+    corelog.WriteToLog("* "..testClassName..":getRelativeLocationDown() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -380,7 +380,7 @@ end
 
 function T_Location.T_getRelativeLocationLeft()
     -- prepare test
-    corelog.WriteToLog("* Location:getRelativeLocationLeft() tests")
+    corelog.WriteToLog("* "..testClassName..":getRelativeLocationLeft() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -422,7 +422,7 @@ end
 
 function T_Location.T_getRelativeLocationRight()
     -- prepare test
-    corelog.WriteToLog("* Location:getRelativeLocationRight() tests")
+    corelog.WriteToLog("* "..testClassName..":getRelativeLocationRight() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
@@ -464,7 +464,7 @@ end
 
 function T_Location.T_blockDistanceTo()
     -- prepare test
-    corelog.WriteToLog("* Location:blockDistanceTo() tests")
+    corelog.WriteToLog("* "..testClassName..":blockDistanceTo() tests")
     local location1 = Location:new({
         _x  = x1,
         _y  = y1,
