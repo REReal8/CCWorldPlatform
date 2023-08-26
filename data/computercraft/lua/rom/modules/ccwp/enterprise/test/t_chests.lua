@@ -15,8 +15,8 @@ function t_chests.T_All()
     t_chests.T_releaseMObj_SSrv_Chest()
 end
 
-local testStartLocation  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
-local testStartLocation2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
+local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
+local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
 
 local callback = Callback:new({
     _moduleName     = "t_main",

@@ -13,8 +13,8 @@ local t_turtle
 function t_manufacturing.T_All()
 end
 
-local baseLocationV0 = Location:new({_x=6, _y= 0, _z= 1, _dx=0, _dy=1})
-local baseLocationV1 = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
+local baseLocationV0 = Location:newInstance(6, 0, 1, 0, 1)
+local baseLocationV1 = Location:newInstance(12, 0, 1, 0, 1)
 local baseLocationV2 = baseLocationV1:copy()
 
 local callback = Callback:new({

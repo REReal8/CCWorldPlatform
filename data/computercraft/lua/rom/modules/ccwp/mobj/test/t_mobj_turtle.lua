@@ -42,7 +42,7 @@ end
 local testClassName = "Turtle"
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
-local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
+local location2  = Location:newInstance(-6, 6, 1, 0, 1)
 
 local compact = { compact = true }
 

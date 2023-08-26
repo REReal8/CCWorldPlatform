@@ -158,7 +158,7 @@ function TestMObj:getBuildBlueprint()
 
     -- construct layer list
     local layerList = {
---        { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
+--        { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()},
         -- note: empty as we currently do not want to actually have the Turtle move
     }
 

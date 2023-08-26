@@ -14,7 +14,7 @@ function t_builder.T_All()
     t_builder.T_BuildBlueprint_MetaData()
 end
 
-local testStartLocation     = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local testStartLocation = Location:newInstance(-6, 0, 1, 0, 1)
 
 local size_x1 = 4
 local size_y1 = 6
@@ -82,11 +82,11 @@ function t_builder.T_BuildBlueprint_MetaData()
     corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
     local testBlueprint = {
         layerList = {
-            { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove  = true, layer = testBuildLayer1:copy()},
-            { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove  = false, layer = testBuildLayer2:copy()},
+            { startpoint = Location:newInstance(0, 0, 0), buildFromAbove  = true, layer = testBuildLayer1:copy()},
+            { startpoint = Location:newInstance(3, 3, -1), buildFromAbove  = false, layer = testBuildLayer2:copy()},
         },
         escapeSequence = {
-            Location:new({ _x= 3, _y= 3, _z=  1}),
+            Location:newInstance(3, 3, 1),
         }
     }
     local blueprintBuildData = {blueprintStartpoint = testStartLocation:getRelativeLocation(6, 0, 0), blueprint = testBlueprint}

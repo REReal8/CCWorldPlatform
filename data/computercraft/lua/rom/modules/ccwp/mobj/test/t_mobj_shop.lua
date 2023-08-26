@@ -194,7 +194,7 @@ function T_Shop.T_delistAllItemSuppliers()
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
-    local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
+    local location1 = Location:newInstance(10, 0, 1, 0, 1)
 
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
     local chestLocator = enterprise_chests:saveObject(chest)
@@ -222,7 +222,7 @@ function T_Shop.T_bestItemSupplier()
         ["minecraft:birch_log"]  = 5,
     }
     local ingredientsItemSupplierLocator = objectLocator
-    local location1 = Location:new({_x= 10, _y= 0, _z= 1, _dx=0, _dy=1})
+    local location1 = Location:newInstance(10, 0, 1, 0, 1)
     local chest = T_Chest.CreateTestObj(nil, location1) assert(chest, "Failed obtaining Chest")
     local itemDepotLocator = enterprise_chests:saveObject(chest)
 

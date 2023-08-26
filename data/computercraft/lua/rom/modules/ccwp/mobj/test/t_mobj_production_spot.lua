@@ -20,7 +20,7 @@ function T_ProductionSpot.T_All()
     -- specific methods
 end
 
-local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local location1  = Location:newInstance(-6, 0, 1, 0, 1)
 local isCraftingSpot1 = true
 
 local compact = { compact = true }

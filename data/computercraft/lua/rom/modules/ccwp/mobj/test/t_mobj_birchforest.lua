@@ -45,10 +45,10 @@ end
 local testClassName = "BirchForest"
 
 local level0 = 0
-local location1 = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
+local location1 = Location:newInstance(0, 0, 1, 0, 1)
 local nTrees = 1
 local level2 = 1
-local location2 = Location:new({_x= 6, _y= 12, _z= 1, _dx=0, _dy=1})
+local location2 = Location:newInstance(6, 12, 1, 0, 1)
 local nTrees2 = 2
 
 --    _       _ _   _       _ _           _   _

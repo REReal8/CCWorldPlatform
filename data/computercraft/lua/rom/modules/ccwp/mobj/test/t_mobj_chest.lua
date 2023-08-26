@@ -61,8 +61,8 @@ end
 local logOk = false
 local testClassName = "Chest"
 local mobjHostName = "enterprise_chests"
-local location1  = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
-local location2  = Location:new({_x= -6, _y= 6, _z= 1, _dx=0, _dy=1})
+local location1  = Location:newInstance(-6, 0, 1, 0, 1)
+local location2  = Location:newInstance(-6, 6, 1, 0, 1)
 local accessDirection1 = "top"
 local emptyInventory = Inventory:new()
 local inventory1 = Inventory:new() -- ToDo: add elements

@@ -264,13 +264,13 @@ end
 function Mine.GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = Location:new({ _x= 0, _y= 0, _z= 0}), buildFromAbove = true,    layer = TopLayerlayer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true,    layer = TopLayerlayer()},
     }
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
-        escapeSequence = {Location:new({ _x= 0, _y= 0, _z=  1})}
+        escapeSequence = {Location:newInstance(0, 0, 1)}
     }
 
     -- construct build data

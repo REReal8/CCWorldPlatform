@@ -15,7 +15,7 @@ local enterprise_chests = require "enterprise_chests"
 local t_chests = require "test.t_chests"
 local t_turtle = require "test.t_turtle"
 
-local testStartLocation     = Location:new({_x= -6, _y= 0, _z= 1, _dx=0, _dy=1})
+local testStartLocation     = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
 
 local testBuildLayer1 = LayerRectangle:new({
@@ -159,13 +159,13 @@ function t_construction.T_BuildBlueprint_ASrv()
     corelog.WriteToLog("* BuildBlueprint_ASrv test")
     local testBlueprint1 = {
         layerList = {
-            { startpoint = Location:new({ _x= 0, _y= 0, _z=  0}), buildFromAbove  = true, layer = testBuildLayer3:copy()},
-            { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove  = false, layer = testBuildLayer4:copy()},
-            { startpoint = Location:new({ _x= 2, _y= 2, _z= -2}), buildFromAbove  = false, layer = testBuildLayer2:copy()},
-            { startpoint = Location:new({ _x= 2, _y= 2, _z= -3}), buildFromAbove  = false, layer = testBuildLayer2:copy()}
+            { startpoint = Location:newInstance(0, 0, 0), buildFromAbove  = true, layer = testBuildLayer3:copy()},
+            { startpoint = Location:newInstance(3, 3, -1), buildFromAbove  = false, layer = testBuildLayer4:copy()},
+            { startpoint = Location:newInstance(2, 2, -2), buildFromAbove  = false, layer = testBuildLayer2:copy()},
+            { startpoint = Location:newInstance(2, 2, -3), buildFromAbove  = false, layer = testBuildLayer2:copy()}
         },
         escapeSequence = {
-            Location:new({ _x= 3, _y= 3, _z=  1}),
+            Location:newInstance(3, 3, 1),
         }
     }
     local blueprintBuildData = {

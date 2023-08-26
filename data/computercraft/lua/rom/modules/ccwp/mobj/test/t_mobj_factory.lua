@@ -48,7 +48,7 @@ function T_Factory.T_All()
     T_Factory.T_can_ProvideItems_QOSrv()
 end
 
-local location1  = Location:new({_x= -12, _y= 0, _z= 1, _dx=0, _dy=1})
+local location1  = Location:newInstance(-12, 0, 1, 0, 1)
 local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
 local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })

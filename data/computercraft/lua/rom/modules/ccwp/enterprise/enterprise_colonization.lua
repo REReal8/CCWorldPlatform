@@ -71,8 +71,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return Callback.ErrorCall(callback) end
 
     -- construct arguments
-    local startLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1})
-    local forestLocation            = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
+    local startLocation             = Location:newInstance(3, 2, 1, 0, 1)
+    local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
     local initialiseCoordinatesTaskData =  {
         startLocation               = startLocation:copy(),
     }
@@ -80,7 +80,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         startLocation               = startLocation:copy(),
     }
 
-    local factoryLocation           = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
+    local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
     local nTreeswanted = 6
     local settleData = {
         materialsItemSupplierLocator    = enterprise_shop.GetShopLocator(),
@@ -123,7 +123,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         siloHostLocator                 = enterprise_storage:getHostLocator(),
         siloClassName                   = "Silo",
         siloConstructParameters         = {
-            baseLocation                    = Location:new({_x= 12, _y= -12, _z= 1, _dx=0, _dy=1}),
+            baseLocation                    = Location:newInstance(12, -12, 1, 0, 1),
             topChests                       = 2,
             layers                          = 2,
         },

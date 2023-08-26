@@ -70,7 +70,7 @@ function enterprise_test.Test_ASrv(...)
     }
     local metaData = {
         startTime = coreutils.UniversalTime(),
-        location = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1}),
+        location = Location:newInstance(0, 0, 1, 0, 1),
         needTool = false,
         needTurtle = false,
         fuelNeeded = 0

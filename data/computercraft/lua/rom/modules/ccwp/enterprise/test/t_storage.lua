@@ -38,7 +38,7 @@ end
 
 local test_mobjHostName = "enterprise_storage"
 local test_mobjClassName1 = "Silo"
-local location1  = Location:new({_x= 12, _y= -12, _z= 1, _dx=0, _dy=1})
+local location1  = Location:newInstance(12, -12, 1, 0, 1)
 local test_mobjConstructParameters1 = {
     baseLocation    = location1,
     topChests       = 2,

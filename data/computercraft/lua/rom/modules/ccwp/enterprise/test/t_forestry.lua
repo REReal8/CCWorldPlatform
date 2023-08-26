@@ -17,7 +17,7 @@ local levelm1 = -1
 local level0 = 0
 local level1 = 1
 local level2 = 2
-local location = Location:new({_x= 0, _y= 0, _z= 1, _dx=0, _dy=1})
+local location = Location:newInstance(0, 0, 1, 0, 1)
 local nTrees1 = 1
 local nTrees2 = 2
 local nTrees3 = 3

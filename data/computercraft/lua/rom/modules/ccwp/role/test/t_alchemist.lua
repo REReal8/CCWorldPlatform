@@ -9,7 +9,7 @@ local role_alchemist = require "role_alchemist"
 function t_alchemist.T_All()
 end
 
-local baseLocationV1 = Location:new({_x=12, _y= 0, _z= 1, _dx=0, _dy=1})
+local baseLocationV1 = Location:newInstance(12, 0, 1, 0, 1)
 
 function t_alchemist.T_Craft_Task()
     local craftData = {
