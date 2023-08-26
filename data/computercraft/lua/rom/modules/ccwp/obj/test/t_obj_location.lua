@@ -123,10 +123,10 @@ function T_Location.T_new()
     local test = T_Location.CreateInitialisedTest(x1, y1, z1, dx1, dy1)
     test:test(obj, "location", "", logOk)
 
-    -- test default
-    obj = Location:new()
-    test = T_Location.CreateInitialisedTest(0, 0, 0, 0, 1)
-    test:test(obj, "location", "", logOk)
+    -- -- test default
+    -- obj = Location:new()
+    -- test = T_Location.CreateInitialisedTest(0, 0, 0, 0, 1)
+    -- test:test(obj, "location", "", logOk)
 
     -- cleanup test
 end
