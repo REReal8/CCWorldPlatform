@@ -43,6 +43,7 @@ function Location:_init(...)
     self._dy    = dy
 end
 
+-- ToDo: should be renamed to newFromTable at some point
 function Location:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
