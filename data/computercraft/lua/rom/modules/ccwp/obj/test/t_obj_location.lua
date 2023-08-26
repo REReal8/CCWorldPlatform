@@ -6,6 +6,9 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Location = require "obj_location"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
@@ -29,6 +32,8 @@ function T_Location.T_All()
     T_Location.T_blockDistanceTo()
 end
 
+local testClassName = "Location"
+local logOk = false
 local x0 = 0
 local y0 = 0
 local z0 = 0
@@ -54,17 +59,41 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "Location"
-function T_Location.CreateTestObj()
+function T_Location.CreateTestObj(x, y, z, dx, dy)
+    -- check input
+    x = x or x1
+    y = y or y1
+    z = z or z1
+    dx = dx or dx1
+    dy = dy or dy1
+
+    -- create testObj
     local testObj = Location:new({
-        _x  = x1,
-        _y  = y1,
-        _z  = z1,
-        _dx = dx1,
-        _dy = dy1,
+        _x  = x,
+        _y  = y,
+        _z  = z,
+        _dx = dx,
+        _dy = dy,
     })
 
+    -- end
     return testObj
+end
+
+function T_Location.CreateInitialisedTest(x, y, z, dx, dy)
+    -- check input
+
+    -- create test
+    local initialisedTest = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_x", x),
+        FieldValueEqualTest:newInstance("_y", y),
+        FieldValueEqualTest:newInstance("_z", z),
+        FieldValueEqualTest:newInstance("_dx", dx),
+        FieldValueEqualTest:newInstance("_dy", dy)
+    )
+
+    -- end
+    return initialisedTest
 end
 
 function T_Location.T_new()
@@ -72,26 +101,20 @@ function T_Location.T_new()
     corelog.WriteToLog("* Location:new() tests")
 
     -- test full
-    local location = Location:new({
+    local obj = Location:new({
         _x  = x1,
         _y  = y1,
         _z  = z1,
         _dx = dx1,
         _dy = dy1,
     })
-    assert(location:getX() == x1, "gotten getX(="..location:getX()..") not the same as expected(="..x1..")")
-    assert(location:getY() == y1, "gotten getY(="..location:getY()..") not the same as expected(="..y1..")")
-    assert(location:getZ() == z1, "gotten getY(="..location:getZ()..") not the same as expected(="..z1..")")
-    assert(location:getDX() == dx1, "gotten getDX(="..location:getDX()..") not the same as expected(="..dx1..")")
-    assert(location:getDY() == dy1, "gotten getDY(="..location:getDY()..") not the same as expected(="..dy1..")")
+    local initialisedTest = T_Location.CreateInitialisedTest(x1, y1, z1, dx1, dy1)
+    initialisedTest:test(obj, "location", "", logOk)
 
     -- test default
-    location = Location:new()
-    assert(location:getX() == 0, "gotten getX(="..location:getX()..") not the same as expected(=0)")
-    assert(location:getY() == 0, "gotten getY(="..location:getY()..") not the same as expected(=0)")
-    assert(location:getZ() == 0, "gotten getY(="..location:getZ()..") not the same as expected(=0)")
-    assert(location:getDX() == 0, "gotten getDX(="..location:getDX()..") not the same as expected(=0)")
-    assert(location:getDY() == 1, "gotten getDY(="..location:getDY()..") not the same as expected(=1)")
+    obj = Location:new()
+    initialisedTest = T_Location.CreateInitialisedTest(0, 0, 0, 0, 1)
+    initialisedTest:test(obj, "location", "", logOk)
 
     -- cleanup test
 end
