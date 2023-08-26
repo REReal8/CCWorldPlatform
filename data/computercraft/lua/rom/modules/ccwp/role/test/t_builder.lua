@@ -37,7 +37,7 @@ local codeMap1 = {
 local testBuildLayer1 = LayerRectangle:new({
     _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
     _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
-})
+}) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
     _codeArray  = {
@@ -52,7 +52,25 @@ local testBuildLayer2 = LayerRectangle:new({
         [2] = "C F",
         [1] = "CEE",
     },
-})
+}) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
+
+local testBuildLayer3 = LayerRectangle:new({
+    _codeArray  = {
+        ["T"]   = Block:new({ _name = torchItemName }),
+        ["C"]   = Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
+        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
+        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    },
+    _codeMap    = {
+        [6] = "C D  T",
+        [5] = "    T ",
+        [4] = "   T  ",
+        [3] = "??T   ",
+        [2] = " T    ",
+        [1] = "T    D",
+    },
+}) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local compact = { compact = true }
 
@@ -104,26 +122,6 @@ function t_builder.T_BuildBlueprint_MetaData()
 
     -- cleanup test
 end
-
-local anyBlock = Block.AnyBlockName()
-local noneBlock = Block.NoneBlockName()
-local testBuildLayer3 = LayerRectangle:new({
-    _codeArray  = {
-        ["T"]   = Block:new({ _name = torchItemName }),
-        ["C"]   = Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
-        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
-    },
-    _codeMap    = {
-        [6] = "C D  T",
-        [5] = "    T ",
-        [4] = "   T  ",
-        [3] = "??T   ",
-        [2] = " T    ",
-        [1] = "T    D",
-    },
-})
 
 function t_builder.T_BuildLayer_Task()
     -- prepare test
