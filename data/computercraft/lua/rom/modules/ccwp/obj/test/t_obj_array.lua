@@ -35,7 +35,7 @@ local testObj2 = TestObj:new({
     _field1 = "field1_2",
     _field2 = 2,
 })
-local wrongTestObj1 = Location:new()
+local wrongTestObj1 = Location:newInstance()
 
 local compact = { compact = true }
 
