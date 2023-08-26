@@ -52,10 +52,10 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
 -  Initialisation: use Class:newInstance & instance:_init to create and initialise objects instances
    -  changed approach instead of calling Class:new
       -  this approach should in the future be renamed to newFromTable
-      -  it normally should only be used for loading from the dht
+      -  it mostly only will be used for loading from the dht (or other special cases)
    -  adopt this approach for all classes
       -  TestObj
-      -  Location
+      R  Location                                                                                                       (done)
       -  URL
       -  Inventory
       -  ObjTable
