@@ -140,75 +140,75 @@ end
 
 function Location:getLocationFront( c )
     c = c or 1
-    return Location:new({
-        _x = self._x + c * self._dx,
-        _y = self._y + c * self._dy,
-        _z = self._z,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
+    return Location:newInstance(
+        self._x + c * self._dx,
+        self._y + c * self._dy,
+        self._z,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:getLocationUp( c )
     c = c or 1
-    return Location:new({
-        _x = self._x,
-        _y = self._y,
-        _z = self._z + c,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
+    return Location:newInstance(
+        self._x,
+        self._y,
+        self._z + c,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:getLocationDown( c )
     c = c or 1
-    return Location:new({
-        _x = self._x,
-        _y = self._y,
-        _z = self._z - c,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
+    return Location:newInstance(
+        self._x,
+        self._y,
+        self._z - c,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:minLocation(o)
-    return Location:new({
-        _x	= math.min(self._x, o._x),
-        _y 	= math.min(self._y, o._y),
-        _z 	= math.min(self._z, o._z),
-        _dx	= math.min(self._dx, o._dx),
-        _dy = math.min(self._dy, o._dy),
-    })
+    return Location:newInstance(
+        math.min(self._x, o._x),
+        math.min(self._y, o._y),
+        math.min(self._z, o._z),
+        math.min(self._dx, o._dx),
+        math.min(self._dy, o._dy)
+    )
 end
 
 function Location:maxLocation(o)
-    return Location:new({
-        _x	= math.max(self._x, o._x),
-        _y 	= math.max(self._y, o._y),
-        _z 	= math.max(self._z, o._z),
-        _dx = math.max(self._dx, o._dx),
-        _dy = math.max(self._dy, o._dy),
-    })
+    return Location:newInstance(
+        math.max(self._x, o._x),
+        math.max(self._y, o._y),
+        math.max(self._z, o._z),
+        math.max(self._dx, o._dx),
+        math.max(self._dy, o._dy)
+    )
 end
 
 function Location:getDivergentDirection(dx, dy)
-    return Location:new({
-        _x	= self._x,
-        _y 	= self._y,
-        _z 	= self._z,
-        _dx	= dx,
-        _dy = dy,
-    })
+    return Location:newInstance(
+        self._x,
+        self._y,
+        self._z,
+        dx,
+        dy
+    )
 end
 
 function Location:getRelativeLocation(addX, addY, addZ)
-    return Location:new({
-        _x	= self._x + addX,
-        _y 	= self._y + addY,
-        _z 	= self._z + addZ,
-        _dx = self._dx,
-        _dy = self._dy
-    })
+    return Location:newInstance(
+        self._x + addX,
+        self._y + addY,
+        self._z + addZ,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:getRelativeLocationFront(steps)
@@ -216,13 +216,13 @@ function Location:getRelativeLocationFront(steps)
     steps	= steps or 1
 
     -- done before we started :-)
-    return Location:new({
-        _x  = self._x + steps * self._dx,
-        _y  = self._y + steps * self._dy,
-        _z	= self._z,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
+    return Location:newInstance(
+        self._x + steps * self._dx,
+        self._y + steps * self._dy,
+        self._z,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:getRelativeLocationUp(steps)
@@ -230,13 +230,13 @@ function Location:getRelativeLocationUp(steps)
     steps	= steps or 1
 
     -- done before we started :-)
-    return Location:new({
-        _x  = self._x,
-        _y 	= self._y,
-        _z  = self._z + steps,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
+    return Location:newInstance(
+        self._x,
+        self._y,
+        self._z + steps,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:getRelativeLocationDown(steps)
@@ -244,13 +244,13 @@ function Location:getRelativeLocationDown(steps)
     steps	= steps or 1
 
     -- done before we started :-)
-    return Location:new({
-        _x	= self._x,
-        _y	= self._y,
-        _z 	= self._z - steps,
-        _dx = self._dx,
-        _dy = self._dy,
-    })
+    return Location:newInstance(
+        self._x,
+        self._y,
+        self._z - steps,
+        self._dx,
+        self._dy
+    )
 end
 
 function Location:getRelativeLocationLeft(steps)
