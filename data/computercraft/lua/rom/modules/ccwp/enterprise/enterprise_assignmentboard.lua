@@ -144,8 +144,8 @@ end
 local function ResetStatistics()
     return coredht.SaveData({
         maxFuelNeed_Assignment  = 0,
-        minLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
-        maxLocation             = Location:new({_x= 3, _y= 2, _z= 1, _dx=0, _dy=1}),
+        minLocation             = Location:newInstance(3, 2, 1, 0, 1),
+        maxLocation             = Location:newInstance(3, 2, 1, 0, 1),
         maxFuelNeed_Travel      = 0,
     }, db.dhtRoot, db.dhtStatistics)
 end

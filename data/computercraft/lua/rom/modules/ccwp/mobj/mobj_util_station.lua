@@ -89,18 +89,18 @@ end
 
 function UtilStation.GetV1SiteBuildData(serviceData)
     if type(serviceData)                ~= "table" then serviceData = {} end
-    if type(serviceData.baseLocation)   ~= "tabel" then serviceData.baseLocation = Location:new({_y = -12, _x = -12, _z = 1, _dx = 0, _dy = 1}) end
+    if type(serviceData.baseLocation)   ~= "tabel" then serviceData.baseLocation = Location:newInstance(-12, -12, 1, 0, 1) end
 
     -- construct layer list
     local layerList = {
-        { startpoint = Location:new({ _x= 8, _y= 3, _z= 0}), buildFromAbove = true, layer = Chest_layer()},
-        { startpoint = Location:new({ _x= 9, _y= 3, _z= 0}), buildFromAbove = true, layer = Computer_layer()},
-        { startpoint = Location:new({ _x= 9, _y= 2, _z= 0}), buildFromAbove = true, layer = Modem_layer()},
-        { startpoint = Location:new({ _x= 9, _y= 3, _z= 2}), buildFromAbove = true, layer = Computer_layer()},
-        { startpoint = Location:new({ _x= 9, _y= 2, _z= 2}), buildFromAbove = true, layer = Modem_layer()},
+        { startpoint = Location:newInstance(8, 3, 0), buildFromAbove = true, layer = Chest_layer()},
+        { startpoint = Location:newInstance(9, 3, 0), buildFromAbove = true, layer = Computer_layer()},
+        { startpoint = Location:newInstance(9, 2, 0), buildFromAbove = true, layer = Modem_layer()},
+        { startpoint = Location:newInstance(9, 3, 2), buildFromAbove = true, layer = Computer_layer()},
+        { startpoint = Location:newInstance(9, 2, 2), buildFromAbove = true, layer = Modem_layer()},
     }
     for i=2,8 do
-        table.insert(layerList, { startpoint = Location:new({ _x= 1, _y= 3, _z= i}), buildFromAbove = true, layer = Monitor_Only_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(1, 3, i), buildFromAbove = true, layer = Monitor_Only_layer()})
     end
 
 
@@ -108,7 +108,7 @@ function UtilStation.GetV1SiteBuildData(serviceData)
     -- compose da blueprint
     local blueprint = {
         layerList = layerList,
-        escapeSequence = { Location:new({ _x= 9, _y= 5, _z= 0}) }
+        escapeSequence = { Location:newInstance(9, 5, 0) }
     }
 
     -- return build data
