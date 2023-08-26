@@ -738,7 +738,7 @@ end
 function Factory.GetV0SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()},
     }
 
     -- construct blueprint
@@ -760,7 +760,7 @@ end
 function Factory.GetV0SiteDismantleBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = Location:new({ _x= 0, _y= 0, _z= -1}), buildFromAbove = true, layer = ShaftRestore_layer()},
+        { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = ShaftRestore_layer()},
     }
 
     -- construct blueprint
@@ -850,17 +850,17 @@ end
 function Factory.GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = true, layer = Shaft_layer()},
-        { startpoint = Location:new({ _x= 3, _y= 3, _z= -2}), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()},
-        { startpoint = Location:new({ _x= 3, _y= 3, _z= -3}), buildFromAbove = false, layer = FurnanceL1_layer()},
-        { startpoint = Location:new({ _x= 3, _y= 3, _z= -5}), buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()},
+        { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()},
+        { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()},
+        { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = Shaft_layer()},
     }
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
-            Location:new({ _x= 3, _y= 3, _z=  1}),
+            Location:newInstance(3, 3, 1),
         }
     }
 
@@ -951,20 +951,20 @@ function Factory.GetV2SiteBuildData(serviceData)
 
     -- construct layer list
     local layerList = {
-        { startpoint = Location:new({ _x= 0, _y= 0, _z= 0}), buildFromAbove = true, layer = TopLayerL2_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopLayerL2_layer()},
     }
     if not onlyUpgrade then
-        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -1}), buildFromAbove = true, layer = Shaft_layer()})
-        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -2}), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
-        table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -3}), buildFromAbove = false, layer = FurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()})
     end
-    table.insert(layerList, { startpoint = Location:new({ _x= 3, _y= 3, _z= -5}), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
+    table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -5), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
 
     -- construct blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = {
-            Location:new({ _x= 3, _y= 3, _z= 1}),
+            Location:newInstance(3, 3, 1),
         }
     }
 
