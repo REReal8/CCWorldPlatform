@@ -2,7 +2,6 @@ local T_Factory = {}
 
 local corelog = require "corelog"
 local coreutils = require "coreutils"
-local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local IObj = require "i_obj"
@@ -23,6 +22,7 @@ local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 
+local T_Turtle = require "test.t_mobj_turtle"
 local T_Chest = require "test.t_mobj_chest"
 local t_turtle = require "test.t_turtle"
 
@@ -229,7 +229,8 @@ end
 function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test
     corelog.WriteToLog("* Factory:getFuelNeed_Production_Att() tests")
-    local location2 = Location:new(coremove.GetLocation())
+    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
+    local location2 = turtleObj:getLocation()
     local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
     local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
     local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })

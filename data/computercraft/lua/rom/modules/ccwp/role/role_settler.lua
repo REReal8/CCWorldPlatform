@@ -12,7 +12,7 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
-local Location = require "obj_location"
+local Host = require "obj_host"
 
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
@@ -22,7 +22,11 @@ local Location = require "obj_location"
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
 function role_settler.InitialiseCoordinates_MetaData(taskData)
-    local location = Location:new(coremove.GetLocation()) --> use the current location for proper bootstrapping
+    local currentTurtleId = os.getComputerID()
+    local enterprise_turtle = require "enterprise_turtle"
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)) if not currentTurtleLocator then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining turtleLocator for current turtle") return nil end
+    local turtleObj = Host.GetObject(currentTurtleLocator) if not turtleObj then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtle") return nil end
+    local location = turtleObj:getLocation() --> use the current location for proper bootstrapping
 
     return {
         startTime = coreutils.UniversalTime(),

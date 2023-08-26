@@ -1,9 +1,6 @@
 local t_energy = {}
 
 local corelog = require "corelog"
-local coremove = require "coremove"
-
-local Location = require "obj_location"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 
@@ -33,7 +30,9 @@ end
 function t_energy.T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetFuelNeed_Refuel_Att() tests")
-    local turtleLocation = Location:new(coremove.GetLocation())
+    local T_Turtle = require "test.t_mobj_turtle"
+    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
+    local turtleLocation = turtleObj:getLocation()
     local forestLocation = turtleLocation:getRelativeLocation(-3, -2, 0)
     local forest = T_BirchForest.CreateTestObj(nil, levelm1, forestLocation) assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
@@ -103,7 +102,9 @@ function t_energy.T_GetRefuelAmount_Att()
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
 
-    local turtleLocation = Location:new(coremove.GetLocation())
+    local T_Turtle = require "test.t_mobj_turtle"
+    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
+    local turtleLocation = turtleObj:getLocation()
     local factoryLocation1 = turtleLocation:copy()
     local result = t_manufacturing.StartNewSite(factoryLocation1) if not result.success then corelog.Error("failed starting Site") return end
     local factoryLocator1 = result.siteLocator

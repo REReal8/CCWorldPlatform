@@ -179,7 +179,7 @@ function Turtle:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Turtle:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get location
-    local turtleLocation = Location:new(coremove.GetLocation())
+    local turtleLocation = self:getLocation()
 
     -- loop on items
     local fuelNeed = 0
@@ -340,6 +340,18 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function Turtle:getLocation()
+    -- check current Turtle
+    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getLocation() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+
+    -- get location
+    local location = Location:new(coremove.GetLocation())
+
+    -- end
+    return location
+end
+
 
 function Turtle:getInventory()
     -- check current Turtle

@@ -12,14 +12,12 @@ local enterprise_turtle = Class.NewClass(Host)
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
-local Location = require "obj_location"
 
 local Turtle = require "mobj_turtle"
 
@@ -329,7 +327,7 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     if turtle then
         turtleResume = {
             turtleId        = turtleId,
-            location        = Location:new(coremove.GetLocation()),
+            location        = turtleObj:getLocation(),
             fuelLevel       = turtle.getFuelLevel(),
             axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
             inventoryItems  = coreinventory.GetInventoryDetail().items,
@@ -472,11 +470,11 @@ function enterprise_turtle.GetItemDepotLocation_SSrv(...)
 
     -- get turtle
     local currentTurtleId = os.getComputerID()
-    local itemDepotLocatorTurtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemDepotLocator }).turtleId if not itemDepotLocatorTurtleId then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Failed obtaining turtleId from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
-    if itemDepotLocatorTurtleId and currentTurtleId ~= itemDepotLocatorTurtleId then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..itemDepotLocatorTurtleId..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    local turtleObj = Host.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Failed obtaining turtle from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
+    if currentTurtleId ~= turtleObj:getId() then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
-    local location = Location:new(coremove.GetLocation())
+    local location = turtleObj:getLocation()
 
     -- end
     return {
