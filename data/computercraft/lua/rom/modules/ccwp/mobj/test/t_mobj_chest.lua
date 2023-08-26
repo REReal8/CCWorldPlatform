@@ -96,7 +96,7 @@ function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, invent
     -- create test
     local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
     if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
-    local initialisedTest = FieldsTest:newInstance(
+    local test = FieldsTest:newInstance(
         idTest,
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_accessDirection", accessDirection),
@@ -104,7 +104,7 @@ function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, invent
     )
 
     -- end
-    return initialisedTest
+    return test
 end
 
 function T_Chest.T__init()
@@ -114,8 +114,8 @@ function T_Chest.T__init()
 
     -- test
     local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
-    local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    initialisedTest:test(obj, "chest", "", logOk)
+    local test = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
+    test:test(obj, "chest", "", logOk)
 
     -- cleanup test
 end
@@ -133,8 +133,8 @@ function T_Chest.T_new()
         _accessDirection        = accessDirection1,
         _inventory              = inventory1:copy(),
     })
-    local initialisedTest = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    initialisedTest:test(obj, "chest", "", logOk)
+    local test = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
+    test:test(obj, "chest", "", logOk)
 
     -- cleanup test
 end
@@ -211,8 +211,8 @@ function T_Chest.T_construct()
 
     -- test
     local mobj = Chest:construct(constructParameters1) assert(mobj, "Failed obtaining "..testClassName)
-    local initialisedTest = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
-    initialisedTest:test(mobj, "chest", "", logOk)
+    local test = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
+    test:test(mobj, "chest", "", logOk)
 end
 
 function T_Chest.T_destruct()
