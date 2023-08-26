@@ -11,7 +11,6 @@ local enterprise_isp = require "enterprise_isp"
 
 local t_manufacturing = require "test.t_manufacturing"
 local T_BirchForest = require "test.t_mobj_birchforest"
-local T_Turtle = require "test.t_mobj_turtle"
 local TestObj = require "test.obj_test"
 
 function t_turtle.T_All()
@@ -54,6 +53,7 @@ function t_turtle.T_GetFuelLevels_Att()
     corelog.WriteToLog("# Test GetFuelLevels_Att")
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
+    local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location = turtleObj:getLocation()
     local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end

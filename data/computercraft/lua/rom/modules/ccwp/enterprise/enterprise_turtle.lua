@@ -470,8 +470,8 @@ function enterprise_turtle.GetItemDepotLocation_SSrv(...)
 
     -- get turtle
     local currentTurtleId = os.getComputerID()
-    local turtleObj = Host.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Failed obtaining turtle from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
-    if currentTurtleId ~= turtleObj:getId() then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    local turtleObj = enterprise_turtle:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
+    if currentTurtleId ~= turtleObj:getTurtleId() then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getTurtleId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
     local location = turtleObj:getLocation()

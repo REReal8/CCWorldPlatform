@@ -26,7 +26,6 @@ local FieldValueTypeTest = require "field_value_type_test"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Class = require "test.t_class"
-local T_Turtle = require "test.t_mobj_turtle"
 local T_Obj = require "test.t_obj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
@@ -326,6 +325,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
+    local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local itemDepotLocation = turtleObj:getLocation()
