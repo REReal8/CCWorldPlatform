@@ -35,7 +35,7 @@ local t_turtle = require "test.t_turtle"
 
 function T_Chest.T_All()
     -- initialisation
-    T_Chest.T_init()
+    T_Chest.T__init()
     T_Chest.T_new()
     T_Chest.T_Getters()
 
@@ -107,9 +107,9 @@ function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, invent
     return initialisedTest
 end
 
-function T_Chest.T_init()
+function T_Chest.T__init()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":init() tests")
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
     local id = coreutils.NewId()
 
     -- test
