@@ -14,6 +14,7 @@ local T_IObj = require "test.t_i_obj"
 
 function T_Location.T_All()
     -- initialisation
+    T_Location.T__init()
     T_Location.T_new()
 
     -- IObj methods
@@ -68,13 +69,7 @@ function T_Location.CreateTestObj(x, y, z, dx, dy)
     dy = dy or dy1
 
     -- create testObj
-    local testObj = Location:new({
-        _x  = x,
-        _y  = y,
-        _z  = z,
-        _dx = dx,
-        _dy = dy,
-    })
+    local testObj = Location:newInstance(x, y, z, dx, dy)
 
     -- end
     return testObj
@@ -94,6 +89,18 @@ function T_Location.CreateInitialisedTest(x, y, z, dx, dy)
 
     -- end
     return initialisedTest
+end
+
+function T_Location.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_Location.CreateTestObj(x1, y1, z1, dx1, dy1) assert(obj, "Failed obtaining "..testClassName)
+    local initialisedTest = T_Location.CreateInitialisedTest(x1, y1, z1, dx1, dy1)
+    initialisedTest:test(obj, "location", "", logOk)
+
+    -- cleanup test
 end
 
 function T_Location.T_new()

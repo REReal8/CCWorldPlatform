@@ -20,6 +20,29 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Location:_init(...)
+    -- get & check input from description
+    local checkSuccess, x, y, z, dx, dy = InputChecker.Check([[
+        Initialise a Location.
+
+        Parameters:
+            x                       + (number, 0) x coordinate
+            y                       + (number, 0) y coordinate
+            z                       + (number, 0) z coordinate
+            dx                      + (number, 0) x direction (either -1,0,1)
+            dy                      + (number, 1) y direction (either -1,0
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Location:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._x     = x
+    self._y     = y
+    self._z     = z
+    self._dx    = dx
+    self._dy    = dy
+end
+
 function Location:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
