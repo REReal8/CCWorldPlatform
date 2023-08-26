@@ -100,6 +100,11 @@ function T_Location.T__init()
     local initialisedTest = T_Location.CreateInitialisedTest(x1, y1, z1, dx1, dy1)
     initialisedTest:test(obj, "location", "", logOk)
 
+    -- test default
+    obj = Location:newInstance()
+    initialisedTest = T_Location.CreateInitialisedTest(0, 0, 0, 0, 1)
+    initialisedTest:test(obj, "location", "", logOk)
+
     -- cleanup test
 end
 
