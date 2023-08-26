@@ -70,47 +70,6 @@ function Turtle:setFuelPriorityKey(fuelPriorityKey)
     self._fuelPriorityKey = fuelPriorityKey
 end
 
-function Turtle:getInventory()
-    -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
-
-    -- get current Turtle inventory slots
-    local slotTable = {}
-    for slot=1,16 do
-        -- get detailed information about this slot
-        local itemDetail = coreinventory.GetItemDetail(slot)
-
-        -- right item?
-        if type(itemDetail) == "table" then
-            -- add to slots, name and count
-            slotTable[ slot ] = itemDetail
-        end
-    end
-
-    -- construct Inventory object
-    local inventory = Inventory:new({
-        _slotTable  = slotTable,
-    })
-
-    -- end
-    return inventory
-end
-
-function Turtle:getInventoryAsItemTable()
-    -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
-
---    -- get current Turtle inventory slots
---    return ItemTable:new(Turtle:getInventory():getItemTable())
-
-    -- why multiline when it can be done in a single line? Well, for readablilty and debugging ofcourse!
-    local inventory = Turtle:getInventory()
-    local itemTable = inventory:getItemTable()
-
-    -- return the table as an object ItemTable
-    return ItemTable:new(itemTable)
-end
-
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -371,6 +330,56 @@ function Turtle:needsTo_StoreItemsFrom_SOSrv(...)
     -- ToDo: implement
     corelog.Warning("Turtle:needsTo_StoreItemsFrom_SOSrv: not yet implemented")
     return {success = false}
+end
+
+--                        _  __ _                       _   _               _
+--                       (_)/ _(_)                     | | | |             | |
+--    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| '_ \ / _ \/ __| |  _| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ |_) |  __/ (__| | | | | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--       | |
+--       |_|
+
+function Turtle:getInventory()
+    -- check current Turtle
+    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+
+    -- get current Turtle inventory slots
+    local slotTable = {}
+    for slot=1,16 do
+        -- get detailed information about this slot
+        local itemDetail = coreinventory.GetItemDetail(slot)
+
+        -- right item?
+        if type(itemDetail) == "table" then
+            -- add to slots, name and count
+            slotTable[ slot ] = itemDetail
+        end
+    end
+
+    -- construct Inventory object
+    local inventory = Inventory:new({
+        _slotTable  = slotTable,
+    })
+
+    -- end
+    return inventory
+end
+
+function Turtle:getInventoryAsItemTable()
+    -- check current Turtle
+    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+
+--    -- get current Turtle inventory slots
+--    return ItemTable:new(Turtle:getInventory():getItemTable())
+
+    -- why multiline when it can be done in a single line? Well, for readablilty and debugging ofcourse!
+    local inventory = Turtle:getInventory()
+    local itemTable = inventory:getItemTable()
+
+    -- return the table as an object ItemTable
+    return ItemTable:new(itemTable)
 end
 
 return Turtle
