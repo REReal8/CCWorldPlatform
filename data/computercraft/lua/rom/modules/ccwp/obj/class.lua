@@ -103,7 +103,7 @@ function Class:newInstance(...)
     self.__index = self
 
     -- initialisation
-    if ... and instance._init then
+    if instance._init then
         instance:_init(...)
     end
 
