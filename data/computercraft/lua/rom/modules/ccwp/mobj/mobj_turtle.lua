@@ -65,7 +65,7 @@ end
 
 function Turtle:setFuelPriorityKey(fuelPriorityKey)
     -- check
-    if type(fuelPriorityKey) ~= "string" then corelog.Error("LayerRectangle:setCodeArray: Invalid fuelPriorityKey(type="..type(fuelPriorityKey)..")") return end
+    if type(fuelPriorityKey) ~= "string" then corelog.Error("Turtle:setFuelPriorityKey: Invalid fuelPriorityKey(type="..type(fuelPriorityKey)..")") return end
 
     self._fuelPriorityKey = fuelPriorityKey
 end
