@@ -157,12 +157,8 @@ function Silo:construct(...)
         _pickupLocation = 0,
 
         -- chests
-        _topChests      = ObjArray:new({
-            _objClassName = "URL",
-        }),
-        _storageChests  = ObjArray:new({
-            _objClassName = "URL",
-        }),
+        _topChests      = ObjArray:newInstance("URL"),
+        _storageChests  = ObjArray:newInstance("URL"),
 
         -- is this silo accepting requests?
         _operational    = false,

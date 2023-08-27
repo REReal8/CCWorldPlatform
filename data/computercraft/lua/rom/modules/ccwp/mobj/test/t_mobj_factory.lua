@@ -51,14 +51,14 @@ end
 local location1  = Location:newInstance(-12, 0, 1, 0, 1)
 local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
-local inputLocators1 = ObjArray:new({ _objClassName = locatorClassName, inputLocator1, })
+local inputLocators1 = ObjArray:newInstance(locatorClassName, { inputLocator1, })
 local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local outputLocators1 = ObjArray:new({ _objClassName = locatorClassName, outputLocator1, })
+local outputLocators1 = ObjArray:newInstance(locatorClassName, { outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
 local craftingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
-local craftingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot1, })
+local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
 local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
-local smeltingSpots1 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot1, })
+local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
 
 local compact = { compact = true }
 
@@ -232,9 +232,9 @@ function T_Factory.T_getFuelNeed_Production_Att()
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location2 = turtleObj:getLocation()
     local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
-    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, craftingSpot2, })
+    local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { craftingSpot2, })
     local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
-    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, smeltingSpot2, })
+    local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot2, })
     local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("Failed obtaining Factory") return end
 
     -- test
@@ -305,7 +305,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not craft without available craftingSpot
     -- ToDo: improve when a spot can be marked unavailable
-    local craftingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, })
+    local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { })
     obj._craftingSpots = craftingSpots2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
@@ -319,7 +319,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not smelt without available smeltingSpot
     -- ToDo: improve when a spot can be marked unavailable
-    local smeltingSpots2 = ObjArray:new({ _objClassName = productionSpotClassName, })
+    local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { })
     obj._smeltingSpots = smeltingSpots2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly failed for "..itemCount.." "..itemName.."'s")
@@ -327,7 +327,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not produce without available inputLocator
     -- ToDo: improve by changing the availability of the inputLocator
-    local inputLocators2 = ObjArray:new({ _objClassName = locatorClassName, })
+    local inputLocators2 = ObjArray:newInstance(locatorClassName, { })
     obj._inputLocators = inputLocators2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
@@ -335,7 +335,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not produce without available outputLocator
     -- ToDo: improve by changing the availability of the _outputLocators
-    local outputLocators2 = ObjArray:new({ _objClassName = locatorClassName, })
+    local outputLocators2 = ObjArray:newInstance(locatorClassName, { })
     obj._outputLocators = outputLocators2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")

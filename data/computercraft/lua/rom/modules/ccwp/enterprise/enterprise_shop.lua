@@ -72,9 +72,7 @@ function enterprise_shop:getShop()
         shop = Shop:new({
             _id                     = coreutils.NewId(),
 
-            _itemSuppliersLocators  = ObjArray:new({
-                _objClassName   = locatorClassName,
-            }),
+            _itemSuppliersLocators  = ObjArray:newInstance(locatorClassName),
         })
         corelog.WriteToLog("Creating Shop "..shop:getId())
 

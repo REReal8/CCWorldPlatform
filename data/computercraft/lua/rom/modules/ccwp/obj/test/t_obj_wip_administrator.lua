@@ -35,11 +35,9 @@ end
 local workId1 = "workId1"
 local workId2 = "workId2"
 local callbackClassName = "Callback"
-local callbackList1 = ObjArray:new({
-    _objClassName   = callbackClassName,
-}) if not callbackList1 then return end
+local callbackList1 = ObjArray:newInstance(callbackClassName) assert(callbackList1, "Failed obtaining callbackList1")
 local wipQueueClassName = "WIPQueue"
-local wipQueues1 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues1)
+local wipQueues1 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues1, "Failed obtaining wipQueues1")
 
 local compact = { compact = true }
 

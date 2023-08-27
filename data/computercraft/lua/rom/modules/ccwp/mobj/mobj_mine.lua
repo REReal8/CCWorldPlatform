@@ -79,9 +79,7 @@ function Mine:NewMine(...)
         _baseLocation   = baseLocation,
 
         -- chests
-        _topChests      = ObjArray:new({
-            _objClassName = "URL",
-        }),
+        _topChests      = ObjArray:newInstance("URL"),
 
         -- is this silo accepting requests?
         _operational    = false,

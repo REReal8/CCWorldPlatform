@@ -54,7 +54,7 @@ function T_Mine.CreateTestObj(id, baseLocation, topChests)
     -- check input
     id = id or coreutils.NewId()
     baseLocation = baseLocation or location1
-    topChests = topChests or ObjArray:new({ _objClassName = "URL", })
+    topChests = topChests or ObjArray:newInstance("URL")
 
     -- create testObj
     local testObj = Mine:new({
@@ -73,7 +73,7 @@ function T_Mine.T_new()
     -- prepare test
     local id = coreutils.NewId()
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+    local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 
     local obj = T_Mine.CreateTestObj(id, location1, topChests1)
     local expectedFieldValues = {

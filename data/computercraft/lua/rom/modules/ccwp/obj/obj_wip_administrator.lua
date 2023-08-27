@@ -85,9 +85,7 @@ function WIPAdministrator:getWIPQueue(...)
 --        corelog.WriteToLog("WIPAdministrator:getWIPQueue: WIPQueue with id="..queueId.." not yet found. Creating it")
 
         -- create new queue
-        local callbackList = ObjArray:new({
-            _objClassName   = "Callback",
-        })
+        local callbackList = ObjArray:newInstance("Callback")
         queue = WIPQueue:new({
             _workList       = {},
             _callbackList   = callbackList,

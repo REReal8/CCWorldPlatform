@@ -56,15 +56,7 @@ end
 
 local testClassName = "Shop"
 local locatorClassName = "URL"
-local itemSuppliersLocators1 = ObjArray:new({
-    _objClassName   = locatorClassName,
-})
-local itemSuppliersLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local itemSuppliersLocators2 = ObjArray:new({
-    _objClassName   = locatorClassName,
-
-    itemSuppliersLocator1,
-})
+local itemSuppliersLocators1 = ObjArray:newInstance(locatorClassName)
 
 local compact = { compact = true }
 

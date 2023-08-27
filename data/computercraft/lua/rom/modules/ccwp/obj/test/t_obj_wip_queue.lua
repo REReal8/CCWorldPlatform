@@ -36,9 +36,7 @@ local workList1 = {
 }
 local workId = "id"
 local callbackClassName = "Callback"
-local callbackList1 = ObjArray:new({
-    _objClassName   = callbackClassName,
-}) if not callbackList1 then return end
+local callbackList1 = ObjArray:newInstance(callbackClassName) assert(callbackList1, "Failed obtaining callbackList1")
 local callback1 = Callback.GetNewDummyCallBack()
 
 local compact = { compact = true }

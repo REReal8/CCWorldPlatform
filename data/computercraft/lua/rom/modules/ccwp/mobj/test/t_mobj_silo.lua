@@ -67,8 +67,8 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
     id = id or coreutils.NewId()
     baseLocation = baseLocation or location1
     entryLocation = entryLocation or baseLocation:getRelativeLocation(3, 3, 0)
-    topChests = topChests or ObjArray:new({ _objClassName = "URL", })
-    storageChests = storageChests or ObjArray:new({ _objClassName = "URL", })
+    topChests = topChests or ObjArray:newInstance("URL")
+    storageChests = storageChests or ObjArray:newInstance("URL")
 
     -- create testObj
     local testObj = Silo:new({
@@ -96,10 +96,10 @@ function T_Silo.T_new()
     -- prepare test
     local id = coreutils.NewId()
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+    local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
+    local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
     local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1, storageChests1)
     local expectedFieldValues = {
@@ -134,10 +134,10 @@ function T_Silo.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:new({ _objClassName = "URL", chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+    local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests1 = ObjArray:new({ _objClassName = "URL", chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
+    local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
     local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy()) assert(obj, "Failed obtaining "..testClassName)
     local otherObj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy()) assert(otherObj, "Failed obtaining "..testClassName)
 
