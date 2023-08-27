@@ -24,6 +24,7 @@ function T_ObjArray.T_All()
     T_ObjArray.T_IObj_All()
 
     -- specific methods
+    T_ObjArray.T_nObjs()
     T_ObjArray.T_transformObjectTables()
     T_ObjArray.T_new_transformsObjTables()
 end
@@ -104,6 +105,10 @@ end
 function T_ObjArray.T_new()
     -- prepare test
     corelog.WriteToLog("* ObjArray:new() tests")
+    local objsArray = {
+        testObj1:copy(),
+        testObj2:copy(),
+    }
 
     -- test full
     local obj = ObjArray:new({
@@ -112,18 +117,8 @@ function T_ObjArray.T_new()
         testObj1,
         testObj2,
     }) if not obj then corelog.Warning("obj unexpectedly nil") return end
-    assert(obj:getObjClassName() == objClassName1, "gotten getObjClassName(="..obj:getObjClassName()..") not the same as expected(="..objClassName1..")")
-    local expectedNElements = 2
-    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
-    assert(obj[1]:isEqual(testObj1), "obj 1 in obj(="..textutils.serialise(obj[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(obj[2]:isEqual(testObj2), "obj 2 in obj(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-
-    -- test default
-    obj = ObjArray:new() if not obj then return end
-    local defaultName = ""
-    assert(obj:getObjClassName() == defaultName, "gotten getObjClassName(="..obj:getObjClassName()..") not the same as expected(="..defaultName..")")
-    expectedNElements = 0
-    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
+    local test = T_ObjArray.CreateInitialisedTest(objClassName1, objsArray)
+    test:test(obj, "objArray", "", logOk)
 
     -- cleanup test
 end
@@ -156,6 +151,23 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function T_ObjArray.T_nObjs()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":nObjs() tests")
+    local objsArray = {
+        testObj1:copy(),
+        testObj2:copy(),
+    }
+    local obj = T_ObjArray.CreateTestObj(objClassName1, objsArray) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local expectedNElements = 2
+    local nObjs = obj:nObjs()
+    assert(nObjs == expectedNElements, " # elements(="..nObjs..") not the same as expected(="..expectedNElements..")")
+
+    -- cleanup test
+end
 
 function T_ObjArray.T_transformObjectTables()
     -- prepare test
