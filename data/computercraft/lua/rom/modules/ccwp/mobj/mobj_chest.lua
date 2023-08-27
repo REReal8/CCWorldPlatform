@@ -19,6 +19,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+local ObjTable = require "obj_table"
 local Inventory = require "obj_inventory"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -174,11 +175,12 @@ function Chest:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
+local blockClassName = "Block"
 local function Chest_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
-        },
+        }),
         _codeMap    = {
             [1] = "C",
         },
@@ -217,9 +219,9 @@ end
 
 local function ChestDismantle_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [1] = " ",
         },

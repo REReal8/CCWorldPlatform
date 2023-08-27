@@ -24,6 +24,7 @@ local ObjArray = require "obj_array"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -713,11 +714,12 @@ end
     - no smelting spot
 --]]
 
+local blockClassName = "Block"
 local function Shaft_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [1] = " ",
         },
@@ -726,9 +728,9 @@ end
 
 local function ShaftRestore_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
-        },
+        }),
         _codeMap    = {
             [1] = "D",
         },
@@ -824,9 +826,9 @@ end
 
 local function AboveOrBelowFurnanceL1_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [2] = " ",
             [1] = " ",
@@ -836,10 +838,10 @@ end
 
 local function FurnanceL1_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["F"]   = Block:newInstance("minecraft:furnace"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [2] = "F",
             [1] = " ",
@@ -919,9 +921,9 @@ end
 
 local function ItemDepotChestL2_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
-        },
+        }),
         _codeMap    = {
             [1] = "C",
         },
@@ -930,11 +932,11 @@ end
 
 local function TopLayerL2_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "  C C ",
             [5] = "      ",

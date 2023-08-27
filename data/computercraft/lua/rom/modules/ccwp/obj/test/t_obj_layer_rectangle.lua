@@ -1,10 +1,10 @@
 local T_LayerRectangle = {}
 local corelog = require "corelog"
-local coreutils = require "coreutils"
 
 local Class = require "class"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
+local ObjTable = require "obj_table"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -13,11 +13,6 @@ local T_IObj = require "test.t_i_obj"
 
 function T_LayerRectangle.T_All()
     -- helper functions
-    T_LayerRectangle.T_IsCodeTable()
-    T_LayerRectangle.T_IsEqualCodeTable()
-    T_LayerRectangle.T_CodeTableCopy()
-    T_LayerRectangle.T_TransformToCodeTable()
-
     T_LayerRectangle.T_IsCodeMap()
     T_LayerRectangle.T_IsEqualCodeMap()
     T_LayerRectangle.T_CodeMapCopy()
@@ -41,11 +36,12 @@ function T_LayerRectangle.T_All()
 end
 
 local testClassName = "LayerRectangle"
+local blockClassName = "Block"
 local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
 local computerItemName = "computercraft:computer_normal"
-local codeTable1 = {
+local codeTable1 = ObjTable:newInstance(blockClassName, {
     ["T"]   = Block:newInstance(torchItemName),
     ["S"]   = Block:newInstance(saplingItemName),
     ["C"]   = Block:newInstance(chestItemName, -1, 0),
@@ -53,7 +49,7 @@ local codeTable1 = {
     ["K"]   = Block:newInstance(computerItemName),
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
     [" "]   = Block:newInstance(Block.NoneBlockName()),
-}
+})
 
 --    _          _                    __                  _   _
 --   | |        | |                  / _|                | | (_)
@@ -64,108 +60,7 @@ local codeTable1 = {
 --                | |
 --                |_|
 
-function T_LayerRectangle.T_IsCodeTable()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsCodeTable tests")
-
-    -- test valid
-    local isCodeTable = LayerRectangle.IsCodeTable(codeTable1)
-    local expectedIsCodeTable = true
-    assert(isCodeTable == expectedIsCodeTable, "gotten IsCodeTable(="..tostring(isCodeTable)..") not the same as expected(="..tostring(expectedIsCodeTable)..")")
-
-    -- test different object
-    isCodeTable = LayerRectangle.IsCodeTable("a atring")
-    expectedIsCodeTable = false
-    assert(isCodeTable == expectedIsCodeTable, "gotten IsCodeTable(="..tostring(isCodeTable)..") not the same as expected(="..tostring(expectedIsCodeTable)..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_IsEqualCodeTable()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsEqualCodeTable() tests")
-    local codeTable2 = {
-        ["T"]   = Block:newInstance(torchItemName),
-        ["S"]   = Block:newInstance(saplingItemName),
-        ["C"]   = Block:newInstance(chestItemName, -1, 0),
-        ["D"]   = Block:newInstance(chestItemName, 0, 1),
-        ["K"]   = Block:newInstance(computerItemName),
-        ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        [" "]   = Block:newInstance(Block.NoneBlockName()),
-    }
-
-    -- test same
-    local isEqual = LayerRectangle.IsEqualCodeTable(codeTable1, codeTable2)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeTable(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different
-    codeTable2["T"] = Block:newInstance("minecraft:something")
-    isEqual = LayerRectangle.IsEqualCodeTable(codeTable1, codeTable2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeTable(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    codeTable2["T"] = Block:newInstance("minecraft:torch")
-
-    -- test different (size)
-    codeTable2["Z"] = Block:newInstance("minecraft:something")
-    isEqual = LayerRectangle.IsEqualCodeTable(codeTable1, codeTable2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeTable(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    codeTable2["Z"] = nil
-
-    -- cleanup test
-end
-
 local compact = { compact = true }
-
-function T_LayerRectangle.T_CodeTableCopy()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.CodeTableCopy() tests")
-
-    -- test
-    local copy = LayerRectangle.CodeTableCopy(codeTable1)
-    assert(LayerRectangle.IsEqualCodeTable(copy, codeTable1), "gotten CodeTableCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeTable1, compact)..")")
-
-    -- cleanup test
-end
-
-local dx1 = 0
-local dy1 = 1
-
-function T_LayerRectangle.T_TransformToCodeTable()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.TransformToCodeTable() tests")
-    local block1Table = {
-        _name   = "minecraft:torch",
-        _dx     = dx1,
-        _dy     = dy1,
-    }
-    local block2Table = {
-        _name   = "minecraft:birch_sapling",
-        _dx     = dx1,
-        _dy     = dy1,
-    }
-
-    -- test full
-    local codeTableTable = {
-        ["T"] = coreutils.DeepCopy(block1Table),
-        ["S"] = coreutils.DeepCopy(block2Table),
-    }
-    assert(not LayerRectangle.IsCodeTable(codeTableTable), "prepared codeTable already a codeTable")
-    local transformed = LayerRectangle.TransformToCodeTable(codeTableTable)
-    assert(LayerRectangle.IsCodeTable(transformed), "transformed codeTable not a codeTable")
-
-    -- test partial
-    codeTableTable = {
-        ["T"] = Block:newInstance("minecraft:torch", dx1, dy1),
-        ["S"] = coreutils.DeepCopy(block2Table),
-    }
-    assert(not LayerRectangle.IsCodeTable(codeTableTable), "prepared codeTable already a codeTable")
-    transformed = LayerRectangle.TransformToCodeTable(codeTableTable)
-    assert(LayerRectangle.IsCodeTable(transformed), "transformed codeTable(="..textutils.serialise(transformed, compact)..") not a codeTable")
-
-    -- cleanup test
-end
 
 local codeMap1 = {
     [6] = "CD   ?",
@@ -245,20 +140,10 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_LayerRectangle:CreateTestObj()
+function T_LayerRectangle:CreateTestObj(codeTable, codeMap)
     -- check input
-
-    -- create testObj
-    local codeTable = {
-        ["T"]   = Block:newInstance(torchItemName),
-        ["S"]   = Block:newInstance(saplingItemName),
-        ["C"]   = Block:newInstance(chestItemName, -1, 0),
-        ["D"]   = Block:newInstance(chestItemName, 0, 1),
-        ["K"]   = Block:newInstance(computerItemName),
-        ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        [" "]   = Block:newInstance(Block.NoneBlockName()),
-    }
-    local codeMap = {
+    codeTable = codeTable or codeTable1:copy()
+    codeMap = codeMap or {
         [6] = "CD   ?",
         [5] = "      ",
         [4] = "T  S  ",
@@ -267,6 +152,7 @@ function T_LayerRectangle:CreateTestObj()
         [1] = "   T  ",
     }
 
+    -- create testObj
     local testObj = LayerRectangle:new({
         _codeTable  = codeTable,
         _codeMap    = codeMap,
@@ -277,7 +163,7 @@ function T_LayerRectangle:CreateTestObj()
 end
 
 local layer1 = LayerRectangle:new({
-    _codeTable  = codeTable1,
+    _codeTable  = codeTable1:copy(),
     _codeMap    = codeMap1,
 }) assert(layer1, "Failed obtaining layer")
 
@@ -287,7 +173,7 @@ function T_LayerRectangle.T_new()
 
     -- test full
     local layer = LayerRectangle:new({
-        _codeTable  = codeTable1,
+        _codeTable  = codeTable1:copy(),
         _codeMap    = codeMap1,
     }) assert(layer, "Failed obtaining layer")
     local expectedNColumns = 6
@@ -304,7 +190,7 @@ function T_LayerRectangle.T_new()
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
 
     -- test default
-    layer = LayerRectangle:new() assert(layer, "Failed obtaining layer")
+    layer = LayerRectangle:new({ _codeTable = ObjTable:newInstance(blockClassName) }) assert(layer, "Failed obtaining layer")
     expectedNColumns = 0
     assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     expectedNRows = 0
@@ -319,7 +205,7 @@ function T_LayerRectangle.T_getBlock()
 
     -- test full
     local layer = LayerRectangle:new({
-        _codeTable  = codeTable1,
+        _codeTable  = codeTable1:copy(),
         _codeMap    = codeMap1,
     }) assert(layer, "Failed obtaining layer")
     local block = layer:getBlock(4, 1)
@@ -402,11 +288,11 @@ function T_LayerRectangle.T_transformToLayer()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
     local fromLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "   S  ",
             [5] = "      ",
@@ -417,12 +303,12 @@ function T_LayerRectangle.T_transformToLayer()
         },
     }) assert(fromLayer, "Failed obtaining layer")
     local toLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "   ?  ",
             [5] = "      ",
@@ -439,12 +325,12 @@ function T_LayerRectangle.T_transformToLayer()
     local expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     local expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName,{
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "??????",
             [5] = "??????",
@@ -458,11 +344,11 @@ function T_LayerRectangle.T_transformToLayer()
 
     -- test anyBlock added to _codeTable
     toLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "      ",
             [5] = "      ",
@@ -477,12 +363,12 @@ function T_LayerRectangle.T_transformToLayer()
     expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "??? ??",
             [5] = "??????",
@@ -501,13 +387,13 @@ function T_LayerRectangle.T_cleanCodeTable()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:cleanCodeTable() tests")
     local layer = LayerRectangle:new({
-        _codeTable  ={
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [4] = "    ",
             [3] = "T   ",
@@ -518,11 +404,11 @@ function T_LayerRectangle.T_cleanCodeTable()
 
     -- test
     layer:cleanCodeTable()
-    local expectedCodeTable  = {
+    local expectedCodeTable  = ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance(torchItemName),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    }
-    assert(LayerRectangle.IsEqualCodeTable(layer._codeTable, expectedCodeTable), "result codeTable(="..textutils.serialize(layer._codeTable, compact)..") not the same as expected(="..textutils.serialize(expectedCodeTable, compact)..")")
+    })
+    assert(layer._codeTable:isEqual(expectedCodeTable), "result codeTable(="..textutils.serialize(layer._codeTable, compact)..") not the same as expected(="..textutils.serialize(expectedCodeTable, compact)..")")
 
     -- cleanup test
 end
@@ -535,13 +421,13 @@ function T_LayerRectangle.T_removeRow()
     local layer = layer1:copy()
     layer:removeRow(6)
     local expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["K"]   = Block:newInstance(computerItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [5] = "      ",
             [4] = "T  S  ",
@@ -556,14 +442,14 @@ function T_LayerRectangle.T_removeRow()
     layer = layer1:copy()
     layer:removeRow(4)
     expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["D"]   = Block:newInstance(chestItemName, 0, 1),
             ["K"]   = Block:newInstance(computerItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [5] = "CD   ?",
             [4] = "      ",
@@ -578,7 +464,7 @@ function T_LayerRectangle.T_removeRow()
     layer = layer1:copy()
     layer:removeRow(1)
     expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
@@ -586,7 +472,7 @@ function T_LayerRectangle.T_removeRow()
             ["K"]   = Block:newInstance(computerItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [5] = "CD   ?",
             [4] = "      ",
@@ -620,7 +506,7 @@ function T_LayerRectangle.T_removeColumn()
     local layer = layer1:copy()
     layer:removeColumn(6)
     local expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
@@ -628,7 +514,7 @@ function T_LayerRectangle.T_removeColumn()
             ["K"]   = Block:newInstance(computerItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "CD   ",
             [5] = "     ",
@@ -644,13 +530,13 @@ function T_LayerRectangle.T_removeColumn()
     layer = layer1:copy()
     layer:removeColumn(4)
     expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["D"]   = Block:newInstance(chestItemName, 0, 1),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "CD  ?",
             [5] = "     ",
@@ -666,14 +552,14 @@ function T_LayerRectangle.T_removeColumn()
     layer = layer1:copy()
     layer:removeColumn(1)
     expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["D"]   = Block:newInstance(chestItemName, 0, 1),
             ["K"]   = Block:newInstance(computerItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "D   ?",
             [5] = "     ",
@@ -694,12 +580,12 @@ function T_LayerRectangle.T_removeBoundariesWithOnly()
 
     -- test right
     local layer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "??????",
             [5] = "??????",
@@ -716,12 +602,12 @@ function T_LayerRectangle.T_removeBoundariesWithOnly()
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [3] = "TC ",
             [2] = " C?",
@@ -739,12 +625,12 @@ function T_LayerRectangle.T_buildData()
 
     -- test right
     local layer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "??????",
             [5] = "??????",
@@ -760,12 +646,12 @@ function T_LayerRectangle.T_buildData()
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [3] = "TC ",
             [2] = " C?",

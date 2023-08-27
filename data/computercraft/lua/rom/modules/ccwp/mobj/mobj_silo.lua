@@ -19,6 +19,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
+local ObjTable = require "obj_table"
 local Host = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
@@ -247,13 +248,14 @@ function Silo:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
+local blockClassName = "Block"
 local function TopL0_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "  C C ",
             [5] = "      ",
@@ -267,9 +269,9 @@ end
 
 local function Shaft_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [1] = " ",
         },
@@ -278,13 +280,13 @@ end
 
 local function Storage_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
             ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
             ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
             ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [3] = "DDF",
             [2] = "C F",
@@ -333,10 +335,10 @@ end
 
 local function StorageDismantle_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        },
+        }),
         _codeMap    = {
             [3] = "DDD",
             [2] = "D?D",
@@ -347,9 +349,9 @@ end
 
 local function ShaftDismantle_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
-        },
+        }),
         _codeMap    = {
             [1] = "D",
         },
@@ -358,9 +360,9 @@ end
 
 local function TopDismantle_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "      ",
             [5] = "      ",

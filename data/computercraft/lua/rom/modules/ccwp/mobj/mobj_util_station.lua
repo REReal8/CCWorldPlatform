@@ -13,6 +13,7 @@ local coredht           = require "coredht"
 
 local Location          = require "obj_location"
 local Block             = require "obj_block"
+local ObjTable = require "obj_table"
 local LayerRectangle    = require "obj_layer_rectangle"
 
 local db = {
@@ -41,12 +42,13 @@ function UtilStation.Run()
     if myId == USdata.itemInterface then RunItemInterface() end
 end
 --]]
+local blockClassName = "Block"
 local function Chest_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
-        },
+        }),
         _codeMap    = {
             [1] = "C C",
         },
@@ -55,9 +57,9 @@ end
 
 local function Computer_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("computercraft:computer_normal", 0, -1),
-        },
+        }),
         _codeMap    = {
             [1] = "C",
         },
@@ -66,9 +68,9 @@ end
 
 local function Modem_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["M"]   = Block:newInstance("computercraft:wireless_modem_normal"),
-        },
+        }),
         _codeMap    = {
             [1] = "M",
         },
@@ -77,10 +79,10 @@ end
 
 local function Monitor_Only_layer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["M"]   = Block:newInstance("computercraft:monitor_normal"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
-        },
+        }),
         _codeMap    = {
             [1] = "MMMMMMMM MMMMMMMM",
         },

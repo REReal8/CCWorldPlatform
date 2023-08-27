@@ -2,6 +2,7 @@ local t_builder = {}
 
 local corelog = require "corelog"
 
+local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -20,12 +21,13 @@ local size_x1 = 4
 local size_y1 = 6
 local chestItemName = "minecraft:chest"
 local torchItemName = "minecraft:torch"
-local codeTable1 = {
+local blockClassName = "Block"
+local codeTable1 = ObjTable:newInstance(blockClassName, {
     ["T"]   = Block:newInstance(torchItemName),
     ["C"]   = Block:newInstance(chestItemName, 0, 1),
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
     [" "]   = Block:newInstance(Block.NoneBlockName()),
-}
+})
 local codeMap1 = {
     [6] = "  C ",
     [5] = "    ",
@@ -35,18 +37,18 @@ local codeMap1 = {
     [1] = "   T",
 }
 local testBuildLayer1 = LayerRectangle:new({
-    _codeTable  = LayerRectangle.CodeTableCopy(codeTable1),
+    _codeTable  = codeTable1:copy(),
     _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
 }) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
-    _codeTable  = {
+    _codeTable  = ObjTable:newInstance(blockClassName, {
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),
         ["E"]   = Block:newInstance(chestItemName, 0, -1),
         ["F"]   = Block:newInstance(chestItemName, 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    },
+    }),
     _codeMap    = {
         [3] = "DDF",
         [2] = "C F",
@@ -55,13 +57,13 @@ local testBuildLayer2 = LayerRectangle:new({
 }) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:new({
-    _codeTable  = {
+    _codeTable  = ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance(torchItemName),
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),
         ["?"]   = Block:newInstance(Block.AnyBlockName()),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    },
+    }),
     _codeMap    = {
         [6] = "C D  T",
         [5] = "    T ",

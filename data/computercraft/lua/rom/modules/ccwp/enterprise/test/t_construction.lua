@@ -3,7 +3,7 @@ local t_construction = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
-
+local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -15,15 +15,16 @@ local enterprise_chests = require "enterprise_chests"
 local t_chests = require "test.t_chests"
 local t_turtle = require "test.t_turtle"
 
+local blockClassName = "Block"
 local testStartLocation     = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
 
 local testBuildLayer1 = LayerRectangle:new({
-    _codeTable  = {
+    _codeTable  = ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance("minecraft:torch"),
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    },
+    }),
     _codeMap    = {
         [6] = "  C ",
         [5] = "    ",
@@ -35,13 +36,13 @@ local testBuildLayer1 = LayerRectangle:new({
 }) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
-    _codeTable  = {
+    _codeTable  = ObjTable:newInstance(blockClassName, {
         ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
         ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
         ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
         ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    },
+    }),
     _codeMap    = {
         [3] = "DDF",
         [2] = "C F",
@@ -50,11 +51,11 @@ local testBuildLayer2 = LayerRectangle:new({
 }) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:new({
-    _codeTable  = {
+    _codeTable  = ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance("minecraft:torch"),
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    },
+    }),
     _codeMap    = {
         [6] = "  C C ",
         [5] = "      ",
@@ -66,9 +67,9 @@ local testBuildLayer3 = LayerRectangle:new({
 }) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local testBuildLayer4 = LayerRectangle:new({
-    _codeTable  = {
+    _codeTable  = ObjTable:newInstance(blockClassName, {
         [" "]   = Block:newInstance(Block.NoneBlockName()),
-    },
+    }),
     _codeMap    = {
         [1] = " ",
     },

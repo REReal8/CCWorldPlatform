@@ -103,26 +103,6 @@ function Block:getClassName()
     return "Block"
 end
 
--- ToDo: consider making changes such that this can be removed
-function Block.HasFieldsOfType(obj)
-    -- check
-    if type(obj) ~= "table" then return false end
-    if type(obj._name) ~= "string" then return false end
-    if type(obj._dx) ~= "number" or type(obj._dy) ~= "number" then return false end
-
-    -- end
-    return true
-end
-
--- ToDo: consider making changes such that this can be removed
-function Block.HasClassNameOfType(obj)
-    -- check
-    if not obj.getClassName or obj:getClassName() ~= Block:getClassName() then return false end
-
-    -- end
-    return true
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___

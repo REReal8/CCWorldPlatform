@@ -16,6 +16,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
+local ObjTable = require "obj_table"
 local Block = require "obj_block"
 local LayerRectangle = require "obj_layer_rectangle"
 local Location = require "obj_location"
@@ -243,13 +244,14 @@ function Mine:needsTo_ProvideItemsTo_SOSrv(...)
     return {success = true, fuelNeed = 1000}
 end
 
+local blockClassName = "Block"
 local function TopLayerlayer()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "  C C ",
             [5] = "      ",

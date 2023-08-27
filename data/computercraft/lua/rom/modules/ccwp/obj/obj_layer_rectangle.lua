@@ -12,6 +12,7 @@ local LayerRectangle = Class.NewClass(ObjBase)
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
+local ObjTable = require "obj_table"
 local Block = require "obj_block"
 
 --    _       _ _   _       _ _           _   _
@@ -28,7 +29,7 @@ function LayerRectangle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _codeTable              - (table, {}) table mapping _codeMap codes (characters) to Block's
+                _codeTable              - (ObjTable) with mapping _codeMap codes (characters) to Block's
                 _codeMap                - (table, {}) map of codes of blocks within the layer
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return nil end
@@ -36,10 +37,6 @@ function LayerRectangle:new(...)
     -- set class info
     setmetatable(o, self)
     self.__index = self
-
-    -- check codeTable validity
-    o._codeTable = LayerRectangle.TransformToCodeTable(o._codeTable)
-    if not LayerRectangle.CodeTableValid(o._codeTable, true) then corelog.Error("LayerRectangle:new: Invalid codeTable") return nil end
 
     -- check codeMap validity
     if not LayerRectangle.CodeMapValid(o._codeTable, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return nil end
@@ -190,7 +187,8 @@ function LayerRectangle:transformToLayer(...)
     end
 
     -- construct transformCodeTable
-    local transformCodeTable = {}
+    local blockClassName = "Block"
+    local transformCodeTable = ObjTable:newInstance(blockClassName)
     for code, codeCount in pairs(toLayer:codesNeeded()) do
         transformCodeTable[code] = toLayer._codeTable[code]:copy()
     end
@@ -259,7 +257,7 @@ function LayerRectangle:cleanCodeTable()
     local codeList = self:codesNeeded()
 
     -- check for unused codes
-    for code, block in pairs(self._codeTable) do
+    for code, block in self._codeTable:objs() do
         if not codeList[code] then
             -- remove code
             self._codeTable[code] = nil
@@ -364,7 +362,7 @@ function LayerRectangle:buildData()
 
     -- get AnyBlock code
     local anyBlockCode = "?" -- default, but allowed to be different
-    for code, block in pairs(self._codeTable) do
+    for code, block in self._codeTable:objs() do
         if block:isAnyBlock() then
             anyBlockCode = code
             break
@@ -388,97 +386,6 @@ end
 --   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 --                | |
 --                |_|
-
-function LayerRectangle.IsCodeTable(codeTable)
-    -- end
-    return LayerRectangle.CodeTableValid(codeTable, false)
-end
-
-function LayerRectangle.CodeTableValid(codeTable, warn)
-    -- check validity
-    if type(codeTable) ~= "table" then if warn then corelog.Warning("LayerRectangle.CodeTableValid: Invalid codeTable (type="..type(codeTable)..")") end return false end
-    for code, block in pairs(codeTable) do
-        if type(code) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeTableValid: Invalid code (type="..type(code)..")") end return false end
-        if not Class.IsInstanceOf(block, Block) then if warn then corelog.Warning("LayerRectangle.CodeTableValid: Invalid block (type="..type(block)..")") end return false end
-    end
-
-    -- end
-    return true
-end
-
-function LayerRectangle.IsEqualCodeTable(codeTableA, codeTableB)
-    -- check input
-    if not LayerRectangle.IsCodeTable(codeTableA) or not LayerRectangle.IsCodeTable(codeTableB) then return false end
-
-    -- check same elements as in A
-    local sizeA = 0
-    for codeA, blockA in pairs(codeTableA) do
-        sizeA = sizeA + 1
-        -- check same blockName
-        local blockB = codeTableB[codeA]
-        if not blockA:isEqual(blockB) then return false end
-    end
-
-    -- check no other elements in B
-    local sizeB = 0
-    for codeB, blockB in pairs(codeTableB) do
-        sizeB = sizeB + 1
-    end
-    if sizeA ~= sizeB then return false end
-
-    -- end
-	return true
-end
-
-function LayerRectangle.CodeTableCopy(codeTable)
-    -- check input
-    if not LayerRectangle.IsCodeTable(codeTable) then corelog.Error("LayerRectangle.CodeTableCopy: invalid codeTable: "..type(codeTable)) return end
-
-    -- copy elements
-    local codeTableCopy = {}
-    for code, block in pairs(codeTable) do
-        codeTableCopy[code] = block:copy()
-    end
-
-    -- end
-	return codeTableCopy
-end
-
-function LayerRectangle.TransformToCodeTable(...)
-    -- get & check input from description
-    local checkSuccess, codeTable = InputChecker.Check([[
-        Transforms all block tables in the codeTable to Block objects.
-
-        i.e. each block table like {
-            _dx     = nil,
-            _dy     = nil,
-            _name   = "",
-        }
-        is transformed into a block object Block with the same fields
-
-        Parameters:
-            codeTable                   + (table, {}) array mapping _codeMap codes (characters) to Block's
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("LayerRectangle.TransformToCodeTable: Invalid input") return {} end
-
-    local codeTableTransform = {}
-    -- copy elements
-    for code, block in pairs(codeTable) do
-        -- ToDo: consider doing this similair to, or using ObjArray:transformObjectTables => also making HasFieldsOfType and HasClassNameOfType methods obsolete (like was done for the other classes)
-        if Block.HasFieldsOfType(block) then
-            if Block.HasClassNameOfType(block) then
-                codeTableTransform[code] = block -- already a Block
-            else
-                codeTableTransform[code] = Block:new(block) -- transform
-            end
-        else
-            corelog.Warning("LayerRectangle.TransformToCodeTable: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
-        end
-    end
-
-    -- end
-	return codeTableTransform
-end
 
 function LayerRectangle.IsCodeMap(codeMap)
     -- check is codeMap

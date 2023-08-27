@@ -13,6 +13,7 @@ local corelog = require "corelog"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local InputChecker = require "input_checker"
+local ObjTable = require "obj_table"
 local URL = require "obj_url"
 local Host = require "obj_host"
 local Location = require "obj_location"
@@ -433,12 +434,13 @@ function BirchForest:getFirstTreeLocation()
     return self:getBaseLocation():getRelativeLocation(3, 2, 0)
 end
 
+local blockClassName = "Block"
 function Tree_layerLm1()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "??????",
             [5] = "??????",
@@ -452,10 +454,10 @@ end
 
 function Tree_layerL0()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "      ",
             [5] = "      ",
@@ -469,11 +471,11 @@ end
 
 function Tree_layerL1()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "      ",
             [5] = "      ",
@@ -487,13 +489,13 @@ end
 
 function Base_layerL2()
     return LayerRectangle:new({
-        _codeTable  = {
+        _codeTable  = ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
             ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
-        },
+        }),
         _codeMap    = {
             [6] = "      ",
             [5] = "      ",
