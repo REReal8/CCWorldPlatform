@@ -30,7 +30,7 @@ function LayerRectangle:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _codeTable              - (ObjTable) with mapping _codeMap codes (characters) to Block's
-                _codeMap                - (table, {}) map of codes of blocks within the layer
+                _codeMap                - (table, {}) map of codes of Block's within the layer
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return nil end
 
