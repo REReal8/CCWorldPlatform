@@ -9,11 +9,15 @@ local ObjArray = require "obj_array"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ObjArray.T_All()
     -- initialisation
+    T_ObjArray.T__init()
     T_ObjArray.T_new()
 
     -- IObj methods
@@ -25,7 +29,7 @@ function T_ObjArray.T_All()
 end
 
 local testClassName = "ObjArray"
-
+local logOk = false
 local objClassName1 = "TestObj"
 local testObj1 = TestObj:new({
     _field1 = "field1_1",
@@ -46,15 +50,55 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_ObjArray.CreateTestObj()
-    local testObj = ObjArray:new({
-        _objClassName   = objClassName1,
-
+function T_ObjArray.CreateTestObj(objClassName, objsArray)
+    -- check input
+    objClassName = objClassName or objClassName1
+    objsArray = objsArray or {
         testObj1:copy(),
         testObj2:copy(),
-    })
+    }
 
+    -- create testObj
+    local testObj = ObjArray:newInstance(objClassName, objsArray)
+
+    -- end
     return testObj
+end
+
+function T_ObjArray.CreateInitialisedTest(objClassName, objsArray)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_objClassName", objClassName)
+    )
+    for i, obj in ipairs(objsArray) do
+        table.insert(test._tests, FieldValueEqualTest:newInstance(i, obj))
+    end
+
+    -- end
+    return test
+end
+
+function T_ObjArray.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+    local objsArray = {
+        testObj1:copy(),
+        testObj2:copy(),
+    }
+
+    -- test
+    local obj = T_ObjArray.CreateTestObj(objClassName1, objsArray) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_ObjArray.CreateInitialisedTest(objClassName1, objsArray)
+    test:test(obj, "objArray", "", logOk)
+
+    -- test default
+    obj = ObjArray:newInstance()
+    test = T_ObjArray.CreateInitialisedTest("", {})
+    test:test(obj, "objArray", "", logOk)
+
+    -- cleanup test
 end
 
 function T_ObjArray.T_new()

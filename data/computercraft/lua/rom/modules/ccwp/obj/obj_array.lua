@@ -23,6 +23,34 @@ local objectFactory = ObjectFactory:getInstance()
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function ObjArray:_init(...)
+    -- get & check input from description
+    local checkSuccess, objClassName, objsArray = InputChecker.Check([[
+        Initialise a ObjArray.
+
+        Parameters:
+            objClassName            + (string, "") with className of objects in ObjArray (e.g. "Chest")
+            objsArray               + (table, {}) with array of Obj in ObjArray
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ObjArray:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._objClassName  = objClassName
+    for i, obj in ipairs(objsArray) do
+        if not Class.IsInstanceOf(obj, IObj) then
+            corelog.Warning("ObjArray:_init: obj not an IObj => skipped")
+        else
+            if obj:getClassName() ~= objClassName then
+                corelog.Warning("ObjArray:_init: obj type(="..obj:getClassName()..") not "..objClassName.." => skipped")
+            else
+                self[i] = obj
+            end
+        end
+    end
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function ObjArray:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
