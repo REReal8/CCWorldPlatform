@@ -29,7 +29,7 @@ function LayerRectangle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _codeTable              - (ObjTable) with mapping _codeMap codes (characters) to Block's
+                _codeTable              - (ObjTable) with mapping CodeMap codes (characters) to Block's
                 _codeMap                - (table, {}) map of codes of Block's within the layer
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return nil end
@@ -38,8 +38,8 @@ function LayerRectangle:new(...)
     setmetatable(o, self)
     self.__index = self
 
-    -- check codeMap validity
-    if not LayerRectangle.CodeMapValid(o._codeTable, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return nil end
+    -- check CodeMap validity
+    if not LayerRectangle.CodeMapValid(o._codeTable, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid CodeMap") return nil end
 
     -- end
     return o
@@ -250,7 +250,7 @@ end
 
 function LayerRectangle:cleanCodeTable()
     --[[
-        Remove code's from codeTable that are not (anymore) in codeMap
+        Remove code's from codeTable that are not (anymore) in CodeMap
     ]]
 
     -- get codeList
@@ -388,7 +388,7 @@ end
 --                |_|
 
 function LayerRectangle.IsCodeMap(codeMap)
-    -- check is codeMap
+    -- check is CodeMap
     if type(codeMap) ~= "table" then return false end
     local size_x = 0
     for iY, codeRow in ipairs(codeMap) do
@@ -409,7 +409,7 @@ function LayerRectangle.IsCodeMap(codeMap)
 end
 
 function LayerRectangle.CodeMapValid(codeTable, codeMap, warn)
-    -- check codeMap validity
+    -- check CodeMap validity
     local size_x = 0
     for iY, codeRow in ipairs(codeMap) do
         -- check row is string
@@ -466,7 +466,7 @@ end
 
 function LayerRectangle.CodeMapCopy(codeMap)
     -- check input
-    if not LayerRectangle.IsCodeMap(codeMap) then corelog.Error("LayerRectangle.CodeMapCopy: invalid codeMap: "..type(codeMap)) return end
+    if not LayerRectangle.IsCodeMap(codeMap) then corelog.Error("LayerRectangle.CodeMapCopy: invalid CodeMap: "..type(codeMap)) return end
 
     -- end
 	return LayerRectangle.MapCopy(codeMap)
