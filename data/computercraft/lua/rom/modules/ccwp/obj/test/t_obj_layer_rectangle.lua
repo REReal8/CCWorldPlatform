@@ -45,13 +45,13 @@ local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
 local computerItemName = "computercraft:computer_normal"
 local codeArray1 = {
-    ["T"]   = Block:new({ _name = torchItemName }),
-    ["S"]   = Block:new({ _name = saplingItemName }),
-    ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-    ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-    ["K"]   = Block:new({ _name = computerItemName }),
-    ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-    [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    ["T"]   = Block:newInstance(torchItemName),
+    ["S"]   = Block:newInstance(saplingItemName),
+    ["C"]   = Block:newInstance(chestItemName, -1, 0),
+    ["D"]   = Block:newInstance(chestItemName, 0, 1),
+    ["K"]   = Block:newInstance(computerItemName),
+    ["?"]   = Block:newInstance(Block.AnyBlockName()),
+    [" "]   = Block:newInstance(Block.NoneBlockName()),
 }
 
 --    _          _                    __                  _   _
@@ -84,13 +84,13 @@ function T_LayerRectangle.T_IsEqualCodeArray()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle.IsEqualCodeArray() tests")
     local codeArray2 = {
-        ["T"]   = Block:new({ _name = torchItemName }),
-        ["S"]   = Block:new({ _name = saplingItemName }),
-        ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["K"]   = Block:new({ _name = computerItemName }),
-        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        ["T"]   = Block:newInstance(torchItemName),
+        ["S"]   = Block:newInstance(saplingItemName),
+        ["C"]   = Block:newInstance(chestItemName, -1, 0),
+        ["D"]   = Block:newInstance(chestItemName, 0, 1),
+        ["K"]   = Block:newInstance(computerItemName),
+        ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        [" "]   = Block:newInstance(Block.NoneBlockName()),
     }
 
     -- test same
@@ -99,14 +99,14 @@ function T_LayerRectangle.T_IsEqualCodeArray()
     assert(isEqual == expectedIsEqual, "gotten IsEqualCodeArray(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
 
     -- test different
-    codeArray2["T"] = Block:new({ _name = "minecraft:something"})
+    codeArray2["T"] = Block:newInstance("minecraft:something")
     isEqual = LayerRectangle.IsEqualCodeArray(codeArray1, codeArray2)
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten IsEqualCodeArray(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    codeArray2["T"] = Block:new({ _name = "minecraft:torch" })
+    codeArray2["T"] = Block:newInstance("minecraft:torch")
 
     -- test different (size)
-    codeArray2["Z"] = Block:new({ _name = "minecraft:something"})
+    codeArray2["Z"] = Block:newInstance("minecraft:something")
     isEqual = LayerRectangle.IsEqualCodeArray(codeArray1, codeArray2)
     expectedIsEqual = false
     assert(isEqual == expectedIsEqual, "gotten IsEqualCodeArray(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -156,7 +156,7 @@ function T_LayerRectangle.T_TransformToCodeArray()
 
     -- test partial
     codeArrayTable = {
-        ["T"] = Block:new({ _name = "minecraft:torch", _dx = dx1, _dy = dy1 }),
+        ["T"] = Block:newInstance("minecraft:torch", dx1, dy1),
         ["S"] = coreutils.DeepCopy(block2Table),
     }
     assert(not LayerRectangle.IsCodeArray(codeArrayTable), "prepared codeArray already a codeArray")
@@ -248,13 +248,13 @@ local testClassName = "LayerRectangle"
 -- ToDo: rename to LayerRectangle:CreateTestObj
 local function createTestObj()
     local codeArray = {
-        ["T"]   = Block:new({ _name = torchItemName }),
-        ["S"]   = Block:new({ _name = saplingItemName }),
-        ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["K"]   = Block:new({ _name = computerItemName }),
-        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        ["T"]   = Block:newInstance(torchItemName),
+        ["S"]   = Block:newInstance(saplingItemName),
+        ["C"]   = Block:newInstance(chestItemName, -1, 0),
+        ["D"]   = Block:newInstance(chestItemName, 0, 1),
+        ["K"]   = Block:newInstance(computerItemName),
+        ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        [" "]   = Block:newInstance(Block.NoneBlockName()),
     }
     local codeMap = {
         [6] = "CD   ?",
@@ -320,22 +320,22 @@ function T_LayerRectangle.T_getBlock()
         _codeMap    = codeMap1,
     }) assert(layer, "Failed obtaining layer")
     local block = layer:getBlock(4, 1)
-    local expectedBlock = Block:new({ _name = torchItemName })
+    local expectedBlock = Block:newInstance(torchItemName)
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 4)
-    expectedBlock = Block:new({ _name = torchItemName })
+    expectedBlock = Block:newInstance(torchItemName)
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(4, 4)
-    expectedBlock = Block:new({ _name = saplingItemName })
+    expectedBlock = Block:newInstance(saplingItemName)
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 1)
-    expectedBlock = Block:new({ _name = Block.NoneBlockName() })
+    expectedBlock = Block:newInstance(Block.NoneBlockName())
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(3, 3)
-    expectedBlock = Block:new({ _name = Block.AnyBlockName() })
+    expectedBlock = Block:newInstance(Block.AnyBlockName())
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
     block = layer:getBlock(1, 6)
-    expectedBlock = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 })
+    expectedBlock = Block:newInstance(chestItemName, -1, 0)
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
 
     -- cleanup test
@@ -400,9 +400,9 @@ function T_LayerRectangle.T_transformToLayer()
     corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
     local fromLayer = LayerRectangle:new({
         _codeArray  = {
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "   S  ",
@@ -415,10 +415,10 @@ function T_LayerRectangle.T_transformToLayer()
     }) assert(fromLayer, "Failed obtaining layer")
     local toLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "   ?  ",
@@ -437,10 +437,10 @@ function T_LayerRectangle.T_transformToLayer()
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "??????",
@@ -456,9 +456,9 @@ function T_LayerRectangle.T_transformToLayer()
     -- test anyBlock added to _codeArray
     toLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "      ",
@@ -475,10 +475,10 @@ function T_LayerRectangle.T_transformToLayer()
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "??? ??",
@@ -499,11 +499,11 @@ function T_LayerRectangle.T_cleanCodeArray()
     corelog.WriteToLog("* LayerRectangle:cleanCodeArray() tests")
     local layer = LayerRectangle:new({
         _codeArray  ={
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [4] = "    ",
@@ -516,8 +516,8 @@ function T_LayerRectangle.T_cleanCodeArray()
     -- test
     layer:cleanCodeArray()
     local expectedCodeArray  = {
-        ["T"]   = Block:new({ _name = torchItemName }),
-        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        ["T"]   = Block:newInstance(torchItemName),
+        [" "]   = Block:newInstance(Block.NoneBlockName()),
     }
     assert(LayerRectangle.IsEqualCodeArray(layer._codeArray, expectedCodeArray), "result codeArray(="..textutils.serialize(layer._codeArray, compact)..") not the same as expected(="..textutils.serialize(expectedCodeArray, compact)..")")
 
@@ -533,11 +533,11 @@ function T_LayerRectangle.T_removeRow()
     layer:removeRow(6)
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["K"]   = Block:new({ _name = computerItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["K"]   = Block:newInstance(computerItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [5] = "      ",
@@ -554,12 +554,12 @@ function T_LayerRectangle.T_removeRow()
     layer:removeRow(4)
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["K"]   = Block:new({ _name = computerItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["D"]   = Block:newInstance(chestItemName, 0, 1),
+            ["K"]   = Block:newInstance(computerItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [5] = "CD   ?",
@@ -576,13 +576,13 @@ function T_LayerRectangle.T_removeRow()
     layer:removeRow(1)
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["K"]   = Block:new({ _name = computerItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["D"]   = Block:newInstance(chestItemName, 0, 1),
+            ["K"]   = Block:newInstance(computerItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [5] = "CD   ?",
@@ -618,13 +618,13 @@ function T_LayerRectangle.T_removeColumn()
     layer:removeColumn(6)
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["K"]   = Block:new({ _name = computerItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["D"]   = Block:newInstance(chestItemName, 0, 1),
+            ["K"]   = Block:newInstance(computerItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "CD   ",
@@ -642,11 +642,11 @@ function T_LayerRectangle.T_removeColumn()
     layer:removeColumn(4)
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["D"]   = Block:newInstance(chestItemName, 0, 1),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "CD  ?",
@@ -664,12 +664,12 @@ function T_LayerRectangle.T_removeColumn()
     layer:removeColumn(1)
     expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["S"]   = Block:new({ _name = saplingItemName }),
-            ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-            ["K"]   = Block:new({ _name = computerItemName }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["S"]   = Block:newInstance(saplingItemName),
+            ["D"]   = Block:newInstance(chestItemName, 0, 1),
+            ["K"]   = Block:newInstance(computerItemName),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "D   ?",
@@ -692,10 +692,10 @@ function T_LayerRectangle.T_removeBoundariesWithOnly()
     -- test right
     local layer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "??????",
@@ -714,10 +714,10 @@ function T_LayerRectangle.T_removeBoundariesWithOnly()
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [3] = "TC ",
@@ -737,10 +737,10 @@ function T_LayerRectangle.T_buildData()
     -- test right
     local layer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "??????",
@@ -758,10 +758,10 @@ function T_LayerRectangle.T_buildData()
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = torchItemName }),
-            ["C"]   = Block:new({ _name = chestItemName, _dx = -1, _dy = 0 }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance(torchItemName),
+            ["C"]   = Block:newInstance(chestItemName, -1, 0),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [3] = "TC ",

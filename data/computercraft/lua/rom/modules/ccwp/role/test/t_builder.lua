@@ -21,10 +21,10 @@ local size_y1 = 6
 local chestItemName = "minecraft:chest"
 local torchItemName = "minecraft:torch"
 local codeArray1 = {
-    ["T"]   = Block:new({ _name = torchItemName }),
-    ["C"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-    ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-    [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+    ["T"]   = Block:newInstance(torchItemName),
+    ["C"]   = Block:newInstance(chestItemName, 0, 1),
+    ["?"]   = Block:newInstance(Block.AnyBlockName()),
+    [" "]   = Block:newInstance(Block.NoneBlockName()),
 }
 local codeMap1 = {
     [6] = "  C ",
@@ -41,11 +41,11 @@ local testBuildLayer1 = LayerRectangle:new({
 
 local testBuildLayer2 = LayerRectangle:new({
     _codeArray  = {
-        ["C"]   = Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
-        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["E"]   = Block:new({ _name = chestItemName, _dx = 0, _dy =-1 }),
-        ["F"]   = Block:new({ _name = chestItemName, _dx = 1, _dy = 0 }),
-        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        ["C"]   = Block:newInstance(chestItemName, -1, 0),
+        ["D"]   = Block:newInstance(chestItemName, 0, 1),
+        ["E"]   = Block:newInstance(chestItemName, 0, -1),
+        ["F"]   = Block:newInstance(chestItemName, 1, 0),
+        [" "]   = Block:newInstance(Block.NoneBlockName()),
     },
     _codeMap    = {
         [3] = "DDF",
@@ -56,11 +56,11 @@ local testBuildLayer2 = LayerRectangle:new({
 
 local testBuildLayer3 = LayerRectangle:new({
     _codeArray  = {
-        ["T"]   = Block:new({ _name = torchItemName }),
-        ["C"]   = Block:new({ _name = chestItemName, _dx =-1, _dy = 0 }),
-        ["D"]   = Block:new({ _name = chestItemName, _dx = 0, _dy = 1 }),
-        ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
-        [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+        ["T"]   = Block:newInstance(torchItemName),
+        ["C"]   = Block:newInstance(chestItemName, -1, 0),
+        ["D"]   = Block:newInstance(chestItemName, 0, 1),
+        ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        [" "]   = Block:newInstance(Block.NoneBlockName()),
     },
     _codeMap    = {
         [6] = "C D  T",
