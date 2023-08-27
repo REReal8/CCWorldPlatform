@@ -40,6 +40,7 @@ function T_LayerRectangle.T_All()
     T_LayerRectangle.T_buildData()
 end
 
+local testClassName = "LayerRectangle"
 local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
@@ -244,9 +245,10 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "LayerRectangle"
--- ToDo: rename to LayerRectangle:CreateTestObj
-local function createTestObj()
+function T_LayerRectangle:CreateTestObj()
+    -- check input
+
+    -- create testObj
     local codeArray = {
         ["T"]   = Block:newInstance(torchItemName),
         ["S"]   = Block:newInstance(saplingItemName),
@@ -270,6 +272,7 @@ local function createTestObj()
         _codeMap    = codeMap,
     })
 
+    -- end
     return testObj
 end
 
@@ -280,7 +283,7 @@ local layer1 = LayerRectangle:new({
 
 function T_LayerRectangle.T_new()
     -- prepare test
-    corelog.WriteToLog("* LayerRectangle:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
     local layer = LayerRectangle:new({
@@ -352,8 +355,8 @@ end
 
 function T_LayerRectangle.T_IObj_All()
     -- prepare test
-    local obj = createTestObj() assert(obj, "failed obtaining "..testClassName)
-    local otherObj = createTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
+    local obj = T_LayerRectangle:CreateTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = T_LayerRectangle:CreateTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
