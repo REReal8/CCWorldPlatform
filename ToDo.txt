@@ -59,7 +59,7 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
       -  URL
       -  Inventory
       R  ObjTable                                                                                                       (done)
-      -  ObjArray
+      R  ObjArray                                                                                                       (done)
       -  CallDef
       -  WIPQueue
       R  Block                                                                                                          (done)
