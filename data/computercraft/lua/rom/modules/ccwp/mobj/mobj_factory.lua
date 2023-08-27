@@ -715,7 +715,7 @@ end
 
 local function Shaft_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
@@ -726,7 +726,7 @@ end
 
 local function ShaftRestore_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         },
         _codeMap    = {
@@ -824,7 +824,7 @@ end
 
 local function AboveOrBelowFurnanceL1_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
@@ -836,7 +836,7 @@ end
 
 local function FurnanceL1_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["F"]   = Block:newInstance("minecraft:furnace"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
@@ -919,7 +919,7 @@ end
 
 local function ItemDepotChestL2_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["C"]   = Block:newInstance("minecraft:chest"),
         },
         _codeMap    = {
@@ -930,7 +930,7 @@ end
 
 local function TopLayerL2_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),

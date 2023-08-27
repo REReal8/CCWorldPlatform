@@ -20,7 +20,7 @@ local size_x1 = 4
 local size_y1 = 6
 local chestItemName = "minecraft:chest"
 local torchItemName = "minecraft:torch"
-local codeArray1 = {
+local codeTable1 = {
     ["T"]   = Block:newInstance(torchItemName),
     ["C"]   = Block:newInstance(chestItemName, 0, 1),
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
@@ -35,12 +35,12 @@ local codeMap1 = {
     [1] = "   T",
 }
 local testBuildLayer1 = LayerRectangle:new({
-    _codeArray  = LayerRectangle.CodeArrayCopy(codeArray1),
+    _codeTable  = LayerRectangle.CodeTableCopy(codeTable1),
     _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
 }) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
-    _codeArray  = {
+    _codeTable  = {
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),
         ["E"]   = Block:newInstance(chestItemName, 0, -1),
@@ -55,7 +55,7 @@ local testBuildLayer2 = LayerRectangle:new({
 }) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:new({
-    _codeArray  = {
+    _codeTable  = {
         ["T"]   = Block:newInstance(torchItemName),
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),

@@ -28,7 +28,7 @@ function LayerRectangle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _codeArray              - (table, {}) array mapping _codeMap codes (characters) to Block's
+                _codeTable              - (table, {}) table mapping _codeMap codes (characters) to Block's
                 _codeMap                - (table, {}) map of codes of blocks within the layer
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("LayerRectangle:new: Invalid input") return nil end
@@ -37,12 +37,12 @@ function LayerRectangle:new(...)
     setmetatable(o, self)
     self.__index = self
 
-    -- check codeArray validity
-    o._codeArray = LayerRectangle.TransformToCodeArray(o._codeArray)
-    if not LayerRectangle.CodeArrayValid(o._codeArray, true) then corelog.Error("LayerRectangle:new: Invalid codeArray") return nil end
+    -- check codeTable validity
+    o._codeTable = LayerRectangle.TransformToCodeTable(o._codeTable)
+    if not LayerRectangle.CodeTableValid(o._codeTable, true) then corelog.Error("LayerRectangle:new: Invalid codeTable") return nil end
 
     -- check codeMap validity
-    if not LayerRectangle.CodeMapValid(o._codeArray, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return nil end
+    if not LayerRectangle.CodeMapValid(o._codeTable, o._codeMap, true) then corelog.Error("LayerRectangle:new: Invalid codeMap") return nil end
 
     -- end
     return o
@@ -62,7 +62,7 @@ function LayerRectangle:getBlock(iColumn, iRow)
     if code:len() ~= 1 then corelog.Error("LayerRectangle:getBlock: code of incorrect length(="..code:len()..")") return nil end
 
     -- get block
-    local block = self._codeArray[code]
+    local block = self._codeTable[code]
 
     -- end
     return block
@@ -82,16 +82,16 @@ end
 
 function LayerRectangle:setCodeMap(codeMap)
     -- check
-    if not LayerRectangle.CodeMapValid(self._codeArray, codeMap, true) then corelog.Error("LayerRectangle:setCodeMap: Invalid codeMap") return end
+    if not LayerRectangle.CodeMapValid(self._codeTable, codeMap, true) then corelog.Error("LayerRectangle:setCodeMap: Invalid codeMap") return end
 
     self._codeMap = codeMap -- note: no deep copy
 end
 
-function LayerRectangle:setCodeArray(codeArray)
+function LayerRectangle:setCodeTable(codeTable)
     -- check
-    if not LayerRectangle.CodeArrayValid(codeArray, true) then corelog.Error("LayerRectangle:setCodeArray: Invalid codeArray") return end
+    if not LayerRectangle.CodeTableValid(codeTable, true) then corelog.Error("LayerRectangle:setCodeTable: Invalid codeTable") return end
 
-    self._codeArray = codeArray -- note: no deep copy
+    self._codeTable = codeTable -- note: no deep copy
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -145,7 +145,7 @@ function LayerRectangle:itemsNeeded()
     local itemList = {}
     for code, codeCount in pairs(codeList) do
         -- get block
-        local block = self._codeArray[code]
+        local block = self._codeTable[code]
 
         -- check is an actual item
         if block:isMinecraftItem() or block:isComputercraftItem() then
@@ -203,18 +203,18 @@ function LayerRectangle:transformToLayer(...)
         transformCodeMap[iRow] = transformRow
     end
 
-    -- construct transformCodeArray
-    local transformCodeArray = {}
+    -- construct transformCodeTable
+    local transformCodeTable = {}
     for code, codeCount in pairs(toLayer:codesNeeded()) do
-        transformCodeArray[code] = toLayer._codeArray[code]:copy()
+        transformCodeTable[code] = toLayer._codeTable[code]:copy()
     end
-    if anyBlockInserted and not transformCodeArray[anyBlockCode] then
-        transformCodeArray[anyBlockCode] = Block:newInstance(Block.AnyBlockName())
+    if anyBlockInserted and not transformCodeTable[anyBlockCode] then
+        transformCodeTable[anyBlockCode] = Block:newInstance(Block.AnyBlockName())
     end
 
     -- end
     local transformLayer = LayerRectangle:new({
-        _codeArray  = transformCodeArray,
+        _codeTable  = transformCodeTable,
         _codeMap    = transformCodeMap,
     })
     return transformLayer
@@ -236,8 +236,8 @@ function LayerRectangle:removeRow(...)
     -- remove row
     table.remove(self._codeMap, iRow)
 
-    -- clean codeArray
-    self:cleanCodeArray()
+    -- clean codeTable
+    self:cleanCodeTable()
 end
 
 function LayerRectangle:removeColumn(...)
@@ -260,23 +260,23 @@ function LayerRectangle:removeColumn(...)
         self._codeMap[iRow] = row:sub(1, iCol - 1)..row:sub(iCol + 1, nCol)
     end
 
-    -- clean codeArray
-    self:cleanCodeArray()
+    -- clean codeTable
+    self:cleanCodeTable()
 end
 
-function LayerRectangle:cleanCodeArray()
+function LayerRectangle:cleanCodeTable()
     --[[
-        Remove code's from codeArray that are not (anymore) in codeMap
+        Remove code's from codeTable that are not (anymore) in codeMap
     ]]
 
     -- get codeList
     local codeList = self:codesNeeded()
 
     -- check for unused codes
-    for code, block in pairs(self._codeArray) do
+    for code, block in pairs(self._codeTable) do
         if not codeList[code] then
             -- remove code
-            self._codeArray[code] = nil
+            self._codeTable[code] = nil
         end
     end
 end
@@ -378,7 +378,7 @@ function LayerRectangle:buildData()
 
     -- get AnyBlock code
     local anyBlockCode = "?" -- default, but allowed to be different
-    for code, block in pairs(self._codeArray) do
+    for code, block in pairs(self._codeTable) do
         if block:isAnyBlock() then
             anyBlockCode = code
             break
@@ -403,39 +403,39 @@ end
 --                | |
 --                |_|
 
-function LayerRectangle.IsCodeArray(codeArray)
+function LayerRectangle.IsCodeTable(codeTable)
     -- end
-    return LayerRectangle.CodeArrayValid(codeArray, false)
+    return LayerRectangle.CodeTableValid(codeTable, false)
 end
 
-function LayerRectangle.CodeArrayValid(codeArray, warn)
+function LayerRectangle.CodeTableValid(codeTable, warn)
     -- check validity
-    if type(codeArray) ~= "table" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid codeArray (type="..type(codeArray)..")") end return false end
-    for code, block in pairs(codeArray) do
-        if type(code) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid code (type="..type(code)..")") end return false end
-        if not Class.IsInstanceOf(block, Block) then if warn then corelog.Warning("LayerRectangle.CodeArrayValid: Invalid block (type="..type(block)..")") end return false end
+    if type(codeTable) ~= "table" then if warn then corelog.Warning("LayerRectangle.CodeTableValid: Invalid codeTable (type="..type(codeTable)..")") end return false end
+    for code, block in pairs(codeTable) do
+        if type(code) ~= "string" then if warn then corelog.Warning("LayerRectangle.CodeTableValid: Invalid code (type="..type(code)..")") end return false end
+        if not Class.IsInstanceOf(block, Block) then if warn then corelog.Warning("LayerRectangle.CodeTableValid: Invalid block (type="..type(block)..")") end return false end
     end
 
     -- end
     return true
 end
 
-function LayerRectangle.IsEqualCodeArray(codeArrayA, codeArrayB)
+function LayerRectangle.IsEqualCodeTable(codeTableA, codeTableB)
     -- check input
-    if not LayerRectangle.IsCodeArray(codeArrayA) or not LayerRectangle.IsCodeArray(codeArrayB) then return false end
+    if not LayerRectangle.IsCodeTable(codeTableA) or not LayerRectangle.IsCodeTable(codeTableB) then return false end
 
     -- check same elements as in A
     local sizeA = 0
-    for codeA, blockA in pairs(codeArrayA) do
+    for codeA, blockA in pairs(codeTableA) do
         sizeA = sizeA + 1
         -- check same blockName
-        local blockB = codeArrayB[codeA]
+        local blockB = codeTableB[codeA]
         if not blockA:isEqual(blockB) then return false end
     end
 
     -- check no other elements in B
     local sizeB = 0
-    for codeB, blockB in pairs(codeArrayB) do
+    for codeB, blockB in pairs(codeTableB) do
         sizeB = sizeB + 1
     end
     if sizeA ~= sizeB then return false end
@@ -444,24 +444,24 @@ function LayerRectangle.IsEqualCodeArray(codeArrayA, codeArrayB)
 	return true
 end
 
-function LayerRectangle.CodeArrayCopy(codeArray)
+function LayerRectangle.CodeTableCopy(codeTable)
     -- check input
-    if not LayerRectangle.IsCodeArray(codeArray) then corelog.Error("LayerRectangle.CodeArrayCopy: invalid codeArray: "..type(codeArray)) return end
+    if not LayerRectangle.IsCodeTable(codeTable) then corelog.Error("LayerRectangle.CodeTableCopy: invalid codeTable: "..type(codeTable)) return end
 
     -- copy elements
-    local codeArrayCopy = {}
-    for code, block in pairs(codeArray) do
-        codeArrayCopy[code] = block:copy()
+    local codeTableCopy = {}
+    for code, block in pairs(codeTable) do
+        codeTableCopy[code] = block:copy()
     end
 
     -- end
-	return codeArrayCopy
+	return codeTableCopy
 end
 
-function LayerRectangle.TransformToCodeArray(...)
+function LayerRectangle.TransformToCodeTable(...)
     -- get & check input from description
-    local checkSuccess, codeArray = InputChecker.Check([[
-        Transforms all block tables in the codeArray to Block objects.
+    local checkSuccess, codeTable = InputChecker.Check([[
+        Transforms all block tables in the codeTable to Block objects.
 
         i.e. each block table like {
             _dx     = nil,
@@ -471,27 +471,27 @@ function LayerRectangle.TransformToCodeArray(...)
         is transformed into a block object Block with the same fields
 
         Parameters:
-            codeArray                   + (table, {}) array mapping _codeMap codes (characters) to Block's
+            codeTable                   + (table, {}) array mapping _codeMap codes (characters) to Block's
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("LayerRectangle.TransformToCodeArray: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("LayerRectangle.TransformToCodeTable: Invalid input") return {} end
 
-    local codeArrayTransform = {}
+    local codeTableTransform = {}
     -- copy elements
-    for code, block in pairs(codeArray) do
+    for code, block in pairs(codeTable) do
         -- ToDo: consider doing this similair to, or using ObjArray:transformObjectTables => also making HasFieldsOfType and HasClassNameOfType methods obsolete (like was done for the other classes)
         if Block.HasFieldsOfType(block) then
             if Block.HasClassNameOfType(block) then
-                codeArrayTransform[code] = block -- already a Block
+                codeTableTransform[code] = block -- already a Block
             else
-                codeArrayTransform[code] = Block:new(block) -- transform
+                codeTableTransform[code] = Block:new(block) -- transform
             end
         else
-            corelog.Warning("LayerRectangle.TransformToCodeArray: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
+            corelog.Warning("LayerRectangle.TransformToCodeTable: block(="..textutils.serialize(block)..") does not have all Block fields => skipped")
         end
     end
 
     -- end
-	return codeArrayTransform
+	return codeTableTransform
 end
 
 function LayerRectangle.IsCodeMap(codeMap)
@@ -515,7 +515,7 @@ function LayerRectangle.IsCodeMap(codeMap)
     return true
 end
 
-function LayerRectangle.CodeMapValid(codeArray, codeMap, warn)
+function LayerRectangle.CodeMapValid(codeTable, codeMap, warn)
     -- check codeMap validity
     local size_x = 0
     for iY, codeRow in ipairs(codeMap) do
@@ -534,7 +534,7 @@ function LayerRectangle.CodeMapValid(codeArray, codeMap, warn)
         for iX = 1, codeRow:len() do
             -- check code validity
             local code = codeRow:sub(iX, iX)
-            if not codeArray[code] then if warn then corelog.Warning("LayerRectangle.CodeMapValid: code(="..code..") at ("..iX..","..iY..") not in codeArray") end return false end
+            if not codeTable[code] then if warn then corelog.Warning("LayerRectangle.CodeMapValid: code(="..code..") at ("..iX..","..iY..") not in codeTable") end return false end
         end
     end
 

@@ -249,7 +249,7 @@ end
 
 local function TopL0_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -267,7 +267,7 @@ end
 
 local function Shaft_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
@@ -278,7 +278,7 @@ end
 
 local function Storage_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
             ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
             ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
@@ -333,7 +333,7 @@ end
 
 local function StorageDismantle_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["D"]   = Block:newInstance("minecraft:dirt"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         },
@@ -347,7 +347,7 @@ end
 
 local function ShaftDismantle_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         },
         _codeMap    = {
@@ -358,7 +358,7 @@ end
 
 local function TopDismantle_layer()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {

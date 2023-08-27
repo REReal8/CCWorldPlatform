@@ -435,7 +435,7 @@ end
 
 function Tree_layerLm1()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         },
@@ -452,7 +452,7 @@ end
 
 function Tree_layerL0()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
@@ -469,7 +469,7 @@ end
 
 function Tree_layerL1()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -487,7 +487,7 @@ end
 
 function Base_layerL2()
     return LayerRectangle:new({
-        _codeArray  = {
+        _codeTable  = {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
