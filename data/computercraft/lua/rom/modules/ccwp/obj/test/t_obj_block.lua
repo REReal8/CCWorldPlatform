@@ -1,8 +1,6 @@
 local T_Block = {}
 local corelog = require "corelog"
 
-local InputChecker = require "input_checker"
-
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Block = require "obj_block"
@@ -32,12 +30,8 @@ end
 local testClassName = "Block"
 local logOk = false
 local dx1 = 0
-local dx2 = -1
 local dy1 = 1
-local dy2 = 0
 local saplingItemName = "minecraft:birch_sapling"
-local furnaceItemName = "minecraft:furnace"
-local chestItemName = "minecraft:chest"
 local computerItemName = "computercraft:computer_normal"
 
 local compact = { compact = true }
@@ -235,7 +229,7 @@ end
 function T_Block.T_hasValidDirection()
     -- prepare test
     corelog.WriteToLog("* Block:hasValidDirection() tests")
-    local blockName = chestItemName
+    local blockName = saplingItemName
     local obj = Block:newInstance(blockName)
 
     -- test default (0,0)
