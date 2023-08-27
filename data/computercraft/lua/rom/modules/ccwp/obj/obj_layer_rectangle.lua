@@ -209,7 +209,7 @@ function LayerRectangle:transformToLayer(...)
         transformCodeArray[code] = toLayer._codeArray[code]:copy()
     end
     if anyBlockInserted and not transformCodeArray[anyBlockCode] then
-        transformCodeArray[anyBlockCode] = Block:new({ _name = Block.AnyBlockName() })
+        transformCodeArray[anyBlockCode] = Block:newInstance(Block.AnyBlockName())
     end
 
     -- end
