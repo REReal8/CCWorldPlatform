@@ -15,7 +15,8 @@ local compact = { compact = true }
 
 function FieldValueEqualTest:_init(fieldName, expectedValue)
     -- check input
-    assert(type(fieldName) == "string", "fieldName not a string")
+    local fieldNameType = type(fieldName)
+    assert(fieldNameType == "string" or fieldNameType == "number", "type fieldName(="..fieldNameType..") not a string or number")
 
     -- initialisation
     ValueEqualTest._init(self, expectedValue)
