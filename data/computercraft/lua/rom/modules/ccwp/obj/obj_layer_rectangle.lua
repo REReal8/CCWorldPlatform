@@ -80,13 +80,6 @@ function LayerRectangle:getNRows()
     return #self._codeMap
 end
 
-function LayerRectangle:setCodeMap(codeMap)
-    -- check
-    if not LayerRectangle.CodeMapValid(self._codeTable, codeMap, true) then corelog.Error("LayerRectangle:setCodeMap: Invalid codeMap") return end
-
-    self._codeMap = codeMap -- note: no deep copy
-end
-
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
