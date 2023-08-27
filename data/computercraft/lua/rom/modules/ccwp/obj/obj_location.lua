@@ -30,7 +30,7 @@ function Location:_init(...)
             y                       + (number, 0) y coordinate
             z                       + (number, 0) z coordinate
             dx                      + (number, 0) x direction (either -1,0,1)
-            dy                      + (number, 1) y direction (either -1,0
+            dy                      + (number, 1) y direction (either -1,0,1)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Location:_init: Invalid input") return nil end
 
