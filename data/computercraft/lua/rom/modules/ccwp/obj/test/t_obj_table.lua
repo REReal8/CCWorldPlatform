@@ -25,6 +25,7 @@ function T_ObjTable.T_All()
 
     -- specific methods
     T_ObjTable.T_nObjs()
+    T_ObjTable.T_verifyObjsOfCorrectType()
     T_ObjTable.T_transformObjectTables()
     T_ObjTable.T_new_transformsObjTables()
 end
@@ -165,6 +166,27 @@ function T_ObjTable.T_nObjs()
     local expectedNElements = 2
     local nObjs = obj:nObjs()
     assert(nObjs == expectedNElements, " # elements(="..nObjs..") not the same as expected(="..expectedNElements..")")
+
+    -- cleanup test
+end
+
+function T_ObjTable.T_verifyObjsOfCorrectType()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":verifyObjsOfCorrectType() tests")
+    local objsTable = {
+        testObj1Key = testObj1:copy(),
+        testObj2Key = testObj2:copy(),
+    }
+    local obj = T_ObjTable.CreateTestObj(objClassName1, objsTable) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test with correct objs
+    local objsOfCorrectType = obj:verifyObjsOfCorrectType()
+    assert(objsOfCorrectType, "Unexpectedly not all objects of correct type")
+
+    -- test with incorrect obj
+    obj.testObj3Key = wrongTestObj1
+    objsOfCorrectType = obj:verifyObjsOfCorrectType(true)
+    assert(not objsOfCorrectType, "Unexpectedly all objects assumed to be of correct type")
 
     -- cleanup test
 end

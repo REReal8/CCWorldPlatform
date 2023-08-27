@@ -142,6 +142,37 @@ function ObjTable:objs()
     return nextObj, self, nil
 end
 
+function ObjTable:verifyObjsOfCorrectType(suppressWarning)
+    --[[
+        This method verifies of all Obj's in the ObjTable are of the correct type (i.e. equal to objClassName).
+
+        note: normally this should be true. However, as it's allowed to add objects in the usual way of adding objects to a table we might want to verify.
+
+        Parameters:
+            suppressWarning         + (boolean, false) if Warning should be suppressed
+    --]]
+
+    suppressWarning = suppressWarning or false
+
+    -- verify Obj's
+    for key, obj in self:objs() do
+        -- verfify IObj
+        if not Class.IsInstanceOf(obj, IObj) then
+            if not suppressWarning then corelog.Warning("ObjTable:verifyObjsOfCorrectType(): obj does not implement IObj interface") end
+            return false
+        end
+
+        -- verfify className
+        if obj:getClassName() ~= self:getObjClassName() then
+            if not suppressWarning then corelog.Warning("ObjTable:verifyObjsOfCorrectType: obj type(="..obj:getClassName()..") not equal to "..self:getObjClassName()) end
+            return false
+        end
+    end
+
+    -- end
+    return true
+end
+
 function ObjTable:transformObjectTables(suppressWarning)
     --[[
         Transform the objects in the ObjTable that are still object tables into objects of type 'objClass'.
