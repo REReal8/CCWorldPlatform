@@ -24,6 +24,7 @@ function T_ObjTable.T_All()
     T_ObjTable.T_IObj_All()
 
     -- specific methods
+    T_ObjTable.T_nObjs()
     T_ObjTable.T_transformObjectTables()
     T_ObjTable.T_new_transformsObjTables()
 end
@@ -157,9 +158,27 @@ end
 --       | |
 --       |_|
 
+function T_ObjTable.T_nObjs()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":nObjs() tests")
+    local objsTable = {
+        testObj1Key = testObj1:copy(),
+        testObj2Key = testObj2:copy(),
+    }
+    local obj = T_ObjTable.CreateTestObj(objClassName1, objsTable) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local expectedNElements = 2
+    local nObjs = obj:nObjs()
+    assert(nObjs == expectedNElements, " # elements(="..nObjs..") not the same as expected(="..expectedNElements..")")
+
+    -- cleanup test
+end
+
+
 function T_ObjTable.T_transformObjectTables()
     -- prepare test
-    corelog.WriteToLog("* ObjTable:transformObjectTables() tests")
+    corelog.WriteToLog("* "..testClassName..":transformObjectTables() tests")
     local objTable2 = ObjTable:new({
         _objClassName   = objClassName1,
     }) if not objTable2 then corelog.Warning("objTable2 unexpectedly nil") return end
@@ -227,7 +246,7 @@ end
 
 function T_ObjTable.T_new_transformsObjTables()
     -- prepare test
-    corelog.WriteToLog("* ObjTable:new() transforms objTables tests")
+    corelog.WriteToLog("* "..testClassName..":new() transforms objTables tests")
     local testObject1Table = {
         _field1 = "field1_1",
         _field2 = 1,
