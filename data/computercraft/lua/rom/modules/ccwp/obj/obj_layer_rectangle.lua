@@ -87,13 +87,6 @@ function LayerRectangle:setCodeMap(codeMap)
     self._codeMap = codeMap -- note: no deep copy
 end
 
-function LayerRectangle:setCodeTable(codeTable)
-    -- check
-    if not LayerRectangle.CodeTableValid(codeTable, true) then corelog.Error("LayerRectangle:setCodeTable: Invalid codeTable") return end
-
-    self._codeTable = codeTable -- note: no deep copy
-end
-
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
