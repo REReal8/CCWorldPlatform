@@ -104,7 +104,7 @@ end
 
 function T_ObjArray.T_new()
     -- prepare test
-    corelog.WriteToLog("* ObjArray:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
     local objsArray = {
         testObj1:copy(),
         testObj2:copy(),
@@ -171,10 +171,8 @@ end
 
 function T_ObjArray.T_transformObjectTables()
     -- prepare test
-    corelog.WriteToLog("* ObjArray:transformObjectTables() tests")
-    local objArray2 = ObjArray:new({
-        _objClassName   = objClassName1,
-    }) if not objArray2 then corelog.Warning("objArray2 unexpectedly nil") return end
+    corelog.WriteToLog("* "..testClassName..":transformObjectTables() tests")
+    local obj = ObjArray:newInstance(objClassName1) assert(obj, "Failed obtaining "..testClassName)
     local testObject1Table = {
         _field1 = "field1_1",
         _field2 = 1,
@@ -187,37 +185,37 @@ function T_ObjArray.T_transformObjectTables()
     assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
-    objArray2[1] = testObj1
-    objArray2[2] = testObj2
-    objArray2:transformObjectTables()
+    obj[1] = testObj1
+    obj[2] = testObj2
+    obj:transformObjectTables()
     local expectedNElements = 2
-    assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
-    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objArray2[1] = nil
-    objArray2[2] = nil
+    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
+    assert(obj[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj[1] = nil
+    obj[2] = nil
 
     -- test different class Obj skipped
-    objArray2[1] = testObj1
-    objArray2[2] = wrongTestObj1
-    objArray2[3] = testObj2
-    objArray2:transformObjectTables(true)
+    obj[1] = testObj1
+    obj[2] = wrongTestObj1
+    obj[3] = testObj2
+    obj:transformObjectTables(true)
     expectedNElements = 2
-    assert(table.getn(objArray2) == expectedNElements, " # elements(="..table.getn(objArray2)..") not the same as expected(="..expectedNElements..")")
-    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objArray2[1] = nil
-    objArray2[2] = nil
-    objArray2[3] = nil
+    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
+    assert(obj[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj[1] = nil
+    obj[2] = nil
+    obj[3] = nil
 
     -- test only object tables
-    objArray2[1] = testObject1Table
-    objArray2[2] = testObject2Table
-    objArray2:transformObjectTables()
-    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objArray2[1] = nil
-    objArray2[2] = nil
+    obj[1] = testObject1Table
+    obj[2] = testObject2Table
+    obj:transformObjectTables()
+    assert(obj[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj[1] = nil
+    obj[2] = nil
 
     -- test mix ObjTables and Obj's
     testObject2Table = {
@@ -226,20 +224,20 @@ function T_ObjArray.T_transformObjectTables()
     }
     assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
 
-    objArray2[1] = testObj1
-    objArray2[2] = testObject2Table
-    objArray2:transformObjectTables()
-    assert(objArray2[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objArray2[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray2[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objArray2[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objArray2[1] = nil
-    objArray2[2] = nil
+    obj[1] = testObj1
+    obj[2] = testObject2Table
+    obj:transformObjectTables()
+    assert(obj[1]:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj[2]:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj[1] = nil
+    obj[2] = nil
 
     -- cleanup test
 end
 
 function T_ObjArray.T_new_transformsObjTables()
     -- prepare test
-    corelog.WriteToLog("* ObjArray:new() transforms objTables tests")
+    corelog.WriteToLog("* "..testClassName..":new() transforms objTables tests")
     local testObject1Table = {
         _field1 = "field1_1",
         _field2 = 1,
