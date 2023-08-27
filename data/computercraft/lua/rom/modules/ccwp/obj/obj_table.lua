@@ -113,10 +113,8 @@ end
 function ObjTable:nObjs()
     -- count
     local nObj = 0
-    for key, el in pairs(self) do
-        if key ~= "_objClassName" then
-            nObj = nObj + 1
-        end
+    for key, el in self:objs() do
+        nObj = nObj + 1
     end
 
     -- end
@@ -167,34 +165,32 @@ function ObjTable:transformObjectTables(suppressWarning)
     end
 
     -- transform objectTable's
-    for key, objectTable in pairs(self) do
-        if key ~= "_objClassName" then
-            -- check if objectTable already an Obj
-            local objectTableClassName = nil
-            if Class.IsInstanceOf(objectTable, IObj) then
-                objectTableClassName = objectTable:getClassName()
-            end
+    for key, objectTable in self:objs() do
+        -- check if objectTable already an Obj
+        local objectTableClassName = nil
+        if Class.IsInstanceOf(objectTable, IObj) then
+            objectTableClassName = objectTable:getClassName()
+        end
 
-            -- determine obj
-            local obj = nil
-            if objectTableClassName then
-                -- check Obj of correct type
-                if objClassName == objectTableClassName then
-                    obj = objectTable -- already an object of type 'class'
-                else
-                    if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): objectTable class (="..objectTableClassName..") different from objClassName(="..objClassName..")") end
-                end
+        -- determine obj
+        local obj = nil
+        if objectTableClassName then
+            -- check Obj of correct type
+            if objClassName == objectTableClassName then
+                obj = objectTable -- already an object of type 'class'
             else
-                obj = objClass:new(objectTable) -- transform
+                if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): objectTable class (="..objectTableClassName..") different from objClassName(="..objClassName..")") end
             end
+        else
+            obj = objClass:new(objectTable) -- transform
+        end
 
-            -- add/ change in self ObjTable
-            self[key] = obj
+        -- add/ change in self ObjTable
+        self[key] = obj
 
-            -- check obj obtained
-            if not obj then
-                if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): failed transforming objectTable(="..textutils.serialize(objectTable)..") to a "..objClassName.." object => skipped") end
-            end
+        -- check obj obtained
+        if not obj then
+            if not suppressWarning then corelog.Warning("ObjTable:transformObjectTables(): failed transforming objectTable(="..textutils.serialize(objectTable)..") to a "..objClassName.." object => skipped") end
         end
     end
 end
