@@ -24,15 +24,7 @@ function T_ObjTable.T_All()
     T_ObjTable.T_new_transformsObjTables()
 end
 
-local compact = { compact = true }
-
---    _       _ _   _       _ _           _   _
---   (_)     (_) | (_)     | (_)         | | (_)
---    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
---   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
---   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
---   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
-
+local testClassName = "ObjTable"
 local objClassName1 = "TestObj"
 local testObj1 = TestObj:new({
     _field1 = "field1_1",
@@ -44,7 +36,15 @@ local testObj2 = TestObj:new({
 })
 local wrongTestObj1 = Location:newInstance()
 
-local testClassName = "ObjTable"
+local compact = { compact = true }
+
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
 function T_ObjTable.CreateTestObj()
     local testObj = ObjTable:new({
         _objClassName   = objClassName1,
