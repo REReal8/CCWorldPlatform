@@ -9,11 +9,15 @@ local ObjTable = require "obj_table"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ObjTable.T_All()
     -- initialisation
+    T_ObjTable.T__init()
     T_ObjTable.T_new()
 
     -- IObj methods
@@ -25,6 +29,7 @@ function T_ObjTable.T_All()
 end
 
 local testClassName = "ObjTable"
+local logOk = false
 local objClassName1 = "TestObj"
 local testObj1 = TestObj:new({
     _field1 = "field1_1",
@@ -45,20 +50,55 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_ObjTable.CreateTestObj(objClassName)
+function T_ObjTable.CreateTestObj(objClassName, objsTable)
     -- check input
     objClassName = objClassName or objClassName1
+    objsTable = objsTable or {
+        testObj1Key = testObj1:copy(),
+        testObj2Key = testObj2:copy(),
+    }
 
     -- create testObj
-    local testObj = ObjTable:new({
-        _objClassName   = objClassName1,
-
-        testObj1Key     = testObj1:copy(),
-        testObj2Key     = testObj2:copy(),
-    })
+    local testObj = ObjTable:newInstance(objClassName, objsTable)
 
     -- end
     return testObj
+end
+
+function T_ObjTable.CreateInitialisedTest(objClassName, objsTable)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_objClassName", objClassName)
+    )
+    for key, obj in pairs(objsTable) do
+        table.insert(test._tests, FieldValueEqualTest:newInstance(key, obj))
+    end
+
+    -- end
+    return test
+end
+
+function T_ObjTable.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+    local objsTable = {
+        testObj1Key = testObj1:copy(),
+        testObj2Key = testObj2:copy(),
+    }
+
+    -- test
+    local obj = T_ObjTable.CreateTestObj(objClassName1, objsTable) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_ObjTable.CreateInitialisedTest(objClassName1, objsTable)
+    test:test(obj, "objTable", "", logOk)
+
+    -- test default
+    obj = ObjTable:newInstance()
+    test = T_ObjTable.CreateInitialisedTest("", {})
+    test:test(obj, "objTable", "", logOk)
+
+    -- cleanup test
 end
 
 function T_ObjTable.T_new()

@@ -23,6 +23,38 @@ local objectFactory = ObjectFactory:getInstance()
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function ObjTable:_init(...)
+    -- get & check input from description
+    local checkSuccess, objClassName, objsTable = InputChecker.Check([[
+        Initialise a ObjTable.
+
+        Parameters:
+            objClassName            + (string, "") with className of objects in ObjTable (e.g. "Chest")
+            objsTable               + (table, {}) with key, value pairs of Obj in ObjTable
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ObjTable:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._objClassName  = objClassName
+    for key, obj in pairs(objsTable) do
+        if key == "_objClassName" then
+            corelog.Warning("ObjTable:_init: key of object in objsTable is not allowed to be reserved key _objClassName => skipped")
+        else
+            if not Class.IsInstanceOf(obj, IObj) then
+                corelog.Warning("ObjTable:_init: obj not an IObj => skipped")
+            else
+                if obj:getClassName() ~= objClassName then
+                    corelog.Warning("ObjTable:_init: obj type(="..obj:getClassName()..") not "..objClassName.." => skipped")
+                else
+                    self[key] = obj
+                end
+            end
+        end
+    end
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function ObjTable:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
