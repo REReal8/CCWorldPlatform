@@ -105,26 +105,20 @@ end
 function T_ObjTable.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
+    local objsTable = {
+        testObj1Key = testObj1:copy(),
+        testObj2Key = testObj2:copy(),
+    }
 
     -- test full
-    local objTable = ObjTable:new({
+    local obj = ObjTable:new({
         _objClassName   = objClassName1,
 
         testObj1Key     = testObj1,
         testObj2Key     = testObj2,
-    }) if not objTable then corelog.Warning("objTable unexpectedly nil") return end
-    assert(objTable:getObjClassName() == objClassName1, "gotten getObjClassName(="..objTable:getObjClassName()..") not the same as expected(="..objClassName1..")")
-    local expectedNElements = 2
-    assert(objTable:nObjs() == expectedNElements, " # elements(="..objTable:nObjs()..") not the same as expected(="..expectedNElements..")")
-    assert(objTable.testObj1Key:isEqual(testObj1), "obj 1 in objTable(="..textutils.serialise(objTable.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objTable.testObj2Key:isEqual(testObj2), "obj 2 in objTable(="..textutils.serialise(objTable.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-
-    -- test default
-    objTable = ObjTable:new() if not objTable then return end
-    local defaultName = ""
-    assert(objTable:getObjClassName() == defaultName, "gotten getObjClassName(="..objTable:getObjClassName()..") not the same as expected(="..defaultName..")")
-    expectedNElements = 0
-    assert(objTable:nObjs() == expectedNElements, " # elements(="..objTable:nObjs()..") not the same as expected(="..expectedNElements..")")
+    }) assert(obj, "Failed obtaining objTable")
+    local test = T_ObjTable.CreateInitialisedTest(objClassName1, objsTable)
+    test:test(obj, "objTable", "", logOk)
 
     -- cleanup test
 end
@@ -175,13 +169,10 @@ function T_ObjTable.T_nObjs()
     -- cleanup test
 end
 
-
 function T_ObjTable.T_transformObjectTables()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":transformObjectTables() tests")
-    local objTable2 = ObjTable:new({
-        _objClassName   = objClassName1,
-    }) if not objTable2 then corelog.Warning("objTable2 unexpectedly nil") return end
+    local obj = ObjTable:newInstance(objClassName1) assert(obj, "Failed obtaining "..testClassName)
     local testObject1Table = {
         _field1 = "field1_1",
         _field2 = 1,
@@ -194,37 +185,37 @@ function T_ObjTable.T_transformObjectTables()
     assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
 
     -- test already only Obj's (nothing should change)
-    objTable2.testObj1Key = testObj1
-    objTable2.testObj2Key = testObj2
-    objTable2:transformObjectTables()
+    obj.testObj1Key = testObj1
+    obj.testObj2Key = testObj2
+    obj:transformObjectTables()
     local expectedNElements = 2
-    assert(objTable2:nObjs() == expectedNElements, " # elements(="..objTable2:nObjs()..") not the same as expected(="..expectedNElements..")")
-    assert(objTable2.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objTable2.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objTable2.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objTable2.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objTable2.testObj1Key = nil
-    objTable2.testObj2Key = nil
+    assert(obj:nObjs() == expectedNElements, " # elements(="..obj:nObjs()..") not the same as expected(="..expectedNElements..")")
+    assert(obj.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj.testObj1Key = nil
+    obj.testObj2Key = nil
 
     -- test different class Obj skipped
-    objTable2.testObj1Key = testObj1
-    objTable2.testObj3Key = wrongTestObj1
-    objTable2.testObj2Key = testObj2
-    objTable2:transformObjectTables(true)
+    obj.testObj1Key = testObj1
+    obj.testObj3Key = wrongTestObj1
+    obj.testObj2Key = testObj2
+    obj:transformObjectTables(true)
     expectedNElements = 2
-    assert(objTable2:nObjs() == expectedNElements, " # elements(="..objTable2:nObjs()..") not the same as expected(="..expectedNElements..")")
-    assert(objTable2.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objTable2.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objTable2.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objTable2.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objTable2.testObj1Key = nil
-    objTable2.testObj2Key = nil
-    objTable2.testObj3Key = nil
+    assert(obj:nObjs() == expectedNElements, " # elements(="..obj:nObjs()..") not the same as expected(="..expectedNElements..")")
+    assert(obj.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj.testObj1Key = nil
+    obj.testObj2Key = nil
+    obj.testObj3Key = nil
 
     -- test only object tables
-    objTable2.testObj1Key = testObject1Table
-    objTable2.testObj2Key = testObject2Table
-    objTable2:transformObjectTables()
-    assert(objTable2.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objTable2.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objTable2.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objTable2.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objTable2.testObj1Key = nil
-    objTable2.testObj2Key = nil
+    obj.testObj1Key = testObject1Table
+    obj.testObj2Key = testObject2Table
+    obj:transformObjectTables()
+    assert(obj.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj.testObj1Key = nil
+    obj.testObj2Key = nil
 
     -- test mix ObjTables and Obj's
     testObject2Table = {
@@ -233,13 +224,13 @@ function T_ObjTable.T_transformObjectTables()
     }
     assert(not Class.IsInstanceOf(testObject2Table, TestObj), "testObject2Table incorrectly of type "..objClassName1)
 
-    objTable2.testObj1Key = testObj1
-    objTable2.testObj2Key = testObject2Table
-    objTable2:transformObjectTables()
-    assert(objTable2.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(objTable2.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objTable2.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(objTable2.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
-    objTable2.testObj1Key = nil
-    objTable2.testObj2Key = nil
+    obj.testObj1Key = testObj1
+    obj.testObj2Key = testObject2Table
+    obj:transformObjectTables()
+    assert(obj.testObj1Key:isEqual(testObj1), "obj 1 in array(="..textutils.serialise(obj.testObj1Key, compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj.testObj2Key:isEqual(testObj2), "obj 2 in array(="..textutils.serialise(obj.testObj2Key, compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    obj.testObj1Key = nil
+    obj.testObj2Key = nil
 
     -- cleanup test
 end
@@ -257,19 +248,18 @@ function T_ObjTable.T_new_transformsObjTables()
     }
 
     -- test new transforms objTables
-    local objTable = ObjTable:new({
+    local obj = ObjTable:new({
         _objClassName   = objClassName1,
 
         testObj1        = testObject1Table,
         testObj2        = testObject2Table,
-    })
-    if not objTable then return end
-    assert(objTable:getObjClassName() == objClassName1, "gotten getObjClassName(="..objTable:getObjClassName()..") not the same as expected(="..objClassName1..")")
+    }) assert(obj, "Failed obtaining "..testClassName)
+    assert(obj:getObjClassName() == objClassName1, "gotten getObjClassName(="..obj:getObjClassName()..") not the same as expected(="..objClassName1..")")
     local expectedNElements = 2
-    assert(objTable:nObjs() == expectedNElements, " # elements(="..objTable:nObjs()..") not the same as expected(="..expectedNElements..")")
-    local objClass = objTable:getObjClass()
-    assert(Class.IsInstanceOf(objTable.testObj1, objClass), "obj 1 in objTable(="..textutils.serialise(objTable.testObj1, compact)..") not of type "..objClassName1)
-    assert(Class.IsInstanceOf(objTable.testObj2, objClass), "obj 2 in objTable(="..textutils.serialise(objTable.testObj2, compact)..") not of type "..objClassName1)
+    assert(obj:nObjs() == expectedNElements, " # elements(="..obj:nObjs()..") not the same as expected(="..expectedNElements..")")
+    local objClass = obj:getObjClass()
+    assert(Class.IsInstanceOf(obj.testObj1, objClass), "obj 1 in ObjTable(="..textutils.serialise(obj.testObj1, compact)..") not of type "..objClassName1)
+    assert(Class.IsInstanceOf(obj.testObj2, objClass), "obj 2 in ObjTable(="..textutils.serialise(obj.testObj2, compact)..") not of type "..objClassName1)
 
     -- cleanup test
 end
