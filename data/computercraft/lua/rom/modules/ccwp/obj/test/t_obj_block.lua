@@ -7,11 +7,15 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Block = require "obj_block"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_Block.T_All()
     -- initialisation
+    T_Block.T__init()
     T_Block.T_new()
 
     -- IObj methods
@@ -25,6 +29,8 @@ function T_Block.T_All()
     T_Block.T_hasValidDirection()
 end
 
+local testClassName = "Block"
+local logOk = false
 local dx1 = 0
 local dx2 = -1
 local dy1 = 1
@@ -33,12 +39,6 @@ local saplingItemName = "minecraft:birch_sapling"
 local furnaceItemName = "minecraft:furnace"
 local chestItemName = "minecraft:chest"
 local computerItemName = "computercraft:computer_normal"
-
-local block1 = Block:new({
-    _dx     = dx1,
-    _dy     = dy1,
-    _name   = saplingItemName,
-})
 
 local compact = { compact = true }
 
@@ -49,47 +49,68 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "Block"
-function T_Block.CreateTestObj()
-    local testObj = Block:new({
-        _dx     = dx1,
-        _dy     = dy1,
+function T_Block.CreateTestObj(blockName, dx, dy)
+    -- check input
+    blockName = blockName or saplingItemName
+    dx = dx or dx1
+    dy = dy or dy1
 
-        _name   = saplingItemName,
-    })
+    -- create testObj
+    local testObj = Block:newInstance(blockName, dx, dy)
 
+    -- end
     return testObj
+end
+
+function T_Block.CreateInitialisedTest(blockName, dx, dy)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_name", blockName),
+        FieldValueEqualTest:newInstance("_dx", dx),
+        FieldValueEqualTest:newInstance("_dy", dy)
+    )
+
+    -- end
+    return test
+end
+
+function T_Block.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_Block.CreateTestObj(saplingItemName, dx1, dy1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Block.CreateInitialisedTest(saplingItemName, dx1, dy1)
+    test:test(obj, "block", "", logOk)
+
+    -- test without orientations (i.e dx, dy)
+    obj = Block:newInstance(saplingItemName)
+    test = T_Block.CreateInitialisedTest(saplingItemName, 0, 0)
+    test:test(obj, "block", "", logOk)
+
+    -- test default
+    obj = Block:newInstance()
+    test = T_Block.CreateInitialisedTest("", 0, 0)
+    test:test(obj, "block", "", logOk)
+
+    -- cleanup test
 end
 
 function T_Block.T_new()
     -- prepare test
-    corelog.WriteToLog("* Block:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local block = Block:new({
+    local obj = Block:new({
         _dx     = dx1,
         _dy     = dy1,
 
         _name   = saplingItemName,
     })
-    assert(block:getDx() == dx1, "gotten getDx(="..block:getDx()..") not the same as expected(="..dx1..")")
-    assert(block:getDy() == dy1, "gotten getDy(="..block:getDy()..") not the same as expected(="..dy1..")")
-    assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
-
-    -- test without orientations (i.e dx, dy)
-    block = Block:new({
-        _name   = saplingItemName,
-    })
-    assert(block:getDx() == 0, "gotten getDx(="..(block:getDx() or 0)..") not the same as expected(=0)")
-    assert(block:getDy() == 0, "gotten getDy(="..(block:getDy() or 0)..") not the same as expected(=0)")
-    assert(block:getName() == saplingItemName, "gotten getName(="..block:getName()..") not the same as expected(="..saplingItemName..")")
-
-    -- test default
-    block = Block:new()
-    assert(block:getDx() == 0, "gotten getDx(="..(block:getDx() or 0)..") not the same as expected(=0)")
-    assert(block:getDy() == 0, "gotten getDy(="..(block:getDy() or 0)..") not the same as expected(=0)")
-    local dedaultName = ""
-    assert(block:getName() == dedaultName, "gotten getName(="..block:getName()..") not the same as expected(="..dedaultName..")")
+    local test = T_Block.CreateInitialisedTest(saplingItemName, dx1, dy1)
+    test:test(obj, "block", "", logOk)
 
     -- cleanup test
 end
@@ -127,27 +148,22 @@ function T_Block.T_isMinecraftItem()
     -- prepare test
     corelog.WriteToLog("* Block:isMinecraftItem() tests")
     local blockName = saplingItemName
-    local block2 = Block:new({
-        _dx     = dx1,
-        _dy     = dy1,
-
-        _name   = blockName,
-    })
+    local obj = Block:newInstance(blockName, dx1, dy1)
 
     -- test minecraft item
-    local isMinecraftItem = block2:isMinecraftItem()
+    local isMinecraftItem = obj:isMinecraftItem()
     assert(isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(true)")
 
     -- test blockNameAny
     blockName = Block.AnyBlockName()
-    block2:setName(blockName)
-    isMinecraftItem = block2:isMinecraftItem()
+    obj:setName(blockName)
+    isMinecraftItem = obj:isMinecraftItem()
     assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(false)")
 
     -- test blockNameNone
     blockName = Block.NoneBlockName()
-    block2:setName(blockName)
-    isMinecraftItem = block2:isMinecraftItem()
+    obj:setName(blockName)
+    isMinecraftItem = obj:isMinecraftItem()
     assert(not isMinecraftItem, "gotten isMinecraftItem(="..tostring(isMinecraftItem)..") for "..blockName.." not the same as expected(false)")
 
     -- cleanup test
@@ -157,21 +173,16 @@ function T_Block.T_isAnyBlock()
     -- prepare test
     corelog.WriteToLog("* Block:isAnyBlock() tests")
     local blockName = Block.AnyBlockName()
-    local block2 = Block:new({
-        _dx     = dx1,
-        _dy     = dy1,
-
-        _name   = blockName,
-    })
+    local obj = Block:newInstance(blockName, dx1, dy1)
 
     -- test any block
-    local isAnyBlock = block2:isAnyBlock()
+    local isAnyBlock = obj:isAnyBlock()
     assert(isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(true)")
 
     -- test not any block
     blockName = saplingItemName
-    block2:setName(blockName)
-    isAnyBlock = block2:isAnyBlock()
+    obj:setName(blockName)
+    isAnyBlock = obj:isAnyBlock()
     assert(not isAnyBlock, "gotten isAnyBlock(="..tostring(isAnyBlock)..") for "..blockName.." not the same as expected(false)")
 
     -- cleanup test
@@ -181,21 +192,16 @@ function T_Block.T_isNoneBlock()
     -- prepare test
     corelog.WriteToLog("* Block:isNoneBlock() tests")
     local blockName = Block.NoneBlockName()
-    local block2 = Block:new({
-        _dx     = dx1,
-        _dy     = dy1,
-
-        _name   = blockName,
-    })
+    local obj = Block:newInstance(blockName, dx1, dy1)
 
     -- test any block
-    local isNoneBlock = block2:isNoneBlock()
+    local isNoneBlock = obj:isNoneBlock()
     assert(isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(true)")
 
     -- test not any block
     blockName = saplingItemName
-    block2:setName(blockName)
-    isNoneBlock = block2:isNoneBlock()
+    obj:setName(blockName)
+    isNoneBlock = obj:isNoneBlock()
     assert(not isNoneBlock, "gotten isNoneBlock(="..tostring(isNoneBlock)..") for "..blockName.." not the same as expected(false)")
 
     -- cleanup test
@@ -205,27 +211,22 @@ function T_Block.T_isComputercraftItem()
     -- prepare test
     corelog.WriteToLog("* Block:isComputercraftItem() tests")
     local blockName = computerItemName
-    local block2 = Block:new({
-        _dx     = dx1,
-        _dy     = dy1,
-
-        _name   = blockName,
-    })
+    local obj = Block:newInstance(blockName, dx1, dy1)
 
     -- test computercraft item
-    local isComputercraftItem = block2:isComputercraftItem()
+    local isComputercraftItem = obj:isComputercraftItem()
     assert(isComputercraftItem, "gotten isComputercraftItem(="..tostring(isComputercraftItem)..") for "..blockName.." not the same as expected(true)")
 
     -- test blockNameAny
     blockName = Block.AnyBlockName()
-    block2:setName(blockName)
-    isComputercraftItem = block2:isComputercraftItem()
+    obj:setName(blockName)
+    isComputercraftItem = obj:isComputercraftItem()
     assert(not isComputercraftItem, "gotten isComputercraftItem(="..tostring(isComputercraftItem)..") for "..blockName.." not the same as expected(false)")
 
     -- test blockNameNone
     blockName = Block.NoneBlockName()
-    block2:setName(blockName)
-    isComputercraftItem = block2:isComputercraftItem()
+    obj:setName(blockName)
+    isComputercraftItem = obj:isComputercraftItem()
     assert(not isComputercraftItem, "gotten isComputercraftItem(="..tostring(isComputercraftItem)..") for "..blockName.." not the same as expected(false)")
 
     -- cleanup test
@@ -235,12 +236,7 @@ function T_Block.T_hasValidDirection()
     -- prepare test
     corelog.WriteToLog("* Block:hasValidDirection() tests")
     local blockName = chestItemName
-    local obj = Block:new({
-        _dx     = 0,
-        _dy     = 0,
-
-        _name   = blockName,
-    })
+    local obj = Block:newInstance(blockName)
 
     -- test default (0,0)
     local expectedDirectionValid = false
