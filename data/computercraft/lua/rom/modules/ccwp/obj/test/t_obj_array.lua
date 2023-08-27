@@ -106,24 +106,24 @@ function T_ObjArray.T_new()
     corelog.WriteToLog("* ObjArray:new() tests")
 
     -- test full
-    local objArray = ObjArray:new({
+    local obj = ObjArray:new({
         _objClassName   = objClassName1,
 
         testObj1,
         testObj2,
-    }) if not objArray then corelog.Warning("objArray unexpectedly nil") return end
-    assert(objArray:getObjClassName() == objClassName1, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..objClassName1..")")
+    }) if not obj then corelog.Warning("obj unexpectedly nil") return end
+    assert(obj:getObjClassName() == objClassName1, "gotten getObjClassName(="..obj:getObjClassName()..") not the same as expected(="..objClassName1..")")
     local expectedNElements = 2
-    assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
-    assert(objArray[1]:isEqual(testObj1), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
-    assert(objArray[2]:isEqual(testObj2), "obj 2 in objArray(="..textutils.serialise(objArray[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
+    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
+    assert(obj[1]:isEqual(testObj1), "obj 1 in obj(="..textutils.serialise(obj[1], compact)..") not the same as expected(="..textutils.serialise(testObj1, compact)..")")
+    assert(obj[2]:isEqual(testObj2), "obj 2 in obj(="..textutils.serialise(obj[2], compact)..") not the same as expected(="..textutils.serialise(testObj2, compact)..")")
 
     -- test default
-    objArray = ObjArray:new() if not objArray then return end
+    obj = ObjArray:new() if not obj then return end
     local defaultName = ""
-    assert(objArray:getObjClassName() == defaultName, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..defaultName..")")
+    assert(obj:getObjClassName() == defaultName, "gotten getObjClassName(="..obj:getObjClassName()..") not the same as expected(="..defaultName..")")
     expectedNElements = 0
-    assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
+    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
 
     -- cleanup test
 end
@@ -238,20 +238,20 @@ function T_ObjArray.T_new_transformsObjTables()
     }
 
     -- test new transforms objTables
-    local objArray = ObjArray:new({
+    local obj = ObjArray:new({
         _objClassName   = objClassName1,
 
         testObject1Table,
         testObject2Table,
     })
-    if not objArray then return end
-    assert(objArray:getObjClassName() == objClassName1, "gotten getObjClassName(="..objArray:getObjClassName()..") not the same as expected(="..objClassName1..")")
+    if not obj then return end
+    assert(obj:getObjClassName() == objClassName1, "gotten getObjClassName(="..obj:getObjClassName()..") not the same as expected(="..objClassName1..")")
     local expectedNElements = 2
-    assert(table.getn(objArray) == expectedNElements, " # elements(="..table.getn(objArray)..") not the same as expected(="..expectedNElements..")")
-    local objClass = objArray:getObjClass()
+    assert(table.getn(obj) == expectedNElements, " # elements(="..table.getn(obj)..") not the same as expected(="..expectedNElements..")")
+    local objClass = obj:getObjClass()
 
-    assert(Class.IsInstanceOf(objArray[1], objClass), "obj 1 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
-    assert(Class.IsInstanceOf(objArray[2], objClass), "obj 2 in objArray(="..textutils.serialise(objArray[1], compact)..") not of type "..objClassName1)
+    assert(Class.IsInstanceOf(obj[1], objClass), "obj 1 in obj(="..textutils.serialise(obj[1], compact)..") not of type "..objClassName1)
+    assert(Class.IsInstanceOf(obj[2], objClass), "obj 2 in obj(="..textutils.serialise(obj[1], compact)..") not of type "..objClassName1)
 
     -- cleanup test
 end
