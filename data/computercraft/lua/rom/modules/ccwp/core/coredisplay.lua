@@ -279,6 +279,7 @@ function ExecuteObjTest(t)
 		{key = "h", desc = "Host", 				func = ExecuteObjTest, param = {filename = "T_Host"}},
 		{key = "l", desc = "Location",			func = ExecuteObjTest, param = {filename = "T_Location"}},
 		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
+		{key = "p", desc = "CodeMap",			func = ExecuteObjTest, param = {filename = "T_CodeMap"}},
 		{key = "r", desc = "LayerRectangle",	func = ExecuteObjTest, param = {filename = "T_LayerRectangle"}},
 		{key = "i", desc = "Inventory",			func = ExecuteObjTest, param = {filename = "T_Inventory"}},
 		{key = "g", desc = "ItemTable",			func = ExecuteObjTest, param = {filename = "T_ItemTable"}},

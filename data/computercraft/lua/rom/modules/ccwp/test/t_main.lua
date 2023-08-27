@@ -25,6 +25,7 @@ local T_URL = require "test.t_obj_url"
 local T_Host = require "test.t_obj_host"
 local T_Location = require "test.t_obj_location"
 local T_Block = require "test.t_obj_block"
+local T_CodeMap = require "test.t_obj_code_map"
 local T_LayerRectangle = require "test.t_obj_layer_rectangle"
 local T_Inventory = require "test.t_obj_inventory"
 local T_WIPQueue = require "test.t_obj_wip_queue"
@@ -91,6 +92,7 @@ function t_main.T_All()
     T_Host.T_All()
     T_Location.T_All()
     T_Block.T_All()
+    T_CodeMap.T_All()
     T_LayerRectangle.T_All()
     T_Inventory.T_All()
     T_WIPQueue.T_All()
