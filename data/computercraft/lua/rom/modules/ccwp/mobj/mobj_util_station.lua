@@ -44,8 +44,8 @@ end
 local function Chest_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = Block:new({ _name = "minecraft:chest" }),
-            [" "]   = Block:new({ _name = Block.AnyBlockName() }),
+            ["C"]   = Block:newInstance("minecraft:chest"),
+            [" "]   = Block:newInstance(Block.AnyBlockName()),
         },
         _codeMap    = {
             [1] = "C C",
@@ -56,7 +56,7 @@ end
 local function Computer_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = Block:new({ _name = "computercraft:computer_normal", _dx =0, _dy = -1 }),
+            ["C"]   = Block:newInstance("computercraft:computer_normal", 0, -1),
         },
         _codeMap    = {
             [1] = "C",
@@ -67,7 +67,7 @@ end
 local function Modem_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["M"]   = Block:new({ _name = "computercraft:wireless_modem_normal" }),
+            ["M"]   = Block:newInstance("computercraft:wireless_modem_normal"),
         },
         _codeMap    = {
             [1] = "M",
@@ -78,8 +78,8 @@ end
 local function Monitor_Only_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["M"]   = Block:new({ _name = "computercraft:monitor_normal" }),
-            [" "]   = Block:new({ _name = Block.AnyBlockName() }),
+            ["M"]   = Block:newInstance("computercraft:monitor_normal"),
+            [" "]   = Block:newInstance(Block.AnyBlockName()),
         },
         _codeMap    = {
             [1] = "MMMMMMMM MMMMMMMM",

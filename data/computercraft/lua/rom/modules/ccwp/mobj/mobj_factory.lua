@@ -716,7 +716,7 @@ end
 local function Shaft_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [1] = " ",
@@ -727,7 +727,7 @@ end
 local function ShaftRestore_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["D"]   = Block:new({ _name = "minecraft:dirt" }),
+            ["D"]   = Block:newInstance("minecraft:dirt"),
         },
         _codeMap    = {
             [1] = "D",
@@ -825,7 +825,7 @@ end
 local function AboveOrBelowFurnanceL1_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [2] = " ",
@@ -837,8 +837,8 @@ end
 local function FurnanceL1_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["F"]   = Block:new({ _name = "minecraft:furnace" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["F"]   = Block:newInstance("minecraft:furnace"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [2] = "F",
@@ -920,7 +920,7 @@ end
 local function ItemDepotChestL2_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = Block:new({ _name = "minecraft:chest" }),
+            ["C"]   = Block:newInstance("minecraft:chest"),
         },
         _codeMap    = {
             [1] = "C",
@@ -931,9 +931,9 @@ end
 local function TopLayerL2_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = "minecraft:torch" }),
-            ["C"]   = Block:new({ _name = "minecraft:chest" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            ["C"]   = Block:newInstance("minecraft:chest"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "  C C ",

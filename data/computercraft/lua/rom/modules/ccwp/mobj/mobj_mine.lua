@@ -246,9 +246,9 @@ end
 local function TopLayerlayer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["T"]   = Block:new({ _name = "minecraft:torch" }),
-            ["C"]   = Block:new({ _name = "minecraft:chest" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            ["C"]   = Block:newInstance("minecraft:chest"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "  C C ",

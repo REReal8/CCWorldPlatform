@@ -177,7 +177,7 @@ end
 local function Chest_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            ["C"]   = Block:new({ _name = "minecraft:chest" }),
+            ["C"]   = Block:newInstance("minecraft:chest"),
         },
         _codeMap    = {
             [1] = "C",
@@ -218,7 +218,7 @@ end
 local function ChestDismantle_layer()
     return LayerRectangle:new({
         _codeArray  = {
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [1] = " ",

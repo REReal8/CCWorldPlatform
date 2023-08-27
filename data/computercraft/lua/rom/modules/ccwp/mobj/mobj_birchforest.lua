@@ -436,8 +436,8 @@ end
 function Tree_layerLm1()
     return LayerRectangle:new({
         _codeArray  = {
-            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
-            ["?"]   = Block:new({ _name = Block.AnyBlockName() }),
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
         },
         _codeMap    = {
             [6] = "??????",
@@ -453,8 +453,8 @@ end
 function Tree_layerL0()
     return LayerRectangle:new({
         _codeArray  = {
-            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "      ",
@@ -470,9 +470,9 @@ end
 function Tree_layerL1()
     return LayerRectangle:new({
         _codeArray  = {
-            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
-            ["T"]   = Block:new({ _name = "minecraft:torch" }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "      ",
@@ -488,11 +488,11 @@ end
 function Base_layerL2()
     return LayerRectangle:new({
         _codeArray  = {
-            ["S"]   = Block:new({ _name = "minecraft:birch_sapling" }),
-            ["T"]   = Block:new({ _name = "minecraft:torch" }),
-            ["C"]   = Block:new({ _name = "minecraft:chest", _dx =-1, _dy = 0 }),
-            ["D"]   = Block:new({ _name = "minecraft:chest", _dx = 1, _dy = 0 }),
-            [" "]   = Block:new({ _name = Block.NoneBlockName() }),
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
+            ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         },
         _codeMap    = {
             [6] = "      ",
