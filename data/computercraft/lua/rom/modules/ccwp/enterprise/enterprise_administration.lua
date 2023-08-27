@@ -93,9 +93,7 @@ end
 function enterprise_administration:createNewWIPAdministrator()
     -- create WIPAdministrator
     local administrator = WIPAdministrator:new({
-        _wipQueues  = ObjTable:new({
-            _objClassName   = "WIPQueue",
-        }),
+        _wipQueues  = ObjTable:newInstance("WIPQueue"),
     })
 
     -- save it

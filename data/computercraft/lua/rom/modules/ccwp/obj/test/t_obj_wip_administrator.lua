@@ -39,9 +39,7 @@ local callbackList1 = ObjArray:new({
     _objClassName   = callbackClassName,
 }) if not callbackList1 then return end
 local wipQueueClassName = "WIPQueue"
-local wipQueues1 = ObjTable:new({
-    _objClassName   = wipQueueClassName,
-}) assert(wipQueues1)
+local wipQueues1 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues1)
 
 local compact = { compact = true }
 
@@ -55,9 +53,7 @@ local compact = { compact = true }
 local testClassName = "WIPAdministrator"
 function T_WIPAdministrator.CreateTestObj()
     local wipQueue = T_WIPQueue.CreateTestObj() assert(wipQueue, "Failed obtaining WIPQueue")
-    local wipQueues = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-
+    local wipQueues = ObjTable:newInstance(wipQueueClassName, {
         wipQueue,
     }) assert(wipQueues1)
 
@@ -119,9 +115,7 @@ function T_WIPAdministrator.T_removeWIPQueue()
         _callbackList   = callbackList1:copy(),
     }) assert(wipQueue1)
 
-    local wipQueues2 = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-    }) assert(wipQueues2)
+    local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues2:copy(),
@@ -148,9 +142,7 @@ function T_WIPAdministrator.T_getWIPQueue()
         _callbackList   = callbackList1:copy(),
     }) assert(wipQueue1)
 
-    local wipQueues2 = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-    }) assert(wipQueues2)
+    local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues2,
@@ -182,9 +174,7 @@ function T_WIPAdministrator.T_reset()
         _callbackList   = callbackList1:copy(),
     }) assert(wipQueue1)
 
-    local wipQueues = ObjTable:new({
-        _objClassName   = wipQueueClassName,
-    }) assert(wipQueues)
+    local wipQueues = ObjTable:newInstance(wipQueueClassName) assert(wipQueues)
     wipQueues[wipQueueId1] = wipQueue1
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues:copy(),
