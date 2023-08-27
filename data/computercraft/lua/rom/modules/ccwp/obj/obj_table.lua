@@ -131,13 +131,13 @@ function ObjTable:objs()
     --]]
 
     -- create iterator that skips _objClassName
-    local function nextObj(table)
-        local key, value = next(table)
-        while key do
-            if key ~= "_objClassName" then
-                return key, value
+    local function nextObj(table, key)
+        local newKey, value = next(table, key)
+        while newKey do
+            if newKey ~= "_objClassName" then
+                return newKey, value
             end
-            key, value = next(table, key) -- Continue to the next key-value pair
+            newKey, value = next(table, newKey) -- Continue to the next key-value pair
         end
     end
 
