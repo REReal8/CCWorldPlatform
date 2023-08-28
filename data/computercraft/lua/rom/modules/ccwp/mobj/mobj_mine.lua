@@ -18,6 +18,7 @@ local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local ObjTable = require "obj_table"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 local Location = require "obj_location"
 
@@ -250,14 +251,14 @@ local function TopLayerlayer()
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        },
+        }),
     })
 end
 

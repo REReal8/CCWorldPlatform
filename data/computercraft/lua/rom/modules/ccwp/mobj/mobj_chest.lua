@@ -22,6 +22,7 @@ local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
 local Inventory = require "obj_inventory"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local role_fuel_worker = require "role_fuel_worker"
@@ -181,9 +182,9 @@ local function Chest_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "C",
-        },
+        }),
     })
 end
 
@@ -222,9 +223,9 @@ local function ChestDismantle_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = " ",
-        },
+        }),
     })
 end
 

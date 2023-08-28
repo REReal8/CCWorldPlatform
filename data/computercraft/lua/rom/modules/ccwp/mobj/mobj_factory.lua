@@ -27,6 +27,7 @@ local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local ProductionSpot = require "mobj_production_spot"
@@ -720,9 +721,9 @@ local function Shaft_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = " ",
-        },
+        }),
     })
 end
 
@@ -731,9 +732,9 @@ local function ShaftRestore_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "D",
-        },
+        }),
     })
 end
 
@@ -821,10 +822,10 @@ local function AboveOrBelowFurnanceL1_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [2] = " ",
             [1] = " ",
-        },
+        }),
     })
 end
 
@@ -834,10 +835,10 @@ local function FurnanceL1_layer()
             ["F"]   = Block:newInstance("minecraft:furnace"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [2] = "F",
             [1] = " ",
-        },
+        }),
     })
 end
 
@@ -908,9 +909,9 @@ local function ItemDepotChestL2_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "C",
-        },
+        }),
     })
 end
 
@@ -921,14 +922,14 @@ local function TopLayerL2_layer()
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        },
+        }),
     })
 end
 

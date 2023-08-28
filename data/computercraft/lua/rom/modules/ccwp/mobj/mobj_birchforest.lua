@@ -18,6 +18,7 @@ local URL = require "obj_url"
 local Host = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local role_forester = require "role_forester"
@@ -441,14 +442,14 @@ function Tree_layerLm1()
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "??????",
             [5] = "??????",
             [4] = "???S??",
             [3] = "??????",
             [2] = "??????",
             [1] = "??????",
-        },
+        }),
     })
 end
 
@@ -458,14 +459,14 @@ function Tree_layerL0()
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "   S  ",
             [3] = "      ",
             [2] = "      ",
             [1] = "      ",
-        },
+        }),
     })
 end
 
@@ -476,14 +477,14 @@ function Tree_layerL1()
             ["T"]   = Block:newInstance("minecraft:torch"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        },
+        }),
     })
 end
 
@@ -496,14 +497,14 @@ function Base_layerL2()
             ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "     D",
             [2] = "  C D ",
             [1] = "   T  ",
-        },
+        }),
     })
 end
 

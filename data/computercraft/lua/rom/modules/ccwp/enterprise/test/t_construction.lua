@@ -6,6 +6,7 @@ local Callback = require "obj_callback"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_projects = require "enterprise_projects"
@@ -25,14 +26,14 @@ local testBuildLayer1 = LayerRectangle:new({
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = {
+    _codeMap    = CodeMap:new({
         [6] = "  C ",
         [5] = "    ",
         [4] = "T   ",
         [3] = "    ",
         [2] = "    ",
         [1] = "   T",
-    },
+    }),
 }) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
@@ -43,11 +44,11 @@ local testBuildLayer2 = LayerRectangle:new({
         ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = {
+    _codeMap    = CodeMap:new({
         [3] = "DDF",
         [2] = "C F",
         [1] = "CEE",
-    },
+    }),
 }) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:new({
@@ -56,23 +57,23 @@ local testBuildLayer3 = LayerRectangle:new({
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = {
+    _codeMap    = CodeMap:new({
         [6] = "  C C ",
         [5] = "      ",
         [4] = "T     ",
         [3] = "      ",
         [2] = "      ",
         [1] = "   T  ",
-    },
+    }),
 }) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local testBuildLayer4 = LayerRectangle:new({
     _codeTable  = ObjTable:newInstance(blockClassName, {
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = {
+    _codeMap    = CodeMap:new({
         [1] = " ",
-    },
+    }),
 }) assert(testBuildLayer4, "Failed obtaining testBuildLayer4")
 
 function t_construction.T_BuildLayer_ASrv_FromTurtle()

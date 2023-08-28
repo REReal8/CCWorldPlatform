@@ -13,6 +13,7 @@ local coredht           = require "coredht"
 
 local Location          = require "obj_location"
 local Block             = require "obj_block"
+local CodeMap = require "obj_code_map"
 local ObjTable = require "obj_table"
 local LayerRectangle    = require "obj_layer_rectangle"
 
@@ -49,9 +50,9 @@ local function Chest_layer()
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "C C",
-        },
+        }),
     })
 end
 
@@ -60,9 +61,9 @@ local function Computer_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("computercraft:computer_normal", 0, -1),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "C",
-        },
+        }),
     })
 end
 
@@ -71,9 +72,9 @@ local function Modem_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             ["M"]   = Block:newInstance("computercraft:wireless_modem_normal"),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "M",
-        },
+        }),
     })
 end
 
@@ -83,9 +84,9 @@ local function Monitor_Only_layer()
             ["M"]   = Block:newInstance("computercraft:monitor_normal"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "MMMMMMMM MMMMMMMM",
-        },
+        }),
     })
 end
 

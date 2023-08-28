@@ -23,6 +23,7 @@ local ObjTable = require "obj_table"
 local Host = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_projects = require "enterprise_projects"
@@ -252,14 +253,14 @@ local function TopL0_layer()
             ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        },
+        }),
     })
 end
 
@@ -268,9 +269,9 @@ local function Shaft_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = " ",
-        },
+        }),
     })
 end
 
@@ -283,11 +284,11 @@ local function Storage_layer()
             ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [3] = "DDF",
             [2] = "C F",
             [1] = "CEE",
-        },
+        }),
     })
 end
 
@@ -335,11 +336,11 @@ local function StorageDismantle_layer()
             ["D"]   = Block:newInstance("minecraft:dirt"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [3] = "DDD",
             [2] = "D?D",
             [1] = "DDD",
-        },
+        }),
     })
 end
 
@@ -348,9 +349,9 @@ local function ShaftDismantle_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [1] = "D",
-        },
+        }),
     })
 end
 
@@ -359,14 +360,14 @@ local function TopDismantle_layer()
         _codeTable  = ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        _codeMap    = CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "      ",
             [3] = "      ",
             [2] = "      ",
             [1] = "      ",
-        },
+        }),
     })
 end
 
