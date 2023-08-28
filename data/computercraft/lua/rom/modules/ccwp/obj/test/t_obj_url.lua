@@ -7,11 +7,16 @@ local URL = require "obj_url"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local FieldValueTypeTest = require "field_value_type_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_URL.T_All()
     -- initialisation
+    T_URL.T__init()
     T_URL.T_new()
     T_URL.T_GettersURI()
     T_URL.T_Setters()
@@ -26,6 +31,8 @@ function T_URL.T_All()
     T_URL.T_baseCopy()
 end
 
+local testClassName = "URL"
+local logOk = false
 local scheme = "ccwprp"
 local host1 = "enterprise_forestry"
 local host2 = "enterprise_turtle"
@@ -62,24 +69,59 @@ local expectedQueryURI = "?"..itemName1.."="..itemCount1.."&"..itemName2.."="..i
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "URL"
-function T_URL.CreateTestObj(host, port, path, query)
+function T_URL.CreateTestObj(host, path, query, port)
     -- check input
     host = host or host1
-    port = port or port1
     path = path or path1
     query = query or {[itemName1] = itemCount1, [itemName2] = itemCount2}
+--    port = port or port1
 
     -- test
     local testObj = URL:new({
         _host = host,
-        _port = port,
         _path = path,
         _query = query,
+        _port = port,
     })
 
     -- end
     return testObj
+end
+
+function T_URL.CreateInitialisedTest(host, path, query, port)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_host", host),
+        FieldValueEqualTest:newInstance("_path", path),
+        FieldValueEqualTest:newInstance("_query", query)
+    )
+    if port then
+        table.insert(test._tests, FieldValueEqualTest:newInstance("_port", port))
+    else
+        table.insert(test._tests, FieldValueTypeTest:newInstance("_port", "nil"))
+    end
+
+    -- end
+    return test
+end
+
+function T_URL.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_URL.CreateTestObj(host1, path1, query1, port1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_URL.CreateInitialisedTest(host1, path1, query1, port1)
+    test:test(obj, "url", "", logOk)
+
+    -- test default
+    obj = URL:newInstance()
+    test = T_URL.CreateInitialisedTest("", "", {}, nil)
+    test:test(obj, "url", "", logOk)
+
+    -- cleanup test
 end
 
 function T_URL.T_new()
@@ -132,7 +174,7 @@ end
 function T_URL.T_GettersURI()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." URI getter tests")
-    local obj = T_URL.CreateTestObj()
+    local obj = T_URL.CreateTestObj(host1, path1, query1, port1)
 
     -- test
     assert(obj:getSchemeURI() == schemeURI, "getSchemeURI() return(="..obj:getSchemeURI()..") different from expected(="..schemeURI..")")
@@ -337,7 +379,7 @@ end
 function T_URL.T_baseCopy()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":baseCopy() tests")
-    local obj = T_URL.CreateTestObj()
+    local obj = T_URL.CreateTestObj(host1, path1, query1, port1)
 
     -- test
     local baseCopy = obj:baseCopy()
