@@ -302,78 +302,39 @@ end
 function T_URL.T_SameURLComponents()
     corelog.WriteToLog("* "..testClassName.." same components tests")
     -- same Host
-    local obj = URL:new({
-        _host = host1,
-    })
-    local aSameObj = URL:new({
-        _host = host1,
-    })
+    local obj = URL:newInstance(host1)
+    local aSameObj = URL:newInstance(host1)
     assert(obj:sameHost(aSameObj), "hosts should be the same")
-    local aDifferentObj = URL:new({
-        _host = host2,
-    })
+    local aDifferentObj = URL:newInstance(host2)
     assert(not obj:sameHost(aDifferentObj), "hosts should not be the same")
 
     -- same Authority
-    obj = URL:new({
-        _host = host2,
-        _port = port1,
-    })
-    aSameObj = URL:new({
-        _host = host2,
-        _port = port1,
-    })
+    obj = URL:newInstance(host2, "", {}, port1)
+    aSameObj = URL:newInstance(host2, "", {}, port1)
     assert(obj:sameAuthority(aSameObj), "authority should be the same")
-    aDifferentObj = URL:new({
-        _host = host2,
-        _port = port2,
-    })
+    aDifferentObj = URL:newInstance(host2, "", {}, port2)
     assert(not obj:sameAuthority(aDifferentObj), "authority should not be the same")
 
     -- same path1
-    obj = URL:new({
-        _path = path1,
-    })
-    aSameObj = URL:new({
-        _path = path1,
-    })
-    assert(obj:samePath(aSameObj), "path1 should be the same")
-    aDifferentObj = URL:new({
-        _path = path2,
-    })
-    assert(not obj:samePath(aDifferentObj), "path1 should not be the same")
+    obj = URL:newInstance(host1, path1)
+    aSameObj = URL:newInstance(host1, path1)
+    assert(obj:samePath(aSameObj), "path should be the same")
+    aDifferentObj = URL:newInstance(host1, path2)
+    assert(not obj:samePath(aDifferentObj), "path should not be the same")
 
     -- same base
-    obj = URL:new({
-        _host = host2,
-        _port = port1,
-        _path = path1,
-    })
-    aSameObj = URL:new({
-        _host = host2,
-        _port = port1,
-        _path = path1,
-    })
+    obj = URL:newInstance(host2, path1, {}, port1)
+    aSameObj = URL:newInstance(host2, path1, {}, port1)
     assert(obj:samePath(aSameObj), "base should be the same")
-    aDifferentObj = URL:new({
-        _host = host2,
-        _port = port1,
-        _path = path2,
-    })
+    aDifferentObj = URL:newInstance(host2, path2, {}, port1)
     assert(not obj:samePath(aDifferentObj), "base should not be the same")
 
     -- same query1
-    obj = URL:new({
-        _query = query1,
-    })
-    aSameObj = URL:new({
-        _query = query1,
-    })
-    assert(obj:sameQuery(aSameObj), "query1 should be the same")
-    aDifferentObj = URL:new({
-        _query = query2,
-    })
-    assert(not obj:sameQuery(aDifferentObj), "query1 should not be the same")
+    obj = URL:newInstance("", "", query1)
+    aSameObj = URL:newInstance("", "", query1)
+    assert(obj:sameQuery(aSameObj), "query should be the same")
+    aDifferentObj = URL:newInstance("", "", query2)
+    assert(not obj:sameQuery(aDifferentObj), "query should not be the same")
 end
 
 function T_URL.T_baseCopy()
