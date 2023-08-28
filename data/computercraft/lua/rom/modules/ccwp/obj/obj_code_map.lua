@@ -56,26 +56,6 @@ function CodeMap:new(...)
     return o
 end
 
-function CodeMap:getCode(iColumn, iRow)
-    -- check
-    if iColumn < 1 or iColumn > self:getNColumns() then corelog.Error("CodeMap:getCode: iColumn(="..iColumn..") not within range i.e. between 1 and "..self:getNColumns()) return "" end
-
-    -- end
-    return self:getCodeRow(iRow):sub(iColumn, iColumn)
-end
-
-function CodeMap:getNColumns()
-    -- check not empty
-    if self:getNRows() == 0 then return 0 end
-
-    -- end
-    return self:getCodeRow(1):len()
-end
-
-function CodeMap:getNRows()
-    return #self
-end
-
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -97,6 +77,26 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function CodeMap:getNColumns()
+    -- check not empty
+    if self:getNRows() == 0 then return 0 end
+
+    -- end
+    return self:getCodeRow(1):len()
+end
+
+function CodeMap:getNRows()
+    return #self
+end
+
+function CodeMap:getCode(iColumn, iRow)
+    -- check
+    if iColumn < 1 or iColumn > self:getNColumns() then corelog.Error("CodeMap:getCode: iColumn(="..iColumn..") not within range i.e. between 1 and "..self:getNColumns()) return "" end
+
+    -- end
+    return self:getCodeRow(iRow):sub(iColumn, iColumn)
+end
 
 function CodeMap:codesNeeded()
     -- determine code list
