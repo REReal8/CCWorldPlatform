@@ -178,14 +178,14 @@ end
 
 local blockClassName = "Block"
 local function Chest_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "C",
-        }),
-    })
+        })
+    )
 end
 
 function Chest:getBuildBlueprint()
@@ -219,14 +219,14 @@ function Chest:getBuildBlueprint()
 end
 
 local function ChestDismantle_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = " ",
-        }),
-    })
+        })
+    )
 end
 
 function Chest:getDismantleBlueprint()

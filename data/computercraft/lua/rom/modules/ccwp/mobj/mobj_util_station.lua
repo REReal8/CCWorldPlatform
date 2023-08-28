@@ -45,49 +45,49 @@ end
 --]]
 local blockClassName = "Block"
 local function Chest_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "C C",
-        }),
-    })
+        })
+    )
 end
 
 local function Computer_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("computercraft:computer_normal", 0, -1),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "C",
-        }),
-    })
+        })
+    )
 end
 
 local function Modem_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["M"]   = Block:newInstance("computercraft:wireless_modem_normal"),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "M",
-        }),
-    })
+        })
+    )
 end
 
 local function Monitor_Only_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["M"]   = Block:newInstance("computercraft:monitor_normal"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "MMMMMMMM MMMMMMMM",
-        }),
-    })
+        })
+    )
 end
 
 function UtilStation.GetV1SiteBuildData(serviceData)

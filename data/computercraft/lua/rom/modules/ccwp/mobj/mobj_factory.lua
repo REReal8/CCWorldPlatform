@@ -717,25 +717,25 @@ end
 
 local blockClassName = "Block"
 local function Shaft_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = " ",
-        }),
-    })
+        })
+    )
 end
 
 local function ShaftRestore_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "D",
-        }),
-    })
+        })
+    )
 end
 
 function Factory.GetV0SiteBuildData(serviceData)
@@ -818,28 +818,28 @@ end
 --]]
 
 local function AboveOrBelowFurnanceL1_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [2] = " ",
             [1] = " ",
-        }),
-    })
+        })
+    )
 end
 
 local function FurnanceL1_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["F"]   = Block:newInstance("minecraft:furnace"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [2] = "F",
             [1] = " ",
-        }),
-    })
+        })
+    )
 end
 
 function Factory.GetV1SiteBuildData(serviceData)
@@ -905,32 +905,32 @@ end
 --]]
 
 local function ItemDepotChestL2_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "C",
-        }),
-    })
+        })
+    )
 end
 
 local function TopLayerL2_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        }),
-    })
+        })
+    )
 end
 
 function Factory.GetV2SiteBuildData(serviceData)

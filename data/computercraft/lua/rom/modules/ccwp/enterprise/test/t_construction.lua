@@ -20,61 +20,61 @@ local blockClassName = "Block"
 local testStartLocation     = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
 
-local testBuildLayer1 = LayerRectangle:new({
-    _codeTable  = ObjTable:newInstance(blockClassName, {
+local testBuildLayer1 = LayerRectangle:newInstance(
+    ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance("minecraft:torch"),
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = CodeMap:new({
+    CodeMap:new({
         [6] = "  C ",
         [5] = "    ",
         [4] = "T   ",
         [3] = "    ",
         [2] = "    ",
         [1] = "   T",
-    }),
-}) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
+    })
+) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
-local testBuildLayer2 = LayerRectangle:new({
-    _codeTable  = ObjTable:newInstance(blockClassName, {
+local testBuildLayer2 = LayerRectangle:newInstance(
+    ObjTable:newInstance(blockClassName, {
         ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
         ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
         ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
         ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = CodeMap:new({
+    CodeMap:new({
         [3] = "DDF",
         [2] = "C F",
         [1] = "CEE",
-    }),
-}) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
+    })
+) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
-local testBuildLayer3 = LayerRectangle:new({
-    _codeTable  = ObjTable:newInstance(blockClassName, {
+local testBuildLayer3 = LayerRectangle:newInstance(
+    ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance("minecraft:torch"),
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = CodeMap:new({
+    CodeMap:new({
         [6] = "  C C ",
         [5] = "      ",
         [4] = "T     ",
         [3] = "      ",
         [2] = "      ",
         [1] = "   T  ",
-    }),
-}) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
+    })
+) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
-local testBuildLayer4 = LayerRectangle:new({
-    _codeTable  = ObjTable:newInstance(blockClassName, {
+local testBuildLayer4 = LayerRectangle:newInstance(
+    ObjTable:newInstance(blockClassName, {
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = CodeMap:new({
+    CodeMap:new({
         [1] = " ",
-    }),
-}) assert(testBuildLayer4, "Failed obtaining testBuildLayer4")
+    })
+) assert(testBuildLayer4, "Failed obtaining testBuildLayer4")
 
 function t_construction.T_BuildLayer_ASrv_FromTurtle()
     -- test service 1

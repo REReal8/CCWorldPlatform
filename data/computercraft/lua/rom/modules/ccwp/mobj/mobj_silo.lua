@@ -247,49 +247,49 @@ end
 
 local blockClassName = "Block"
 local function TopL0_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        }),
-    })
+        })
+    )
 end
 
 local function Shaft_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = " ",
-        }),
-    })
+        })
+    )
 end
 
 local function Storage_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
             ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
             ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
             ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [3] = "DDF",
             [2] = "C F",
             [1] = "CEE",
-        }),
-    })
+        })
+    )
 end
 
 function Silo:getBuildBlueprint()
@@ -331,44 +331,44 @@ function Silo:getBuildBlueprint()
 end
 
 local function StorageDismantle_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [3] = "DDD",
             [2] = "D?D",
             [1] = "DDD",
-        }),
-    })
+        })
+    )
 end
 
 local function ShaftDismantle_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [1] = "D",
-        }),
-    })
+        })
+    )
 end
 
 local function TopDismantle_layer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "      ",
             [3] = "      ",
             [2] = "      ",
             [1] = "      ",
-        }),
-    })
+        })
+    )
 end
 
 function Silo:getDismantleBlueprint()

@@ -245,21 +245,21 @@ end
 
 local blockClassName = "Block"
 local function TopLayerlayer()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        }),
-    })
+        })
+    )
 end
 
 function Mine.GetV1SiteBuildData(serviceData)

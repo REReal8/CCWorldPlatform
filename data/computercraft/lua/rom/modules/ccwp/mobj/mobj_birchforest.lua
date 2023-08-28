@@ -437,75 +437,75 @@ end
 
 local blockClassName = "Block"
 function Tree_layerLm1()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "??????",
             [5] = "??????",
             [4] = "???S??",
             [3] = "??????",
             [2] = "??????",
             [1] = "??????",
-        }),
-    })
+        })
+    )
 end
 
 function Tree_layerL0()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "   S  ",
             [3] = "      ",
             [2] = "      ",
             [1] = "      ",
-        }),
-    })
+        })
+    )
 end
 
 function Tree_layerL1()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        }),
-    })
+        })
+    )
 end
 
 function Base_layerL2()
-    return LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
             ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = CodeMap:new({
+        CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "     D",
             [2] = "  C D ",
             [1] = "   T  ",
-        }),
-    })
+        })
+    )
 end
 
 return BirchForest

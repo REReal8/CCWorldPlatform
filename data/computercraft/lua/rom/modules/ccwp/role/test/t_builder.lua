@@ -37,43 +37,40 @@ local codeMap1 = CodeMap:new({
     [2] = "    ",
     [1] = "   T",
 }) assert(codeMap1, "Failed obtaining codeMap1")
-local testBuildLayer1 = LayerRectangle:new({
-    _codeTable  = codeTable1:copy(),
-    _codeMap    = codeMap1:copy(),
-}) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
+local testBuildLayer1 = LayerRectangle:newInstance(codeTable1:copy(), codeMap1:copy()) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
-local testBuildLayer2 = LayerRectangle:new({
-    _codeTable  = ObjTable:newInstance(blockClassName, {
+local testBuildLayer2 = LayerRectangle:newInstance(
+    ObjTable:newInstance(blockClassName, {
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),
         ["E"]   = Block:newInstance(chestItemName, 0, -1),
         ["F"]   = Block:newInstance(chestItemName, 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = CodeMap:new({
+    CodeMap:new({
         [3] = "DDF",
         [2] = "C F",
         [1] = "CEE",
-    }),
-}) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
+    })
+) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
-local testBuildLayer3 = LayerRectangle:new({
-    _codeTable  = ObjTable:newInstance(blockClassName, {
+local testBuildLayer3 = LayerRectangle:newInstance(
+    ObjTable:newInstance(blockClassName, {
         ["T"]   = Block:newInstance(torchItemName),
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),
         ["?"]   = Block:newInstance(Block.AnyBlockName()),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = CodeMap:new({
+    CodeMap:new({
         [6] = "C D  T",
         [5] = "    T ",
         [4] = "   T  ",
         [3] = "??T   ",
         [2] = " T    ",
         [1] = "T    D",
-    }),
-}) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
+    })
+) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local compact = { compact = true }
 
