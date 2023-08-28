@@ -87,11 +87,19 @@ function T_CodeMap.T__init()
     local obj = T_CodeMap.CreateTestObj(codeRowArray1) assert(obj, "Failed obtaining "..testClassName)
     local test = T_CodeMap.CreateInitialisedTest(codeRowArray1)
     test:test(obj, "codeMap", "", logOk)
+    local expectedNColumns = 6
+    assert(obj:getNColumns() == expectedNColumns, "gotten getNColumns(="..obj:getNColumns()..") not the same as expected(="..expectedNColumns..")")
+    local expectedNRows = 6
+    assert(obj:getNRows() == expectedNRows, "gotten getNRows(="..obj:getNRows()..") not the same as expected(="..expectedNRows..")")
 
     -- test default
     obj = CodeMap:newInstance()
     test = T_CodeMap.CreateInitialisedTest({})
     test:test(obj, "codeMap", "", logOk)
+    expectedNColumns = 0
+    assert(obj:getNColumns() == expectedNColumns, "gotten getNColumns(="..obj:getNColumns()..") not the same as expected(="..expectedNColumns..")")
+    expectedNRows = 0
+    assert(obj:getNRows() == expectedNRows, "gotten getNRows(="..obj:getNRows()..") not the same as expected(="..expectedNRows..")")
 
     -- cleanup test
 end
@@ -102,10 +110,9 @@ function T_CodeMap.T_new()
 
     -- test full
     local obj = CodeMap:new(codeRowArray1) assert(obj, "Failed obtaining CodeMap")
-    local expectedNColumns = 6
-    assert(obj:getNColumns() == expectedNColumns, "gotten getNColumns(="..obj:getNColumns()..") not the same as expected(="..expectedNColumns..")")
-    local expectedNRows = 6
-    assert(obj:getNRows() == expectedNRows, "gotten getNRows(="..obj:getNRows()..") not the same as expected(="..expectedNRows..")")
+    local test = T_CodeMap.CreateInitialisedTest(codeRowArray1)
+    test:test(obj, "codeMap", "", logOk)
+
     local code = obj:getCode(4, 1)
     local expectedCode = "T"
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
@@ -114,13 +121,6 @@ function T_CodeMap.T_new()
     code = obj:getCode(4, 4)
     expectedCode = "S"
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-
-    -- test default
-    obj = CodeMap:new() assert(obj, "Failed obtaining CodeMap")
-    expectedNColumns = 0
-    assert(obj:getNColumns() == expectedNColumns, "gotten getNColumns(="..obj:getNColumns()..") not the same as expected(="..expectedNColumns..")")
-    expectedNRows = 0
-    assert(obj:getNRows() == expectedNRows, "gotten getNRows(="..obj:getNRows()..") not the same as expected(="..expectedNRows..")")
 
     -- cleanup test
 end
