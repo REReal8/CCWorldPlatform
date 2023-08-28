@@ -82,17 +82,6 @@ function T_URL.CreateTestObj(host, port, path, query)
     return testObj
 end
 
-function T_URL.T_URL_Serializing()
-    -- new URL
-    corelog.WriteToLog("* Test "..testClassName.." serialize")
-    local obj = T_URL.CreateTestObj()
-    corelog.WriteToLog(" obj:getURI() = "..obj:getURI())
-
-    corelog.WriteToLog(" obj type = "..type(obj))
-    corelog.WriteToLog(" 1: obj = "..obj:getURI())
-    corelog.WriteToLog(" 2: obj = "..textutils.serialize(obj))
-end
-
 function T_URL.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() and getter tests")
