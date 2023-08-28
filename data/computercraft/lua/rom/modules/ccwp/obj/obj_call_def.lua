@@ -45,24 +45,12 @@ function CallDef:getModuleName()
     return self._moduleName
 end
 
-function CallDef:setModuleName(moduleName)
-    self._moduleName = moduleName
-end
-
 function CallDef:getMethodName()
     return self._methodName
 end
 
-function CallDef:setMethodName(methodName)
-    self._methodName = methodName
-end
-
 function CallDef:getData()
     return self._data
-end
-
-function CallDef:setData(data)
-    self._data = data
 end
 
 --    _____ ____  _     _                  _   _               _
