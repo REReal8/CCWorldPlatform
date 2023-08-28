@@ -151,10 +151,7 @@ function LayerRectangle:transformToLayer(...)
     end
 
     -- end
-    local transformLayer = LayerRectangle:new({
-        _codeTable  = transformCodeTable,
-        _codeMap    = transformCodeMap,
-    })
+    local transformLayer = LayerRectangle:newInstance(transformCodeTable, transformCodeMap)
     return transformLayer
 end
 

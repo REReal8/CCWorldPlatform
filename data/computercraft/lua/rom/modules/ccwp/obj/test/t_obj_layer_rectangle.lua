@@ -55,10 +55,7 @@ local codeMap1 = CodeMap:new({
     [2] = "   K  ",
     [1] = "   T  ",
 }) assert(codeMap1, "Failed obtaining codeMap1")
-local layer1 = LayerRectangle:new({
-    _codeTable  = codeTable1:copy(),
-    _codeMap    = codeMap1,
-}) assert(layer1, "Failed obtaining layer1")
+local layer1 = LayerRectangle:newInstance(codeTable1:copy(), codeMap1) assert(layer1, "Failed obtaining layer1")
 
 local compact = { compact = true }
 
@@ -160,10 +157,7 @@ function T_LayerRectangle.T_getBlock()
     corelog.WriteToLog("* LayerRectangle:getBlock() tests")
 
     -- test full
-    local layer = LayerRectangle:new({
-        _codeTable  = codeTable1:copy(),
-        _codeMap    = codeMap1,
-    }) assert(layer, "Failed obtaining layer")
+    local layer = LayerRectangle:newInstance(codeTable1:copy(), codeMap1:copy()) assert(layer, "Failed obtaining layer")
     local block = layer:getBlock(4, 1)
     local expectedBlock = Block:newInstance(torchItemName)
     assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
@@ -214,97 +208,97 @@ end
 function T_LayerRectangle.T_transformToLayer()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
-    local fromLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    local fromLayer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [6] = "   S  ",
             [5] = "      ",
             [4] = "   S  ",
             [3] = "   ?  ",
             [2] = "   ?  ",
             [1] = "   ?  ",
-        },
-    }) assert(fromLayer, "Failed obtaining layer")
-    local toLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+        })
+    ) assert(fromLayer, "Failed obtaining layer")
+    local toLayer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [6] = "   ?  ",
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "      ",
             [2] = "   ?  ",
             [1] = "   T  ",
-        },
-    }) assert(toLayer, "Failed obtaining layer")
+        })
+    ) assert(toLayer, "Failed obtaining layer")
 
     -- test
     local transformLayer = fromLayer:transformToLayer(toLayer)
     local isInstanceOf = Class.IsInstanceOf(transformLayer, LayerRectangle)
     local expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
-    local expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName,{
+    local expectedLayer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName,{
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [6] = "??????",
             [5] = "??????",
             [4] = "T?????",
             [3] = "??? ??",
             [2] = "??????",
             [1] = "???T??",
-        },
-    })
+        })
+    )
     assert(transformLayer:isEqual(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- test anyBlock added to _codeTable
-    toLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    toLayer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
-        },
-    })
+        })
+    )
     transformLayer = fromLayer:transformToLayer(toLayer)
     isInstanceOf = Class.IsInstanceOf(transformLayer, LayerRectangle)
     expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
-    expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    expectedLayer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [6] = "??? ??",
             [5] = "??????",
             [4] = "T?????",
             [3] = "??? ??",
             [2] = "??? ??",
             [1] = "???T??",
-        },
-    })
+        })
+    )
     assert(transformLayer:isEqual(expectedLayer), "gotten transformToLayer(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
@@ -313,21 +307,21 @@ end
 function T_LayerRectangle.T_cleanCodeTable()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:cleanCodeTable() tests")
-    local layer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    local layer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [4] = "    ",
             [3] = "T   ",
             [2] = "    ",
             [1] = " T  ",
-        },
-    }) assert(layer, "Failed obtaining layer")
+        })
+    ) assert(layer, "Failed obtaining layer")
 
     -- test
     layer:cleanCodeTable()
@@ -357,40 +351,40 @@ function T_LayerRectangle.T_buildData()
     corelog.WriteToLog("* LayerRectangle:buildData() tests")
 
     -- test right
-    local layer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    local layer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [6] = "??????",
             [5] = "??????",
             [4] = "??TC ?",
             [3] = "?? C??",
             [2] = "??? T?",
             [1] = "??????",
-        },
-    }) assert(layer, "Failed obtaining layer")
+        })
+    ) assert(layer, "Failed obtaining layer")
     local colOffset, rowOffset, buildLayer = layer:buildData()
     local expectedOffset = 1
     assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
-    local expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
+    local expectedLayer = LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        _codeMap    = {
+        CodeMap:new({
             [3] = "TC ",
             [2] = " C?",
             [1] = "? T",
-        },
-    })
+        })
+    )
     assert(buildLayer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
