@@ -63,7 +63,8 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
       -  CallDef
       -  WIPQueue
       R  Block                                                                                                          (done)
-      R  LayerRectangle                                                                                                 (....)
+      -  CodeMap
+      R  LayerRectangle                                                                                                 (done)
       -  ItemTable
       -  WIPAdministrator
       R  ObjBase                                                                                                        (done)
