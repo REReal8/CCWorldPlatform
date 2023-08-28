@@ -76,24 +76,24 @@ end
 
 function T_URL.T_URL_Serializing()
     -- new URL
-    corelog.WriteToLog("* Test URL serialize")
-    local aURL = URL:new({
+    corelog.WriteToLog("* Test "..testClassName.." serialize")
+    local obj = URL:new({
         _host = host,
         _port = port,
         _path = path,
         _query = query,
     })
-    corelog.WriteToLog(" aURL:getURI() = "..aURL:getURI())
+    corelog.WriteToLog(" obj:getURI() = "..obj:getURI())
 
-    corelog.WriteToLog(" aURL type = "..type(aURL))
-    corelog.WriteToLog(" 1: aURL = "..aURL:getURI())
-    corelog.WriteToLog(" 2: aURL = "..textutils.serialize(aURL))
+    corelog.WriteToLog(" obj type = "..type(obj))
+    corelog.WriteToLog(" 1: obj = "..obj:getURI())
+    corelog.WriteToLog(" 2: obj = "..textutils.serialize(obj))
 end
 
 function T_URL.T_new()
     -- prepare test
-    corelog.WriteToLog("* URL:new() and getter tests")
-    local url = URL:new({
+    corelog.WriteToLog("* "..testClassName..":new() and getter tests")
+    local obj = URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -101,46 +101,46 @@ function T_URL.T_new()
     })
 
     -- test
-    local testResult = url:getScheme()
+    local testResult = obj:getScheme()
     local expectedResultStr = scheme
     assert(testResult == expectedResultStr, "getScheme() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
-    testResult = url:getHost()
+    testResult = obj:getHost()
     expectedResultStr = host
     assert(testResult == expectedResultStr, "getHost() return(="..testResult..") different from expected(="..expectedResultStr..")")
 
-    testResult = url:getPort()
+    testResult = obj:getPort()
     local expectedResultNumber = port
     assert(testResult == expectedResultNumber, "getPort() return(="..testResult..") different from expected(="..expectedResultNumber..")")
 
-    testResult = url:getPath()
+    testResult = obj:getPath()
     expectedResultStr = path
     assert(testResult == expectedResultStr, "getPath() return(="..testResult..") different from expected(="..expectedResultStr..")")
     local iPathSegment = 1
-    for pathSegment in url:pathSegments_iter() do
+    for pathSegment in obj:pathSegments_iter() do
         expectedResultStr = pathSegments[iPathSegment]
         assert(pathSegment == expectedResultStr, "pathSegment(="..pathSegment..") different from expected(="..expectedResultStr..")")
         iPathSegment = iPathSegment + 1
     end
 
-    testResult = url:getQuery()
+    testResult = obj:getQuery()
     local expectedResultTable = query
     assert(testResult == expectedResultTable, "getQuery() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
 
     -- test default
-    url = URL:new()
-    assert(url:getHost() == "", "gotten getHost(="..url:getHost()..") not the same as expected(=``)")
-    assert(type(url:getPort()) == "nil", "gotten getPort(="..(url:getPort() or "nil")..") not the same as expected(=nil)")
-    assert(url:getPath() == "", "gotten getPath(="..url:getPath()..") not the same as expected(=``)")
-    assert(url:getQueryURI() == "", "gotten getQueryURI(="..url:getQueryURI()..") not the same as expected(=``)")
+    obj = URL:new()
+    assert(obj:getHost() == "", "gotten getHost(="..obj:getHost()..") not the same as expected(=``)")
+    assert(type(obj:getPort()) == "nil", "gotten getPort(="..(obj:getPort() or "nil")..") not the same as expected(=nil)")
+    assert(obj:getPath() == "", "gotten getPath(="..obj:getPath()..") not the same as expected(=``)")
+    assert(obj:getQueryURI() == "", "gotten getQueryURI(="..obj:getQueryURI()..") not the same as expected(=``)")
 
     -- cleanup test
 end
 
 function T_URL.T_GettersURI()
     -- prepare test
-    corelog.WriteToLog("* URL URI getter tests")
-    local url = URL:new({
+    corelog.WriteToLog("* "..testClassName.." URI getter tests")
+    local obj = URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -148,61 +148,61 @@ function T_URL.T_GettersURI()
     })
 
     -- test
-    assert(url:getSchemeURI() == schemeURI, "getSchemeURI() return(="..url:getSchemeURI()..") different from expected(="..schemeURI..")")
-    AssertWithURIs(url, hostURI, portURI, pathURI, queryURI)
-    assert(url:getAuthorityURI() == hostURI..portURI, "getAuthorityURI() return(="..url:getAuthorityURI()..") different from expected(="..hostURI..portURI..")")
+    assert(obj:getSchemeURI() == schemeURI, "getSchemeURI() return(="..obj:getSchemeURI()..") different from expected(="..schemeURI..")")
+    AssertWithURIs(obj, hostURI, portURI, pathURI, queryURI)
+    assert(obj:getAuthorityURI() == hostURI..portURI, "getAuthorityURI() return(="..obj:getAuthorityURI()..") different from expected(="..hostURI..portURI..")")
 
     -- cleanup test
 end
 
-function AssertWithURIs(aURL, aHostURI, aPortURI, aNPathURI, aQueryURI)
+function AssertWithURIs(obj, aHostURI, aPortURI, aNPathURI, aQueryURI)
     -- test
-    assert(aURL:getHostURI() == aHostURI, "getHostURI() return(="..aURL:getHostURI()..") different from expected(="..aHostURI..")")
-    assert(aURL:getPortURI() == aPortURI, "getPortURI() return(="..aURL:getPortURI()..") different from expected(="..aPortURI..")")
-    assert(aURL:getPathURI() == aNPathURI, "getPathURI() return(="..aURL:getPathURI()..") different from expected(="..aNPathURI..")")
-    assert(aURL:getQueryURI() == aQueryURI, "getQueryURI() return(="..aURL:getQueryURI()..") different from expected(="..aQueryURI..")")
+    assert(obj:getHostURI() == aHostURI, "getHostURI() return(="..obj:getHostURI()..") different from expected(="..aHostURI..")")
+    assert(obj:getPortURI() == aPortURI, "getPortURI() return(="..obj:getPortURI()..") different from expected(="..aPortURI..")")
+    assert(obj:getPathURI() == aNPathURI, "getPathURI() return(="..obj:getPathURI()..") different from expected(="..aNPathURI..")")
+    assert(obj:getQueryURI() == aQueryURI, "getQueryURI() return(="..obj:getQueryURI()..") different from expected(="..aQueryURI..")")
     local expectedResultStr = schemeURI..aHostURI..aPortURI..aNPathURI..aQueryURI
-    assert(aURL:getURI() == expectedResultStr, "getURI() return(="..aURL:getURI()..") different from expected(="..expectedResultStr..")")
+    assert(obj:getURI() == expectedResultStr, "getURI() return(="..obj:getURI()..") different from expected(="..expectedResultStr..")")
 end
 
 function T_URL.T_Setters()
     -- prepare test
-    corelog.WriteToLog("* URL setter tests")
-    local setterURL = URL:new()
+    corelog.WriteToLog("* "..testClassName.." setter tests")
+    local obj = URL:new()
 
     -- test
-    setterURL:setHost(host)
-    assert(setterURL:getHost() == host, "setHost() result(="..setterURL:getHost()..") different from expected(="..host..")")
+    obj:setHost(host)
+    assert(obj:getHost() == host, "setHost() result(="..obj:getHost()..") different from expected(="..host..")")
 
-    setterURL:setPort(port)
-    assert(setterURL:getPort() == port, "setPort() result(="..setterURL:getPort()..") different from expected(="..port..")")
+    obj:setPort(port)
+    assert(obj:getPort() == port, "setPort() result(="..obj:getPort()..") different from expected(="..port..")")
 
-    setterURL:setPath(path)
-    assert(setterURL:getPath() == path, "setPath() result(="..textutils.serialize(setterURL:getPath())..") different from expected(="..textutils.serialize(path)..")")
+    obj:setPath(path)
+    assert(obj:getPath() == path, "setPath() result(="..textutils.serialize(obj:getPath())..") different from expected(="..textutils.serialize(path)..")")
 
-    setterURL:setQuery(query)
-    assert(setterURL:getQuery() == query, "setHost() result(="..textutils.serialize(setterURL:getQuery())..") different from expected(="..textutils.serialize(query)..")")
+    obj:setQuery(query)
+    assert(obj:getQuery() == query, "setHost() result(="..textutils.serialize(obj:getQuery())..") different from expected(="..textutils.serialize(query)..")")
 
     -- cleanup test
 end
 
 function T_URL.T_SettersFromURI()
     -- prepare test
-    corelog.WriteToLog("* URL setter from URI tests")
-    local uriSetterURL = URL:new()
+    corelog.WriteToLog("* "..testClassName.." setter from URI tests")
+    local obj = URL:new()
 
     -- test
-    uriSetterURL:setHostURI(hostURI)
-    assert(uriSetterURL:getHostURI() == hostURI, "setHostURI() result(="..uriSetterURL:getHostURI()..") different from expected(="..hostURI..")")
+    obj:setHostURI(hostURI)
+    assert(obj:getHostURI() == hostURI, "setHostURI() result(="..obj:getHostURI()..") different from expected(="..hostURI..")")
 
-    uriSetterURL:setPortURI(portURI)
-    assert(uriSetterURL:getPortURI() == portURI, "setPortURI() result(="..uriSetterURL:getPortURI()..") different from expected(="..portURI..")")
+    obj:setPortURI(portURI)
+    assert(obj:getPortURI() == portURI, "setPortURI() result(="..obj:getPortURI()..") different from expected(="..portURI..")")
 
-    uriSetterURL:setPathURI(pathURI)
-    assert(uriSetterURL:getPathURI() == pathURI, "setPathURI() result(="..uriSetterURL:getPathURI()..") different from expected(="..pathURI..")")
+    obj:setPathURI(pathURI)
+    assert(obj:getPathURI() == pathURI, "setPathURI() result(="..obj:getPathURI()..") different from expected(="..pathURI..")")
 
-    uriSetterURL:setQueryURI(queryURI)
-    local testResult = uriSetterURL:getQuery()
+    obj:setQueryURI(queryURI)
+    local testResult = obj:getQuery()
     assert(testResult[itemName1] == itemCount1, "testResult.itemName1 (="..testResult[itemName1]..") different from expected(="..itemCount1..")")
     assert(testResult[itemName2] == itemCount2, "testResult.itemName1 (="..testResult[itemName2]..") different from expected(="..itemCount2..")")
 
@@ -211,32 +211,32 @@ end
 
 function T_URL.T_NewFromURI()
     -- prepare test
-    corelog.WriteToLog("* URL from URI tests (0)")
+    corelog.WriteToLog("* "..testClassName.." from URI tests (0)")
 
     -- test
     local newURI0=schemeURI..hostURI..portURI..pathURI..queryURI
-    local fromURI_URL0 = URL:newFromURI(newURI0)
-    AssertWithURIs(fromURI_URL0, hostURI, portURI, pathURI, expectedQueryURI)
+    local obj = URL:newFromURI(newURI0)
+    AssertWithURIs(obj, hostURI, portURI, pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (1: no host)")
     local newURI1=schemeURI..portURI..pathURI..queryURI
-    local fromURI_URL1 = URL:newFromURI(newURI1, true)
-    AssertWithURIs(fromURI_URL1, "", "", "", "") -- note: implies failure (error)
+    obj = URL:newFromURI(newURI1, true)
+    AssertWithURIs(obj, "", "", "", "") -- note: implies failure (error)
 
     corelog.WriteToLog("* URL from URI tests (2: no port)")
     local newURI2=schemeURI..hostURI..pathURI..queryURI
-    local fromURI_URL2 = URL:newFromURI(newURI2)
-    AssertWithURIs(fromURI_URL2, hostURI, "", pathURI, expectedQueryURI)
+    obj = URL:newFromURI(newURI2)
+    AssertWithURIs(obj, hostURI, "", pathURI, expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (3: no path)")
     local newURI3=schemeURI..hostURI..portURI..queryURI
-    local fromURI_URL3 = URL:newFromURI(newURI3)
-    AssertWithURIs(fromURI_URL3, hostURI, portURI, "", expectedQueryURI)
+    obj = URL:newFromURI(newURI3)
+    AssertWithURIs(obj, hostURI, portURI, "", expectedQueryURI)
 
     corelog.WriteToLog("* URL from URI tests (4: no query)")
     local newURI4=schemeURI..hostURI..portURI..pathURI
-    local fromURI_URL4 = URL:newFromURI(newURI4)
-    AssertWithURIs(fromURI_URL4, hostURI, portURI, pathURI, "")
+    obj = URL:newFromURI(newURI4)
+    AssertWithURIs(obj, hostURI, portURI, pathURI, "")
 
     -- cleanup test
 end
@@ -271,86 +271,86 @@ end
 --       |_|
 
 function T_URL.T_SameURLComponents()
-    corelog.WriteToLog("* URL same components tests")
+    corelog.WriteToLog("* "..testClassName.." same components tests")
     -- same Host
-    local aURL = URL:new({
+    local obj = URL:new({
         _host = host,
     })
-    local aSameURL = URL:new({
+    local aSameObj = URL:new({
         _host = host,
     })
-    assert(aURL:sameHost(aSameURL), "hosts should be the same")
-    local aDifferentURL = URL:new({
+    assert(obj:sameHost(aSameObj), "hosts should be the same")
+    local aDifferentObj = URL:new({
         _host = host2,
     })
-    assert(not aURL:sameHost(aDifferentURL), "hosts should not be the same")
+    assert(not obj:sameHost(aDifferentObj), "hosts should not be the same")
 
     -- same Authority
-    aURL = URL:new({
+    obj = URL:new({
         _host = host2,
         _port = port,
     })
-    aSameURL = URL:new({
+    aSameObj = URL:new({
         _host = host2,
         _port = port,
     })
-    assert(aURL:sameAuthority(aSameURL), "authority should be the same")
-    aDifferentURL = URL:new({
+    assert(obj:sameAuthority(aSameObj), "authority should be the same")
+    aDifferentObj = URL:new({
         _host = host2,
         _port = port2,
     })
-    assert(not aURL:sameAuthority(aDifferentURL), "authority should not be the same")
+    assert(not obj:sameAuthority(aDifferentObj), "authority should not be the same")
 
     -- same path
-    aURL = URL:new({
+    obj = URL:new({
         _path = path,
     })
-    aSameURL = URL:new({
+    aSameObj = URL:new({
         _path = path,
     })
-    assert(aURL:samePath(aSameURL), "path should be the same")
-    aDifferentURL = URL:new({
+    assert(obj:samePath(aSameObj), "path should be the same")
+    aDifferentObj = URL:new({
         _path = path2,
     })
-    assert(not aURL:samePath(aDifferentURL), "path should not be the same")
+    assert(not obj:samePath(aDifferentObj), "path should not be the same")
 
     -- same base
-    aURL = URL:new({
+    obj = URL:new({
         _host = host2,
         _port = port,
         _path = path,
     })
-    aSameURL = URL:new({
+    aSameObj = URL:new({
         _host = host2,
         _port = port,
         _path = path,
     })
-    assert(aURL:samePath(aSameURL), "base should be the same")
-    aDifferentURL = URL:new({
+    assert(obj:samePath(aSameObj), "base should be the same")
+    aDifferentObj = URL:new({
         _host = host2,
         _port = port,
         _path = path2,
     })
-    assert(not aURL:samePath(aDifferentURL), "base should not be the same")
+    assert(not obj:samePath(aDifferentObj), "base should not be the same")
 
     -- same query
-    aURL = URL:new({
+    obj = URL:new({
         _query = query,
     })
-    aSameURL = URL:new({
+    aSameObj = URL:new({
         _query = query,
     })
-    assert(aURL:sameQuery(aSameURL), "query should be the same")
-    aDifferentURL = URL:new({
+    assert(obj:sameQuery(aSameObj), "query should be the same")
+    aDifferentObj = URL:new({
         _query = query2,
     })
-    assert(not aURL:sameQuery(aDifferentURL), "query should not be the same")
+    assert(not obj:sameQuery(aDifferentObj), "query should not be the same")
 end
 
 function T_URL.T_baseCopy()
     -- prepare test
-    corelog.WriteToLog("* URL:baseCopy() tests")
-    local obj1 = URL:new({
+    corelog.WriteToLog("* "..testClassName..":baseCopy() tests")
+    local obj = URL:new({
         _host = host,
         _port = port,
         _path = path,
@@ -358,7 +358,7 @@ function T_URL.T_baseCopy()
     })
 
     -- test
-    local baseCopy = obj1:baseCopy()
+    local baseCopy = obj:baseCopy()
     AssertWithURIs(baseCopy, hostURI, portURI, pathURI, "")
 
     -- cleanup test
