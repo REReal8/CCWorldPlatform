@@ -14,12 +14,14 @@ local T_IObj = require "test.t_i_obj"
 
 function T_CodeMap.T_All()
     -- initialisation
+    T_CodeMap.T__init()
     T_CodeMap.T_new()
 
     -- IObj methods
     T_CodeMap.T_IObj_All()
 
     -- specific methods
+    T_CodeMap.T_getCode()
     T_CodeMap.T_transformToMap()
     T_CodeMap.T_removeRow()
     T_CodeMap.T_removeColumn()
@@ -113,15 +115,6 @@ function T_CodeMap.T_new()
     local test = T_CodeMap.CreateInitialisedTest(codeRowArray1)
     test:test(obj, "codeMap", "", logOk)
 
-    local code = obj:getCode(4, 1)
-    local expectedCode = "T"
-    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-    code = obj:getCode(1, 4)
-    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-    code = obj:getCode(4, 4)
-    expectedCode = "S"
-    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-
     -- cleanup test
 end
 
@@ -154,9 +147,27 @@ end
 --       | |
 --       |_|
 
+function T_CodeMap.T_getCode()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getCode() tests")
+    local obj = CodeMap:new(codeRowArray1) assert(obj, "Failed obtaining CodeMap")
+
+    -- test
+    local code = obj:getCode(4, 1)
+    local expectedCode = "T"
+    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
+    code = obj:getCode(1, 4)
+    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
+    code = obj:getCode(4, 4)
+    expectedCode = "S"
+    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
+
+    -- cleanup test
+end
+
 function T_CodeMap.T_transformToMap()
     -- prepare test
-    corelog.WriteToLog("* CodeMap:transformToMap() tests")
+    corelog.WriteToLog("* "..testClassName..":transformToMap() tests")
     local anyBlockCode = "?"
     local fromMap = CodeMap:new({
         [6] = "   S  ",
@@ -218,7 +229,7 @@ end
 
 function T_CodeMap.T_removeRow()
     -- prepare test
-    corelog.WriteToLog("* CodeMap:removeRow() tests")
+    corelog.WriteToLog("* "..testClassName..":removeRow() tests")
 
     -- test top
     local obj = T_CodeMap.CreateTestObj()
@@ -261,7 +272,7 @@ end
 
 function T_CodeMap.T_getCodeCol()
     -- prepare test
-    corelog.WriteToLog("* CodeMap:getCodeCol() tests")
+    corelog.WriteToLog("* "..testClassName..":getCodeCol() tests")
     local obj = T_CodeMap.CreateTestObj()
 
     -- test
@@ -274,7 +285,7 @@ end
 
 function T_CodeMap.T_removeColumn()
     -- prepare test
-    corelog.WriteToLog("* CodeMap:removeColumn() tests")
+    corelog.WriteToLog("* "..testClassName..":removeColumn() tests")
 
     -- test right
     local obj = T_CodeMap.CreateTestObj()
@@ -320,7 +331,7 @@ end
 
 function T_CodeMap.T_removeBoundariesWithOnly()
     -- prepare test
-    corelog.WriteToLog("* CodeMap:removeBoundariesWithOnly() tests")
+    corelog.WriteToLog("* "..testClassName..":removeBoundariesWithOnly() tests")
 
     -- test right
     local obj = CodeMap:new({
