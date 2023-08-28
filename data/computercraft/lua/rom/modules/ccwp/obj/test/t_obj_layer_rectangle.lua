@@ -140,7 +140,7 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_LayerRectangle:CreateTestObj(codeTable, codeMap)
+function T_LayerRectangle.CreateTestObj(codeTable, codeMap)
     -- check input
     codeTable = codeTable or codeTable1:copy()
     codeMap = codeMap or {
@@ -241,8 +241,8 @@ end
 
 function T_LayerRectangle.T_IObj_All()
     -- prepare test
-    local obj = T_LayerRectangle:CreateTestObj() assert(obj, "failed obtaining "..testClassName)
-    local otherObj = T_LayerRectangle:CreateTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
+    local obj = T_LayerRectangle.CreateTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = T_LayerRectangle.CreateTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)

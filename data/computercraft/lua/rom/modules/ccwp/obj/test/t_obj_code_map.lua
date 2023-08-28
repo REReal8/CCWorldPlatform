@@ -44,7 +44,7 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_CodeMap:CreateTestObj(codeMap)
+function T_CodeMap.CreateTestObj(codeMap)
     -- check input
     codeMap = codeMap or {
         [6] = "CD   ?",
@@ -102,8 +102,8 @@ end
 
 function T_CodeMap.T_IObj_All()
     -- prepare test
-    local obj = T_CodeMap:CreateTestObj() assert(obj, "failed obtaining "..testClassName)
-    local otherObj = T_CodeMap:CreateTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
+    local obj = T_CodeMap.CreateTestObj() assert(obj, "failed obtaining "..testClassName)
+    local otherObj = T_CodeMap.CreateTestObj() assert(obj, "failed obtaining "..testClassName) assert(otherObj, "failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
