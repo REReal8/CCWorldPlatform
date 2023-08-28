@@ -216,19 +216,11 @@ function T_WIPQueue.T_callAndReleaseCallbacks()
         _callbackList   = callbackList1:copy(),
     }) assert(obj1)
 
-    local callback2 = Callback:new({
-        _moduleName     = "T_WIPQueue",
-        _methodName     = "callAndReleaseCallbacks_Callback",
-        _data           = { callbackName = "callback2", },
-    })
+    local callback2 = Callback:newInstance("T_WIPQueue", "callAndReleaseCallbacks_Callback", { callbackName = "callback2", })
     obj1:addCallback(callback2)
     callback2Called = false
 
-    local callback3 = Callback:new({
-        _moduleName     = "T_WIPQueue",
-        _methodName     = "callAndReleaseCallbacks_Callback",
-        _data           = { callbackName = "callback3", },
-    })
+    local callback3 = Callback:newInstance("T_WIPQueue", "callAndReleaseCallbacks_Callback", { callbackName = "callback3", })
     obj1:addCallback(callback3)
     callback3Called = false
 

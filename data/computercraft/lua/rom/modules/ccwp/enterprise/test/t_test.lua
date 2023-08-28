@@ -35,11 +35,7 @@ end
 function t_test.T_Test_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_test.Test_ASrv() test")
-    local callback = Callback:new({
-        _moduleName     = "t_test",
-        _methodName     = "Test_ASrv_Callback",
-        _data           = { [0] = callbackTestValue},
-    })
+    local callback = Callback:newInstance("t_test", "Test_ASrv_Callback", { [0] = callbackTestValue })
 
     -- test
     return enterprise_test.Test_ASrv(testData, callback)

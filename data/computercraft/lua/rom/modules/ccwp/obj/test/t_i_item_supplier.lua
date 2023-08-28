@@ -31,15 +31,11 @@ function T_IItemSupplier.pt_provideItemsTo_AOSrv_Test(mobjHostName, className, c
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
-        _moduleName     = "T_IItemSupplier",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["mobjHostName"]                    = mobjHostName,
-            ["mobjLocator"]                     = mobjLocator,
-            ["itemDepotLocator"]                = itemDepotLocator,
-        },
+    local callback = Callback:newInstance("T_IItemSupplier", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["mobjHostName"]                    = mobjHostName,
+        ["mobjLocator"]                     = mobjLocator,
+        ["itemDepotLocator"]                = itemDepotLocator,
     })
 
     -- test

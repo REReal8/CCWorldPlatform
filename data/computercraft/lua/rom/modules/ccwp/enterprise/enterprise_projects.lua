@@ -425,11 +425,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if not checkSuccess then corelog.Error("enterprise_projects.NextProjectStep: Failed obtaining ASrv stepTypeDef fields for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         --
-        local callback = Callback:new({
-            _moduleName     = "enterprise_projects",
-            _methodName     = "NextProjectStep",
-            _data           = internalProjectData,
-        })
+        local callback = Callback:newInstance("enterprise_projects", "NextProjectStep", internalProjectData)
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." async module service", projectId)
@@ -473,11 +469,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(objData) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Invalid objData field "..objKeyDef.." of project"..projectId) TerminateProject(internalProjectData) return false end
 
         --
-        local callback = Callback:new({
-            _moduleName     = "enterprise_projects",
-            _methodName     = "NextProjectStep",
-            _data           = internalProjectData,
-        })
+        local callback = Callback:newInstance("enterprise_projects", "NextProjectStep", internalProjectData)
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." async Obj service", projectId)
@@ -508,11 +500,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         if type(obj) ~= "table" then corelog.Error("enterprise_projects.NextProjectStep: Obj "..objLocator:getURI().." not found.") TerminateProject(internalProjectData) return false end
 
         --
-        local callback = Callback:new({
-            _moduleName     = "enterprise_projects",
-            _methodName     = "NextProjectStep",
-            _data           = internalProjectData,
-        })
+        local callback = Callback:newInstance("enterprise_projects", "NextProjectStep", internalProjectData)
 
         -- do service
         corelog.WriteToProjectsLog("Start step "..currentStep.." located async Obj service", projectId)

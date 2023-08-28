@@ -18,11 +18,7 @@ end
 local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
 
-local callback = Callback:new({
-    _moduleName     = "t_main",
-    _methodName     = "Func1_Callback",
-    _data           = { },
-})
+local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
 
 function t_chests.T_hostAndUpdateChest()
     corelog.WriteToLog("* Test host and update chest")

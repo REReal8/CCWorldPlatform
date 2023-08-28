@@ -262,20 +262,16 @@ local function provideItemsTo_AOSrv_Test(provideItems)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback2 = Callback:new({
-        _moduleName     = "T_Silo",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["siloLocator"]                     = siloLocator,
-        },
+    local callback = Callback:newInstance("T_Silo", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["siloLocator"]                     = siloLocator,
     })
 
     -- test
     local scheduleResult = obj:provideItemsTo_AOSrv({
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
-    }, callback2)
+    }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
 end
 
@@ -340,14 +336,10 @@ function T_Silo.T_storeItemsFrom_AOSrv()
 
     local expectedDestinationItemsLocator = siloLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
-        _moduleName     = "T_Silo",
-        _methodName     = "storeItemsFrom_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["siloLocator"]                     = siloLocator,
-            ["itemsLocator"]                    = itemsLocator:copy(),
-        },
+    local callback = Callback:newInstance("T_Silo", "storeItemsFrom_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["siloLocator"]                     = siloLocator,
+        ["itemsLocator"]                    = itemsLocator:copy(),
     })
 
     -- test

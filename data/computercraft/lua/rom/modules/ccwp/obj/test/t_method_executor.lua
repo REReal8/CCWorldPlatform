@@ -158,11 +158,7 @@ function T_MethodExecutor.T_DoASyncService()
     local serviceData = {
         testArg = testValue,
     }
-    local callback = Callback:new({
-        _moduleName     = "T_MethodExecutor",
-        _methodName     = "DoASyncService_Callback",
-        _data           = { [0] = callbackTestValue},
-    })
+    local callback = Callback:newInstance("T_MethodExecutor", "DoASyncService_Callback", { [0] = callbackTestValue })
 
     -- test
     local result = MethodExecutor.DoASyncService(moduleName, serviceName, serviceData, callback)
@@ -195,11 +191,7 @@ function T_MethodExecutor.T_DoASyncObjService()
     local serviceData = {
         testArg = testValue,
     }
-    local callback = Callback:new({
-        _moduleName     = "T_MethodExecutor",
-        _methodName     = "DoASyncObjService_Callback",
-        _data           = { [0] = callbackTestValue},
-    })
+    local callback = Callback:newInstance("T_MethodExecutor", "DoASyncObjService_Callback", { [0] = callbackTestValue })
 
     -- test
     local result = MethodExecutor.DoASyncObjService(className, objData, serviceName, serviceData, callback)

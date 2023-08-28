@@ -181,13 +181,9 @@ local function provideItemsTo_AOSrv_Test(provideItems)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback2 = Callback:new({
-        _moduleName     = "T_Mine",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["mineLocator"]                     = mineLocator,
-        },
+    local callback2 = Callback:newInstance("T_Mine", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["mineLocator"]                     = mineLocator,
     })
 
     -- test

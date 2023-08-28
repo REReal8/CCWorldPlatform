@@ -270,13 +270,9 @@ local function provideItemsTo_AOSrv_Test(provideItems)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback2 = Callback:new({
-        _moduleName     = "T_Shop",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["objectLocator"]                   = objectLocator,
-        },
+    local callback = Callback:newInstance("T_Shop", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["objectLocator"]                   = objectLocator,
     })
 
     -- test
@@ -285,7 +281,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         wasteItemDepotLocator           = wasteItemDepotLocator,
-    }, callback2)
+    }, callback)
     assert(scheduleResult == true, "failed to schedule async service")
 end
 

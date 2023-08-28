@@ -271,13 +271,9 @@ local function t_provideItemsTo_AOSrv(provideItems)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback2 = Callback:new({
-        _moduleName     = "T_BirchForest",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["objLocator"] = objLocator,
-        },
+    local callback = Callback:newInstance("T_BirchForest", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["objLocator"] = objLocator,
     })
 
     -- test
@@ -286,7 +282,7 @@ local function t_provideItemsTo_AOSrv(provideItems)
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         wasteItemDepotLocator           = wasteItemDepotLocator,
-    }, callback2)
+    }, callback)
 end
 
 function T_BirchForest.T_provideItemsTo_AOSrv_Log()

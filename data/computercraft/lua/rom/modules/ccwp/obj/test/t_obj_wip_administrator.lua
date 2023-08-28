@@ -218,11 +218,7 @@ function T_WIPAdministrator.T_administerWorkStarted()
 end
 
 local callback1Called = false
-local callback1 = Callback:new({
-    _moduleName     = "T_WIPAdministrator",
-    _methodName     = "waitForNoWIPOnQueue_AOSrv_Callback",
-    _data           = { callbackName = "callback1", },
-})
+local callback1 = Callback:newInstance("T_WIPAdministrator", "waitForNoWIPOnQueue_AOSrv_Callback", { callbackName = "callback1", })
 
 local function hasCallback(callbackList, callback)
     for i, aCallback in ipairs(callbackList) do

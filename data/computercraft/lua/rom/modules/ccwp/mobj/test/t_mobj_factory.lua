@@ -358,12 +358,8 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback2 = Callback:new({
-        _moduleName     = "T_Factory",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        },
+    local callback2 = Callback:newInstance("T_Factory", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
     })
 
     -- test

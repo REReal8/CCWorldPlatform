@@ -237,12 +237,8 @@ function T_Chest.T_updateChestRecord_AOSrv()
     local obj = T_Chest.CreateTestObj(nil, location1:getRelativeLocation(2, 5, 0)) assert(obj, "Failed obtaining "..testClassName)
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
-    local callback = Callback:new({
-        _moduleName     = "T_Chest",
-        _methodName     = "updateChestRecord_AOSrv_Callback",
-        _data           = {
-            ["chestLocator"]                    = chestLocator,
-        },
+    local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
+        ["chestLocator"] = chestLocator,
     })
 
     -- test
@@ -400,14 +396,10 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
 
     local expectedDestinationItemsLocator = chestLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
-        _moduleName     = "T_Chest",
-        _methodName     = "storeItemsFrom_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["chestLocator"]                    = chestLocator,
-            ["itemsLocator"]                    = itemsLocator:copy(),
-        },
+    local callback = Callback:newInstance("T_Chest", "storeItemsFrom_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["chestLocator"]                    = chestLocator,
+        ["itemsLocator"]                    = itemsLocator:copy(),
     })
 
     -- test

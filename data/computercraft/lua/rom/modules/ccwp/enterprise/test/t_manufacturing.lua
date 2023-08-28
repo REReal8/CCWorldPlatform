@@ -17,18 +17,10 @@ local baseLocationV0 = Location:newInstance(6, 0, 1, 0, 1)
 local baseLocationV1 = Location:newInstance(12, 0, 1, 0, 1)
 local baseLocationV2 = baseLocationV1:copy()
 
-local callback = Callback:new({
-    _moduleName     = "t_main",
-    _methodName     = "Func1_Callback",
-    _data           = {"some callback data"},
-})
+local callback = Callback.GetNewDummyCallBack()
 
 function t_manufacturing.T_BuildAndStartNewV1Site()
-    local callbackBuildAndStartNewV1Site = Callback:new({
-        _moduleName     = "t_manufacturing",
-        _methodName     = "BuildAndStartNewV1Site_CallBack",
-        _data           = {},
-    })
+    local callbackBuildAndStartNewV1Site = Callback:newInstance("t_manufacturing", "BuildAndStartNewV1Site_CallBack")
 
     t_turtle = t_turtle or require "test.t_turtle"
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({

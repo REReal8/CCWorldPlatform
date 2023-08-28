@@ -168,13 +168,7 @@ local function TriggerRefuelIfNeeded(turtleObj)
 
             assignmentsPriorityKey          = priorityKey,
         }
-        local callback = Callback:new({
-            _moduleName         = "enterprise_turtle",
-            _methodName         = "Fuel_Callback",
-            _data               = {
-                turtleLocator   = turtleLocator,
-            },
-        })
+        local callback = Callback:newInstance("enterprise_turtle", "Fuel_Callback", { turtleLocator = turtleLocator, })
 
         -- call service
         enterprise_energy.ProvideFuelTo_ASrv(serviceData, callback)

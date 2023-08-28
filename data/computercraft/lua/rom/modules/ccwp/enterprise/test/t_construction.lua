@@ -86,11 +86,7 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }
-    local callback = Callback:new({
-        _moduleName     = "t_main",
-        _methodName     = "Func1_Callback",
-        _data           = {"some callback data"},
-    })
+    local callback = Callback.GetNewDummyCallBack()
 
     corelog.WriteToLog("T_construction calling BuildLayer_ASrv("..textutils.serialise(buildData)..", ...)")
     return enterprise_construction.BuildLayer_ASrv(buildData, callback)
@@ -148,11 +144,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
     }
 
     -- start project
-    local callback = Callback:new({
-        _moduleName     = "t_main",
-        _methodName     = "Func1_Callback",
-        _data           = {"some callback data"},
-    })
+    local callback = Callback.GetNewDummyCallBack()
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
@@ -176,11 +168,7 @@ function t_construction.T_BuildBlueprint_ASrv()
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     }
-    local callback = Callback:new({
-        _moduleName     = "t_main",
-        _methodName     = "Func1_Callback",
-        _data           = {"some callback data"},
-    })
+    local callback = Callback.GetNewDummyCallBack()
 
     -- test
 --    corelog.WriteToLog("T_construction calling BuildBlueprint_ASrv("..textutils.serialise(blueprintBuildData)..", ...)")

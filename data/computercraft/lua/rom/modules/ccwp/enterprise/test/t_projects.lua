@@ -149,14 +149,10 @@ function t_projects.T_StartProject_ASrv()
         testObj = testObj,
         objLocator = objLocator,
     }
-    local callback = Callback:new({
-        _moduleName     = "t_projects",
-        _methodName     = "StartProject_ASrv_Callback",
-        _data           = {
-            [0]             = callbackTestValue,
-            ["hostName"]    = hostName,
-            ["objLocator"]  = objLocator,
-        },
+    local callback = Callback:newInstance("t_projects", "StartProject_ASrv_Callback", {
+        [0]             = callbackTestValue,
+        ["hostName"]    = hostName,
+        ["objLocator"]  = objLocator,
     })
     local projectServiceData = {
         projectDef  = projectDef,

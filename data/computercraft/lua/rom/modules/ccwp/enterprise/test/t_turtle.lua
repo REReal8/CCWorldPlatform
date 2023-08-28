@@ -106,13 +106,7 @@ function t_turtle.T_DelistTurtle_ASrv()
         turtleId        = turtleId1
     }
     local objLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator if not objLocator then corelog.Error("failed registering Obj") return end
-    local callback = Callback:new({
-        _moduleName     = "t_turtle",
-        _methodName     = "DelistTurtle_ASrv_callback",
-        _data           = {
-            ["objLocator"]                      = objLocator,
-        },
-    })
+    local callback = Callback:newInstance("t_turtle", "DelistTurtle_ASrv_callback", { ["objLocator"] = objLocator, })
 
     -- test
     return enterprise_turtle.DelistTurtle_ASrv({ turtleLocator = objLocator}, callback)

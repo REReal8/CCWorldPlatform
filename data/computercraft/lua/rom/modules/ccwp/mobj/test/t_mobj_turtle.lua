@@ -144,13 +144,9 @@ local function provideItemsTo_AOSrv_Test(itemDepotLocator, toStr)
     }
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
-        _moduleName     = "T_Turtle",
-        _methodName     = "provideItemsTo_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["itemDepotLocator"]                = itemDepotLocator,
-        },
+    local callback = Callback:newInstance("T_Turtle", "provideItemsTo_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["itemDepotLocator"]                = itemDepotLocator,
     })
 
     -- test
@@ -227,13 +223,9 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
 
     local expectedDestinationItemsLocator = turtleLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:new({
-        _moduleName     = "T_Turtle",
-        _methodName     = "storeItemsFrom_AOSrv_Callback",
-        _data           = {
-            ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-            ["itemsLocator"]                    = itemsLocator:copy(),
-        },
+    local callback = Callback:newInstance("T_Turtle", "storeItemsFrom_AOSrv_Callback", {
+        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
+        ["itemsLocator"]                    = itemsLocator:copy(),
     })
 
     -- test

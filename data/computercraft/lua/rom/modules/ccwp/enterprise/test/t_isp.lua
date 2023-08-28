@@ -1,33 +1,11 @@
 local t_isp = {}
 
-local corelog = require "corelog"
-
-local Callback = require "obj_callback"
-
-local Location = require "obj_location"
-
 local enterprise_turtle = require "enterprise_turtle"
-local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
-
-local t_chests = require "test.t_chests"
 
 function t_isp.T_All()
     t_isp.T_AddItemsLocators()
 end
-
-local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
-local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
-local itemsQuery = {
-    ["minecraft:birch_log"] = 1,
-    ["minecraft:torch"]     = 5,
-}
-
-local callback = Callback:new({
-    _moduleName     = "t_main",
-    _methodName     = "Func1_Callback",
-    _data           = {"some callback data"},
-})
 
 function t_isp.T_AddItemsLocators()
     -- create testData
