@@ -157,9 +157,10 @@ function LayerRectangle:transformToLayer(...)
     if fromLayer:getNColumns() ~= toLayer:getNColumns() then corelog.Error("LayerRectangle:transformToLayer: # columns in fromLayer(="..fromLayer:getNColumns()..") not equal to that in toLayer(="..toLayer:getNColumns()..")") return nil end
 
     -- construct transformCodeMap
+    local toMap = toLayer._codeMap
+    local anyBlockCode = "?"
     local transformCodeMap = {}
     local nCol = fromLayer:getNColumns()
-    local anyBlockCode = "?"
 
     -- loop on rows
     local anyBlockInserted = false
