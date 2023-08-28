@@ -5,6 +5,7 @@ local corelog = require "corelog"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local role_builder = require "role_builder"
@@ -28,17 +29,17 @@ local codeTable1 = ObjTable:newInstance(blockClassName, {
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
     [" "]   = Block:newInstance(Block.NoneBlockName()),
 })
-local codeMap1 = {
+local codeMap1 = CodeMap:new({
     [6] = "  C ",
     [5] = "    ",
     [4] = "T   ",
     [3] = "    ",
     [2] = "    ",
     [1] = "   T",
-}
+}) assert(codeMap1, "Failed obtaining codeMap1")
 local testBuildLayer1 = LayerRectangle:new({
     _codeTable  = codeTable1:copy(),
-    _codeMap    = LayerRectangle.MapCopy(codeMap1),
+    _codeMap    = codeMap1:copy(),
 }) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({
@@ -49,11 +50,11 @@ local testBuildLayer2 = LayerRectangle:new({
         ["F"]   = Block:newInstance(chestItemName, 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = {
+    _codeMap    = CodeMap:new({
         [3] = "DDF",
         [2] = "C F",
         [1] = "CEE",
-    },
+    }),
 }) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:new({
@@ -64,14 +65,14 @@ local testBuildLayer3 = LayerRectangle:new({
         ["?"]   = Block:newInstance(Block.AnyBlockName()),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    _codeMap    = {
+    _codeMap    = CodeMap:new({
         [6] = "C D  T",
         [5] = "    T ",
         [4] = "   T  ",
         [3] = "??T   ",
         [2] = " T    ",
         [1] = "T    D",
-    },
+    }),
 }) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local compact = { compact = true }

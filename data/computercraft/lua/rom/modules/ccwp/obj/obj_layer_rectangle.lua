@@ -241,15 +241,4 @@ function LayerRectangle.CodeMapValid(codeTable, codeMap, warn)
     return true
 end
 
-function LayerRectangle.MapCopy(map)
-    -- copy elements
-    local mapCopy = {}
-    for iRow, row in ipairs(map) do
-        mapCopy[iRow] = row
-    end
-
-    -- end
-	return mapCopy
-end
-
 return LayerRectangle
