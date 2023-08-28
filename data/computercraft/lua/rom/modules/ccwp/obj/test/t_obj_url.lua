@@ -96,7 +96,12 @@ end
 function T_URL.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() and getter tests")
-    local obj = T_URL.CreateTestObj()
+    local obj = URL:new({
+        _host = host1,
+        _port = port1,
+        _path = path1,
+        _query = query1,
+    })
 
     -- test
     local testResult = obj:getScheme()
