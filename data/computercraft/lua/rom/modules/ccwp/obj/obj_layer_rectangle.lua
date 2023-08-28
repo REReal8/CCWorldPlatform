@@ -160,8 +160,8 @@ function LayerRectangle:transformToLayer(...)
     local toMap = toLayer._codeMap
     local anyBlockCode = "?"
     local transformCodeMap = {}
-    local nCol = fromLayer:getNColumns()
     local anyBlockInserted = false
+    local nCol = fromLayer:getNColumns()
 
     -- loop on rows
     for iRow, fromRow in ipairs(fromLayer._codeMap) do
