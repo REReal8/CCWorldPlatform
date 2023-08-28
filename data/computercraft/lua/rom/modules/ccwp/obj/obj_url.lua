@@ -20,6 +20,27 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function URL:_init(...)
+    -- get & check input from description
+    local checkSuccess, host, path, query, port = InputChecker.Check([[
+        Initialise a URL.
+
+        Parameters:
+            host                    + (string, "") depicting the host sub-component of the URL (e.g. "turtle", "world" or "item-depot")
+            path                    + (string, "") defining the path sub-component of the URL (e.g. "/forests/oak/id=50:23012")
+            query                   + (table, {}) of key-value pairs with (item) query segments (e.g. {"minecraft:torch"=5, "minecraft:birch_log"=3} indicating two minecraft items with it's amount)
+            port                    + (number, nil) defining the port sub-component of the URL (e.g. the id of a turtle, i.e. "30")
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("URL:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._host  = host
+    self._port  = port
+    self._path  = path
+    self._query = query
+end
+
 function URL:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
