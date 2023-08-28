@@ -77,12 +77,7 @@ end
 function T_URL.T_URL_Serializing()
     -- new URL
     corelog.WriteToLog("* Test "..testClassName.." serialize")
-    local obj = URL:new({
-        _host = host,
-        _port = port,
-        _path = path,
-        _query = query,
-    })
+    local obj = T_URL.CreateTestObj()
     corelog.WriteToLog(" obj:getURI() = "..obj:getURI())
 
     corelog.WriteToLog(" obj type = "..type(obj))
@@ -93,12 +88,7 @@ end
 function T_URL.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() and getter tests")
-    local obj = URL:new({
-        _host = host,
-        _port = port,
-        _path = path,
-        _query = query,
-    })
+    local obj = T_URL.CreateTestObj()
 
     -- test
     local testResult = obj:getScheme()
@@ -140,12 +130,7 @@ end
 function T_URL.T_GettersURI()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." URI getter tests")
-    local obj = URL:new({
-        _host = host,
-        _port = port,
-        _path = path,
-        _query = query,
-    })
+    local obj = T_URL.CreateTestObj()
 
     -- test
     assert(obj:getSchemeURI() == schemeURI, "getSchemeURI() return(="..obj:getSchemeURI()..") different from expected(="..schemeURI..")")
@@ -350,12 +335,7 @@ end
 function T_URL.T_baseCopy()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":baseCopy() tests")
-    local obj = URL:new({
-        _host = host,
-        _port = port,
-        _path = path,
-        _query = query,
-    })
+    local obj = T_URL.CreateTestObj()
 
     -- test
     local baseCopy = obj:baseCopy()
