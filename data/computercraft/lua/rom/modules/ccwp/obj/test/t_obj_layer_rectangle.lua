@@ -100,10 +100,7 @@ function T_LayerRectangle.T__init()
     local test = T_LayerRectangle.CreateInitialisedTest(codeTable1, codeMap1)
     test:test(obj, "layer", "", logOk)
 
-    -- test default
-    -- obj = LayerRectangle:newInstance()
-    -- test = T_LayerRectangle.CreateInitialisedTest(0, 0, 0, 0, 1)
-    -- test:test(obj, "layer", "", logOk)
+    -- note: no default test
 
     -- cleanup test
 end
