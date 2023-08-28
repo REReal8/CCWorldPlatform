@@ -6,6 +6,9 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local CodeMap = require "obj_code_map"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
@@ -25,7 +28,8 @@ function T_CodeMap.T_All()
 end
 
 local testClassName = "CodeMap"
-local codeMap1 = {
+local logOk = false
+local codeRowArray1 = {
     [6] = "CD   ?",
     [5] = "      ",
     [4] = "T  S  ",
@@ -33,7 +37,7 @@ local codeMap1 = {
     [2] = "   K  ",
     [1] = "   T  ",
 }
-local map1 = CodeMap:new(codeMap1) assert(map1, "Failed obtaining CodeMap")
+local map1 = CodeMap:new(codeRowArray1) assert(map1, "Failed obtaining CodeMap")
 
 local compact = { compact = true }
 
@@ -56,10 +60,42 @@ function T_CodeMap.CreateTestObj(codeMap)
     }
 
     -- create testObj
-    local testObj = CodeMap:new(codeMap)
+    local testObj = CodeMap:newInstance(codeMap)
 
     -- end
     return testObj
+end
+
+function T_CodeMap.CreateInitialisedTest(codeRowArray)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+    )
+    for i, codeRow in ipairs(codeRowArray) do
+        table.insert(test._tests, FieldValueEqualTest:newInstance(i, codeRow))
+    end
+
+    -- end
+    return test
+end
+
+
+function T_CodeMap.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_CodeMap.CreateTestObj(codeRowArray1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_CodeMap.CreateInitialisedTest(codeRowArray1)
+    test:test(obj, "codeMap", "", logOk)
+
+    -- test default
+    obj = CodeMap:newInstance()
+    test = T_CodeMap.CreateInitialisedTest({})
+    test:test(obj, "codeMap", "", logOk)
+
+    -- cleanup test
 end
 
 function T_CodeMap.T_new()
@@ -67,7 +103,7 @@ function T_CodeMap.T_new()
     corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local map = CodeMap:new(codeMap1) assert(map, "Failed obtaining CodeMap")
+    local map = CodeMap:new(codeRowArray1) assert(map, "Failed obtaining CodeMap")
     local expectedNColumns = 6
     assert(map:getNColumns() == expectedNColumns, "gotten getNColumns(="..map:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     local expectedNRows = 6
