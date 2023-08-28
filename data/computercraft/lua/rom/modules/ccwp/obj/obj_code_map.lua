@@ -20,6 +20,7 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+-- ToDo: should be renamed to newFromTable at some point
 function CodeMap:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
