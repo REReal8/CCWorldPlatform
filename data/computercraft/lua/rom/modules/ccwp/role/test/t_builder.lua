@@ -38,7 +38,7 @@ local codeMap1 = {
 }
 local testBuildLayer1 = LayerRectangle:new({
     _codeTable  = codeTable1:copy(),
-    _codeMap    = LayerRectangle.CodeMapCopy(codeMap1),
+    _codeMap    = LayerRectangle.MapCopy(codeMap1),
 }) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:new({

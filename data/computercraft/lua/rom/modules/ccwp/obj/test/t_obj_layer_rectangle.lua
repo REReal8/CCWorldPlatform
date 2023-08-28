@@ -6,36 +6,33 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local ObjTable = require "obj_table"
 local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
+
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_LayerRectangle.T_All()
-    -- helper functions
-    T_LayerRectangle.T_IsCodeMap()
-    T_LayerRectangle.T_IsEqualCodeMap()
-    T_LayerRectangle.T_CodeMapCopy()
-
     -- initialisation
+    T_LayerRectangle.T__init()
     T_LayerRectangle.T_new()
-    T_LayerRectangle.T_getBlock()
 
     -- IObj methods
     T_LayerRectangle.T_IObj_All()
 
     -- specific methods
+    T_LayerRectangle.T_getBlock()
     T_LayerRectangle.T_itemsNeeded()
     T_LayerRectangle.T_transformToLayer()
     T_LayerRectangle.T_cleanCodeTable()
-    T_LayerRectangle.T_removeRow()
-    T_LayerRectangle.T_removeColumn()
-    T_LayerRectangle.T_getCodeCol()
-    T_LayerRectangle.T_removeBoundariesWithOnly()
     T_LayerRectangle.T_buildData()
 end
 
 local testClassName = "LayerRectangle"
+local logOk = false
 local blockClassName = "Block"
 local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
@@ -50,88 +47,20 @@ local codeTable1 = ObjTable:newInstance(blockClassName, {
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
     [" "]   = Block:newInstance(Block.NoneBlockName()),
 })
-
---    _          _                    __                  _   _
---   | |        | |                  / _|                | | (_)
---   | |__   ___| |_ __   ___ _ __  | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
---   | '_ \ / _ \ | '_ \ / _ \ '__| |  _| | | | '_ \ / __| __| |/ _ \| '_ \/ __|
---   | | | |  __/ | |_) |  __/ |    | | | |_| | | | | (__| |_| | (_) | | | \__ \
---   |_| |_|\___|_| .__/ \___|_|    |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
---                | |
---                |_|
-
-local compact = { compact = true }
-
-local codeMap1 = {
+local codeMap1 = CodeMap:new({
     [6] = "CD   ?",
     [5] = "      ",
     [4] = "T  S  ",
     [3] = "  ?   ",
     [2] = "   K  ",
     [1] = "   T  ",
-}
+}) assert(codeMap1, "Failed obtaining codeMap1")
+local layer1 = LayerRectangle:new({
+    _codeTable  = codeTable1:copy(),
+    _codeMap    = codeMap1,
+}) assert(layer1, "Failed obtaining layer1")
 
-function T_LayerRectangle.T_IsCodeMap()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsCodeMap tests")
-
-    -- test valid
-    local isCodeMap = LayerRectangle.IsCodeMap(codeMap1)
-    local expectedIsCodeMap = true
-    assert(isCodeMap == expectedIsCodeMap, "gotten IsCodeMap(="..tostring(isCodeMap)..") not the same as expected(="..tostring(expectedIsCodeMap)..")")
-
-    -- test different object
-    isCodeMap = LayerRectangle.IsCodeMap("a atring")
-    expectedIsCodeMap = false
-    assert(isCodeMap == expectedIsCodeMap, "gotten IsCodeMap(="..tostring(isCodeMap)..") not the same as expected(="..tostring(expectedIsCodeMap)..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_IsEqualCodeMap()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.IsEqualCodeMap() tests")
-    local codeMap2 = {
-        [6] = "CD   ?",
-        [5] = "      ",
-        [4] = "T  S  ",
-        [3] = "  ?   ",
-        [2] = "   K  ",
-        [1] = "   T  ",
-    }
-
-    -- test same
-    local isEqual = LayerRectangle.IsEqualCodeMap(codeMap1, codeMap2)
-    local expectedIsEqual = true
-    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeMap(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-
-    -- test different
-    codeMap2[4] = "TTTSTT"
-    isEqual = LayerRectangle.IsEqualCodeMap(codeMap1, codeMap2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeMap(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    codeMap2[4] = "T  S  "
-
-    -- test different (size)
-    codeMap2[7] = "TT  TT"
-    isEqual = LayerRectangle.IsEqualCodeMap(codeMap1, codeMap2)
-    expectedIsEqual = false
-    assert(isEqual == expectedIsEqual, "gotten IsEqualCodeMap(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
-    codeMap2[7] = nil
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_CodeMapCopy()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle.CodeMapCopy() tests")
-
-    -- test
-    local copy = LayerRectangle.CodeMapCopy(codeMap1)
-    assert(LayerRectangle.IsEqualCodeMap(copy, codeMap1), "gotten CodeMapCopy(="..textutils.serialize(copy, compact)..") not the same as expected(="..textutils.serialize(codeMap1, compact)..")")
-
-    -- cleanup test
-end
+local compact = { compact = true }
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -143,29 +72,44 @@ end
 function T_LayerRectangle.CreateTestObj(codeTable, codeMap)
     -- check input
     codeTable = codeTable or codeTable1:copy()
-    codeMap = codeMap or {
-        [6] = "CD   ?",
-        [5] = "      ",
-        [4] = "T  S  ",
-        [3] = "  ?   ",
-        [2] = "   K  ",
-        [1] = "   T  ",
-    }
+    codeMap = codeMap or codeMap1:copy()
 
     -- create testObj
-    local testObj = LayerRectangle:new({
-        _codeTable  = codeTable,
-        _codeMap    = codeMap,
-    })
+    local testObj = LayerRectangle:newInstance(codeTable, codeMap)
 
     -- end
     return testObj
 end
 
-local layer1 = LayerRectangle:new({
-    _codeTable  = codeTable1:copy(),
-    _codeMap    = codeMap1,
-}) assert(layer1, "Failed obtaining layer")
+function T_LayerRectangle.CreateInitialisedTest(codeTable, codeMap)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_codeTable", codeTable),
+        FieldValueEqualTest:newInstance("_codeMap", codeMap)
+    )
+
+    -- end
+    return test
+end
+
+function T_LayerRectangle.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_LayerRectangle.CreateTestObj(codeTable1, codeMap1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_LayerRectangle.CreateInitialisedTest(codeTable1, codeMap1)
+    test:test(obj, "layer", "", logOk)
+
+    -- test default
+    -- obj = LayerRectangle:newInstance()
+    -- test = T_LayerRectangle.CreateInitialisedTest(0, 0, 0, 0, 1)
+    -- test:test(obj, "layer", "", logOk)
+
+    -- cleanup test
+end
 
 function T_LayerRectangle.T_new()
     -- prepare test
@@ -174,58 +118,10 @@ function T_LayerRectangle.T_new()
     -- test full
     local layer = LayerRectangle:new({
         _codeTable  = codeTable1:copy(),
-        _codeMap    = codeMap1,
-    }) assert(layer, "Failed obtaining layer")
-    local expectedNColumns = 6
-    assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
-    local expectedNRows = 6
-    assert(layer:getNRows() == expectedNRows, "gotten getNRows(="..layer:getNRows()..") not the same as expected(="..expectedNRows..")")
-    local code = layer:getCode(4, 1)
-    local expectedCode = "T"
-    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-    code = layer:getCode(1, 4)
-    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-    code = layer:getCode(4, 4)
-    expectedCode = "S"
-    assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-
-    -- test default
-    layer = LayerRectangle:new({ _codeTable = ObjTable:newInstance(blockClassName) }) assert(layer, "Failed obtaining layer")
-    expectedNColumns = 0
-    assert(layer:getNColumns() == expectedNColumns, "gotten getNColumns(="..layer:getNColumns()..") not the same as expected(="..expectedNColumns..")")
-    expectedNRows = 0
-    assert(layer:getNRows() == expectedNRows, "gotten getNRows(="..layer:getNRows()..") not the same as expected(="..expectedNRows..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_getBlock()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:getBlock() tests")
-
-    -- test full
-    local layer = LayerRectangle:new({
-        _codeTable  = codeTable1:copy(),
-        _codeMap    = codeMap1,
-    }) assert(layer, "Failed obtaining layer")
-    local block = layer:getBlock(4, 1)
-    local expectedBlock = Block:newInstance(torchItemName)
-    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
-    block = layer:getBlock(1, 4)
-    expectedBlock = Block:newInstance(torchItemName)
-    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
-    block = layer:getBlock(4, 4)
-    expectedBlock = Block:newInstance(saplingItemName)
-    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
-    block = layer:getBlock(1, 1)
-    expectedBlock = Block:newInstance(Block.NoneBlockName())
-    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
-    block = layer:getBlock(3, 3)
-    expectedBlock = Block:newInstance(Block.AnyBlockName())
-    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
-    block = layer:getBlock(1, 6)
-    expectedBlock = Block:newInstance(chestItemName, -1, 0)
-    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+        _codeMap    = codeMap1:copy(),
+    }) assert(layer, "Failed obtaining "..testClassName)
+    local test = T_LayerRectangle.CreateInitialisedTest(codeTable1, codeMap1)
+    test:test(layer, "location", "", logOk)
 
     -- cleanup test
 end
@@ -258,6 +154,37 @@ end
 --   |___/ .__/ \___|\___|_|_| |_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --       | |
 --       |_|
+
+function T_LayerRectangle.T_getBlock()
+    -- prepare test
+    corelog.WriteToLog("* LayerRectangle:getBlock() tests")
+
+    -- test full
+    local layer = LayerRectangle:new({
+        _codeTable  = codeTable1:copy(),
+        _codeMap    = codeMap1,
+    }) assert(layer, "Failed obtaining layer")
+    local block = layer:getBlock(4, 1)
+    local expectedBlock = Block:newInstance(torchItemName)
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 4)
+    expectedBlock = Block:newInstance(torchItemName)
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(4, 4)
+    expectedBlock = Block:newInstance(saplingItemName)
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 1)
+    expectedBlock = Block:newInstance(Block.NoneBlockName())
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(3, 3)
+    expectedBlock = Block:newInstance(Block.AnyBlockName())
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+    block = layer:getBlock(1, 6)
+    expectedBlock = Block:newInstance(chestItemName, -1, 0)
+    assert(block:isEqual(expectedBlock), "gotten block(="..textutils.serialize(block, compact)..") not the same as expected(="..textutils.serialize(expectedBlock, compact)..")")
+
+    -- cleanup test
+end
 
 function T_LayerRectangle.T_itemsNeeded()
     -- prepare test
@@ -413,79 +340,6 @@ function T_LayerRectangle.T_cleanCodeTable()
     -- cleanup test
 end
 
-function T_LayerRectangle.T_removeRow()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:removeRow() tests")
-
-    -- test top
-    local layer = layer1:copy()
-    layer:removeRow(6)
-    local expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["S"]   = Block:newInstance(saplingItemName),
-            ["K"]   = Block:newInstance(computerItemName),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [5] = "      ",
-            [4] = "T  S  ",
-            [3] = "  ?   ",
-            [2] = "   K  ",
-            [1] = "   T  ",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
-
-    -- test a mid
-    layer = layer1:copy()
-    layer:removeRow(4)
-    expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["C"]   = Block:newInstance(chestItemName, -1, 0),
-            ["D"]   = Block:newInstance(chestItemName, 0, 1),
-            ["K"]   = Block:newInstance(computerItemName),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [5] = "CD   ?",
-            [4] = "      ",
-            [3] = "  ?   ",
-            [2] = "   K  ",
-            [1] = "   T  ",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
-
-    -- test bottom
-    layer = layer1:copy()
-    layer:removeRow(1)
-    expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["S"]   = Block:newInstance(saplingItemName),
-            ["C"]   = Block:newInstance(chestItemName, -1, 0),
-            ["D"]   = Block:newInstance(chestItemName, 0, 1),
-            ["K"]   = Block:newInstance(computerItemName),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [5] = "CD   ?",
-            [4] = "      ",
-            [3] = "T  S  ",
-            [2] = "  ?   ",
-            [1] = "   K  ",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
-
-    -- cleanup test
-end
-
 function T_LayerRectangle.T_getCodeCol()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:getCodeCol() tests")
@@ -494,127 +348,6 @@ function T_LayerRectangle.T_getCodeCol()
     local column = layer1:getCodeCol(4)
     local expectedColumn = "TK S  "
     assert(column == expectedColumn, "gotten column(="..column..") not the same as expected(="..expectedColumn..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_removeColumn()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:removeColumn() tests")
-
-    -- test right
-    local layer = layer1:copy()
-    layer:removeColumn(6)
-    local expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["S"]   = Block:newInstance(saplingItemName),
-            ["C"]   = Block:newInstance(chestItemName, -1, 0),
-            ["D"]   = Block:newInstance(chestItemName, 0, 1),
-            ["K"]   = Block:newInstance(computerItemName),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [6] = "CD   ",
-            [5] = "     ",
-            [4] = "T  S ",
-            [3] = "  ?  ",
-            [2] = "   K ",
-            [1] = "   T ",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
-
-    -- test mid
-    layer = layer1:copy()
-    layer:removeColumn(4)
-    expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["C"]   = Block:newInstance(chestItemName, -1, 0),
-            ["D"]   = Block:newInstance(chestItemName, 0, 1),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [6] = "CD  ?",
-            [5] = "     ",
-            [4] = "T    ",
-            [3] = "  ?  ",
-            [2] = "     ",
-            [1] = "     ",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
-
-    -- test left
-    layer = layer1:copy()
-    layer:removeColumn(1)
-    expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["S"]   = Block:newInstance(saplingItemName),
-            ["D"]   = Block:newInstance(chestItemName, 0, 1),
-            ["K"]   = Block:newInstance(computerItemName),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [6] = "D   ?",
-            [5] = "     ",
-            [4] = "  S  ",
-            [3] = " ?   ",
-            [2] = "  K  ",
-            [1] = "  T  ",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
-
-    -- cleanup test
-end
-
-function T_LayerRectangle.T_removeBoundariesWithOnly()
-    -- prepare test
-    corelog.WriteToLog("* LayerRectangle:removeBoundariesWithOnly() tests")
-
-    -- test right
-    local layer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["C"]   = Block:newInstance(chestItemName, -1, 0),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [6] = "??????",
-            [5] = "??????",
-            [4] = "??TC ?",
-            [3] = "?? C??",
-            [2] = "??? T?",
-            [1] = "??????",
-        },
-    }) assert(layer, "Failed obtaining layer")
-    local code = "?"
-    local colOffset, rowOffset = layer:removeBoundariesWithOnly(code)
-    local expectedOffset = 1
-    assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
-    expectedOffset = 2
-    assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
-    local expectedLayer = LayerRectangle:new({
-        _codeTable  = ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance(torchItemName),
-            ["C"]   = Block:newInstance(chestItemName, -1, 0),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        _codeMap    = {
-            [3] = "TC ",
-            [2] = " C?",
-            [1] = "? T",
-        },
-    })
-    assert(layer:isEqual(expectedLayer), "result layer(="..textutils.serialize(layer, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedLayer, compact)..")")
 
     -- cleanup test
 end
