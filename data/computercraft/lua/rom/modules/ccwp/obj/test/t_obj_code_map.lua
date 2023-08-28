@@ -37,7 +37,6 @@ local codeRowArray1 = {
     [2] = "   K  ",
     [1] = "   T  ",
 }
-local map1 = CodeMap:new(codeRowArray1) assert(map1, "Failed obtaining CodeMap")
 
 local compact = { compact = true }
 
@@ -80,7 +79,6 @@ function T_CodeMap.CreateInitialisedTest(codeRowArray)
     return test
 end
 
-
 function T_CodeMap.T__init()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":_init() tests")
@@ -103,26 +101,26 @@ function T_CodeMap.T_new()
     corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local map = CodeMap:new(codeRowArray1) assert(map, "Failed obtaining CodeMap")
+    local obj = CodeMap:new(codeRowArray1) assert(obj, "Failed obtaining CodeMap")
     local expectedNColumns = 6
-    assert(map:getNColumns() == expectedNColumns, "gotten getNColumns(="..map:getNColumns()..") not the same as expected(="..expectedNColumns..")")
+    assert(obj:getNColumns() == expectedNColumns, "gotten getNColumns(="..obj:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     local expectedNRows = 6
-    assert(map:getNRows() == expectedNRows, "gotten getNRows(="..map:getNRows()..") not the same as expected(="..expectedNRows..")")
-    local code = map:getCode(4, 1)
+    assert(obj:getNRows() == expectedNRows, "gotten getNRows(="..obj:getNRows()..") not the same as expected(="..expectedNRows..")")
+    local code = obj:getCode(4, 1)
     local expectedCode = "T"
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-    code = map:getCode(1, 4)
+    code = obj:getCode(1, 4)
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
-    code = map:getCode(4, 4)
+    code = obj:getCode(4, 4)
     expectedCode = "S"
     assert(code == expectedCode, "gotten code(="..code..") not the same as expected(="..expectedCode..")")
 
     -- test default
-    map = CodeMap:new() assert(map, "Failed obtaining CodeMap")
+    obj = CodeMap:new() assert(obj, "Failed obtaining CodeMap")
     expectedNColumns = 0
-    assert(map:getNColumns() == expectedNColumns, "gotten getNColumns(="..map:getNColumns()..") not the same as expected(="..expectedNColumns..")")
+    assert(obj:getNColumns() == expectedNColumns, "gotten getNColumns(="..obj:getNColumns()..") not the same as expected(="..expectedNColumns..")")
     expectedNRows = 0
-    assert(map:getNRows() == expectedNRows, "gotten getNRows(="..map:getNRows()..") not the same as expected(="..expectedNRows..")")
+    assert(obj:getNRows() == expectedNRows, "gotten getNRows(="..obj:getNRows()..") not the same as expected(="..expectedNRows..")")
 
     -- cleanup test
 end
@@ -223,8 +221,8 @@ function T_CodeMap.T_removeRow()
     corelog.WriteToLog("* CodeMap:removeRow() tests")
 
     -- test top
-    local map = map1:copy()
-    map:removeRow(6)
+    local obj = T_CodeMap.CreateTestObj()
+    obj:removeRow(6)
     local expectedMap = CodeMap:new({
         [5] = "      ",
         [4] = "T  S  ",
@@ -232,11 +230,11 @@ function T_CodeMap.T_removeRow()
         [2] = "   K  ",
         [1] = "   T  ",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- test a mid
-    map = map1:copy()
-    map:removeRow(4)
+    obj = T_CodeMap.CreateTestObj()
+    obj:removeRow(4)
     expectedMap = CodeMap:new({
         [5] = "CD   ?",
         [4] = "      ",
@@ -244,11 +242,11 @@ function T_CodeMap.T_removeRow()
         [2] = "   K  ",
         [1] = "   T  ",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- test bottom
-    map = map1:copy()
-    map:removeRow(1)
+    obj = T_CodeMap.CreateTestObj()
+    obj:removeRow(1)
     expectedMap = CodeMap:new({
         [5] = "CD   ?",
         [4] = "      ",
@@ -256,7 +254,7 @@ function T_CodeMap.T_removeRow()
         [2] = "  ?   ",
         [1] = "   K  ",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- cleanup test
 end
@@ -264,9 +262,10 @@ end
 function T_CodeMap.T_getCodeCol()
     -- prepare test
     corelog.WriteToLog("* CodeMap:getCodeCol() tests")
+    local obj = T_CodeMap.CreateTestObj()
 
     -- test
-    local column = map1:getCodeCol(4)
+    local column = obj:getCodeCol(4)
     local expectedColumn = "TK S  "
     assert(column == expectedColumn, "gotten column(="..column..") not the same as expected(="..expectedColumn..")")
 
@@ -278,8 +277,8 @@ function T_CodeMap.T_removeColumn()
     corelog.WriteToLog("* CodeMap:removeColumn() tests")
 
     -- test right
-    local map = map1:copy()
-    map:removeColumn(6)
+    local obj = T_CodeMap.CreateTestObj()
+    obj:removeColumn(6)
     local expectedMap = CodeMap:new({
         [6] = "CD   ",
         [5] = "     ",
@@ -288,11 +287,11 @@ function T_CodeMap.T_removeColumn()
         [2] = "   K ",
         [1] = "   T ",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- test mid
-    map = map1:copy()
-    map:removeColumn(4)
+    obj = T_CodeMap.CreateTestObj()
+    obj:removeColumn(4)
     expectedMap = CodeMap:new({
         [6] = "CD  ?",
         [5] = "     ",
@@ -301,11 +300,11 @@ function T_CodeMap.T_removeColumn()
         [2] = "     ",
         [1] = "     ",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- test left
-    map = map1:copy()
-    map:removeColumn(1)
+    obj = T_CodeMap.CreateTestObj()
+    obj:removeColumn(1)
     expectedMap = CodeMap:new({
         [6] = "D   ?",
         [5] = "     ",
@@ -314,7 +313,7 @@ function T_CodeMap.T_removeColumn()
         [2] = "  K  ",
         [1] = "  T  ",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- cleanup test
 end
@@ -324,16 +323,16 @@ function T_CodeMap.T_removeBoundariesWithOnly()
     corelog.WriteToLog("* CodeMap:removeBoundariesWithOnly() tests")
 
     -- test right
-    local map = CodeMap:new({
+    local obj = CodeMap:new({
         [6] = "??????",
         [5] = "??????",
         [4] = "??TC ?",
         [3] = "?? C??",
         [2] = "??? T?",
         [1] = "??????",
-    }) assert(map, "Failed obtaining CodeMap")
+    }) assert(obj, "Failed obtaining CodeMap")
     local code = "?"
-    local colOffset, rowOffset = map:removeBoundariesWithOnly(code)
+    local colOffset, rowOffset = obj:removeBoundariesWithOnly(code)
     local expectedOffset = 1
     assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
     expectedOffset = 2
@@ -343,7 +342,7 @@ function T_CodeMap.T_removeBoundariesWithOnly()
         [2] = " C?",
         [1] = "? T",
     })
-    assert(map:isEqual(expectedMap), "result map(="..textutils.serialize(map, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
+    assert(obj:isEqual(expectedMap), "result obj(="..textutils.serialize(obj, compact)..") for code "..code.." not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- cleanup test
 end
