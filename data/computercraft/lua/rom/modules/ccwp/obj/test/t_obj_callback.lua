@@ -32,11 +32,7 @@ local resultData1 = { someResult = "some result", success = true }
 function T_Callback.T_call()
     -- prepare test
     corelog.WriteToLog("* Callback:call() test")
-    local callback = Callback:new({
-        _moduleName     = moduleName1,
-        _methodName     = methodName1,
-        _data           = data1,
-    })
+    local callback = Callback:newInstance(moduleName1, methodName1, data1)
 
     -- test
     local callResult = callback:call(resultData1)
@@ -67,11 +63,7 @@ end
 function T_Callback.T_ErrorCall()
     -- prepare test
     corelog.WriteToLog("* Callback.ErrorCall() tests")
-    local callback = Callback:new({
-        _moduleName     = moduleName1,
-        _methodName     = "ErrorCall_Callback",
-        _data           = data1,
-    })
+    local callback = Callback:newInstance(moduleName1, "ErrorCall_Callback", data1)
 
     -- test no callback returns false
     local callResult = callback.ErrorCall(nil)

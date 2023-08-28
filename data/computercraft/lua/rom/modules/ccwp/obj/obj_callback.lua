@@ -75,7 +75,7 @@ end
 
 function Callback.GetNewDummyCallBack()
     -- construct dummy callback
-    local callback = Callback:new({ _moduleName = "Callback", _methodName = "Dummy_Callback", _data = { }, })
+    local callback = Callback:newInstance("Callback", "Dummy_Callback")
 
     -- end
     return callback
