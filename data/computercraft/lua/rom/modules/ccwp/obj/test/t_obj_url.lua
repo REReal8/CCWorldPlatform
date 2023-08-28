@@ -18,6 +18,7 @@ function T_URL.T_All()
     -- initialisation
     T_URL.T__init()
     T_URL.T_new()
+    T_URL.T_Getters()
     T_URL.T_GettersURI()
     T_URL.T_Setters()
     T_URL.T_SettersFromURI()
@@ -74,15 +75,9 @@ function T_URL.CreateTestObj(host, path, query, port)
     host = host or host1
     path = path or path1
     query = query or {[itemName1] = itemCount1, [itemName2] = itemCount2}
---    port = port or port1
 
     -- test
-    local testObj = URL:new({
-        _host = host,
-        _path = path,
-        _query = query,
-        _port = port,
-    })
+    local testObj = URL:newInstance(host, path, query, port)
 
     -- end
     return testObj
@@ -126,13 +121,25 @@ end
 
 function T_URL.T_new()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":new() and getter tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
+
+    -- test
     local obj = URL:new({
         _host = host1,
-        _port = port1,
         _path = path1,
         _query = query1,
+        _port = port1,
     })
+    local test = T_URL.CreateInitialisedTest(host1, path1, query1, port1)
+    test:test(obj, "url", "", logOk)
+
+    -- cleanup test
+end
+
+function T_URL.T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName.." getter tests")
+    local obj = T_URL.CreateTestObj(host1, path1, query1, port1)
 
     -- test
     local testResult = obj:getScheme()
@@ -160,13 +167,6 @@ function T_URL.T_new()
     testResult = obj:getQuery()
     local expectedResultTable = query1
     assert(testResult == expectedResultTable, "getQuery() return(="..textutils.serialize(testResult)..") different from expected(="..textutils.serialize(expectedResultTable)..")")
-
-    -- test default
-    obj = URL:new()
-    assert(obj:getHost() == "", "gotten getHost(="..obj:getHost()..") not the same as expected(=``)")
-    assert(type(obj:getPort()) == "nil", "gotten getPort(="..(obj:getPort() or "nil")..") not the same as expected(=nil)")
-    assert(obj:getPath() == "", "gotten getPath(="..obj:getPath()..") not the same as expected(=``)")
-    assert(obj:getQueryURI() == "", "gotten getQueryURI(="..obj:getQueryURI()..") not the same as expected(=``)")
 
     -- cleanup test
 end

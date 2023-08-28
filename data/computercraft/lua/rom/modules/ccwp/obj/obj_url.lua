@@ -41,6 +41,7 @@ function URL:_init(...)
     self._query = query
 end
 
+-- ToDo: should be renamed to newFromTable at some point
 function URL:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
