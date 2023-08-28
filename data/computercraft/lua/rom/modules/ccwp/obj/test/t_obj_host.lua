@@ -137,7 +137,7 @@ function T_Host.T_getHostLocator()
 
     -- test
     local hostLocator = host1:getHostLocator()
-    local expectedLocator = URL:new()
+    local expectedLocator = URL:newInstance()
     expectedLocator:setHost(hostName1)
     assert(hostLocator:isEqual(expectedLocator), "getHostLocator(="..hostLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
 
@@ -171,7 +171,7 @@ function T_Host.T_getResourceLocator()
 
     -- test
     local resourceLocator = host1:getResourceLocator(resourcePath1)
-    local expectedLocator = URL:new()
+    local expectedLocator = URL:newInstance()
     expectedLocator:setHost(hostName1)
     expectedLocator:setPath(resourcePath1)
     assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")
@@ -190,7 +190,7 @@ function T_Host.T_get_save_delete_Resource()
 
     -- test save
     resourceLocator = host1:saveResource(resource, resourcePath1)
-    local expectedLocator = URL:new()
+    local expectedLocator = URL:newInstance()
     expectedLocator:setHost(hostName1)
     expectedLocator:setPath(resourcePath1)
     assert(resourceLocator:isEqual(expectedLocator), "getResourceLocator(="..resourceLocator:getURI()..") not the same as expected(="..expectedLocator:getURI()..")")

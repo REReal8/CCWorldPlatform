@@ -197,7 +197,7 @@ end
 function T_URL.T_Setters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." setter tests")
-    local obj = URL:new()
+    local obj = URL:newInstance()
 
     -- test
     obj:setHost(host1)
@@ -218,7 +218,7 @@ end
 function T_URL.T_SettersFromURI()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." setter from URI tests")
-    local obj = URL:new()
+    local obj = URL:newInstance()
 
     -- test
     obj:setHostURI(hostURI)

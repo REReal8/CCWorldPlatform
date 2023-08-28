@@ -92,7 +92,7 @@ function Host:getHostLocator()
             nil
     --]]
 
-    local hostURL = URL:new()
+    local hostURL = URL:newInstance()
     hostURL:setHost(self:getHostName())
 
     return hostURL

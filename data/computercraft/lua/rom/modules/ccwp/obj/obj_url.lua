@@ -65,7 +65,7 @@ function URL:new(...)
 end
 
 function URL:newFromURI(uri, suppressError)
-    local aNewURL = URL:new({})
+    local aNewURL = URL:newInstance()
 
     aNewURL:setURI(uri, suppressError)
 
