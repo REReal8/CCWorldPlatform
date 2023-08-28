@@ -47,7 +47,7 @@ local codeTable1 = ObjTable:newInstance(blockClassName, {
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
     [" "]   = Block:newInstance(Block.NoneBlockName()),
 })
-local codeMap1 = CodeMap:new({
+local codeMap1 = CodeMap:newInstance({
     [6] = "CD   ?",
     [5] = "      ",
     [4] = "T  S  ",
@@ -214,7 +214,7 @@ function T_LayerRectangle.T_transformToLayer()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "   S  ",
             [5] = "      ",
             [4] = "   S  ",
@@ -230,7 +230,7 @@ function T_LayerRectangle.T_transformToLayer()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "   ?  ",
             [5] = "      ",
             [4] = "T  S  ",
@@ -252,7 +252,7 @@ function T_LayerRectangle.T_transformToLayer()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "??????",
             [5] = "??????",
             [4] = "T?????",
@@ -270,7 +270,7 @@ function T_LayerRectangle.T_transformToLayer()
             ["S"]   = Block:newInstance(saplingItemName),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
@@ -290,7 +290,7 @@ function T_LayerRectangle.T_transformToLayer()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "??? ??",
             [5] = "??????",
             [4] = "T?????",
@@ -315,7 +315,7 @@ function T_LayerRectangle.T_cleanCodeTable()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [4] = "    ",
             [3] = "T   ",
             [2] = "    ",
@@ -358,7 +358,7 @@ function T_LayerRectangle.T_buildData()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "??????",
             [5] = "??????",
             [4] = "??TC ?",
@@ -379,7 +379,7 @@ function T_LayerRectangle.T_buildData()
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [3] = "TC ",
             [2] = " C?",
             [1] = "? T",

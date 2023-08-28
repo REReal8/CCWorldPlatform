@@ -182,7 +182,7 @@ local function Chest_layer()
         ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "C",
         })
     )
@@ -223,7 +223,7 @@ local function ChestDismantle_layer()
         ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = " ",
         })
     )

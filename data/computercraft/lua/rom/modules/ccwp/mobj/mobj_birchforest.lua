@@ -442,7 +442,7 @@ function Tree_layerLm1()
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "??????",
             [5] = "??????",
             [4] = "???S??",
@@ -459,7 +459,7 @@ function Tree_layerL0()
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "      ",
             [5] = "      ",
             [4] = "   S  ",
@@ -477,7 +477,7 @@ function Tree_layerL1()
             ["T"]   = Block:newInstance("minecraft:torch"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",
@@ -497,7 +497,7 @@ function Base_layerL2()
             ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "      ",
             [5] = "      ",
             [4] = "T  S  ",

@@ -150,7 +150,7 @@ end
 function T_CodeMap.T_getCode()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getCode() tests")
-    local obj = CodeMap:new(codeRowArray1) assert(obj, "Failed obtaining CodeMap")
+    local obj = CodeMap:newInstance(codeRowArray1) assert(obj, "Failed obtaining CodeMap")
 
     -- test
     local code = obj:getCode(4, 1)
@@ -169,7 +169,7 @@ function T_CodeMap.T_transformToMap()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":transformToMap() tests")
     local anyBlockCode = "?"
-    local fromMap = CodeMap:new({
+    local fromMap = CodeMap:newInstance({
         [6] = "   S  ",
         [5] = "      ",
         [4] = "   S  ",
@@ -177,7 +177,7 @@ function T_CodeMap.T_transformToMap()
         [2] = "   ?  ",
         [1] = "   ?  ",
     }) assert(fromMap, "Failed obtaining CodeMap")
-    local toMap = CodeMap:new({
+    local toMap = CodeMap:newInstance({
         [6] = "   ?  ",
         [5] = "      ",
         [4] = "T  S  ",
@@ -191,7 +191,7 @@ function T_CodeMap.T_transformToMap()
     local isInstanceOf = Class.IsInstanceOf(transformLayer, CodeMap)
     local expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
-    local expectedMap = CodeMap:new({
+    local expectedMap = CodeMap:newInstance({
         [6] = "??????",
         [5] = "??????",
         [4] = "T?????",
@@ -202,7 +202,7 @@ function T_CodeMap.T_transformToMap()
     assert(transformLayer:isEqual(expectedMap), "gotten transformToMap(="..textutils.serialize(transformLayer, compact)..") not the same as expected(="..textutils.serialize(expectedMap, compact)..")")
 
     -- test anyBlock added to _codeTable
-    toMap = CodeMap:new({
+    toMap = CodeMap:newInstance({
         [6] = "      ",
         [5] = "      ",
         [4] = "T  S  ",
@@ -214,7 +214,7 @@ function T_CodeMap.T_transformToMap()
     isInstanceOf = Class.IsInstanceOf(transformLayer, CodeMap)
     expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
-    expectedMap = CodeMap:new({
+    expectedMap = CodeMap:newInstance({
         [6] = "??? ??",
         [5] = "??????",
         [4] = "T?????",
@@ -234,7 +234,7 @@ function T_CodeMap.T_removeRow()
     -- test top
     local obj = T_CodeMap.CreateTestObj()
     obj:removeRow(6)
-    local expectedMap = CodeMap:new({
+    local expectedMap = CodeMap:newInstance({
         [5] = "      ",
         [4] = "T  S  ",
         [3] = "  ?   ",
@@ -246,7 +246,7 @@ function T_CodeMap.T_removeRow()
     -- test a mid
     obj = T_CodeMap.CreateTestObj()
     obj:removeRow(4)
-    expectedMap = CodeMap:new({
+    expectedMap = CodeMap:newInstance({
         [5] = "CD   ?",
         [4] = "      ",
         [3] = "  ?   ",
@@ -258,7 +258,7 @@ function T_CodeMap.T_removeRow()
     -- test bottom
     obj = T_CodeMap.CreateTestObj()
     obj:removeRow(1)
-    expectedMap = CodeMap:new({
+    expectedMap = CodeMap:newInstance({
         [5] = "CD   ?",
         [4] = "      ",
         [3] = "T  S  ",
@@ -290,7 +290,7 @@ function T_CodeMap.T_removeColumn()
     -- test right
     local obj = T_CodeMap.CreateTestObj()
     obj:removeColumn(6)
-    local expectedMap = CodeMap:new({
+    local expectedMap = CodeMap:newInstance({
         [6] = "CD   ",
         [5] = "     ",
         [4] = "T  S ",
@@ -303,7 +303,7 @@ function T_CodeMap.T_removeColumn()
     -- test mid
     obj = T_CodeMap.CreateTestObj()
     obj:removeColumn(4)
-    expectedMap = CodeMap:new({
+    expectedMap = CodeMap:newInstance({
         [6] = "CD  ?",
         [5] = "     ",
         [4] = "T    ",
@@ -316,7 +316,7 @@ function T_CodeMap.T_removeColumn()
     -- test left
     obj = T_CodeMap.CreateTestObj()
     obj:removeColumn(1)
-    expectedMap = CodeMap:new({
+    expectedMap = CodeMap:newInstance({
         [6] = "D   ?",
         [5] = "     ",
         [4] = "  S  ",
@@ -334,7 +334,7 @@ function T_CodeMap.T_removeBoundariesWithOnly()
     corelog.WriteToLog("* "..testClassName..":removeBoundariesWithOnly() tests")
 
     -- test right
-    local obj = CodeMap:new({
+    local obj = CodeMap:newInstance({
         [6] = "??????",
         [5] = "??????",
         [4] = "??TC ?",
@@ -348,7 +348,7 @@ function T_CodeMap.T_removeBoundariesWithOnly()
     assert(rowOffset == expectedOffset, "gotten rowOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for code "..code.." not the same as expected(="..tostring(expectedOffset)..")")
-    local expectedMap = CodeMap:new({
+    local expectedMap = CodeMap:newInstance({
         [3] = "TC ",
         [2] = " C?",
         [1] = "? T",

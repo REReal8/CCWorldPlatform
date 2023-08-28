@@ -29,7 +29,7 @@ local codeTable1 = ObjTable:newInstance(blockClassName, {
     ["?"]   = Block:newInstance(Block.AnyBlockName()),
     [" "]   = Block:newInstance(Block.NoneBlockName()),
 })
-local codeMap1 = CodeMap:new({
+local codeMap1 = CodeMap:newInstance({
     [6] = "  C ",
     [5] = "    ",
     [4] = "T   ",
@@ -47,7 +47,7 @@ local testBuildLayer2 = LayerRectangle:newInstance(
         ["F"]   = Block:newInstance(chestItemName, 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    CodeMap:new({
+    CodeMap:newInstance({
         [3] = "DDF",
         [2] = "C F",
         [1] = "CEE",
@@ -62,7 +62,7 @@ local testBuildLayer3 = LayerRectangle:newInstance(
         ["?"]   = Block:newInstance(Block.AnyBlockName()),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    CodeMap:new({
+    CodeMap:newInstance({
         [6] = "C D  T",
         [5] = "    T ",
         [4] = "   T  ",

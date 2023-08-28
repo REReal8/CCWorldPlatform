@@ -251,7 +251,7 @@ local function TopLayerlayer()
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",

@@ -50,7 +50,7 @@ local function Chest_layer()
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "C C",
         })
     )
@@ -61,7 +61,7 @@ local function Computer_layer()
         ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("computercraft:computer_normal", 0, -1),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "C",
         })
     )
@@ -72,7 +72,7 @@ local function Modem_layer()
         ObjTable:newInstance(blockClassName, {
             ["M"]   = Block:newInstance("computercraft:wireless_modem_normal"),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "M",
         })
     )
@@ -84,7 +84,7 @@ local function Monitor_Only_layer()
             ["M"]   = Block:newInstance("computercraft:monitor_normal"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "MMMMMMMM MMMMMMMM",
         })
     )

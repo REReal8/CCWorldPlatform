@@ -26,7 +26,7 @@ local testBuildLayer1 = LayerRectangle:newInstance(
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    CodeMap:new({
+    CodeMap:newInstance({
         [6] = "  C ",
         [5] = "    ",
         [4] = "T   ",
@@ -44,7 +44,7 @@ local testBuildLayer2 = LayerRectangle:newInstance(
         ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    CodeMap:new({
+    CodeMap:newInstance({
         [3] = "DDF",
         [2] = "C F",
         [1] = "CEE",
@@ -57,7 +57,7 @@ local testBuildLayer3 = LayerRectangle:newInstance(
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    CodeMap:new({
+    CodeMap:newInstance({
         [6] = "  C C ",
         [5] = "      ",
         [4] = "T     ",
@@ -71,7 +71,7 @@ local testBuildLayer4 = LayerRectangle:newInstance(
     ObjTable:newInstance(blockClassName, {
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
-    CodeMap:new({
+    CodeMap:newInstance({
         [1] = " ",
     })
 ) assert(testBuildLayer4, "Failed obtaining testBuildLayer4")

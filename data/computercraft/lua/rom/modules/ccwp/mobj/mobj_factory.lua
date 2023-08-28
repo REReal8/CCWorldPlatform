@@ -721,7 +721,7 @@ local function Shaft_layer()
         ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = " ",
         })
     )
@@ -732,7 +732,7 @@ local function ShaftRestore_layer()
         ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "D",
         })
     )
@@ -822,7 +822,7 @@ local function AboveOrBelowFurnanceL1_layer()
         ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [2] = " ",
             [1] = " ",
         })
@@ -835,7 +835,7 @@ local function FurnanceL1_layer()
             ["F"]   = Block:newInstance("minecraft:furnace"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [2] = "F",
             [1] = " ",
         })
@@ -909,7 +909,7 @@ local function ItemDepotChestL2_layer()
         ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "C",
         })
     )
@@ -922,7 +922,7 @@ local function TopLayerL2_layer()
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",

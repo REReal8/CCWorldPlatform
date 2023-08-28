@@ -140,7 +140,7 @@ function CodeMap:transformToMap(...)
     if fromMap:getNColumns() ~= toMap:getNColumns() then corelog.Error("CodeMap:transformToMap: # columns in fromMap(="..fromMap:getNColumns()..") not equal to that in toMap(="..toMap:getNColumns()..")") return nil end
 
     -- construct transformCodeMap
-    local transformCodeMap = CodeMap:new()
+    local transformCodeMap = CodeMap:newInstance()
     local nCol = fromMap:getNColumns()
 
     -- loop on rows

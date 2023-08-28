@@ -253,7 +253,7 @@ local function TopL0_layer()
             ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "  C C ",
             [5] = "      ",
             [4] = "T     ",
@@ -269,7 +269,7 @@ local function Shaft_layer()
         ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = " ",
         })
     )
@@ -284,7 +284,7 @@ local function Storage_layer()
             ["F"]   = Block:newInstance("minecraft:chest", 1, 0),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [3] = "DDF",
             [2] = "C F",
             [1] = "CEE",
@@ -336,7 +336,7 @@ local function StorageDismantle_layer()
             ["D"]   = Block:newInstance("minecraft:dirt"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [3] = "DDD",
             [2] = "D?D",
             [1] = "DDD",
@@ -349,7 +349,7 @@ local function ShaftDismantle_layer()
         ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [1] = "D",
         })
     )
@@ -360,7 +360,7 @@ local function TopDismantle_layer()
         ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
-        CodeMap:new({
+        CodeMap:newInstance({
             [6] = "      ",
             [5] = "      ",
             [4] = "      ",
