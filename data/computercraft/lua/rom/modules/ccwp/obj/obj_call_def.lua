@@ -20,6 +20,26 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function CallDef:_init(...)
+    -- get & check input from description
+    local checkSuccess, moduleName, methodName, data = InputChecker.Check([[
+        Initialise a CallDef.
+
+        Parameters:
+            moduleName          + (string, "") name of module to call
+            methodName          + (string, "") name of method to call
+            data                + (table, {}) with arguments to pass to method call
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("CallDef:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._moduleName    = moduleName
+    self._methodName    = methodName
+    self._data          = data
+end
+
+
 function CallDef:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[

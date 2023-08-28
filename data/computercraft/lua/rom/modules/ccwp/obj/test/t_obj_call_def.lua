@@ -6,11 +6,16 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local CallDef = require "obj_call_def"
 
+local FieldsTest = require "fields_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local FieldValueTypeTest = require "field_value_type_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_CallDef.T_All()
     -- initialisation
+    T_CallDef.T__init()
     T_CallDef.T_new()
 
     -- IObj methods
@@ -19,9 +24,11 @@ function T_CallDef.T_All()
     -- specific methods
 end
 
+local testClassName = "CallDef"
+local logOk = false
 local moduleName1 = "T_CallDef"
 local methodName1 = "Call_Callback"
-local data1 = {"some callback data"}
+local data1 = {"some obj data"}
 
 local compact = { compact = true }
 
@@ -32,38 +39,62 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "CallDef"
-function T_CallDef.CreateTestObj()
-    local testObj = CallDef:new({
-        _moduleName     = moduleName1,
-        _methodName     = methodName1,
-        _data           = {"some callback data"},
-    })
+function T_CallDef.CreateTestObj(moduleName, methodName, data)
+    -- check input
+    moduleName = moduleName or moduleName1
+    methodName = methodName or methodName1
+    data = data or {"some obj data"}
 
+    -- create testObj
+    local testObj = CallDef:newInstance(moduleName, methodName, data)
+
+    -- end
     return testObj
+end
+
+function T_CallDef.CreateInitialisedTest(moduleName, methodName, data)
+    -- check input
+
+    -- create test
+    local test = FieldsTest:newInstance(
+        FieldValueEqualTest:newInstance("_moduleName", moduleName),
+        FieldValueEqualTest:newInstance("_methodName", methodName),
+        FieldValueTypeTest:newInstance("_data", "table")
+    )
+
+    -- end
+    return test
+end
+
+function T_CallDef.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_CallDef.CreateTestObj(moduleName1, methodName1, data1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_CallDef.CreateInitialisedTest(moduleName1, methodName1, data1)
+    test:test(obj, "calldef", "", logOk)
+
+    -- test default
+    obj = CallDef:newInstance()
+    test = T_CallDef.CreateInitialisedTest("", "", {})
+    test:test(obj, "calldef", "", logOk)
+
+    -- cleanup test
 end
 
 function T_CallDef.T_new()
     -- prepare test
-    corelog.WriteToLog("* CallDef:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local callback = CallDef:new({
+    local obj = CallDef:new({
         _moduleName     = moduleName1,
         _methodName     = methodName1,
         _data           = data1,
     })
-    assert(callback:getModuleName() == moduleName1, "gotten getModuleName(="..callback:getModuleName()..") not the same as expected(="..moduleName1..")")
-    assert(callback:getMethodName() == methodName1, "gotten getMethodName(="..callback:getMethodName()..") not the same as expected(="..methodName1..")")
-    local data = callback:getData()
-    assert(data == data1, "gotten getData(="..textutils.serialise(callback:getData(), compact)..") not the same as expected(="..textutils.serialise(data1, compact)..")")
-
-    -- test default
-    callback = CallDef:new()
-    assert(callback:getModuleName() == "", "gotten getModuleName(="..(callback:getModuleName() or "nil")..") not the same as expected(='')")
-    assert(callback:getMethodName() == "", "gotten getMethodName(="..(callback:getMethodName() or "nil")..") not the same as expected(='')")
-    data = callback:getData()
-    assert(type(data) == "table" and next(data) == nil , "gotten getData(="..textutils.serialise(callback:getData(), compact)..") not the same as expected(={})")
+    local test = T_CallDef.CreateInitialisedTest(moduleName1, methodName1, data1)
+    test:test(obj, "calldef", "", logOk)
 
     -- cleanup test
 end
