@@ -104,7 +104,7 @@ end
 
 function CodeMap:transformToMap(...)
     -- get & check input from description
-    local checkSuccess, toMap = InputChecker.Check([[
+    local checkSuccess, toMap, anyBlockCode = InputChecker.Check([[
         This method returns the CodeMap that is needed to transform this CodeMap into toMap.
 
         Return value:
@@ -113,6 +113,7 @@ function CodeMap:transformToMap(...)
 
         Parameters:
             toMap                   + (CodeMap) table with
+            anyBlockCode            + (string) block code to use for new any blocks
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("CodeMap:transformToMap: Invalid input") return nil end
 
@@ -124,7 +125,6 @@ function CodeMap:transformToMap(...)
     -- construct transformCodeMap
     local transformCodeMap = CodeMap:new()
     local nCol = fromMap:getNColumns()
-    local anyBlockCode = "?"
 
     -- loop on rows
     local anyBlockInserted = false

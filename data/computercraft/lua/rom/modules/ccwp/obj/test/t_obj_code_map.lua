@@ -123,6 +123,7 @@ end
 function T_CodeMap.T_transformToMap()
     -- prepare test
     corelog.WriteToLog("* CodeMap:transformToMap() tests")
+    local anyBlockCode = "?"
     local fromMap = CodeMap:new({
         [6] = "   S  ",
         [5] = "      ",
@@ -141,7 +142,7 @@ function T_CodeMap.T_transformToMap()
     }) assert(toMap, "Failed obtaining CodeMap")
 
     -- test
-    local transformLayer = fromMap:transformToMap(toMap)
+    local transformLayer = fromMap:transformToMap(toMap, anyBlockCode)
     local isInstanceOf = Class.IsInstanceOf(transformLayer, CodeMap)
     local expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
@@ -164,7 +165,7 @@ function T_CodeMap.T_transformToMap()
         [2] = "      ",
         [1] = "   T  ",
     })
-    transformLayer = fromMap:transformToMap(toMap)
+    transformLayer = fromMap:transformToMap(toMap, anyBlockCode)
     isInstanceOf = Class.IsInstanceOf(transformLayer, CodeMap)
     expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")

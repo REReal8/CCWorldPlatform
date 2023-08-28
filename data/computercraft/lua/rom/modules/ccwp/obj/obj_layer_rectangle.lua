@@ -138,7 +138,7 @@ function LayerRectangle:transformToLayer(...)
     -- construct transformCodeMap
     local toMap = toLayer._codeMap
     local anyBlockCode = "?"
-    local transformCodeMap, anyBlockInserted = self._codeMap:transformToMap(toMap)
+    local transformCodeMap, anyBlockInserted = self._codeMap:transformToMap(toMap, anyBlockCode)
 
     -- construct transformCodeTable
     local blockClassName = "Block"
