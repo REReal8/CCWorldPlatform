@@ -32,7 +32,9 @@ function FieldValueTypeTest:test(testObj, testObjName, indent, logOk)
     local testFieldStr = testObjName.."."..self._fieldName.." field"
 
     local fieldValue = testObj[self._fieldName]
-    assert(fieldValue, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have field")
+    if self._expectedType ~= "nil" then
+        assert(fieldValue, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have field")
+    end
 
     -- test (via ValueTypeTest base)
     ValueTypeTest.test(self, fieldValue, testFieldStr, indent.."  ", logOk)
