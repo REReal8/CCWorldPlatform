@@ -56,7 +56,7 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
    -  adopt this approach for all classes
       -  TestObj
       R  Location                                                                                                       (done)
-      -  URL
+      R  URL                                                                                                            (done) note: a lot of URL:new remaining where a table is given
       -  Inventory
       R  ObjTable                                                                                                       (done)
       R  ObjArray                                                                                                       (done)
