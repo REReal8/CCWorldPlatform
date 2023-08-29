@@ -10,6 +10,7 @@ local MethodResultEqualTest = Class.NewClass(MethodResultTest)
 --]]
 
 local ValueEqualTest = require "value_equal_test"
+local MultipleValuesTest = require "multiple_values_test"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -24,7 +25,7 @@ function MethodResultEqualTest:_init(methodName, expectedResult)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
 
     -- initialisation
-    MethodResultTest._init(self, methodName, ValueEqualTest:newInstance(expectedResult))
+    MethodResultTest._init(self, methodName, MultipleValuesTest:newInstance(ValueEqualTest:newInstance(expectedResult)))
 end
 
 --    _____ ____  _     _                  _   _               _

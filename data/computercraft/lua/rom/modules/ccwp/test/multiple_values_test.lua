@@ -2,15 +2,17 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local ITest = require "i_test"
-local MethodResultTest = Class.NewClass(ObjBase, ITest)
+local MultipleValuesTest = Class.NewClass(ObjBase, ITest)
 
 --[[
-    This module implements the class MethodResultTest.
+    This module implements the class MultipleValuesTest.
 
-    It is a generic test class for testing the results of a method call on an object.
+    It is a generic test class for testing multitude values.
 --]]
 
 local corelog = require "corelog"
+
+local IObj = require "i_obj"
 
 local compact = { compact = true }
 
@@ -21,15 +23,15 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function MethodResultTest:_init(methodName, resultTest)
+function MultipleValuesTest:_init(...)
     -- check input
-    local methodNameType = type(methodName)
-    assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
-    assert(Class.IsInstanceOf(resultTest, ITest), "Provided resultTest argument not an ITest")
+    local valuesTests = {...}
+    for i, valueTest in ipairs(valuesTests) do
+        assert(Class.IsInstanceOf(valueTest, ITest), "Provided valueTest argument "..textutils.serialise(valueTest).." not an ITest")
+    end
 
     -- initialisation
-    self._resultTest    = resultTest
-    self._methodName    = methodName
+    self._valueTests = valuesTests
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -41,8 +43,8 @@ end
 --                    _/ |
 --                   |__/
 
-function MethodResultTest:getClassName()
-    return "MethodResultTest"
+function MultipleValuesTest:getClassName()
+    return "MultipleValuesTest"
 end
 
 --    _____ _______        _
@@ -52,27 +54,27 @@ end
 --    _| |_   | |  __/\__ \ |_
 --   |_____|  |_|\___||___/\__|
 
-function MethodResultTest:test(testObj, testObjName, indent, logOk)
+function MultipleValuesTest:test(values, valuesName, indent, logOk)
     -- check input
-    assert(type(testObjName) == "string", "testObjName not a string")
+    assert(type(valuesName) == "string", "valuesName not a string")
     assert(type(indent) == "string", "indent not a string")
     assert(type(logOk) == "boolean", "logOk not a boolean")
 
     -- prepare test
-    local testFieldStr = testObjName..":"..self._methodName.."() result"
+    local testContextStr = valuesName.." values "..textutils.serialise(values, compact)
 
-    local method = testObj[self._methodName]
-    assert(method, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have method")
-
-    -- test (via ValueEqualTest)
-    local methodResults = {method(testObj)} -- note: collect possible multiple results
-    -- ToDo: consider allowing methods which additional arguments
-    self._resultTest:test(methodResults, testFieldStr, indent.."  ", logOk)
+    -- test all tests
+    assert(self._valueTests, indent..testContextStr..": no tests provided")
+    for i, valueTest in ipairs(self._valueTests) do
+        -- test
+        local value = values[i]
+        valueTest:test(value, valuesName.."["..i.."]", indent.."  ", logOk)
+    end
 
     -- complete test
-    if logOk then corelog.WriteToLog(indent..testFieldStr.." ok") end
+    if logOk then corelog.WriteToLog(indent..testContextStr.." ok") end
 
     -- cleanup test
 end
 
-return MethodResultTest
+return MultipleValuesTest
