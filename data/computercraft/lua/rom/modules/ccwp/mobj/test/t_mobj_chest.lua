@@ -62,6 +62,7 @@ end
 
 local logOk = false
 local testClassName = "Chest"
+local testObjName = "chest"
 local mobjHostName = "enterprise_chests"
 local location1  = Location:newInstance(-6, 0, 1, 0, 1)
 local location2  = Location:newInstance(-6, 6, 1, 0, 1)
@@ -117,7 +118,7 @@ function T_Chest.T__init()
     -- test
     local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
     local test = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    test:test(obj, "chest", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -136,7 +137,7 @@ function T_Chest.T_new()
         _inventory              = inventory1:copy(),
     })
     local test = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
-    test:test(obj, "chest", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -153,7 +154,7 @@ function T_Chest.T_Getters()
         MethodResultEqualTest:newInstance("getAccessDirection", accessDirection1),
         MethodResultEqualTest:newInstance("getInventory", inventory1)
     )
-    test:test(obj, "chest", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -216,7 +217,7 @@ function T_Chest.T_construct()
     -- test
     local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
     local test = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
-    test:test(obj, "chest", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 end
 
 function T_Chest.T_destruct()
@@ -236,7 +237,7 @@ function T_Chest.T_getId()
 
     -- test
     local test = MethodResultEqualTest:newInstance("getId", obj._id)
-    test:test(obj, "chest", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 end
 
 function T_Chest.T_getWIPId()
@@ -247,7 +248,7 @@ function T_Chest.T_getWIPId()
     -- test
     local expectedWIPId = testClassName.." "..obj:getId()
     local test = MethodResultEqualTest:newInstance("getWIPId", expectedWIPId)
-    test:test(obj, "chest", "", logOk)
+    test:test(obj, testObjName, "", logOk)
 end
 
 --                        _                           _   _               _
