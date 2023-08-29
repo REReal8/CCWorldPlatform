@@ -9,7 +9,7 @@ local ObjArray = require "obj_array"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
@@ -70,7 +70,7 @@ function T_ObjArray.CreateInitialisedTest(objClassName, objsArray)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_objClassName", objClassName)
     )
     for i, obj in ipairs(objsArray) do

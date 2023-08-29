@@ -9,7 +9,7 @@ local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
@@ -82,7 +82,7 @@ function T_LayerRectangle.CreateInitialisedTest(codeTable, codeMap)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_codeTable", codeTable),
         FieldValueEqualTest:newInstance("_codeMap", codeMap)
     )

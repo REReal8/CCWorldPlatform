@@ -7,7 +7,7 @@ local URL = require "obj_url"
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
 
@@ -87,7 +87,7 @@ function T_URL.CreateInitialisedTest(host, path, query, port)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_host", host),
         FieldValueEqualTest:newInstance("_path", path),
         FieldValueEqualTest:newInstance("_query", query)

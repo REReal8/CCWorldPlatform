@@ -2,17 +2,17 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local ITest = require "i_test"
-local FieldsTest = Class.NewClass(ObjBase, ITest)
+local TestArrayTest = Class.NewClass(ObjBase, ITest)
 
 --[[
-    This module implements the class FieldsTest.
+    This module implements the class TestArrayTest.
 
-    It is a generic test class for testing the equality of fields in an object.
+    It is a generic test class for testing multiple (i.e. an array of) tests on an object.
 --]]
 
 local corelog = require "corelog"
 
-function FieldsTest:_init(...)
+function TestArrayTest:_init(...)
     -- check input
     local tests = {...}
     for i, test in ipairs(tests) do
@@ -23,7 +23,7 @@ function FieldsTest:_init(...)
     self._tests = tests
 end
 
-function FieldsTest:test(testObj, testObjName, indent, logOk)
+function TestArrayTest:test(testObj, testObjName, indent, logOk)
     -- check input
     assert(type(testObj) ~= "nil", "testObj shouldn't be nil")
     assert(type(testObjName) == "string", "testObjName not a string")
@@ -46,4 +46,4 @@ function FieldsTest:test(testObj, testObjName, indent, logOk)
     -- cleanup test
 end
 
-return FieldsTest
+return TestArrayTest

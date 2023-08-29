@@ -9,7 +9,7 @@ local ObjTable = require "obj_table"
 local TestObj = require "test.obj_test"
 local Location = require "obj_location"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
@@ -71,7 +71,7 @@ function T_ObjTable.CreateInitialisedTest(objClassName, objsTable)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_objClassName", objClassName)
     )
     for key, obj in pairs(objsTable) do

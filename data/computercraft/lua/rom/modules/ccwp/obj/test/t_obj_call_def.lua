@@ -6,7 +6,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local CallDef = require "obj_call_def"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
 
@@ -56,7 +56,7 @@ function T_CallDef.CreateInitialisedTest(moduleName, methodName, data)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_moduleName", moduleName),
         FieldValueEqualTest:newInstance("_methodName", methodName),
         FieldValueTypeTest:newInstance("_data", "table")

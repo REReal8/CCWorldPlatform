@@ -5,7 +5,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Block = require "obj_block"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
@@ -60,7 +60,7 @@ function T_Block.CreateInitialisedTest(blockName, dx, dy)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         FieldValueEqualTest:newInstance("_name", blockName),
         FieldValueEqualTest:newInstance("_dx", dx),
         FieldValueEqualTest:newInstance("_dy", dy)

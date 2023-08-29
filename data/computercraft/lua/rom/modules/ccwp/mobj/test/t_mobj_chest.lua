@@ -19,7 +19,7 @@ local Chest = require "mobj_chest"
 
 local enterprise_chests = require "enterprise_chests"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
@@ -99,7 +99,7 @@ function T_Chest.CreateInitialisedTest(id, baseLocation, accessDirection, invent
     -- create test
     local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
     if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         idTest,
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_accessDirection", accessDirection),
@@ -149,7 +149,7 @@ function T_Chest.T_Getters()
     local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getBaseLocation", location1),
         MethodResultEqualTest:newInstance("getAccessDirection", accessDirection1),
         MethodResultEqualTest:newInstance("getInventory", inventory1)

@@ -6,7 +6,7 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local CodeMap = require "obj_code_map"
 
-local FieldsTest = require "fields_test"
+local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
@@ -71,7 +71,7 @@ function T_CodeMap.CreateInitialisedTest(codeRowArray)
     -- check input
 
     -- create test
-    local test = FieldsTest:newInstance(
+    local test = TestArrayTest:newInstance(
     )
     for i, codeRow in ipairs(codeRowArray) do
         table.insert(test._tests, FieldValueEqualTest:newInstance(i, codeRow))
