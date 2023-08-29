@@ -240,7 +240,8 @@ end
 function T_Chest.T_getId()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getId() tests")
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local id = coreutils.NewId()
+    local obj = T_Chest.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = MethodResultEqualTest:newInstance("getId", obj._id)
@@ -250,7 +251,7 @@ end
 function T_Chest.T_getWIPId()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getWIPId() tests")
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local expectedWIPId = testClassName.." "..obj:getId()
@@ -261,7 +262,7 @@ end
 function T_Chest.T_getBuildBlueprint()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getBuildBlueprint() tests")
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(nil, location1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local isBlueprintTest = IsBlueprintTest:newInstance(location1)
@@ -272,7 +273,7 @@ end
 function T_Chest.T_getDismantleBlueprint()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getDismantleBlueprint() tests")
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(nil, location1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local isBlueprintTest = IsBlueprintTest:newInstance(location1)
