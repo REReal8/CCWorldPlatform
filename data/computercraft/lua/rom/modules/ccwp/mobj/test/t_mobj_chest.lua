@@ -214,16 +214,6 @@ local constructParameters1 = {
     accessDirection = accessDirection1,
 }
 
-function T_Chest.T_construct()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":construct() tests")
-
-    -- test
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
-    test:test(obj, testObjName, "", logOk)
-end
-
 function T_Chest.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":destruct() tests")
@@ -232,6 +222,19 @@ function T_Chest.T_destruct()
     -- test
     local destructSuccess = obj:destruct()
     assert(destructSuccess, testClassName..":destruct() not a success")
+end
+
+function T_Chest.T_construct()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":construct() tests")
+
+    -- test
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
+    obj:destruct()
 end
 
 function T_Chest.T_getId()
