@@ -98,7 +98,7 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
    -  use in mobj_turtle
 
 -  ensure all MObj's implement and follow IMObj interface
-   -  generalise (I)MObj test functions; i.e. for construct, destruct, etc
+   R  generalise (I)MObj test functions; i.e. for construct, destruct, etc                                              (done)
    R  mobj_test                                                                                                         (done)
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)

@@ -22,14 +22,13 @@ local enterprise_chests = require "enterprise_chests"
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
-local MethodResultTest = require "method_result_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_Class = require "test.t_class"
-local T_Obj = require "test.t_obj"
+local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
 
@@ -45,14 +44,7 @@ function T_Chest.T_All()
     T_Chest.T_IObj_All()
 
     -- IMObj methods
-    T_Chest.T_IsInstanceOf_IMObj()
-    T_Chest.T_Implements_IMObj()
-    T_Chest.T_construct()
-    T_Chest.T_destruct()
-    T_Chest.T_getId()
-    T_Chest.T_getWIPId()
-    T_Chest.T_getBuildBlueprint()
-    T_Chest.T_getDismantleBlueprint()
+    T_Chest.T_IMObj_All()
 
     -- IItemSupplier methods
     T_Chest.T_IItemSupplier_All()
@@ -69,7 +61,6 @@ local testClassName = "Chest"
 local testObjName = "chest"
 local mobjHostName = "enterprise_chests"
 local location1  = Location:newInstance(-6, 0, 1, 0, 1)
-local location2  = Location:newInstance(-6, 6, 1, 0, 1)
 local accessDirection1 = "top"
 local emptyInventory = Inventory:new()
 local inventory1 = Inventory:new() -- ToDo: add elements
@@ -193,92 +184,20 @@ end
 --                            _/ |
 --                           |__/
 
-function T_Chest.T_IsInstanceOf_IMObj()
-    -- prepare test
-    local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
-end
-
-function T_Chest.T_Implements_IMObj()
-    -- prepare test
-    local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
-end
-
 local constructParameters1 = {
     baseLocation    = location1,
     accessDirection = accessDirection1,
 }
 
-function T_Chest.T_destruct()
+function T_Chest.T_IMObj_All()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":destruct() tests")
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local destructSuccess = obj:destruct()
-    assert(destructSuccess, testClassName..":destruct() not a success")
-end
-
-function T_Chest.T_construct()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":construct() tests")
-
-    -- test
-    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
-    test:test(obj, testObjName, "", logOk)
-
-    -- cleanup test
-    obj:destruct()
-end
-
-function T_Chest.T_getId()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getId() tests")
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local test = MethodResultEqualTest:newInstance("getId", obj._id)
-    test:test(obj, testObjName, "", logOk)
-end
-
-function T_Chest.T_getWIPId()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getWIPId() tests")
-    local obj = T_Chest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    local expectedWIPId = testClassName.." "..obj:getId()
-    local test = MethodResultEqualTest:newInstance("getWIPId", expectedWIPId)
-    test:test(obj, testObjName, "", logOk)
-end
-
-function T_Chest.T_getBuildBlueprint()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getBuildBlueprint() tests")
-    local obj = T_Chest.CreateTestObj(nil, location1) assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
+    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
+    local initialisedTest = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
     local isBlueprintTest = IsBlueprintTest:newInstance(location1)
-    local test = MethodResultTest:newInstance("getBuildBlueprint", isBlueprintTest)
-    test:test(obj, testObjName, "", logOk)
-end
-
-function T_Chest.T_getDismantleBlueprint()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getDismantleBlueprint() tests")
-    local obj = T_Chest.CreateTestObj(nil, location1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    local isBlueprintTest = IsBlueprintTest:newInstance(location1)
-    local test = MethodResultTest:newInstance("getDismantleBlueprint", isBlueprintTest)
-    test:test(obj, testObjName, "", logOk)
+    T_IMObj.pt_all(testClassName, Chest, constructParameters1, obj, testObjName, initialisedTest, isBlueprintTest, logOk)
 end
 
 --                        _                           _   _               _
