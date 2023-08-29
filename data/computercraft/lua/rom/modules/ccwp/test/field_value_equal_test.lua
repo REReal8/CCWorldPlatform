@@ -25,7 +25,7 @@ end
 
 function FieldValueEqualTest:test(testObj, testObjName, indent, logOk)
     -- check input
-    assert(type(testObjName) == "string", "testObjClassName not a string")
+    assert(type(testObjName) == "string", "testObjName not a string")
     assert(type(indent) == "string", "indent not a string")
     assert(type(logOk) == "boolean", "logOk not a boolean")
 
