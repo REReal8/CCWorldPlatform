@@ -5,6 +5,7 @@ local Class = require "class"
 local IObj = require "i_obj"
 
 function T_IObj.pt_all(className, obj, otherObj)
+    -- IObj methods
     T_IObj.pt_getClassName(className, obj)
     T_IObj.pt_isEqual(className, obj, otherObj)
     T_IObj.pt_copy(className, obj)
