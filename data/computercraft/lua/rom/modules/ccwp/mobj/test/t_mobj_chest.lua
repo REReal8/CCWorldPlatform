@@ -20,12 +20,11 @@ local Chest = require "mobj_chest"
 local enterprise_chests = require "enterprise_chests"
 
 local TestArrayTest = require "test_array_test"
-local ValueEqualTest = require "value_equal_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultTest = require "method_result_test"
 local MethodResultEqualTest = require "method_result_equal_test"
-local MultipleValuesTest = require "multiple_values_test"
+local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
@@ -254,29 +253,6 @@ function T_Chest.T_getWIPId()
     local expectedWIPId = testClassName.." "..obj:getId()
     local test = MethodResultEqualTest:newInstance("getWIPId", expectedWIPId)
     test:test(obj, testObjName, "", logOk)
-end
-
-
--- define class
-local Class = require "class"
-local IsBlueprintTest = Class.NewClass(MultipleValuesTest)
-
--- ToDo: consider extending this test class by testing the blueprint a bit more in details.
---      Also take into account we want implement a Blueprint class, which likely replaces part of this test.
-function IsBlueprintTest:_init(buildLocation)
-    -- check input
-    assert(Class.IsInstanceOf(buildLocation, Location), "Provided buildLocation argument "..textutils.serialise(buildLocation).." not aLocation")
-
-    -- initialisation
-    MultipleValuesTest._init(self,
-        -- result value 1
-        ValueEqualTest:newInstance(location1),
-        -- result value 2
-        TestArrayTest:newInstance(
-            FieldValueTypeTest:newInstance("layerList", "table"),
-            FieldValueTypeTest:newInstance("escapeSequence", "table")
-        )
-    )
 end
 
 function T_Chest.T_getBuildBlueprint()
