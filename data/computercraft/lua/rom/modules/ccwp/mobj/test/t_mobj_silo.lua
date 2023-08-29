@@ -175,14 +175,14 @@ end
 function T_Silo.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":destruct() tests")
-    local mobj = Silo:construct({
+    local obj = Silo:construct({
         baseLocation    = location1,
         topChests       = 0,
         layers          = 0,
-    }) assert(mobj, "Failed obtaining mobj")
+    }) assert(obj, "Failed obtaining obj")
 
     -- test
-    local destructSuccess = mobj:destruct()
+    local destructSuccess = obj:destruct()
     assert(destructSuccess, testClassName..":destruct not a success")
 end
 
@@ -193,24 +193,24 @@ function T_Silo.T_construct()
     local layers1 = 3
 
     -- test
-    local mobj = Silo:construct({
+    local obj = Silo:construct({
         baseLocation    = location1,
         topChests       = topChests1,
         layers          = layers1,
-    }) assert(mobj, "Failed obtaining mobj")
-    assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
-    assert(mobj._topChests:nObjs() == topChests1, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
-    assert(mobj._storageChests:nObjs() == layers1*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
-    mobj:destruct()
+    }) assert(obj, "Failed obtaining obj")
+    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(obj._topChests:nObjs() == topChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
+    assert(obj._storageChests:nObjs() == layers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
+    obj:destruct()
 
     -- test default
-    mobj = Silo:construct({
+    obj = Silo:construct({
         baseLocation    = location1,
-    }) assert(mobj, "Failed obtaining mobj")
-    assert(mobj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(mobj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
-    assert(mobj._topChests:nObjs() == 2, " # topChests(="..mobj._topChests:nObjs()..") not the same as expected(=2)")
-    assert(mobj._storageChests:nObjs() == 2*4, " # storageChests(="..mobj._storageChests:nObjs()..") not the same as expected(=8)")
-    mobj:destruct()
+    }) assert(obj, "Failed obtaining obj")
+    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(obj._topChests:nObjs() == 2, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(=2)")
+    assert(obj._storageChests:nObjs() == 2*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(=8)")
+    obj:destruct()
 
     -- cleanup test
 end
