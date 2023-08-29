@@ -30,7 +30,7 @@ function MethodResultEqualTest:test(testObj, testObjName, indent, logOk)
     assert(type(logOk) == "boolean", "logOk not a boolean")
 
     -- prepare test
-    local testFieldStr = testObjName.."."..self._methodName.."() result"
+    local testFieldStr = testObjName..":"..self._methodName.."() result"
 
     local method = testObj[self._methodName]
     assert(method, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have method")
