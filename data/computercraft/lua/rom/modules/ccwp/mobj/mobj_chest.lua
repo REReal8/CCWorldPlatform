@@ -40,7 +40,6 @@ local enterprise_chests
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-
 function Chest:_init(...)
     -- get & check input from description
     local checkSuccess, id, baseLocation, accessDirection, inventory = InputChecker.Check([[
