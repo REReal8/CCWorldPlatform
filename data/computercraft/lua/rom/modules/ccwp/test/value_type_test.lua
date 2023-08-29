@@ -14,6 +14,13 @@ local corelog = require "corelog"
 
 local IObj = require "i_obj"
 
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
 function ValueTypeTest:_init(expectedType)
     -- check input
     assert(type(expectedType) == "string", "expectedType not a string")
@@ -21,6 +28,26 @@ function ValueTypeTest:_init(expectedType)
     -- initialisation
     self._expectedType = expectedType
 end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function ValueTypeTest:getClassName()
+    return "ValueTypeTest"
+end
+
+--    _____ _______        _
+--   |_   _|__   __|      | |
+--     | |    | | ___  ___| |_
+--     | |    | |/ _ \/ __| __|
+--    _| |_   | |  __/\__ \ |_
+--   |_____|  |_|\___||___/\__|
 
 function ValueTypeTest:test(value, valueName, indent, logOk)
     -- check input

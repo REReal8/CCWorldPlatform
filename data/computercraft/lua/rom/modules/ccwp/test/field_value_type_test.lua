@@ -13,6 +13,13 @@ local corelog = require "corelog"
 
 local compact = { compact = true }
 
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
+
 function FieldValueTypeTest:_init(fieldName, expectedType)
     -- check input
     assert(type(fieldName) == "string", "fieldName not a string")
@@ -21,6 +28,26 @@ function FieldValueTypeTest:_init(fieldName, expectedType)
     ValueTypeTest._init(self, expectedType)
     self._fieldName     = fieldName
 end
+
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function FieldValueTypeTest:getClassName()
+    return "FieldValueTypeTest"
+end
+
+--    _____ _______        _
+--   |_   _|__   __|      | |
+--     | |    | | ___  ___| |_
+--     | |    | |/ _ \/ __| __|
+--    _| |_   | |  __/\__ \ |_
+--   |_____|  |_|\___||___/\__|
 
 function FieldValueTypeTest:test(testObj, testObjName, indent, logOk)
     -- check input
