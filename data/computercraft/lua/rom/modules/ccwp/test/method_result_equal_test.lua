@@ -1,17 +1,22 @@
 -- define class
 local Class = require "class"
-local ValueEqualTest = require "value_equal_test"
-local MethodResultEqualTest = Class.NewClass(ValueEqualTest)
+local MethodResultTest = require "method_result_test"
+local MethodResultEqualTest = Class.NewClass(MethodResultTest)
 
 --[[
     This module implements the class MethodResultEqualTest.
 
-    It is a generic test class for testing the results of a method call on an object.
+    It is a generic test class for testing the results of a method call on an object be equal to something.
 --]]
 
-local corelog = require "corelog"
+local ValueEqualTest = require "value_equal_test"
 
-local compact = { compact = true }
+--    _       _ _   _       _ _           _   _
+--   (_)     (_) | (_)     | (_)         | | (_)
+--    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
+--   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
+--   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
+--   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 function MethodResultEqualTest:_init(methodName, expectedResult)
     -- check input
@@ -19,31 +24,27 @@ function MethodResultEqualTest:_init(methodName, expectedResult)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
 
     -- initialisation
-    ValueEqualTest._init(self, expectedResult)
-    self._methodName     = methodName
+    MethodResultTest._init(self, methodName, ValueEqualTest:newInstance(expectedResult))
 end
 
-function MethodResultEqualTest:test(testObj, testObjName, indent, logOk)
-    -- check input
-    assert(type(testObjName) == "string", "testObjName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
 
-    -- prepare test
-    local testFieldStr = testObjName..":"..self._methodName.."() result"
-
-    local method = testObj[self._methodName]
-    assert(method, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have method")
-
-    -- test (via ValueEqualTest)
-    local methodResult = method(testObj)
-    -- ToDo: consider allowing methods which additional arguments
-    ValueEqualTest.test(self, methodResult, testFieldStr, indent.."  ", logOk)
-
-    -- complete test
-    if logOk then corelog.WriteToLog(indent..testFieldStr.." ok") end
-
-    -- cleanup test
+function MethodResultEqualTest:getClassName()
+    return "MethodResultEqualTest"
 end
+
+--    _____ _______        _
+--   |_   _|__   __|      | |
+--     | |    | | ___  ___| |_
+--     | |    | |/ _ \/ __| __|
+--    _| |_   | |  __/\__ \ |_
+--   |_____|  |_|\___||___/\__|
 
 return MethodResultEqualTest
