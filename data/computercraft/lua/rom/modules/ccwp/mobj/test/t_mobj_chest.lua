@@ -20,9 +20,12 @@ local Chest = require "mobj_chest"
 local enterprise_chests = require "enterprise_chests"
 
 local TestArrayTest = require "test_array_test"
+local ValueEqualTest = require "value_equal_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
+local MethodResultTest = require "method_result_test"
 local MethodResultEqualTest = require "method_result_equal_test"
+local MultipleValuesTest = require "multiple_values_test"
 
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
@@ -49,6 +52,8 @@ function T_Chest.T_All()
     T_Chest.T_destruct()
     T_Chest.T_getId()
     T_Chest.T_getWIPId()
+    T_Chest.T_getBuildBlueprint()
+    T_Chest.T_getDismantleBlueprint()
 
     -- IItemSupplier methods
     T_Chest.T_IItemSupplier_All()
@@ -248,6 +253,51 @@ function T_Chest.T_getWIPId()
     -- test
     local expectedWIPId = testClassName.." "..obj:getId()
     local test = MethodResultEqualTest:newInstance("getWIPId", expectedWIPId)
+    test:test(obj, testObjName, "", logOk)
+end
+
+
+-- define class
+local Class = require "class"
+local IsBlueprintTest = Class.NewClass(MultipleValuesTest)
+
+-- ToDo: consider extending this test class by testing the blueprint a bit more in details.
+--      Also take into account we want implement a Blueprint class, which likely replaces part of this test.
+function IsBlueprintTest:_init(buildLocation)
+    -- check input
+    assert(Class.IsInstanceOf(buildLocation, Location), "Provided buildLocation argument "..textutils.serialise(buildLocation).." not aLocation")
+
+    -- initialisation
+    MultipleValuesTest._init(self,
+        -- result value 1
+        ValueEqualTest:newInstance(location1),
+        -- result value 2
+        TestArrayTest:newInstance(
+            FieldValueTypeTest:newInstance("layerList", "table"),
+            FieldValueTypeTest:newInstance("escapeSequence", "table")
+        )
+    )
+end
+
+function T_Chest.T_getBuildBlueprint()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getBuildBlueprint() tests")
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local isBlueprintTest = IsBlueprintTest:newInstance(location1)
+    local test = MethodResultTest:newInstance("getBuildBlueprint", isBlueprintTest)
+    test:test(obj, testObjName, "", logOk)
+end
+
+function T_Chest.T_getDismantleBlueprint()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getDismantleBlueprint() tests")
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local isBlueprintTest = IsBlueprintTest:newInstance(location1)
+    local test = MethodResultTest:newInstance("getDismantleBlueprint", isBlueprintTest)
     test:test(obj, testObjName, "", logOk)
 end
 
