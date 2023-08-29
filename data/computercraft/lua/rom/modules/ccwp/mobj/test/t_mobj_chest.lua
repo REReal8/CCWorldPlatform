@@ -22,6 +22,7 @@ local enterprise_chests = require "enterprise_chests"
 local FieldsTest = require "fields_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
+local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
@@ -44,8 +45,10 @@ function T_Chest.T_All()
     -- IMObj methods
     T_Chest.T_IsInstanceOf_IMObj()
     T_Chest.T_Implements_IMObj()
-    T_Chest.T_destruct()
     T_Chest.T_construct()
+    T_Chest.T_destruct()
+    T_Chest.T_getId()
+    T_Chest.T_getWIPId()
 
     -- IItemSupplier methods
     T_Chest.T_IItemSupplier_All()
@@ -140,15 +143,17 @@ end
 
 function T_Chest.T_Getters()
     -- prepare test
-    corelog.WriteToLog("* Chest getter tests")
+    corelog.WriteToLog("* Chest base getter tests")
     local id = coreutils.NewId()
     local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation())..") not the same as expected(="..textutils.serialize(location1)..")")
-    assert(obj:getAccessDirection() == accessDirection1, "gotten getAccessDirection(="..obj:getAccessDirection()..") not the same as expected(="..accessDirection1..")")
-    assert(obj:getInventory():isEqual(inventory1), "gotten getInventory(="..textutils.serialize(obj:getInventory(), compact)..") not the same as expected(="..textutils.serialize(inventory1, compact)..")")
+    local test = FieldsTest:newInstance(
+        MethodResultEqualTest:newInstance("getBaseLocation", location1),
+        MethodResultEqualTest:newInstance("getAccessDirection", accessDirection1),
+        MethodResultEqualTest:newInstance("getInventory", inventory1)
+    )
+    test:test(obj, "chest", "", logOk)
 
     -- cleanup test
 end
@@ -209,19 +214,40 @@ function T_Chest.T_construct()
     corelog.WriteToLog("* "..testClassName..":construct() tests")
 
     -- test
-    local mobj = Chest:construct(constructParameters1) assert(mobj, "Failed obtaining "..testClassName)
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
     local test = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
-    test:test(mobj, "chest", "", logOk)
+    test:test(obj, "chest", "", logOk)
 end
 
 function T_Chest.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":destruct() tests")
-    local mobj = Chest:construct(constructParameters1) assert(mobj, "Failed obtaining "..testClassName)
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
-    local destructSuccess = mobj:destruct()
-    assert(destructSuccess, testClassName..":destruct not a success")
+    local destructSuccess = obj:destruct()
+    assert(destructSuccess, testClassName..":destruct() not a success")
+end
+
+function T_Chest.T_getId()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getId() tests")
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local test = MethodResultEqualTest:newInstance("getId", obj._id)
+    test:test(obj, "chest", "", logOk)
+end
+
+function T_Chest.T_getWIPId()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getWIPId() tests")
+    local obj = Chest:construct(constructParameters1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local expectedWIPId = testClassName.." "..obj:getId()
+    local test = MethodResultEqualTest:newInstance("getWIPId", expectedWIPId)
+    test:test(obj, "chest", "", logOk)
 end
 
 --                        _                           _   _               _
