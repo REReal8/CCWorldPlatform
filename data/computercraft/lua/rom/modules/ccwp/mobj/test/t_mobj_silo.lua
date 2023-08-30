@@ -59,6 +59,10 @@ local testObjName = "silo"
 local logOk = false
 local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
+local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
+local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
+local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
 local compact = { compact = true }
 
@@ -74,8 +78,8 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
     id = id or coreutils.NewId()
     baseLocation = baseLocation or baseLocation1
     entryLocation = entryLocation or entryLocation1
-    topChests = topChests or ObjArray:newInstance("URL")
-    storageChests = storageChests or ObjArray:newInstance("URL")
+    topChests = topChests or topChests1
+    storageChests = storageChests or storageChests1
 
     -- create testObj
     local testObj = Silo:new({
@@ -125,11 +129,6 @@ function T_Silo.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
-    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
-
-    local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
     -- test
     local obj = Silo:new({
@@ -165,13 +164,8 @@ end
 function T_Silo.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
-
-    local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
-    local obj = T_Silo.CreateTestObj(id, baseLocation1, nil, topChests1:copy(), storageChests1:copy()) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_Silo.CreateTestObj(id, baseLocation1, nil, topChests1:copy(), storageChests1:copy()) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Silo.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Silo.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
