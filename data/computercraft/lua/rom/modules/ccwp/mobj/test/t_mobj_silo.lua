@@ -198,8 +198,8 @@ function T_Silo.T_destruct()
     corelog.WriteToLog("* "..testClassName..":destruct() tests")
     local obj = Silo:construct({
         baseLocation    = baseLocation1,
-        topChests       = 0,
-        layers          = 0,
+        nTopChests      = 0,
+        nLayers         = 0,
     }) assert(obj, "Failed obtaining obj")
 
     -- test
@@ -210,18 +210,18 @@ end
 function T_Silo.T_construct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":construct() tests")
-    local topChests1 = 4
-    local layers1 = 3
+    local nTopChests1 = 4
+    local nLayers1 = 3
 
     -- test
     local obj = Silo:construct({
         baseLocation    = baseLocation1,
-        topChests       = topChests1,
-        layers          = layers1,
+        nTopChests      = nTopChests1,
+        nLayers         = nLayers1,
     }) assert(obj, "Failed obtaining obj")
     assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
-    assert(obj._topChests:nObjs() == topChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
-    assert(obj._storageChests:nObjs() == layers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
+    assert(obj._topChests:nObjs() == nTopChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..nTopChests1..")")
+    assert(obj._storageChests:nObjs() == nLayers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*nLayers1..")")
     obj:destruct()
 
     -- test default
@@ -246,7 +246,7 @@ end
 function T_Silo.T_integrity()
     -- do the new test
     corelog.WriteToLog("* Silo:construct() tests")
-    local obj = Silo:construct({baseLocation=baseLocation1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     obj:IntegretyCheck()
@@ -273,7 +273,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({baseLocation=baseLocation1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
 
     -- activate the silo
     obj:Activate()
@@ -346,7 +346,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
-    local obj = Silo:construct({baseLocation=baseLocation1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     local provideItems = {

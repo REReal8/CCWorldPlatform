@@ -144,7 +144,7 @@ function T_Mine.T_NewMine()
 
     -- test
     corelog.WriteToLog("* Mine:NewMine() tests")
-    local obj = Mine:NewMine({baseLocation=location1, topChests=2})
+    local obj = Mine:NewMine({baseLocation=location1, nTopChests=2})
 
     -- cleanup test
 end
@@ -170,7 +170,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Mine:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Mine:NewMine({baseLocation=location1, topChests=2}) if not obj then corelog.Error("Failed obtaining Mine") return end
+    local obj = Mine:NewMine({baseLocation=location1, nTopChests=2}) if not obj then corelog.Error("Failed obtaining Mine") return end
 
     -- activate the mine
     obj:Activate()

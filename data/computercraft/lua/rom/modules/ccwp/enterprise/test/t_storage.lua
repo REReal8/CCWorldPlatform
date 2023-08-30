@@ -41,8 +41,8 @@ local test_mobjClassName1 = "Silo"
 local location1  = Location:newInstance(12, -12, 1, 0, 1)
 local test_mobjConstructParameters1 = {
     baseLocation    = location1,
-    topChests       = 2,
-    layers          = 2,
+    nTopChests      = 2,
+    nLayers         = 2,
 }
 
 -- hostAndBuildMObj_ASrv

@@ -147,7 +147,7 @@ end
 
 function Silo:construct(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, topChests, layers = InputChecker.Check([[
+    local checkSuccess, baseLocation, nTopChests, nLayers = InputChecker.Check([[
         This method constructs a Silo instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also ensures all child MObj's the Silo spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
@@ -160,8 +160,8 @@ function Silo:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Silo
                 baseLocation            + (Location) base location of the Silo
-                topChests               + (number, 2) # of top chests
-                layers                  + (number, 2) # of layers
+                nTopChests              + (number, 2) # of top chests
+                nLayers                 + (number, 2) # of layers
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:construct: Invalid input") return nil end
 
@@ -170,16 +170,20 @@ function Silo:construct(...)
     baseLocation:setDY(1)
 
     -- make object table
+    local id = coreutils.NewId()
+    local entryLocation = baseLocation:getRelativeLocation(3, 3, 0)
+    local dropLocation = 0
+    local pickupLocation = 0
     local oTable  = {
-        _id             = coreutils.NewId(),
+        _id             = id,
 
         -- locations
         _baseLocation   = baseLocation:copy(),
-        _entryLocation  = baseLocation:getRelativeLocation(3, 3, 0),
+        _entryLocation  = entryLocation,
 
         -- pickup and drop
-        _dropLocation   = 0,
-        _pickupLocation = 0,
+        _dropLocation   = dropLocation,
+        _pickupLocation = pickupLocation,
 
         -- chests
         _topChests      = ObjArray:newInstance("URL"),
@@ -193,21 +197,21 @@ function Silo:construct(...)
 --    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if topChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 2 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if topChests >= 3 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 4 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
-    if topChests >= 5 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 6 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if topChests >= 7 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
-    if topChests >= 8 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
+    if nTopChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if nTopChests >= 2 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if nTopChests >= 3 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
+    if nTopChests >= 4 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
+    if nTopChests >= 5 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if nTopChests >= 6 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if nTopChests >= 7 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
+    if nTopChests >= 8 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
 
     -- set the defaults (basic setup)
-    if topChests >= 1 then oTable._dropLocation   = 1 end
-    if topChests >= 2 then oTable._pickupLocation = 2 end
+    if nTopChests >= 1 then oTable._dropLocation   = 1 end
+    if nTopChests >= 2 then oTable._pickupLocation = 2 end
 
     -- loop the layers
-    for i=1, layers, 1 do
+    for i=1, nLayers, 1 do
 
         -- do the floor
         local shaft = oTable._entryLocation:getRelativeLocation(0, 0, -1 - i)

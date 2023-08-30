@@ -87,7 +87,7 @@ function enterprise_gathering.AddNewMine_ASrv(...)
     -- create projectDef and projectData
     local projectData = {
         forestLocator           = mineLocator,
-        topChests               = 2,
+        nTopChests              = 2,
     }
 
     -- insert buildingn project here

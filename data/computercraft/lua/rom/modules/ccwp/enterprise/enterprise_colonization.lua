@@ -124,8 +124,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         siloClassName                   = "Silo",
         siloConstructParameters         = {
             baseLocation                    = Location:newInstance(12, -12, 1, 0, 1),
-            topChests                       = 2,
-            layers                          = 2,
+            nTopChests                      = 2,
+            nLayers                         = 2,
         },
     }
 
