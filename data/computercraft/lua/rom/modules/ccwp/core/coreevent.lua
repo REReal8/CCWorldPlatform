@@ -124,7 +124,7 @@ function CloseChannel(channel, protocol)
 		db.channel[channel] = nil
 
 		-- close the channel on the modem if needed
-		if modem.isOpen(channel) == true then modem.close(channel) end
+		if modem and modem.isOpen(channel) == true then modem.close(channel) end
 	end
 end
 
