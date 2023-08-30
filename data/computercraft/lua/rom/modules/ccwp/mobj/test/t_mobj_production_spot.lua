@@ -7,6 +7,9 @@ local Location = require "obj_location"
 
 local ProductionSpot = require "mobj_production_spot"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
@@ -20,7 +23,10 @@ function T_ProductionSpot.T_All()
     -- specific methods
 end
 
-local location1  = Location:newInstance(-6, 0, 1, 0, 1)
+local testClassName = "ProductionSpot"
+local testObjName = "productionSpot"
+local logOk = false
+local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local isCraftingSpot1 = true
 
 local compact = { compact = true }
@@ -32,27 +38,45 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "ProductionSpot"
-function T_ProductionSpot.CreateTestObj()
+function T_ProductionSpot.CreateTestObj(baseLocation, isCraftingSpot)
+    -- check input
+    baseLocation = baseLocation or baseLocation1
+    isCraftingSpot = isCraftingSpot or isCraftingSpot1
+
+    -- create testObj
     local testObj = ProductionSpot:new({
-        _baseLocation   = location1:copy(),
-        _isCraftingSpot = isCraftingSpot1,
+        _baseLocation   = baseLocation:copy(),
+        _isCraftingSpot = isCraftingSpot,
     })
 
+    -- end
     return testObj
+end
+
+function T_ProductionSpot.CreateInitialisedTest(baseLocation, isCraftingSpot)
+    -- check input
+
+    -- create test
+    local test = TestArrayTest:newInstance(
+        FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
+        FieldValueEqualTest:newInstance("_isCraftingSpot", isCraftingSpot)
+    )
+
+    -- end
+    return test
 end
 
 function T_ProductionSpot.T_new()
     -- prepare test
-    corelog.WriteToLog("* ProductionSpot:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test
     local obj = ProductionSpot:new({
-        _baseLocation   = location1,
+        _baseLocation   = baseLocation1:copy(),
         _isCraftingSpot = isCraftingSpot1,
     })
-    assert(location1:isEqual(obj:getBaseLocation()), "gotten getBaseLocation(="..textutils.serialise(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialise(location1, compact)..")")
-    assert(isCraftingSpot1 == obj:isCraftingSpot(), "gotten isCraftingSpot(="..textutils.serialise(obj:isCraftingSpot(), compact)..") not the same as expected(="..textutils.serialise(isCraftingSpot1, compact)..")")
+    local test = T_ProductionSpot.CreateInitialisedTest(baseLocation1, isCraftingSpot1)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
