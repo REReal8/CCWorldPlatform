@@ -50,6 +50,32 @@ local enterprise_manufacturing
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Factory:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots = InputChecker.Check([[
+        Initialise a Factory.
+
+        Parameters:
+            id                      + (string) id of the Factory
+            baseLocation            + (Location) base location of the Factory
+            inputLocators           + (ObjArray) with input locators
+            outputLocators          + (ObjArray) with output locators
+            craftingSpots           + (ObjArray) with crafting spots
+            smeltingSpots           + (ObjArray) with smelting spots
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id                = id
+    self._baseLocation      = baseLocation
+    self._inputLocators     = inputLocators
+    self._outputLocators    = outputLocators
+    self._craftingSpots     = craftingSpots
+    self._smeltingSpots     = smeltingSpots
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Factory:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[

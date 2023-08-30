@@ -32,6 +32,7 @@ local t_turtle = require "test.t_turtle"
 
 function T_Factory.T_All()
     -- initialisation
+    T_Factory.T__init()
     T_Factory.T_new()
 
     -- IObj methods
@@ -86,17 +87,7 @@ function T_Factory.CreateTestObj(id, baseLocation, inputLocators, outputLocators
     smeltingSpots = smeltingSpots or smeltingSpots1
 
     -- create testObj
-    local testObj = Factory:new({
-        _id             = id,
-
-        _baseLocation   = baseLocation:copy(),
-
-        _inputLocators  = inputLocators:copy(),
-        _outputLocators = outputLocators:copy(),
-
-        _craftingSpots  = craftingSpots:copy(),
-        _smeltingSpots  = smeltingSpots:copy(),
-    })
+    local testObj = Factory:newInstance(id, baseLocation:copy(), inputLocators:copy(), outputLocators:copy(), craftingSpots:copy(), smeltingSpots:copy())
 
     -- end
     return testObj
@@ -119,6 +110,19 @@ function T_Factory.CreateInitialisedTest(id, baseLocation, inputLocators, output
 
     -- end
     return test
+end
+
+function T_Factory.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+    local id = coreutils.NewId()
+
+    -- test
+    local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Factory.CreateInitialisedTest(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_Factory.T_new()
