@@ -60,7 +60,7 @@ local testClassName = "Chest"
 local testObjName = "chest"
 local logOk = false
 local mobjHostName = "enterprise_chests"
-local location1  = Location:newInstance(-6, 0, 1, 0, 1)
+local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local accessDirection1 = "top"
 local emptyInventory = Inventory:new()
 local inventory1 = Inventory:new() -- ToDo: add elements
@@ -77,7 +77,7 @@ local compact = { compact = true }
 function T_Chest.CreateTestObj(id, baseLocation, accessDirection, inventory)
     -- check input
     id = id or coreutils.NewId()
-    baseLocation = baseLocation or location1
+    baseLocation = baseLocation or baseLocation1
     accessDirection = accessDirection or accessDirection1
     inventory = inventory or inventory1
 
@@ -111,8 +111,8 @@ function T_Chest.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
+    local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Chest.CreateInitialisedTest(id, baseLocation1, accessDirection1, inventory1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -127,11 +127,11 @@ function T_Chest.T_new()
     local obj = Chest:new({
         _id                     = id,
 
-        _baseLocation           = location1:copy(),
+        _baseLocation           = baseLocation1:copy(),
         _accessDirection        = accessDirection1,
         _inventory              = inventory1:copy(),
     })
-    local test = T_Chest.CreateInitialisedTest(id, location1, accessDirection1, inventory1)
+    local test = T_Chest.CreateInitialisedTest(id, baseLocation1, accessDirection1, inventory1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -141,11 +141,11 @@ function T_Chest.T_Getters()
     -- prepare test
     corelog.WriteToLog("* Chest base getter tests")
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getBaseLocation", location1),
+        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation1),
         MethodResultEqualTest:newInstance("getAccessDirection", accessDirection1),
         MethodResultEqualTest:newInstance("getInventory", inventory1)
     )
@@ -185,18 +185,18 @@ end
 --                           |__/
 
 local constructParameters1 = {
-    baseLocation    = location1,
+    baseLocation    = baseLocation1,
     accessDirection = accessDirection1,
 }
 
 function T_Chest.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = T_Chest.CreateTestObj(id, location1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
 
-    local constructInitialisedTest = T_Chest.CreateInitialisedTest(nil, location1, accessDirection1, emptyInventory)
+    local constructInitialisedTest = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
 
-    local isBlueprintTest = IsBlueprintTest:newInstance(location1)
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
@@ -219,7 +219,7 @@ end
 function T_Chest.T_updateChestRecord_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:updateChestRecord_AOSrv test")
-    local obj = T_Chest.CreateTestObj(nil, location1:getRelativeLocation(2, 5, 0)) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(2, 5, 0)) assert(obj, "Failed obtaining "..testClassName)
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
     local callback = Callback:newInstance("T_Chest", "updateChestRecord_AOSrv_Callback", {
@@ -266,7 +266,7 @@ end
 function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
     local constructParameters = {
-        baseLocation    = location1:getRelativeLocation(2, 5, 0),
+        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
         accessDirection = accessDirection1,
     }
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
@@ -284,11 +284,11 @@ end
 function T_Chest.T_provideItemsTo_AOSrv_Chest()
     -- prepare test
     local constructParameters = {
-        baseLocation    = location1:getRelativeLocation(2, 5, 0),
+        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
         accessDirection = accessDirection1,
     }
 
-    local obj2 = T_Chest.CreateTestObj(nil, location1:getRelativeLocation(2, 5, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
+    local obj2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(2, 5, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
     local itemDepotLocator = enterprise_chests:saveObject(obj2)
 
     local provideItems = {
@@ -332,7 +332,7 @@ function T_Chest.T_can_ProvideItems_QOSrv()
             { name = "minecraft:dirt", count = 20 },
         }
     })
-    local obj = T_Chest.CreateTestObj(nil, location1, accessDirection1, inventory) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(nil, baseLocation1, accessDirection1, inventory) assert(obj, "Failed obtaining "..testClassName)
 
     -- test can
     local itemName = "minecraft:dirt"
@@ -370,7 +370,7 @@ end
 local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* Chest:storeItemsFrom_AOSrv() test (to "..toStr..")")
-    local obj = T_Chest.CreateTestObj(nil, location1:getRelativeLocation(2, 5, 0)) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(2, 5, 0)) assert(obj, "Failed obtaining "..testClassName)
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
     local chestLocator = enterprise_chests:getObjectLocator(obj)
 
@@ -404,7 +404,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Chest()
     -- prepare test
-    local obj2 = T_Chest.CreateTestObj(nil, location1:getRelativeLocation(2, 5, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
+    local obj2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(2, 5, 0)) assert(obj2, "Failed obtaining "..testClassName.." 2")
     local itemsLocator = enterprise_chests:saveObject(obj2)
 
     -- test
