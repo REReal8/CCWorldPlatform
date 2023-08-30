@@ -21,6 +21,10 @@ local enterprise_isp = require "enterprise_isp"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_storage = require "enterprise_storage"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local FieldValueTypeTest = require "field_value_type_test"
+
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
@@ -51,7 +55,7 @@ function T_Silo.T_All()
 end
 
 local testClassName = "Silo"
-local location1  = Location:newInstance(12, -12, 1, 0, 1)
+local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 
 local compact = { compact = true }
 
@@ -65,7 +69,7 @@ local compact = { compact = true }
 function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storageChests)
     -- check input
     id = id or coreutils.NewId()
-    baseLocation = baseLocation or location1
+    baseLocation = baseLocation or baseLocation1
     entryLocation = entryLocation or baseLocation:getRelativeLocation(3, 3, 0)
     topChests = topChests or ObjArray:newInstance("URL")
     storageChests = storageChests or ObjArray:newInstance("URL")
@@ -89,6 +93,7 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
         _storageChests  = storageChests:copy(),
     })
 
+    -- end
     return testObj
 end
 
@@ -101,14 +106,14 @@ function T_Silo.T_new()
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
-    local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1, storageChests1)
+    local obj = T_Silo.CreateTestObj(id, baseLocation1, nil, topChests1, storageChests1)
     local expectedFieldValues = {
         _id                 = id,
 
         _version            = 1,
 
-        _baseLocation       = location1,
-        _entryLocation      = location1:getRelativeLocation(3, 3, 0),
+        _baseLocation       = baseLocation1,
+        _entryLocation      = baseLocation1:getRelativeLocation(3, 3, 0),
 
         _dropLocation       = 0,
         _pickupLocation     = 0,
@@ -118,6 +123,7 @@ function T_Silo.T_new()
     }
 
     -- test
+    -- })
     T_Obj.pt_new(testClassName, obj, expectedFieldValues)
 end
 
@@ -138,8 +144,8 @@ function T_Silo.T_IObj_All()
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
-    local obj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy()) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_Silo.CreateTestObj(id, location1, nil, topChests1:copy(), storageChests1:copy()) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Silo.CreateTestObj(id, baseLocation1, nil, topChests1:copy(), storageChests1:copy()) assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Silo.CreateTestObj(id, baseLocation1, nil, topChests1:copy(), storageChests1:copy()) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -176,7 +182,7 @@ function T_Silo.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":destruct() tests")
     local obj = Silo:construct({
-        baseLocation    = location1,
+        baseLocation    = baseLocation1,
         topChests       = 0,
         layers          = 0,
     }) assert(obj, "Failed obtaining obj")
@@ -194,20 +200,20 @@ function T_Silo.T_construct()
 
     -- test
     local obj = Silo:construct({
-        baseLocation    = location1,
+        baseLocation    = baseLocation1,
         topChests       = topChests1,
         layers          = layers1,
     }) assert(obj, "Failed obtaining obj")
-    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
     assert(obj._topChests:nObjs() == topChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..topChests1..")")
     assert(obj._storageChests:nObjs() == layers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*layers1..")")
     obj:destruct()
 
     -- test default
     obj = Silo:construct({
-        baseLocation    = location1,
+        baseLocation    = baseLocation1,
     }) assert(obj, "Failed obtaining obj")
-    assert(obj:getBaseLocation():isEqual(location1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(location1, compact)..")")
+    assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
     assert(obj._topChests:nObjs() == 2, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(=2)")
     assert(obj._storageChests:nObjs() == 2*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(=8)")
     obj:destruct()
@@ -225,7 +231,7 @@ end
 function T_Silo.T_integrity()
     -- do the new test
     corelog.WriteToLog("* Silo:construct() tests")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     obj:IntegretyCheck()
@@ -252,7 +258,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Silo:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
 
     -- activate the silo
     obj:Activate()
@@ -325,7 +331,7 @@ function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
     local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
-    local obj = Silo:construct({baseLocation=location1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
+    local obj = Silo:construct({baseLocation=baseLocation1, topChests=2, layers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
     local provideItems = {
