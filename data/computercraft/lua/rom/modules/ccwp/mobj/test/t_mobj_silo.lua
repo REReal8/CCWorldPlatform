@@ -60,6 +60,8 @@ local testObjName = "silo"
 local logOk = false
 local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
+local dropLocation1 = 0
+local pickupLocation1 = 0
 local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
 local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
@@ -74,22 +76,24 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storageChests)
+function T_Silo.CreateTestObj(id, baseLocation, entryLocation, dropLocation, pickupLocation, topChests, storageChests)
     -- check input
     id = id or coreutils.NewId()
     baseLocation = baseLocation or baseLocation1
     entryLocation = entryLocation or entryLocation1
+    dropLocation = dropLocation or dropLocation1
+    pickupLocation = pickupLocation or pickupLocation1
     topChests = topChests or topChests1
     storageChests = storageChests or storageChests1
 
     -- create testObj
-    local testObj = Silo:newInstance(id, baseLocation:copy(), entryLocation:copy(), 0, 0, topChests:copy(), storageChests:copy())
+    local testObj = Silo:newInstance(id, baseLocation:copy(), entryLocation:copy(), dropLocation, pickupLocation, topChests:copy(), storageChests:copy())
 
     -- end
     return testObj
 end
 
-function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, topChests, storageChests)
+function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, dropLocation, pickupLocation, topChests, storageChests)
     -- check input
 
     -- create test
@@ -99,8 +103,8 @@ function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, topChests
         idTest,
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_entryLocation", entryLocation),
-        FieldValueEqualTest:newInstance("_dropLocation", 0),
-        FieldValueEqualTest:newInstance("_pickupLocation", 0),
+        FieldValueEqualTest:newInstance("_dropLocation", dropLocation),
+        FieldValueEqualTest:newInstance("_pickupLocation", pickupLocation),
         FieldValueEqualTest:newInstance("_topChests", topChests),
         FieldValueEqualTest:newInstance("_storageChests", storageChests)
     )
@@ -115,8 +119,8 @@ function T_Silo.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, topChests1, storageChests1)
+    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -136,14 +140,14 @@ function T_Silo.T_new()
         _entryLocation  = entryLocation1:copy(),
 
         -- pickup and drop
-        _dropLocation   = 0,
-        _pickupLocation = 0,
+        _dropLocation   = dropLocation1,
+        _pickupLocation = pickupLocation1,
 
         -- chests
         _topChests      = topChests1:copy(),
         _storageChests  = storageChests1:copy(),
     })
-    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, topChests1, storageChests1)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1)
     test:test(obj, testObjName, "", logOk)
 end
 
@@ -220,9 +224,9 @@ function T_Silo.T_construct()
     assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
     assert(obj._topChests:nObjs() == nTopChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..nTopChests1..")")
     assert(obj._storageChests:nObjs() == nLayers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*nLayers1..")")
-    obj:destruct()
 
     -- cleanup test
+    obj:destruct()
 end
 
 --                        _                           _   _               _
