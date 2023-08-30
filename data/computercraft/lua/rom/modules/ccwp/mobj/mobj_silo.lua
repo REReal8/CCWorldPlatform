@@ -166,65 +166,45 @@ function Silo:construct(...)
     if not checkSuccess then corelog.Error("Silo:construct: Invalid input") return nil end
 
     -- determine Silo fields
-
+    local id = coreutils.NewId()
     -- better safe then sorry, maybe flexible one day
     baseLocation:setDX(0)
     baseLocation:setDY(1)
-
-    -- make object table
-    local id = coreutils.NewId()
     local entryLocation = baseLocation:getRelativeLocation(3, 3, 0)
     local dropLocation = 0
     local pickupLocation = 0
-    local oTable  = {
-        _id             = id,
-
-        -- locations
-        _baseLocation   = baseLocation:copy(),
-        _entryLocation  = entryLocation,
-
-        -- pickup and drop
-        _dropLocation   = dropLocation,
-        _pickupLocation = pickupLocation,
-
-        -- chests
-        _topChests      = ObjArray:newInstance("URL"),
-        _storageChests  = ObjArray:newInstance("URL"),
-
-        -- is this silo accepting requests?
-        _operational    = false,
-    }
+    local topChests = ObjArray:newInstance("URL")
+    local storageChests = ObjArray:newInstance("URL")
 
     -- log
 --    corelog.WriteToLog(">Starting Silo at "..textutils.serialise(baseLocation, { compact = true }))
 
     -- add our top chests, depending how many we have
-    if nTopChests >= 1 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if nTopChests >= 2 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
-    if nTopChests >= 3 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
-    if nTopChests >= 4 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
-    if nTopChests >= 5 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if nTopChests >= 6 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
-    if nTopChests >= 7 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
-    if nTopChests >= 8 then table.insert(oTable._topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
+    if nTopChests >= 1 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if nTopChests >= 2 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 5, 0), accessDirection="back"}}).mobjLocator) end
+    if nTopChests >= 3 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 4, 0), accessDirection="left"}}).mobjLocator) end
+    if nTopChests >= 4 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(5, 2, 0), accessDirection="left"}}).mobjLocator) end
+    if nTopChests >= 5 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(4, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if nTopChests >= 6 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(2, 1, 0), accessDirection="front"}}).mobjLocator) end
+    if nTopChests >= 7 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 2, 0), accessDirection="right"}}).mobjLocator) end
+    if nTopChests >= 8 then table.insert(topChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=baseLocation:getRelativeLocation(1, 4, 0), accessDirection="right"}}).mobjLocator) end
 
     -- set the defaults (basic setup)
-    if nTopChests >= 1 then oTable._dropLocation   = 1 end
-    if nTopChests >= 2 then oTable._pickupLocation = 2 end
+    if nTopChests >= 1 then dropLocation   = 1 end
+    if nTopChests >= 2 then pickupLocation = 2 end
 
     -- loop the layers
     for i=1, nLayers, 1 do
-
         -- do the floor
-        local shaft = oTable._entryLocation:getRelativeLocation(0, 0, -1 - i)
-        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}}).mobjLocator)
-        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
-        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}}).mobjLocator)
-        table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        local shaft = entryLocation:getRelativeLocation(0, 0, -1 - i)
+        table.insert(storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 0,  1):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        table.insert(storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        table.insert(storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection( 0, -1):getLocationFront(), accessDirection="back"}}).mobjLocator)
+        table.insert(storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
     end
 
     -- construct new Silo
-    local obj = Silo:new(oTable)
+    local obj = Silo:newInstance(id, baseLocation:copy(), entryLocation, dropLocation, pickupLocation, topChests, storageChests)
 
     -- end
     return obj
