@@ -58,6 +58,7 @@ local testClassName = "Silo"
 local testObjName = "silo"
 local logOk = false
 local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
+local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
 
 local compact = { compact = true }
 
@@ -72,7 +73,7 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
     -- check input
     id = id or coreutils.NewId()
     baseLocation = baseLocation or baseLocation1
-    entryLocation = entryLocation or baseLocation:getRelativeLocation(3, 3, 0)
+    entryLocation = entryLocation or entryLocation1
     topChests = topChests or ObjArray:newInstance("URL")
     storageChests = storageChests or ObjArray:newInstance("URL")
 
@@ -124,7 +125,6 @@ function T_Silo.T_new()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
-    local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 
