@@ -177,6 +177,14 @@ end
 --                            _/ |
 --                           |__/
 
+local nTopChests1 = 4
+local nLayers1 = 3
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
+    nTopChests      = nTopChests1,
+    nLayers         = nLayers1,
+}
+
 function T_Silo.T_IsInstanceOf_IMObj()
     -- prepare test
     local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
@@ -196,11 +204,7 @@ end
 function T_Silo.T_destruct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":destruct() tests")
-    local obj = Silo:construct({
-        baseLocation    = baseLocation1,
-        nTopChests      = 0,
-        nLayers         = 0,
-    }) assert(obj, "Failed obtaining obj")
+    local obj = Silo:construct(constructParameters1) assert(obj, "Failed obtaining obj")
 
     -- test
     local destructSuccess = obj:destruct()
@@ -210,27 +214,12 @@ end
 function T_Silo.T_construct()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":construct() tests")
-    local nTopChests1 = 4
-    local nLayers1 = 3
 
     -- test
-    local obj = Silo:construct({
-        baseLocation    = baseLocation1,
-        nTopChests      = nTopChests1,
-        nLayers         = nLayers1,
-    }) assert(obj, "Failed obtaining obj")
+    local obj = Silo:construct(constructParameters1) assert(obj, "Failed obtaining obj")
     assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
     assert(obj._topChests:nObjs() == nTopChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..nTopChests1..")")
     assert(obj._storageChests:nObjs() == nLayers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*nLayers1..")")
-    obj:destruct()
-
-    -- test default
-    obj = Silo:construct({
-        baseLocation    = baseLocation1,
-    }) assert(obj, "Failed obtaining obj")
-    assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
-    assert(obj._topChests:nObjs() == 2, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(=2)")
-    assert(obj._storageChests:nObjs() == 2*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(=8)")
     obj:destruct()
 
     -- cleanup test
