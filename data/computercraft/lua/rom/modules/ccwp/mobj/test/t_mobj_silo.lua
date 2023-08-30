@@ -22,8 +22,11 @@ local enterprise_shop = require "enterprise_shop"
 local enterprise_storage = require "enterprise_storage"
 
 local TestArrayTest = require "test_array_test"
+local FieldTest = require "field_test"
 local FieldValueEqualTest = require "field_value_equal_test"
+local ValueTypeTest = require "value_type_test"
 local FieldValueTypeTest = require "field_value_type_test"
+local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
@@ -226,9 +229,18 @@ function T_Silo.T_construct()
 
     -- test
     local obj = Silo:construct(constructParameters1) assert(obj, "Failed obtaining obj")
-    assert(obj:getBaseLocation():isEqual(baseLocation1), "gotten getBaseLocation(="..textutils.serialize(obj:getBaseLocation(), compact)..") not the same as expected(="..textutils.serialize(baseLocation1, compact)..")")
-    assert(obj._topChests:nObjs() == nTopChests1, " # topChests(="..obj._topChests:nObjs()..") not the same as expected(="..nTopChests1..")")
-    assert(obj._storageChests:nObjs() == nLayers1*4, " # storageChests(="..obj._storageChests:nObjs()..") not the same as expected(="..4*nLayers1..")")
+    local dropLocation = 1
+    local pickupLocation = 2
+    local topChestsTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("nObjs", nTopChests1)
+    ))
+    local storageChestsTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("nObjs", nLayers1*4)
+    ))
+    local test = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsTest, storageChestsTest)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
     obj:destruct()

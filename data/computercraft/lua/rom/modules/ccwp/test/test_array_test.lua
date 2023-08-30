@@ -31,7 +31,7 @@ function TestArrayTest:test(testObj, testObjName, indent, logOk)
     assert(type(logOk) == "boolean", "logOk not a boolean")
 
     -- prepare test
-    local testFieldsStr = testObjName.." fields"
+    local testFieldsStr = testObjName.." tests"
 
     -- test all tests
     assert(self._tests, indent..testFieldsStr..": no tests provided")
