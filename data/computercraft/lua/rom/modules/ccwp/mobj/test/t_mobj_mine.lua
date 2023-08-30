@@ -16,10 +16,13 @@ local Mine = require "mobj_mine"
 
 local enterprise_storage = require "enterprise_storage"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local FieldValueTypeTest = require "field_value_type_test"
+
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
-local T_Obj = require "test.t_obj"
 
 local t_turtle = require "test.t_turtle"
 
@@ -41,7 +44,10 @@ function T_Mine.T_All()
 end
 
 local testClassName = "Mine"
-local location1 = Location:newInstance(12, -6, 1, 0, 1)
+local testObjName = "mine"
+local logOk = false
+local baseLocation1 = Location:newInstance(12, -6, 1, 0, 1)
+local topChests1 = ObjArray:newInstance("URL") assert(topChests1, "Failed obtaining ObjArray")
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -53,41 +59,58 @@ local location1 = Location:newInstance(12, -6, 1, 0, 1)
 function T_Mine.CreateTestObj(id, baseLocation, topChests)
     -- check input
     id = id or coreutils.NewId()
-    baseLocation = baseLocation or location1
-    topChests = topChests or ObjArray:newInstance("URL")
+    baseLocation = baseLocation or baseLocation1
+    topChests = topChests or topChests1
 
     -- create testObj
     local testObj = Mine:new({
         _id                     = id,
-        _version                = 1,
 
         _baseLocation           = baseLocation:copy(),
 
         _topChests              = topChests:copy(),
     })
 
+    -- end
     return testObj
+end
+
+function T_Mine.CreateInitialisedTest(id, baseLocation, topChestsTest)
+    -- check input
+
+    -- create test
+    local idTest = FieldValueEqualTest:newInstance("_id", id)
+    if not id then
+        idTest = FieldValueTypeTest:newInstance("_id", "string")
+    end
+    local test = TestArrayTest:newInstance(
+        idTest,
+        FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
+        topChestsTest
+    )
+
+    -- end
+    return test
 end
 
 function T_Mine.T_new()
     -- prepare test
+    corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
-    local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-    local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
-
-    local obj = T_Mine.CreateTestObj(id, location1, topChests1)
-    local expectedFieldValues = {
-        _id                 = id,
-
-        _version            = 1,
-
-        _baseLocation       = location1,
-
-        _topChests          = topChests1,
-    }
 
     -- test
-    T_Obj.pt_new(testClassName, obj, expectedFieldValues)
+    local obj = Mine:new({
+        _id             = id,
+
+        _baseLocation   = baseLocation1:copy(),
+
+        _topChests      = topChests1:copy(),
+    })
+    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests1)
+    local test = T_Mine.CreateInitialisedTest(id, baseLocation1, topChestsTest)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 local compact = { compact = true }
@@ -144,7 +167,7 @@ function T_Mine.T_NewMine()
 
     -- test
     corelog.WriteToLog("* Mine:NewMine() tests")
-    local obj = Mine:NewMine({baseLocation=location1, nTopChests=2})
+    local obj = Mine:NewMine({baseLocation=baseLocation1, nTopChests=2})
 
     -- cleanup test
 end
@@ -170,7 +193,7 @@ end
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
     corelog.WriteToLog("* Mine:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
-    local obj = Mine:NewMine({baseLocation=location1, nTopChests=2}) if not obj then corelog.Error("Failed obtaining Mine") return end
+    local obj = Mine:NewMine({baseLocation=baseLocation1, nTopChests=2}) if not obj then corelog.Error("Failed obtaining Mine") return end
 
     -- activate the mine
     obj:Activate()

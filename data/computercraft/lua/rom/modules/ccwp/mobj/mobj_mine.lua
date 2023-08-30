@@ -39,7 +39,6 @@ function Mine:new(...)
         Parameters:
             o                           + (table) with object fields
                 _id                     - (string) id of the Mine
-                _version                - (number) version of the Mine
                 _baseLocation           - (Location) base location of the Mine
                 _topChests              - (ObjArray) with top chests
     ]], table.unpack(arg))
@@ -72,9 +71,6 @@ function Mine:NewMine(...)
     -- main var
     local siteData  = {
         _id             = coreutils.NewId(),
-
-        -- might be userfull later
-        _version        = 1,
 
         -- locations
         _baseLocation   = baseLocation,
