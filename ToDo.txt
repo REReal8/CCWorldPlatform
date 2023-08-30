@@ -72,7 +72,7 @@ R  Generalise IObj test functions into "templates" to reduce duplication        
       -  TestMObj
       R  Chest                                                                                                          (done)
       -  ProductionSpot
-      -  Silo
+      R  Silo                                                                                                           (done)
       -  BirchForest
       -  Factory
       -  Mine
