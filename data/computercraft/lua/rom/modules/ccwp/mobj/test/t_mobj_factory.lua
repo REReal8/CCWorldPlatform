@@ -76,25 +76,26 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_Factory.CreateTestObj(id)
+function T_Factory.CreateTestObj(id, baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots)
     -- check input
-    assert(baseLocation1, "Failed obtaining baseLocation1 for "..testClassName)
-    assert(inputLocators1, "Failed obtaining inputLocators1 for "..testClassName)
-    assert(outputLocators1, "Failed obtaining outputLocators1 for "..testClassName)
-    assert(craftingSpots1, "Failed obtaining craftingSpots1 for "..testClassName)
-    assert(smeltingSpots1, "Failed obtaining smeltingSpots1 for "..testClassName)
+    id = id or coreutils.NewId()
+    baseLocation = baseLocation or baseLocation1
+    inputLocators = inputLocators or inputLocators1
+    outputLocators = outputLocators or outputLocators1
+    craftingSpots = craftingSpots or craftingSpots1
+    smeltingSpots = smeltingSpots or smeltingSpots1
 
     -- create testObj
     local testObj = Factory:new({
-        _id             = id or coreutils.NewId(),
+        _id             = id,
 
-        _baseLocation   = baseLocation1:copy(),
+        _baseLocation   = baseLocation:copy(),
 
-        _inputLocators  = inputLocators1:copy(),
-        _outputLocators = outputLocators1:copy(),
+        _inputLocators  = inputLocators:copy(),
+        _outputLocators = outputLocators:copy(),
 
-        _craftingSpots  = craftingSpots1:copy(),
-        _smeltingSpots  = smeltingSpots1:copy(),
+        _craftingSpots  = craftingSpots:copy(),
+        _smeltingSpots  = smeltingSpots:copy(),
     })
 
     -- end
@@ -143,34 +144,6 @@ function T_Factory.T_new()
     -- cleanup test
 end
 
-function T_Factory.CreateFactory(baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots, id)
-    -- check input
-    id = id or coreutils.NewId()
-    baseLocation = baseLocation or baseLocation1
-
-    inputLocators = inputLocators or inputLocators1
-    outputLocators = outputLocators or outputLocators1
-
-    craftingSpots = craftingSpots or craftingSpots1
-    smeltingSpots = smeltingSpots or smeltingSpots1
-
-    -- create Factory object
-    local obj = Factory:new({
-        _id             = id,
-
-        _baseLocation   = baseLocation,
-
-        _inputLocators  = inputLocators:copy(),
-        _outputLocators = outputLocators,
-
-        _craftingSpots  = craftingSpots,
-        _smeltingSpots  = smeltingSpots,
-    })
-
-    -- end
-    return obj
-end
-
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -184,7 +157,7 @@ function T_Factory.T_IObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_Factory.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_Factory.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName) assert(otherObj, "Failed obtaining "..testClassName)
+    local otherObj = T_Factory.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -204,7 +177,7 @@ end
 function T_Factory.T_getAvailableInputLocator()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getAvailableInputLocator() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local locator = obj:getAvailableInputLocator()
@@ -216,7 +189,7 @@ end
 function T_Factory.T_getAvailableOutputLocator()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getAvailableOutputLocator() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local locator = obj:getAvailableOutputLocator()
@@ -228,7 +201,7 @@ end
 function T_Factory.T_getAvailableCraftSpot()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getAvailableCraftSpot() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local spot = obj:getAvailableCraftSpot()
@@ -240,7 +213,7 @@ end
 function T_Factory.T_getAvailableSmeltSpot()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getAvailableSmeltSpot() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local spot = obj:getAvailableSmeltSpot()
@@ -265,7 +238,7 @@ function T_Factory.T_getFuelNeed_Production_Att()
     local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { craftingSpot2, })
     local smeltingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -3), false)
     local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot2, })
-    local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj(nil, location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local items = { ["minecraft:birch_planks"] = 4 }
@@ -279,7 +252,7 @@ end
 function T_Factory.T_getProductionLocation_Att()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getProductionLocation_Att() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test craft
     local itemName = "minecraft:birch_planks"
@@ -319,7 +292,7 @@ end
 function T_Factory.T_can_ProvideItems_QOSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":can_ProvideItems_QOSrv() tests")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
 
     -- test can not produce item without recipe
     local itemName = "anItemWithNoRecipe"
@@ -377,7 +350,7 @@ end
 local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() tests ("..productionMethod..")")
-    local obj = T_Factory.CreateFactory() if not obj then corelog.Error("Failed obtaining Factory") return end
+    local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
