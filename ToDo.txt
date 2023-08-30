@@ -24,31 +24,6 @@ G  Debug: Modem events send but not received                                    
    - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))
    - option to bundle messages, reduces count, not size. (done)
 
-R  Introduce multiple inheritance                                                                                       (done)
-   R  Introduce Class meta class with methods for                                                                       (done)
-      R  Checking if an object (or class) is an instance of a class.                                                    (done)
-      R  Creating a new class by inheriting functionality from a chain of other classes.                                (done)
-      R  Creating new instances (objects) of a Class.                                                                   (done)
-   R  Use Class.NewClass for creating all classes                                                                       (done)
-
-R  ensure all ItemSupplier's inherit IItemSupplier interface                                                            (done)
-   R  mobj_birchforest                                                                                                  (done)
-   R  mobj_chest                                                                                                        (done)
-   R  mobj_factory                                                                                                      (done)
-   R  mobj_mine                                                                                                         (done)
-   R  mobj_silo                                                                                                         (done)
-   R  mobj_shop                                                                                                         (done)
-   R  mobj_turtle                                                                                                       (done)
-
-R  ensure all ItemDepot's inherit ItemDepot interface                                                                   (done)
-   R  mobj_chest                                                                                                        (done)
-   R  mobj_silo                                                                                                         (done)
-   R  mobj_turtle                                                                                                       (done)
-
-R  Generalise IObj test functions into "templates" to reduce duplication                                                (done)
-   R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
-   R  generalise IObj test functions                                                                                    (done)
-
 -  Initialisation: use Class:newInstance & instance:_init to create and initialise objects instances
    -  changed approach instead of calling Class:new
       -  this approach should in the future be renamed to newFromTable
@@ -350,6 +325,31 @@ ToDo history
    ToDo History conventions:
    -  Newly completed and acknowledged ToDo's should be added at the top of this list. Hence, older ToDo's will be lower on the list.
 ]]
+
+R  Introduce multiple inheritance                                                                                       (done)
+   R  Introduce Class meta class with methods for                                                                       (done)
+      R  Checking if an object (or class) is an instance of a class.                                                    (done)
+      R  Creating a new class by inheriting functionality from a chain of other classes.                                (done)
+      R  Creating new instances (objects) of a Class.                                                                   (done)
+   R  Use Class.NewClass for creating all classes                                                                       (done)
+
+R  ensure all ItemSupplier's inherit IItemSupplier interface                                                            (done)
+   R  mobj_birchforest                                                                                                  (done)
+   R  mobj_chest                                                                                                        (done)
+   R  mobj_factory                                                                                                      (done)
+   R  mobj_mine                                                                                                         (done)
+   R  mobj_silo                                                                                                         (done)
+   R  mobj_shop                                                                                                         (done)
+   R  mobj_turtle                                                                                                       (done)
+
+R  ensure all ItemDepot's inherit ItemDepot interface                                                                   (done)
+   R  mobj_chest                                                                                                        (done)
+   R  mobj_silo                                                                                                         (done)
+   R  mobj_turtle                                                                                                       (done)
+
+R  Generalise IObj test functions into "templates" to reduce duplication                                                (done)
+   R  adopt naming convention to name generic (i.e. taking parameters) tests starting with pt_                          (done)
+   R  generalise IObj test functions                                                                                    (done)
 
 R  Introduce ObjBase, a class that can be used as the base class for any class implementing IObj interface              (done)
    R  convert Location to a proper IObj                                                                                 (done)
