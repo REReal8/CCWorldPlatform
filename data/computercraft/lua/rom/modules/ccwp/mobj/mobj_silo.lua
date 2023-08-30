@@ -46,7 +46,6 @@ function Silo:new(...)
         Parameters:
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the Silo
-                _version                - (number) version of the Silo
                 _baseLocation           - (Location) base location of the Silo
                 _entryLocation          - (Location) entry location of the Silo
                 _dropLocation           - (number) top chest index
@@ -145,9 +144,6 @@ function Silo:construct(...)
     -- make object table
     local oTable  = {
         _id             = coreutils.NewId(),
-
-        -- might be userfull later
-        _version        = 1,
 
         -- locations
         _baseLocation   = baseLocation:copy(),

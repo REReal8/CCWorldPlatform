@@ -85,8 +85,6 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
     local testObj = Silo:new({
         _id             = id,
 
-        _version        = 1,
-
         -- locations
         _baseLocation   = baseLocation:copy(),
         _entryLocation  = entryLocation:copy(),
@@ -112,7 +110,6 @@ function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, topChests
     if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
     local test = TestArrayTest:newInstance(
         idTest,
-        FieldValueEqualTest:newInstance("_version", 1),
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_entryLocation", entryLocation),
         FieldValueEqualTest:newInstance("_dropLocation", 0),
@@ -133,8 +130,6 @@ function T_Silo.T_new()
     -- test
     local obj = Silo:new({
         _id             = id,
-
-        _version        = 1,
 
         -- locations
         _baseLocation   = baseLocation1:copy(),
