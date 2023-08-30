@@ -165,6 +165,8 @@ function Silo:construct(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Silo:construct: Invalid input") return nil end
 
+    -- determine Silo fields
+
     -- better safe then sorry, maybe flexible one day
     baseLocation:setDX(0)
     baseLocation:setDY(1)
@@ -221,8 +223,11 @@ function Silo:construct(...)
         table.insert(oTable._storageChests, enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={baseLocation=shaft:getDivergentDirection(-1,  0):getLocationFront(), accessDirection="back"}}).mobjLocator)
     end
 
-    -- create new Silo
-    return Silo:new(oTable)
+    -- construct new Silo
+    local obj = Silo:new(oTable)
+
+    -- end
+    return obj
 end
 
 function Silo:destruct()

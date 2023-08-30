@@ -134,13 +134,15 @@ function Chest:construct(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Chest:construct: Invalid input") return nil end
 
-    -- construct new Chest
+    -- determine Chest fields
     local id = coreutils.NewId()
     local inventory = Inventory:new() -- assumed to be empty
-    local chest = Chest:newInstance(id, baseLocation:copy(), accessDirection, inventory)
+
+    -- construct new Chest
+    local obj = Chest:newInstance(id, baseLocation:copy(), accessDirection, inventory)
 
     -- end
-    return chest
+    return obj
 end
 
 function Chest:destruct()
