@@ -62,10 +62,8 @@ local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
 local dropLocation1 = 0
 local pickupLocation1 = 0
-local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
-local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
-local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
+local topChests1 = ObjArray:newInstance("URL") assert(topChests1, "Failed obtaining ObjArray")
+local storageChests1 = ObjArray:newInstance("URL") assert(storageChests1, "Failed obtaining ObjArray")
 
 local compact = { compact = true }
 
