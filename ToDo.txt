@@ -46,7 +46,7 @@ G  Debug: Modem events send but not received                                    
       R  ObjBase                                                                                                        (done)
       -  TestMObj
       R  Chest                                                                                                          (done)
-      -  ProductionSpot
+      R  ProductionSpot                                                                                                 (done)
       R  Silo                                                                                                           (done)
       -  BirchForest
       -  Factory

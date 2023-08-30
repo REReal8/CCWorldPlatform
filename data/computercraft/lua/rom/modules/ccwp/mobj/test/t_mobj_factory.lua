@@ -55,9 +55,9 @@ local inputLocators1 = ObjArray:newInstance(locatorClassName, { inputLocator1, }
 local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators1 = ObjArray:newInstance(locatorClassName, { outputLocator1, })
 local productionSpotClassName = "ProductionSpot"
-local craftingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+local craftingSpot1 = ProductionSpot:newInstance(location1:getRelativeLocation(3, 3, -4), true)
 local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
-local smeltingSpot1 = ProductionSpot:new({ _baseLocation = location1:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+local smeltingSpot1 = ProductionSpot:newInstance(location1:getRelativeLocation(3, 3, -3), false)
 local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
 
 local compact = { compact = true }
@@ -231,9 +231,9 @@ function T_Factory.T_getFuelNeed_Production_Att()
     corelog.WriteToLog("* Factory:getFuelNeed_Production_Att() tests")
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location2 = turtleObj:getLocation()
-    local craftingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -4), _isCraftingSpot = true })
+    local craftingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -4), true)
     local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { craftingSpot2, })
-    local smeltingSpot2 = ProductionSpot:new({ _baseLocation = location2:getRelativeLocation(3, 3, -3), _isCraftingSpot = false })
+    local smeltingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -3), false)
     local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot2, })
     local obj = T_Factory.CreateFactory(location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) if not obj then corelog.Error("Failed obtaining Factory") return end
 

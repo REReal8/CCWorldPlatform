@@ -803,7 +803,7 @@ function Factory.GetV0SiteStartData(serviceData)
         }),
 
         craftingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(0, 0, 0), _isCraftingSpot = true }),
+            ProductionSpot:newInstance(baseLocation:getRelativeLocation(0, 0, 0), true),
         }),
         smeltingSpots = ObjArray:newInstance(productionSpotClassName),
     }
@@ -886,10 +886,10 @@ function Factory.GetV1SiteStartData(serviceData)
         }),
 
         craftingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -4), _isCraftingSpot = true }),
+            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true),
         }),
         smeltingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -3), _isCraftingSpot = false }),
+            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false),
         }),
     }
 
@@ -994,10 +994,10 @@ function Factory.GetV2SiteStartData(serviceData)
         }),
 
         craftingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -4), _isCraftingSpot = true }),
+            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true),
         }),
         smeltingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:new({ _baseLocation = baseLocation:getRelativeLocation(3, 3, -3), _isCraftingSpot = false }),
+            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false),
         }),
     }
 
