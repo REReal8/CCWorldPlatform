@@ -91,20 +91,23 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, dropLocation, pic
     return testObj
 end
 
-function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, dropLocation, pickupLocation, topChests, storageChests)
+function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, dropLocation, pickupLocation, topChestsTest, storageChestsTest)
     -- check input
 
     -- create test
-    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
-    if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
+    local idTest = FieldValueEqualTest:newInstance("_id", id)
+    if not id then
+        -- note: allow for testing only the type (instead of also the value)
+        idTest = FieldValueTypeTest:newInstance("_id", "string")
+    end
     local test = TestArrayTest:newInstance(
         idTest,
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_entryLocation", entryLocation),
         FieldValueEqualTest:newInstance("_dropLocation", dropLocation),
         FieldValueEqualTest:newInstance("_pickupLocation", pickupLocation),
-        FieldValueEqualTest:newInstance("_topChests", topChests),
-        FieldValueEqualTest:newInstance("_storageChests", storageChests)
+        topChestsTest,
+        storageChestsTest
     )
 
     -- end
@@ -118,7 +121,9 @@ function T_Silo.T__init()
 
     -- test
     local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1)
+    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests1)
+    local storageChestsTest = FieldValueEqualTest:newInstance("_storageChests", storageChests1)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChestsTest, storageChestsTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -145,7 +150,9 @@ function T_Silo.T_new()
         _topChests      = topChests1:copy(),
         _storageChests  = storageChests1:copy(),
     })
-    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1)
+    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests1)
+    local storageChestsTest = FieldValueEqualTest:newInstance("_storageChests", storageChests1)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChestsTest, storageChestsTest)
     test:test(obj, testObjName, "", logOk)
 end
 
