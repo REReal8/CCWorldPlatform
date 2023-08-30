@@ -63,7 +63,7 @@ function Mine:NewMine(...)
                 baseLocation            + (Location) base location of Mine
                 topChests               + (number, 2) # of top chests
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Silo:new: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("Mine:NewMine: Invalid input") return {} end
 
     -- better safe then sorry, maybe flexible one day
 --    location:setDX(0)

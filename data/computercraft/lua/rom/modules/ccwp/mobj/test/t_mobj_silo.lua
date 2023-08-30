@@ -36,6 +36,7 @@ local t_turtle = require "test.t_turtle"
 
 function T_Silo.T_All()
     -- initialisation
+    T_Silo.T__init()
     T_Silo.T_new()
 
     -- IObj methods
@@ -82,21 +83,7 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
     storageChests = storageChests or storageChests1
 
     -- create testObj
-    local testObj = Silo:new({
-        _id             = id,
-
-        -- locations
-        _baseLocation   = baseLocation:copy(),
-        _entryLocation  = entryLocation:copy(),
-
-        -- pickup and drop
-        _dropLocation   = 0,
-        _pickupLocation = 0,
-
-        -- chests
-        _topChests      = topChests:copy(),
-        _storageChests  = storageChests:copy(),
-    })
+    local testObj = Silo:newInstance(id, baseLocation:copy(), entryLocation:copy(), 0, 0, topChests:copy(), storageChests:copy())
 
     -- end
     return testObj
@@ -120,6 +107,19 @@ function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, topChests
 
     -- end
     return test
+end
+
+function T_Silo.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+    local id = coreutils.NewId()
+
+    -- test
+    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, topChests1, storageChests1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_Silo.T_new()

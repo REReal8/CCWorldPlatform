@@ -38,6 +38,34 @@ local enterprise_storage
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Silo:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, baseLocation, entryLocation, dropLocation, pickupLocation, topChests, storageChests = InputChecker.Check([[
+        Initialise a Silo.
+
+        Parameters:
+            id                      + (string) id of the Silo
+            baseLocation            + (Location) base location of the Silo
+            entryLocation           + (Location) entry location of the Silo
+            dropLocation            + (number) top chest index
+            pickupLocation          + (number) top chest index
+            topChests               + (ObjArray) with top chests
+            storageChests           + (ObjArray) with storage chests
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Silo:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id                = id
+    self._baseLocation      = baseLocation
+    self._entryLocation     = entryLocation
+    self._dropLocation      = dropLocation
+    self._pickupLocation    = pickupLocation
+    self._topChests         = topChests
+    self._storageChests     = storageChests
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Silo:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
