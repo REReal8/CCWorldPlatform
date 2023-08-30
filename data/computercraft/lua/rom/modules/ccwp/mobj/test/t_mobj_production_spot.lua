@@ -15,6 +15,7 @@ local T_IObj = require "test.t_i_obj"
 
 function T_ProductionSpot.T_All()
     -- initialisation
+    T_ProductionSpot.T__init()
     T_ProductionSpot.T_new()
 
     -- IObj methods
@@ -44,10 +45,7 @@ function T_ProductionSpot.CreateTestObj(baseLocation, isCraftingSpot)
     isCraftingSpot = isCraftingSpot or isCraftingSpot1
 
     -- create testObj
-    local testObj = ProductionSpot:new({
-        _baseLocation   = baseLocation:copy(),
-        _isCraftingSpot = isCraftingSpot,
-    })
+    local testObj = ProductionSpot:newInstance(baseLocation:copy(), isCraftingSpot)
 
     -- end
     return testObj
@@ -64,6 +62,18 @@ function T_ProductionSpot.CreateInitialisedTest(baseLocation, isCraftingSpot)
 
     -- end
     return test
+end
+
+function T_ProductionSpot.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_ProductionSpot.CreateTestObj(baseLocation1, isCraftingSpot1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_ProductionSpot.CreateInitialisedTest(baseLocation1, isCraftingSpot1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_ProductionSpot.T_new()

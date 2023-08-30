@@ -25,6 +25,24 @@ local role_alchemist = require "role_alchemist"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function ProductionSpot:_init(...)
+    -- get & check input from description
+    local checkSuccess, baseLocation, isCraftingSpot = InputChecker.Check([[
+        Initialise a ProductionSpot.
+
+        Parameters:
+            baseLocation            + (Location) base location of the ProductionSpot
+            isCraftingSpot          + (boolean) if it is a crafting spot
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ProductionSpot:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._baseLocation      = baseLocation
+    self._isCraftingSpot   = isCraftingSpot
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function ProductionSpot:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
