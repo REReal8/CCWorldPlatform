@@ -9,18 +9,6 @@ local T_Class = require "test.t_class"
 local MethodResultTest = require "method_result_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
-function T_IMObj.pt_all(className, class, constructParameters, obj, objName, initialisedTest, isBlueprintTest, logOk)
-    -- IMObj methods
-    T_IMObj.pt_IsInstanceOf_IMObj(className, obj)
-    T_IMObj.pt_Implements_IMObj(className, obj)
-    T_IMObj.pt_destruct(className, class, constructParameters)
-    T_IMObj.pt_construct(className, class, constructParameters, objName, initialisedTest, logOk)
-    T_IMObj.pt_getId(className, obj, objName, logOk)
-    T_IMObj.pt_getWIPId(className, obj, objName, logOk)
-    T_IMObj.pt_getBuildBlueprint(className, obj, objName, isBlueprintTest, logOk)
-    T_IMObj.pt_getDismantleBlueprint(className, obj, objName, isBlueprintTest, logOk)
-end
-
 --    _____ __  __  ____  _     _                  _   _               _
 --   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
 --     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___

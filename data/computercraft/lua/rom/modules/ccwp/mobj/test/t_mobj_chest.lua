@@ -197,7 +197,14 @@ function T_Chest.T_IMObj_All()
     local isBlueprintTest = IsBlueprintTest:newInstance(location1)
 
     -- test
-    T_IMObj.pt_all(testClassName, Chest, constructParameters1, obj, testObjName, initialisedTest, isBlueprintTest, logOk)
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    T_IMObj.pt_Implements_IMObj(testClassName, obj)
+    T_IMObj.pt_destruct(testClassName, Chest, constructParameters1)
+    T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, initialisedTest, logOk)
+    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end
 
 --                        _                           _   _               _
