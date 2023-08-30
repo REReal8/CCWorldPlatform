@@ -280,19 +280,8 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
     end
 
     -- create new Factory
-    local factory = Factory:new({
---        _version        = siteStartData.version,
-        _id             = coreutils.NewId(),
-
-        _baseLocation   = siteStartData.baseLocation,
---        _entryLocation   = siteStartData.location:getRelativeLocation(3, 3, 1), -- ToDo: consider adding and using (before moving to workingLocation)
-
-        _inputLocators  = siteStartData.inputLocators,
-        _outputLocators = siteStartData.outputLocators,
-
-        _craftingSpots  = siteStartData.craftingSpots,
-        _smeltingSpots  = siteStartData.smeltingSpots,
-    }) if not factory then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv:failed obtaining Factory") return {success = false} end
+    local factory = Factory:newInstance(coreutils.NewId(), siteStartData.baseLocation, siteStartData.inputLocators, siteStartData.outputLocators, siteStartData.craftingSpots, siteStartData.smeltingSpots)
+    if not factory then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv:failed obtaining Factory") return {success = false} end
 
     -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)
 

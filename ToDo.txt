@@ -49,7 +49,7 @@ G  Debug: Modem events send but not received                                    
       R  ProductionSpot                                                                                                 (done)
       R  Silo                                                                                                           (done)
       -  BirchForest
-      -  Factory
+      R  Factory                                                                                                        (done)
       R  Mine                                                                                                           (done)
       -  Shop
       -  Turtle
