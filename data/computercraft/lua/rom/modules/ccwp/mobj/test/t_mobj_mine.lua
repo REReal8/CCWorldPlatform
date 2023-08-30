@@ -28,6 +28,7 @@ local t_turtle = require "test.t_turtle"
 
 function T_Mine.T_All()
     -- initialisation
+    T_Mine.T__init()
     T_Mine.T_new()
 
     -- IObj methods
@@ -63,13 +64,7 @@ function T_Mine.CreateTestObj(id, baseLocation, topChests)
     topChests = topChests or topChests1
 
     -- create testObj
-    local testObj = Mine:new({
-        _id                     = id,
-
-        _baseLocation           = baseLocation:copy(),
-
-        _topChests              = topChests:copy(),
-    })
+    local testObj = Mine:newInstance(id, baseLocation:copy(), topChests:copy())
 
     -- end
     return testObj
@@ -91,6 +86,20 @@ function T_Mine.CreateInitialisedTest(id, baseLocation, topChestsTest)
 
     -- end
     return test
+end
+
+function T_Mine.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+    local id = coreutils.NewId()
+
+    -- test
+    local obj = T_Mine.CreateTestObj(id, baseLocation1, topChests1) assert(obj, "Failed obtaining "..testClassName)
+    local topChestsTest = FieldValueEqualTest:newInstance("_topChests", topChests1)
+    local test = T_Mine.CreateInitialisedTest(id, baseLocation1, topChestsTest)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_Mine.T_new()

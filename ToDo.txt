@@ -50,7 +50,7 @@ G  Debug: Modem events send but not received                                    
       R  Silo                                                                                                           (done)
       -  BirchForest
       -  Factory
-      -  Mine
+      R  Mine                                                                                                           (done)
       -  Shop
       -  Turtle
       -  Host

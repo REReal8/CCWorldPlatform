@@ -31,6 +31,26 @@ local enterprise_chests = require "enterprise_chests"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Mine:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, baseLocation, topChests = InputChecker.Check([[
+        Initialise a Mine.
+
+        Parameters:
+            id                      + (string) id of the Mine
+            baseLocation            + (Location) base location of the Mine
+            topChests               + (ObjArray) with top Chest's
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Mine:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id                = id
+    self._baseLocation      = baseLocation
+    self._topChests         = topChests
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Mine:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
