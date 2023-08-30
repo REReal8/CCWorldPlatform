@@ -55,6 +55,8 @@ function T_Silo.T_All()
 end
 
 local testClassName = "Silo"
+local testObjName = "silo"
+local logOk = false
 local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 
 local compact = { compact = true }
@@ -97,34 +99,58 @@ function T_Silo.CreateTestObj(id, baseLocation, entryLocation, topChests, storag
     return testObj
 end
 
+function T_Silo.CreateInitialisedTest(id, baseLocation, entryLocation, topChests, storageChests)
+    -- check input
+
+    -- create test
+    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
+    if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
+    local test = TestArrayTest:newInstance(
+        idTest,
+        FieldValueEqualTest:newInstance("_version", 1),
+        FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
+        FieldValueEqualTest:newInstance("_entryLocation", entryLocation),
+        FieldValueEqualTest:newInstance("_dropLocation", 0),
+        FieldValueEqualTest:newInstance("_pickupLocation", 0),
+        FieldValueEqualTest:newInstance("_topChests", topChests),
+        FieldValueEqualTest:newInstance("_storageChests", storageChests)
+    )
+
+    -- end
+    return test
+end
+
 function T_Silo.T_new()
     -- prepare test
+    corelog.WriteToLog("* "..testClassName..":new() tests")
     local id = coreutils.NewId()
+    local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
     local chestLocator1 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local topChests1 = ObjArray:newInstance("URL", { chestLocator1 }) assert(topChests1, "Failed obtaining ObjArray")
 
     local chestLocator2 = URL:newFromURI("ccwprp://enterprise_chests/objects/class=Chest/id="..coreutils.NewId())
     local storageChests1 = ObjArray:newInstance("URL", { chestLocator2 }) assert(storageChests1, "Failed obtaining ObjArray")
 
-    local obj = T_Silo.CreateTestObj(id, baseLocation1, nil, topChests1, storageChests1)
-    local expectedFieldValues = {
-        _id                 = id,
-
-        _version            = 1,
-
-        _baseLocation       = baseLocation1,
-        _entryLocation      = baseLocation1:getRelativeLocation(3, 3, 0),
-
-        _dropLocation       = 0,
-        _pickupLocation     = 0,
-
-        _topChests          = topChests1,
-        _storageChests      = storageChests1,
-    }
-
     -- test
-    -- })
-    T_Obj.pt_new(testClassName, obj, expectedFieldValues)
+    local obj = Silo:new({
+        _id             = id,
+
+        _version        = 1,
+
+        -- locations
+        _baseLocation   = baseLocation1:copy(),
+        _entryLocation  = entryLocation1:copy(),
+
+        -- pickup and drop
+        _dropLocation   = 0,
+        _pickupLocation = 0,
+
+        -- chests
+        _topChests      = topChests1:copy(),
+        _storageChests  = storageChests1:copy(),
+    })
+    local test = T_Silo.CreateInitialisedTest(id, baseLocation1, entryLocation1, topChests1, storageChests1)
+    test:test(obj, testObjName, "", logOk)
 end
 
 --    _____ ____  _     _                  _   _               _

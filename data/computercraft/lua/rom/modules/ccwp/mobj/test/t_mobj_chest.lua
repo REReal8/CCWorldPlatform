@@ -56,9 +56,9 @@ function T_Chest.T_All()
     T_Chest.T_IItemDepot_All()
 end
 
-local logOk = false
 local testClassName = "Chest"
 local testObjName = "chest"
+local logOk = false
 local mobjHostName = "enterprise_chests"
 local location1  = Location:newInstance(-6, 0, 1, 0, 1)
 local accessDirection1 = "top"
