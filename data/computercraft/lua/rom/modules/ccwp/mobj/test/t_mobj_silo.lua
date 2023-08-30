@@ -27,11 +27,12 @@ local FieldValueEqualTest = require "field_value_equal_test"
 local ValueTypeTest = require "value_type_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
+local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
-local T_Obj = require "test.t_obj"
+local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
 
@@ -46,10 +47,7 @@ function T_Silo.T_All()
     T_Silo.T_IObj_All()
 
     -- IMObj methods
-    T_Silo.T_IsInstanceOf_IMObj()
-    T_Silo.T_Implements_IMObj()
-    T_Silo.T_destruct()
-    T_Silo.T_construct()
+    T_Silo.T_IMObj_All()
 
     -- IItemSupplier methods
     T_Silo.T_IItemSupplier_All()
@@ -197,38 +195,11 @@ local constructParameters1 = {
     nLayers         = nLayers1,
 }
 
-function T_Silo.T_IsInstanceOf_IMObj()
+function T_Silo.T_IMObj_All()
     -- prepare test
-    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local id = coreutils.NewId()
+    local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
 
-    -- test
-    T_Class.pt_IsInstanceOf(testClassName, obj, "IMObj", IMObj)
-end
-
-function T_Silo.T_Implements_IMObj()
-    -- prepare test
-    local obj = T_Silo.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-
-    -- test
-    T_IInterface.pt_ImplementsInterface("IMObj", IMObj, testClassName, obj)
-end
-
-function T_Silo.T_destruct()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":destruct() tests")
-    local obj = Silo:construct(constructParameters1) assert(obj, "Failed obtaining obj")
-
-    -- test
-    local destructSuccess = obj:destruct()
-    assert(destructSuccess, testClassName..":destruct not a success")
-end
-
-function T_Silo.T_construct()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":construct() tests")
-
-    -- test
-    local obj = Silo:construct(constructParameters1) assert(obj, "Failed obtaining obj")
     local dropLocation = 1
     local pickupLocation = 2
     local topChestsTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
@@ -239,11 +210,19 @@ function T_Silo.T_construct()
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("nObjs", nLayers1*4)
     ))
-    local test = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsTest, storageChestsTest)
-    test:test(obj, testObjName, "", logOk)
+    local constructInitialisedTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsTest, storageChestsTest)
 
-    -- cleanup test
-    obj:destruct()
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+
+    -- test
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    T_IMObj.pt_Implements_IMObj(testClassName, obj)
+    T_IMObj.pt_destruct(testClassName, Silo, constructParameters1)
+    T_IMObj.pt_construct(testClassName, Silo, constructParameters1, testObjName, constructInitialisedTest, logOk)
+    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end
 
 --                        _                           _   _               _

@@ -49,19 +49,19 @@ function T_IMObj.pt_destruct(className, class, constructParameters)
     assert(destructSuccess, className..":destruct() not a success")
 end
 
-function T_IMObj.pt_construct(className, class, constructParameters, objName, initialisedTest, logOk)
+function T_IMObj.pt_construct(className, class, constructParameters, objName, constructInitialisedTest, logOk)
     -- prepare test
     assert(className, "no className provided")
     assert(class, "no class provided")
     assert(constructParameters, "no constructParameters provided")
     assert(objName, "no objName provided")
-    assert(initialisedTest, "no initialisedTest provided")
+    assert(constructInitialisedTest, "no constructInitialisedTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":construct() tests")
 
     -- test
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
-    local test = initialisedTest
+    local test = constructInitialisedTest
     test:test(obj, objName, "", logOk)
 
     -- cleanup test
