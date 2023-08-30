@@ -1,7 +1,7 @@
 -- define class
 local Class = require "class"
-local ValueTypeTest = require "value_type_test"
-local FieldValueTypeTest = Class.NewClass(ValueTypeTest)
+local FieldTest = require "field_test"
+local FieldValueTypeTest = Class.NewClass(FieldTest)
 
 --[[
     This module implements the class FieldValueTypeTest.
@@ -9,9 +9,7 @@ local FieldValueTypeTest = Class.NewClass(ValueTypeTest)
     It is a generic test class for testing the type of a field of an object.
 --]]
 
-local corelog = require "corelog"
-
-local compact = { compact = true }
+local ValueTypeTest = require "value_type_test"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -25,8 +23,7 @@ function FieldValueTypeTest:_init(fieldName, expectedType)
     assert(type(fieldName) == "string", "fieldName not a string")
 
     -- initialisation
-    ValueTypeTest._init(self, expectedType)
-    self._fieldName     = fieldName
+    FieldTest._init(self, fieldName, ValueTypeTest:newInstance(expectedType))
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -48,28 +45,5 @@ end
 --     | |    | |/ _ \/ __| __|
 --    _| |_   | |  __/\__ \ |_
 --   |_____|  |_|\___||___/\__|
-
-function FieldValueTypeTest:test(testObj, testObjName, indent, logOk)
-    -- check input
-    assert(type(testObjName) == "string", "testObjName not a string")
-    assert(type(indent) == "string", "indent not a string")
-    assert(type(logOk) == "boolean", "logOk not a boolean")
-
-    -- prepare test
-    local testFieldStr = testObjName.."."..self._fieldName.." field"
-
-    local fieldValue = testObj[self._fieldName]
-    if self._expectedType ~= "nil" then
-        assert(fieldValue, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have field")
-    end
-
-    -- test (via ValueTypeTest base)
-    ValueTypeTest.test(self, fieldValue, testFieldStr, indent.."  ", logOk)
-
-    -- complete test
-    if logOk then corelog.WriteToLog(indent..testFieldStr.." ok") end
-
-    -- cleanup test
-end
 
 return FieldValueTypeTest

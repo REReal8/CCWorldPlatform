@@ -2,12 +2,12 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local ITest = require "i_test"
-local MethodResultTest = Class.NewClass(ObjBase, ITest)
+local FieldTest = Class.NewClass(ObjBase, ITest)
 
 --[[
-    This module implements the class MethodResultTest.
+    This module implements the class FieldTest.
 
-    It is a generic test class for testing the results of a method call on an object.
+    It is a generic test class for testing a field of an object.
 --]]
 
 local corelog = require "corelog"
@@ -21,15 +21,15 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function MethodResultTest:_init(methodName, resultTest)
+function FieldTest:_init(fieldName, fieldTest)
     -- check input
-    local methodNameType = type(methodName)
-    assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
-    assert(Class.IsInstanceOf(resultTest, ITest), "Provided resultTest argument not an ITest")
+    local fieldNameType = type(fieldName)
+    assert(fieldNameType == "string" or fieldNameType == "number", "type fieldName(="..fieldNameType..") not a string or number")
+    assert(Class.IsInstanceOf(fieldTest, ITest), "Provided fieldTest argument not an ITest")
 
     -- initialisation
-    self._resultTest    = resultTest
-    self._methodName    = methodName
+    self._fieldName     = fieldName
+    self._fieldTest     = fieldTest
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -41,8 +41,8 @@ end
 --                    _/ |
 --                   |__/
 
-function MethodResultTest:getClassName()
-    return "MethodResultTest"
+function FieldTest:getClassName()
+    return "FieldTest"
 end
 
 --    _____ _______        _
@@ -52,22 +52,22 @@ end
 --    _| |_   | |  __/\__ \ |_
 --   |_____|  |_|\___||___/\__|
 
-function MethodResultTest:test(testObj, testObjName, indent, logOk)
+function FieldTest:test(testObj, testObjName, indent, logOk)
     -- check input
     assert(type(testObjName) == "string", "testObjName not a string")
     assert(type(indent) == "string", "indent not a string")
     assert(type(logOk) == "boolean", "logOk not a boolean")
 
     -- prepare test
-    local testFieldStr = testObjName..":"..self._methodName.."() result"
+    local testFieldStr = testObjName.."."..self._fieldName.." field"
 
-    local method = testObj[self._methodName]
-    assert(method, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have method")
+    local fieldValue = testObj[self._fieldName]
+    if self._fieldTest._expectedType ~= "nil" then
+        assert(fieldValue, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have field")
+    end
 
-    -- test (via _resultTest)
-    local methodResults = {method(testObj)} -- note: collect possible multiple results
-    -- ToDo: consider allowing methods which additional arguments
-    self._resultTest:test(methodResults, testFieldStr, indent.."  ", logOk)
+    -- test (via _fieldTest)
+    self._fieldTest:test(fieldValue, testFieldStr, indent.."  ", logOk)
 
     -- complete test
     if logOk then corelog.WriteToLog(indent..testFieldStr.." ok") end
@@ -75,4 +75,4 @@ function MethodResultTest:test(testObj, testObjName, indent, logOk)
     -- cleanup test
 end
 
-return MethodResultTest
+return FieldTest
