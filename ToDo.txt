@@ -175,6 +175,60 @@ RG mine v2
    -  uitdenken
    -  maken
 
+-  Het order proces
+   -  de start van het order proces is een reservering. De reservering kan gedaan worden bij een partij die reserveringen accepteerd.
+      -  er zijn in eerste instantie drie type reserveringen
+         -  items (provide item)
+         -  fuel (zelfde als item, alleen bestemming is altijd een turtle die de brandstof gebruikt als laatste stap)
+         -  opslagruimte (depot)
+      -  er zijn meer type reserveringen in de toekomst te verwachten
+         -  tijd van turtle om iets te doen (nu via assignmentboard)
+         -  tijd van een cpu om iets te doen (langer dan 1 tick, geen turtle API nodig)
+         -  ruimte in de map om te bewegen (zoals de schacht van een silo/mijn, deel van een snelweg)
+         -  tijd van items in de wereld, zoals furnace, crafting table
+   -  het antwoord / de return value op de reservering is altijd een object / table, twee mogelijkheden
+      -  success == True
+         -  Het antwoord is een order object, de benodigde middelen (items, opslagruimte, ...) zijn gereserveerd. In de order staat informatie hierover.
+         -  Er wordt extra informatie gegeven over de order, bijvoorbeeld verwachte levertijd, brandstof kosten, etc.
+         -  Er MOET iets met dit object gedaan worden!
+            -  execute, de order wordt uitgevoerd
+            -  cancel, de order (en de onderliggende reserveringen) worden geannuleerd / vrijgegeven
+      -  success == False
+         -  Het antwoord is een table
+         -  Het antwoord bevat eventueel extra informatie, zoals bij een item order hoeveel wel geleverd kan worden.
+         -  Met het antwoord kan niks gedaan worden, informatie gebruiken waar nodig.
+
+-  order object
+   -  bestaat altijd uit een OrderBase
+   -  bestaat altijd uit een (of meer?) van de hieronder genoemde typen
+      -  OrderBase
+         -  id
+         -  status
+         -  bevat reservering informatie, waar zijn zaken gereserveerd (dus met een locator en details over de reservering)
+         -  completeCallback, welke functie moet worden aangeroepen zodra deze order complete is
+      -  ItemOrder
+         -  ItemTable            - bestelde items
+         -  aflever adres        - locator
+      -  FuelOrder
+         - Zelfde als ItemOrder, waarbij het aflever adres altijd een turtle is die alle items uit de item table gebruikt voor refuel()
+      -  DepotOrder
+         -  ItemTable            - te verwerken items
+         -  pick adres           - locator
+      -  CraftOrder
+         -  ItemTable            - to craft
+         -  ItemTable            - ingredients
+         -  ingredients locator  - locator
+         -  aflever adres        - locator
+      -  SmeltOrder
+         -  ItemTable            - to craft
+         -  ItemTable            - ingredients
+         -  aflever adres        - locator
+      -  BuiltOrder?
+         -  Blueprint
+         -  Location
+         -  ItemTable            - ingredients
+         -  ingredients locator  - locator
+
 -  Consider creating and using "order" objects (maybe even generalise this to reservations)
    -  order object that holds an outstanding order
    -  order object holds the items concerned
