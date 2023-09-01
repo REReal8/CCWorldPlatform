@@ -213,6 +213,7 @@ RG mine v2
          - Zelfde als ItemOrder, waarbij het aflever adres altijd een turtle is die alle items uit de item table gebruikt voor refuel()
       -  DepotOrder
          -  ItemTable            - te verwerken items
+         -  _itemSlots           - aantal slots nodig om de items op te slaan, berekend op basis van de itemTable
          -  pick adres           - locator
       -  CraftOrder
          -  ItemTable            - to craft
