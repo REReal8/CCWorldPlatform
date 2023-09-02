@@ -40,6 +40,9 @@ function T_Factory.T_All()
     -- IObj methods
     T_Factory.T_IObj_All()
 
+    -- IMObj methods
+    T_Factory.T_IMObj_All()
+
     -- specific methods
     T_Factory.T_getAvailableInputLocator()
     T_Factory.T_getAvailableOutputLocator()
@@ -59,11 +62,11 @@ local testClassName = "Factory"
 local testObjName = "factory"
 local logOk = false
 local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
-local inputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
+local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
-local inputLocators1 = ObjArray:newInstance(locatorClassName, { inputLocator1, })
-local outputLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local outputLocators1 = ObjArray:newInstance(locatorClassName, { outputLocator1, })
+local inputLocators0 = ObjArray:newInstance(locatorClassName, { inputLocator0, })
+local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local outputLocators0 = ObjArray:newInstance(locatorClassName, { outputLocator0, })
 local productionSpotClassName = "ProductionSpot"
 local craftingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -4), true)
 local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
@@ -83,8 +86,8 @@ function T_Factory.CreateTestObj(id, baseLocation, inputLocators, outputLocators
     -- check input
     id = id or coreutils.NewId()
     baseLocation = baseLocation or baseLocation1
-    inputLocators = inputLocators or inputLocators1
-    outputLocators = outputLocators or outputLocators1
+    inputLocators = inputLocators or inputLocators0
+    outputLocators = outputLocators or outputLocators0
     craftingSpots = craftingSpots or craftingSpots1
     smeltingSpots = smeltingSpots or smeltingSpots1
 
@@ -120,8 +123,8 @@ function T_Factory.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Factory.CreateInitialisedTest(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1)
+    local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Factory.CreateInitialisedTest(id, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -138,13 +141,13 @@ function T_Factory.T_new()
 
         _baseLocation   = baseLocation1:copy(),
 
-        _inputLocators  = inputLocators1:copy(),
-        _outputLocators = outputLocators1:copy(),
+        _inputLocators  = inputLocators0:copy(),
+        _outputLocators = outputLocators0:copy(),
 
         _craftingSpots  = craftingSpots1:copy(),
         _smeltingSpots  = smeltingSpots1:copy(),
     })
-    local test = T_Factory.CreateInitialisedTest(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1)
+    local test = T_Factory.CreateInitialisedTest(id, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -183,7 +186,7 @@ end
 function T_Factory.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
 
     local constructInitialisedTest2 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1)
 
@@ -211,7 +214,7 @@ function T_Factory.T_getAvailableInputLocator()
 
     -- test
     local locator = obj:getAvailableInputLocator()
-    assert(locator:isEqual(inputLocator1), "gotten getAvailableInputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(inputLocator1, compact)..")")
+    assert(locator:isEqual(inputLocator0), "gotten getAvailableInputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(inputLocator0, compact)..")")
 
     -- cleanup test
 end
@@ -223,7 +226,7 @@ function T_Factory.T_getAvailableOutputLocator()
 
     -- test
     local locator = obj:getAvailableOutputLocator()
-    assert(locator:isEqual(outputLocator1), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator1, compact)..")")
+    assert(locator:isEqual(outputLocator0), "gotten getAvailableOutputLocator(="..textutils.serialise(locator, compact)..") not the same as expected(="..textutils.serialise(outputLocator0, compact)..")")
 
     -- cleanup test
 end
@@ -268,7 +271,7 @@ function T_Factory.T_getFuelNeed_Production_Att()
     local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { craftingSpot2, })
     local smeltingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -3), false)
     local smeltingSpots2 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot2, })
-    local obj = T_Factory.CreateTestObj(nil, location2, inputLocators1, outputLocators1, craftingSpots2, smeltingSpots2) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Factory.CreateTestObj(nil, location2, inputLocators0, outputLocators0, craftingSpots2, smeltingSpots2) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local items = { ["minecraft:birch_planks"] = 4 }
@@ -364,7 +367,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
     obj._inputLocators = inputLocators2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
-    obj._inputLocators = inputLocators1
+    obj._inputLocators = inputLocators0
 
     -- test can not produce without available outputLocator
     -- ToDo: improve by changing the availability of the _outputLocators
@@ -372,7 +375,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
     obj._outputLocators = outputLocators2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
-    obj._outputLocators = outputLocators1
+    obj._outputLocators = outputLocators0
 
     -- cleanup test
 end
