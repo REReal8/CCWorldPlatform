@@ -212,7 +212,6 @@ local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocati
 local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingSpot0, })
 local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
 
-
 function T_Factory.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
