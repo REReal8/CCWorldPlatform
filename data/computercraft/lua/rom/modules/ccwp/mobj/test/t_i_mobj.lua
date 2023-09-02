@@ -9,6 +9,8 @@ local T_Class = require "test.t_class"
 local MethodResultTest = require "method_result_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
+local compact = { compact = true }
+
 --    _____ __  __  ____  _     _                  _   _               _
 --   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
 --     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -57,7 +59,7 @@ function T_IMObj.pt_construct(className, class, constructParameters, objName, co
     assert(objName, "no objName provided")
     assert(constructInitialisedTest, "no constructInitialisedTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":construct() tests")
+    corelog.WriteToLog("* "..className..":construct() tests ("..textutils.serialise(constructParameters, compact)..")")
 
     -- test
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)

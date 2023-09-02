@@ -183,17 +183,38 @@ end
 --                            _/ |
 --                           |__/
 
+local factoryVersion0 = "v0"
+local factoryVersion1 = "v1"
+local constructParameters0 = {
+    version         = factoryVersion0,
+
+    baseLocation    = baseLocation1,
+}
+local constructParameters1 = {
+    version         = factoryVersion1,
+
+    baseLocation    = baseLocation1,
+}
+local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(0, 0, 0), true)
+local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingSpot0, })
+local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
+
+
 function T_Factory.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
 
-    local constructInitialisedTest2 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1)
+    local constructInitialisedTest0 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0)
+    local constructInitialisedTest1 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    T_IMObj.pt_destruct(testClassName, Factory, constructParameters0)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName, constructInitialisedTest0, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName, constructInitialisedTest1, logOk)
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 end

@@ -143,6 +143,82 @@ end
 --                            _/ |
 --                           |__/
 
+function Factory:construct(...)
+    -- get & check input from description
+    local checkSuccess, version, baseLocation = InputChecker.Check([[
+        This method constructs a Factory instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
+
+        The constructed Factory is not yet saved in the Host.
+
+        Return value:
+                                        - (Factory) the constructed Factory
+
+        Parameters:
+            constructParameters         - (table) parameters for constructing the Factory
+                version                 + (string) version of the factory
+                baseLocation            + (Location) base location of the Factory
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:construct: Invalid input") return nil end
+
+    -- determine Factory fields
+    local id = coreutils.NewId()
+    local locatorClassName = "URL"
+    local productionSpotClassName = "ProductionSpot"
+    local inputLocators = ObjArray:newInstance(locatorClassName)
+    local outputLocators = ObjArray:newInstance(locatorClassName)
+    local craftingSpots = ObjArray:newInstance(productionSpotClassName)
+    local smeltingSpots = ObjArray:newInstance(productionSpotClassName)
+    if version == "v0" then
+        -- inputLocators
+        table.insert(inputLocators, enterprise_turtle.GetAnyTurtleLocator())
+
+        -- outputLocators
+        table.insert(outputLocators, enterprise_turtle.GetAnyTurtleLocator())
+
+        -- craftingSpots
+        table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(0, 0, 0), true))
+
+        -- smeltingSpots
+        -- note: none
+    elseif version == "v1" then
+        -- inputLocators
+        table.insert(inputLocators, enterprise_turtle.GetAnyTurtleLocator())
+
+        -- outputLocators
+        table.insert(outputLocators, enterprise_turtle.GetAnyTurtleLocator())
+
+        -- craftingSpots
+        table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true))
+
+        -- smeltingSpots
+        table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
+    else
+        corelog.Error("Factory:construct: Don't know how to construct a Factory of version "..version) return nil
+    end
+
+    -- construct new Factory
+    local obj = Factory:newInstance(id, baseLocation:copy(), inputLocators:copy(), outputLocators:copy(), craftingSpots:copy(), smeltingSpots:copy())
+
+    -- end
+    return obj
+end
+
+function Factory:destruct()
+    --[[
+        This method destructs a Factory instance.
+
+        The Factory is not yet deleted from the Host.
+
+        Return value:
+                                        - (boolean) whether the Factory was succesfully destructed.
+
+        Parameters:
+    ]]
+
+    -- end
+    return true
+end
+
 function Factory:getId()
     return self._id
 end
