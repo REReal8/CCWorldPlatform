@@ -191,6 +191,7 @@ function T_Factory.T_IMObj_All()
 
     -- test
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
 end
 
 --                        _  __ _                       _   _               _

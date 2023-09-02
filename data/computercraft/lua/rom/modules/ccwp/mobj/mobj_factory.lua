@@ -101,10 +101,6 @@ function Factory:new(...)
     return o
 end
 
-function Factory:getId()
-    return self._id
-end
-
 function Factory:getBaseLocation()
     return self._baseLocation
 end
@@ -136,6 +132,19 @@ end
 
 function Factory:getClassName()
     return "Factory"
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+function Factory:getId()
+    return self._id
 end
 
 --                        _  __ _                       _   _               _
