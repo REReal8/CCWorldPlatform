@@ -77,7 +77,7 @@ G  Debug: Modem events send but not received                                    
    R  mobj_test                                                                                                         (done)
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
-   -  mobj_factory
+   R  mobj_factory                                                                                                      (....)
    R  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop

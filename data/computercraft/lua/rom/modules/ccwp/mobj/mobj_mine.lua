@@ -1,9 +1,9 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
-local IItemSupplier = require "i_item_supplier"
 local IMObj = require "i_mobj"
-local Mine = Class.NewClass(ObjBase, IItemSupplier, IMObj)
+local IItemSupplier = require "i_item_supplier"
+local Mine = Class.NewClass(ObjBase, IMObj, IItemSupplier)
 
 --[[
     The following design decisions are made

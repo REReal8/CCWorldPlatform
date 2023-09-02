@@ -21,10 +21,12 @@ local enterprise_chests = require "enterprise_chests"
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
+local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
+local T_IMObj = require "test.t_i_mobj"
 
 local T_Turtle = require "test.t_mobj_turtle"
 local T_Chest = require "test.t_mobj_chest"
@@ -167,6 +169,28 @@ function T_Factory.T_IObj_All()
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
     T_IObj.pt_all(testClassName, obj, otherObj)
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+function T_Factory.T_IMObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+
+    local constructInitialisedTest2 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocators1, outputLocators1, craftingSpots1, smeltingSpots1)
+
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+
+    -- test
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
 end
 
 --                        _  __ _                       _   _               _

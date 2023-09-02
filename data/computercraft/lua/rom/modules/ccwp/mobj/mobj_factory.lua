@@ -2,7 +2,8 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local IItemSupplier = require "i_item_supplier"
-local Factory = Class.NewClass(ObjBase, IItemSupplier)
+local IMObj = require "i_mobj"
+local Factory = Class.NewClass(ObjBase, IMObj, IItemSupplier)
 
 --[[
     The Factory mobj represents a factory in the minecraft world and provides (production) services to operate on that Factory.
