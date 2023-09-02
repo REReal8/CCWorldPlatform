@@ -147,6 +147,14 @@ function Factory:getId()
     return self._id
 end
 
+function Factory:getWIPId()
+    --[[
+        Returns the unique Id of the Factory used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
+end
+
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
