@@ -192,6 +192,26 @@ function Factory:construct(...)
 
         -- smeltingSpots
         table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
+    elseif version == "v2" then
+        -- inputLocators
+        local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
+            accessDirection = "top",
+        }}).mobjLocator
+        table.insert(inputLocators, inputChestLocator)
+
+        -- outputLocators
+        local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
+            accessDirection = "top",
+        }}).mobjLocator
+        table.insert(outputLocators, outputChestLocator)
+
+        -- craftingSpots
+        table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true))
+
+        -- smeltingSpots
+        table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
     else
         corelog.Error("Factory:construct: Don't know how to construct a Factory of version "..version) return nil
     end

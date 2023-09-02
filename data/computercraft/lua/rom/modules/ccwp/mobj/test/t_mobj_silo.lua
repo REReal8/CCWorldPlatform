@@ -63,8 +63,9 @@ local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
 local dropLocation1 = 0
 local pickupLocation1 = 0
-local topChests1 = ObjArray:newInstance("URL") assert(topChests1, "Failed obtaining ObjArray")
-local storageChests1 = ObjArray:newInstance("URL") assert(storageChests1, "Failed obtaining ObjArray")
+local locatorClassName = "URL"
+local topChests1 = ObjArray:newInstance(locatorClassName) assert(topChests1, "Failed obtaining ObjArray")
+local storageChests1 = ObjArray:newInstance(locatorClassName) assert(storageChests1, "Failed obtaining ObjArray")
 
 local compact = { compact = true }
 
@@ -204,10 +205,12 @@ function T_Silo.T_IMObj_All()
     local pickupLocation = 2
     local topChestsTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
         MethodResultEqualTest:newInstance("nObjs", nTopChests1)
     ))
     local storageChestsTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
         MethodResultEqualTest:newInstance("nObjs", nLayers1*4)
     ))
     local constructInitialisedTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsTest, storageChestsTest)
