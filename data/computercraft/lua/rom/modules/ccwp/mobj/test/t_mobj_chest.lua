@@ -194,15 +194,17 @@ function T_Chest.T_IMObj_All()
     local id = coreutils.NewId()
     local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, emptyInventory) assert(obj, "Failed obtaining "..testClassName)
 
-    local constructInitialisedTest = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
+    local destructFieldsTest = TestArrayTest:newInstance()
+
+    local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    T_IMObj.pt_destruct(testClassName, Chest, constructParameters1)
-    T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructInitialisedTest, logOk)
+    T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)

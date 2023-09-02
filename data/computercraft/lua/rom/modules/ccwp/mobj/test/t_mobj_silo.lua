@@ -201,27 +201,42 @@ function T_Silo.T_IMObj_All()
     local id = coreutils.NewId()
     local obj = T_Silo.CreateTestObj(id, baseLocation1, entryLocation1, dropLocation1, pickupLocation1, topChests1, storageChests1) assert(obj, "Failed obtaining "..testClassName)
 
+    local topChestsDestructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("nObjs", 0)
+    ))
+    local storageChestsDestructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("nObjs", 0)
+    ))
+    local destructFieldsTest = TestArrayTest:newInstance(
+        topChestsDestructTest,
+        storageChestsDestructTest
+    )
+
     local dropLocation = 1
     local pickupLocation = 2
-    local topChestsTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
+    local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
         MethodResultEqualTest:newInstance("nObjs", nTopChests1)
     ))
-    local storageChestsTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
+    local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
         MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
         MethodResultEqualTest:newInstance("nObjs", nLayers1*4)
     ))
-    local constructInitialisedTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsTest, storageChestsTest)
+    local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    T_IMObj.pt_destruct(testClassName, Silo, constructParameters1)
-    T_IMObj.pt_construct(testClassName, Silo, constructParameters1, testObjName, constructInitialisedTest, logOk)
+    T_IMObj.pt_destruct(testClassName, Silo, constructParameters1, testObjName, destructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, Silo, constructParameters1, testObjName, constructFieldsTest, logOk)
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)

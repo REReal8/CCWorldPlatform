@@ -38,32 +38,39 @@ function T_IMObj.pt_Implements_IMObj(className, obj)
     T_IInterface.pt_ImplementsInterface("IMObj", IMObj, className, obj)
 end
 
-function T_IMObj.pt_destruct(className, class, constructParameters)
+function T_IMObj.pt_destruct(className, class, constructParameters, objName, destructFieldsTest, logOk)
     -- prepare test
     assert(className, "no className provided")
     assert(class, "no class provided")
     assert(constructParameters, "no constructParameters provided")
+    assert(objName, "no objName provided")
+    assert(destructFieldsTest, "no destructFieldsTest provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":destruct() tests")
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
 
     -- test
     local destructSuccess = obj:destruct()
     assert(destructSuccess, className..":destruct() not a success")
+    local test = destructFieldsTest
+    test:test(obj, objName, "", logOk)
+
+    -- ToDo: add tests if child MObj's have been released
 end
 
-function T_IMObj.pt_construct(className, class, constructParameters, objName, constructInitialisedTest, logOk)
+function T_IMObj.pt_construct(className, class, constructParameters, objName, constructFieldsTest, logOk)
     -- prepare test
     assert(className, "no className provided")
     assert(class, "no class provided")
     assert(constructParameters, "no constructParameters provided")
     assert(objName, "no objName provided")
-    assert(constructInitialisedTest, "no constructInitialisedTest provided")
+    assert(constructFieldsTest, "no constructFieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":construct() tests ("..textutils.serialise(constructParameters, compact)..")")
 
     -- test
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
-    local test = constructInitialisedTest
+    local test = constructFieldsTest
     test:test(obj, objName, "", logOk)
 
     -- cleanup test

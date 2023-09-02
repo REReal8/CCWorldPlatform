@@ -218,11 +218,26 @@ function T_Factory.T_IMObj_All()
     local id = coreutils.NewId()
     local obj = T_Factory.CreateTestObj(id, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
 
+    local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("nObjs", 0)
+    ))
+    local storageChestsDestructTest = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("ObjArray"),
+        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("nObjs", 0)
+    ))
+    local destructFieldsTest = TestArrayTest:newInstance(
+        topChestsDestructTest,
+        storageChestsDestructTest
+    )
+
     local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest0 = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
-    local constructInitialisedTest0 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots0, smeltingSpots0)
+    local constructFieldsTest0 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots0, smeltingSpots0)
 
-    local constructInitialisedTest1 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
+    local constructFieldsTest1 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
 
     local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -234,16 +249,16 @@ function T_Factory.T_IMObj_All()
         MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
-    local constructInitialisedTest2 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+    local constructFieldsTest2 = T_Factory.CreateInitialisedTest(nil, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
-    T_IMObj.pt_destruct(testClassName, Factory, constructParameters0)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName, constructInitialisedTest0, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName, constructInitialisedTest1, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName, constructInitialisedTest2, logOk)
+    T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName, destructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName, constructFieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName, constructFieldsTest1, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName, constructFieldsTest2, logOk)
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 end

@@ -227,6 +227,8 @@ function Factory:destruct()
     --[[
         This method destructs a Factory instance.
 
+        It also ensures all child MObj's the Factory is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+
         The Factory is not yet deleted from the Host.
 
         Return value:
@@ -235,8 +237,29 @@ function Factory:destruct()
         Parameters:
     ]]
 
+    -- release inputLocators
+    local destructSucces = true
+    for i, mobjLocator in ipairs(self._inputLocators) do
+        local hostName = mobjLocator:getHost()
+        if hostName == enterprise_chests:getHostName() then
+            local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing input locator "..mobjLocator:getURI()) destructSucces = false end
+        end
+        self._inputLocators[i] = nil
+    end
+
+    -- release outputLocators
+    for i, mobjLocator in ipairs(self._outputLocators) do
+        local hostName = mobjLocator:getHost()
+        if hostName == enterprise_chests:getHostName() then
+            local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
+            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing output locator "..mobjLocator:getURI()) destructSucces = false end
+        end
+        self._outputLocators[i] = nil
+    end
+
     -- end
-    return true
+    return destructSucces
 end
 
 function Factory:getId()

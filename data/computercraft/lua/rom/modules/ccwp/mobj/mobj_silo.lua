@@ -228,18 +228,20 @@ function Silo:destruct()
 --    corelog.WriteToLog("Oh no, someone is deleting a Silo!!!")
 
     -- Why would you ever want to delete such a magnificent structure.
-    local childsSuccesfullyReleased = true
+    local destructSucces = true
     for i, mobjLocator in ipairs(self._topChests) do
         local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
-        if not releaseResult or not releaseResult.success then corelog.Warning("Silo:destruct(): failed releasing top Chest "..mobjLocator:getURI()) childsSuccesfullyReleased = false end
+        if not releaseResult or not releaseResult.success then corelog.Warning("Silo:destruct(): failed releasing top Chest "..mobjLocator:getURI()) destructSucces = false end
+        self._topChests[i] = nil
     end
     for i, mobjLocator in ipairs(self._storageChests) do
         local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
-        if not releaseResult or not releaseResult.success then corelog.Warning("Silo:destruct(): failed releasing storage Chest "..mobjLocator:getURI()) childsSuccesfullyReleased = false end
+        if not releaseResult or not releaseResult.success then corelog.Warning("Silo:destruct(): failed releasing storage Chest "..mobjLocator:getURI()) destructSucces = false end
+        self._storageChests[i] = nil
     end
 
     -- end
-    return childsSuccesfullyReleased
+    return destructSucces
 end
 
 function Silo:getId()
