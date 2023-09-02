@@ -249,7 +249,7 @@ end
 
 function enterprise_manufacturing.StartNewSite_SSrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, siteVersion, siteAlreadyBuild = InputChecker.Check([[
+    local checkSuccess, baseLocation, siteVersion, siteAlreadyBuild = InputChecker.Check([[
         This sync public service ensures a new site is ready for use.
 
         Return value:
@@ -258,42 +258,34 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
                 siteLocator         - (URL) locating the created site (in this enterprise)
 
         Parameters:
-            serviceData             + (table) data about this service
-                baseLocation        - (Location) world location of the base (lower left corner) of this site
+            serviceData             - (table) data about this service
+                baseLocation        + (Location) world location of the base (lower left corner) of this site
                 siteVersion         + (string) version string of the site
                 siteAlreadyBuild    + (boolean) confirmation that the site was already physically build
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Invalid input") return {success = false} end
     if not siteAlreadyBuild then corelog.Warning("enterprise_manufacturing.StartNewSite_SSrv: Site not (yet) successfully build => we will not start it") return {success = false} end
 
-    -- get site start data
-    local siteStartData = nil
-    if siteVersion == "v0" then
-        siteStartData = Factory.GetV0SiteStartData(serviceData)
-    elseif siteVersion == "v1" then
-        siteStartData = Factory.GetV1SiteStartData(serviceData)
-    elseif siteVersion == "v2" then
-        siteStartData = Factory.GetV2SiteStartData(serviceData)
-    else
-        corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Don't know how to start a factory site of version "..siteVersion)
-        return {success = false}
-    end
+    -- determine constructParameters
+    local constructParameters = {
+        version         = siteVersion,
 
-    -- create new Factory
-    local factory = Factory:newInstance(coreutils.NewId(), siteStartData.baseLocation, siteStartData.inputLocators, siteStartData.outputLocators, siteStartData.craftingSpots, siteStartData.smeltingSpots)
-    if not factory then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv:failed obtaining Factory") return {success = false} end
+        baseLocation    = baseLocation:copy(),
+    }
 
-    -- ToDo: initialise possible other data (like e.g. open for business, availability of spots)
+    -- construct new Factory
+    local mobj = Factory:construct(constructParameters)
+    if not mobj then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Failed constructing Factory from constructParameters(="..textutils.serialise(constructParameters)..")") return {success = false} end
 
     -- save the Factory
-    corelog.WriteToLog(">Adding Factory "..factory:getId()..".")
-    local siteLocator = enterprise_manufacturing:saveObject(factory)
-    if not siteLocator then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Failed starting site from start data "..textutils.serialize(siteStartData)) return {success = false} end
+    corelog.WriteToLog(">Adding Factory "..mobj:getId()..".")
+    local mobjLocator = enterprise_manufacturing:saveObject(mobj)
+    if not mobjLocator then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Failed saving Factory "..textutils.serialise(mobj)..")") return {success = false} end
 
     -- end
     return {
         success     = true,
-        siteLocator = siteLocator,
+        siteLocator = mobjLocator,
     }
 end
 

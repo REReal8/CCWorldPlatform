@@ -945,35 +945,6 @@ function Factory.GetV0SiteDismantleBuildData(serviceData)
     return siteDismantleBuildData
 end
 
-local locatorClassName = "URL"
-local productionSpotClassName = "ProductionSpot"
-
-function Factory.GetV0SiteStartData(serviceData)
-    --
-    local baseLocation = serviceData.baseLocation
-
-    -- construct start data
-    local startData = {
-        version = serviceData.siteVersion,
-
-        baseLocation = baseLocation:copy(),
-
-        inputLocators = ObjArray:newInstance(locatorClassName, {
-            enterprise_turtle.GetAnyTurtleLocator(),
-        }),
-        outputLocators = ObjArray:newInstance(locatorClassName, {
-            enterprise_turtle.GetAnyTurtleLocator(),
-        }),
-
-        craftingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:newInstance(baseLocation:getRelativeLocation(0, 0, 0), true),
-        }),
-        smeltingSpots = ObjArray:newInstance(productionSpotClassName),
-    }
-
-    return startData
-end
-
 --[[
     A v1 site is comprised of
     - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed.
@@ -1029,34 +1000,6 @@ function Factory.GetV1SiteBuildData(serviceData)
     }
 
     return siteBuildData
-end
-
-function Factory.GetV1SiteStartData(serviceData)
-    --
-    local baseLocation = serviceData.baseLocation
-
-    -- construct start data
-    local startData = {
-        version = serviceData.siteVersion,
-
-        baseLocation = baseLocation:copy(),
-
-        inputLocators = ObjArray:newInstance(locatorClassName, {
-            enterprise_turtle.GetAnyTurtleLocator(),
-        }),
-        outputLocators = ObjArray:newInstance(locatorClassName, {
-            enterprise_turtle.GetAnyTurtleLocator(),
-        }),
-
-        craftingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true),
-        }),
-        smeltingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false),
-        }),
-    }
-
-    return startData
 end
 
 --[[
@@ -1125,46 +1068,6 @@ function Factory.GetV2SiteBuildData(serviceData)
     }
 
     return siteBuildData
-end
-
-function Factory.GetV2SiteStartData(serviceData)
-    --
-    local baseLocation = serviceData.baseLocation
-
-    -- register input chest
-    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
-        accessDirection = "top",
-    }}).mobjLocator
-
-    -- register output chest
-    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-        baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
-        accessDirection = "top",
-    }}).mobjLocator
-
-    -- construct start data
-    local startData = {
-        version = serviceData.siteVersion,
-
-        baseLocation = baseLocation,
-
-        inputLocators = ObjArray:newInstance(locatorClassName, {
-            inputChestLocator,
-        }),
-        outputLocators = ObjArray:newInstance(locatorClassName, {
-            outputChestLocator,
-        }),
-
-        craftingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true),
-        }),
-        smeltingSpots = ObjArray:newInstance(productionSpotClassName, {
-            ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false),
-        }),
-    }
-
-    return startData
 end
 
 function Factory.CraftItem_ASrv(...)
