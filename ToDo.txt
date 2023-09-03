@@ -206,6 +206,7 @@ RG mine v2
          -  status
          -  bevat reservering informatie, waar zijn zaken gereserveerd (dus met een locator en details over de reservering)
          -  completeCallback, welke functie moet worden aangeroepen zodra deze order complete is
+         -  description - handig voor systeem monitoring en zo
       -  ItemOrder
          -  ItemTable            - bestelde items
          -  aflever adres        - locator
