@@ -53,11 +53,12 @@ local enterprise_manufacturing
 
 function Factory:_init(...)
     -- get & check input from description
-    local checkSuccess, id, baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots = InputChecker.Check([[
+    local checkSuccess, id, level, baseLocation, inputLocators, outputLocators, craftingSpots, smeltingSpots = InputChecker.Check([[
         Initialise a Factory.
 
         Parameters:
             id                      + (string) id of the Factory
+            level                   + (number) with Factory level
             baseLocation            + (Location) base location of the Factory
             inputLocators           + (ObjArray) with input locators
             outputLocators          + (ObjArray) with output locators
@@ -69,6 +70,7 @@ function Factory:_init(...)
     -- initialisation
     ObjBase._init(self)
     self._id                = id
+    self._level             = level
     self._baseLocation      = baseLocation
     self._inputLocators     = inputLocators
     self._outputLocators    = outputLocators
@@ -85,6 +87,7 @@ function Factory:new(...)
         Parameters:
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the Factory
+                _level                  - (number) with Factory level
                 _baseLocation           - (Location) location of the Factory
                 _inputLocators          - (ObjArray) with input locators
                 _outputLocators         - (ObjArray) with output locators
@@ -145,7 +148,7 @@ end
 
 function Factory:construct(...)
     -- get & check input from description
-    local checkSuccess, version, baseLocation = InputChecker.Check([[
+    local checkSuccess, level, baseLocation = InputChecker.Check([[
         This method constructs a Factory instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         The constructed Factory is not yet saved in the Host.
@@ -155,7 +158,7 @@ function Factory:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the Factory
-                version                 + (string) version of the factory
+                level                   + (number) with Factory level
                 baseLocation            + (Location) base location of the Factory
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory:construct: Invalid input") return nil end
@@ -168,7 +171,7 @@ function Factory:construct(...)
     local outputLocators = ObjArray:newInstance(locatorClassName)
     local craftingSpots = ObjArray:newInstance(productionSpotClassName)
     local smeltingSpots = ObjArray:newInstance(productionSpotClassName)
-    if version == "v0" then
+    if level == 0 then
         -- inputLocators
         table.insert(inputLocators, enterprise_turtle.GetAnyTurtleLocator())
 
@@ -180,7 +183,7 @@ function Factory:construct(...)
 
         -- smeltingSpots
         -- note: none
-    elseif version == "v1" then
+    elseif level == 1 then
         -- inputLocators
         table.insert(inputLocators, enterprise_turtle.GetAnyTurtleLocator())
 
@@ -192,7 +195,7 @@ function Factory:construct(...)
 
         -- smeltingSpots
         table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
-    elseif version == "v2" then
+    elseif level == 2 then
         -- inputLocators
         local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
@@ -213,11 +216,11 @@ function Factory:construct(...)
         -- smeltingSpots
         table.insert(smeltingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -3), false))
     else
-        corelog.Error("Factory:construct: Don't know how to construct a Factory of version "..version) return nil
+        corelog.Error("Factory:construct: Don't know how to construct a Factory of level "..level) return nil
     end
 
     -- construct new Factory
-    local obj = Factory:newInstance(id, baseLocation:copy(), inputLocators:copy(), outputLocators:copy(), craftingSpots:copy(), smeltingSpots:copy())
+    local obj = Factory:newInstance(id, level, baseLocation:copy(), inputLocators:copy(), outputLocators:copy(), craftingSpots:copy(), smeltingSpots:copy())
 
     -- end
     return obj

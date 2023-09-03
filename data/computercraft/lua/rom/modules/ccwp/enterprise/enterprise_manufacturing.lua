@@ -267,8 +267,16 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
     if not siteAlreadyBuild then corelog.Warning("enterprise_manufacturing.StartNewSite_SSrv: Site not (yet) successfully build => we will not start it") return {success = false} end
 
     -- determine constructParameters
+    local level = -1
+    if siteVersion == "v0" then
+        level = 0
+    elseif siteVersion == "v1" then
+        level = 1
+    elseif siteVersion == "v2" then
+        level = 2
+    end
     local constructParameters = {
-        version         = siteVersion,
+        level           = level,
 
         baseLocation    = baseLocation:copy(),
     }
