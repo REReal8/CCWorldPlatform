@@ -16,6 +16,19 @@ local Factory = Class.NewClass(ObjBase, IMObj, IItemSupplier)
     one or more item output "spots". These input/ output spots locally locate the input and output of items by the site.
     The most simple version of these input/ output "spots" are the inventory of a turtle. They however could in principle
     also be a full fledged local ItemDepot site.
+
+    There are currently 3 levels of a Factory with a different composition
+        - Level 0:
+            - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed
+            - no smelting spot
+        - Level 1:
+            - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed.
+            - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
+        - Level 2:
+            - an ingredient input chest
+            - an product output chest
+            - one crafting spot. Below the crafting spot is a chest as a temporary ItemDepot for items not needed.
+            - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
 --]]
 
 local corelog = require "corelog"
@@ -275,6 +288,169 @@ function Factory:getWIPId()
     ]]
 
     return self:getClassName().." "..self:getId()
+end
+
+local blockClassName = "Block"
+local function Shaft_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = " ",
+        })
+    )
+end
+
+local function ShaftRestore_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["D"]   = Block:newInstance("minecraft:dirt"),
+        }),
+        CodeMap:newInstance({
+            [1] = "D",
+        })
+    )
+end
+
+local function AboveOrBelowFurnanceL1_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [2] = " ",
+            [1] = " ",
+        })
+    )
+end
+
+local function FurnanceL1_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["F"]   = Block:newInstance("minecraft:furnace"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [2] = "F",
+            [1] = " ",
+        })
+    )
+end
+
+local function ItemDepotChestL2_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["C"]   = Block:newInstance("minecraft:chest"),
+        }),
+        CodeMap:newInstance({
+            [1] = "C",
+        })
+    )
+end
+
+local function TopLayerL2_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            ["C"]   = Block:newInstance("minecraft:chest"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [6] = "  C C ",
+            [5] = "      ",
+            [4] = "T     ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        })
+    )
+end
+
+function Factory:getBuildBlueprint()
+    --[[
+        This method returns a blueprint for building the Factory in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- determine layerList
+    local layerList = {}
+    if self._level == 0 then
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()})
+    elseif self._level == 1 then
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = Shaft_layer()})
+    elseif self._level == 2 then
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopLayerL2_layer()})
+        --    if not onlyUpgrade then
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()})
+        --    end
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -5), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
+    else
+        corelog.Warning("Factory:getBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..self._level)
+    end
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+    if self._level == 1 or self._level == 2 then
+        table.insert(escapeSequence, Location:newInstance(3, 3, 1))
+    end
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence,
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
+end
+
+function Factory:getDismantleBlueprint()
+    --[[
+        This method returns a blueprint for dismantling the Factory in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- determine layerList
+    local layerList = {}
+    if self._level == 0 then
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = ShaftRestore_layer()})
+    else
+        corelog.Warning("Factory:getDismantleBlueprint: Don't know how to make a dismantle blueprint for a Factory of level "..self._level)
+    end
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
 end
 
 --                        _  __ _                       _   _               _
@@ -875,35 +1051,6 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
---[[
-    A v0 site is comprised of
-    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed
-    - no smelting spot
---]]
-
-local blockClassName = "Block"
-local function Shaft_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [1] = " ",
-        })
-    )
-end
-
-local function ShaftRestore_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["D"]   = Block:newInstance("minecraft:dirt"),
-        }),
-        CodeMap:newInstance({
-            [1] = "D",
-        })
-    )
-end
-
 function Factory.GetV0SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
@@ -948,37 +1095,6 @@ function Factory.GetV0SiteDismantleBuildData(serviceData)
     return siteDismantleBuildData
 end
 
---[[
-    A v1 site is comprised of
-    - one crafting spot. Below the crafting spot is a hole in the ground as a temporary ItemDepot for items not needed.
-    - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
---]]
-
-local function AboveOrBelowFurnanceL1_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [2] = " ",
-            [1] = " ",
-        })
-    )
-end
-
-local function FurnanceL1_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["F"]   = Block:newInstance("minecraft:furnace"),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [2] = "F",
-            [1] = " ",
-        })
-    )
-end
-
 function Factory.GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
@@ -1003,43 +1119,6 @@ function Factory.GetV1SiteBuildData(serviceData)
     }
 
     return siteBuildData
-end
-
---[[
-    A v2 site is comprised of
-    - one crafting spot. Below the crafting spot should is a chest as a temporary ItemDepot for items not needed.
-    - one smelting spot. In front of the smelting spot is a furnace that can be accessed from the front, the top and below.
-
-    - ToDo and some additional chests of which we need to define what their exact purpose is.
---]]
-
-local function ItemDepotChestL2_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["C"]   = Block:newInstance("minecraft:chest"),
-        }),
-        CodeMap:newInstance({
-            [1] = "C",
-        })
-    )
-end
-
-local function TopLayerL2_layer()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["T"]   = Block:newInstance("minecraft:torch"),
-            ["C"]   = Block:newInstance("minecraft:chest"),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [6] = "  C C ",
-            [5] = "      ",
-            [4] = "T     ",
-            [3] = "      ",
-            [2] = "      ",
-            [1] = "   T  ",
-        })
-    )
 end
 
 function Factory.GetV2SiteBuildData(serviceData)

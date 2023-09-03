@@ -219,7 +219,7 @@ local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
 function T_Factory.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+    local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
 
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -257,13 +257,16 @@ function T_Factory.T_IMObj_All()
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
     -- test
-    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
+    T_IMObj.pt_Implements_IMObj(testClassName, obj0)
     T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName, destructFieldsTest, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName, constructFieldsTest0, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName, constructFieldsTest1, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName, constructFieldsTest2, logOk)
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getId(testClassName, obj0, testObjName, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
 end
 
 --                        _  __ _                       _   _               _
