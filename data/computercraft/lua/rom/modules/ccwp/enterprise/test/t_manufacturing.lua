@@ -100,7 +100,6 @@ function t_manufacturing.StartNewSite(baseLocation, version)
     return enterprise_manufacturing.StartNewSite_SSrv({
         baseLocation        = baseLocation,
         siteVersion         = version,
-        siteAlreadyBuild    = true
     })
 end
 

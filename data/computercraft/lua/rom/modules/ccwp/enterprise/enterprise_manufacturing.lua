@@ -177,7 +177,6 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
         { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
             { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
             { keyDef = "siteVersion"            , sourceStep = 0, sourceKeyDef = "siteVersion" },
-            { keyDef = "siteAlreadyBuild"       , sourceStep = iStep, sourceKeyDef = "success" }
         }}
     )
     iStep = iStep + 1
@@ -249,7 +248,7 @@ end
 
 function enterprise_manufacturing.StartNewSite_SSrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, siteVersion, siteAlreadyBuild = InputChecker.Check([[
+    local checkSuccess, baseLocation, siteVersion = InputChecker.Check([[
         This sync public service ensures a new site is ready for use.
 
         Return value:
@@ -261,10 +260,8 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
             serviceData             - (table) data about this service
                 baseLocation        + (Location) world location of the base (lower left corner) of this site
                 siteVersion         + (string) version string of the site
-                siteAlreadyBuild    + (boolean) confirmation that the site was already physically build
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Invalid input") return {success = false} end
-    if not siteAlreadyBuild then corelog.Warning("enterprise_manufacturing.StartNewSite_SSrv: Site not (yet) successfully build => we will not start it") return {success = false} end
 
     -- determine constructParameters
     local level = -1
