@@ -10,6 +10,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+local URL = require "obj_url"
 local Location = require "obj_location"
 
 local role_settler = require "role_settler"
@@ -93,8 +94,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
         ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle:TriggerRefuelIfNeeded
 
+        factoryConstructParameters0     = {
+            level                           = 0,
+
+            baseLocation                    = startLocation:copy(),
+        },
         factoryVersion0                 = "v0",
         upgradeFalse                    = false,
+        dummySiteToUpgradeLocator       = URL:newInstance(),
 
         forestLocation                  = forestLocation:copy(),
         forestLm1                       = -1,
@@ -114,10 +121,17 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         collectCobbleStoneMetaData      = role_settler.CollectCobbleStone_MetaData(collectCobbleStoneTaskData),
         collectCobbleStoneTaskCall      = TaskCall:new({ _moduleName = "role_settler", _methodName = "CollectCobbleStone_Task", _data = collectCobbleStoneTaskData, }),
 
-        factoryLocation                 = factoryLocation:copy(),
-        factoryVersion1                 = "v1",
+        factoryConstructParameters1     = {
+            level                           = 1,
 
-        factoryVersion2                 = "v2",
+            baseLocation                    = factoryLocation:copy(),
+        },
+
+        factoryConstructParameters2     = {
+            level                           = 2,
+
+            baseLocation                    = factoryLocation:copy(),
+        },
         upgradeToV2                     = true,
 
         siloHostLocator                 = enterprise_storage:getHostLocator(),
@@ -143,9 +157,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }, description = "Setting coordinates"},
             -- host, build and register initial (L0) factory (crafting spot, i.e. in place hole in the ground)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
-                { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "startLocation" },
-                { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion0" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters0" },
                 { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
+                { keyDef = "siteLocator"                    , sourceStep = 0, sourceKeyDef = "dummySiteToUpgradeLocator" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building first factory"},
@@ -194,9 +208,9 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }, description = "Getting cobblestone"},
             -- host, build and register new L1 factory (crafting + smelting spot)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
-                { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "factoryLocation" },
-                { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion1" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters1" },
                 { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgradeFalse" },
+                { keyDef = "siteLocator"                    , sourceStep = 0, sourceKeyDef = "dummySiteToUpgradeLocator" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Building a better factory"},
@@ -238,8 +252,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }, description = "Adding chests to the forest"},
             -- upgrade/ replace existing L1 factory to/ with L2 factory (in/out chests, crafting + smelting spot)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildAndStartNewSite_ASrv" }, stepDataDef = {
-                { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "factoryLocation" },
-                { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "factoryVersion2" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters2" },
                 { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgradeToV2" },
                 { keyDef = "siteLocator"                    , sourceStep = 11, sourceKeyDef = "siteLocator" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },

@@ -20,12 +20,16 @@ local baseLocationV2 = baseLocationV1:copy()
 local callback = Callback.GetNewDummyCallBack()
 
 function t_manufacturing.T_BuildAndStartNewV1Site()
+    local constructParameters1 = {
+        level           = 1,
+
+        baseLocation    = baseLocationV1,
+    }
     local callbackBuildAndStartNewV1Site = Callback:newInstance("t_manufacturing", "BuildAndStartNewV1Site_CallBack")
 
     t_turtle = t_turtle or require "test.t_turtle"
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
-        baseLocation                = baseLocationV1,
-        siteVersion                 = "v1",
+        constructParameters         = constructParameters1,
         upgrade                     = false,
         siteLocator                 = nil,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
@@ -51,11 +55,15 @@ function t_manufacturing.T_BuildAndStartNewV2Site()
     corelog.WriteToLog("* enterprise_manufacturing.BuildAndStartNewSite_ASrv tests")
     if not siteLocatorV1 then corelog.Error("siteLocatorV1 not yet set, first create v1 site as this test wants to upgrade") return false end
     t_turtle = t_turtle or require "test.t_turtle"
+    local constructParameters2 = {
+        level           = 2,
+
+        baseLocation    = baseLocationV2,
+    }
 
     -- test
     return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
-        baseLocation                = baseLocationV2,
-        siteVersion                 = "v2",
+        constructParameters         = constructParameters2,
         upgrade                     = true,
         siteLocator                 = siteLocatorV1,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
@@ -75,12 +83,16 @@ function t_manufacturing.T_StopAndDismantleV1Site()
     }, callback)
 end
 
+local constructParameters0 = {
+    level           = 0,
+
+    baseLocation    = baseLocationV0,
+}
+
 function t_manufacturing.T_BuildNewV0Site()
     t_turtle = t_turtle or require "test.t_turtle"
-
     return enterprise_manufacturing.BuildNewSite_ASrv({
-        baseLocation                = baseLocationV0,
-        siteVersion                 = "v0",
+        constructParameters         = constructParameters0,
         upgrade                     = false,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
@@ -90,16 +102,15 @@ end
 local siteLocatorV0
 
 function t_manufacturing.T_StartNewV0Site()
-    local result = t_manufacturing.StartNewSite(baseLocationV0) if not result.success then corelog.Error("failed starting Site") return end
+    local result = t_manufacturing.StartNewSite(constructParameters0) if not result.success then corelog.Error("failed starting Site") return end
     siteLocatorV0 = result.siteLocator
 end
 
-function t_manufacturing.StartNewSite(baseLocation, version)
-    version = version or "v0"
+function t_manufacturing.StartNewSite(constructParameters)
+    assert(constructParameters, "no constructParameters provided")
 
     return enterprise_manufacturing.StartNewSite_SSrv({
-        baseLocation        = baseLocation,
-        siteVersion         = version,
+        constructParameters = constructParameters,
     })
 end
 

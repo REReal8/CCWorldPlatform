@@ -17,6 +17,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 
+local Location = require "obj_location"
 local Factory = require "mobj_factory"
 
 local enterprise_projects = require "enterprise_projects"
@@ -125,7 +126,7 @@ end
 
 function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, upgrade, callback = InputChecker.Check([[
+    local checkSuccess, constructParameters, upgrade, siteLocator, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a new factory site and ensures it's ready for use.
 
         Return value:
@@ -137,13 +138,12 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
                 siteLocator                     - (URL) locating the created site (in this enterprise)
 
         Parameters:
-            serviceData                         + (table) data about this site
-                baseLocation                    - (Location) world location of the base (lower left corner) of this site
-                siteVersion                     - (string) version string of the site
+            serviceData                         - (table) data about this site
+                constructParameters             + (table) parameters for constructing the Factory
                 upgrade                         + (boolean, false) if site should (only) be updated from a previous version
-                siteLocator                     - (URL, nil) locating the to be upgraded site
-                materialsItemSupplierLocator    - (URL) locating the host of the building materials
-                wasteItemDepotLocator           - (URL) locating where waste material can be delivered
+                siteLocator                     + (URL, nil) locating the to be upgraded site
+                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.BuildAndStartNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
@@ -153,8 +153,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     local iStep = 0
     table.insert(projectSteps,
         { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "BuildNewSite_ASrv" }, stepDataDef = {
-            { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "baseLocation" },
-            { keyDef = "siteVersion"                    , sourceStep = 0, sourceKeyDef = "siteVersion" },
+            { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
             { keyDef = "upgrade"                        , sourceStep = 0, sourceKeyDef = "upgrade" },
             { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
             { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
@@ -175,8 +174,7 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     -- continue
     table.insert(projectSteps,
         { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_manufacturing", serviceName = "StartNewSite_SSrv" }, stepDataDef = {
-            { keyDef = "baseLocation"           , sourceStep = 0, sourceKeyDef = "baseLocation" },
-            { keyDef = "siteVersion"            , sourceStep = 0, sourceKeyDef = "siteVersion" },
+            { keyDef = "constructParameters"    , sourceStep = 0, sourceKeyDef = "constructParameters" },
         }}
     )
     iStep = iStep + 1
@@ -190,7 +188,15 @@ function enterprise_manufacturing.BuildAndStartNewSite_ASrv(...)
     }
     local projectServiceData = {
         projectDef  = buildAndStartNewSiteProjectDef,
-        projectData = serviceData,
+        projectData = {
+            constructParameters         = constructParameters,
+
+            upgrade                     = upgrade,
+            siteLocator                 = siteLocator,
+
+            materialsItemSupplierLocator= materialsItemSupplierLocator,
+            wasteItemDepotLocator       = wasteItemDepotLocator,
+        },
         projectMeta = { title = "Building new factory", description = "Crafting the world for you!" },
     }
 
@@ -201,7 +207,7 @@ end
 
 function enterprise_manufacturing.BuildNewSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, serviceData, baseLocation, siteVersion, upgrade, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
+    local checkSuccess, constructParameters, upgrade, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a new factory site.
 
         Return value:
@@ -212,9 +218,8 @@ function enterprise_manufacturing.BuildNewSite_ASrv(...)
                 success                         - (boolean) whether the site was successfully build
 
         Parameters:
-            serviceData                         + (table) data about this service
-                baseLocation                    + (Location) world location of the base (lower left corner) of this site
-                siteVersion                     + (string) version string of the site
+            serviceData                         - (table) data about this service
+                constructParameters             + (table) parameters for constructing the Factory
                 upgrade                         + (boolean, false) if site should (only) be updated from a previous version
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
@@ -222,16 +227,19 @@ function enterprise_manufacturing.BuildNewSite_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    -- temp
+    local level = constructParameters.level if not level then corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Invalid level") return Callback.ErrorCall(callback) end
+    local baseLocation = Location:new(constructParameters.baseLocation) if not baseLocation then corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Invalid baseLocation") return Callback.ErrorCall(callback) end
     -- get site build data
     local siteBuildData = nil
-    if siteVersion == "v0" then
-        siteBuildData = Factory.GetV0SiteBuildData(serviceData)
-    elseif siteVersion == "v1" then
-        siteBuildData = Factory.GetV1SiteBuildData(serviceData)
-    elseif siteVersion == "v2" then
-        siteBuildData = Factory.GetV2SiteBuildData(serviceData)
+    if level == 0 then
+        siteBuildData = Factory.GetV0SiteBuildData(baseLocation)
+    elseif level == 1 then
+        siteBuildData = Factory.GetV1SiteBuildData(baseLocation)
+    elseif level == 2 then
+        siteBuildData = Factory.GetV2SiteBuildData(baseLocation, upgrade)
     else
-        corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to build a factory site of version "..siteVersion)
+        corelog.Error("enterprise_manufacturing.BuildNewSite_ASrv: Don't know how to build a Factory of level "..level)
         return Callback.ErrorCall(callback)
     end
     siteBuildData.materialsItemSupplierLocator = materialsItemSupplierLocator
@@ -239,16 +247,16 @@ function enterprise_manufacturing.BuildNewSite_ASrv(...)
 
     -- let construction enterprise build the site
     if upgrade then
-        corelog.WriteToLog(">Upgrading factory site at "..textutils.serialise(baseLocation, { compact = true }).." to version "..siteVersion)
+        corelog.WriteToLog(">Upgrading Factory at "..textutils.serialise(baseLocation, { compact = true }).." to level "..level)
     else
-        corelog.WriteToLog(">Building factory site version "..siteVersion.." at "..textutils.serialise(baseLocation, { compact = true }))
+        corelog.WriteToLog(">Building Factory level "..level.." at "..textutils.serialise(baseLocation, { compact = true }))
     end
     return enterprise_construction.BuildBlueprint_ASrv(siteBuildData, callback)
 end
 
 function enterprise_manufacturing.StartNewSite_SSrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, siteVersion = InputChecker.Check([[
+    local checkSuccess, constructParameters = InputChecker.Check([[
         This sync public service ensures a new site is ready for use.
 
         Return value:
@@ -258,25 +266,9 @@ function enterprise_manufacturing.StartNewSite_SSrv(...)
 
         Parameters:
             serviceData             - (table) data about this service
-                baseLocation        + (Location) world location of the base (lower left corner) of this site
-                siteVersion         + (string) version string of the site
+                constructParameters + (table) parameters for constructing the Factory
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_manufacturing.StartNewSite_SSrv: Invalid input") return {success = false} end
-
-    -- determine constructParameters
-    local level = -1
-    if siteVersion == "v0" then
-        level = 0
-    elseif siteVersion == "v1" then
-        level = 1
-    elseif siteVersion == "v2" then
-        level = 2
-    end
-    local constructParameters = {
-        level           = level,
-
-        baseLocation    = baseLocation:copy(),
-    }
 
     -- construct new Factory
     local mobj = Factory:construct(constructParameters)

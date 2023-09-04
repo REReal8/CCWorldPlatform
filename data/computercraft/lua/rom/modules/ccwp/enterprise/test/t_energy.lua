@@ -37,8 +37,12 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     local forest = T_BirchForest.CreateTestObj(nil, levelm1, forestLocation) assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
 
-    local factoryLocation1 = turtleLocation:copy()
-    local result = t_manufacturing.StartNewSite(factoryLocation1) if not result.success then corelog.Error("failed starting Site") return end
+    local factoryConstructParameters = {
+        level           = 0,
+
+        baseLocation    = turtleLocation:copy(),
+    }
+    local result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("failed starting Site") return end
     local factoryLocator1 = result.siteLocator
 
     local energyParameters = enterprise_energy.GetParameters()
@@ -78,8 +82,12 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     forest:setLevel(level2)
     forest:setNTrees(3*6)
     forestLocator = enterprise_forestry:saveObject(forest)
-    local factoryLocation2 = forestLocation:getRelativeLocation(12, 0, 0)
-    result = t_manufacturing.StartNewSite(factoryLocation2) if not result.success then corelog.Error("failed starting Site") return end
+    factoryConstructParameters = {
+        level           = 0,
+
+        baseLocation    = forestLocation:getRelativeLocation(12, 0, 0),
+    }
+    result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("failed starting Site") return end
     local factoryLocator2 = result.siteLocator
     level = level3
 
@@ -105,8 +113,12 @@ function t_energy.T_GetRefuelAmount_Att()
     local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local turtleLocation = turtleObj:getLocation()
-    local factoryLocation1 = turtleLocation:copy()
-    local result = t_manufacturing.StartNewSite(factoryLocation1) if not result.success then corelog.Error("failed starting Site") return end
+    local factoryConstructParameters = {
+        level           = 0,
+
+        baseLocation    = turtleLocation:copy(),
+    }
+    local result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("Failed starting Factory") return end
     local factoryLocator1 = result.siteLocator
 
     local energyParameters = enterprise_energy.GetParameters()

@@ -56,7 +56,12 @@ function t_turtle.T_GetFuelLevels_Att()
     local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location = turtleObj:getLocation()
-    local result = t_manufacturing.StartNewSite(location) if not result.success then corelog.Error("failed starting Site") return end
+    local factoryConstructParameters = {
+        level           = 0,
+
+        baseLocation    = location,
+    }
+    local result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("Failed starting Factory") return end
     local factoryLocator = result.siteLocator
 
     local energyParameters = enterprise_energy.GetParameters()

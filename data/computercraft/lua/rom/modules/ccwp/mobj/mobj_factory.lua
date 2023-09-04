@@ -1051,7 +1051,7 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function Factory.GetV0SiteBuildData(serviceData)
+function Factory.GetV0SiteBuildData(baseLocation)
     -- construct layer list
     local layerList = {
         { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()},
@@ -1066,7 +1066,7 @@ function Factory.GetV0SiteBuildData(serviceData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = serviceData.baseLocation:copy(),
+        blueprintStartpoint = baseLocation:copy(),
         blueprint = blueprint
     }
 
@@ -1095,7 +1095,7 @@ function Factory.GetV0SiteDismantleBuildData(serviceData)
     return siteDismantleBuildData
 end
 
-function Factory.GetV1SiteBuildData(serviceData)
+function Factory.GetV1SiteBuildData(baseLocation)
     -- construct layer list
     local layerList = {
         { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()},
@@ -1114,15 +1114,15 @@ function Factory.GetV1SiteBuildData(serviceData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = serviceData.baseLocation:copy(),
+        blueprintStartpoint = baseLocation:copy(),
         blueprint = blueprint
     }
 
     return siteBuildData
 end
 
-function Factory.GetV2SiteBuildData(serviceData)
-    local onlyUpgrade = serviceData.upgrade
+function Factory.GetV2SiteBuildData(baseLocation, upgrade)
+    local onlyUpgrade = upgrade
 
     -- construct layer list
     local layerList = {
@@ -1145,7 +1145,7 @@ function Factory.GetV2SiteBuildData(serviceData)
 
     -- construct build data
     local siteBuildData = {
-        blueprintStartpoint = serviceData.baseLocation:copy(),
+        blueprintStartpoint = baseLocation:copy(),
         blueprint = blueprint
     }
 
