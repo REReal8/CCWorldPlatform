@@ -475,6 +475,47 @@ function Factory:getBuildBlueprint()
     return buildLocation, blueprint
 end
 
+function Factory:getExtendBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, upgradeLevel = InputChecker.Check([[
+        This method returns a blueprint for extending the Factory in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+            upgradeParameters           - (table) parameters for upgrading the Factory
+                level                   + (number) with Factory level to upgrade to
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:getExtendBlueprint: Invalid input") return nil end
+
+    -- determine layerList
+    local layerList = {}
+    local level = self:getLevel()
+    if level == 1 and upgradeLevel == 2 then
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopLayerL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -5), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
+    else
+        corelog.Warning("Factory:getExtendBlueprint: Don't know how to make a extend blueprint for a Factory from level "..level.." to "..upgradeLevel)
+    end
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence,
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
+end
+
 function Factory:getDismantleBlueprint()
     --[[
         This method returns a blueprint for dismantling the Factory in the physical minecraft world.

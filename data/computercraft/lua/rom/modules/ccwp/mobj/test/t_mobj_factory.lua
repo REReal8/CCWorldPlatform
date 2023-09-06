@@ -65,18 +65,26 @@ end
 local testClassName = "Factory"
 local testObjName = "factory"
 local logOk = false
+
 local level0 = 0
 local level1 = 1
 local level2 = 2
+
 local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
+
 local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
 local inputLocators0 = ObjArray:newInstance(locatorClassName, { inputLocator0, })
 local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(locatorClassName, { outputLocator0, })
+
+local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(0, 0, 0), true)
 local productionSpotClassName = "ProductionSpot"
+local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingSpot0, })
 local craftingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -4), true)
 local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
+
+local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
 local smeltingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -3), false)
 local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
 
@@ -218,29 +226,11 @@ end
 --                            _/ |
 --                           |__/
 
-local constructParameters0 = {
-    level           = level0,
-
-    baseLocation    = baseLocation1,
-}
-local constructParameters1 = {
-    level           = level1,
-
-    baseLocation    = baseLocation1,
-}
-local constructParameters2 = {
-    level           = level2,
-
-    baseLocation    = baseLocation1,
-}
-local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(0, 0, 0), true)
-local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingSpot0, })
-local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
-
 function T_Factory.T_IMObj_All()
     -- prepare tests
     local id = coreutils.NewId()
     local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
+    local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
 
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -275,6 +265,21 @@ function T_Factory.T_IMObj_All()
     ))
     local constructFieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
+    local constructParameters0 = {
+        level           = level0,
+
+        baseLocation    = baseLocation1,
+    }
+    local constructParameters1 = {
+        level           = level1,
+
+        baseLocation    = baseLocation1,
+    }
+    local constructParameters2 = {
+        level           = level2,
+
+        baseLocation    = baseLocation1,
+    }
     local upgradeParametersTo2 = {
         level           = level2,
     }
@@ -300,6 +305,8 @@ function T_Factory.T_IMObj_All()
 
     -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj1, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName, upgradeParametersTo2, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
 end
 
