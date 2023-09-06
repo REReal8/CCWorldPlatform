@@ -186,7 +186,7 @@ function MObjHost:dismantleAndReleaseMObj_ASrv(...)
 
         Async service return value (to Callback):
                                                 - (table)
-                success                         - (boolean) whether the site was successfully stopped and dismantled.
+                success                         - (boolean) whether the service executed successfully
 
         Parameters:
             serviceData                         - (table) data about this service
