@@ -21,15 +21,17 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function MethodResultTest:_init(methodName, resultTest)
+function MethodResultTest:_init(methodName, resultTest, methodArguments)
     -- check input
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
     assert(Class.IsInstanceOf(resultTest, ITest), "Provided resultTest argument not an ITest")
+    methodArguments = methodArguments or {} -- table with arguments to supply to the method
 
     -- initialisation
-    self._resultTest    = resultTest
-    self._methodName    = methodName
+    self._resultTest        = resultTest
+    self._methodName        = methodName
+    self._methodArguments   = methodArguments
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -65,8 +67,7 @@ function MethodResultTest:test(testObj, testObjName, indent, logOk)
     assert(method, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have method")
 
     -- test (via _resultTest)
-    local methodResults = {method(testObj)} -- note: collect possible multiple results
-    -- ToDo: consider allowing methods which additional arguments
+    local methodResults = {method(testObj, table.unpack(self._methodArguments))} -- note: collect possible multiple results
     self._resultTest:test(methodResults, testFieldStr, indent.."  ", logOk)
 
     -- complete test
