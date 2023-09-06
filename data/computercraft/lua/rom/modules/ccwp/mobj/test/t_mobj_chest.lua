@@ -139,7 +139,7 @@ end
 
 function T_Chest.T_Getters()
     -- prepare test
-    corelog.WriteToLog("* Chest base getter tests")
+    corelog.WriteToLog("* "..testClassName.." base getter tests")
     local id = coreutils.NewId()
     local obj = T_Chest.CreateTestObj(id, baseLocation1, accessDirection1, inventory1) assert(obj, "Failed obtaining "..testClassName)
 

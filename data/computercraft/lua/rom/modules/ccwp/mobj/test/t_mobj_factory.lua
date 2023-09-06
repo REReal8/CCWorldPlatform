@@ -39,6 +39,7 @@ function T_Factory.T_All()
     -- initialisation
     T_Factory.T__init()
     T_Factory.T_new()
+    T_Factory.T_Getters()
 
     -- IObj methods
     T_Factory.T_IObj_All()
@@ -162,6 +163,26 @@ function T_Factory.T_new()
     local inputLocatorsTest = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
     local test = T_Factory.CreateInitialisedTest(id, level1, baseLocation1, inputLocatorsTest, outputLocatorsTest, craftingSpots1, smeltingSpots1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
+end
+
+function T_Factory.T_Getters()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName.." base getter tests")
+    local id = coreutils.NewId()
+    local obj = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- test
+    local test = TestArrayTest:newInstance(
+        MethodResultEqualTest:newInstance("getLevel", level1),
+        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation1),
+        MethodResultEqualTest:newInstance("getInputLocators", inputLocators0),
+        MethodResultEqualTest:newInstance("getOutputLocators", outputLocators0),
+        MethodResultEqualTest:newInstance("getCraftingSpots", craftingSpots1),
+        MethodResultEqualTest:newInstance("getSmeltingSpots", smeltingSpots1)
+    )
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test

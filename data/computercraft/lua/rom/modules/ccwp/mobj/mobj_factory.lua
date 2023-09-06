@@ -117,6 +117,10 @@ function Factory:new(...)
     return o
 end
 
+function Factory:getLevel()
+    return self._level
+end
+
 function Factory:getBaseLocation()
     return self._baseLocation
 end
@@ -254,12 +258,12 @@ function Factory:destruct()
     ]]
 
     -- release inputLocators
-    local destructSucces = true
+    local destructSuccess = true
     for i, mobjLocator in ipairs(self._inputLocators) do
         local hostName = mobjLocator:getHost()
         if hostName == enterprise_chests:getHostName() then
             local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
-            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing input locator "..mobjLocator:getURI()) destructSucces = false end
+            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing input locator "..mobjLocator:getURI()) destructSuccess = false end
         end
         self._inputLocators[i] = nil
     end
@@ -269,13 +273,13 @@ function Factory:destruct()
         local hostName = mobjLocator:getHost()
         if hostName == enterprise_chests:getHostName() then
             local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = mobjLocator })
-            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing output locator "..mobjLocator:getURI()) destructSucces = false end
+            if not releaseResult or not releaseResult.success then corelog.Warning("Factory:destruct(): failed releasing output locator "..mobjLocator:getURI()) destructSuccess = false end
         end
         self._outputLocators[i] = nil
     end
 
     -- end
-    return destructSucces
+    return destructSuccess
 end
 
 function Factory:getId()
@@ -380,14 +384,15 @@ function Factory:getBuildBlueprint()
 
     -- determine layerList
     local layerList = {}
-    if self._level == 0 then
+    local level = self:getLevel()
+    if level == 0 then
         table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()})
-    elseif self._level == 1 then
+    elseif level == 1 then
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()})
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = Shaft_layer()})
-    elseif self._level == 2 then
+    elseif level == 2 then
         table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopLayerL2_layer()})
         --    if not onlyUpgrade then
         table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
@@ -396,12 +401,12 @@ function Factory:getBuildBlueprint()
         --    end
         table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -5), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
     else
-        corelog.Warning("Factory:getBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..self._level)
+        corelog.Warning("Factory:getBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..level)
     end
 
     -- determine escapeSequence
     local escapeSequence = {}
-    if self._level == 1 or self._level == 2 then
+    if level == 1 or level == 2 then
         table.insert(escapeSequence, Location:newInstance(3, 3, 1))
     end
 
