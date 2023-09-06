@@ -238,7 +238,7 @@ local craftingSpots0 = ObjArray:newInstance(productionSpotClassName, { craftingS
 local smeltingSpots0 = ObjArray:newInstance(productionSpotClassName)
 
 function T_Factory.T_IMObj_All()
-    -- prepare test
+    -- prepare tests
     local id = coreutils.NewId()
     local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
 
@@ -275,17 +275,29 @@ function T_Factory.T_IMObj_All()
     ))
     local constructFieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
+    local upgradeParametersTo2 = {
+        level           = level2,
+    }
+
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test
+    -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
+
+    -- test construct/ upgrade/ destruct
     T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName, destructFieldsTest, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName, constructFieldsTest0, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName, constructFieldsTest1, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName, constructFieldsTest2, logOk)
+
+    T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName, upgradeParametersTo2, constructFieldsTest2, logOk)
+
+    -- test getters
     T_IMObj.pt_getId(testClassName, obj0, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj0, testObjName, logOk)
+
+    -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
 end

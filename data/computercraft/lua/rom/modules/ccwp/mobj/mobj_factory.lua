@@ -243,6 +243,58 @@ function Factory:construct(...)
     return obj
 end
 
+function Factory:upgrade(...)
+    -- get & check input from description
+    local checkSuccess, upgradeLevel = InputChecker.Check([[
+        This method upgrades a Factory instance from a table of parameters.
+
+        The upgraded Factory is not yet saved in it's Host.
+
+        Return value:
+                                        - (boolean) whether the Factory was succesfully upgraded.
+
+        Parameters:
+            upgradeParameters           - (table) parameters for upgrading the Factory
+                level                   + (number) with Factory level to upgrade to
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Factory:upgrade: Invalid input") return false end
+
+    -- upgrade if possible
+    local level = self:getLevel()
+    local baseLocation = self:getBaseLocation()
+    local inputLocators = self:getInputLocators()
+    local outputLocators = self:getOutputLocators()
+    if level == 1 and upgradeLevel == 2 then
+        -- inputLocators
+        table.remove(inputLocators, 1) -- remove previous level
+        local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(2, 5, 0),
+            accessDirection = "top",
+        }}).mobjLocator
+        table.insert(inputLocators, inputChestLocator)
+
+        -- outputLocators
+        table.remove(outputLocators, 1) -- remove previous level
+        local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(4, 5, 0),
+            accessDirection = "top",
+        }}).mobjLocator
+        table.insert(outputLocators, outputChestLocator)
+
+        -- craftingSpots
+
+        -- smeltingSpots
+    else
+        corelog.Error("Factory:construct: Don't know how to upgrade a Factory from level "..level.." to "..upgradeLevel) return false
+    end
+
+    -- level
+    self._level = upgradeLevel
+
+    -- end
+    return true
+end
+
 function Factory:destruct()
     --[[
         This method destructs a Factory instance.

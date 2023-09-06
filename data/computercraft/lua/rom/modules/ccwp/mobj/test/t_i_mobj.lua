@@ -77,6 +77,28 @@ function T_IMObj.pt_construct(className, class, constructParameters, objName, co
     obj:destruct()
 end
 
+function T_IMObj.pt_upgrade(className, class, constructParameters, objName, upgradeParameters, upgradeFieldsTest, logOk)
+    -- prepare test
+    assert(className, "no className provided")
+    assert(class, "no class provided")
+    assert(constructParameters, "no constructParameters provided")
+    assert(objName, "no objName provided")
+    assert(upgradeParameters, "no upgradeParameters provided")
+    assert(upgradeFieldsTest, "no upgradeFieldsTest provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..className..":upgrade(...) tests")
+    local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
+
+    -- test
+    local upgradeSuccess = obj:upgrade(upgradeParameters)
+    assert(upgradeSuccess, className..":upgrade() not a success")
+    local test = upgradeFieldsTest
+    test:test(obj, objName, "", logOk)
+
+    -- cleanup test
+    obj:destruct()
+end
+
 function T_IMObj.pt_getId(className, obj, objName, logOk)
     -- prepare test
     assert(className, "no className provided")
