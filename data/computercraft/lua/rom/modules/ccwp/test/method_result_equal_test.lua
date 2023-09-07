@@ -19,13 +19,13 @@ local MultipleValuesTest = require "multiple_values_test"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function MethodResultEqualTest:_init(methodName, expectedResult)
+function MethodResultEqualTest:_init(methodName, expectedResult, ...)
     -- check input
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
 
     -- initialisation
-    MethodResultTest._init(self, methodName, MultipleValuesTest:newInstance(ValueEqualTest:newInstance(expectedResult)))
+    MethodResultTest._init(self, methodName, MultipleValuesTest:newInstance(ValueEqualTest:newInstance(expectedResult)), ...)
 end
 
 --    _____ ____  _     _                  _   _               _
