@@ -21,12 +21,12 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function MethodResultTest:_init(methodName, resultTest, methodArguments)
+function MethodResultTest:_init(methodName, resultTest, ...)
     -- check input
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
     assert(Class.IsInstanceOf(resultTest, ITest), "Provided resultTest argument not an ITest")
-    methodArguments = methodArguments or {} -- table with arguments to supply to the method
+    local methodArguments = {...}
 
     -- initialisation
     self._resultTest        = resultTest

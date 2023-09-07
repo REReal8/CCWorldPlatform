@@ -126,36 +126,35 @@ function T_IMObj.pt_getWIPId(className, obj, objName, logOk)
     test:test(obj, objName, "", logOk)
 end
 
-function T_IMObj.pt_getBlueprint(className, methodName, obj, objName, methodArguments, isBlueprintTest, logOk)
+function T_IMObj.pt_getBlueprint(className, methodName, obj, objName, isBlueprintTest, logOk, ...)
     -- prepare test
     assert(className, "no className provided")
     local methodNameType = type(methodName)
     assert(methodNameType == "string", "type methodName(="..methodNameType..") not a string")
     assert(obj, "no obj provided")
     assert(objName, "no objName provided")
-    assert(methodArguments, "no methodArguments provided")
     assert(isBlueprintTest, "no isBlueprintTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..className..":"..methodName.."() tests")
 
     -- test
-    local test = MethodResultTest:newInstance(methodName, isBlueprintTest, methodArguments)
+    local test = MethodResultTest:newInstance(methodName, isBlueprintTest, ...)
     test:test(obj, objName, "", logOk)
 end
 
 function T_IMObj.pt_getBuildBlueprint(className, obj, objName, isBlueprintTest, logOk)
     -- test
-    T_IMObj.pt_getBlueprint(className, "getBuildBlueprint", obj, objName, {}, isBlueprintTest, logOk)
+    T_IMObj.pt_getBlueprint(className, "getBuildBlueprint", obj, objName, isBlueprintTest, logOk)
 end
 
 function T_IMObj.pt_getDismantleBlueprint(className, obj, objName, isBlueprintTest, logOk)
     -- test
-    T_IMObj.pt_getBlueprint(className, "getDismantleBlueprint", obj, objName, {}, isBlueprintTest, logOk)
+    T_IMObj.pt_getBlueprint(className, "getDismantleBlueprint", obj, objName, isBlueprintTest, logOk)
 end
 
 function T_IMObj.pt_getExtendBlueprint(className, obj, objName, upgradeParameters, isBlueprintTest, logOk)
     -- test
-    T_IMObj.pt_getBlueprint(className, "getExtendBlueprint", obj, objName, { upgradeParameters }, isBlueprintTest, logOk)
+    T_IMObj.pt_getBlueprint(className, "getExtendBlueprint", obj, objName, isBlueprintTest, logOk, upgradeParameters)
 end
 
 return T_IMObj
