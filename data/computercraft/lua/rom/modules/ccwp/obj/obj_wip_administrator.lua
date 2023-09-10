@@ -12,6 +12,8 @@ local WIPAdministrator = Class.NewClass(ObjBase)
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
+local ObjectFactory = require "object_factory"
+local objectFactory = ObjectFactory:getInstance()
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local WIPQueue = require "obj_wip_queue"
@@ -68,7 +70,7 @@ end
 
 function WIPAdministrator:getWIPQueue(...)
     -- get & check input from description
-    local checkSuccess, queueId = InputChecker.Check([[
+    local checkSuccess, queueId, createQueueIfNotExists = InputChecker.Check([[
         This method returns the WIPQueue 'queueId'.
 
         Return value:
@@ -76,12 +78,13 @@ function WIPAdministrator:getWIPQueue(...)
 
         Parameters:
             queueId                             + (string) with the id of the WIPQueue
+            createQueueIfNotExists              + (boolean, true) if queue should be created if it does not exist
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("WIPAdministrator:getWIPQueue: Invalid input") return nil end
 
     -- get queue
     local queue = self._wipQueues[queueId]
-    if not queue then
+    if not queue and createQueueIfNotExists then
 --        corelog.WriteToLog("WIPAdministrator:getWIPQueue: WIPQueue with id="..queueId.." not yet found. Creating it")
 
         -- create new queue
@@ -95,7 +98,7 @@ function WIPAdministrator:getWIPQueue(...)
         self._wipQueues[queueId] = queue
 
         -- save
-        enterprise_administration = require "enterprise_administration"
+        enterprise_administration = enterprise_administration or require "enterprise_administration"
         local objLocator = enterprise_administration:saveObject(self)
         if not objLocator then corelog.Error("WIPAdministrator:getWIPQueue: Failed saving WIPAdministrator") return false end
     end
@@ -128,7 +131,7 @@ function WIPAdministrator:removeWIPQueue(...)
     self._wipQueues[queueId] = nil
 
     -- save
-    enterprise_administration = require "enterprise_administration"
+    enterprise_administration = enterprise_administration or require "enterprise_administration"
     local objLocator = enterprise_administration:saveObject(self)
     if not objLocator then corelog.Error("WIPAdministrator:getWIPQueue: Failed saving WIPAdministrator") return false end
 
@@ -181,7 +184,7 @@ function WIPAdministrator:administerWorkStarted(...)
     if not success then corelog.Error("WIPAdministrator:administerWorkStarted: Failed adding work "..workId.." to WIPQueue "..queueId) return false end
 
     -- save
-    enterprise_administration = require "enterprise_administration"
+    enterprise_administration = enterprise_administration or require "enterprise_administration"
     local objLocator = enterprise_administration:saveObject(self)
     if not objLocator then corelog.Error("WIPAdministrator:administerWorkStarted: Failed saving WIPAdministrator") return false end
 
@@ -224,12 +227,41 @@ function WIPAdministrator:administerWorkCompleted(...)
     end
 
     -- save
-    enterprise_administration = require "enterprise_administration"
+    enterprise_administration = enterprise_administration or require "enterprise_administration"
     local objLocator = enterprise_administration:saveObject(self)
     if not objLocator then corelog.Error("WIPAdministrator:administerWorkCompleted: Failed saving WIPAdministrator") return false end
 
     -- end
     return true
+end
+
+function WIPAdministrator:waitForNoWIPOnQueue_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, queueId = InputChecker.Check([[
+        This sync public service waits until the WIPQueue 'queueId' has no WIP.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                         - (table) data about this site
+                queueId                         + (string) with the id of the WIP queue
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_SOSrv: Invalid input") return {success = false} end
+
+    -- wait until WIPQueue had no WIP
+    local queue = self:getWIPQueue(queueId, false)
+    while queue and not queue:noWIP() do
+        -- wait
+        os.sleep(0.5)
+
+        -- get possibly updated queue
+        queue = self:getWIPQueue(queueId, false)
+    end
+
+    -- end
+    return {success = true}
 end
 
 function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
@@ -268,7 +300,7 @@ function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
         if not success then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_AOSrv: Failed adding Callback to WIPQueue "..queueId) return false end
 
         -- save
-        enterprise_administration = require "enterprise_administration"
+        enterprise_administration = enterprise_administration or require "enterprise_administration"
         local objLocator = enterprise_administration:saveObject(self)
         if not objLocator then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_AOSrv: Failed saving WIPAdministrator") return false end
     end

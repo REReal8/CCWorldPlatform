@@ -29,6 +29,7 @@ function T_WIPAdministrator.T_All()
     T_WIPAdministrator.T_reset()
     T_WIPAdministrator.T_administerWorkStarted()
     T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
+    T_WIPAdministrator.T_waitForNoWIPOnQueue_SOSrv()
     T_WIPAdministrator.T_administerWorkCompleted()
 end
 
@@ -216,6 +217,48 @@ function T_WIPAdministrator.T_administerWorkStarted()
     -- cleanup test
     wipQueue:removeWork(workId3)
     obj1:removeWIPQueue(wipQueueId2)
+end
+
+local objSync = nil
+local wipQueueIdSync = "wipQueueIdSync"
+local workIdSync = "workIdSync"
+
+local function call_waitForNoWIPOnQueue_SOSrv()
+    assert(objSync, "Failed obtaining objSync")
+
+    -- call waitForNoWIPOnQueue_SOSrv
+    local success = objSync:waitForNoWIPOnQueue_SOSrv({queueId = wipQueueIdSync})
+    assert(success, "waitForNoWIPOnQueue_SOSrv not a success")
+end
+
+local function delayed_administerWorkCompleted()
+    assert(objSync, "Failed obtaining objSync")
+
+    -- delay a bit
+    os.sleep(2.0)
+
+    -- administerWorkCompleted
+    objSync:administerWorkCompleted(wipQueueIdSync, workIdSync)
+end
+
+function T_WIPAdministrator.T_waitForNoWIPOnQueue_SOSrv()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":waitForNoWIPOnQueue_SOSrv() tests")
+    objSync = WIPAdministrator:new({
+        _wipQueues      = wipQueues1:copy(),
+    }) assert(objSync, "Failed obtaining objSync")
+
+    -- test direct return when no WIP
+    local success = objSync:waitForNoWIPOnQueue_SOSrv({queueId = wipQueueIdSync})
+    assert(success, "waitForNoWIPOnQueue_SOSrv not a success")
+    assert(objSync._wipQueues[wipQueueIdSync] == nil, "WIPQueue not removed when no WIP")
+
+    -- test return only once no WIP
+    objSync:administerWorkStarted(wipQueueIdSync, workIdSync)
+    parallel.waitForAll(call_waitForNoWIPOnQueue_SOSrv, delayed_administerWorkCompleted) -- run functions in parallel
+    assert(objSync._wipQueues[wipQueueIdSync] == nil, "WIPQueue not removed when no WIP")
+
+    -- cleanup test
 end
 
 local callback1Called = false
