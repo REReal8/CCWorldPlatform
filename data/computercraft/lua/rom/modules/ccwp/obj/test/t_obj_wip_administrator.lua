@@ -32,6 +32,8 @@ function T_WIPAdministrator.T_All()
     T_WIPAdministrator.T_administerWorkCompleted()
 end
 
+local testClassName = "WIPAdministrator"
+
 local workId1 = "workId1"
 local workId2 = "workId2"
 local callbackClassName = "Callback"
@@ -48,7 +50,6 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "WIPAdministrator"
 function T_WIPAdministrator.CreateTestObj()
     local wipQueue = T_WIPQueue.CreateTestObj() assert(wipQueue, "Failed obtaining WIPQueue")
     local wipQueues = ObjTable:newInstance(wipQueueClassName, {
@@ -64,7 +65,7 @@ end
 
 function T_WIPAdministrator.T_new()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test
     local obj = WIPAdministrator:new({
@@ -106,7 +107,7 @@ end
 
 function T_WIPAdministrator.T_removeWIPQueue()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:removeWIPQueue() tests")
+    corelog.WriteToLog("* "..testClassName..":removeWIPQueue() tests")
     local wipQueueId1 = "wipQueueId1"
     local wipQueue1 = WIPQueue:new({
         _workList       = {},
@@ -129,7 +130,7 @@ end
 
 function T_WIPAdministrator.T_getWIPQueue()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:getWIPQueue() tests")
+    corelog.WriteToLog("* "..testClassName..":getWIPQueue() tests")
     local wipQueueId1 = "wipQueueId1"
     local workList1 = {
         workId1,
@@ -165,7 +166,7 @@ end
 
 function T_WIPAdministrator.T_reset()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:reset() tests")
+    corelog.WriteToLog("* "..testClassName..":reset() tests")
     local wipQueueId1 = "wipQueueId1"
     local wipQueue1 = WIPQueue:new({
         _workList       = {},
@@ -199,7 +200,7 @@ end
 
 function T_WIPAdministrator.T_administerWorkStarted()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:administerWorkStarted() tests")
+    corelog.WriteToLog("* "..testClassName..":administerWorkStarted() tests")
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues1:copy(),
     }) assert(obj1)
@@ -233,7 +234,7 @@ end
 
 function T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:waitForNoWIPOnQueue_AOSrv() tests")
+    corelog.WriteToLog("* "..testClassName..":waitForNoWIPOnQueue_AOSrv() tests")
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues1:copy(),
     }) assert(obj1)
@@ -280,7 +281,7 @@ end
 
 function T_WIPAdministrator.T_administerWorkCompleted()
     -- prepare test
-    corelog.WriteToLog("* WIPAdministrator:administerWorkCompleted() tests")
+    corelog.WriteToLog("* "..testClassName..":administerWorkCompleted() tests")
     local obj1 = WIPAdministrator:new({
         _wipQueues      = wipQueues1:copy(),
     }) assert(obj1)
