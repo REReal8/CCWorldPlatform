@@ -260,15 +260,6 @@ function WIPAdministrator:waitForNoWIPOnQueue_AOSrv(...)
         -- remove just created queue (by calling getWIPQueue)
         self:removeWIPQueue(queueId)
 
-        --[[
-        self._wipQueues[queueId] = nil
-
-        -- save
-        enterprise_administration = require "enterprise_administration"
-        local objLocator = enterprise_administration:saveObject(self)
-        if not objLocator then corelog.Error("WIPAdministrator:waitForNoWIPOnQueue_AOSrv: Failed saving WIPAdministrator") return false end
-        ]]
-
         -- immediatly call callback
         return callback:call({success = true})
     else
