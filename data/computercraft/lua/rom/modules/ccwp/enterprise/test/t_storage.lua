@@ -78,7 +78,7 @@ function t_storage.T_hostAndBuildMObj_ASrv_Silo(...)
         projectDef  = {
             steps = {
                 -- test
-                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "hostAndBuildMObj_ASrv_test_ASrv" }, stepDataDef = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "pt_hostAndBuildMObj_ASrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                     { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
@@ -164,7 +164,7 @@ function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(...)
         projectDef  = {
             steps = {
                 -- test
-                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_test_ASrv" }, stepDataDef = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "pt_dismantleAndReleaseMObj_ASrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
                 }},

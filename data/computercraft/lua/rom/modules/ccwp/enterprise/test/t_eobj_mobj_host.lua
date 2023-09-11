@@ -154,7 +154,7 @@ function T_MObjHost.T_hostMObj_SSrv()
 end
 
 -- hostAndBuildMObj_ASrv
-function T_MObjHost.hostAndBuildMObj_ASrv_test_ASrv(...)
+function T_MObjHost.pt_hostAndBuildMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, mobjHostName, className, constructParameters, callback = InputChecker.Check([[
         This async method tests the hostAndBuildMObj_ASrv service of a specific MObjHost for hosting and building a specific MObj.
@@ -174,7 +174,7 @@ function T_MObjHost.hostAndBuildMObj_ASrv_test_ASrv(...)
                 constructParameters             + (table) parameters for constructing the MObj
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.hostAndBuildMObj_ASrv_test_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("T_MObjHost.pt_hostAndBuildMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- prepare test
     corelog.WriteToLog("* "..mobjHostName..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
@@ -281,7 +281,7 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj(...)
         projectDef  = {
             steps = {
                 -- test
-                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "hostAndBuildMObj_ASrv_test_ASrv" }, stepDataDef = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "pt_hostAndBuildMObj_ASrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
                     { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
@@ -357,7 +357,7 @@ function T_MObjHost.T_releaseMObj_SSrv()
 end
 
 -- dismantleAndReleaseMObj_ASrv
-function T_MObjHost.dismantleAndReleaseMObj_ASrv_test_ASrv(...)
+function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, mobjHostName, mobjLocator, callback = InputChecker.Check([[
         This async method tests the dismantleAndReleaseMObj_ASrv service of a specific MObjHost for dismantling and releasing a specific MObj.
@@ -375,7 +375,7 @@ function T_MObjHost.dismantleAndReleaseMObj_ASrv_test_ASrv(...)
                 mobjLocator                     + (URL) locating the MObj
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.dismantleAndReleaseMObj_ASrv_test_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("T_MObjHost.pt_dismantleAndReleaseMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- prepare test
     corelog.WriteToLog("* "..mobjHostName..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
@@ -488,7 +488,7 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(...)
         projectDef  = {
             steps = {
                 -- test
-                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_test_ASrv" }, stepDataDef = {
+                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "pt_dismantleAndReleaseMObj_ASrv" }, stepDataDef = {
                     { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
                     { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
                 }},
