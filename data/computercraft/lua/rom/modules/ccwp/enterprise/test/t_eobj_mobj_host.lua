@@ -4,10 +4,8 @@ local corelog = require "corelog"
 
 local Class = require "class"
 local IObj = require "i_obj"
-local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
-local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 local ObjBase = require "obj_base"
 
