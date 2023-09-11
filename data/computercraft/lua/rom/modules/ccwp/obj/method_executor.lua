@@ -3,7 +3,7 @@ local MethodExecutor = {}
 
 -- ToDo: add proper description here
 --[[
-    The InputChecker ...
+    The MethodExecutor ...
 --]]
 
 local corelog = require "corelog"
