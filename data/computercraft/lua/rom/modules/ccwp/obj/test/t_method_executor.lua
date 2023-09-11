@@ -147,6 +147,29 @@ function T_MethodExecutor.T_DoSyncObjService()
     -- cleanup test
 end
 
+function T_MethodExecutor.T_DoASyncObjService_Sync()
+    -- prepare test
+    corelog.WriteToLog("* MethodExecutor.DoASyncObjService_Sync() test")
+    local className = "TestObj"
+    local serviceName = "test_AOSrv"
+    assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
+    local objData = {
+        _field1 = "field1_1",
+        _field2 = 1,
+    }
+    local serviceData = {
+        testArg = testValue,
+    }
+
+    -- test
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(className, objData, serviceName, serviceData)
+    assert(type(serviceResults) == "table" , "no result table returned")
+    assert(serviceResults.success, "failed executing async obj service")
+    assert(serviceResults.input == testValue, "Unexpected result from service: " .. tostring(serviceResults.input))
+
+    -- cleanup test
+end
+
 local callbackTestValue = "some callback data"
 
 function T_MethodExecutor.T_DoASyncService()

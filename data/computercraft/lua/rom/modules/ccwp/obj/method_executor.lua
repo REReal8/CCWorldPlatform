@@ -7,12 +7,14 @@ local MethodExecutor = {}
 --]]
 
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local InputChecker = require "input_checker"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+local Callback
 
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
@@ -89,6 +91,64 @@ function MethodExecutor.DoASyncService(...)
     return MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback })
 end
 
+local doASyncObjService_Sync_serviceResults = {}
+
+function MethodExecutor.DoASyncObjService_Sync(...)
+    -- get & check input from description
+    local checkSuccess, className, objData, serviceName, serviceData = InputChecker.Check([[
+        This function executes an async service method of an obj in a sync way. It does so by
+            - creating an internal callback function
+            - call the async service method with the callback
+            - wait for the callback to be called
+            - return the async service results the callback is called with
+
+        It creates a callback function and waits for the callback to return.
+
+        Return value:
+            results                     - (?) service method return value
+
+        Parameters:
+            className                   + (string) name of class with the service
+            objData                     + (table) with obj data
+            serviceName                 + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MethodExecutor.DoASyncObjServiceSync: Invalid input") return nil end
+
+    -- create callback
+    local callId = coreutils.NewId()
+    Callback = Callback or require "obj_callback"
+    local callback = Callback:newInstance("MethodExecutor", "doASyncObjService_Sync_Callback", {
+        ["callId"] = callId,
+    })
+
+    -- call async service method
+    MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData, callback })
+
+    -- wait for callback
+    while not doASyncObjService_Sync_serviceResults[callId] do
+        -- wait
+        os.sleep(0.5)
+    end
+
+    -- get results
+    local serviceResults = doASyncObjService_Sync_serviceResults[callId]
+    doASyncObjService_Sync_serviceResults[callId] = nil -- remove temporary results
+
+    -- end
+    return serviceResults
+end
+
+function MethodExecutor.doASyncObjService_Sync_Callback(callbackData, serviceResults)
+    -- temporary store results
+    local callId = callbackData["callId"]
+    doASyncObjService_Sync_serviceResults[callId] = serviceResults
+    -- ToDo: consider if/ how we need to support this to work accross multiple turtles
+
+    -- end
+    return true
+end
+
 function MethodExecutor.DoASyncObjService(...)
     -- get & check input from description
     local checkSuccess, className, objData, serviceName, serviceData, callback = InputChecker.Check([[
@@ -98,7 +158,7 @@ function MethodExecutor.DoASyncObjService(...)
                                         - (boolean) whether the service was scheduled successfully
 
         Async service return value (to Callback):
-            results                     - (?) service function return value
+            results                     - (?) service method return value
 
         Parameters:
             className                   + (string) name of class with the service
