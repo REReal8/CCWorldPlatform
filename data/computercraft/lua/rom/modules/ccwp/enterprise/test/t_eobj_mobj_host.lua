@@ -8,6 +8,7 @@ local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local InputChecker = require "input_checker"
+local MethodExecutor = require "method_executor"
 local ObjBase = require "obj_base"
 
 local URL = require "obj_url"
@@ -15,7 +16,6 @@ local Location = require "obj_location"
 local Host = require "obj_host"
 
 local MObjHost = require "eobj_mobj_host"
-local enterprise_projects = require "enterprise_projects"
 
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
@@ -38,12 +38,8 @@ function T_MObjHost.T_AllPhysical()
     -- IObj methods
 
     -- service methods
-    enterprise_projects.StartProject_ASrv({ projectMeta = { title = "MObjHost ASrv Tests", description = "ASync MObjHost tests in sequence" }, projectData = { }, projectDef  = { steps = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_hostAndBuildMObj_ASrv_TestMObj" }, stepDataDef = {}},
-            { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "T_dismantleAndReleaseMObj_ASrv_TestMObj" }, stepDataDef = {
-                { keyDef = "mobjLocator"        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            }},
-        }, returnData  = { }}, }, Callback.GetNewDummyCallBack())
+    local mobjLocator = T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
+    T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
 end
 
 local testClassName = "MObjHost"
@@ -154,176 +150,59 @@ function T_MObjHost.T_hostMObj_SSrv()
 end
 
 -- hostAndBuildMObj_ASrv
-function T_MObjHost.pt_hostAndBuildMObj_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, mobjHostName, className, constructParameters, callback = InputChecker.Check([[
-        This async method tests the hostAndBuildMObj_ASrv service of a specific MObjHost for hosting and building a specific MObj.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the hosted and build MObj
-
-        Parameters:
-            serviceData                         - (table) data about this site
-                mobjHostName                    + (string) with the name of the MObjHost of the MObj
-                className                       + (string) with the name of the class of the MObj
-                constructParameters             + (table) parameters for constructing the MObj
-            callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.pt_hostAndBuildMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
+function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, logOk)
     -- prepare test
-    corelog.WriteToLog("* "..mobjHostName..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
-    local mobjHost = moduleRegistry:getModule(mobjHostName)
-    if not mobjHost then corelog.Error("host "..mobjHostName.." not registered") return Callback.ErrorCall(callback) end
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(className) == "string", "no className provided")
+    assert(type(constructParameters) == "table", "no constructParameters provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
 
-    -- test
-    return enterprise_projects.StartProject_ASrv({ projectMeta = { title = "Test hostAndBuildMObj_ASrv", description = "Testing "..mobjHostName..":hostAndBuildMObj_ASrv for a "..className },
-        projectData = {
-            mobjHostName                = mobjHostName,
-            mobjHostLocator             = mobjHost:getHostLocator(),
+    -- test: service success
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
+        className                   = className,
+        constructParameters         = constructParameters,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+    })
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
 
-            className                   = className,
-            constructParameters         = constructParameters,
-            materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-            wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-        },
-        projectDef  = {
-            steps = {
-                -- test: call method to test
-                { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "mobjHostLocator" }, stepDataDef = {
-                    { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                    { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-                    { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
-                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                }},
-                -- test: check results
-                { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "hostAndBuildMObj_ASrv_checkResults_SSrv" }, stepDataDef = {
-                    { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
-                    { keyDef = "mobjLocator"                    , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-                }},
-            },
-            returnData  = {
-                { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            }
-        },
-    }, callback)
-end
-
-function T_MObjHost.hostAndBuildMObj_ASrv_checkResults_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, mobjHostName, mobjLocator = InputChecker.Check([[
-        This method checks the results of a hostAndBuildMObj_ASrv service test call for a specific MObjHost, MObj combination.
-
-        Return value:
-                success                         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData                         - (table) data about this site
-                mobjHostName                    + (string) with the name of the MObjHost of the MObj
-                mobjLocator                     + (URL) locating the hosted and build MObj
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.hostAndBuildMObj_ASrv_checkResults_SSrv: Invalid input") return { success = false } end
-
-    -- check expected MObjHost
-    local mobjHost = MObjHost.GetHost(mobjLocator:getHost()) if not mobjHost then corelog.Error("MObjHost of mobjLocator(="..mobjLocator:getURI()..") not present") return { success = false } end
-    if mobjHost:getHostName() ~= mobjHostName then corelog.Error("MObjHost name(="..mobjHost:getHostName()..") not the same as expected(="..mobjHostName..")") return { success = false } end
-
-    -- check mobj hosted on MObjHost (full check done in T_hostMObj_SSrv)
+    -- test: mobj hosted on MObjHost (full check done in T_hostMObj_SSrv)
+    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
     local mobj = mobjHost:getObject(mobjLocator)
-    if not mobj then corelog.Error("MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName()) return { success = false } end
+    assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
 
-    -- check build blueprint build
+    -- test: build blueprint build
     -- ToDo: add mock test
+
+    -- complete test
+    if logOk then corelog.WriteToLog(" ok") end
 
     -- cleanup test
 
-    -- end
-    return {success = true}
-end
-
-function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj(...)
-    -- get & check input from description
-    local checkSuccess, callback = InputChecker.Check([[
-        This async method tests MObjHost:hostAndBuildMObj_ASrv service with a TestMObj.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the hosted and build MObj
-
-        Parameters:
-            serviceData                         - (table, {}) data about this site
-            callback                            + (Callback, nil) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- prepare test: register test host
-    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
-
-    -- prepare test: ensure callback (needed when called directly)
-    if not callback then callback = Callback:GetNewDummyCallBack() end
-
-    -- test & cleanup
-    return enterprise_projects.StartProject_ASrv({ projectMeta = { title = "Test MObjHost:hostAndBuildMObj_ASrv", description = "Testing MObjHost:hostAndBuildMObj_ASrv for a "..test_mobjClassName1 },
-        projectData = {
-            mobjHostName                = test_mobjHostName1,
-            className                   = test_mobjClassName1,
-            constructParameters         = test_mobjConstructParameters1,
-        },
-        projectDef  = {
-            steps = {
-                -- test
-                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "pt_hostAndBuildMObj_ASrv" }, stepDataDef = {
-                    { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
-                    { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "className" },
-                    { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "constructParameters" },
-                }},
-                -- cleanup test
-                { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "hostAndBuildMObj_ASrv_TestMObj_cleanupTest_SSrv" }, stepDataDef = {
-                    { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-                }},
-            },
-            returnData  = {
-                { keyDef = "mobjLocator"                        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
-            }
-        },
-    }, callback)
+    -- return results
+    return serviceResults
 end
 
 local mobjLocator_TestMObj = nil
 
-function T_MObjHost.hostAndBuildMObj_ASrv_TestMObj_cleanupTest_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, mobjLocator = InputChecker.Check([[
-        This method does test cleanup actions.
+local logOk = true
 
-        Return value:
-                success                         - (boolean) whether the service executed successfully
+function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
+    -- prepare test
+    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
-        Parameters:
-            serviceData                         - (table, {}) data about this site
-                mobjLocator                     + (URL, nil) locating the MObj
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.hostAndBuildMObj_ASrv_TestMObj_cleanupTest_SSrv: Invalid input") return {success = true} end
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, test_mobjClassName1, test_mobjConstructParameters1, logOk)
+    assert(serviceResults, "no serviceResults returned")
 
---    corelog.WriteToLog("hostAndBuildMObj_ASrv_TestMObj_cleanupTest_SSrv")
-
-    -- cleanup test: delist test host
+    -- cleanup test
     moduleRegistry:delistModule(test_mobjHostName1)
+    mobjLocator_TestMObj = serviceResults.mobjLocator
 
-    -- cleanup test: remembering mobjLocator (for possible usage by T_dismantleAndReleaseMObj_ASrv_TestMObj)
-    mobjLocator_TestMObj = mobjLocator
-
-    -- end
-    return {success = true}
+    -- return mobjLocator
+    return serviceResults.mobjLocator
 end
 
 -- releaseMObj_SSrv
@@ -357,165 +236,56 @@ function T_MObjHost.T_releaseMObj_SSrv()
 end
 
 -- dismantleAndReleaseMObj_ASrv
-function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, mobjHostName, mobjLocator, callback = InputChecker.Check([[
-        This async method tests the dismantleAndReleaseMObj_ASrv service of a specific MObjHost for dismantling and releasing a specific MObj.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData                         - (table) data about this site
-                mobjHostName                    + (string) with the name of the MObjHost of the MObj
-                mobjLocator                     + (URL) locating the MObj
-            callback                            + (Callback) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.pt_dismantleAndReleaseMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
+function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk)
     -- prepare test
-    corelog.WriteToLog("* "..mobjHostName..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
-    local mobjHost = moduleRegistry:getModule(mobjHostName)
-    if not mobjHost then corelog.Error("host "..mobjHostName.." not registered") return Callback.ErrorCall(callback) end
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(mobjLocator) == "table", "no mobjLocator provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
 
-    -- test
-    return enterprise_projects.StartProject_ASrv({ projectMeta = { title = "Test dismantleAndReleaseMObj_ASrv", description = "Testing "..mobjHostName..":dismantleAndReleaseMObj_ASrv with "..mobjLocator:getURI() },
-        projectData = {
-            mobjHostName                = mobjHostName,
-            mobjHostLocator             = mobjHost:getHostLocator(),
+    -- test: service success
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "dismantleAndReleaseMObj_ASrv", {
+        mobjLocator                 = mobjLocator,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+    })
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
 
-            mobjLocator                 = mobjLocator,
-            materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-            wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-        },
-        projectDef  = {
-            steps = {
-                -- test: call method to test
-                { stepType = "LAOSrv", stepTypeDef = { serviceName = "dismantleAndReleaseMObj_ASrv", locatorStep = 0, locatorKeyDef = "mobjHostLocator" }, stepDataDef = {
-                    { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-                    { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
-                    { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                }},
-                -- test: check results
-                { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_checkResults_SSrv" }, stepDataDef = {
-                    { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
-                    { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-                }},
-            },
-            returnData  = {
-            }
-        },
-    }, callback)
-end
-
-function T_MObjHost.dismantleAndReleaseMObj_ASrv_checkResults_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, mobjHostName, mobjLocator = InputChecker.Check([[
-        This method checks the results of a dismantleAndReleaseMObj_ASrv service test call for a specific MObjHost, MObj combination.
-
-        Return value:
-                success                         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData                         - (table) data about this site
-                mobjHostName                    + (string) with the name of the MObjHost of the MObj
-                mobjLocator                     + (URL) locating the hosted and build MObj
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.dismantleAndReleaseMObj_ASrv_checkResults_SSrv: Invalid input") return { success = false } end
-
-    -- check expected MObjHost
-    local mobjHost = MObjHost.GetHost(mobjLocator:getHost()) if not mobjHost then corelog.Error("MObjHost of mobjLocator(="..mobjLocator:getURI()..") not present") return { success = false } end
-    if mobjHost:getHostName() ~= mobjHostName then corelog.Error("MObjHost name(="..mobjHost:getHostName()..") not the same as expected(="..mobjHostName..")") return { success = false } end
-
-    -- check mobj deleted
+    -- test: mobj released
     local mobjResourceTable = mobjHost:getResource(mobjLocator)
-    if mobjResourceTable ~= nil then corelog.Error("MObj(="..mobjLocator:getURI()..") not deleted from MObjHost "..mobjHost:getHostName()) return { success = false } end
+    assert(not mobjResourceTable, "MObj(="..mobjLocator:getURI()..") not released from MObjHost "..mobjHost:getHostName())
 
-    -- check dismantle blueprint "build"
+    -- test: dismantle blueprint "build"
     -- ToDo: add mock test
 
-    -- end
-    return {success = true}
+    -- complete test
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- cleanup test
+
+    -- return results
+    return serviceResults
 end
 
-function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(...)
-    -- get & check input from description
-    local checkSuccess, mobjLocator, callback = InputChecker.Check([[
-        This async method tests MObjHost:dismantleAndReleaseMObj_ASrv service with a TestMObj.
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData                         - (table, {}) data about this site
-                mobjLocator                     + (URL, nil) locating the MObj
-            callback                            + (Callback, nil) to call once service is ready
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- prepare test: register test host
+function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
+    -- prepare test
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
-    -- prepare test: ensure/ check mobjLocator
     if not mobjLocator then
-        -- see if we locally remembered a mobjLocator from the T_hostAndBuildMObj_ASrv_TestMObj test
-        if mobjLocator_TestMObj then
---            corelog.WriteToLog("Using previously stored "..mobjLocator:getURI())
-            mobjLocator = mobjLocator_TestMObj
-        else
-            corelog.Error("T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj: No mobjLocator for the TestMObj to operate on") return Callback.ErrorCall(callback)
-        end
+        -- check if we locally remembered a mobjLocator from the T_hostAndBuildMObj_ASrv_TestMObj test
+        assert(mobjLocator_TestMObj, "no mobjLocator for the TestMObj to operate on")
+        mobjLocator = mobjLocator_TestMObj
     end
 
-    -- prepare test: ensure callback (needed when called directly)
-    if not callback then callback = Callback:GetNewDummyCallBack() end
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(test_mobjHost1, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
 
-    -- test & cleanup
-    return enterprise_projects.StartProject_ASrv({ projectMeta = { title = "Test MObjHost:dismantleAndReleaseMObj_ASrv", description = "Testing MObjHost:dismantleAndReleaseMObj_ASrv for a "..test_mobjClassName1 },
-        projectData = {
-            mobjHostName                = test_mobjHostName1,
-
-            mobjLocator                 = mobjLocator,
-        },
-        projectDef  = {
-            steps = {
-                -- test
-                { stepType = "ASrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "pt_dismantleAndReleaseMObj_ASrv" }, stepDataDef = {
-                    { keyDef = "mobjHostName"                   , sourceStep = 0, sourceKeyDef = "mobjHostName" },
-                    { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-                }},
-                -- cleanup test
-                { stepType = "SSrv", stepTypeDef = { moduleName = "T_MObjHost", serviceName = "dismantleAndReleaseMObj_ASrv_TestMObj_cleanupTest_SSrv" }, stepDataDef = {
-                }},
-            },
-            returnData  = {
-            }
-        },
-    }, callback)
-end
-
-function T_MObjHost.dismantleAndReleaseMObj_ASrv_TestMObj_cleanupTest_SSrv(...)
---    corelog.WriteToLog("dismantleAndReleaseMObj_ASrv_TestMObj_cleanupTest_SSrv")
-
-    -- cleanup test: stop remembering mobjLocator_TestMObj
+    -- cleanup test
     mobjLocator_TestMObj = nil
-
-    -- cleanup test: remove test host data
-    -- ToDo: remove data
-
-    -- cleanup test: delist test host
+    -- ToDo: remove test host data
     moduleRegistry:delistModule(test_mobjHostName1)
-
-    -- end
-    return {success = true}
 end
 
 return T_MObjHost
