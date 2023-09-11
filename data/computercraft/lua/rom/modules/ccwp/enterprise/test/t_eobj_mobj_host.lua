@@ -30,8 +30,8 @@ function T_MObjHost.T_All()
     T_MObjHost.T_IObj_All()
 
     -- service methods
-    T_MObjHost.T_hostMObj_SSrv()
-    T_MObjHost.T_releaseMObj_SSrv()
+    T_MObjHost.T_hostMObj_SSrv_TestMObj()
+    T_MObjHost.T_releaseMObj_SSrv_TestMObj()
 end
 
 function T_MObjHost.T_AllPhysical()
@@ -108,6 +108,75 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+-- parameterised service tests
+function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, logOk)
+    -- prepare test
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(className) == "string", "no className provided")
+    assert(type(constructParameters) == "table", "no constructParameters provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
+
+    -- test: service success
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
+        className                   = className,
+        constructParameters         = constructParameters,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+    })
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
+    -- test: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
+    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
+    local mobj = mobjHost:getObject(mobjLocator)
+    assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
+
+    -- test: build blueprint build
+    -- ToDo: add mock test
+
+    -- complete test
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- cleanup test
+
+    -- return results
+    return serviceResults
+end
+
+function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk)
+    -- prepare test
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(mobjLocator) == "table", "no mobjLocator provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
+
+    -- test: service success
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "dismantleAndReleaseMObj_ASrv", {
+        mobjLocator                 = mobjLocator,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+    })
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
+    -- test: mobj released
+    local mobjResourceTable = mobjHost:getResource(mobjLocator)
+    assert(not mobjResourceTable, "MObj(="..mobjLocator:getURI()..") not released from MObjHost "..mobjHost:getHostName())
+
+    -- test: dismantle blueprint "build"
+    -- ToDo: add mock test
+
+    -- complete test
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- cleanup test
+
+    -- return results
+    return serviceResults
+end
+
+-- test MObjHost with TestMObj
 local test_mobjClassName1 = "TestMObj"
 local location1 = Location:newInstance(-12, 0, 1, 0, 1)
 local field1SetValue = "value field1"
@@ -116,8 +185,7 @@ local test_mobjConstructParameters1 = {
     field1Value     = field1SetValue,
 }
 
--- hostMObj_SSrv
-function T_MObjHost.T_hostMObj_SSrv()
+function T_MObjHost.T_hostMObj_SSrv_TestMObj()
     -- prepare test
     corelog.WriteToLog("* MObjHost:hostMObj_SSrv() tests")
 
@@ -149,45 +217,9 @@ function T_MObjHost.T_hostMObj_SSrv()
     test_mobjHost1:deleteObjects("TestMObj")
 end
 
--- hostAndBuildMObj_ASrv
-function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, logOk)
-    -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(className) == "string", "no className provided")
-    assert(type(constructParameters) == "table", "no constructParameters provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
-
-    -- test: service success
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
-        className                   = className,
-        constructParameters         = constructParameters,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    })
-    assert(serviceResults, "no serviceResults returned")
-    assert(serviceResults.success, "failed executing service")
-
-    -- test: mobj hosted on MObjHost (full check done in T_hostMObj_SSrv)
-    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
-    local mobj = mobjHost:getObject(mobjLocator)
-    assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
-
-    -- test: build blueprint build
-    -- ToDo: add mock test
-
-    -- complete test
-    if logOk then corelog.WriteToLog(" ok") end
-
-    -- cleanup test
-
-    -- return results
-    return serviceResults
-end
-
 local mobjLocator_TestMObj = nil
 
-local logOk = true
+local logOk = false
 
 function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     -- prepare test
@@ -205,8 +237,7 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     return serviceResults.mobjLocator
 end
 
--- releaseMObj_SSrv
-function T_MObjHost.T_releaseMObj_SSrv()
+function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     -- prepare test
     corelog.WriteToLog("* MObjHost:releaseMObj_SSrv() tests")
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
@@ -233,39 +264,6 @@ function T_MObjHost.T_releaseMObj_SSrv()
 
     -- cleanup test
     moduleRegistry:delistModule(test_mobjHostName1)
-end
-
--- dismantleAndReleaseMObj_ASrv
-function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk)
-    -- prepare test
-    assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(mobjLocator) == "table", "no mobjLocator provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
-
-    -- test: service success
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "dismantleAndReleaseMObj_ASrv", {
-        mobjLocator                 = mobjLocator,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    })
-    assert(serviceResults, "no serviceResults returned")
-    assert(serviceResults.success, "failed executing service")
-
-    -- test: mobj released
-    local mobjResourceTable = mobjHost:getResource(mobjLocator)
-    assert(not mobjResourceTable, "MObj(="..mobjLocator:getURI()..") not released from MObjHost "..mobjHost:getHostName())
-
-    -- test: dismantle blueprint "build"
-    -- ToDo: add mock test
-
-    -- complete test
-    if logOk then corelog.WriteToLog(" ok") end
-
-    -- cleanup test
-
-    -- return results
-    return serviceResults
 end
 
 function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
