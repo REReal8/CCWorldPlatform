@@ -95,7 +95,7 @@ local doASyncObjService_Sync_serviceResults = {}
 
 function MethodExecutor.DoASyncObjService_Sync(...)
     -- get & check input from description
-    local checkSuccess, className, objData, serviceName, serviceData = InputChecker.Check([[
+    local checkSuccess, object, serviceName, serviceData = InputChecker.Check([[
         This function executes an async service method of an obj in a sync way. It does so by
             - creating an internal callback function
             - call the async service method with the callback
@@ -108,8 +108,7 @@ function MethodExecutor.DoASyncObjService_Sync(...)
             results                     - (?) service method return value
 
         Parameters:
-            className                   + (string) name of class with the service
-            objData                     + (table) with obj data
+            object                      + (table) object to execute on
             serviceName                 + (string) name of service function to execute
             serviceData                 + (table) with argument to supply to service function
     ]], table.unpack(arg))
@@ -123,7 +122,7 @@ function MethodExecutor.DoASyncObjService_Sync(...)
     })
 
     -- call async service method
-    MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData, callback })
+    MethodExecutor.CallInstanceMethod(object, serviceName, { serviceData, callback })
 
     -- wait for callback
     while not doASyncObjService_Sync_serviceResults[callId] do

@@ -160,9 +160,10 @@ function T_MethodExecutor.T_DoASyncObjService_Sync()
     local serviceData = {
         testArg = testValue,
     }
+    local obj = TestObj:new(objData)
 
     -- test
-    local serviceResults = MethodExecutor.DoASyncObjService_Sync(className, objData, serviceName, serviceData)
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, serviceName, serviceData)
     assert(type(serviceResults) == "table" , "no result table returned")
     assert(serviceResults.success, "failed executing async obj service")
     assert(serviceResults.input == testValue, "Unexpected result from service: " .. tostring(serviceResults.input))
