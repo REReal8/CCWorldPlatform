@@ -5,9 +5,13 @@ local corelog = require "corelog"
 local Callback = require "obj_callback"
 
 local Location = require "obj_location"
+local Inventory = require "obj_inventory"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_chests = require "enterprise_chests"
+
+local T_Chest = require "test.t_mobj_chest"
+local T_MObjHost = require "test.t_eobj_mobj_host"
 
 function t_chests.T_All()
     -- service methods
@@ -19,6 +23,13 @@ local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
 
 local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
+
+--                        _                           _   _               _
+--                       (_)                         | | | |             | |
+--    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 function t_chests.T_hostAndUpdateChest()
     corelog.WriteToLog("* Test host and update chest")
@@ -61,26 +72,27 @@ function t_chests.GetHostAndUpdateChestProjectDef()
     }
 end
 
+local testMObjClassName = "Chest"
+local testMObjName = "chest"
+local logOk = false
+local baseLocation1 = testStartLocation:getRelativeLocation(2, 5, 0)
+local accessDirection1 = "top"
+local inventory1 = Inventory:new() -- optionally add elements
+
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
+    accessDirection = "top"
+}
+
 function t_chests.T_hostMObj_SSrv_Chest()
     -- prepare test
-    local className = "Chest"
-    corelog.WriteToLog("* enterprise_chests:hostMObj_SSrv() ("..className..") tests")
-    local constructParameters = {
-        baseLocation    = testStartLocation:getRelativeLocation(2, 5, 0),
-        accessDirection = "top"
-    }
+    local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, inventory1)
 
     -- test
-    local result = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters,})
-    assert(result.success, "failed hosting "..className)
-    local mobjLocator = result.mobjLocator
-    assert(mobjLocator, "Failed obtaining mobjLocator")
-    local mobj = enterprise_chests:getObject(mobjLocator)
-    assert(mobj, "Failed obtaining mobj")
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_chests, testMObjClassName, constructParameters1, testMObjName, constructFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    mobj:destruct()
-    enterprise_chests:deleteResource(mobjLocator)
 end
 
 function t_chests.T_releaseMObj_SSrv_Chest()
