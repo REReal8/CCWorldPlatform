@@ -40,7 +40,6 @@ local test_mobjConstructParameters1 = {
     nLayers         = 2,
 }
 
--- hostAndBuildMObj_ASrv
 function t_storage.T_hostAndBuildMObj_ASrv_Silo()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
@@ -56,7 +55,6 @@ function t_storage.T_hostAndBuildMObj_ASrv_Silo()
     return serviceResults.mobjLocator
 end
 
--- dismantleAndReleaseMObj_ASrv
 function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
     -- prepare test
     if not mobjLocator then
