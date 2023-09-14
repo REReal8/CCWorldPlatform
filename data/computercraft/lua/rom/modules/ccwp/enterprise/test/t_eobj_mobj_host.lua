@@ -95,7 +95,7 @@ function T_MObjHost.T_IObj_All()
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
-    T_Class.pt_IsInstanceOf(testClassName, obj, "Host", Host)
+    T_Class.pt_IsInstanceOf(testClassName, obj, "Host", Host) -- ToDo: consider moving to different section
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
@@ -115,22 +115,24 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
 
-    -- test: service success
+    -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
         className                   = className,
         constructParameters         = constructParameters,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     })
+
+    -- check: service success
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
-    -- test: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
+    -- check: mobj hosted on MObjHost (full check done in pt_hostMObj_SSrv)
     local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
     local mobj = mobjHost:getObject(mobjLocator)
     assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
 
-    -- test: build blueprint build
+    -- check: build blueprint build
     -- ToDo: add mock test
 
     -- complete test
@@ -149,20 +151,22 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
 
-    -- test: service success
+    -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "dismantleAndReleaseMObj_ASrv", {
         mobjLocator                 = mobjLocator,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
     })
+
+    -- check: service success
     assert(serviceResults, "no serviceResults returned")
     assert(serviceResults.success, "failed executing service")
 
-    -- test: mobj released
+    -- check: mobj released
     local mobjResourceTable = mobjHost:getResource(mobjLocator)
     assert(not mobjResourceTable, "MObj(="..mobjLocator:getURI()..") not released from MObjHost "..mobjHost:getHostName())
 
-    -- test: dismantle blueprint "build"
+    -- check: dismantle blueprint "build"
     -- ToDo: add mock test
 
     -- complete test
@@ -193,26 +197,27 @@ function T_MObjHost.T_hostMObj_SSrv_TestMObj()
         constructParameters = test_mobjConstructParameters1,
     })
 
-    -- check hosting success
+    -- check: hosting success
     assert(serviceResults and serviceResults.success, "failed hosting MObj")
 
-    -- check mobjLocator returned
+    -- check: mobjLocator returned
     local mobjLocator = serviceResults.mobjLocator
     assert(Class.IsInstanceOf(mobjLocator, URL), "incorrect mobjLocator returned")
 
-    -- check mobj saved
+    -- check: mobj saved
     local mobj = test_mobjHost1:getObject(mobjLocator)
     assert(mobj, "MObj not in host")
 
-    -- check mobj constructed
+    -- check: mobj constructed
     local field1Value = mobj:getField1()
     assert(field1Value == field1SetValue, "construct did not set _field1")
 
-    -- check child MObj's hosted
-    -- ToDo: consider implementing testing this. Or shouldn't we as it's a choice to have and responsibilty of the MObj to do this?
+    -- check: child MObj's hosted
+    -- ToDo: consider implementing testing this. Or shouldn't we as it's a choice to have/ responsibilty of the MObj to do this?
 
     -- cleanup test
-    test_mobjHost1:deleteObjects("TestMObj")
+    mobj:destruct()
+    test_mobjHost1:deleteResource(mobjLocator)
 end
 
 local mobjLocator_TestMObj = nil
