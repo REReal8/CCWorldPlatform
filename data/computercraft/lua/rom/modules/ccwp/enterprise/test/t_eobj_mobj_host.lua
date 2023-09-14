@@ -115,6 +115,8 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     assert(type(className) == "string", "no className provided")
     assert(type(constructParameters) == "table", "no constructParameters provided")
     assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(objName) == "string", "no objName provided")
+    assert(type(fieldsTest) == "table", "no fieldsTest provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests")
 
     -- test
@@ -176,6 +178,36 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
 
     -- check: build blueprint build
     -- ToDo: add mock test
+
+    -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- return results
+    return serviceResults
+end
+
+function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, mobjLocator, className, logOk)
+    -- prepare test
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(mobjLocator) == "table", "no mobjLocator provided")
+    assert(type(className) == "string", "no className provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests")
+
+    -- test
+    local serviceResults = mobjHost:releaseMObj_SSrv({
+        mobjLocator         = mobjLocator,
+    })
+
+    -- check: releasing success
+    assert(serviceResults and serviceResults.success, "failed releasing "..className)
+
+    -- check: mobj deleted
+    local mobjResourceTable = mobjHost:getResource(mobjLocator)
+    assert(not mobjResourceTable, className.." not deleted")
+
+    -- check child MObj's released
+    -- ToDo: consider implementing testing this. Or shouldn't we as it's a responsibilty of the MObj to do this?
 
     -- cleanup test
     if logOk then corelog.WriteToLog(" ok") end
@@ -263,23 +295,12 @@ function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     local serviceResults = test_mobjHost1:hostMObj_SSrv({
         className           = testMObjClassName,
         constructParameters = constructParameters1,
-    })
-    local mobjLocator = URL:new(serviceResults.mobjLocator)
+    }) assert(serviceResults, "failed hosting "..testMObjClassName)
+    local mobjLocator = serviceResults.mobjLocator
 
     -- test
-    serviceResults = test_mobjHost1:releaseMObj_SSrv({
-        mobjLocator         = mobjLocator,
-    })
-
-    -- check releasing success
-    assert(serviceResults and serviceResults.success, "failed releasing MObj")
-
-    -- check mobj deleted
-    local mobjResourceTable = test_mobjHost1:getResource(mobjLocator)
-    assert(not mobjResourceTable, "MObj not deleted")
-
-    -- check child MObj's released
-    -- ToDo: consider implementing testing this. Or shouldn't we as it's a responsibilty of the MObj to do this?
+    serviceResults = T_MObjHost.pt_releaseMObj_SSrv(test_mobjHost1, mobjLocator, testMObjClassName, logOk)
+    assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
     moduleRegistry:delistModule(test_mobjHostName1)

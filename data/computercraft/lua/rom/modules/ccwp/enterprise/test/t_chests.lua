@@ -97,20 +97,11 @@ end
 
 function t_chests.T_releaseMObj_SSrv_Chest()
     -- prepare test
-    local className = "Chest"
-    corelog.WriteToLog("* enterprise_chests:releaseMObj_SSrv() tests")
-    local constructParameters = {
-        baseLocation    = testStartLocation:getRelativeLocation(2, 5, 0),
-        accessDirection = "top"
-    }
-    local objLocator = enterprise_chests:hostMObj_SSrv({className = className, constructParameters = constructParameters}).mobjLocator if not objLocator then corelog.Error("failed registering Obj") return end
+    local mobjLocator = enterprise_chests:hostMObj_SSrv({className = testMObjClassName, constructParameters = constructParameters1}).mobjLocator if not mobjLocator then corelog.Error("failed registering Obj") return end
 
     -- test
-    local serviceResults = enterprise_chests:releaseMObj_SSrv({ mobjLocator = objLocator})
-    assert(serviceResults.success, "failed executing sync service")
-
-    local objResourceTable = enterprise_chests:getResource(objLocator)
-    assert(not objResourceTable, "Obj wasn't deleted")
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, mobjLocator, testMObjClassName, logOk)
+    assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
