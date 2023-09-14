@@ -29,6 +29,8 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("IMObj", "i_mobj")
 
     -- register library modules test modules
+    moduleRegistry:requireAndRegisterModule("T_TestMObj", "test.t_mobj_test")
+
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")

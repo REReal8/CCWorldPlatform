@@ -22,6 +22,26 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function TestMObj:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, baseLocation, field1 = InputChecker.Check([[
+        Initialise a TestMObj.
+
+        Parameters:
+            id                      + (string) id of the TestMObj
+            baseLocation            + (Location) base location of the TestMObj
+            field1                  + (string) field 1
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestMObj:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id            = id
+    self._baseLocation  = baseLocation
+    self._field1        = field1
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function TestMObj:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -99,16 +119,14 @@ function TestMObj:construct(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestMObj:construct: Invalid input") return nil end
 
-    -- make object table
-    local oTable = {
-        _id             = coreutils.NewId(),
+    -- determine TestMObj fields
+    local id = coreutils.NewId()
 
-        _baseLocation   = baseLocation,
-        _field1         = field1Value,
-    }
+    -- construct new TestMObj
+    local obj = TestMObj:newInstance(id, baseLocation:copy(), field1Value)
 
-    -- create new TestMObj
-    return TestMObj:new(oTable)
+    -- end
+    return obj
 end
 
 function TestMObj:destruct()

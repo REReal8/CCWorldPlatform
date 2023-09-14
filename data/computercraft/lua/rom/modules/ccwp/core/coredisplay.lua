@@ -293,6 +293,7 @@ end
 function ExecuteMObjTest(t)
 	-- forward call with options
 	local options	= {
+		{key = "1", desc = "TestMObj",			func = ExecuteMObjTest, param = {filename = "T_TestMObj"}},
 		{key = "b", desc = "BirchForest",		func = ExecuteMObjTest, param = {filename = "T_BirchForest"}},
 		{key = "c", desc = "Chest",				func = ExecuteMObjTest, param = {filename = "T_Chest"}},
 		{key = "f", desc = "Factory",			func = ExecuteMObjTest, param = {filename = "T_Factory"}},

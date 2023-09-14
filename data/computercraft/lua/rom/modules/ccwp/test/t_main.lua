@@ -31,6 +31,7 @@ local T_Inventory = require "test.t_obj_inventory"
 local T_WIPQueue = require "test.t_obj_wip_queue"
 local T_WIPAdministrator = require "test.t_obj_wip_administrator"
 
+local T_TestMObj = require "test.t_mobj_test"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local T_Chest = require "test.t_mobj_chest"
 local T_ProductionSpot = require "test.t_mobj_production_spot"
@@ -99,6 +100,7 @@ function t_main.T_All()
     T_WIPAdministrator.T_All()
 
     -- mobj tests
+    T_TestMObj.T_All()
     T_BirchForest.T_All()
     T_Chest.T_All()
     T_Factory.T_All()
