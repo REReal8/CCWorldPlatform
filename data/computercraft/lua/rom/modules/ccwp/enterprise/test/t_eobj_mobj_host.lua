@@ -18,6 +18,8 @@ local MObjHost = require "eobj_mobj_host"
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
+local T_TestMObj = require "test.t_mobj_test"
+
 local t_turtle = require "test.t_turtle"
 
 function T_MObjHost.T_All()
@@ -107,6 +109,46 @@ end
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 -- parameterised service tests
+function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, objName, fieldsTest, logOk)
+    -- prepare test
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(className) == "string", "no className provided")
+    assert(type(constructParameters) == "table", "no constructParameters provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests")
+
+    -- test
+    local serviceResults = mobjHost:hostMObj_SSrv({
+        className           = className,
+        constructParameters = constructParameters,
+    })
+
+    -- check: hosting success
+    assert(serviceResults and serviceResults.success, "failed hosting MObj")
+
+    -- check: mobjLocator returned
+    local mobjLocator = serviceResults.mobjLocator
+    assert(Class.IsInstanceOf(mobjLocator, URL), "incorrect mobjLocator returned")
+
+    -- check: mobj saved
+    local mobj = mobjHost:getObject(mobjLocator)
+    assert(mobj, "MObj not in host")
+
+    -- check: mobj constructed (i.e. fields initialised as expected)
+    fieldsTest:test(mobj, objName, "", logOk)
+
+    -- check: child MObj's hosted
+    -- ToDo: consider implementing testing this. Or shouldn't we as it's a choice to have/ responsibilty of the MObj to do this?
+
+    -- cleanup test
+    mobj:destruct()
+    mobjHost:deleteResource(mobjLocator)
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- return results
+    return serviceResults
+end
+
 function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
@@ -135,10 +177,8 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
     -- check: build blueprint build
     -- ToDo: add mock test
 
-    -- complete test
-    if logOk then corelog.WriteToLog(" ok") end
-
     -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
 
     -- return results
     return serviceResults
@@ -169,67 +209,43 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     -- check: dismantle blueprint "build"
     -- ToDo: add mock test
 
-    -- complete test
-    if logOk then corelog.WriteToLog(" ok") end
-
     -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
 
     -- return results
     return serviceResults
 end
 
 -- test MObjHost with TestMObj
-local test_mobjClassName1 = "TestMObj"
-local location1 = Location:newInstance(-12, 0, 1, 0, 1)
+local testMObjClassName = "TestMObj"
+local testMObjName = "testMObj"
+local logOk = false
+local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
 local field1SetValue = "value field1"
-local test_mobjConstructParameters1 = {
-    baseLocation    = location1,
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
     field1Value     = field1SetValue,
 }
 
 function T_MObjHost.T_hostMObj_SSrv_TestMObj()
     -- prepare test
-    corelog.WriteToLog("* MObjHost:hostMObj_SSrv() tests")
+    local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1SetValue)
 
     -- test
-    local serviceResults = test_mobjHost1:hostMObj_SSrv({
-        className           = test_mobjClassName1,
-        constructParameters = test_mobjConstructParameters1,
-    })
-
-    -- check: hosting success
-    assert(serviceResults and serviceResults.success, "failed hosting MObj")
-
-    -- check: mobjLocator returned
-    local mobjLocator = serviceResults.mobjLocator
-    assert(Class.IsInstanceOf(mobjLocator, URL), "incorrect mobjLocator returned")
-
-    -- check: mobj saved
-    local mobj = test_mobjHost1:getObject(mobjLocator)
-    assert(mobj, "MObj not in host")
-
-    -- check: mobj constructed
-    local field1Value = mobj:getField1()
-    assert(field1Value == field1SetValue, "construct did not set _field1")
-
-    -- check: child MObj's hosted
-    -- ToDo: consider implementing testing this. Or shouldn't we as it's a choice to have/ responsibilty of the MObj to do this?
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, constructFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    mobj:destruct()
-    test_mobjHost1:deleteResource(mobjLocator)
 end
 
 local mobjLocator_TestMObj = nil
-
-local logOk = false
 
 function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     -- prepare test
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, test_mobjClassName1, test_mobjConstructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, testMObjClassName, constructParameters1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -245,8 +261,8 @@ function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     corelog.WriteToLog("* MObjHost:releaseMObj_SSrv() tests")
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
     local serviceResults = test_mobjHost1:hostMObj_SSrv({
-        className           = test_mobjClassName1,
-        constructParameters = test_mobjConstructParameters1,
+        className           = testMObjClassName,
+        constructParameters = constructParameters1,
     })
     local mobjLocator = URL:new(serviceResults.mobjLocator)
 
