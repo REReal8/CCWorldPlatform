@@ -19,9 +19,17 @@ function t_chests.T_All()
     t_chests.T_releaseMObj_SSrv_Chest()
 end
 
+function t_chests.T_AllPhysical()
+    -- IObj methods
+
+    -- service methods
+    local mobjLocator = t_chests.T_hostAndBuildMObj_ASrv_Chest()
+    t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
+end
+
 local testMObjClassName = "Chest"
 local testMObjName = "chest"
-local logOk = false
+local logOk = true
 local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
 local baseLocation1 = testStartLocation:getRelativeLocation(2, 5, 0)
@@ -92,6 +100,23 @@ function t_chests.T_hostMObj_SSrv_Chest()
     -- cleanup test
 end
 
+local mobjLocator_Chest = nil
+
+function t_chests.T_hostAndBuildMObj_ASrv_Chest()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_chests, testMObjClassName, constructParameters1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Chest = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+
 function t_chests.T_releaseMObj_SSrv_Chest()
     -- prepare test
 
@@ -100,6 +125,22 @@ function t_chests.T_releaseMObj_SSrv_Chest()
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
+end
+
+function t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
+    -- prepare test
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator from the pt_hostAndBuildMObj_ASrv test
+        assert(mobjLocator_Chest, "no mobjLocator for the "..testMObjClassName.." to operate on")
+        mobjLocator = mobjLocator_Chest
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_chests, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Chest = nil
 end
 
 return t_chests

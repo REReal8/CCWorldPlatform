@@ -32,7 +32,6 @@ end
 local testMObjClassName = "Silo"
 local testMObjName = "silo"
 local logOk = false
-local mobjLocator_Silo = nil
 local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
 local dropLocation1 = 1
@@ -75,6 +74,8 @@ function t_storage.T_hostMObj_SSrv_Silo()
     -- cleanup test
 end
 
+local mobjLocator_Silo = nil
+
 function t_storage.T_hostAndBuildMObj_ASrv_Silo()
     -- prepare test
     enterprise_storage = enterprise_storage or require "enterprise_storage"
@@ -104,8 +105,8 @@ end
 function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
     -- prepare test
     if not mobjLocator then
-        -- see if we locally remembered a mobjLocator from the T_hostAndBuildMObj_ASrv_Silo test
-        assert(mobjLocator_Silo, "no mobjLocator for the Silo to operate on")
+        -- see if we locally remembered a mobjLocator from the pt_hostAndBuildMObj_ASrv test
+        assert(mobjLocator_Silo, "no mobjLocator for the "..testMObjClassName.." to operate on")
         mobjLocator = mobjLocator_Silo
     end
 

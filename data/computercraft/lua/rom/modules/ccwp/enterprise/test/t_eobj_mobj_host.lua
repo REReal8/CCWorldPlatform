@@ -117,7 +117,7 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     assert(type(logOk) == "boolean", "no logOk provided")
     assert(type(objName) == "string", "no objName provided")
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests ("..className..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests (with a "..className..")")
 
     -- test
     local serviceResults = mobjHost:hostMObj_SSrv({
@@ -192,7 +192,7 @@ function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters
     assert(type(className) == "string", "no className provided")
     assert(type(constructParameters) == "table", "no constructParameters provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests ("..className..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests (with a "..className..")")
 
     local serviceResults = mobjHost:hostMObj_SSrv({
         className           = className,
