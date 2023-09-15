@@ -46,7 +46,7 @@ function T_IMObj.pt_destruct(className, class, constructParameters, objName, des
     assert(objName, "no objName provided")
     assert(destructFieldsTest, "no destructFieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":destruct() tests")
+    corelog.WriteToLog("* "..className..":destruct() tests (with "..objName..")")
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
 
     -- test
@@ -66,7 +66,7 @@ function T_IMObj.pt_construct(className, class, constructParameters, objName, co
     assert(objName, "no objName provided")
     assert(constructFieldsTest, "no constructFieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":construct() tests ("..textutils.serialise(constructParameters, compact)..")")
+    corelog.WriteToLog("* "..className..":construct() tests (with "..objName..")")
 
     -- test
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
@@ -86,7 +86,7 @@ function T_IMObj.pt_upgrade(className, class, constructParameters, objName, upgr
     assert(upgradeParameters, "no upgradeParameters provided")
     assert(upgradeFieldsTest, "no upgradeFieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":upgrade(...) tests")
+    corelog.WriteToLog("* "..className..":upgrade() tests (with "..objName..")")
     local obj = class:construct(constructParameters) assert(obj, "Failed obtaining "..className)
 
     -- test
@@ -135,7 +135,7 @@ function T_IMObj.pt_getBlueprint(className, methodName, obj, objName, isBlueprin
     assert(objName, "no objName provided")
     assert(isBlueprintTest, "no isBlueprintTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..className..":"..methodName.."() tests")
+    corelog.WriteToLog("* "..className..":"..methodName.."() tests (with "..objName..")")
 
     -- test
     local test = MethodResultTest:newInstance(methodName, isBlueprintTest, ...)

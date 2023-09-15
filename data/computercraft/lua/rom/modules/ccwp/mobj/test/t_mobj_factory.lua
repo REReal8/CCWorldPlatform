@@ -231,8 +231,10 @@ function T_Factory.T_IMObj_All()
     -- prepare tests
     local id = coreutils.NewId()
     local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
+    local testObjName0 = testObjName.."0"
 
     local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
+    local testObjName1 = testObjName.."1"
 
     local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
@@ -245,6 +247,7 @@ function T_Factory.T_IMObj_All()
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
     local outputLocators2 = ObjArray:newInstance(locatorClassName, { outputChestLocator, })
     local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
+    local testObjName2 = testObjName.."2"
 
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -305,24 +308,24 @@ function T_Factory.T_IMObj_All()
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
 
     -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName, constructFieldsTest0, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName, constructFieldsTest1, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName, constructFieldsTest2, logOk)
+    T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName0, destructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, constructFieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, constructFieldsTest1, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, constructFieldsTest2, logOk)
 
     -- test upgrade
-    T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName, upgradeParametersTo2, constructFieldsTest2, logOk)
+    T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, constructFieldsTest2, logOk)
 
     -- test getters
-    T_IMObj.pt_getId(testClassName, obj0, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName, logOk)
+    T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj1, testObjName, isBlueprintTest, logOk)
-    T_IMObj.pt_getBuildBlueprint(testClassName, obj2, testObjName, isBlueprintTest, logOk)
-    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName, upgradeParametersTo2, isBlueprintTest, logOk)
-    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj1, testObjName1, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj2, testObjName2, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
+    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 
     -- cleanup test
     enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
