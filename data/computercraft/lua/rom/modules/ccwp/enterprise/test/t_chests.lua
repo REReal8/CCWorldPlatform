@@ -29,7 +29,7 @@ end
 
 local testMObjClassName = "Chest"
 local testMObjName = "chest"
-local logOk = true
+local logOk = false
 local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
 local baseLocation1 = testStartLocation:getRelativeLocation(2, 5, 0)
