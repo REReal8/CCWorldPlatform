@@ -20,6 +20,7 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
+local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
@@ -202,7 +203,7 @@ function Chest:getBuildBlueprint()
 
     -- construct layer list
     local layerList = {
-        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = Chest_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = Chest_layer()},
     }
 
     -- construct blueprint
@@ -243,7 +244,7 @@ function Chest:getDismantleBlueprint()
 
     -- construct layer list
     local layerList = {
-        { startpoint = self._baseLocation:copy(), buildFromAbove = true, layer = ChestDismantle_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = ChestDismantle_layer()},
     }
 
     -- construct blueprint
