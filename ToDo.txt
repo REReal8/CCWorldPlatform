@@ -44,7 +44,7 @@ G  Debug: Modem events send but not received                                    
       -  ItemTable
       -  WIPAdministrator
       R  ObjBase                                                                                                        (done)
-      -  TestMObj
+      R  TestMObj                                                                                                       (done)
       R  Chest                                                                                                          (done)
       R  ProductionSpot                                                                                                 (done)
       R  Silo                                                                                                           (done)
@@ -84,7 +84,7 @@ G  Debug: Modem events send but not received                                    
    -  mobj_turtle
 
 R  use MObjHost class
-   -  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc
+   R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)
    R  enterprise_forestry
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
