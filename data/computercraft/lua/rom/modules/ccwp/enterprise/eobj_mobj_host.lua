@@ -171,6 +171,44 @@ function MObjHost:hostMObj_SSrv(...)
     return result
 end
 
+function MObjHost:upgradeMObj_SSrv(...)
+    -- get & check input from description
+    local checkSuccess, mobjLocator, upgradeParameters = InputChecker.Check([[
+        This async public service upgrades a MObj in the MObjHost.
+
+        Note that the MObj is not physically extended in the world. If this is also required extendAndUpgradeMObj_ASrv should be called.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                         - (table) data about this service
+                mobjLocator                     + (URL) locating the MObj
+                upgradeParameters               + (table) parameters for upgrading the MObj
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MObjHost:upgradeMObj_SSrv: Invalid input") return {success = false} end
+
+    -- log
+    corelog.WriteToLog(">Upgrading "..mobjLocator:getURI())
+
+    -- get MObj
+    local mobj = Host.GetObject(mobjLocator)
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
+    if not mobj.upgrade then corelog.Error("MObjHost:upgradeMObj_SSrv: MObj "..mobjLocator:getURI().." does not have upgrade method (yet)") return {success = false} end
+
+    -- upgrade MObj
+    local success = mobj:upgrade(upgradeParameters)
+    if not success then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed upgrading "..mobjLocator:getURI().." from upgradeParameters(="..textutils.serialise(upgradeParameters)..")") return {success = false} end
+
+    -- save the MObj
+    mobjLocator = self:saveObject(mobj)
+    if not mobjLocator then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed saving "..textutils.serialise(mobj)..")") return {success = false} end
+
+    -- end
+    return {success = success}
+end
+
 function MObjHost:dismantleAndReleaseMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, mobjLocator, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[

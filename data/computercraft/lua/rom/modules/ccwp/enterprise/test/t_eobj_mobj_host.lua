@@ -31,6 +31,7 @@ function T_MObjHost.T_All()
 
     -- service methods
     T_MObjHost.T_hostMObj_SSrv_TestMObj()
+    T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     T_MObjHost.T_releaseMObj_SSrv_TestMObj()
 end
 
@@ -186,6 +187,48 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
     return serviceResults
 end
 
+function T_MObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters, upgradeParameters, objName, fieldsTest, logOk)
+    -- prepare test
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(className) == "string", "no className provided")
+    assert(type(constructParameters) == "table", "no constructParameters provided")
+    assert(type(upgradeParameters) == "table", "no upgradeParameters provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    assert(type(objName) == "string", "no objName provided")
+    assert(type(fieldsTest) == "table", "no fieldsTest provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":upgradeMObj_SSrv() tests (with a "..className..")")
+
+    local serviceResults = mobjHost:hostMObj_SSrv({
+        className           = className,
+        constructParameters = constructParameters,
+    }) assert(serviceResults, "failed hosting "..className)
+    local mobjLocator = serviceResults.mobjLocator
+
+    -- test
+    serviceResults = mobjHost:upgradeMObj_SSrv({
+        mobjLocator         = mobjLocator,
+        upgradeParameters   = upgradeParameters,
+    })
+
+    -- check: service success
+    assert(serviceResults and serviceResults.success, "failed upgrading "..mobjLocator:getURI())
+
+    -- check: mobj saved
+    local mobj = mobjHost:getObject(mobjLocator)
+    assert(mobj, mobjLocator:getURI().." not in host")
+
+    -- check: mobj upgraded (i.e. fields values as expected)
+    fieldsTest:test(mobj, objName, "", logOk)
+
+    -- cleanup test
+    mobj:destruct()
+    mobjHost:deleteResource(mobjLocator)
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- return results
+    return serviceResults
+end
+
 function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
@@ -259,15 +302,16 @@ local testMObjClassName = "TestMObj"
 local testMObjName = "testMObj"
 local logOk = false
 local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
-local field1SetValue = "value field1"
+local field1_1 = "field1 1"
+local field1_2 = "field1 2"
 local constructParameters1 = {
     baseLocation    = baseLocation1,
-    field1Value     = field1SetValue,
+    field1Value     = field1_1,
 }
 
 function T_MObjHost.T_hostMObj_SSrv_TestMObj()
     -- prepare test
-    local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1SetValue)
+    local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_1)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, constructFieldsTest, logOk)
@@ -294,9 +338,24 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     return serviceResults.mobjLocator
 end
 
+function T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
+    -- prepare test
+    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    local upgradeParameters = {
+        field1 = field1_2
+    }
+    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, upgradeParameters, testMObjName, upgradeFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    moduleRegistry:delistModule(test_mobjHostName1)
+end
+
 function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     -- prepare test
-    corelog.WriteToLog("* MObjHost:releaseMObj_SSrv() tests")
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
     -- test

@@ -38,6 +38,7 @@ local testObjName = "testMObj"
 local logOk = false
 local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local field1_1 = "field1 1"
+local field1_2 = "field1 2"
 
 local compact = { compact = true }
 
@@ -168,15 +169,27 @@ function T_TestMObj.T_IMObj_All()
 
     local constructFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_1)
 
+    local upgradeParameters = {
+        field1 = field1_2
+    }
+    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
+
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test
+    -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
+
+    -- test construct/ upgrade/ destruct
     T_IMObj.pt_destruct(testClassName, TestMObj, constructParameters1, testObjName, destructFieldsTest, logOk)
     T_IMObj.pt_construct(testClassName, TestMObj, constructParameters1, testObjName, constructFieldsTest, logOk)
+    T_IMObj.pt_upgrade(testClassName, TestMObj, constructParameters1, testObjName, upgradeParameters, upgradeFieldsTest, logOk)
+
+    -- test getters
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+
+    -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end

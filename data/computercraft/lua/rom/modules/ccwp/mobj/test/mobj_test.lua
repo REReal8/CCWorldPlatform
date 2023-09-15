@@ -129,6 +129,30 @@ function TestMObj:construct(...)
     return obj
 end
 
+function TestMObj:upgrade(...)
+    -- get & check input from description
+    local checkSuccess, field1 = InputChecker.Check([[
+        This method upgrades a TestMObj instance from a table of parameters.
+
+        The upgraded TestMObj is not yet saved in it's Host.
+
+        Return value:
+                                        - (boolean) whether the TestMObj was succesfully upgraded.
+
+        Parameters:
+            upgradeParameters           - (table) parameters for upgrading the TestMObj
+                field1                  + (string) with field1 value to upgrade to
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestMObj:upgrade: Invalid input") return false end
+
+    -- upgrade
+    if self._field1 == field1 then corelog.Warning("TestMObj:upgrade: field1 is already equal to "..field1) end
+    self._field1 = field1
+
+    -- end
+    return true
+end
+
 function TestMObj:destruct()
     --[[
         This method destructs a TestMObj instance.

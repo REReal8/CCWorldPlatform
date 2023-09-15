@@ -312,8 +312,6 @@ function T_Factory.T_IMObj_All()
     T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, constructFieldsTest0, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, constructFieldsTest1, logOk)
     T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, constructFieldsTest2, logOk)
-
-    -- test upgrade
     T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, constructFieldsTest2, logOk)
 
     -- test getters
