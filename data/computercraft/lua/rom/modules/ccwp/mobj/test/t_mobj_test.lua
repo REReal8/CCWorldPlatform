@@ -191,6 +191,7 @@ function T_TestMObj.T_IMObj_All()
 
     -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj, testObjName, upgradeParameters, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end
 

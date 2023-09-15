@@ -200,8 +200,7 @@ function TestMObj:getBuildBlueprint()
 
     -- construct layer list
     local layerList = {
---        { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()},
-        -- note: empty as we currently do not want to actually have the Turtle move
+        -- note: empty as we do not want to actually have the Turtle move for TestMObj
     }
 
     -- construct blueprint
@@ -218,6 +217,43 @@ function TestMObj:getBuildBlueprint()
     return buildLocation, blueprint
 end
 
+function TestMObj:getExtendBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, field1 = InputChecker.Check([[
+        This method returns a blueprint for extending the TestMObj in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+            upgradeParameters           - (table) parameters for upgrading the TestMObj
+                field1                  + (string) with field1 value to upgrade to
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestMObj:getExtendBlueprint: Invalid input") return nil end
+
+    -- determine layerList
+    local layerList = {
+        -- note: empty as we do not want to actually have the Turtle move for TestMObj
+    }
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence,
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
+end
+
+
 function TestMObj:getDismantleBlueprint()
     --[[
         This method returns a blueprint for dismantling the TestMObj in the physical minecraft world.
@@ -231,7 +267,7 @@ function TestMObj:getDismantleBlueprint()
 
     -- construct layer list
     local layerList = {
-        -- note: empty as we currently do not want to actually have the Turtle move
+        -- note: empty as we do not want to actually have the Turtle move for TestMObj
     }
 
     -- construct blueprint
