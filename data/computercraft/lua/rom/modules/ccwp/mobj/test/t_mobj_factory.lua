@@ -75,6 +75,7 @@ local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
 local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
 local inputLocators0 = ObjArray:newInstance(locatorClassName, { inputLocator0, })
+
 local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(locatorClassName, { outputLocator0, })
 
@@ -230,7 +231,20 @@ function T_Factory.T_IMObj_All()
     -- prepare tests
     local id = coreutils.NewId()
     local obj0 = T_Factory.CreateTestObj(id, level0, baseLocation1, inputLocators0, outputLocators0, craftingSpots0, smeltingSpots0) assert(obj0, "Failed obtaining "..testClassName)
+
     local obj1 = T_Factory.CreateTestObj(id, level1, baseLocation1, inputLocators0, outputLocators0, craftingSpots1, smeltingSpots1) assert(obj1, "Failed obtaining "..testClassName)
+
+    local inputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
+        accessDirection = "top",
+    }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
+    local inputLocators2 = ObjArray:newInstance(locatorClassName, { inputChestLocator, })
+    local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
+        accessDirection = "top",
+    }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
+    local outputLocators2 = ObjArray:newInstance(locatorClassName, { outputChestLocator, })
+    local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
 
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -306,8 +320,13 @@ function T_Factory.T_IMObj_All()
     -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj1, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj2, testObjName, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName, upgradeParametersTo2, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName, isBlueprintTest, logOk)
+
+    -- cleanup test
+    enterprise_chests:releaseMObj_SSrv({ mobjLocator = inputChestLocator })
+    enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputChestLocator })
 end
 
 --                        _  __ _                       _   _               _
