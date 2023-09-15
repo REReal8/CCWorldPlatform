@@ -126,7 +126,7 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     })
 
     -- check: hosting success
-    assert(serviceResults and serviceResults.success, "failed hosting MObj")
+    assert(serviceResults and serviceResults.success, "failed hosting "..className)
 
     -- check: mobjLocator returned
     local mobjLocator = serviceResults.mobjLocator
@@ -134,7 +134,7 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
 
     -- check: mobj saved
     local mobj = mobjHost:getObject(mobjLocator)
-    assert(mobj, "MObj not in host")
+    assert(mobj, className.." not in host")
 
     -- check: mobj constructed (i.e. fields initialised as expected)
     fieldsTest:test(mobj, objName, "", logOk)
@@ -206,11 +206,11 @@ function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters
     })
 
     -- check: releasing success
-    assert(serviceResults and serviceResults.success, "failed releasing "..className)
+    assert(serviceResults and serviceResults.success, "failed releasing "..mobjLocator:getURI())
 
     -- check: mobj deleted
     local mobjResourceTable = mobjHost:getResource(mobjLocator)
-    assert(not mobjResourceTable, className.." not deleted")
+    assert(not mobjResourceTable, mobjLocator:getURI().." not deleted")
 
     -- check child MObj's released
     -- ToDo: consider implementing testing this. Or shouldn't we as it's a responsibilty of the MObj to do this?
@@ -313,7 +313,7 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator from the T_hostAndBuildMObj_ASrv_TestMObj test
-        assert(mobjLocator_TestMObj, "no mobjLocator for the TestMObj to operate on")
+        assert(mobjLocator_TestMObj, "no mobjLocator to operate on")
         mobjLocator = mobjLocator_TestMObj
     end
 
