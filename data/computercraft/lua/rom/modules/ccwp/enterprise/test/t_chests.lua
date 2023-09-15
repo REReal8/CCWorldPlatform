@@ -19,10 +19,18 @@ function t_chests.T_All()
     t_chests.T_releaseMObj_SSrv_Chest()
 end
 
+local testMObjClassName = "Chest"
+local testMObjName = "chest"
+local logOk = false
 local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
-
-local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
+local baseLocation1 = testStartLocation:getRelativeLocation(2, 5, 0)
+local accessDirection1 = "top"
+local inventory1 = Inventory:new() -- optionally add elements
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
+    accessDirection = "top"
+}
 
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
@@ -33,6 +41,7 @@ local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
 
 function t_chests.T_hostAndUpdateChest()
     corelog.WriteToLog("* Test host and update chest")
+    local callback = Callback:newInstance("t_main", "Func1_Callback", { } )
 
     -- create project
     local projectData = {
@@ -72,18 +81,6 @@ function t_chests.GetHostAndUpdateChestProjectDef()
     }
 end
 
-local testMObjClassName = "Chest"
-local testMObjName = "chest"
-local logOk = false
-local baseLocation1 = testStartLocation:getRelativeLocation(2, 5, 0)
-local accessDirection1 = "top"
-local inventory1 = Inventory:new() -- optionally add elements
-
-local constructParameters1 = {
-    baseLocation    = baseLocation1,
-    accessDirection = "top"
-}
-
 function t_chests.T_hostMObj_SSrv_Chest()
     -- prepare test
     local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, inventory1)
@@ -97,10 +94,9 @@ end
 
 function t_chests.T_releaseMObj_SSrv_Chest()
     -- prepare test
-    local mobjLocator = enterprise_chests:hostMObj_SSrv({className = testMObjClassName, constructParameters = constructParameters1}).mobjLocator if not mobjLocator then corelog.Error("failed registering Obj") return end
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, mobjLocator, testMObjClassName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, testMObjClassName, constructParameters1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

@@ -64,6 +64,10 @@ local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local accessDirection1 = "top"
 local emptyInventory = Inventory:new()
 local inventory1 = Inventory:new() -- ToDo: add elements
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
+    accessDirection = accessDirection1,
+}
 
 local compact = { compact = true }
 
@@ -183,11 +187,6 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
-
-local constructParameters1 = {
-    baseLocation    = baseLocation1,
-    accessDirection = accessDirection1,
-}
 
 function T_Chest.T_IMObj_All()
     -- prepare test

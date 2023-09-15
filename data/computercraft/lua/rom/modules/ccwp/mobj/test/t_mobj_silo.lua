@@ -17,8 +17,6 @@ local IMObj = require "i_mobj"
 local Silo = require "mobj_silo"
 
 local enterprise_chests = require "enterprise_chests"
-local enterprise_isp = require "enterprise_isp"
-local enterprise_shop = require "enterprise_shop"
 local enterprise_storage = require "enterprise_storage"
 
 local TestArrayTest = require "test_array_test"
@@ -66,6 +64,13 @@ local pickupLocation1 = 0
 local locatorClassName = "URL"
 local topChests1 = ObjArray:newInstance(locatorClassName) assert(topChests1, "Failed obtaining ObjArray")
 local storageChests1 = ObjArray:newInstance(locatorClassName) assert(storageChests1, "Failed obtaining ObjArray")
+local nTopChests1 = 4
+local nLayers1 = 3
+local constructParameters1 = {
+    baseLocation    = baseLocation1,
+    nTopChests      = nTopChests1,
+    nLayers         = nLayers1,
+}
 
 local compact = { compact = true }
 
@@ -187,14 +192,6 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
-
-local nTopChests1 = 4
-local nLayers1 = 3
-local constructParameters1 = {
-    baseLocation    = baseLocation1,
-    nTopChests      = nTopChests1,
-    nLayers         = nLayers1,
-}
 
 function T_Silo.T_IMObj_All()
     -- prepare test

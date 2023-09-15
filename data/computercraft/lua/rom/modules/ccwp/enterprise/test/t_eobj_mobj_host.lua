@@ -117,7 +117,7 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     assert(type(logOk) == "boolean", "no logOk provided")
     assert(type(objName) == "string", "no objName provided")
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests ("..className..")")
 
     -- test
     local serviceResults = mobjHost:hostMObj_SSrv({
@@ -186,16 +186,22 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
     return serviceResults
 end
 
-function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, mobjLocator, className, logOk)
+function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
-    assert(type(mobjLocator) == "table", "no mobjLocator provided")
     assert(type(className) == "string", "no className provided")
+    assert(type(constructParameters) == "table", "no constructParameters provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests ("..className..")")
+
+    local serviceResults = mobjHost:hostMObj_SSrv({
+        className           = className,
+        constructParameters = constructParameters,
+    }) assert(serviceResults, "failed hosting "..className)
+    local mobjLocator = serviceResults.mobjLocator
 
     -- test
-    local serviceResults = mobjHost:releaseMObj_SSrv({
+    serviceResults = mobjHost:releaseMObj_SSrv({
         mobjLocator         = mobjLocator,
     })
 
@@ -292,14 +298,9 @@ function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     -- prepare test
     corelog.WriteToLog("* MObjHost:releaseMObj_SSrv() tests")
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
-    local serviceResults = test_mobjHost1:hostMObj_SSrv({
-        className           = testMObjClassName,
-        constructParameters = constructParameters1,
-    }) assert(serviceResults, "failed hosting "..testMObjClassName)
-    local mobjLocator = serviceResults.mobjLocator
 
     -- test
-    serviceResults = T_MObjHost.pt_releaseMObj_SSrv(test_mobjHost1, mobjLocator, testMObjClassName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
