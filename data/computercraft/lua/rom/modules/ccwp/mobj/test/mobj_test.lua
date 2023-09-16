@@ -253,7 +253,6 @@ function TestMObj:getExtendBlueprint(...)
     return buildLocation, blueprint
 end
 
-
 function TestMObj:getDismantleBlueprint()
     --[[
         This method returns a blueprint for dismantling the TestMObj in the physical minecraft world.
