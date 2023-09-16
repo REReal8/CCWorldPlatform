@@ -40,6 +40,7 @@ function T_MObjHost.T_AllPhysical()
 
     -- service methods
     local mobjLocator = T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
+    T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
 end
 
@@ -229,6 +230,42 @@ function T_MObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters
     return serviceResults
 end
 
+function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeParameters, objName, fieldsTest, logOk)
+    -- prepare test
+    assert(type(mobjHost) =="table", "no mobjHost provided")
+    assert(type(mobjLocator) == "table", "no mobjLocator provided")
+    assert(type(upgradeParameters) == "table", "no upgradeParameters provided")
+    assert(type(objName) == "string", "no objName provided")
+    assert(type(fieldsTest) == "table", "no fieldsTest provided")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":extendAndUpgradeMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
+
+    -- test
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "extendAndUpgradeMObj_ASrv", {
+        mobjLocator                 = mobjLocator,
+        upgradeParameters           = upgradeParameters,
+        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+    })
+
+    -- check: service success
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
+    -- check: extend blueprint build
+    -- ToDo: add mock test
+
+    -- check: mobj upgraded (i.e. fields values as expected)
+    local mobj = mobjHost:getObject(mobjLocator) assert(mobj, "MObj(="..mobjLocator:getURI()..") not hosted by "..mobjHost:getHostName())
+    fieldsTest:test(mobj, objName, "", logOk)
+
+    -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
+
+    -- return results
+    return serviceResults
+end
+
 function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
@@ -308,6 +345,9 @@ local constructParameters1 = {
     baseLocation    = baseLocation1,
     field1Value     = field1_1,
 }
+local upgradeParameters2 = {
+    field1 = field1_2
+}
 
 function T_MObjHost.T_hostMObj_SSrv_TestMObj()
     -- prepare test
@@ -341,13 +381,29 @@ end
 function T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     -- prepare test
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
-    local upgradeParameters = {
-        field1 = field1_2
-    }
     local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, upgradeParameters, testMObjName, upgradeFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, upgradeParameters2, testMObjName, upgradeFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    moduleRegistry:delistModule(test_mobjHostName1)
+end
+
+function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
+    -- prepare test
+    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
+
+    if not mobjLocator then
+        -- check if we locally remembered a mobjLocator
+        assert(mobjLocator_TestMObj, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_TestMObj
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(test_mobjHost1, mobjLocator, upgradeParameters2, testMObjName, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -371,7 +427,7 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
     if not mobjLocator then
-        -- check if we locally remembered a mobjLocator from the T_hostAndBuildMObj_ASrv_TestMObj test
+        -- check if we locally remembered a mobjLocator
         assert(mobjLocator_TestMObj, "no mobjLocator to operate on")
         mobjLocator = mobjLocator_TestMObj
     end
@@ -382,7 +438,6 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
 
     -- cleanup test
     mobjLocator_TestMObj = nil
-    -- ToDo: remove test host data
     moduleRegistry:delistModule(test_mobjHostName1)
 end
 

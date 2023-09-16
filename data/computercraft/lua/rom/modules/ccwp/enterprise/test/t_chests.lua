@@ -129,7 +129,7 @@ end
 function t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
     -- prepare test
     if not mobjLocator then
-        -- see if we locally remembered a mobjLocator from the pt_hostAndBuildMObj_ASrv test
+        -- see if we locally remembered a mobjLocator
         assert(mobjLocator_Chest, "no mobjLocator to operate on")
         mobjLocator = mobjLocator_Chest
     end

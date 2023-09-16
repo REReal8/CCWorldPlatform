@@ -485,7 +485,7 @@ function Factory:getExtendBlueprint(...)
             blueprint                   - (table) the blueprint
 
         Parameters:
-            upgradeParameters           - (table) parameters for upgrading the Factory
+            upgradeParameters           - (table) parameters for upgrading the current Factory
                 level                   + (number) with Factory level to upgrade to
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory:getExtendBlueprint: Invalid input") return nil end

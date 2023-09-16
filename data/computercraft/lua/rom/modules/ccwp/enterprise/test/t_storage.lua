@@ -105,7 +105,7 @@ end
 function t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
     -- prepare test
     if not mobjLocator then
-        -- see if we locally remembered a mobjLocator from the pt_hostAndBuildMObj_ASrv test
+        -- see if we locally remembered a mobjLocator
         assert(mobjLocator_Silo, "no mobjLocator to operate on")
         mobjLocator = mobjLocator_Silo
     end

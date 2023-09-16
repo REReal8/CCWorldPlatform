@@ -209,6 +209,81 @@ function MObjHost:upgradeMObj_SSrv(...)
     return {success = success}
 end
 
+function MObjHost:extendAndUpgradeMObj_ASrv(...)
+    -- get & check input from description
+    local checkSuccess, mobjLocator, upgradeParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
+        This async public service extends and upgrades a MObj. It consists of
+            - extending the MObj in the world
+            - upgrading the MObj
+
+        This service assumes extending the MObj will not interfere with any running business in the MObj.
+
+        Return value:
+                                                - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                                - (table)
+                success                         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData                         - (table) data about this service
+                mobjLocator                     + (URL) locating the MObj
+                upgradeParameters               + (table) parameters for upgrading the MObj
+                materialsItemSupplierLocator    + (URL) locating the host for dismantling materials
+                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
+            callback                            + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- get MObj
+    local mobj = Host.GetObject(mobjLocator)
+    if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
+    if not mobj.getExtendBlueprint then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: MObj "..mobjLocator:getURI().." does not have getExtendBlueprint method (yet)") return {success = false} end
+
+    -- get blueprint
+    local buildLocation, blueprint = mobj:getExtendBlueprint(upgradeParameters)
+    if not buildLocation or not blueprint then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Failed obtaining extend blueprint for "..mobjLocator:getURI().." with upgradeParameters(="..textutils.serialise(upgradeParameters)..")") return Callback.ErrorCall(callback) end
+
+    -- create project definition
+    local projectData = {
+        buildLocation               = buildLocation,
+        blueprint                   = blueprint,
+        materialsItemSupplierLocator= materialsItemSupplierLocator,
+        wasteItemDepotLocator       = wasteItemDepotLocator,
+
+        hostLocator                 = self:getHostLocator(),
+
+        mobjLocator                 = mobjLocator,
+        upgradeParameters           = upgradeParameters,
+    }
+    local projectDef = {
+        steps   = {
+            -- extend MObj in the world
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildBlueprint_ASrv" }, stepDataDef = {
+                { keyDef = "blueprintStartpoint"            , sourceStep = 0, sourceKeyDef = "buildLocation" },
+                { keyDef = "blueprint"                      , sourceStep = 0, sourceKeyDef = "blueprint" },
+                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
+                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+            }},
+            -- upgrade MObj
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
+                { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParameters" },
+            }},
+        },
+        returnData  = {
+        }
+    }
+    local projectServiceData = {
+        projectDef  = projectDef,
+        projectData = projectData,
+        projectMeta = { title = "extend and upgrade MObj", description = "extend and upgrade "..mobjLocator:getURI().." with upgradeParameters(="..textutils.serialise(upgradeParameters)..")"},
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
 function MObjHost:dismantleAndReleaseMObj_ASrv(...)
     -- get & check input from description
     local checkSuccess, mobjLocator, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
