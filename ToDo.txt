@@ -83,6 +83,9 @@ G  Debug: Modem events send but not received                                    
    -  mobj_shop
    -  mobj_turtle
 
+R  Improve MObjHost                                                                                                     (done)
+   R  Support extending and upgrading of MObj's                                                                         (done)
+
 R  use MObjHost class
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)
    R  enterprise_forestry
@@ -134,9 +137,6 @@ R  Factory:
 
 -  blueprint
    -  Introduce Blueprint objects
-
--  Improve MObjHost
-   -  Support updating of MObj's
 
 -  ItemSupplierGroup & ItemDepotGroup
    -  there seems to be a pattern where multiple (m)obj's handle groups of ItemSupplier's (or ItemDepot's), e.g.
