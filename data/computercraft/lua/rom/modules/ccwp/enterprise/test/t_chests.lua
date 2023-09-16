@@ -30,11 +30,13 @@ end
 local testMObjClassName = "Chest"
 local testMObjName = "chest"
 local logOk = false
+
 local testStartLocation  = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2  = Location:newInstance(-6, 6, 1, 0, 1)
 local baseLocation1 = testStartLocation:getRelativeLocation(2, 5, 0)
 local accessDirection1 = "top"
 local inventory1 = Inventory:new() -- optionally add elements
+
 local constructParameters1 = {
     baseLocation    = baseLocation1,
     accessDirection = "top"

@@ -31,9 +31,8 @@ local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_IMObj = require "test.t_i_mobj"
 
-local T_Turtle = require "test.t_mobj_turtle"
 local T_Chest = require "test.t_mobj_chest"
-local t_turtle = require "test.t_turtle"
+local t_turtle
 
 function T_Factory.T_All()
     -- initialisation
@@ -70,7 +69,7 @@ local level0 = 0
 local level1 = 1
 local level2 = 2
 
-local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
+local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
 
 local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local locatorClassName = "URL"
@@ -397,6 +396,7 @@ end
 function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() tests")
+    local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location2 = turtleObj:getLocation()
     local craftingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -4), true)
@@ -516,13 +516,13 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() tests ("..productionMethod..")")
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    t_turtle = t_turtle or require "test.t_turtle"
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local chest2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
 
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
---    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)

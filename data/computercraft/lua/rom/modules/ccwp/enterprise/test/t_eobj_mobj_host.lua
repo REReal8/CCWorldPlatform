@@ -20,7 +20,7 @@ local T_IObj = require "test.t_i_obj"
 
 local T_TestMObj = require "test.t_mobj_test"
 
-local t_turtle = require "test.t_turtle"
+local t_turtle
 
 function T_MObjHost.T_All()
     -- initialisation
@@ -162,6 +162,7 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
     assert(type(constructParameters) == "table", "no constructParameters provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
+    t_turtle = t_turtle or require "test.t_turtle"
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
@@ -241,6 +242,7 @@ function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeP
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":extendAndUpgradeMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
+    t_turtle = t_turtle or require "test.t_turtle"
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "extendAndUpgradeMObj_ASrv", {
@@ -310,6 +312,7 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     assert(type(mobjLocator) == "table", "no mobjLocator provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
+    t_turtle = t_turtle or require "test.t_turtle"
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "dismantleAndReleaseMObj_ASrv", {

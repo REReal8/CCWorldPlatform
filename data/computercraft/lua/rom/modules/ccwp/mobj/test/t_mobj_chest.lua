@@ -32,7 +32,7 @@ local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
 
-local t_turtle = require "test.t_turtle"
+local t_turtle
 
 function T_Chest.T_All()
     -- initialisation
@@ -272,6 +272,7 @@ function T_Chest.T_provideItemsTo_AOSrv_Turtle()
     }
     --note: as a test short cut we do not have to set the Inventory content here. We just assume the test Chest is present. FetchItemsFromChestIntoTurtle_Task should make sure the inventory is obtained
 
+    t_turtle = t_turtle or require "test.t_turtle"
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local provideItems = {
@@ -309,6 +310,7 @@ function T_Chest.T_needsTo_ProvideItemsTo_SOSrv()
     }
     local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
+    t_turtle = t_turtle or require "test.t_turtle"
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
     local itemDepotLocation = turtleObj:getLocation()
 
@@ -397,6 +399,7 @@ end
 
 function T_Chest.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
+    t_turtle = t_turtle or require "test.t_turtle"
     local itemsLocator = t_turtle.GetCurrentTurtleLocator()
 
     -- test
