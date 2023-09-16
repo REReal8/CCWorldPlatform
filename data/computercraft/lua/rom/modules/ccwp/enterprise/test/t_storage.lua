@@ -16,7 +16,7 @@ local enterprise_storage
 function t_storage.T_All()
     -- IObj methods
 
-    -- service methods
+    -- MObjHost methods
     t_storage.T_hostMObj_SSrv_Silo()
     t_storage.T_releaseMObj_SSrv_Silo()
 end
@@ -24,7 +24,7 @@ end
 function t_storage.T_AllPhysical()
     -- IObj methods
 
-    -- service methods
+    -- MObjHost methods
     local mobjLocator = t_storage.T_hostAndBuildMObj_ASrv_Silo()
     t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
 end
@@ -45,12 +45,14 @@ local constructParameters1 = {
     nLayers         = nLayers1,
 }
 
---                        _                           _   _               _
---                       (_)                         | | | |             | |
---    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    __  __  ____  _     _ _    _           _                    _   _               _
+--   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                      _/ |
+--                     |__/
 
 function t_storage.T_hostMObj_SSrv_Silo()
     -- prepare test

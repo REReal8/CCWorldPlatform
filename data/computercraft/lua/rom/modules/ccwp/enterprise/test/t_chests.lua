@@ -14,7 +14,7 @@ local T_Chest = require "test.t_mobj_chest"
 local T_MObjHost = require "test.t_eobj_mobj_host"
 
 function t_chests.T_All()
-    -- service methods
+    -- MObjHost methods
     t_chests.T_hostMObj_SSrv_Chest()
     t_chests.T_releaseMObj_SSrv_Chest()
 end
@@ -22,7 +22,7 @@ end
 function t_chests.T_AllPhysical()
     -- IObj methods
 
-    -- service methods
+    -- MObjHost methods
     local mobjLocator = t_chests.T_hostAndBuildMObj_ASrv_Chest()
     t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
 end
@@ -88,6 +88,15 @@ function t_chests.GetHostAndUpdateChestProjectDef()
         }
     }
 end
+
+--    __  __  ____  _     _ _    _           _                    _   _               _
+--   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                      _/ |
+--                     |__/
 
 function t_chests.T_hostMObj_SSrv_Chest()
     -- prepare test
