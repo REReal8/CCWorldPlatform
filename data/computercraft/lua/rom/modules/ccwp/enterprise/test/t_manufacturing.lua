@@ -1,147 +1,222 @@
 local t_manufacturing = {}
 
-local corelog = require "corelog"
-
-local Callback = require "obj_callback"
+local ObjArray = require "obj_array"
 
 local Location = require "obj_location"
 
+local ProductionSpot = require "mobj_production_spot"
+
+local enterprise_turtle = require "enterprise_turtle"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 
-local t_turtle
+local TestArrayTest = require "test_array_test"
+local FieldTest = require "field_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local ValueTypeTest = require "value_type_test"
+local MethodResultEqualTest = require "method_result_equal_test"
+
+local T_Factory = require "test.t_mobj_factory"
+local T_MObjHost = require "test.t_eobj_mobj_host"
 
 function t_manufacturing.T_All()
+    -- MObjHost methods
+    t_manufacturing.T_hostMObj_SSrv_Factory()
+    t_manufacturing.T_upgradeMObj_SSrv_Factory()
+    t_manufacturing.T_releaseMObj_SSrv_Factory()
 end
 
-local baseLocationV0 = Location:newInstance(6, 0, 1, 0, 1)
-local baseLocationV1 = Location:newInstance(12, 0, 1, 0, 1)
-local baseLocationV2 = baseLocationV1:copy()
+function t_manufacturing.T_AllPhysical()
+    -- IObj methods
 
-local callback = Callback.GetNewDummyCallBack()
-
-function t_manufacturing.T_BuildAndStartNewV1Site()
-    local constructParameters1 = {
-        level           = 1,
-
-        baseLocation    = baseLocationV1,
-    }
-    local callbackBuildAndStartNewV1Site = Callback:newInstance("t_manufacturing", "BuildAndStartNewV1Site_CallBack")
-
-    t_turtle = t_turtle or require "test.t_turtle"
-    return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
-        constructParameters         = constructParameters1,
-        upgrade                     = false,
-        siteLocator                 = nil,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, callbackBuildAndStartNewV1Site)
+    -- MObjHost methods
+    local mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory0()
+    t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
+    mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
+    t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
+    mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
+    t_manufacturing.T_extendAndUpgradeMObj_ASrv_FactoryTo2(mobjLocator)
+    t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
+    mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory2()
+    t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
 end
 
-local siteLocatorV1
+local testMObjClassName = "Factory"
+local testMObjName = "factory"
+local testMObjName0 = testMObjName.."0"
+local testMObjName1 = testMObjName.."1"
+local testMObjName2 = testMObjName.."2"
+local logOk = false
 
-function t_manufacturing.BuildAndStartNewV1Site_CallBack(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-    siteLocatorV1 = serviceResults.siteLocator
+local level0 = 0
+local level1 = 1
+local level2 = 2
 
-    -- cleanup test
+local baseLocation0 = Location:newInstance(6, 0, 1, 0, 1)
+local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
+local baseLocation2 = baseLocation1:copy()
 
-    -- end
-    return true
-end
+local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local locatorClassName = "URL"
+local inputLocators0 = ObjArray:newInstance(locatorClassName, { inputLocator0, })
 
-function t_manufacturing.T_BuildAndStartNewV2Site()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_manufacturing.BuildAndStartNewSite_ASrv tests")
-    if not siteLocatorV1 then corelog.Error("siteLocatorV1 not yet set, first create v1 site as this test wants to upgrade") return false end
-    t_turtle = t_turtle or require "test.t_turtle"
-    local constructParameters2 = {
-        level           = 2,
+local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local outputLocators0 = ObjArray:newInstance(locatorClassName, { outputLocator0, })
 
-        baseLocation    = baseLocationV2,
-    }
+local productionSpotClassName = "ProductionSpot"
+local craftingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -4), true)
+local craftingSpots1 = ObjArray:newInstance(productionSpotClassName, { craftingSpot1, })
 
-    -- test
-    return enterprise_manufacturing.BuildAndStartNewSite_ASrv({
-        constructParameters         = constructParameters2,
-        upgrade                     = true,
-        siteLocator                 = siteLocatorV1,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, callback)
-end
-
-function t_manufacturing.T_StopAndDismantleV1Site()
-    t_turtle = t_turtle or require "test.t_turtle"
-
-    return enterprise_manufacturing.StopAndDismantleSite_ASrv({
-        siteLocator                 = siteLocatorV1,
-        baseLocation                = baseLocationV1,
-        siteVersion                 = "v1",
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, callback)
-end
+local smeltingSpot1 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(3, 3, -3), false)
+local smeltingSpots1 = ObjArray:newInstance(productionSpotClassName, { smeltingSpot1, })
 
 local constructParameters0 = {
-    level           = 0,
+    level           = level0,
 
-    baseLocation    = baseLocationV0,
+    baseLocation    = baseLocation0,
+}
+local constructParameters1 = {
+    level           = level1,
+
+    baseLocation    = baseLocation1,
+}
+local constructParameters2 = {
+    level           = level2,
+
+    baseLocation    = baseLocation2,
+}
+local upgradeParametersTo2 = {
+    level           = level2,
 }
 
-function t_manufacturing.T_BuildNewV0Site()
-    t_turtle = t_turtle or require "test.t_turtle"
-    return enterprise_manufacturing.BuildNewSite_ASrv({
-        constructParameters         = constructParameters0,
-        upgrade                     = false,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, callback)
+local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
+    ValueTypeTest:newInstance("ObjArray"),
+    MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+    MethodResultEqualTest:newInstance("nObjs", 1)
+))
+local outputLocatorsTest2 = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
+    ValueTypeTest:newInstance("ObjArray"),
+    MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+    MethodResultEqualTest:newInstance("nObjs", 1)
+))
+
+--    __  __  ____  _     _ _    _           _                    _   _               _
+--   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                      _/ |
+--                     |__/
+
+function t_manufacturing.T_hostMObj_SSrv_Factory()
+    -- prepare test
+    local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
+    local outputLocatorsTest0 = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
+    local constructFieldsTest = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, constructFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
 end
 
-local siteLocatorV0
+local mobjLocator_Factory = nil
 
-function t_manufacturing.T_StartNewV0Site()
-    local result = t_manufacturing.StartNewSite(constructParameters0) if not result.success then corelog.Error("failed starting Site") return end
-    siteLocatorV0 = result.siteLocator
+function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory0()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Factory = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
 end
 
-function t_manufacturing.StartNewSite(constructParameters)
-    assert(constructParameters, "no constructParameters provided")
+function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()
+    -- prepare test
 
-    return enterprise_manufacturing.StartNewSite_SSrv({
-        constructParameters = constructParameters,
-    })
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Factory = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
 end
 
-local function DismantleV0Site(baseLocation)
-    t_turtle = t_turtle or require "test.t_turtle"
+function t_manufacturing.T_hostAndBuildMObj_ASrv_Factory2()
+    -- prepare test
 
-    return enterprise_manufacturing.DismantleSite_ASrv({
-        baseLocation                = baseLocation,
-        siteVersion                 = "v0",
-        siteStopped                 = true,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, callback)
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_manufacturing, testMObjClassName, constructParameters2, testMObjName2, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Factory = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
 end
 
-function t_manufacturing.T_DismantleV0Site()
-    DismantleV0Site(baseLocationV0)
+function t_manufacturing.T_upgradeMObj_SSrv_Factory()
+    -- prepare test
+    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
 end
 
-function t_manufacturing.T_StopV0Site()
-    t_manufacturing.StopSite(siteLocatorV0)
+function t_manufacturing.T_extendAndUpgradeMObj_ASrv_FactoryTo2(mobjLocator)
+    -- prepare test
+    local upgradeFieldsTest = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+
+    if not mobjLocator then
+        -- check if we locally remembered a mobjLocator
+        assert(mobjLocator_Factory, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_Factory
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_manufacturing, mobjLocator, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
 end
 
-function t_manufacturing.StopSite(siteLocator)
-    return enterprise_manufacturing.StopSite_ASrv({
-        siteLocator     = siteLocator
-    }, callback)
+function t_manufacturing.T_releaseMObj_SSrv_Factory()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_manufacturing, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
 end
 
-function t_manufacturing.T_DeleteSites()
-    enterprise_manufacturing:deleteObjects("Factory")
+function t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
+    -- prepare test
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator
+        assert(mobjLocator_Factory, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_Factory
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_manufacturing, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Factory = nil
 end
 
 return t_manufacturing

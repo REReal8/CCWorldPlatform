@@ -6,8 +6,7 @@ local T_BirchForest = require "test.t_mobj_birchforest"
 
 local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
-
-local t_manufacturing = require "test.t_manufacturing"
+local enterprise_manufacturing = require "enterprise_manufacturing"
 
 function t_energy.T_All()
     t_energy.T_GetFuelNeed_Refuel_Att()
@@ -19,6 +18,8 @@ local level0 = 0
 local level1 = 1
 local level2 = 2
 local level3 = 3
+
+local factoryClassName = "Factory"
 
 function t_energy.T_ResetParameters()
     enterprise_energy.ResetParameters()
@@ -42,8 +43,8 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
         baseLocation    = turtleLocation:copy(),
     }
-    local result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("failed starting Site") return end
-    local factoryLocator1 = result.siteLocator
+    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local factoryLocator1 = result.mobjLocator
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -76,7 +77,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     expectedFuelNeed = 89
     assert(fuelNeed == expectedFuelNeed, "gotten fuelNeed(="..fuelNeed..") for enterpriseLevel "..level.." not the same as expected(="..expectedFuelNeed..")")
 
-    t_manufacturing.StopSite(factoryLocator1)
+    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
 
     -- test L3
     forest:setLevel(level2)
@@ -87,8 +88,8 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
 
         baseLocation    = forestLocation:getRelativeLocation(12, 0, 0),
     }
-    result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("failed starting Site") return end
-    local factoryLocator2 = result.siteLocator
+    result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local factoryLocator2 = result.mobjLocator
     level = level3
 
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = level, forestLocator = forestLocator, factoryLocator = factoryLocator2})
@@ -99,7 +100,7 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    t_manufacturing.StopSite(factoryLocator2)
+    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator2}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
 end
@@ -118,8 +119,8 @@ function t_energy.T_GetRefuelAmount_Att()
 
         baseLocation    = turtleLocation:copy(),
     }
-    local result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("Failed starting Factory") return end
-    local factoryLocator1 = result.siteLocator
+    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local factoryLocator1 = result.mobjLocator
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -157,7 +158,7 @@ function t_energy.T_GetRefuelAmount_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    t_manufacturing.StopSite(factoryLocator1)
+    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator1}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
 end

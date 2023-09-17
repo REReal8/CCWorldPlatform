@@ -97,10 +97,10 @@ R  use MObjHost class
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
       -  merge into enterprise_storage
-   R  enterprise_manufacturing
-      R  upgrade to a MObjHost
-      R  use new MObjHost methods instead of current equivalent
-      R  use generalised test functions
+   R  enterprise_manufacturing                                                                                          (done)
+      R  upgrade to a MObjHost                                                                                          (done)
+      R  use new MObjHost methods instead of current equivalent                                                         (done)
+      R  use generalised test functions                                                                                 (done)
    -  enterprise_gathering
       -  upgrade into an MObjHost
       -  use new MObjHost methods instead of current equivalent

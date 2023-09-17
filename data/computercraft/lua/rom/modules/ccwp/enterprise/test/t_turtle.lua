@@ -7,9 +7,9 @@ local Callback = require "obj_callback"
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
+local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_isp = require "enterprise_isp"
 
-local t_manufacturing = require "test.t_manufacturing"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local TestObj = require "test.obj_test"
 
@@ -56,13 +56,15 @@ function t_turtle.T_GetFuelLevels_Att()
     local T_Turtle = require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location = turtleObj:getLocation()
+    local factoryClassName = "Factory"
     local factoryConstructParameters = {
         level           = 0,
 
         baseLocation    = location,
     }
-    local result = t_manufacturing.StartNewSite(factoryConstructParameters) if not result.success then corelog.Error("Failed starting Factory") return end
-    local factoryLocator = result.siteLocator
+
+    local result = enterprise_manufacturing:hostMObj_SSrv({ className = factoryClassName, constructParameters = factoryConstructParameters}) assert(result.success, "Failed hosting Factory")
+    local factoryLocator = result.mobjLocator
 
     local energyParameters = enterprise_energy.GetParameters()
     local originalLevel = energyParameters.enterpriseLevel
@@ -80,7 +82,7 @@ function t_turtle.T_GetFuelLevels_Att()
     -- cleanup test
     enterprise_energy.UpdateEnterprise_SSrv({ enterpriseLevel = originalLevel, forestLocator = originalForestLocator, factoryLocator = originalFactoryLocator })
 
-    t_manufacturing.StopSite(factoryLocator)
+    result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
 end
