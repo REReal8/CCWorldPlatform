@@ -78,7 +78,7 @@ G  Debug: Modem events send but not received                                    
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
    R  mobj_factory                                                                                                      (done)
-   R  mobj_mine                                                                                                         (....)
+   R  mobj_mine                                                                                                         (done)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
@@ -92,11 +92,10 @@ R  use MObjHost class
       R  upgrade to a MObjHost
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
-   R  enterprise_chest
+   R  enterprise_chest                                                                                                  (done)
       R  upgrade to a MObjHost                                                                                          (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
-      -  merge into enterprise_storage
    R  enterprise_manufacturing                                                                                          (done)
       R  upgrade to a MObjHost                                                                                          (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
@@ -118,6 +117,8 @@ R  use MObjHost class
       R  upgrade into an MObjHost
       R  use new MObjHost methods instead of current equivalent
       R  use generalised test functions
+
+-  consider merging enterprise_chest into enterprise_storage
 
 G  Descriptions for blueprints and project steps
    G  Blueprint layer holds a desription / name
