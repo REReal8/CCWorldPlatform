@@ -117,7 +117,7 @@ function t_chests.T_hostAndBuildMObj_ASrv_Chest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_chests, testMObjClassName, constructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_chests, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -131,7 +131,7 @@ function t_chests.T_releaseMObj_SSrv_Chest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, testMObjClassName, constructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_chests, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

@@ -83,7 +83,7 @@ function t_storage.T_hostAndBuildMObj_ASrv_Silo()
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_storage, testMObjClassName, constructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_storage, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -98,7 +98,7 @@ function t_storage.T_releaseMObj_SSrv_Silo()
     enterprise_storage = enterprise_storage or require "enterprise_storage"
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testMObjClassName, constructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_storage, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

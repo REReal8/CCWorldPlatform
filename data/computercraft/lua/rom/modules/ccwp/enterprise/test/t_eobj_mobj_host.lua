@@ -118,10 +118,10 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     assert(type(mobjHost) =="table", "no mobjHost provided")
     assert(type(className) == "string", "no className provided")
     assert(type(constructParameters) == "table", "no constructParameters provided")
-    assert(type(logOk) == "boolean", "no logOk provided")
     assert(type(objName) == "string", "no objName provided")
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests (with a "..className..")")
+    assert(type(logOk) == "boolean", "no logOk provided")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostMObj_SSrv() tests (of "..objName..")")
 
     -- test
     local serviceResults = mobjHost:hostMObj_SSrv({
@@ -155,13 +155,14 @@ function T_MObjHost.pt_hostMObj_SSrv(mobjHost, className, constructParameters, o
     return serviceResults
 end
 
-function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, logOk)
+function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
     assert(type(className) == "string", "no className provided")
     assert(type(constructParameters) == "table", "no constructParameters provided")
+    assert(type(objName) == "string", "no objName provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (with a "..className..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (of "..objName..")")
     t_turtle = t_turtle or require "test.t_turtle"
 
     -- test
@@ -200,7 +201,7 @@ function T_MObjHost.pt_upgradeMObj_SSrv(mobjHost, className, constructParameters
     assert(type(logOk) == "boolean", "no logOk provided")
     assert(type(objName) == "string", "no objName provided")
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":upgradeMObj_SSrv() tests (with a "..className..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":upgradeMObj_SSrv() tests (of "..objName..")")
 
     local serviceResults = mobjHost:hostMObj_SSrv({
         className           = className,
@@ -241,7 +242,7 @@ function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeP
     assert(type(objName) == "string", "no objName provided")
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":extendAndUpgradeMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":extendAndUpgradeMObj_ASrv() tests (of "..objName..")")
     t_turtle = t_turtle or require "test.t_turtle"
 
     -- test
@@ -270,13 +271,14 @@ function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeP
     return serviceResults
 end
 
-function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, logOk)
+function T_MObjHost.pt_releaseMObj_SSrv(mobjHost, className, constructParameters, objName, logOk)
     -- prepare test
     assert(type(mobjHost) =="table", "no mobjHost provided")
     assert(type(className) == "string", "no className provided")
     assert(type(constructParameters) == "table", "no constructParameters provided")
+    assert(type(objName) == "string", "no objName provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests (with a "..className..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":releaseMObj_SSrv() tests (of "..objName..")")
 
     local serviceResults = mobjHost:hostMObj_SSrv({
         className           = className,
@@ -311,7 +313,7 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     assert(type(mobjHost) =="table", "no mobjHost provided")
     assert(type(mobjLocator) == "table", "no mobjLocator provided")
     assert(type(logOk) == "boolean", "no logOk provided")
-    corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (with "..mobjLocator:getURI()..")")
+    corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (of "..mobjLocator:getURI()..")")
     t_turtle = t_turtle or require "test.t_turtle"
 
     -- test
@@ -372,7 +374,7 @@ function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, testMObjClassName, constructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -420,7 +422,7 @@ function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
