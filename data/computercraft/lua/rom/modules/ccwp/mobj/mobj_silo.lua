@@ -376,12 +376,12 @@ local function TopDismantle_layer()
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
-            [6] = "      ",
-            [5] = "      ",
-            [4] = "      ",
-            [3] = "      ",
-            [2] = "      ",
-            [1] = "      ",
+            [6] = "     ",
+            [5] = "     ",
+            [4] = "     ",
+            [3] = "     ",
+            [2] = "     ",
+            [1] = "     ",
         })
     )
 end

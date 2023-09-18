@@ -358,7 +358,7 @@ local function Shaft_layer()
     )
 end
 
-local function ShaftRestore_layer()
+local function ShaftDismantle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(blockClassName, {
             ["D"]   = Block:newInstance("minecraft:dirt"),
@@ -369,7 +369,7 @@ local function ShaftRestore_layer()
     )
 end
 
-local function AboveOrBelowFurnanceL1_layer()
+local function AboveOrBelowFurnance_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(blockClassName, {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -381,7 +381,19 @@ local function AboveOrBelowFurnanceL1_layer()
     )
 end
 
-local function FurnanceL1_layer()
+local function FurnanceDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["D"]   = Block:newInstance("minecraft:dirt"),
+        }),
+        CodeMap:newInstance({
+            [2] = "D",
+            [1] = "D",
+        })
+    )
+end
+
+local function Furnance_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(blockClassName, {
             ["F"]   = Block:newInstance("minecraft:furnace"),
@@ -394,7 +406,7 @@ local function FurnanceL1_layer()
     )
 end
 
-local function ItemDepotChestL2_layer()
+local function CraftingSpotChest_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(blockClassName, {
             ["C"]   = Block:newInstance("minecraft:chest"),
@@ -405,7 +417,7 @@ local function ItemDepotChestL2_layer()
     )
 end
 
-local function TopLayerL2_layer()
+local function TopL2_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(blockClassName, {
             ["T"]   = Block:newInstance("minecraft:torch"),
@@ -419,6 +431,22 @@ local function TopLayerL2_layer()
             [3] = "      ",
             [2] = "      ",
             [1] = "   T  ",
+        })
+    )
+end
+
+local function TopL2Dismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [6] = "     ",
+            [5] = "     ",
+            [4] = "     ",
+            [3] = "     ",
+            [2] = "     ",
+            [1] = "     ",
         })
     )
 end
@@ -441,17 +469,15 @@ function Factory:getBuildBlueprint()
         table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()})
     elseif level == 1 then
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = Furnance_layer()})
         table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = Shaft_layer()})
     elseif level == 2 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopLayerL2_layer()})
-        --    if not onlyUpgrade then
-        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnanceL1_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -3), buildFromAbove = false, layer = FurnanceL1_layer()})
-        --    end
-        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -5), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = Furnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = CraftingSpotChest_layer()})
     else
         corelog.Warning("Factory:getBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..level)
     end
@@ -494,8 +520,8 @@ function Factory:getExtendBlueprint(...)
     local layerList = {}
     local level = self:getLevel()
     if level == 1 and upgradeLevel == 2 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopLayerL2_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance( 3, 3, -5), buildFromAbove = true, layer = ItemDepotChestL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = CraftingSpotChest_layer()})
     else
         corelog.Warning("Factory:getExtendBlueprint: Don't know how to make a extend blueprint for a Factory from level "..level.." to "..upgradeLevel)
     end
@@ -530,8 +556,18 @@ function Factory:getDismantleBlueprint()
     -- determine layerList
     local layerList = {}
     if self._level == 0 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = ShaftRestore_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = ShaftDismantle_layer()})
+    elseif self._level == 1 or self._level == 2 then
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = ShaftDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -4), buildFromAbove = true, layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = true, layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = true, layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = FurnanceDismantle_layer()})
+        if self._level == 2 then
+            table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2Dismantle_layer()})
+        end
     else
+        -- ToDo: implement for L1 and L2
         corelog.Warning("Factory:getDismantleBlueprint: Don't know how to make a dismantle blueprint for a Factory of level "..self._level)
     end
 
