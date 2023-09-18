@@ -137,7 +137,7 @@ function Chest:construct(...)
 
     -- determine Chest fields
     local id = coreutils.NewId()
-    local inventory = Inventory:new() -- assumed to be empty
+    local inventory = Inventory:newInstance() -- assumed to be empty
 
     -- construct new Chest
     local obj = Chest:newInstance(id, baseLocation:copy(), accessDirection, inventory)

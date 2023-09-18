@@ -32,7 +32,7 @@ G  Debug: Modem events send but not received                                    
       R  TestObj                                                                                                        (done)
       R  Location                                                                                                       (done)
       R  URL                                                                                                            (done) note: a lot of URL:new remaining where a table is given
-      -  Inventory
+      R  Inventory                                                                                                      (done)
       R  ObjTable                                                                                                       (done)
       R  ObjArray                                                                                                       (done)
       R  CallDef                                                                                                        (done)

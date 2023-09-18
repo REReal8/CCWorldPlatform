@@ -60,10 +60,11 @@ local testClassName = "Chest"
 local testObjName = "chest"
 local logOk = false
 local mobjHostName = "enterprise_chests"
+
 local baseLocation1  = Location:newInstance(-6, 0, 1, 0, 1)
 local accessDirection1 = "top"
-local emptyInventory = Inventory:new()
-local inventory1 = Inventory:new() -- ToDo: add elements
+local emptyInventory = Inventory:newInstance()
+local inventory1 = Inventory:newInstance() -- ToDo: add elements
 local constructParameters1 = {
     baseLocation    = baseLocation1,
     accessDirection = accessDirection1,
@@ -330,11 +331,9 @@ end
 function T_Chest.T_can_ProvideItems_QOSrv()
     -- prepare test
     corelog.WriteToLog("* Chest:can_ProvideItems_QOSrv() tests")
-    local inventory = Inventory:new({
-        _slotTable = {
+    local inventory = Inventory:newInstance({
             { name = "minecraft:dirt", count = 20 },
-        }
-    })
+        })
     local obj = T_Chest.CreateTestObj(nil, baseLocation1, accessDirection1, inventory) assert(obj, "Failed obtaining "..testClassName)
 
     -- test can

@@ -137,9 +137,7 @@ function role_chests_worker.FetchChestSlotsInventory_Task(...)
 
     -- get inventory
     local slots = chest.list()
-    local inventory = Inventory:new({
-        _slotTable  = slots,
-    })
+    local inventory = Inventory:newInstance(slots)
 
     -- end
     local result = {
@@ -307,9 +305,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
 --        corelog.WriteToLog("   fetching "..requestItemCount.." "..requestItemName.."'s from chest into turtle")
 
         -- check enough items
-        local inventory = Inventory:new({
-            _slotTable  = chest.list(),
-        })
+        local inventory = Inventory:newInstance(chest.list())
         local items = inventory:getItemTable()
         if not items[requestItemName] or items[requestItemName] < requestItemCount then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: not enough (="..requestItemCount..") "..requestItemName.." items available (="..(items[requestItemName] or "0")..") in chest.") return {success = false} end
 
@@ -352,9 +348,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
     -- get final inventory
     local slots = chest.list()
     -- ToDo: consider double checking only exactly the requested items were moved to the turtle => itemResultQuery
-    local inventory = Inventory:new({
-        _slotTable  = slots,
-    })
+    local inventory = Inventory:newInstance(slots)
 
     -- get turtleId
     local currentTurtleId = os.getComputerID()
@@ -478,9 +472,7 @@ function role_chests_worker.PutItemsFromTurtleIntoChest_Task(...)
     -- get final inventory
     local slots = chest.list()
     -- ToDo: consider double checking only exactly the requested items were put into the chest
-    local inventory = Inventory:new({
-        _slotTable  = slots,
-    })
+    local inventory = Inventory:newInstance(slots)
 
     -- end
     local result = {

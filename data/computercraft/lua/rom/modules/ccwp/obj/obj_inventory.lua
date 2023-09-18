@@ -20,6 +20,24 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Inventory:_init(...)
+    -- get & check input from description
+    local checkSuccess, slotTable, itemTable = InputChecker.Check([[
+        Initialise a Chest.
+
+        Parameters:
+            slotTable               + (table, {}) slotTable
+            itemTable               + (table, {}) itemTable
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Inventory:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._slotTable = slotTable
+    self._itemTable = itemTable
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Inventory:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -37,7 +55,6 @@ function Inventory:new(...)
     self.__index = self
     return o
 end
-
 
 function Inventory:getSlotTable()
     return self._slotTable
@@ -176,7 +193,7 @@ function Inventory:substract(...)
         if self._slotTable[slot]                ~= nil then calculatedSlotList[slot]    = { name = self._slotTable[slot].name,                  count = self._slotTable[slot].count }                   end
     end
 
-    local calculatedInventory = Inventory:new({_slotTable = calculatedSlotList})
+    local calculatedInventory = Inventory:newInstance(calculatedSlotList)
     calculatedInventory:getItemTable()
 
     -- we are done!!

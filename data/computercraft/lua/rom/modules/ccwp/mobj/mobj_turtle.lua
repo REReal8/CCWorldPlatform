@@ -371,9 +371,7 @@ function Turtle:getInventory()
     end
 
     -- construct Inventory object
-    local inventory = Inventory:new({
-        _slotTable  = slotTable,
-    })
+    local inventory = Inventory:newInstance(slotTable)
 
     -- end
     return inventory

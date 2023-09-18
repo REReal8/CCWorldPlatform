@@ -6,6 +6,9 @@ local IObj = require "i_obj"
 local ObjBase = require "obj_base"
 local Inventory = require "obj_inventory"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
@@ -19,7 +22,8 @@ function T_Inventory.T_All()
     T_Inventory.T_IsEqualSlotTable()
     T_Inventory.T_SlotTableCopy()
 
-    -- initialisation methods
+    -- initialisation
+    T_Inventory.T__init()
     T_Inventory.T_new()
 
     -- IObj methods
@@ -32,6 +36,10 @@ function T_Inventory.T_All()
     T_Inventory.T_hasItems()
     T_Inventory.T_substract()
 end
+
+local testClassName = "Inventory"
+local testObjName = "inventory"
+local logOk = false
 
 local saplingItemName = "minecraft:birch_sapling"
 local saplingCount1 = 10
@@ -203,28 +211,56 @@ end
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "Inventory"
-function T_Inventory.CreateTestObj()
-    local testObj = Inventory:new({
-        _slotTable  = Inventory.SlotTableCopy(slotTable1),
-    })
+function T_Inventory.CreateTestObj(slotTable)
+    -- check input
+    slotTable = slotTable or slotTable1
 
+    -- create testObj
+    local testObj = Inventory:newInstance(Inventory.SlotTableCopy(slotTable))
+
+    -- end
     return testObj
+end
+
+function T_Inventory.CreateInitialisedTest(slotTable)
+    -- check input
+
+    -- create test
+    local test = TestArrayTest:newInstance(
+        FieldValueEqualTest:newInstance("_slotTable", slotTable)
+    )
+
+    -- end
+    return test
+end
+
+function T_Inventory.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_Inventory.CreateTestObj(slotTable1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Inventory.CreateInitialisedTest(slotTable1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- test default
+    obj = Inventory:newInstance()
+    test = T_Inventory.CreateInitialisedTest({})
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_Inventory.T_new()
     -- prepare test
-    corelog.WriteToLog("* Inventory:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local inventory = Inventory:new({
+    local obj = Inventory:new({
         _slotTable  = Inventory.SlotTableCopy(slotTable1),
     })
-    assert(Inventory.IsEqualSlotTable(inventory:getSlotTable(), slotTable1), "gotten getSlotTable(="..textutils.serialize(inventory:getSlotTable(), compact)..") not the same as expected(="..textutils.serialize(slotTable1)..")")
-
-    -- test default
-    inventory = Inventory:new()
-    assert(Inventory.IsEqualSlotTable(inventory:getSlotTable(), {}), "gotten getSlotTable(="..textutils.serialize(inventory:getSlotTable(), compact)..") not the same as expected(="..textutils.serialize({})..")")
+    local test = T_Inventory.CreateInitialisedTest(slotTable1)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -260,20 +296,17 @@ end
 
 function T_Inventory.T_isEmpty()
     -- prepare test
-    corelog.WriteToLog("* Inventory:isEmpty() tests")
+    corelog.WriteToLog("* "..testClassName..":isEmpty() tests")
 
     -- test not empty
-    local inventory = Inventory:new({
-    })
-    local isEmpty = inventory:isEmpty()
+    local obj = Inventory:newInstance()
+    local isEmpty = obj:isEmpty()
     local expectedIsEmpty = true
     assert(isEmpty == expectedIsEmpty, "gotten isEmpty(="..tostring(isEmpty)..") not the same as expected(="..tostring(expectedIsEmpty)..")")
 
     -- test not empty
-    inventory = Inventory:new({
-        _slotTable  = slotTable1,
-    })
-    isEmpty = inventory:isEmpty()
+    obj = Inventory:newInstance(slotTable1)
+    isEmpty = obj:isEmpty()
     expectedIsEmpty = false
     assert(isEmpty == expectedIsEmpty, "gotten isEmpty(="..tostring(isEmpty)..") not the same as expected(="..tostring(expectedIsEmpty)..")")
 
@@ -282,7 +315,7 @@ end
 
 function T_Inventory.T_hasNoItems()
     -- prepare test
-    corelog.WriteToLog("* Inventory:hasNoItems() tests")
+    corelog.WriteToLog("* "..testClassName..":hasNoItems() tests")
     local negSlotTable1 = {
         { name = saplingItemName, count = saplingCount1 },
         { name = saplingItemName, count = -saplingCount1 },
@@ -294,33 +327,26 @@ function T_Inventory.T_hasNoItems()
     }
 
     -- test empty
-    local inventory = Inventory:new({
-    })
-    local hasNoItems = inventory:hasNoItems()
+    local obj = Inventory:newInstance()
+    local hasNoItems = obj:hasNoItems()
     local expectedHasNoItems = true
     assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
 
     -- test not empty
-    inventory = Inventory:new({
-        _slotTable  = Inventory.SlotTableCopy(slotTable1),
-    })
-    hasNoItems = inventory:hasNoItems()
+    obj = Inventory:newInstance(Inventory.SlotTableCopy(slotTable1))
+    hasNoItems = obj:hasNoItems()
     expectedHasNoItems = false
     assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
 
     -- test negative values in slot (net result = 0)
-    inventory = Inventory:new({
-        _slotTable  = negSlotTable1,
-    })
-    hasNoItems = inventory:hasNoItems()
+    obj = Inventory:newInstance(negSlotTable1)
+    hasNoItems = obj:hasNoItems()
     expectedHasNoItems = true
     assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
 
     -- test negative values in slot (net result ~= 0)
-    inventory = Inventory:new({
-        _slotTable  = negSlotTable2,
-    })
-    hasNoItems = inventory:hasNoItems()
+    obj = Inventory:newInstance(negSlotTable2)
+    hasNoItems = obj:hasNoItems()
     expectedHasNoItems = false
     assert(hasNoItems == expectedHasNoItems, "gotten hasNoItems(="..tostring(hasNoItems)..") not the same as expected(="..tostring(expectedHasNoItems)..")")
 
@@ -329,13 +355,11 @@ end
 
 function T_Inventory.T_getItemTable()
     -- prepare test
-    corelog.WriteToLog("* Inventory:getItemTable() tests")
+    corelog.WriteToLog("* "..testClassName..":getItemTable() tests")
 
     -- test
-    local inventory = Inventory:new({
-        _slotTable  = Inventory.SlotTableCopy(slotTable1),
-    })
-    local itemTable = inventory:getItemTable()
+    local obj = Inventory:newInstance(Inventory.SlotTableCopy(slotTable1))
+    local itemTable = obj:getItemTable()
     local isEqual = Inventory.IsEqualItemTable(itemTable, itemTable1)
     local expectedIsEqual = true
     assert(isEqual == expectedIsEqual, "gotten isEqual(="..tostring(isEqual)..") not the same as expected(="..tostring(expectedIsEqual)..")")
@@ -345,34 +369,32 @@ end
 
 function T_Inventory.T_hasItems()
     -- prepare test
-    corelog.WriteToLog("* Inventory:hasItems() tests")
-    local inventory = Inventory:new({
-        _slotTable = {
+    corelog.WriteToLog("* "..testClassName..":hasItems() tests")
+    local obj = Inventory:newInstance({
             { name = "minecraft:dirt", count = 20 },
             { name = "minecraft:birch_log", count = 1 },
             { name = "minecraft:birch_sapling", count = 5 },
-        }
-    })
+        })
 
     -- test
     local itemName = "minecraft:dirt"
     local itemCount = 10
-    local hasItems = inventory:hasItems( { [itemName] = itemCount} )
+    local hasItems = obj:hasItems( { [itemName] = itemCount} )
     assert(hasItems, "hasItems incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:birch_sapling"
     itemCount = 2
-    hasItems = inventory:hasItems({ [itemName] = itemCount} )
+    hasItems = obj:hasItems({ [itemName] = itemCount} )
     assert(hasItems, "hasItems incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:birch_log"
     itemCount = 10
-    hasItems = inventory:hasItems({ [itemName] = itemCount} )
+    hasItems = obj:hasItems({ [itemName] = itemCount} )
     assert(not hasItems, "hasItems incorrectly success for "..itemCount.." "..itemName.."'s")
 
     itemName = "minecraft:furnace"
     itemCount = 1
-    hasItems = inventory:hasItems({ [itemName] = itemCount} )
+    hasItems = obj:hasItems({ [itemName] = itemCount} )
     assert(not hasItems, "hasItems incorrectly success for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
@@ -380,28 +402,22 @@ end
 
 function T_Inventory.T_substract()
     -- prepare test
-    corelog.WriteToLog("* Inventory:substract() tests")
-    local inv1 = Inventory:new({
-        _slotTable = {
+    corelog.WriteToLog("* "..testClassName..":substract() tests")
+    local inv1 = Inventory:newInstance({
             { name = "minecraft:dirt", count = 20 },
             { name = "minecraft:birch_log", count = 1 },
             { name = "minecraft:birch_sapling", count = 5 },
-        }
-    })
-    local inv2 = Inventory:new({
-        _slotTable = {
+        })
+    local inv2 = Inventory:newInstance({
             { name = "minecraft:dirt", count = 20 },
             { name = "minecraft:birch_log", count = 1 },
             [ 4 ] = { name = "minecraft:birch_sapling", count = 5 },
-        }
-    })
-    local inv3 = Inventory:new({
-        _slotTable = {
+        })
+    local inv3 = Inventory:newInstance({
             { name = "minecraft:dirt", count = 15 },
             { name = "minecraft:birch_log", count = 1 },
             { name = "minecraft:birch_sapling", count = 3 },
-        }
-    })
+        })
 
     -- test on itself returns noItems
     local calculatedInventory = inv1:substract(inv1)
