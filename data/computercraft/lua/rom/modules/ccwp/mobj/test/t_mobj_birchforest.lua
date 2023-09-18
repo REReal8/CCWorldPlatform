@@ -319,5 +319,4 @@ function T_BirchForest.provideItemsTo_AOSrv_Callback(callbackData, serviceResult
     return true
 end
 
-
 return T_BirchForest
