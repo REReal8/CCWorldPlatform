@@ -1,8 +1,6 @@
 local T_WIPAdministrator = {}
 local corelog = require "corelog"
 
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
 local Callback = require "obj_callback"
 
 local IObj = require "i_obj"
@@ -12,12 +10,16 @@ local ObjTable = require "obj_table"
 local WIPQueue = require "obj_wip_queue"
 local WIPAdministrator = require "obj_wip_administrator"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 local T_WIPQueue = require "test.t_obj_wip_queue"
 
 function T_WIPAdministrator.T_All()
     -- initialisation
+    T_WIPAdministrator.T__init()
     T_WIPAdministrator.T_new()
 
     -- IObj methods
@@ -34,13 +36,16 @@ function T_WIPAdministrator.T_All()
 end
 
 local testClassName = "WIPAdministrator"
+local testObjName = "chest"
+local logOk = true
 
 local workId1 = "workId1"
 local workId2 = "workId2"
 local callbackClassName = "Callback"
 local callbackList1 = ObjArray:newInstance(callbackClassName) assert(callbackList1, "Failed obtaining callbackList1")
 local wipQueueClassName = "WIPQueue"
-local wipQueues1 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues1, "Failed obtaining wipQueues1")
+local wipQueue1 = T_WIPQueue.CreateTestObj() assert(wipQueue1, "Failed obtaining WIPQueue")
+local wipQueues1 = ObjTable:newInstance(wipQueueClassName, { wipQueue1 } ) assert(wipQueues1, "Failed obtaining wipQueues1")
 
 local compact = { compact = true }
 
@@ -51,17 +56,39 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_WIPAdministrator.CreateTestObj()
-    local wipQueue = T_WIPQueue.CreateTestObj() assert(wipQueue, "Failed obtaining WIPQueue")
-    local wipQueues = ObjTable:newInstance(wipQueueClassName, {
-        wipQueue,
-    }) assert(wipQueues1)
+function T_WIPAdministrator.CreateTestObj(wipQueues)
+    -- check input
+    wipQueues = wipQueues or wipQueues1
 
-    local testObj = WIPAdministrator:new({
-        _wipQueues  = wipQueues,
-    })
+    -- create testObj
+    local testObj = WIPAdministrator:newInstance(wipQueues:copy())
 
+    -- end
     return testObj
+end
+
+function T_WIPAdministrator.CreateInitialisedTest(wipQueues)
+    -- check input
+
+    -- create test
+    local test = TestArrayTest:newInstance(
+        FieldValueEqualTest:newInstance("_wipQueues", wipQueues)
+    )
+
+    -- end
+    return test
+end
+
+function T_WIPAdministrator.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_WIPAdministrator.CreateTestObj(wipQueues1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_WIPAdministrator.CreateInitialisedTest(wipQueues1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_WIPAdministrator.T_new()
@@ -71,8 +98,9 @@ function T_WIPAdministrator.T_new()
     -- test
     local obj = WIPAdministrator:new({
         _wipQueues      = wipQueues1:copy(),
-    }) assert(obj)
-    assert(obj._wipQueues:isEqual(wipQueues1), "gotten _wipQueues(="..textutils.serialise(obj._wipQueues)..") not the same as expected(="..textutils.serialise(wipQueues1)..")")
+    })
+    local test = T_WIPAdministrator.CreateInitialisedTest(wipQueues1)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -114,9 +142,7 @@ function T_WIPAdministrator.T_removeWIPQueue()
 
     local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues2:copy(),
-    }) assert(obj1)
+    local obj1 = WIPAdministrator:newInstance(wipQueues2:copy()) assert(obj1)
 
     -- test
     local success = obj1:removeWIPQueue(wipQueueId1)
@@ -138,9 +164,7 @@ function T_WIPAdministrator.T_getWIPQueue()
 
     local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues2,
-    }) assert(obj1)
+    local obj1 = WIPAdministrator:newInstance(wipQueues2) assert(obj1)
 
     -- test returns already present WIPQueue
     local wipQueue = obj1:getWIPQueue(wipQueueId1)
@@ -167,9 +191,7 @@ function T_WIPAdministrator.T_reset()
 
     local wipQueues = ObjTable:newInstance(wipQueueClassName) assert(wipQueues)
     wipQueues[wipQueueId1] = wipQueue1
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues:copy(),
-    }) assert(obj1)
+    local obj1 = WIPAdministrator:newInstance(wipQueues:copy()) assert(obj1)
 
     -- test
     local success = obj1:reset(wipQueueId1)
@@ -193,9 +215,7 @@ end
 function T_WIPAdministrator.T_administerWorkStarted()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":administerWorkStarted() tests")
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(obj1)
+    local obj1 = WIPAdministrator:newInstance(wipQueues1:copy()) assert(obj1)
     local workId3 = "workId3"
     local wipQueueId2 = "wipQueueId2"
 
@@ -235,9 +255,7 @@ end
 function T_WIPAdministrator.T_waitForNoWIPOnQueue_SOSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":waitForNoWIPOnQueue_SOSrv() tests")
-    objSync = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(objSync, "Failed obtaining objSync")
+    objSync = WIPAdministrator:newInstance(wipQueues1:copy()) assert(objSync, "Failed obtaining objSync")
 
     -- test direct return when no WIP
     local success = objSync:waitForNoWIPOnQueue_SOSrv({queueId = wipQueueIdSync})
@@ -269,9 +287,7 @@ end
 function T_WIPAdministrator.T_waitForNoWIPOnQueue_AOSrv()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":waitForNoWIPOnQueue_AOSrv() tests")
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(obj1)
+    local obj1 = WIPAdministrator:newInstance(wipQueues1:copy()) assert(obj1)
 
     callback1Called = false
 
@@ -316,9 +332,7 @@ end
 function T_WIPAdministrator.T_administerWorkCompleted()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":administerWorkCompleted() tests")
-    local obj1 = WIPAdministrator:new({
-        _wipQueues      = wipQueues1:copy(),
-    }) assert(obj1)
+    local obj1 = WIPAdministrator:newInstance(wipQueues1:copy()) assert(obj1)
     local workId3 = "workId3"
     local wipQueueId2 = "wipQueueId2"
     obj1:administerWorkStarted(wipQueueId2, workId3)

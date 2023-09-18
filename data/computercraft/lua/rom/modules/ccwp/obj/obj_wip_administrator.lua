@@ -12,8 +12,6 @@ local WIPAdministrator = Class.NewClass(ObjBase)
 local corelog = require "corelog"
 
 local InputChecker = require "input_checker"
-local ObjectFactory = require "object_factory"
-local objectFactory = ObjectFactory:getInstance()
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local WIPQueue = require "obj_wip_queue"
@@ -27,6 +25,22 @@ local enterprise_administration
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function WIPAdministrator:_init(...)
+    -- get & check input from description
+    local checkSuccess, wipQueues = InputChecker.Check([[
+        Initialise a WIPAdministrator.
+
+        Parameters:
+            wipQueues               + (ObjTable) with WIPQueue's
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("WIPAdministrator:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._wipQueues = wipQueues
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function WIPAdministrator:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[

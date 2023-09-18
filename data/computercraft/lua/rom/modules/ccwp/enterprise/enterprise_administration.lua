@@ -92,9 +92,7 @@ end
 
 function enterprise_administration:createNewWIPAdministrator()
     -- create WIPAdministrator
-    local administrator = WIPAdministrator:new({
-        _wipQueues  = ObjTable:newInstance("WIPQueue"),
-    })
+    local administrator = WIPAdministrator:newInstance(ObjTable:newInstance("WIPQueue"))
 
     -- save it
     local objLocator = self:saveObject(administrator)

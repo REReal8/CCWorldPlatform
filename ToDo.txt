@@ -42,7 +42,7 @@ G  Debug: Modem events send but not received                                    
       R  CodeMap                                                                                                        (done)
       R  LayerRectangle                                                                                                 (done)
       -  ItemTable
-      -  WIPAdministrator
+      R  WIPAdministrator                                                                                               (done)
       R  ObjBase                                                                                                        (done)
       R  TestMObj                                                                                                       (done)
       R  Chest                                                                                                          (done)
