@@ -62,10 +62,7 @@ function T_MethodExecutor.T_CallInstanceMethod()
     -- prepare test
     corelog.WriteToLog("* MethodExecutor.CallInstanceMethod() test")
     local field2Value = 3
-    local object = TestObj:new({
-        _field1 = "field1_1",
-        _field2 = field2Value,
-    })
+    local object = TestObj:newInstance("field1_1", field2Value)
     local methodName = "field2Plus"
     local addValue = 5
     local methodArguments = {
@@ -153,14 +150,10 @@ function T_MethodExecutor.T_DoASyncObjService_Sync()
     local className = "TestObj"
     local serviceName = "test_AOSrv"
     assert(objectFactory:isRegistered(className), "Class "..className.." is not registered in the factory.")
-    local objData = {
-        _field1 = "field1_1",
-        _field2 = 1,
-    }
     local serviceData = {
         testArg = testValue,
     }
-    local obj = TestObj:new(objData)
+    local obj = TestObj:newInstance("field1_1", 1)
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, serviceName, serviceData)

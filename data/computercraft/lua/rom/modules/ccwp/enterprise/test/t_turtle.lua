@@ -168,10 +168,7 @@ end
 function t_turtle.T_getObject()
     -- prepare test
     corelog.WriteToLog("* enterprise_turtle:getObject() tests")
-    local testObject = TestObj:new({
-        _field1 = "field1",
-        _field2 = 4,
-    })
+    local testObject = TestObj:newInstance("field1", 4)
     local className = "TestObj"
     local objectLocator = enterprise_turtle:saveObject(testObject, className)
     local currentTurtleLocator = t_turtle.GetCurrentTurtleLocator()

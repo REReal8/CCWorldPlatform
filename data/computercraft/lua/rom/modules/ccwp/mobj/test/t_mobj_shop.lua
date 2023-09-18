@@ -133,10 +133,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
-    local testObject = TestObj:new({
-        _field1 = "field1",
-        _field2 = 4,
-    })
+    local testObject = TestObj:newInstance("field1", 4)
     local testHost = T_Host.CreateTestObj()
     moduleRegistry:registerModule(testHost:getHostName(), testHost)
     local nonItemSupplierLocator = testHost:saveObject(testObject)

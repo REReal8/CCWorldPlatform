@@ -210,10 +210,7 @@ function T_Host.T_get_save_delete_Resource()
     -- cleanup test
 end
 
-local testObject = TestObj:new({
-    _field1 = "field1",
-    _field2 = 4,
-})
+local testObject = TestObj:newInstance("field1", 4)
 local className = "TestObj"
 
 function T_Host.T_getObjectLocator()
@@ -351,10 +348,7 @@ function T_Host.T_GetHost()
     moduleRegistry:delistModule(hostName1)
 
     -- test other registered object
-    local testObj = TestObj:new({
-        _field1 = "field1",
-        _field2 = 4,
-    })
+    local testObj = TestObj:newInstance("field1", 4)
     local testObjName = "testObj"
     moduleRegistry:registerModule(testObjName, testObj)
     host = Host.GetHost(testObjName, true)

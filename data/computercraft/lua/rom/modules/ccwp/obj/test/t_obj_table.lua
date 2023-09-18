@@ -33,14 +33,8 @@ end
 local testClassName = "ObjTable"
 local logOk = false
 local objClassName1 = "TestObj"
-local testObj1 = TestObj:new({
-    _field1 = "field1_1",
-    _field2 = 1,
-})
-local testObj2 = TestObj:new({
-    _field1 = "field1_2",
-    _field2 = 2,
-})
+local testObj1 = TestObj:newInstance("field1_1", 1)
+local testObj2 = TestObj:newInstance("field1_2", 2)
 local wrongTestObj1 = Location:newInstance()
 
 local compact = { compact = true }

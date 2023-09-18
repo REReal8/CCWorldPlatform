@@ -26,6 +26,24 @@ local enterprise_assignmentboard = require "enterprise_assignmentboard"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function TestObj:_init(...)
+    -- get & check input from description
+    local checkSuccess, field1, field2 = InputChecker.Check([[
+        Initialise a TestObj.
+
+        Parameters:
+            field1                  + (string) field
+            field2                  + (number) field
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("TestObj:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._field1    = field1
+    self._field2    = field2
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function TestObj:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[

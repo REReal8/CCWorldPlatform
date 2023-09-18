@@ -57,10 +57,7 @@ local callbackTestValue = "some callback data"
 local testArgValue20 = 20
 local testArgValue222 = 222
 local testArgValue44 = 44
-local testObj = TestObj:new({
-    _field1 = "field1",
-    _field2 = 4,
-})
+local testObj = TestObj:newInstance("field1", 4)
 
 local compact = { compact = true }
 
