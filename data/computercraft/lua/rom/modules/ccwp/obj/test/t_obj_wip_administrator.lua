@@ -110,10 +110,7 @@ function T_WIPAdministrator.T_removeWIPQueue()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":removeWIPQueue() tests")
     local wipQueueId1 = "wipQueueId1"
-    local wipQueue1 = WIPQueue:new({
-        _workList       = {},
-        _callbackList   = callbackList1:copy(),
-    }) assert(wipQueue1)
+    local wipQueue1 = WIPQueue:newInstance({}, callbackList1:copy()) assert(wipQueue1)
 
     local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
@@ -137,10 +134,7 @@ function T_WIPAdministrator.T_getWIPQueue()
         workId1,
         workId2,
     }
-    local wipQueue1 = WIPQueue:new({
-        _workList       = workList1,
-        _callbackList   = callbackList1:copy(),
-    }) assert(wipQueue1)
+    local wipQueue1 = WIPQueue:newInstance(workList1, callbackList1:copy()) assert(wipQueue1)
 
     local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
     wipQueues2[wipQueueId1] = wipQueue1
@@ -169,10 +163,7 @@ function T_WIPAdministrator.T_reset()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":reset() tests")
     local wipQueueId1 = "wipQueueId1"
-    local wipQueue1 = WIPQueue:new({
-        _workList       = {},
-        _callbackList   = callbackList1:copy(),
-    }) assert(wipQueue1)
+    local wipQueue1 = WIPQueue:newInstance({}, callbackList1:copy()) assert(wipQueue1)
 
     local wipQueues = ObjTable:newInstance(wipQueueClassName) assert(wipQueues)
     wipQueues[wipQueueId1] = wipQueue1

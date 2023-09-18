@@ -89,10 +89,7 @@ function WIPAdministrator:getWIPQueue(...)
 
         -- create new queue
         local callbackList = ObjArray:newInstance("Callback")
-        queue = WIPQueue:new({
-            _workList       = {},
-            _callbackList   = callbackList,
-        })
+        queue = WIPQueue:newInstance({}, callbackList)
 
         -- add it to the WIPAdministrator
         self._wipQueues[queueId] = queue

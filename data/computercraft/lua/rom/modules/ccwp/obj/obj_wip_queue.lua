@@ -24,6 +24,24 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function WIPQueue:_init(...)
+    -- get & check input from description
+    local checkSuccess, workList, callbackList = InputChecker.Check([[
+        Initialise a WIPQueue.
+
+        Parameters:
+            workList                + (table) with workId's
+            callbackList            + (ObjArray) with Callback's
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("WIPQueue:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._workList      = workList
+    self._callbackList  = callbackList
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function WIPQueue:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[

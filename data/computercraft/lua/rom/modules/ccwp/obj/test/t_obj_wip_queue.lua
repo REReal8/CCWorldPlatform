@@ -3,18 +3,20 @@ local corelog = require "corelog"
 
 local IObj = require "i_obj"
 local ObjBase = require "obj_base"
-local ModuleRegistry = require "module_registry"
-local moduleRegistry = ModuleRegistry:getInstance()
 local Callback = require "obj_callback"
 
 local ObjArray = require "obj_array"
 local WIPQueue = require "obj_wip_queue"
+
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
 
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_WIPQueue.T_All()
     -- initialisation
+    T_WIPQueue.T__init()
     T_WIPQueue.T_new()
     T_WIPQueue.T_addWork()
     T_WIPQueue.T_removeWork()
@@ -27,6 +29,10 @@ function T_WIPQueue.T_All()
     -- specific methods
     T_WIPQueue.T_callAndReleaseCallbacks()
 end
+
+local testClassName = "WIPQueue"
+local testObjName = "wipQueue"
+local logOk = false
 
 local workId1 = "id1"
 local workId2 = "id2"
@@ -48,8 +54,6 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-local testClassName = "WIPQueue"
-
 local function workListCopy(workList)
     local copy = {}
     for i, aWorkId in ipairs(workList) do
@@ -60,24 +64,55 @@ local function workListCopy(workList)
     return copy
 end
 
-function T_WIPQueue.CreateTestObj()
-    local testObj = WIPQueue:new({
-        _workList       = workListCopy(workList1),
-        _callbackList   = callbackList1:copy(),
-    })
+function T_WIPQueue.CreateTestObj(workList, callbackList)
+    -- check input
+    workList = workList or workList1
+    callbackList = callbackList or callbackList1
 
+    -- create testObj
+    local testObj = WIPQueue:newInstance(workListCopy(workList), callbackList:copy())
+
+    -- end
     return testObj
+end
+
+function T_WIPQueue.CreateInitialisedTest(workList, callbackList)
+    -- check input
+
+    -- create test
+    local test = TestArrayTest:newInstance(
+        FieldValueEqualTest:newInstance("_workList", workList),
+        FieldValueEqualTest:newInstance("_callbackList", callbackList)
+    )
+
+    -- end
+    return test
+end
+
+function T_WIPQueue.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_WIPQueue.CreateTestObj(workList1, callbackList1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_WIPQueue.CreateInitialisedTest(workList1, callbackList1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_WIPQueue.T_new()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
     local obj = WIPQueue:new({
         _workList       = workListCopy(workList1),
         _callbackList   = callbackList1:copy(),
     }) assert(obj)
+    local test = T_WIPQueue.CreateInitialisedTest(workList1, callbackList1)
+    test:test(obj, testObjName, "", logOk)
+
     assert(obj._workList[1] == workId1, "no workId1")
     assert(obj._workList[2] == workId2, "no workId2")
     assert(obj._callbackList:isEqual(callbackList1), "gotten _callbackList(="..textutils.serialise(obj._callbackList)..") not the same as expected(="..textutils.serialise(callbackList1)..")")
@@ -98,11 +133,8 @@ end
 
 function T_WIPQueue.T_addWork()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:addWork() tests")
-    local obj1 = WIPQueue:new({
-        _workList       = workListCopy(workList1),
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj1)
+    corelog.WriteToLog("* "..testClassName..":addWork() tests")
+    local obj1 = T_WIPQueue.CreateTestObj() assert(obj1)
     assert(not hasWork(obj1._workList, workId), "workId already present")
 
     -- test
@@ -114,11 +146,8 @@ end
 
 function T_WIPQueue.T_removeWork()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:removeWork() tests")
-    local obj1 = WIPQueue:new({
-        _workList       = workListCopy(workList1),
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj1)
+    corelog.WriteToLog("* "..testClassName..":removeWork() tests")
+    local obj1 = T_WIPQueue.CreateTestObj() assert(obj1)
     obj1:addWork(workId)
     assert(hasWork(obj1._workList, workId), "workId not added")
 
@@ -131,11 +160,8 @@ end
 
 function T_WIPQueue.T_noWIP()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:noWIP() tests")
-    local obj1 = WIPQueue:new({
-        _workList       = {},
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj1)
+    corelog.WriteToLog("* "..testClassName..":noWIP() tests")
+    local obj1 = T_WIPQueue.CreateTestObj({}, callbackList1) assert(obj1)
 
     -- test noWIP
     local noWIP = obj1:noWIP()
@@ -162,11 +188,8 @@ end
 
 function T_WIPQueue.T_addCallback()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:addCallback() tests")
-    local obj1 = WIPQueue:new({
-        _workList       = {},
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj1)
+    corelog.WriteToLog("* "..testClassName..":addCallback() tests")
+    local obj1 = T_WIPQueue.CreateTestObj({}, callbackList1) assert(obj1)
     assert(not hasCallback(obj1._callbackList, callback1), "callback1 already present")
 
     -- test
@@ -210,11 +233,8 @@ local callback3Called = false
 
 function T_WIPQueue.T_callAndReleaseCallbacks()
     -- prepare test
-    corelog.WriteToLog("* WIPQueue:callAndReleaseCallbacks() tests")
-    local obj1 = WIPQueue:new({
-        _workList       = {},
-        _callbackList   = callbackList1:copy(),
-    }) assert(obj1)
+    corelog.WriteToLog("* "..testClassName..":callAndReleaseCallbacks() tests")
+    local obj1 = T_WIPQueue.CreateTestObj({}, callbackList1) assert(obj1)
 
     local callback2 = Callback:newInstance("T_WIPQueue", "callAndReleaseCallbacks_Callback", { callbackName = "callback2", })
     obj1:addCallback(callback2)
