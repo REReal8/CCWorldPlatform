@@ -35,7 +35,6 @@ function TestObj:new(...)
             o               + (table, {}) table with object fields
                 _field1     - (string) field
                 _field2     - (number) field
-                _field3     - (number, nil) (optional) field
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("TestObj:new: Invalid input") return {} end
 
@@ -67,17 +66,6 @@ function TestObj:setField2(fieldValue)
     if type(fieldValue) ~= "number" then corelog.Error("TestObj:setField2: invalid fieldValue: "..type(fieldValue)) return end
 
     self._field2 = fieldValue
-end
-
-function TestObj:getField3()
-    return self._field3
-end
-
-function TestObj:setField3(fieldValue)
-    -- check input
-    if type(fieldValue) ~= "nil" and type(fieldValue) ~= "number" then corelog.Error("TestObj:setField3: invalid fieldValue: "..type(fieldValue)) return end
-
-    self._field3 = fieldValue
 end
 
 --    _____ ____  _     _                  _   _               _
