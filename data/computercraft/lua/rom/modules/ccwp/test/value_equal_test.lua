@@ -48,6 +48,31 @@ end
 --    _| |_   | |  __/\__ \ |_
 --   |_____|  |_|\___||___/\__|
 
+local function anActualTest(expectedValue, value, valueName, indent, logOk)
+    -- prepare test
+    local testContextStr = valueName.." value "..textutils.serialise(value, compact)
+
+    -- check expectedValue type
+    if Class.IsInstanceOf(expectedValue, IObj) then
+        assert(value:isEqual(expectedValue), indent..testContextStr.." not equal to expected value "..textutils.serialise(expectedValue))
+    elseif type(expectedValue) == "table" then
+        assert(type(value) == "table", indent..testContextStr.." not equal to expected type table")
+        for key, expTblValue in pairs(expectedValue) do
+            -- nested test
+            local tblValue = value[key]
+            local tblValueName = valueName.." sub field "..key
+            anActualTest(expTblValue, tblValue, tblValueName, indent.."  ", logOk)
+
+            -- complete nested test
+            local testTblContextStr = tblValueName.." value "..textutils.serialise(tblValue, compact)
+            if logOk then corelog.WriteToLog(indent.."  "..testTblContextStr.." ok") end
+        end
+        -- ToDo: consider testing for additional keys in value (see also ObjBase)
+    else
+        assert(value == expectedValue, indent..testContextStr.." not equal to expected value "..textutils.serialise(expectedValue))
+    end
+end
+
 function ValueEqualTest:test(value, valueName, indent, logOk)
     -- check input
     assert(type(valueName) == "string", "valueName not a string")
@@ -58,21 +83,7 @@ function ValueEqualTest:test(value, valueName, indent, logOk)
     local testContextStr = valueName.." value "..textutils.serialise(value, compact)
 
     -- test
-    if Class.IsInstanceOf(self._expectedValue, IObj) then
-        assert(value:isEqual(self._expectedValue), indent..testContextStr.." not equal to expected value "..textutils.serialise(self._expectedValue))
-    elseif type(self._expectedValue) == "table" then
-        assert(type(value) == "table", indent..testContextStr.." not equal to expected type table")
-        for key, expTblValue in pairs(self._expectedValue) do
-            local tblValue = value[key]
-            local testTblContextStr = valueName.." sub field "..key.." value "..textutils.serialise(tblValue, compact)
-            assert(tblValue == expTblValue, indent.."  "..testTblContextStr.." not equal to expected value "..textutils.serialise(expTblValue))
-            if logOk then corelog.WriteToLog(indent.."  "..testTblContextStr.." ok") end
-        end
-        -- ToDo: consider testing for additional keys in value (see also ObjBase)
-        -- ToDo: consider testing deeper into the table (see also ObjBase)
-    else
-        assert(value == self._expectedValue, indent..testContextStr.." not equal to expected value "..textutils.serialise(self._expectedValue))
-    end
+    anActualTest(self._expectedValue, value, valueName, indent, logOk)
 
     -- complete test
     if logOk then corelog.WriteToLog(indent..testContextStr.." ok") end
