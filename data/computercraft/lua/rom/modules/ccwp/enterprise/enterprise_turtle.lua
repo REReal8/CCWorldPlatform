@@ -229,9 +229,7 @@ function enterprise_turtle.RegisterTurtle_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_turtle.RegisterTurtle_SSrv: Invalid input") return {success = false} end
 
     -- create new Obj
-    local obj = Turtle:new({
-        _id = tostring(turtleId),
-    })
+    local obj = Turtle:newInstance(tostring(turtleId))
     if not obj then corelog.Error("enterprise_turtle.RegisterTurtle_SSrv: Failed creating Obj") return {success = false} end
 
     -- save the Obj

@@ -31,6 +31,24 @@ local enterprise_turtle
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Turtle:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, fuelPriorityKey = InputChecker.Check([[
+        Initialise a Turtle.
+
+        Parameters:
+            id                      + (string, "any") id of the Turtle
+            fuelPriorityKey         + (string, "") fuel priority key of the Turtle
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Turtle:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id                = id
+    self._fuelPriorityKey   = fuelPriorityKey
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Turtle:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -49,10 +67,6 @@ function Turtle:new(...)
 
     -- end
     return o
-end
-
-function Turtle:getId()
-    return self._id
 end
 
 function Turtle:getTurtleId()
@@ -81,6 +95,19 @@ end
 
 function Turtle:getClassName()
     return "Turtle"
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+function Turtle:getId()
+    return self._id
 end
 
 --    _____ _____ _                  _____                   _ _                            _   _               _

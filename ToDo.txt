@@ -52,7 +52,7 @@ G  Debug: Modem events send but not received                                    
       R  Factory                                                                                                        (done)
       R  Mine                                                                                                           (done)
       R  Shop                                                                                                           (done)
-      -  Turtle
+      R  Turtle                                                                                                         (done)
       -  Host
       -  MObjHost
 
