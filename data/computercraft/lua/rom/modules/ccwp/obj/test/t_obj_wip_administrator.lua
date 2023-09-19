@@ -37,15 +37,16 @@ end
 
 local testClassName = "WIPAdministrator"
 local testObjName = "chest"
-local logOk = true
+local logOk = false
 
 local workId1 = "workId1"
 local workId2 = "workId2"
 local callbackClassName = "Callback"
 local callbackList1 = ObjArray:newInstance(callbackClassName) assert(callbackList1, "Failed obtaining callbackList1")
 local wipQueueClassName = "WIPQueue"
+local wipQueueId1 = "wipQueueId1"
 local wipQueue1 = T_WIPQueue.CreateTestObj() assert(wipQueue1, "Failed obtaining WIPQueue")
-local wipQueues1 = ObjTable:newInstance(wipQueueClassName, { wipQueue1 } ) assert(wipQueues1, "Failed obtaining wipQueues1")
+local wipQueues1 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues1, "Failed obtaining wipQueues1")
 
 local compact = { compact = true }
 
@@ -137,7 +138,6 @@ end
 function T_WIPAdministrator.T_removeWIPQueue()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":removeWIPQueue() tests")
-    local wipQueueId1 = "wipQueueId1"
     local wipQueue1 = WIPQueue:newInstance({}, callbackList1:copy()) assert(wipQueue1)
 
     local wipQueues2 = ObjTable:newInstance(wipQueueClassName) assert(wipQueues2)
@@ -155,7 +155,6 @@ end
 function T_WIPAdministrator.T_getWIPQueue()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getWIPQueue() tests")
-    local wipQueueId1 = "wipQueueId1"
     local workList1 = {
         workId1,
         workId2,
@@ -186,7 +185,6 @@ end
 function T_WIPAdministrator.T_reset()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":reset() tests")
-    local wipQueueId1 = "wipQueueId1"
     local wipQueue1 = WIPQueue:newInstance({}, callbackList1:copy()) assert(wipQueue1)
 
     local wipQueues = ObjTable:newInstance(wipQueueClassName) assert(wipQueues)
