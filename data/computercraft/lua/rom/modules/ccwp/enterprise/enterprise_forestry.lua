@@ -85,16 +85,8 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
     -- create new BirchForest
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local forest = BirchForest:new({
-        _id                     = coreutils.NewId(),
-        _level                  = forestLevel,
-
-        _baseLocation           = baseLocation:copy(),
-        _nTrees                 = 0,
-
-        _localLogsLocator       = enterprise_turtle.GetAnyTurtleLocator(),
-        _localSaplingsLocator   = enterprise_turtle.GetAnyTurtleLocator(),
-    }) if not forest then corelog.Error("enterprise_forestry.AddNewSite_ASrv:failed obtaining BirchForest") return Callback.ErrorCall(callback) end
+    local forest = BirchForest:newInstance(coreutils.NewId(), forestLevel, baseLocation:copy(), 0, enterprise_turtle.GetAnyTurtleLocator(), enterprise_turtle.GetAnyTurtleLocator())
+    if not forest then corelog.Error("enterprise_forestry.AddNewSite_ASrv:failed obtaining BirchForest") return Callback.ErrorCall(callback) end
 
     -- save the BirchForest
     corelog.WriteToLog(">Adding forest "..forest:getId()..".")

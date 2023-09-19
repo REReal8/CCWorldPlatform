@@ -48,7 +48,7 @@ G  Debug: Modem events send but not received                                    
       R  Chest                                                                                                          (done)
       R  ProductionSpot                                                                                                 (done)
       R  Silo                                                                                                           (done)
-      -  BirchForest
+      R  BirchForest                                                                                                    (done)
       R  Factory                                                                                                        (done)
       R  Mine                                                                                                           (done)
       -  Shop

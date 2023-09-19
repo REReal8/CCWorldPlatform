@@ -33,6 +33,32 @@ local enterprise_projects = require "enterprise_projects"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function BirchForest:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, level, baseLocation, nTrees, localLogsLocator, localSaplingsLocator = InputChecker.Check([[
+        Initialise a BirchForest.
+
+        Parameters:
+            id                      + (string) id of the BirchForest
+            level                   + (number) level of the forest
+            baseLocation            + (Location) base location of the BirchForest
+            nTrees                  + (number) # trees in the BirchForest
+            localLogsLocator        + (URL) locating the local ItemSupplier of logs (e.g. a chest)
+            localSaplingsLocator    + (URL) locating the local ItemSupplier of saplings (e.g. a chest)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("BirchForest:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id                    = id
+    self._level                 = level
+    self._baseLocation          = baseLocation
+    self._nTrees                = nTrees
+    self._localLogsLocator      = localLogsLocator
+    self._localSaplingsLocator  = localSaplingsLocator
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function BirchForest:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -55,10 +81,6 @@ function BirchForest:new(...)
 
     -- end
     return o
-end
-
-function BirchForest:getId()
-    return self._id
 end
 
 function BirchForest:getLevel()
@@ -143,6 +165,19 @@ end
 
 function BirchForest:getClassName()
     return "BirchForest"
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--
+
+function BirchForest:getId()
+    return self._id
 end
 
 --                        _                           _   _               _
