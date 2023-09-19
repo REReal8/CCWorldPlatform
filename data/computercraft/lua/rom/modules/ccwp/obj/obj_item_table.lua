@@ -19,6 +19,30 @@ local InputChecker = require "input_checker"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function ItemTable:_init(...)
+    -- get & check input from description
+    local checkSuccess, itemsTable = InputChecker.Check([[
+        Initialise a ItemTable.
+
+        Parameters:
+            itemsTable              + (table, {}) with key, value pairs of items
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("ItemTable:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    for itemName, itemCount in pairs(itemsTable) do
+        if type(itemName) ~= "string" then
+            corelog.Warning("ItemTable:_init: itemName type(="..type(itemName)..") not a string => skipped")
+        elseif type(itemCount) ~= "number" then
+            corelog.Warning("ItemTable:_init: itemName type(="..type(itemCount)..") not a number => skipped")
+        else
+            self[itemName] = itemCount
+        end
+    end
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function ItemTable:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -93,7 +117,7 @@ function ItemTable.combine(...)
     for itemName, itemCount in pairs(secondItemList) do combined[ itemName ] = (combined[ itemName ] or 0) + itemCount end
 
     -- no need to thank us
-    return ItemTable:new(combined)
+    return ItemTable:newInstance(combined)
 end
 
 function ItemTable.compare(...)
@@ -161,7 +185,7 @@ function ItemTable.compare(...)
     end
 
     -- end
-    return ItemTable:new(uniqueFirst), ItemTable:new(common), ItemTable:new(uniqueSecond)
+    return ItemTable:newInstance(uniqueFirst), ItemTable:newInstance(common), ItemTable:newInstance(uniqueSecond)
 end
 
 --    _          _                    __                  _   _

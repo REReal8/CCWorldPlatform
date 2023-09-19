@@ -379,17 +379,14 @@ end
 
 function Turtle:getInventoryAsItemTable()
     -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
-
---    -- get current Turtle inventory slots
---    return ItemTable:new(Turtle:getInventory():getItemTable())
+    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventoryAsItemTable() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
 
     -- why multiline when it can be done in a single line? Well, for readablilty and debugging ofcourse!
     local inventory = Turtle:getInventory()
     local itemTable = inventory:getItemTable()
 
     -- return the table as an object ItemTable
-    return ItemTable:new(itemTable)
+    return ItemTable:newInstance(itemTable)
 end
 
 return Turtle
