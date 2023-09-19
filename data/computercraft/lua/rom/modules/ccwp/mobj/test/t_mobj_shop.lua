@@ -28,6 +28,12 @@ local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+local FieldValueTypeTest = require "field_value_type_test"
+local MethodResultEqualTest = require "method_result_equal_test"
+
+local T_IMObj = require "test.t_i_mobj"
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local T_Host = require "test.t_obj_host"
@@ -35,12 +41,15 @@ local t_turtle = require "test.t_turtle"
 
 function T_Shop.T_All()
     -- initialisation
+    T_Shop.T__init()
+    T_Shop.T_new()
     T_Shop.T_Getters()
 
     -- IObj methods
     T_Shop.T_IObj_All()
 
-    -- specific methods
+    -- IMObj methods
+    T_Shop.T_IMObj_All()
 
     -- service methods
     T_Shop.T_registerItemSupplier_SOSrv()
@@ -55,6 +64,9 @@ function T_Shop.T_All()
 end
 
 local testClassName = "Shop"
+local testObjName = "shop"
+local logOk = false
+
 local locatorClassName = "URL"
 local itemSuppliersLocators1 = ObjArray:newInstance(locatorClassName)
 
@@ -73,26 +85,68 @@ function T_Shop.CreateTestObj(id, itemSuppliersLocators)
     itemSuppliersLocators = itemSuppliersLocators or itemSuppliersLocators1
 
     -- create testObj
-    local testObj = Shop:new({
+    local testObj = Shop:newInstance(id, itemSuppliersLocators:copy())
+
+    -- end
+    return testObj
+end
+
+function T_Shop.CreateInitialisedTest(id, itemSuppliersLocators)
+    -- check input
+
+    -- create test
+    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
+    if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
+    local test = TestArrayTest:newInstance(
+        idTest,
+        FieldValueEqualTest:newInstance("_itemSuppliersLocators", itemSuppliersLocators)
+    )
+
+    -- end
+    return test
+end
+
+function T_Shop.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+    local id = coreutils.NewId()
+
+    -- test
+    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Shop.CreateInitialisedTest(id, itemSuppliersLocators1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
+end
+
+function T_Shop.T_new()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":new() tests")
+    local id = coreutils.NewId()
+
+    -- test
+    local obj = Shop:new({
         _id                     = id,
 
-        _itemSuppliersLocators  = itemSuppliersLocators:copy(),
+        _itemSuppliersLocators  = itemSuppliersLocators1:copy(),
     })
+    local test = T_Shop.CreateInitialisedTest(id, itemSuppliersLocators1)
+    test:test(obj, testObjName, "", logOk)
 
-    return testObj
+    -- cleanup test
 end
 
 function T_Shop.T_Getters()
     -- prepare test
-    corelog.WriteToLog("* Shop getter tests")
+    corelog.WriteToLog("* "..testClassName.." getter tests")
     local id = coreutils.NewId()
-    local className = "Shop"
     local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) if not obj then corelog.Error("Failed obtaining Shop") return end
 
     -- test
-    assert(obj:getClassName() == className, "gotten className(="..obj:getClassName()..") not the same as expected(="..className..")")
-    assert(obj:getId() == id, "gotten id(="..obj:getId()..") not the same as expected(="..id..")")
-    assert(obj:getItemSuppliersLocators():isEqual(itemSuppliersLocators1), "gotten getItemSuppliersLocators(="..textutils.serialize(obj:getItemSuppliersLocators())..") not the same as expected(="..textutils.serialize(itemSuppliersLocators1)..")")
+    local test = TestArrayTest:newInstance(
+        MethodResultEqualTest:newInstance("getItemSuppliersLocators", itemSuppliersLocators1)
+    )
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -118,6 +172,35 @@ function T_Shop.T_IObj_All()
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+function T_Shop.T_IMObj_All()
+    -- prepare test
+    local id = coreutils.NewId()
+    local obj = T_Shop.CreateTestObj(id, itemSuppliersLocators1) assert(obj, "Failed obtaining "..testClassName)
+
+    -- local destructFieldsTest = TestArrayTest:newInstance()
+
+    -- local constructFieldsTest = T_Shop.CreateInitialisedTest(nil, itemSuppliersLocators1)
+
+    -- test
+    -- T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    -- T_IMObj.pt_Implements_IMObj(testClassName, obj)
+    -- T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
+    -- T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
+    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
+    -- T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    -- T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+end
+
 --                        _                           _   _               _
 --                       (_)                         | | | |             | |
 --    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
@@ -127,7 +210,7 @@ end
 
 function T_Shop.T_registerItemSupplier_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* Shop:registerItemSupplier_SOSrv() tests")
+    corelog.WriteToLog("* "..testClassName..":registerItemSupplier_SOSrv() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
@@ -157,7 +240,7 @@ end
 
 function T_Shop.T_delistItemSupplier_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* Shop:delistItemSupplier_SOSrv() tests")
+    corelog.WriteToLog("* "..testClassName..":delistItemSupplier_SOSrv() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
@@ -177,7 +260,7 @@ end
 
 function T_Shop.T_delistAllItemSuppliers()
     -- prepare test
-    corelog.WriteToLog("* Shop:delistAllItemSuppliers() tests")
+    corelog.WriteToLog("* "..testClassName..":delistAllItemSuppliers() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
@@ -204,7 +287,7 @@ end
 
 function T_Shop.T_bestItemSupplier()
     -- prepare test
-    corelog.WriteToLog("* Shop:bestItemSupplier() tests")
+    corelog.WriteToLog("* "..testClassName..":bestItemSupplier() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local item = {
@@ -257,7 +340,7 @@ end
 
 local function provideItemsTo_AOSrv_Test(provideItems)
     -- prepare test (cont)
-    corelog.WriteToLog("* Shop:provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
+    corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
@@ -331,7 +414,7 @@ end
 
 function T_Shop.T_can_ProvideItems_QOSrv()
     -- prepare test
-    corelog.WriteToLog("* Shop:can_ProvideItems_QOSrv() tests")
+    corelog.WriteToLog("* "..testClassName..":can_ProvideItems_QOSrv() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
@@ -361,7 +444,7 @@ end
 
 function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     -- prepare test
-    corelog.WriteToLog("* Shop:needsTo_ProvideItemsTo_SOSrv() tests")
+    corelog.WriteToLog("* "..testClassName..":needsTo_ProvideItemsTo_SOSrv() tests")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining obj") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local ingredientsItemSupplierLocator = objectLocator

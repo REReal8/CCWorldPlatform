@@ -51,7 +51,7 @@ G  Debug: Modem events send but not received                                    
       R  BirchForest                                                                                                    (done)
       R  Factory                                                                                                        (done)
       R  Mine                                                                                                           (done)
-      -  Shop
+      R  Shop                                                                                                           (done)
       -  Turtle
       -  Host
       -  MObjHost

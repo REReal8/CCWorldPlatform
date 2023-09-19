@@ -37,6 +37,24 @@ local enterprise_shop
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Shop:_init(...)
+    -- get & check input from description
+    local checkSuccess, id, itemSuppliersLocators = InputChecker.Check([[
+        Initialise a Shop.
+
+        Parameters:
+            id                      + (string) id of the Shop
+            itemSuppliersLocators   + (ObjArray) with locators of registered ItemSupplier's
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Shop:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._id                    = id
+    self._itemSuppliersLocators = itemSuppliersLocators
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Shop:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
@@ -57,10 +75,6 @@ function Shop:new(...)
     return o
 end
 
-function Shop:getId()
-    return self._id
-end
-
 function Shop:getItemSuppliersLocators()
     return self._itemSuppliersLocators
 end
@@ -76,6 +90,19 @@ end
 
 function Shop:getClassName()
     return "Shop"
+end
+
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+function Shop:getId()
+    return self._id
 end
 
 --                        _  __ _                       _   _               _

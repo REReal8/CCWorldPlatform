@@ -69,11 +69,7 @@ function enterprise_shop:getShop()
     if nShops == 0 then
         -- the Shop is not there yet => create it
         local locatorClassName = "URL"
-        shop = Shop:new({
-            _id                     = coreutils.NewId(),
-
-            _itemSuppliersLocators  = ObjArray:newInstance(locatorClassName),
-        })
+        shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(locatorClassName))
         corelog.WriteToLog("Creating Shop "..shop:getId())
 
         -- save it
