@@ -168,6 +168,8 @@ function Factory:construct(...)
     local checkSuccess, level, baseLocation = InputChecker.Check([[
         This method constructs a Factory instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
+        It also ensures all child MObj's the Factory spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+
         The constructed Factory is not yet saved in the Host.
 
         Return value:
