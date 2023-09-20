@@ -190,7 +190,7 @@ function MObjHost:upgradeMObj_SSrv(...)
     if not checkSuccess then corelog.Error("MObjHost:upgradeMObj_SSrv: Invalid input") return {success = false} end
 
     -- log
-    corelog.WriteToLog(">Upgrading "..mobjLocator:getURI())
+    corelog.WriteToLog(">Upgrading "..mobjLocator:getURI().." with "..textutils.serialise(upgradeParameters, {compact = true}))
 
     -- get MObj
     local mobj = Host.GetObject(mobjLocator)
