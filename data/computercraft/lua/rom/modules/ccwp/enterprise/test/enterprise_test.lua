@@ -79,7 +79,7 @@ function enterprise_test.Test_ASrv(...)
     -- do assignment
     local assignmentServiceData = {
         metaData    = metaData,
-        taskCall    = TaskCall:new({ _moduleName = "role_test", _methodName = "Func1_Task", _data = taskData, }),
+        taskCall    = TaskCall:newInstance("role_test", "Func1_Task", taskData),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end

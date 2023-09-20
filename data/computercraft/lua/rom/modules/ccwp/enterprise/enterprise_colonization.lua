@@ -90,7 +90,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
-        initialiseCoordinatesTaskCall   = TaskCall:new({ _moduleName = "role_settler", _methodName = "InitialiseCoordinates_Task", _data = initialiseCoordinatesTaskData, }),
+        initialiseCoordinatesTaskCall   = TaskCall:newInstance("role_settler", "InitialiseCoordinates_Task", initialiseCoordinatesTaskData),
 
         ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle:TriggerRefuelIfNeeded
 
@@ -118,7 +118,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         energyL3                        = 3,
 
         collectCobbleStoneMetaData      = role_settler.CollectCobbleStone_MetaData(collectCobbleStoneTaskData),
-        collectCobbleStoneTaskCall      = TaskCall:new({ _moduleName = "role_settler", _methodName = "CollectCobbleStone_Task", _data = collectCobbleStoneTaskData, }),
+        collectCobbleStoneTaskCall      = TaskCall:newInstance("role_settler", "CollectCobbleStone_Task", collectCobbleStoneTaskData),
 
         factoryConstructParameters1     = {
             level                           = 1,

@@ -36,11 +36,7 @@ local compact = { compact = true }
 function T_TaskCall.T_call()
     -- prepare test
     corelog.WriteToLog("* TaskCall:call() test")
-    local taskCall = TaskCall:new({
-        _moduleName     = moduleName1,
-        _methodName     = methodName1,
-        _data           = taskData1,
-    })
+    local taskCall = TaskCall:newInstance(moduleName1, methodName1, taskData1)
 
     -- test
     local callResult = taskCall:call()

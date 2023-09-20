@@ -107,7 +107,7 @@ local function Refuel_ASrv(...)
         wasteItemDepotLocator           = wasteItemDepotLocator,
 
         refuelMetaData                  = role_fuel_worker.Refuel_MetaData(refuelTaskData),
-        refuelTaskCall                  = TaskCall:new({ _moduleName = "role_fuel_worker", _methodName = "Refuel_Task", _data = refuelTaskData, }),
+        refuelTaskCall                  = TaskCall:newInstance("role_fuel_worker", "Refuel_Task", refuelTaskData),
 
         assignmentsPriorityKey          = assignmentsPriorityKey,
     }

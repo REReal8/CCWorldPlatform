@@ -275,7 +275,7 @@ function t_assignmentboard.T_DoAssignment_ASrv()
         needTurtle = false,
         fuelNeeded = 0
     }
-    local taskCall = TaskCall:new({ _moduleName = "role_test", _methodName = "Func1_Task", _data = taskData, })
+    local taskCall = TaskCall:newInstance("role_test", "Func1_Task", taskData)
     local callback = Callback:newInstance("t_assignmentboard", "DoAssignment_ASrv_Callback", { [0] = callbackTestValue })
     local assignmentServiceData = {
         metaData    = metaData,

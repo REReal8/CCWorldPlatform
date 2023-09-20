@@ -226,7 +226,7 @@ function TestObj:test_AOSrv(...)
     -- do assignment
     local assignmentServiceData = {
         metaData    = metaData,
-        taskCall    = TaskCall:new({ _moduleName = "role_test", _methodName = "Func2_Task", _data = taskData, }),
+        taskCall    = TaskCall:newInstance("role_test", "Func2_Task", taskData),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end

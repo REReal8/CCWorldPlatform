@@ -330,7 +330,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 itemDepotLocator                = itemDepotLocator:copy(),
 
                 harvestForestMetaData           = role_forester.HarvestForest_MetaData(harvestForestTaskData),
-                harvestForestTaskCall           = TaskCall:new({ _moduleName = "role_forester", _methodName = "HarvestForest_Task", _data = harvestForestTaskData, }),
+                harvestForestTaskCall           = TaskCall:newInstance("role_forester", "HarvestForest_Task", harvestForestTaskData),
 
                 assignmentsPriorityKey          = assignmentsPriorityKey,
             }

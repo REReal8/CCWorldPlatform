@@ -116,7 +116,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
             startLocation               = firstTreeLocation:copy(),
         }
         projectData.plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData)
-        projectData.plantFirstSaplingTaskCall   = TaskCall:new({ _moduleName = "role_forester", _methodName = "PlantFirstSapling_Task", _data = plantFirstSaplingTaskData, })
+        projectData.plantFirstSaplingTaskCall   = TaskCall:newInstance("role_forester", "PlantFirstSapling_Task", plantFirstSaplingTaskData)
     else
         -- add build tree step
         table.insert(projectSteps,

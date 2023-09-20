@@ -60,7 +60,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
 
     -- check if materials needed
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
-    local taskCall = TaskCall:new({ _moduleName = "role_builder", _methodName = "BuildBlueprint_Task", _data = taskData, })
+    local taskCall = TaskCall:newInstance("role_builder", "BuildBlueprint_Task", taskData)
     if next(materialsNeeded) == nil then
         -- directly do assignment
 --        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
@@ -157,7 +157,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
 
     -- check if materials needed
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)
-    local taskCall = TaskCall:new({ _moduleName = "role_builder", _methodName = "BuildLayer_Task", _data = taskData, })
+    local taskCall = TaskCall:newInstance("role_builder", "BuildLayer_Task", taskData)
     if next(materialsNeeded) == nil then
         -- directly do assignment
 --        corelog.WriteToLog(">Building (zero materials) layer at "..textutils.serialise(startpoint))

@@ -301,7 +301,7 @@ function Chest:updateChestRecord_AOSrv(...)
         chest           = self:copy(),
 
         metaData        = role_chests_worker.FetchChestSlotsInventory_MetaData(taskData),
-        taskCall        = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "FetchChestSlotsInventory_Task", _data = taskData, }),
+        taskCall        = TaskCall:newInstance("role_chests_worker", "FetchChestSlotsInventory_Task", taskData),
     }
     local projectDef = {
         steps   = {
@@ -385,7 +385,7 @@ function Chest:provideItemsTo_AOSrv(...)
         chest                   = self:copy(),
 
         metaData                = role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(taskData),
-        taskCall                = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "FetchItemsFromChestIntoTurtle_Task", _data = taskData, }),
+        taskCall                = TaskCall:newInstance("role_chests_worker", "FetchItemsFromChestIntoTurtle_Task", taskData),
 
         itemDepotLocator        = itemDepotLocator,
         assignmentsPriorityKey  = assignmentsPriorityKey,
@@ -563,7 +563,7 @@ function Chest:storeItemsFrom_AOSrv(...)
         chest                   = self:copy(),
 
         metaData                = role_chests_worker.PutItemsFromTurtleIntoChest_MetaData(taskData),
-        taskCall                = TaskCall:new({ _moduleName = "role_chests_worker", _methodName = "PutItemsFromTurtleIntoChest_Task", _data = taskData, }),
+        taskCall                = TaskCall:newInstance("role_chests_worker", "PutItemsFromTurtleIntoChest_Task", taskData),
 
         itemsLocator            = itemsLocator,
         turtleLocator           = enterprise_turtle.GetAnyTurtleLocator(),

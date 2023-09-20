@@ -1231,7 +1231,7 @@ function Factory.CraftItem_ASrv(...)
 --    corelog.WriteToLog("   >Crafting with recipe "..textutils.serialise(productionRecipe).."'s")
     local assignmentServiceData = {
         metaData    = metaData,
-        taskCall    = TaskCall:new({ _moduleName = "role_alchemist", _methodName = "Craft_Task", _data = craftData, }),
+        taskCall    = TaskCall:newInstance("role_alchemist", "Craft_Task", craftData),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
@@ -1281,7 +1281,7 @@ function Factory.SmeltItem_ASrv(...)
 --    corelog.WriteToLog("   >Smelting with recipe "..textutils.serialise(productionRecipe).."'s")
     local assignmentServiceData = {
         metaData    = metaData,
-        taskCall    = TaskCall:new({ _moduleName = "role_alchemist", _methodName = "Smelt_Task", _data = smeltData, }),
+        taskCall    = TaskCall:newInstance("role_alchemist", "Smelt_Task", smeltData),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
@@ -1326,7 +1326,7 @@ function Factory.Pickup_ASrv(...)
 --    corelog.WriteToLog("   >Pickup at spot "..textutils.serialise(spotLocation).."")
     local assignmentServiceData = {
         metaData    = metaData,
-        taskCall    = TaskCall:new({ _moduleName = "role_alchemist", _methodName = "Pickup_Task", _data = pickupData, }),
+        taskCall    = TaskCall:newInstance("role_alchemist", "Pickup_Task", pickupData),
     }
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
