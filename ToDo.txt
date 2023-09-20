@@ -24,14 +24,16 @@ G  Debug: Modem events send but not received                                    
    - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))
    - option to bundle messages, reduces count, not size.                                                                (done)
 
--  Initialisation: use Class:newInstance & instance:_init to create and initialise objects instances                    (....)
-   -  changed approach instead of calling Class:new
-      -  this approach should in the future be renamed to newFromTable
-      -  it mostly only will be used for loading from the dht (or other special cases)
-   -  adopt this approach for all classes
+R  Obj(ect) Initialisation: improve v1.1                                                                                (done)
+   R  rename section base methods => initialisation                                                                     (done)
+   R  remove new from IObj (+ move most implementations to correct section)                                             (done)
+
+R  Initialisation: v2.0                                                                                                 (done)
+   R  use Class:newInstance & instance:_init to create and initialise objects instances                                 (done)
+   R  adopt this approach for all classes                                                                               (done)
       R  TestObj                                                                                                        (done)
       R  Location                                                                                                       (done)
-      R  URL                                                                                                            (done) note: a lot of URL:new remaining where a table is given
+      R  URL                                                                                                            (done) note: a lot of URL:new remaining where a table is given due to indirect dht retrieval
       R  Inventory                                                                                                      (done)
       R  ObjTable                                                                                                       (done)
       R  ObjArray                                                                                                       (done)
@@ -57,21 +59,8 @@ G  Debug: Modem events send but not received                                    
       R  Host                                                                                                           (done)
       R  MObjHost                                                                                                       (done)
 
--  Generalised IItemSupplier test functions for MObj's
-   -  generalise IItemSupplier test functions
-   -  use in mobj_birchforest
-   -  use in mobj_chest
-   -  use in mobj_factory
-   -  use in mobj_mine
-   -  use in mobj_silo
-   -  use in mobj_shop
-   -  use in mobj_turtle
-
--  Generalised IItemDepot test functions for MObj's
-   -  generalise IItemDepot test functions
-   -  use in mobj_chest
-   -  use in mobj_silo
-   -  use in mobj_turtle
+R  Improve MObjHost                                                                                                     (done)
+   R  Support extending and upgrading of MObj's                                                                         (done)
 
 -  ensure all MObj's implement and follow IMObj interface                                                               (....)
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc                                              (done)
@@ -83,9 +72,6 @@ G  Debug: Modem events send but not received                                    
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
-
-R  Improve MObjHost                                                                                                     (done)
-   R  Support extending and upgrading of MObj's                                                                         (done)
 
 -  use MObjHost class                                                                                                   (....)
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)
@@ -120,6 +106,22 @@ R  Improve MObjHost                                                             
       -  use generalised test functions
 
 -  consider merging enterprise_chest into enterprise_storage
+
+-  Generalised IItemSupplier test functions for MObj's
+   -  generalise IItemSupplier test functions
+   -  use in mobj_birchforest
+   -  use in mobj_chest
+   -  use in mobj_factory
+   -  use in mobj_mine
+   -  use in mobj_silo
+   -  use in mobj_shop
+   -  use in mobj_turtle
+
+-  Generalised IItemDepot test functions for MObj's
+   -  generalise IItemDepot test functions
+   -  use in mobj_chest
+   -  use in mobj_silo
+   -  use in mobj_turtle
 
 G  Descriptions for blueprints and project steps
    G  Blueprint layer holds a desription / name
@@ -263,23 +265,19 @@ RG mine v2
             -  specifieke projectstap eo assignment voor de MoveTo stap met een beschikbaarheids token voor de shaft die om een aantal project stappen heen staat
             -  bijv. de stappen: [move de shaft in, haal items uit een storage kist, move de shaft uit] (binnen een protected sequence dmv de token)
 
--  object new methods:
-   -  consider return nil after a CheckInput failure (instead of empty table).
-      -  this propably depends on the usage of new. In case of constructing an instance we DO want to return a table. And we should set it's fields.
-      -  this might change if we implement the toTable and fromTable serialise/ deserialising logic
-   -  goed testen dat alles nog goed gaat.
-
--  Obj(ect) Initialisation & Destruction: improve
-   R  rename section base methods => initialisation                                                                     (done)
-   R  remove new from IObj (+ move most implementations to correct section)                                             (done)
-   -  ToDiscuss: Consider revising Initialisation, some aspects to consider
+-  Obj(ect) Initialisation & Destruction: v2.5/ v3.0
+   -  ToDiscuss: Consider further revising Initialisation, some aspects to consider
+      -  Object new(fromTable) methods: consider return nil after a CheckInput failure (instead of empty table).
+         -  this propably depends on the usage of new. In case of constructing an instance we DO want to return a table. And we should set it's fields.
+         -  this might change if we implement the toTable and fromTable serialise/ deserialising logic below
+         -  goed testen dat alles nog goed gaat.
       -  Serialising and deserialising objects
-         -  consider introducting methods (new)FromTable and serialiseToTable
-         -  provide a default implementing class
+         -  consider introducting methods newFromTable and serialiseToTable to handle from and to dht
+         -  provide a default implementing class (? maybe ObjBase)
          -  replace current new method in almost all current objects with the above
-      -  construct method (and destruct methods) currently in IMObj
-         -  adopt/ change to the above "new" method, i.e.
-            -  it should not take a table with the parameters + the parameters itself (change MObjHost to reflect this change)
+      -  construct method's currently in IMObj
+         -  adopt/ change to the above "new" method approach, i.e.
+            -  it should not take a table with the parameters + the parameters itself (also change MObjHost to reflect this change)
             -  possibly remove them from IMObj but introduce some other mechanism for enforcing hosting child objects (via MObjHost:hostMObj_SSrv)
       -  Consider introducing one or more interfaces (e.g. IInitialisation) for the above initialisation related methods
       -  Reimplement ObjectFactory based on these developments
