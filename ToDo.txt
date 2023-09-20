@@ -68,7 +68,7 @@ R  Improve MObjHost                                                             
    -  mobj_birchforest
    R  mobj_chest                                                                                                        (done)
    R  mobj_factory                                                                                                      (done)
-   R  mobj_mine                                                                                                         (done)
+   -  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
    -  mobj_turtle
