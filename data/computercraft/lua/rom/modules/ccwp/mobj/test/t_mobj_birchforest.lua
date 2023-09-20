@@ -4,6 +4,7 @@ local corelog = require "corelog"
 local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
+local MethodExecutor = require "method_executor"
 local IObj = require "i_obj"
 local IItemSupplier = require "i_item_supplier"
 local ObjBase = require "obj_base"
@@ -365,24 +366,28 @@ local function t_provideItemsTo_AOSrv(provideItems)
 
     local T_Chest = require "test.t_mobj_chest"
     local chest2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
-
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
---    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
-    local callback = Callback:newInstance("T_BirchForest", "provideItemsTo_AOSrv_Callback", {
-        ["expectedDestinationItemsLocator"] = expectedDestinationItemsLocator,
-        ["objLocator"] = objLocator,
-    })
 
     -- test
-    return obj:provideItemsTo_AOSrv({
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(obj, "provideItemsTo_AOSrv", {
         provideItems                    = provideItems,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         wasteItemDepotLocator           = wasteItemDepotLocator,
-    }, callback)
+    })
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
+    -- check: destinationItemsLocator
+    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
+    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
+
+    -- cleanup test
+    enterprise_forestry:deleteResource(objLocator)
+    enterprise_chests:deleteResource(wasteItemDepotLocator)
 end
 
 function T_BirchForest.T_provideItemsTo_AOSrv_Log()
@@ -399,24 +404,6 @@ function T_BirchForest.T_provideItemsTo_AOSrv_Sapling()
 
     -- test
     t_provideItemsTo_AOSrv(provideItems)
-end
-
-function T_BirchForest.provideItemsTo_AOSrv_Callback(callbackData, serviceResults)
-    -- test (cont)
-    corelog.WriteToLog(callbackData)
-    corelog.WriteToLog(serviceResults)
-    assert(serviceResults.success, "failed executing async service")
-
-    local destinationItemsLocator = URL:new(serviceResults.destinationItemsLocator)
-    local expectedDestinationItemsLocator = URL:new(callbackData["expectedDestinationItemsLocator"])
-    assert(destinationItemsLocator:isEqual(expectedDestinationItemsLocator), "gotten destinationItemsLocator(="..textutils.serialize(destinationItemsLocator, compact)..") not the same as expected(="..textutils.serialize(expectedDestinationItemsLocator, compact)..")")
-
-    -- cleanup test
-    local objLocator = URL:new(callbackData["objLocator"])
-    enterprise_forestry:deleteResource(objLocator)
-
-    -- end
-    return true
 end
 
 return T_BirchForest
