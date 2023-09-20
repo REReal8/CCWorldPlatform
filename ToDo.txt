@@ -53,7 +53,7 @@ G  Debug: Modem events send but not received                                    
       R  Mine                                                                                                           (done)
       R  Shop                                                                                                           (done)
       R  Turtle                                                                                                         (done)
-      -  Host
+      R  Host                                                                                                           (done)
       -  MObjHost
 
 -  Generalised IItemSupplier test functions for MObj's

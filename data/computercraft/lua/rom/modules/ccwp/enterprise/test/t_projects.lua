@@ -65,9 +65,7 @@ function t_projects.T_StartProject_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
     local hostName = "TestHost"
-    local host = Host:new({
-        _hostName   = hostName,
-    })
+    local host = Host:newInstance(hostName)
     moduleRegistry:registerModule(hostName, host)
     local objLocator = host:saveObject(testObj)
 

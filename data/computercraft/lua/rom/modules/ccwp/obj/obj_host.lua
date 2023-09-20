@@ -36,6 +36,22 @@ local URL = require "obj_url"
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
+function Host:_init(...)
+    -- get & check input from description
+    local checkSuccess, hostName = InputChecker.Check([[
+        Initialise a Host.
+
+        Parameters:
+            hostName                + (string) with hostName of the Host
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Host:_init: Invalid input") return nil end
+
+    -- initialisation
+    ObjBase._init(self)
+    self._hostName  = hostName
+end
+
+-- ToDo: should be renamed to newFromTable at some point
 function Host:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[

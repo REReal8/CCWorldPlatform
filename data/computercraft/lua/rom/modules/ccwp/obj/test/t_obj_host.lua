@@ -12,11 +12,15 @@ local Host = require "obj_host"
 
 local TestObj = require "test.obj_test"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_Host.T_All()
     -- initialisation
+    T_Host.T__init()
     T_Host.T_new()
 
     -- IObj methods
@@ -39,12 +43,13 @@ function T_Host.T_All()
 end
 
 local testClassName = "Host"
+local testObjName = "host"
+local logOk = true
+
 local hostName1 = "TestHost"
 local hostName2 = "TestHost2"
 
-local host1 = Host:new({
-    _hostName   = hostName1,
-})
+local host1 = Host:newInstance(hostName1)
 
 local compact = { compact = true }
 
@@ -60,22 +65,46 @@ function T_Host.CreateTestObj(hostName)
     hostName = hostName1 or hostName
 
     -- create testObj
-    local testObj = Host:new({
-        _hostName   = hostName,
-    })
+    local testObj = Host:newInstance(hostName)
 
+    -- end
     return testObj
+end
+
+function T_Host.CreateInitialisedTest(hostName)
+    -- check input
+
+    -- create test
+    local test = TestArrayTest:newInstance(
+        FieldValueEqualTest:newInstance("_hostName", hostName)
+    )
+
+    -- end
+    return test
+end
+
+function T_Host.T__init()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":_init() tests")
+
+    -- test
+    local obj = T_Host.CreateTestObj(hostName1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Host.CreateInitialisedTest(hostName1)
+    test:test(obj, testObjName, "", logOk)
+
+    -- cleanup test
 end
 
 function T_Host.T_new()
     -- prepare test
-    corelog.WriteToLog("* Host:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local host = Host:new({
+    local obj = Host:new({
         _hostName   = hostName1,
     })
-    assert(host:getHostName() == hostName1, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..hostName1..")")
+    local test = T_Host.CreateInitialisedTest(hostName1)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
@@ -133,7 +162,7 @@ end
 
 function T_Host.T_getHostLocator()
     -- prepare test
-    corelog.WriteToLog("* Host:getHostLocator() tests")
+    corelog.WriteToLog("* "..testClassName..":getHostLocator() tests")
 
     -- test
     local hostLocator = host1:getHostLocator()
@@ -146,7 +175,7 @@ end
 
 function T_Host.T_isLocatorFromHost()
     -- prepare test
-    corelog.WriteToLog("* Host:isLocatorFromHost() tests")
+    corelog.WriteToLog("* "..testClassName..":isLocatorFromHost() tests")
     local hostLocator = host1:getHostLocator()
 
     -- test
@@ -154,10 +183,8 @@ function T_Host.T_isLocatorFromHost()
     local expectedIsFromHost = true
     assert(isFromHost == expectedIsFromHost, "gotten isLocatorFromHost(="..tostring(isFromHost)..") not the same as expected(="..tostring(expectedIsFromHost)..")")
 
-    -- test other host
-    local otherHost = Host:new({
-        _hostName   = hostName2,
-    })
+    -- test other Host
+    local otherHost = Host:newInstance(hostName2)
     isFromHost = otherHost:isLocatorFromHost(hostLocator)
     expectedIsFromHost = false
     assert(isFromHost == expectedIsFromHost, "gotten isLocatorFromHost(="..tostring(isFromHost)..") not the same as expected(="..tostring(expectedIsFromHost)..")")
@@ -167,7 +194,7 @@ end
 
 function T_Host.T_getResourceLocator()
     -- prepare test
-    corelog.WriteToLog("* Host:getResourceLocator(...) tests")
+    corelog.WriteToLog("* "..testClassName..":getResourceLocator(...) tests")
 
     -- test
     local resourceLocator = host1:getResourceLocator(resourcePath1)
@@ -181,7 +208,7 @@ end
 
 function T_Host.T_get_save_delete_Resource()
     -- prepare test
-    corelog.WriteToLog("* Host:getResource, saveResource, deleteResource tests")
+    corelog.WriteToLog("* "..testClassName..":getResource, saveResource, deleteResource tests")
     local resourceLocator = host1:getResourceLocator(resourcePath1)
 
     -- test getResource (not yet present)
@@ -215,7 +242,7 @@ local className = "TestObj"
 
 function T_Host.T_getObjectLocator()
     -- prepare test
-    corelog.WriteToLog("* Host:getObjectLocator tests")
+    corelog.WriteToLog("* "..testClassName..":getObjectLocator tests")
     local objectId = coreutils.NewId()
 
     -- test with supplying className and id
@@ -243,7 +270,7 @@ end
 
 function T_Host.T_saveObject()
     -- prepare test
-    corelog.WriteToLog("* Host:saveObject tests")
+    corelog.WriteToLog("* "..testClassName..":saveObject tests")
     local objectId = coreutils.NewId()
 
     -- test with supplying className and id
@@ -279,7 +306,7 @@ end
 
 function T_Host.T_getObject()
     -- prepare test
-    corelog.WriteToLog("* Host:getObject tests")
+    corelog.WriteToLog("* "..testClassName..":getObject tests")
     local objectLocator = host1:saveObject(testObject, className)
 
     -- test get object
@@ -293,7 +320,7 @@ end
 
 function T_Host.T_getNumberOfObjects()
     -- prepare test
-    corelog.WriteToLog("* Host:getNumberOfObjects tests")
+    corelog.WriteToLog("* "..testClassName..":getNumberOfObjects tests")
     local originalNObjects = host1:getNumberOfObjects(className)
     local objectId = coreutils.NewId()
 
@@ -311,7 +338,7 @@ end
 
 function T_Host.T_deleteObjects()
     -- prepare test
-    corelog.WriteToLog("* Host:deleteObjects tests")
+    corelog.WriteToLog("* "..testClassName..":deleteObjects tests")
 
     -- test
     host1:deleteObjects(className)
@@ -337,23 +364,23 @@ function T_Host.T_GetHost()
     local module = moduleRegistry:getModule(hostName1)
     assert(not module, "a module with name="..hostName1.." already registered")
 
-    -- test not registered host
-    local host = Host.GetHost(hostName1, true)
-    assert(not host, "unexpectedly got a host with hostName="..hostName1)
+    -- test not registered Host
+    local obj = Host.GetHost(hostName1, true)
+    assert(not obj, "unexpectedly got a Host with hostName="..hostName1)
 
-    -- test registered host
+    -- test registered Host
     moduleRegistry:registerModule(hostName1, host1)
-    host = Host.GetHost(hostName1)
-    assert(host, "host with hostName="..hostName1.." not gotten")
+    obj = Host.GetHost(hostName1)
+    assert(obj, "Host with hostName="..hostName1.." not gotten")
     moduleRegistry:delistModule(hostName1)
 
     -- test other registered object
-    local testObj = TestObj:newInstance("field1", 4)
-    local testObjName = "testObj"
-    moduleRegistry:registerModule(testObjName, testObj)
-    host = Host.GetHost(testObjName, true)
-    assert(not host, "unexpectedly got a 'Host' with name="..testObjName)
-    moduleRegistry:delistModule(testObjName)
+    local otherTestObj = TestObj:newInstance("field1", 4)
+    local otherTestObjName = "testObj"
+    moduleRegistry:registerModule(otherTestObjName, otherTestObj)
+    obj = Host.GetHost(otherTestObjName, true)
+    assert(not obj, "unexpectedly got a 'Host' with name="..testObjName)
+    moduleRegistry:delistModule(otherTestObjName)
 
     -- cleanup test
 end
