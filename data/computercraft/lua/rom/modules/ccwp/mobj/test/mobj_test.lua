@@ -105,7 +105,7 @@ function TestMObj:construct(...)
     local checkSuccess, baseLocation, field1Value = InputChecker.Check([[
         This method constructs a TestMObj instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        It also registers all child MObj's the TestMObj spawns (by calling the RegisterMObj method on the appropriate MObjHost).
+        It also ensures all child MObj's the TestMObj spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
         The constructed TestMObj is not activated or saved in the Host.
 
@@ -157,7 +157,7 @@ function TestMObj:destruct()
     --[[
         This method destructs a TestMObj instance.
 
-        It (also) delists all child MObj's the TestMObj is the parent of (by calling the DelistMObj method on the appropriate MObjHost).
+        It also ensures all child MObj's the TestMObj is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
         The TestMObj is not yet deleted from the Host.
 
