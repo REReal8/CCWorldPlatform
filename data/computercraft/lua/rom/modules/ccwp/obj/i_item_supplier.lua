@@ -3,7 +3,7 @@ local IItemSupplier = {
 }
 
 --[[
-    This module implements the interface IItemSupplier.
+    This module specifies the interface IItemSupplier.
 
     The IItemSupplier interface defines service methods for supplying (providing) items.
 

@@ -3,7 +3,7 @@ local IMObj = {
 }
 
 --[[
-    This module implements the interface IMObj.
+    This module specifies the interface IMObj.
 
     The IMObj interface defines methods for objects representing "physical" things in the minecraft world that we would
     like to programmically interact with. Objects of a class implementing the interface are referred to as MObj's.

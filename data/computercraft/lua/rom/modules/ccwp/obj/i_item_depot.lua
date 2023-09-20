@@ -3,7 +3,7 @@ local IItemDepot = {
 }
 
 --[[
-    This module implements the interface IItemDepot.
+    This module specifies the interface IItemDepot.
 
     The IItemDepot interface defines service methods for supplying (providing) items.
 
