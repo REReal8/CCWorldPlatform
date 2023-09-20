@@ -23,7 +23,6 @@ local corelog = require "corelog"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
-local URL = require "obj_url"
 local Host = require "obj_host"
 
 local enterprise_projects = require "enterprise_projects"
@@ -191,7 +190,6 @@ function Shop:getCanProvideItemSuppliers(item)
     -- select ItemSuppliers than can provide items
     local canProvideItemSupplierLocators = {}
     for i, itemSupplierLocator in ipairs(self._itemSuppliersLocators) do
-        itemSupplierLocator = URL:new(itemSupplierLocator)
         -- determine itemLocator
         local itemsLocator = itemSupplierLocator:copy()
         itemsLocator:setQuery(item)
@@ -211,7 +209,7 @@ function Shop:delistAllItemSuppliers()
     local nLocators = #(self._itemSuppliersLocators)
     for i=nLocators, 1, -1 do
         -- cast
-        local itemSupplierLocator = URL:new(self._itemSuppliersLocators[i])
+        local itemSupplierLocator = self._itemSuppliersLocators[i]
         -- remove from list
         corelog.WriteToLog(">Delisting ItemSupplier "..itemSupplierLocator:getURI().." from Shop "..self:getId()..".")
         table.remove(self._itemSuppliersLocators, i)
@@ -290,8 +288,6 @@ function Shop:delistItemSupplier_SOSrv(...)
 --    corelog.WriteToLog("   itemSupplierLocator="..textutils.serialise(itemSupplierLocator))
 
     for i, registeredItemSupplierLocator in ipairs(self._itemSuppliersLocators) do
-        -- cast
-        registeredItemSupplierLocator = URL:new(registeredItemSupplierLocator)
         -- check we found it
         if itemSupplierLocator:getURI() == registeredItemSupplierLocator:getURI() then
             -- remove from list
