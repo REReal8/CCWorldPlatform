@@ -44,7 +44,7 @@ end
 
 local testClassName = "Host"
 local testObjName = "host"
-local logOk = true
+local logOk = false
 
 local hostName1 = "TestHost"
 local hostName2 = "TestHost2"

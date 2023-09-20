@@ -15,6 +15,9 @@ local Host = require "obj_host"
 
 local MObjHost = require "eobj_mobj_host"
 
+local TestArrayTest = require "test_array_test"
+local FieldValueEqualTest = require "field_value_equal_test"
+
 local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
@@ -45,10 +48,11 @@ function T_MObjHost.T_AllPhysical()
 end
 
 local testClassName = "MObjHost"
+local testObjName = "host"
+local logOk = false
+
 local test_mobjHostName1 = "TestMObjHost"
-local test_mobjHost1 = MObjHost:new({
-    _hostName   = test_mobjHostName1,
-})
+local test_mobjHost1 = MObjHost:newInstance(test_mobjHostName1)
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -62,22 +66,34 @@ function T_MObjHost.CreateTestObj(hostName)
     hostName = test_mobjHostName1 or hostName
 
     -- create testObj
-    local testObj = MObjHost:new({
-        _hostName   = hostName,
-    })
+    local testObj = MObjHost:newInstance(hostName)
 
+    -- end
     return testObj
+end
+
+function T_MObjHost.CreateInitialisedTest(hostName)
+    -- check input
+
+    -- create test
+    local test = TestArrayTest:newInstance(
+        FieldValueEqualTest:newInstance("_hostName", hostName)
+    )
+
+    -- end
+    return test
 end
 
 function T_MObjHost.T_new()
     -- prepare test
-    corelog.WriteToLog("* MObjHost:new() tests")
+    corelog.WriteToLog("* "..testClassName..":new() tests")
 
     -- test full
-    local host = MObjHost:new({
+    local obj = MObjHost:new({
         _hostName   = test_mobjHostName1,
     })
-    assert(host:getHostName() == test_mobjHostName1, "gotten getHostName(="..host:getHostName()..") not the same as expected(="..test_mobjHostName1..")")
+    local test = T_MObjHost.CreateInitialisedTest(test_mobjHostName1)
+    test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
 end
