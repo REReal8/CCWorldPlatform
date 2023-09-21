@@ -20,7 +20,9 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 
 local TestArrayTest = require "test_array_test"
+local FieldTest = require "field_test"
 local FieldValueEqualTest = require "field_value_equal_test"
+local ValueTypeTest = require "value_type_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
@@ -59,14 +61,17 @@ local testObjName = "birchForest"
 local logOk = false
 
 local level0 = 0
-local baseLocation1 = Location:newInstance(0, 0, 1, 0, 1)
-local nTrees1 = 1
 local level1 = 1
-local level2 = 1
-local localLogsLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local localSaplingsLocator1 = enterprise_turtle.GetAnyTurtleLocator()
-local location2 = Location:newInstance(6, 12, 1, 0, 1)
+local level2 = 2
+local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
+local baseLocation2 = Location:newInstance(6, 12, 1, 0, 1)
+local nTrees1 = 1
 local nTrees2 = 2
+local nTrees6 = 6
+local localLogsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local localSaplingsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local localLogsLocatorTest0 = FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator0)
+local localSaplingsLocatorTest0 = FieldValueEqualTest:newInstance("_localSaplingsLocator", localSaplingsLocator0)
 
 local compact = { compact = true }
 
@@ -81,10 +86,10 @@ function T_BirchForest.CreateTestObj(id, level, baseLocation, nTrees, localLogsL
     -- check input
     id = id or coreutils.NewId()
     level = level or level0
-    baseLocation = baseLocation or baseLocation1
+    baseLocation = baseLocation or baseLocation0
     nTrees = nTrees or nTrees1
-    localLogsLocator = localLogsLocator or localLogsLocator1
-    localSaplingsLocator = localSaplingsLocator or localSaplingsLocator1
+    localLogsLocator = localLogsLocator or localLogsLocator0
+    localSaplingsLocator = localSaplingsLocator or localSaplingsLocator0
 
     -- create testObj
     local testObj = BirchForest:newInstance(id, level, baseLocation:copy(), nTrees, localLogsLocator, localSaplingsLocator)
@@ -93,7 +98,7 @@ function T_BirchForest.CreateTestObj(id, level, baseLocation, nTrees, localLogsL
     return testObj
 end
 
-function T_BirchForest.CreateInitialisedTest(id, level, baseLocation, nTrees, localLogsLocator, localSaplingsLocator)
+function T_BirchForest.CreateInitialisedTest(id, level, baseLocation, nTrees, localLogsLocatorTest, localSaplingsLocatorTest)
     -- check input
 
     -- create test
@@ -104,8 +109,8 @@ function T_BirchForest.CreateInitialisedTest(id, level, baseLocation, nTrees, lo
         FieldValueEqualTest:newInstance("_level", level),
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
         FieldValueEqualTest:newInstance("_nTrees", nTrees),
-        FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator),
-        FieldValueEqualTest:newInstance("_localSaplingsLocator", localSaplingsLocator)
+        localLogsLocatorTest,
+        localSaplingsLocatorTest
     )
 
     -- end
@@ -118,8 +123,8 @@ function T_BirchForest.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_BirchForest.CreateInitialisedTest(id, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1)
+    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_BirchForest.CreateInitialisedTest(id, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -135,13 +140,13 @@ function T_BirchForest.T_new()
         _id                     = id,
         _level                  = level0,
 
-        _baseLocation           = baseLocation1:copy(),
+        _baseLocation           = baseLocation0:copy(),
         _nTrees                 = nTrees1,
 
-        _localLogsLocator       = localLogsLocator1,
-        _localSaplingsLocator   = localSaplingsLocator1,
+        _localLogsLocator       = localLogsLocator0,
+        _localSaplingsLocator   = localSaplingsLocator0,
     })
-    local test = T_BirchForest.CreateInitialisedTest(id, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1)
+    local test = T_BirchForest.CreateInitialisedTest(id, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -154,15 +159,15 @@ function T_BirchForest.T_Getters()
     local className = "BirchForest"
     local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(localLogsLocator, "Failed obtaining localLogsLocator")
     local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(localSaplingsLocator, "Failed obtaining localLogsLocator")
-    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getLevel", level0),
-        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation1),
+        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation0),
         MethodResultEqualTest:newInstance("getNTrees", nTrees1),
-        MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator1),
-        MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator1)
+        MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator0),
+        MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator0)
     )
     test:test(obj, testObjName, "", logOk)
 
@@ -173,18 +178,18 @@ function T_BirchForest.T_Setters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." setter tests")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
-    local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = location2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
+    local localLogsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation2:getRelativeLocation(2, 2, 0), }}).mobjLocator if not localLogsLocator2 then corelog.Error("failed registering Chest") return end
+    local localSaplingsLocator2 = enterprise_chests:hostMObj_SSrv({className="Chest",constructParameters={ baseLocation = baseLocation2:getRelativeLocation(4, 2, 0), }}).mobjLocator if not localSaplingsLocator2 then corelog.Error("failed registering Chest") return end
 
     -- test
     obj:setLevel(level2)
-    obj:setLocation(location2)
+    obj:setLocation(baseLocation2)
     obj:setNTrees(nTrees2)
     obj:setLocalLogsLocator(localLogsLocator2)
     obj:setLocalSaplingsLocator(localSaplingsLocator2)
     local test = TestArrayTest:newInstance(
         MethodResultEqualTest:newInstance("getLevel", level2),
-        MethodResultEqualTest:newInstance("getBaseLocation", location2),
+        MethodResultEqualTest:newInstance("getBaseLocation", baseLocation2),
         MethodResultEqualTest:newInstance("getNTrees", nTrees2),
         MethodResultEqualTest:newInstance("getLocalLogsLocator", localLogsLocator2),
         MethodResultEqualTest:newInstance("getLocalSaplingsLocator", localSaplingsLocator2)
@@ -229,29 +234,51 @@ end
 function T_BirchForest.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj, "Failed obtaining "..testClassName)
     local testObjName0 = testObjName.."0"
+    local testObjName1 = testObjName.."1"
 
     local constructParameters0 = {
         level           = level0,
 
-        baseLocation    = baseLocation1,
+        baseLocation    = baseLocation0,
         nTrees          = nTrees1,
+    }
+    local constructParameters1 = {
+        level           = level1,
+
+        baseLocation    = baseLocation0,
+        nTrees          = nTrees2,
     }
 
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
-    local constructFieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1)
+    local constructFieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
 
     local upgradeParametersTo1 = {
         level           = level1,
 
         nTrees          = nTrees2,
     }
+    local upgradeParametersTo2 = {
+        level           = level2,
 
-    local upgradeFieldsTestTo1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation1, nTrees2, localLogsLocator1, localSaplingsLocator1)
+        nTrees          = nTrees6,
+    }
 
-    -- local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+    local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL"),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
+    ))
+    local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL"),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
+    ))
+
+    local upgradeFieldsTestTo1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation0, nTrees2, localLogsLocatorTest0, localSaplingsLocatorTest0)
+    local upgradeFieldsTestTo2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees6, localLogsLocatorTest2, localSaplingsLocatorTest2)
+
+    -- local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
@@ -261,6 +288,7 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters0, testObjName0, destructFieldsTest0, logOk)
     T_IMObj.pt_construct(testClassName, BirchForest, constructParameters0, testObjName0, constructFieldsTest0, logOk)
     T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters0, testObjName0, upgradeParametersTo1, upgradeFieldsTestTo1, logOk)
+    -- ToDo: consider tests for other levels (or not as some are already in in t_forestry?)
 
     -- test getters
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
@@ -391,7 +419,7 @@ local function t_provideItemsTo_AOSrv(provideItems)
     local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local T_Chest = require "test.t_mobj_chest"
-    local chest2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
+    local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
     local wasteItemDepotLocator = enterprise_chests:saveObject(chest2)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
