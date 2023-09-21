@@ -239,10 +239,10 @@ end
 
 function t_forestry.T_hostMObj_SSrv_BirchForest()
     -- prepare test
-    local constructFieldsTest = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
+    local fieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters0, testMObjName0, constructFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters0, testMObjName0, fieldsTest0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -258,10 +258,10 @@ function t_forestry.T_upgradeMObj_SSrv_BirchForest()
         ValueTypeTest:newInstance("URL"),
         MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
     ))
-    local upgradeFieldsTest = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees6, localLogsLocatorTest2, localSaplingsLocatorTest2)
+    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees6, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, fieldsTest2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
