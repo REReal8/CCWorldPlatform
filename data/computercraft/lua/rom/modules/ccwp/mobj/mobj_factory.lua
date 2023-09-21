@@ -867,7 +867,7 @@ function Factory:provideItemsTo_AOSrv(...)
         local projectServiceData = {
             projectDef  = projectDef,
             projectData = projectData,
-            projectMeta = { title = "Factory:provideItemsTo", description = "We provide "..itemCount.." "..itemName.."'s" },
+            projectMeta = { title = "Factory:provideItemsTo", description = "We provide "..itemCount.." "..itemName.."'s", wipId = self:getWIPId() },
         }
 
         -- start project
@@ -1173,7 +1173,7 @@ function Factory.ProduceItem_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "Factory.ProduceItem_ASrv", description = "Time to make stuff" },
+        projectMeta = { title = "Factory.ProduceItem_ASrv", description = "Time to make stuff" }, -- add wipId here. likely once we have ProductionSpot's that are IItemSupplier's
     }
 
     -- start project
