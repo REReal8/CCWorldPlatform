@@ -196,7 +196,7 @@ function T_Chest.T_IMObj_All()
 
     local destructFieldsTest = TestArrayTest:newInstance()
 
-    local constructFieldsTest = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
+    local fieldsTest1 = T_Chest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
@@ -204,7 +204,7 @@ function T_Chest.T_IMObj_All()
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     T_IMObj.pt_Implements_IMObj(testClassName, obj)
     T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, fieldsTest1, logOk)
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)

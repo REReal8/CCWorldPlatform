@@ -265,9 +265,9 @@ function T_Factory.T_IMObj_All()
 
     local inputLocatorsTest0 = FieldValueEqualTest:newInstance("_inputLocators", inputLocators0)
     local outputLocatorsTest0 = FieldValueEqualTest:newInstance("_outputLocators", outputLocators0)
-    local constructFieldsTest0 = T_Factory.CreateInitialisedTest(nil, level0, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots0, smeltingSpots0)
+    local fieldsTest0 = T_Factory.CreateInitialisedTest(nil, level0, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots0, smeltingSpots0)
 
-    local constructFieldsTest1 = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
+    local fieldsTest1 = T_Factory.CreateInitialisedTest(nil, level1, baseLocation1, inputLocatorsTest0, outputLocatorsTest0, craftingSpots1, smeltingSpots1)
 
     local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
@@ -279,7 +279,7 @@ function T_Factory.T_IMObj_All()
         MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
-    local constructFieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
+    local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
 
     local constructParameters0 = {
         level           = level0,
@@ -308,10 +308,10 @@ function T_Factory.T_IMObj_All()
 
     -- test construct/ upgrade/ destruct
     T_IMObj.pt_destruct(testClassName, Factory, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, constructFieldsTest0, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, constructFieldsTest1, logOk)
-    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, constructFieldsTest2, logOk)
-    T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, constructFieldsTest2, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters0, testObjName0, fieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters1, testObjName1, fieldsTest1, logOk)
+    T_IMObj.pt_construct(testClassName, Factory, constructParameters2, testObjName2, fieldsTest2, logOk)
+    T_IMObj.pt_upgrade(testClassName, Factory, constructParameters1, testObjName1, upgradeParametersTo2, fieldsTest2, logOk)
 
     -- test getters
     T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk)
