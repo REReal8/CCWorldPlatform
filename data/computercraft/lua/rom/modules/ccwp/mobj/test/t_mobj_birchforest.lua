@@ -61,6 +61,7 @@ local logOk = false
 local level0 = 0
 local baseLocation1 = Location:newInstance(0, 0, 1, 0, 1)
 local nTrees1 = 1
+local level1 = 1
 local level2 = 1
 local localLogsLocator1 = enterprise_turtle.GetAnyTurtleLocator()
 local localSaplingsLocator1 = enterprise_turtle.GetAnyTurtleLocator()
@@ -229,10 +230,26 @@ function T_BirchForest.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
     local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1) assert(obj, "Failed obtaining "..testClassName)
+    local testObjName0 = testObjName.."0"
 
-    -- local destructFieldsTest = TestArrayTest:newInstance()
+    local constructParameters0 = {
+        level           = level0,
 
-    -- local constructFieldsTest = T_BirchForest.CreateInitialisedTest(nil, baseLocation1, accessDirection1, emptyInventory)
+        baseLocation    = baseLocation1,
+        nTrees          = nTrees1,
+    }
+
+    local destructFieldsTest0 = TestArrayTest:newInstance()
+
+    local constructFieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation1, nTrees1, localLogsLocator1, localSaplingsLocator1)
+
+    local upgradeParametersTo1 = {
+        level           = level1,
+
+        nTrees          = nTrees2,
+    }
+
+    local upgradeFieldsTestTo1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation1, nTrees2, localLogsLocator1, localSaplingsLocator1)
 
     -- local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
@@ -241,9 +258,9 @@ function T_BirchForest.T_IMObj_All()
     -- T_IMObj.pt_Implements_IMObj(testClassName, obj)
 
     -- test construct/ upgrade/ destruct
-    -- T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    -- T_IMObj.pt_construct(testClassName, BirchForest, constructParameters1, testObjName, constructFieldsTest, logOk)
-    -- T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters1, testObjName1, upgradeParametersTo2, constructFieldsTest2, logOk)
+    T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters0, testObjName0, destructFieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters0, testObjName0, constructFieldsTest0, logOk)
+    T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters0, testObjName0, upgradeParametersTo1, upgradeFieldsTestTo1, logOk)
 
     -- test getters
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)

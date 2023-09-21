@@ -7,7 +7,6 @@ local enterprise_forestry = Class.NewClass(Host)
     The forestry enterprise provides services for building and using forest production sites.
 --]]
 
-local coreutils = require "coreutils"
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
@@ -19,7 +18,6 @@ local role_forester = require "role_forester"
 local BirchForest = require "mobj_birchforest"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
 local enterprise_construction = require "enterprise_construction"
 
 --    _       _ _   _       _ _           _   _
@@ -83,19 +81,29 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     -- check nTrees == 1  -- ToDo: remove this restriction
     if nTrees ~=1 then corelog.Warning("enterprise_forestry.AddNewSite_ASrv: not yet implemented for nTrees="..nTrees) return Callback.ErrorCall(callback) end
 
-    -- create new BirchForest
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local forest = BirchForest:newInstance(coreutils.NewId(), forestLevel, baseLocation:copy(), 0, enterprise_turtle.GetAnyTurtleLocator(), enterprise_turtle.GetAnyTurtleLocator())
-    if not forest then corelog.Error("enterprise_forestry.AddNewSite_ASrv:failed obtaining BirchForest") return Callback.ErrorCall(callback) end
+    -- create constructParameters
+    local className = "BirchForest"
+    local constructParameters = {
+        level           = forestLevel,
 
-    -- save the BirchForest
-    corelog.WriteToLog(">Adding forest "..forest:getId()..".")
-    local forestLocator = enterprise_forestry:saveObject(forest)
-    if not forestLocator then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Failed adding BirchForest") return Callback.ErrorCall(callback) end
+        baseLocation    = baseLocation,
+        nTrees          = 0,
+    }
+
+    -- construct new MObj
+    local mobj = BirchForest:construct(constructParameters)
+    if not mobj then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Failed constructing "..className.." from constructParameters(="..textutils.serialise(constructParameters)..")") return Callback.ErrorCall(callback) end
+
+    -- save the MObj
+    local mobjLocator = enterprise_forestry:saveObject(mobj)
+    if not mobjLocator then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return Callback.ErrorCall(callback) end
+
+    -- log
+    corelog.WriteToLog(">Hosting new "..className.." "..mobj:getId()..".")
 
     -- create projectDef and projectData
     local projectData = {
-        forestLocator               = forestLocator,
+        forestLocator               = mobjLocator,
         forestLevel                 = forestLevel,
         nTrees                      = nTrees,
     }
@@ -130,7 +138,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
         -- add step data
         local treeBaseLocation  = baseLocation:copy()
-        local targetBaseLayer = forest:getBaseLayer(forestLevel)
+        local targetBaseLayer = mobj:getBaseLayer(forestLevel)
         projectData.materialsItemSupplierLocator= materialsItemSupplierLocator
         projectData.wasteItemDepotLocator       = wasteItemDepotLocator
         projectData.treeBaseLocation            = treeBaseLocation

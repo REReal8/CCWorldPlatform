@@ -10,6 +10,7 @@ local BirchForest = Class.NewClass(ObjBase, IMObj, IItemSupplier)
 --]]
 
 local corelog = require "corelog"
+local coreutils = require "coreutils"
 
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
@@ -26,6 +27,8 @@ local role_forester = require "role_forester"
 
 local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
+local enterprise_chests = require "enterprise_chests"
+local enterprise_turtle
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -160,6 +163,148 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
+
+function BirchForest:construct(...)
+    -- get & check input from description
+    local checkSuccess, level, baseLocation, nTrees = InputChecker.Check([[
+        This method constructs a BirchForest instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
+
+        It also ensures all child MObj's the BirchForest spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
+
+        The constructed BirchForest is not yet saved in the Host.
+
+        Return value:
+                                        - (BirchForest) the constructed BirchForest
+
+        Parameters:
+            constructParameters         - (table) parameters for constructing the BirchForest
+                level                   + (number) with BirchForest level
+                baseLocation            + (Location) base location of the BirchForest
+                nTrees                  + (number) number of trees
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("BirchForest:construct: Invalid input") return nil end
+
+    -- determine BirchForest fields
+    local id = coreutils.NewId()
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local localLogsLocator = nil
+    local localSaplingsLocator = nil
+    if level == -1 or level == 0 or level == 1 then
+        -- localLogsLocator
+        localLogsLocator = enterprise_turtle.GetAnyTurtleLocator()
+
+        -- localSaplingsLocator
+        localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator()
+    elseif level == 2 then
+        -- localLogsLocator
+        localLogsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(2, 1, 0),
+            accessDirection = "front",
+        }}).mobjLocator
+
+        -- localSaplingsLocator
+        localSaplingsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(4, 1, 0),
+            accessDirection = "front",
+        }}).mobjLocator
+    else
+        corelog.Error("BirchForest:construct: Don't know how to construct a BirchForest of level "..level) return nil
+    end
+    if not localLogsLocator then corelog.Error("BirchForest:construct: Failed obtaining localLogsLocator for level "..level) return nil end
+    if not localSaplingsLocator then corelog.Error("BirchForest:construct: Failed obtaining localSaplingsLocator for level "..level) return nil end
+
+    -- construct new BirchForest
+    local obj = BirchForest:newInstance(id, level, baseLocation:copy(), nTrees, localLogsLocator:copy(), localSaplingsLocator:copy())
+
+    -- end
+    return obj
+end
+
+function BirchForest:upgrade(...)
+    -- get & check input from description
+    local checkSuccess, upgradeLevel, nTrees = InputChecker.Check([[
+        This method upgrades a BirchForest instance from a table of parameters.
+
+        The upgraded BirchForest is not yet saved in it's Host.
+
+        Return value:
+                                        - (boolean) whether the BirchForest was succesfully upgraded.
+
+        Parameters:
+            upgradeParameters           - (table) parameters for upgrading the BirchForest
+                level                   + (number) with BirchForest level to upgrade to
+                nTrees                  + (number) number of trees
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("BirchForest:upgrade: Invalid input") return false end
+
+    -- upgrade if possible
+    local level = self:getLevel()
+    local baseLocation = self:getBaseLocation()
+    if level < 2 and upgradeLevel < 2 then
+    elseif level < 2 and upgradeLevel == 2 then
+        -- localLogsLocator
+        local localLogsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(2, 1, 0),
+            accessDirection = "front",
+        }}).mobjLocator
+        if not localLogsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localLogsLocator for level "..upgradeLevel) return false end
+        self._localLogsLocator = localLogsLocator
+
+        -- localSaplingsLocator
+        local localSaplingsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+            baseLocation    = baseLocation:getRelativeLocation(4, 1, 0),
+            accessDirection = "front",
+        }}).mobjLocator
+        if not localSaplingsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localSaplingsLocator for level "..upgradeLevel) return false end
+        self._localSaplingsLocator = localSaplingsLocator
+    else
+        corelog.Error("BirchForest:construct: Don't know how to upgrade a BirchForest from level "..level.." to "..upgradeLevel) return false
+    end
+
+    -- level
+    self._level = upgradeLevel
+
+    -- nTrees
+    self._nTrees = nTrees
+
+    -- end
+    return true
+end
+
+function BirchForest:destruct()
+    --[[
+        This method destructs a BirchForest instance.
+
+        It also ensures all child MObj's the BirchForest is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
+
+        The BirchForest is not yet deleted from the Host.
+
+        Return value:
+                                        - (boolean) whether the BirchForest was succesfully destructed.
+
+        Parameters:
+    ]]
+
+    -- release localLogsLocator
+    local destructSuccess = true
+    local localLogsLocator = self:getLocalLogsLocator()
+    local hostName = localLogsLocator:getHost()
+    if hostName == enterprise_chests:getHostName() then
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = localLogsLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("BirchForest:destruct(): failed releasing localLogsLocator "..localLogsLocator:getURI()) destructSuccess = false end
+    end
+
+    -- release localSaplingsLocator
+    local localSaplingsLocator = self:getLocalSaplingsLocator()
+    hostName = localSaplingsLocator:getHost()
+    if hostName == enterprise_chests:getHostName() then
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = localSaplingsLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("BirchForest:destruct(): failed releasing localSaplingsLocator "..localSaplingsLocator:getURI()) destructSuccess = false end
+    end
+
+    -- end
+    return destructSuccess
+end
 
 function BirchForest:getId()
     return self._id

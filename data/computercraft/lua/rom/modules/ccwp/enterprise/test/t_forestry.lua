@@ -40,22 +40,26 @@ function AddNewSite_ASrv(level, nTrees)
     local originalNForests = enterprise_forestry:getNumberOfObjects("BirchForest")
 
     -- test
-    enterprise_forestry.AddNewSite_ASrv({
+    local serviceResults = MethodExecutor.DoASyncService_Sync("enterprise_forestry", "AddNewSite_ASrv", {
         baseLocation                = location:copy(),
         forestLevel                 = level,
         nTrees                      = nTrees,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, "t_forestry.AddNewSite_ASrv_Callback", { originalNForests = originalNForests,})
-end
+    })
 
-function AddNewSite_ASrv_Callback(callbackData, serviceResults)
-    -- test (cont))
-    assert(serviceResults.success, "failed adding forest")
-    local forestLocator = serviceResults.forestLocator
-    assert(forestLocator ~= nil, "Failed obtaining forestLocator")
+    -- check: service success
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
+    -- check: Forest hosted on enterprise_forestry
+    local forestLocator = serviceResults.forestLocator assert(forestLocator, "no forestLocator returned")
+    local mobj = enterprise_forestry:getObject(forestLocator)
+    assert(mobj, "Forest(="..forestLocator:getURI()..") not hosted by "..enterprise_forestry:getHostName())
+
+    -- check: new forest added
     local nForests = enterprise_forestry:getNumberOfObjects("BirchForest")
-    local expectedNForests = callbackData.originalNForests + 1
+    local expectedNForests = originalNForests + 1
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- cleanup test

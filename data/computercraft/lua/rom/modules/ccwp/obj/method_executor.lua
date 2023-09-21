@@ -68,6 +68,63 @@ function MethodExecutor.DoSyncObjService(...)
     return MethodExecutor.CallObjMethod(className, objData, serviceName, { serviceData })
 end
 
+local doASyncService_Sync_serviceResults = {}
+
+function MethodExecutor.DoASyncService_Sync(...)
+    -- get & check input from description
+    local checkSuccess, moduleName, serviceName, serviceData = InputChecker.Check([[
+        This function executes an async service method of a module in a sync way. It does so by
+            - creating an internal callback function
+            - call the async service method with the callback
+            - wait for the callback to be called
+            - return the async service results the callback is called with
+
+        It creates a callback function and waits for the callback to return.
+
+        Return value:
+            results                     - (?) service method return value
+
+        Parameters:
+            moduleName                  + (string) name of module with the service
+            serviceName                 + (string) name of service function to execute
+            serviceData                 + (table) with argument to supply to service function
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("MethodExecutor.DoASyncService_Sync: Invalid input") return nil end
+
+    -- create callback
+    local callId = coreutils.NewId()
+    Callback = Callback or require "obj_callback"
+    local callback = Callback:newInstance("MethodExecutor", "doASyncService_Sync_Callback", {
+        ["callId"] = callId,
+    })
+
+    -- call async service method
+    MethodExecutor.CallModuleMethod(moduleName, serviceName, { serviceData, callback })
+
+    -- wait for callback
+    while not doASyncService_Sync_serviceResults[callId] do
+        -- wait
+        os.sleep(0.5)
+    end
+
+    -- get results
+    local serviceResults = doASyncService_Sync_serviceResults[callId]
+    doASyncService_Sync_serviceResults[callId] = nil -- remove temporary results
+
+    -- end
+    return serviceResults
+end
+
+function MethodExecutor.doASyncService_Sync_Callback(callbackData, serviceResults)
+    -- temporary store results
+    local callId = callbackData["callId"]
+    doASyncService_Sync_serviceResults[callId] = serviceResults
+    -- ToDo: consider if/ how we need to support this to work accross multiple turtles
+
+    -- end
+    return true
+end
+
 function MethodExecutor.DoASyncService(...)
     -- get & check input from description
     local checkSuccess, moduleName, serviceName, serviceData, callback = InputChecker.Check([[
