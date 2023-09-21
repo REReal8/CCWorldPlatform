@@ -138,6 +138,19 @@ function BirchForest:setLocalSaplingsLocator(localLocator)
     self._localSaplingsLocator = localLocator
 end
 
+--    _____ ____  _     _                  _   _               _
+--   |_   _/ __ \| |   (_)                | | | |             | |
+--     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                    _/ |
+--                   |__/
+
+function BirchForest:getClassName()
+    return "BirchForest"
+end
+
 --    _____ __  __  ____  _     _                  _   _               _
 --   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
 --     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -146,6 +159,10 @@ end
 --   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 --                            _/ |
 --                           |__/
+
+function BirchForest:getId()
+    return self._id
+end
 
 local blockClassName = "Block"
 local function Tree_layerLm1()
@@ -234,32 +251,6 @@ function BirchForest:getTreeLayer(level)
     elseif level == 1 then  return Tree_layerL1()
     elseif level == 2 then  return Tree_layerL1() -- same as L1
     else                    corelog.Error("BirchForest:getTreeLayer: Don't know layer for level "..level) return nil end
-end
-
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                    _/ |
---                   |__/
-
-function BirchForest:getClassName()
-    return "BirchForest"
-end
-
---    _____ __  __  ____  _     _                  _   _               _
---   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
---     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                            _/ |
---                           |__/
-
-function BirchForest:getId()
-    return self._id
 end
 
 --                        _                           _   _               _
