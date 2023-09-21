@@ -1,10 +1,10 @@
 -- define class
 local Class = require "class"
-local Host = require "obj_host"
-local enterprise_forestry = Class.NewClass(Host)
+local MObjHost = require "eobj_mobj_host"
+local enterprise_forestry = Class.NewClass(MObjHost)
 
 --[[
-    The forestry enterprise provides services for building and using forest production sites.
+    The enterprise_forestry is a MObjHost. It hosts ItemSupplier's (i.e. BirchForest's) that can produce wood.
 --]]
 
 local corelog = require "corelog"

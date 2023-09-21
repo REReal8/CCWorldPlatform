@@ -63,6 +63,7 @@ function AddNewSite_ASrv(level, nTrees)
     assert(nForests == expectedNForests, "gotten nForests(="..nForests..") not the same as expected(="..expectedNForests..")")
 
     -- cleanup test
+    mobj:destruct()
     enterprise_forestry:deleteResource(forestLocator)
 end
 
