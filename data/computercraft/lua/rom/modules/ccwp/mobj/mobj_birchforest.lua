@@ -138,6 +138,88 @@ function BirchForest:setLocalSaplingsLocator(localLocator)
     self._localSaplingsLocator = localLocator
 end
 
+--    _____ __  __  ____  _     _                  _   _               _
+--   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
+--     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
+--     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                            _/ |
+--                           |__/
+
+local blockClassName = "Block"
+local function Tree_layerLm1()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [6] = "??????",
+            [5] = "??????",
+            [4] = "???S??",
+            [3] = "??????",
+            [2] = "??????",
+            [1] = "??????",
+        })
+    )
+end
+
+local function Tree_layerL0()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "   S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "      ",
+        })
+    )
+end
+
+local function Tree_layerL1()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "      ",
+            [2] = "      ",
+            [1] = "   T  ",
+        })
+    )
+end
+
+local function Base_layerL2()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+            ["T"]   = Block:newInstance("minecraft:torch"),
+            ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
+            ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [6] = "      ",
+            [5] = "      ",
+            [4] = "T  S  ",
+            [3] = "     D",
+            [2] = "  C D ",
+            [1] = "   T  ",
+        })
+    )
+end
+
 function BirchForest:getBaseLayer(level)
     if level == -1 then     return Tree_layerLm1()
     elseif level == 0 then  return Tree_layerL0()
@@ -468,79 +550,6 @@ end
 
 function BirchForest:getFirstTreeLocation()
     return self:getBaseLocation():getRelativeLocation(3, 2, 0)
-end
-
-local blockClassName = "Block"
-function Tree_layerLm1()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
-            ["?"]   = Block:newInstance(Block.AnyBlockName()),
-        }),
-        CodeMap:newInstance({
-            [6] = "??????",
-            [5] = "??????",
-            [4] = "???S??",
-            [3] = "??????",
-            [2] = "??????",
-            [1] = "??????",
-        })
-    )
-end
-
-function Tree_layerL0()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [6] = "      ",
-            [5] = "      ",
-            [4] = "   S  ",
-            [3] = "      ",
-            [2] = "      ",
-            [1] = "      ",
-        })
-    )
-end
-
-function Tree_layerL1()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
-            ["T"]   = Block:newInstance("minecraft:torch"),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [6] = "      ",
-            [5] = "      ",
-            [4] = "T  S  ",
-            [3] = "      ",
-            [2] = "      ",
-            [1] = "   T  ",
-        })
-    )
-end
-
-function Base_layerL2()
-    return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
-            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
-            ["T"]   = Block:newInstance("minecraft:torch"),
-            ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
-            ["D"]   = Block:newInstance("minecraft:chest", 1, 0),
-            [" "]   = Block:newInstance(Block.NoneBlockName()),
-        }),
-        CodeMap:newInstance({
-            [6] = "      ",
-            [5] = "      ",
-            [4] = "T  S  ",
-            [3] = "     D",
-            [2] = "  C D ",
-            [1] = "   T  ",
-        })
-    )
 end
 
 return BirchForest
