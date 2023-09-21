@@ -1,8 +1,9 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local IMObj = require "i_mobj"
 local IItemSupplier = require "i_item_supplier"
-local BirchForest = Class.NewClass(ObjBase, IItemSupplier)
+local BirchForest = Class.NewClass(ObjBase, IMObj, IItemSupplier)
 
 --[[
     This module implements BirchForest.

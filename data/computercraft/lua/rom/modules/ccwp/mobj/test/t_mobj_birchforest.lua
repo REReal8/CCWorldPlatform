@@ -236,15 +236,24 @@ function T_BirchForest.T_IMObj_All()
 
     -- local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
 
-    -- test
-    -- T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    -- test type
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
     -- T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    -- T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    -- T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
+
+    -- test construct/ upgrade/ destruct
+    -- T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters1, testObjName, destructFieldsTest, logOk)
+    -- T_IMObj.pt_construct(testClassName, BirchForest, constructParameters1, testObjName, constructFieldsTest, logOk)
+    -- T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters1, testObjName1, upgradeParametersTo2, constructFieldsTest2, logOk)
+
+    -- test getters
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+
+    -- test blueprints
     -- T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
     -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+
+    -- cleanup test
 end
 
 --                        _                           _   _               _
