@@ -242,7 +242,7 @@ function T_BirchForest.T_IMObj_All()
     -- T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
     -- T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    -- T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
     -- T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
     -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end

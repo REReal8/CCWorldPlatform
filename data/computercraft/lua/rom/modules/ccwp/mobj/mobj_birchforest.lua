@@ -164,6 +164,14 @@ function BirchForest:getId()
     return self._id
 end
 
+function BirchForest:getWIPId()
+    --[[
+        Returns the unique Id of the BirchForest used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
+end
+
 local blockClassName = "Block"
 local function Tree_layerLm1()
     return LayerRectangle:newInstance(
@@ -410,7 +418,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
             local projectServiceData = {
                 projectDef  = projectDef,
                 projectData = projectData,
-                projectMeta = { title = "Harvesting forest", description = "The most usefull task in the world" },
+                projectMeta = { title = "Harvesting forest", description = "The most usefull task in the world", wipId = self:getWIPId() },
             }
 
             -- start project
