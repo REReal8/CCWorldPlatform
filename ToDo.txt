@@ -88,9 +88,9 @@ R  Improve MObjHost                                                             
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
    -  enterprise_gathering
-      -  upgrade into an MObjHost
-      -  use new MObjHost methods instead of current equivalent
-      -  use generalised test functions
+      R  upgrade into an MObjHost                                                                                       (done)
+      R  use new MObjHost methods instead of current equivalent                                                         (done)
+      -  introduce test module with generalised test functions
    R  enterprise_storage                                                                                                (done)
       R  upgrade into an MObjHost                                                                                       (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
