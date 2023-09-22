@@ -170,17 +170,17 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Starting our first forest"},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
-                { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "mobjLocator" },
             }},
             -- update enterprise_energy to L1 (refuelAmount = 1 log = 60, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL1" },
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "mobjLocator" },
             }},
             -- upgrade forest to L0 (1 tree/ sapling)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
-                { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL0" },
                 { keyDef = "targetNTrees"                   , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
@@ -193,7 +193,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             -- update enterprise_energy to L2 (refuelAmount = 1 tree = 300, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL2" },
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "mobjLocator" },
             }},
             -- collect some cobblestone for furnance
@@ -214,7 +214,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" }, -- ToDo: back to wanted energyL2
                 -- ToDo: investigate how we can postpone L3 to later ... somehow this sometimes fails. Is this because we do not yet claim resources inside the turtle??
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "mobjLocator" },
             }},
             -- delist, dismantle and release initial crafting spot
@@ -228,7 +228,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }, description = "Removing old factory"},
             -- upgrade forest to L1 with 6 trees
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
-                { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL1" },
                 { keyDef = "targetNTrees"                   , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
@@ -236,7 +236,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             }, description = "Expanding forest to 6 trees"},
             -- upgrade forest to L2 (in/out chests + 6 trees)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpgradeSite_ASrv" }, stepDataDef = {
-                { keyDef = "forestLocator"                  , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "targetLevel"                    , sourceStep = 0, sourceKeyDef = "forestL2" },
                 { keyDef = "targetNTrees"                   , sourceStep = 0, sourceKeyDef = "nTreeswanted" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
@@ -262,7 +262,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
             -- update enterprise_energy to L3 (refuelAmount = 6 trees = 1800, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
                 { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
-                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "forestLocator" },
+                { keyDef = "forestLocator"              , sourceStep = 5, sourceKeyDef = "mobjLocator" },
                 { keyDef = "factoryLocator"             , sourceStep = 11, sourceKeyDef = "mobjLocator" },
             }},
         },

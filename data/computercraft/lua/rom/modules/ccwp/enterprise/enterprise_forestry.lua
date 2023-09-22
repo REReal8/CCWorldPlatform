@@ -57,7 +57,7 @@ end
 function enterprise_forestry.AddNewSite_ASrv(...)
     -- get & check input from description
     local checkSuccess, baseLocation, forestLevel, nTrees, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service builds a new forest site and ensures it's ready for use.
+        This async public service builds a new Forest site and ensures it's ready for use.
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -65,7 +65,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
-                forestLocator                   - (URL) locating the site
+                mobjLocator                     - (URL) locating the created MObj
 
         Parameters:
             serviceData                         - (table) data about this site
@@ -105,7 +105,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     local projectData = {
         hostLocator                 = enterprise_forestry:getHostLocator(),
 
-        forestLocator               = mobjLocator,
+        mobjLocator                 = mobjLocator,
         upgradeParameters           = {
             level                   = forestLevel,
 
@@ -138,7 +138,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
                 { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "Building forest"}
+            }, description = "Building Forest"}
         )
 
         -- add step data
@@ -153,20 +153,20 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     table.insert(projectSteps,
         -- upgrade MObj
         { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-            { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "forestLocator" },
+            { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
             { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParameters" },
         }}
     )
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "forestLocator"                  , sourceStep = 0, sourceKeyDef = "forestLocator" },
+            { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
         }
     }
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "New forest site", description = "More trees == more fun" },
+        projectMeta = { title = "New Forest", description = "More trees == more fun" },
     }
 
     -- start project
@@ -175,10 +175,10 @@ end
 
 function enterprise_forestry.UpgradeSite_ASrv(...)
     -- get & check input from description
-    local checkSuccess, forestLocator, targetLevel, targetNTrees, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This private async service upgrades a forest site from the current configuration (i.e. level, # trees, ...) to a new configuration.
+    local checkSuccess, mobjLocator, targetLevel, targetNTrees, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
+        This private async service upgrades a Forest from the current configuration (i.e. level, # trees, ...) to a new configuration.
 
-        Note: downgrading a forest is not supported.
+        Note: downgrading a Forest is not supported.
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -189,22 +189,22 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about the service
-                forestLocator                   + (URL) locating the forest
-                targetLevel                     + (number) with forest level to upgrade to
-                targetNTrees                    + (number) number of trees to upgrade forest to
+                mobjLocator                     + (URL) locating the Forest
+                targetLevel                     + (number) with Forest level to upgrade to
+                targetNTrees                    + (number) number of trees to upgrade Forest to
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- get forest
-    local forest = enterprise_forestry:getObject(forestLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving forest = "..forestLocator:getURI()) return Callback.ErrorCall(callback) end
+    -- get Forest
+    local forest = enterprise_forestry:getObject(mobjLocator)
+    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Failed retrieving Forest = "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
 
     -- check not downgrading
     local startingLevel = forest:getLevel()
-    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading forest level (from "..startingLevel.." to "..targetLevel..") not supported") return Callback.ErrorCall(callback) end
+    if startingLevel > targetLevel then corelog.Error("enterprise_forestry.UpgradeSite_ASrv: Downgrading Forest level (from "..startingLevel.." to "..targetLevel..") not supported") return Callback.ErrorCall(callback) end
 
     -- determine projectSteps and projectData
     local projectSteps = { }
@@ -213,7 +213,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local projectData = {
         hostLocator                 = enterprise_forestry:getHostLocator(),
 
-        forestLocator               = forestLocator,
+        mobjLocator                 = mobjLocator,
 
         treeLayer                   = targetTreeLayer,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
@@ -282,13 +282,13 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             end
         end
 
-        -- update forest info
+        -- update Forest info
         iStep = iStep + 1
         local iStepStr = tostring(iStep)
         table.insert(projectSteps,
             -- upgrade MObj
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "forestLocator" },
+                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
                 { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeLevelParameters" },
             }}
         )
@@ -321,14 +321,14 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             -- add success stepDataDef
             table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, sourceKeyDef = "success" })
 
-            -- update forest info
+            -- update Forest info
             iStep = iStep + 1
             iStepStr = tostring(iStep)
             local upgradeLevelParametersStr = "upgradeLevelParametersStep"..iStepStr
             table.insert(projectSteps,
                 -- upgrade MObj
                 { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-                    { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "forestLocator" },
+                    { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
                     { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = upgradeLevelParametersStr },
                 }}
             )
@@ -354,11 +354,11 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local projectServiceData = {
         projectDef  = projectDef,
         projectData = projectData,
-        projectMeta = { title = "Adding trees to the forest", description = "More trees == more fun" },
+        projectMeta = { title = "Adding trees to the Forest", description = "More trees == more fun" },
     }
 
     -- start project
-    corelog.WriteToLog(">Upgrading forest "..forestLocator:getURI().." from level "..startingLevel.." to "..targetLevel.." and from "..startingNTrees.." to "..targetNTrees.." trees")
+    corelog.WriteToLog(">Upgrading Forest "..mobjLocator:getURI().." from level "..startingLevel.." to "..targetLevel.." and from "..startingNTrees.." to "..targetNTrees.." trees")
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
@@ -372,7 +372,7 @@ end
 function enterprise_forestry.BuildForestTree_ASrv(...)
     -- get & check input from description
     local checkSuccess, treeBaseLocation, treeLayer, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This private async service extends the forest with 1 tree
+        This private async service extends the Forest with 1 tree
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -383,7 +383,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
 
         Parameters:
             serviceData                         - (table) data about this service
-                treeBaseLocation                + (Location) location of the base (lower left corner) of a forest tree (layer)
+                treeBaseLocation                + (Location) location of the base (lower left corner) of a Forest tree (layer)
                 treeLayer                       + (LayerRectangle) tree layer to build
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
@@ -400,7 +400,7 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = wasteItemDepotLocator,
     }
-    corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
+    corelog.WriteToLog(">Building tree (Forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
     return enterprise_construction.BuildLayer_ASrv(buildData, callback)
 end
 

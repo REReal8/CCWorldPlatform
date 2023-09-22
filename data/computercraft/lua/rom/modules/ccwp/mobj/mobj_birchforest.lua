@@ -512,8 +512,8 @@ function BirchForest:provideItemsTo_AOSrv(...)
         else
             -- construct new itemsLocator for this forest
             local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
-            local forestLocator = host:getObjectLocator(self)
-            local itemsLocator = forestLocator:copy()
+            local mobjLocator = host:getObjectLocator(self)
+            local itemsLocator = mobjLocator:copy()
             itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
 
             -- construct taskData

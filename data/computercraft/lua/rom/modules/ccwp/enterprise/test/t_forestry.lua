@@ -97,9 +97,9 @@ function AddNewSite_ASrv(level, nTrees)
     assert(serviceResults.success, "failed executing service")
 
     -- check: Forest hosted on enterprise_forestry
-    local forestLocator = serviceResults.forestLocator assert(forestLocator, "no forestLocator returned")
-    local mobj = enterprise_forestry:getObject(forestLocator)
-    assert(mobj, "Forest(="..forestLocator:getURI()..") not hosted by "..enterprise_forestry:getHostName())
+    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
+    local mobj = enterprise_forestry:getObject(mobjLocator)
+    assert(mobj, "Forest(="..mobjLocator:getURI()..") not hosted by "..enterprise_forestry:getHostName())
 
     -- check: new forest added
     local nForests = enterprise_forestry:getNumberOfObjects("BirchForest")
@@ -108,7 +108,7 @@ function AddNewSite_ASrv(level, nTrees)
 
     -- cleanup test
     mobj:destruct()
-    enterprise_forestry:deleteResource(forestLocator)
+    enterprise_forestry:deleteResource(mobjLocator)
 end
 
 function t_forestry.T_UpgradeSite_ASrv_Levelm1_Level0Trees1()
@@ -137,17 +137,17 @@ end
 
 function t_forestry.ExtraCallback(...)
     -- get & check input
-    local checkSuccess, levelWanted, treesWanted, forestLocator = InputChecker.Check([[
+    local checkSuccess, levelWanted, treesWanted, mobjLocator = InputChecker.Check([[
         Parameters:
             extraCallbackData           - (table) callback data
                 levelWanted             + (number)
                 treesWanted             + (number)
-                forestLocator           + (URL) locating the forest
+                mobjLocator             + (URL) locating the forest
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("ExtraCallback: Invalid input") return end
 
     -- call and test
-    CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, "", {})
+    CallAndTest_UpgradeSite_ASrv(mobjLocator, levelWanted, treesWanted, "", {})
 
     -- end
     return {success = true}
@@ -177,16 +177,16 @@ function UpgradeSite_ASrv(...)
     })
     assert(serviceResults, "failed preparing test")
     assert(serviceResults.success, "failed executing service")
-    local forestLocator = URL:new(serviceResults.forestLocator) assert(forestLocator, "no forestLocator returned")
+    local mobjLocator = URL:new(serviceResults.mobjLocator) assert(mobjLocator, "no mobjLocator returned")
 
     -- call and test
-    CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
+    CallAndTest_UpgradeSite_ASrv(mobjLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
 end
 
-function CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
+function CallAndTest_UpgradeSite_ASrv(mobjLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
     -- test
     local serviceResults = MethodExecutor.DoASyncService_Sync("enterprise_forestry", "UpgradeSite_ASrv", {
-        forestLocator               = forestLocator:copy(),
+        mobjLocator                 = mobjLocator:copy(),
         targetLevel                 = levelWanted,
         targetNTrees                = treesWanted,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
@@ -198,19 +198,19 @@ function CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, e
     assert(serviceResults.success, "failed executing service")
 
     -- check: Forest
-    local forest = enterprise_forestry:getObject(forestLocator)
+    local forest = enterprise_forestry:getObject(mobjLocator)
     assert(forest:getLevel() == levelWanted, "gotten level(="..forest:getLevel()..") not the same as expected(="..levelWanted..")")
     assert(forest:getNTrees() == treesWanted, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..treesWanted..")")
 
     -- extraCallback?
     if extraCallbackName == "" then
         -- cleanup test
-        local mobj = enterprise_forestry:getObject(forestLocator) assert(mobj, "Forest(="..forestLocator:getURI()..") not hosted by "..enterprise_forestry:getHostName())
+        local mobj = enterprise_forestry:getObject(mobjLocator) assert(mobj, "Forest(="..mobjLocator:getURI()..") not hosted by "..enterprise_forestry:getHostName())
         mobj:destruct()
-        enterprise_forestry:deleteResource(forestLocator)
+        enterprise_forestry:deleteResource(mobjLocator)
     else
         -- call extraCallback
-        extraCallbackData.forestLocator = forestLocator
+        extraCallbackData.mobjLocator = mobjLocator
         local moduleName = "t_forestry"
         MethodExecutor.DoSyncService(moduleName, extraCallbackName, extraCallbackData)
     end
