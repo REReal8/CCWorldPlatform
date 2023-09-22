@@ -77,8 +77,8 @@ R  Improve MObjHost                                                             
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)
    R  enterprise_forestry                                                                                               (....)
       R  upgrade to a MObjHost                                                                                          (done)
-      R  use new MObjHost methods instead of current equivalent
-      R  use generalised test functions
+      R  use new MObjHost methods instead of current equivalent                                                         (....)
+      R  use generalised test functions                                                                                 (....)
    R  enterprise_chest                                                                                                  (done)
       R  upgrade to a MObjHost                                                                                          (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
