@@ -4,6 +4,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 
+local URL = require "obj_url"
 local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
@@ -134,7 +135,7 @@ function t_forestry.T_UpgradeSite_ASrv_Level1Trees3_Level2Trees3()
     UpgradeSite_ASrv(level1, nTrees1, level1, nTrees3, "ExtraCallback", { levelWanted = level2, treesWanted = nTrees3 })
 end
 
-function ExtraCallback(...)
+function t_forestry.ExtraCallback(...)
     -- get & check input
     local checkSuccess, levelWanted, treesWanted, forestLocator = InputChecker.Check([[
         Parameters:
@@ -145,73 +146,58 @@ function ExtraCallback(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("ExtraCallback: Invalid input") return end
 
-    -- test
-    enterprise_forestry.UpgradeSite_ASrv({
-        forestLocator               = forestLocator:copy(),
-        targetLevel                 = levelWanted,
-        targetNTrees                = treesWanted,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted })
+    -- call and test
+    CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, "", {})
+
+    -- end
+    return {success = true}
 end
 
-function UpgradeSite_ASrv(levelStart, treesStart, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
+function UpgradeSite_ASrv(...)
+    -- get & check input
+    local checkSuccess, levelStart, treesStart, levelWanted, treesWanted, extraCallbackName, extraCallbackData = InputChecker.Check([[
+        Parameters:
+            levelStart              + (number)
+            treesStart              + (number)
+            levelWanted             + (number)
+            treesWanted             + (number)
+            extraCallbackName       + (string, "") extra callback method name
+            extraCallbackData       + (table, {}) extra callback data
+    --]], table.unpack(arg))
+    assert(checkSuccess, "UpgradeSite_ASrv: Invalid input")
+
     -- prepare test
     corelog.WriteToLog("# UpgradeSite_ASrv (L"..levelStart..",trees"..treesStart..") => (L"..levelWanted..",trees"..treesWanted..") test")
-    enterprise_forestry.AddNewSite_ASrv({
+    local serviceResults = MethodExecutor.DoASyncService_Sync("enterprise_forestry", "AddNewSite_ASrv", {
         baseLocation                = baseLocation0:copy(),
         forestLevel                 = levelStart,
         nTrees                      = treesStart,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, "t_forestry.UpgradeSite_ASrv_PrepCallback", { levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData})
+    })
+    assert(serviceResults, "failed preparing test")
+    assert(serviceResults.success, "failed executing service")
+    local forestLocator = URL:new(serviceResults.forestLocator) assert(forestLocator, "no forestLocator returned")
+
+    -- call and test
+    CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
 end
 
-function UpgradeSite_ASrv_PrepCallback(...)
-    -- get & check input
-    local checkSuccess, levelWanted, treesWanted, extraCallbackName, extraCallbackData, serviceSuccess, forestLocator = InputChecker.Check([[
-        Parameters:
-            callbackData                - (table) callback data
-                levelWanted             + (number)
-                treesWanted             + (number)
-                extraCallbackName       + (string, "") extra callback method name
-                extraCallbackData       + (table, {}) extra callback data
-            serviceResults              - (table) results of the service
-                success                 + (boolean)
-                forestLocator           + (URL) locating the forest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("UpgradeSite_ASrv_PrepCallback: Invalid input") return end
-
-    -- prepare test (cont)
-    assert(serviceSuccess, "failed preparing test")
-
+function CallAndTest_UpgradeSite_ASrv(forestLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData)
     -- test
-    enterprise_forestry.UpgradeSite_ASrv({
+    local serviceResults = MethodExecutor.DoASyncService_Sync("enterprise_forestry", "UpgradeSite_ASrv", {
         forestLocator               = forestLocator:copy(),
         targetLevel                 = levelWanted,
         targetNTrees                = treesWanted,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
-    }, "t_forestry.UpgradeSite_ASrv_TestCallback", { forestLocator = forestLocator:copy(), levelWanted = levelWanted, treesWanted = treesWanted, extraCallbackName = extraCallbackName, extraCallbackData = extraCallbackData })
-end
+    })
 
-function UpgradeSite_ASrv_TestCallback(...)
-    -- get & check input
-    local checkSuccess, forestLocator, levelWanted, treesWanted, extraCallbackName, extraCallbackData, serviceSuccess = InputChecker.Check([[
-        Parameters:
-            callbackData                - (table) callback data
-                forestLocator           + (URL) locating the forest
-                levelWanted             + (number)
-                treesWanted             + (number)
-                extraCallbackName       + (string, "") extra callback method name
-                extraCallbackData       + (table, {}) extra callback data
-            serviceResults              - (table) results of the services
-                success                 + (boolean)
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("UpgradeSite_ASrv_TestCallback: Invalid input") return end
+    -- check: service success
+    assert(serviceResults, "failed upgrading Forest")
+    assert(serviceResults.success, "failed executing service")
 
-    -- test result
-    assert(serviceSuccess, "failed upgrading forest")
+    -- check: Forest
     local forest = enterprise_forestry:getObject(forestLocator)
     assert(forest:getLevel() == levelWanted, "gotten level(="..forest:getLevel()..") not the same as expected(="..levelWanted..")")
     assert(forest:getNTrees() == treesWanted, "gotten nTrees(="..forest:getNTrees()..") not the same as expected(="..treesWanted..")")
@@ -219,6 +205,8 @@ function UpgradeSite_ASrv_TestCallback(...)
     -- extraCallback?
     if extraCallbackName == "" then
         -- cleanup test
+        local mobj = enterprise_forestry:getObject(forestLocator) assert(mobj, "Forest(="..forestLocator:getURI()..") not hosted by "..enterprise_forestry:getHostName())
+        mobj:destruct()
         enterprise_forestry:deleteResource(forestLocator)
     else
         -- call extraCallback

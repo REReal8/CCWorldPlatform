@@ -103,9 +103,14 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
     -- create projectDef and projectData
     local projectData = {
+        hostLocator                 = enterprise_forestry:getHostLocator(),
+
         forestLocator               = mobjLocator,
-        forestLevel                 = forestLevel,
-        nTrees                      = nTrees,
+        upgradeParameters           = {
+            level                   = forestLevel,
+
+            nTrees                  = nTrees,
+        }
     }
 
     local projectSteps = { }
@@ -146,16 +151,16 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     end
 
     table.insert(projectSteps,
-        { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpdateForest_SSrv" }, stepDataDef = {
-            { keyDef = "forestLocator"              , sourceStep = 0, sourceKeyDef = "forestLocator" },
-            { keyDef = "forestLevel"                , sourceStep = 0, sourceKeyDef = "forestLevel" },
-            { keyDef = "nTrees"                     , sourceStep = 0, sourceKeyDef = "nTrees" },
+        -- upgrade MObj
+        { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+            { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "forestLocator" },
+            { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParameters" },
         }}
     )
     local projectDef = {
         steps = projectSteps,
         returnData  = {
-            { keyDef = "forestLocator"                  , sourceStep = 2, sourceKeyDef = "forestLocator" },
+            { keyDef = "forestLocator"                  , sourceStep = 0, sourceKeyDef = "forestLocator" },
         }
     }
     local projectServiceData = {
@@ -206,8 +211,10 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     local areAllTrueStepDataDef = {}
     local targetTreeLayer = forest:getTreeLayer(targetLevel)
     local projectData = {
+        hostLocator                 = enterprise_forestry:getHostLocator(),
+
         forestLocator               = forestLocator,
-        targetLevel                 = targetLevel,
+
         treeLayer                   = targetTreeLayer,
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = wasteItemDepotLocator,
@@ -231,7 +238,11 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         local treeColOffset, treeRowOffset, treeBuildLayer = transformLayer:buildData()
         projectData.treeBuildLayer = treeBuildLayer
 
-        projectData.startingNTrees  = startingNTrees
+        projectData.upgradeLevelParameters = {
+            level   = targetLevel,
+
+            nTrees  = startingNTrees,
+        }
 
         -- loop on current trees
         for iTree = 1, startingNTrees do
@@ -275,10 +286,10 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         iStep = iStep + 1
         local iStepStr = tostring(iStep)
         table.insert(projectSteps,
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpdateForest_SSrv" }, stepDataDef = {
-                { keyDef = "forestLocator"          , sourceStep = 0, sourceKeyDef = "forestLocator" },
-                { keyDef = "forestLevel"            , sourceStep = 0, sourceKeyDef = "targetLevel" },
-                { keyDef = "nTrees"                 , sourceStep = 0, sourceKeyDef = "startingNTrees" },
+            -- upgrade MObj
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "forestLocator" },
+                { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeLevelParameters" },
             }}
         )
 
@@ -313,17 +324,21 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             -- update forest info
             iStep = iStep + 1
             iStepStr = tostring(iStep)
-            local newNTreesStr = "newNTreeStep"..iStepStr
+            local upgradeLevelParametersStr = "upgradeLevelParametersStep"..iStepStr
             table.insert(projectSteps,
-                { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "UpdateForest_SSrv" }, stepDataDef = {
-                    { keyDef = "forestLocator"          , sourceStep = 0, sourceKeyDef = "forestLocator" },
-                    { keyDef = "forestLevel"            , sourceStep = 0, sourceKeyDef = "targetLevel" },
-                    { keyDef = "nTrees"                 , sourceStep = 0, sourceKeyDef = newNTreesStr },
+                -- upgrade MObj
+                { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
+                    { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "forestLocator" },
+                    { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = upgradeLevelParametersStr },
                 }}
             )
 
             -- add step data
-            projectData[newNTreesStr] = iTree
+            projectData[upgradeLevelParametersStr] = {
+                level   = targetLevel,
+
+                nTrees  = iTree,
+            }
 
             -- add success stepDataDef
             table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, sourceKeyDef = "success" })
@@ -387,43 +402,6 @@ function enterprise_forestry.BuildForestTree_ASrv(...)
     }
     corelog.WriteToLog(">Building tree (forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
     return enterprise_construction.BuildLayer_ASrv(buildData, callback)
-end
-
-function enterprise_forestry.UpdateForest_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, forestLocator, forestLevel, nTrees = InputChecker.Check([[
-        This private sync service updates the forest information.
-
-        Return value:
-                                        - (table)
-                success                 - (boolean) whether the service executed successfully
-                forestLocator           - (URL) locating the forest
-
-        Parameters:
-            serviceData                 - (table) data about the service
-                forestLocator           + (URL) locating the forest
-                forestLevel             + (number) with forest level
-                nTrees                  + (number) number of trees in the forest
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.UpdateForest_SSrv: Invalid input") return {success = false} end
-
-    -- get forest
-    local forest = enterprise_forestry:getObject(forestLocator)
-    if type(forest) ~="table" then corelog.Error("enterprise_forestry.UpdateForest_SSrv: Failed retrieving forest = "..forestLocator:getURI()) return {success = false} end
-
-    -- set forest information
-    forest:setLevel(forestLevel)
-    forest:setNTrees(nTrees)
-
-    -- save forest data
-    forestLocator = enterprise_forestry:saveObject(forest)
-
-    -- end
-    corelog.WriteToLog(">Updated forest (level="..forestLevel..", nTrees="..nTrees..")")
-    return {
-        success         = true,
-        forestLocator   = forestLocator,
-    }
 end
 
 return enterprise_forestry
