@@ -240,7 +240,8 @@ function BirchForest:upgrade(...)
     -- upgrade if possible
     local level = self:getLevel()
     local baseLocation = self:getBaseLocation()
-    if level < 2 and upgradeLevel < 2 then
+    if level == upgradeLevel then
+    elseif level < 2 and upgradeLevel < 2 then
     elseif level < 2 and upgradeLevel == 2 then
         -- localLogsLocator
         local localLogsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
