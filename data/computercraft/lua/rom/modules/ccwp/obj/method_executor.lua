@@ -351,7 +351,7 @@ function MethodExecutor.CallMethod(...)
 
     -- get method
     local method = object[methodName]
-    if not method then corelog.Warning("MethodExecutor.CallMethod(...): Method "..methodName.." not found in object "..textutils.serialise(object, {compact = true})) return nil end
+    if not method then corelog.Warning("MethodExecutor.CallMethod(...): Method "..methodName.." not found in object ") return nil end
 
     -- call method
     local results = method(table.unpack(methodArguments))
