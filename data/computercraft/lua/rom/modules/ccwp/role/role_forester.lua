@@ -122,8 +122,9 @@ function role_forester.HarvestForest_Task(...)
         Return value:
             task result                     - (table)
                 success                     - (boolean) whether the task was succesfull
-                turtleOutputLogsLocator     - (URL) locating the logs that where harvested (in a turtle)
-                turtleOutputSaplingsLocator - (URL) locating the saplings that where harvested (in a turtle)
+                turtleOutputLogsLocator     - (URL) locating the logs that where harvested (in the turtle)
+                turtleOutputSaplingsLocator - (URL) locating the saplings that where harvested (in the turtle)
+                turtleWasteItemsLocator     - (URL) locating waste items collected (in the turtle) during harvesting
 
         Parameters:
             taskData                        - (table) data about the task
@@ -161,7 +162,6 @@ function role_forester.HarvestForest_Task(...)
 
         -- harvest forest
         local dontCleanup = true
---        if forestLevel >= 2 then dontCleanup = false end -- ToDo: consider implementing in enterprise to ensure proper usages of chests
         Rondje({
             depth       = nTrees, -- ToDo: modify to spread nTrees over depth and width
             width       = 1,
@@ -178,7 +178,18 @@ function role_forester.HarvestForest_Task(...)
     local logCount = uniqueEndItemTable[logName]
     local saplingCount = uniqueEndItemTable[saplingName]
 
-    -- determine output locators
+    -- determine waste items
+    local wasteItems = {}
+    for wasteItemName, wasteItemCount in pairs(uniqueEndItemTable) do
+        if wasteItemName ~= logName and wasteItemName ~= saplingName then
+            wasteItems[wasteItemName] = wasteItemCount
+        end
+    end
+    if next(wasteItems) ~= nil then
+        corelog.WriteToLog(">harvested waste: "..textutils.serialise(wasteItems, {compact = true}))
+    end
+
+    -- determine output & waste locators
     local turtleOutputLogsLocator = enterprise_turtle.GetItemsLocator_SSrv({
         turtleId    = turtleObj:getTurtleId(),
         itemsQuery  = {
@@ -191,12 +202,17 @@ function role_forester.HarvestForest_Task(...)
             [saplingName]   = saplingCount
         }
     }).itemsLocator
+    local turtleWasteItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
+        turtleId    = turtleObj:getTurtleId(),
+        itemsQuery  = wasteItems
+    }).itemsLocator
 
     -- end
     return {
         success                     = true,
         turtleOutputLogsLocator     = turtleOutputLogsLocator,
         turtleOutputSaplingsLocator = turtleOutputSaplingsLocator,
+        turtleWasteItemsLocator     = turtleWasteItemsLocator,
     }
 end
 

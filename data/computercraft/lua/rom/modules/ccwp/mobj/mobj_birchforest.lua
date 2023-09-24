@@ -550,7 +550,12 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "localSaplingsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
-                    -- ToDo: store waste materials (e.g. sticks)
+                    -- store waste (e.g. sticks) to wasteItemDepotLocator
+                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleWasteItemsLocator" },
+                        { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
+                        { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                    }},
                     -- recursive call to provide (remaining) items
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                         { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "itemsLocator" },
