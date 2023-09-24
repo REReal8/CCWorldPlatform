@@ -550,7 +550,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "localSaplingsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
-                    -- ToDo: consider storing rest/ waste materials (e.g. sticks)
+                    -- ToDo: store waste materials (e.g. sticks)
                     -- recursive call to provide (remaining) items
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                         { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "itemsLocator" },
@@ -686,6 +686,8 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
         local serviceResults = enterprise_isp.NeedsTo_TransferItems_SSrv(transferData)
         if not serviceResults.success then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Failed obtaining transfer needs for "..itemCount.." "..itemName.."'s") return {success = false} end
         local fuelNeed_Transfer = serviceResults.fuelNeed
+
+        -- ToDo: add fuelNeed for waste handling
 
         -- add fuelNeed
 --        corelog.WriteToLog("C  fuelNeed_Rounds="..fuelNeed_Rounds.." (nRounds="..nRounds..", fuelPerRound="..fuelPerRound.."), fuelNeed_Transfer="..fuelNeed_Transfer)
