@@ -68,6 +68,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
             metaData    = metaData,
             taskCall    = taskCall,
         }
+        corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
@@ -165,6 +166,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
             metaData    = metaData,
             taskCall    = taskCall,
         }
+        corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 

@@ -77,10 +77,12 @@ function enterprise_test.Test_ASrv(...)
     }
 
     -- do assignment
+    local taskCall = TaskCall:newInstance("role_test", "Func1_Task", taskData)
     local assignmentServiceData = {
         metaData    = metaData,
-        taskCall    = TaskCall:newInstance("role_test", "Func1_Task", taskData),
+        taskCall    = taskCall,
     }
+    corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
     return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
 end
 

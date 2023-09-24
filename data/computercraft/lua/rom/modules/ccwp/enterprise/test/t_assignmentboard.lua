@@ -283,6 +283,7 @@ function t_assignmentboard.T_DoAssignment_ASrv()
     }
 
     -- test
+    corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
     local result = enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     assert(result == true, "failed scheduling assignment")
 

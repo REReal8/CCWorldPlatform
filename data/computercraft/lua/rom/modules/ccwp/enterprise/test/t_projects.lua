@@ -78,7 +78,7 @@ function t_projects.T_StartProject_ASrv()
             -- test ASrv
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_ASrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
-            }},
+            }, description = "test ASrv"},
             -- test indexed source KeyDef
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_SSrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testTableSource.key3.nKey2" },
@@ -95,7 +95,7 @@ function t_projects.T_StartProject_ASrv()
             -- test AOSrv
             { stepType = "AOSrv", stepTypeDef = { className = "TestObj", serviceName = "test_AOSrv", objStep = 0, objKeyDef = "testObj" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
-            }},
+            }, description = "test AOSrv"},
             -- test located SOSrv
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "test_SOSrv", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
@@ -103,7 +103,7 @@ function t_projects.T_StartProject_ASrv()
             -- test located AOSrv
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "test_AOSrv", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
-            }},
+            }, description = "test located AOSrv"},
             -- test located SMtd
             { stepType = "LSMtd", stepTypeDef = { methodName = "getTestArg", locatorStep = 0, locatorKeyDef = "objLocator" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
@@ -243,7 +243,7 @@ function t_projects.T_StartProject_ASrv_registersWIP()
             -- test ASrv
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_test", serviceName = "Test_ASrv" }, stepDataDef = {
                 { keyDef = "testArg"        , sourceStep = 0, sourceKeyDef = "testArgSource" },
-            }},
+            }, description = "test wipped ASrv"},
         },
         returnData  = {
         }
