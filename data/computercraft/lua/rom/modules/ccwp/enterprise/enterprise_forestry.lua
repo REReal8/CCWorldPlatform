@@ -133,21 +133,24 @@ function enterprise_forestry.AddNewSite_ASrv(...)
     else
         -- add build tree step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
-                { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = "treeBaseLocation" },
-                { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
+            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
+                { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "treeBaseLocation" },
+                { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
+                { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
+                { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "treeLayer" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "Building Forest"}
+            }, description = "Building tree (Forest layer) at "..textutils.serialise(baseLocation, { compact = true })}
         )
 
         -- add step data
-        local treeBaseLocation  = baseLocation:copy()
         local targetBaseLayer = mobj:getBaseLayer(forestLevel)
+        projectData.treeBaseLocation            = baseLocation:copy()
+        projectData.buildFromAbove              = true
+        projectData.replacePresentObjects       = false
+        projectData.treeLayer                   = targetBaseLayer
         projectData.materialsItemSupplierLocator= materialsItemSupplierLocator
         projectData.wasteItemDepotLocator       = wasteItemDepotLocator
-        projectData.treeBaseLocation            = treeBaseLocation
-        projectData.treeLayer                   = targetBaseLayer
     end
 
     table.insert(projectSteps,
@@ -216,6 +219,10 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         mobjLocator                 = mobjLocator,
 
         treeLayer                   = targetTreeLayer,
+
+        buildFromAbove              = true,
+        replacePresentObjects       = false,
+
         materialsItemSupplierLocator= materialsItemSupplierLocator,
         wasteItemDepotLocator       = wasteItemDepotLocator,
     }
@@ -266,12 +273,14 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
                 local treeBaseLocationStr = "treeBaseLocation"..iStepStr
                 table.insert(projectSteps,
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
-                        { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
-                        { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = layerStr },
+                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
+                        { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
+                        { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
+                        { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
+                        { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = layerStr },
                         { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                         { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                    }}
+                    }, description = "Building tree (Forest layer) at "..textutils.serialise(treeBaseLocation, { compact = true })}
                 )
 
                 -- add step data
@@ -307,12 +316,14 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(0, 6 * (iTree - 1), 0)
             local treeBaseLocationStr = "treeBaseLocation"..iStepStr
             table.insert(projectSteps,
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "BuildForestTree_ASrv" }, stepDataDef = {
-                    { keyDef = "treeBaseLocation"               , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
-                    { keyDef = "treeLayer"                      , sourceStep = 0, sourceKeyDef = "treeLayer" },
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
+                    { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
+                    { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
+                    { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
+                    { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "treeLayer" },
                     { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                     { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                }}
+                }, description = "Building tree (Forest layer) at "..textutils.serialise(treeBaseLocation, { compact = true })}
             )
 
             -- add step data
@@ -360,48 +371,6 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
     -- start project
     corelog.WriteToLog(">Upgrading Forest "..mobjLocator:getURI().." from level "..startingLevel.." to "..targetLevel.." and from "..startingNTrees.." to "..targetNTrees.." trees")
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
-end
-
---    _       _                        _                       _                                _   _               _
---   (_)     | |                      | |                     (_)                              | | | |             | |
---    _ _ __ | |_ ___ _ __ _ __   __ _| |  ___  ___ _ ____   ___  ___ ___  ___   _ __ ___   ___| |_| |__   ___   __| |___
---   | | '_ \| __/ _ \ '__| '_ \ / _` | | / __|/ _ \ '__\ \ / / |/ __/ _ \/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | | | | | ||  __/ |  | | | | (_| | | \__ \  __/ |   \ V /| | (_|  __/\__ \ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_|_| |_|\__\___|_|  |_| |_|\__,_|_| |___/\___|_|    \_/ |_|\___\___||___/ |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function enterprise_forestry.BuildForestTree_ASrv(...)
-    -- get & check input from description
-    local checkSuccess, treeBaseLocation, treeLayer, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This private async service extends the Forest with 1 tree
-
-        Return value:
-                                                - (boolean) whether the service was scheduled successfully
-
-        Async service return value (to Callback):
-                                                - (table)
-                success                         - (boolean) whether the service executed successfully
-
-        Parameters:
-            serviceData                         - (table) data about this service
-                treeBaseLocation                + (Location) location of the base (lower left corner) of a Forest tree (layer)
-                treeLayer                       + (LayerRectangle) tree layer to build
-                materialsItemSupplierLocator    + (URL) locating the host of the building materials
-                wasteItemDepotLocator           + (URL) locating where waste material can be delivered
-            callback                            + (Callback) to call once service is ready
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.BuildForestTree_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    -- let construction enterprise build the tree
-    local buildData = {
-        startpoint                  = treeBaseLocation:copy(),
-        buildFromAbove              = true,
-        replacePresentObjects       = false,
-        layer                       = treeLayer,
-        materialsItemSupplierLocator= materialsItemSupplierLocator,
-        wasteItemDepotLocator       = wasteItemDepotLocator,
-    }
-    corelog.WriteToLog(">Building tree (Forest layer) at "..textutils.serialise(buildData.startpoint, { compact = true }))
-    return enterprise_construction.BuildLayer_ASrv(buildData, callback)
 end
 
 return enterprise_forestry
