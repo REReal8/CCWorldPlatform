@@ -795,8 +795,8 @@ function Factory:provideItemsTo_AOSrv(...)
 
         -- determine wasteItemsLocator
         -- ToDo: consider fixing: we assume the current turtle will eventually have the waste. Remove this hack.
-        local currentTurtleId = os.getComputerID()
-        local wasteItemsLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId)):copy()
+        local wasteItemsLocator = enterprise_turtle:GetCurrentTurtleLocator() if not wasteItemsLocator then corelog.Error("Factory.provideItemsTo_AOSrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
+
         wasteItemsLocator:setQuery({ [itemName] = productSurplus })
 
         -- retrieve site input & output locator's

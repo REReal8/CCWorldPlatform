@@ -61,12 +61,12 @@ function coreassignment.Run()
     if not turtle then corelog.WriteToLog("coreassignment.Run(): Not a turtle, not taking assignments") return end
 
     -- get (locator for) current Turtle
-    local turtleId = os.getComputerID()
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(turtleId)) if not turtleLocator then corelog.Error("coreassignment.Run: Failed obtaining turtleLocator for turtle "..turtleId) return false end
+    local turtleLocator = enterprise_turtle:GetCurrentTurtleLocator() if not turtleLocator then corelog.Error("coreassignment.Run: Failed obtaining current turtleLocator") return false end
     -- register current Turtle if not yet registered
     local objResourceTable = enterprise_turtle:getResource(turtleLocator)
     if not objResourceTable then
+        local turtleId = os.getComputerID()
         turtleLocator = enterprise_turtle.RegisterTurtle_SSrv({ turtleId = turtleId }).turtleLocator
         if not turtleLocator then corelog.Error("coreassignment.Run: Failed registering Turtle "..turtleId) return false end
     end

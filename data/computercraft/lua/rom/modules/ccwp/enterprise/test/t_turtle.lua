@@ -147,6 +147,7 @@ function t_turtle.T_GetAnyTurtleLocator()
     -- cleanup test
 end
 
+-- ToDo: consider replacing with direct calls to enterprise_turtle:GetCurrentTurtleLocator()
 function t_turtle.GetCurrentTurtleLocator()
     --[[
         This method provides the locator of the current turtle (in enterprise_turtle).
@@ -158,8 +159,7 @@ function t_turtle.GetCurrentTurtleLocator()
     --]]
 
     -- construct URL
-    local currentTurtleId = os.getComputerID()
-    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
+    local currentTurtleLocator = enterprise_turtle:GetCurrentTurtleLocator()
 
     -- end
     return currentTurtleLocator
