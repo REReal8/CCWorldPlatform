@@ -143,6 +143,24 @@ function enterprise_turtle.GetAnyTurtleLocator()
     return enterprise_turtle:getTurtleLocator("any")
 end
 
+function enterprise_turtle.GetCurrentTurtleLocator()
+    --[[
+        This method provides the locator of the current turtle (in enterprise_turtle).
+
+        Return value:
+            turtleLocator       - (URL) locating the current turtle
+
+        Parameters:
+    --]]
+
+    -- construct URL
+    local currentTurtleId = os.getComputerID()
+    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
+
+    -- end
+    return currentTurtleLocator
+end
+
 local function TriggerRefuelIfNeeded(turtleObj)
     -- get fuelLevels
     local turtleFuelLevel = turtle.getFuelLevel()

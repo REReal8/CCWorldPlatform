@@ -284,8 +284,9 @@ function Turtle:storeItemsFrom_AOSrv(...)
 
         -- verify turtle has items (aleady)
         local storeItems = itemsLocator:getQuery()
-        local hasItems = self:getInventory():hasItems(storeItems)
-        if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all) items available in Turtle") return Callback.ErrorCall(callback) end
+        local turtleInventory = self:getInventory()
+        local hasItems = turtleInventory:hasItems(storeItems)
+        if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all="..textutils.serialise(storeItems, {compact = true})..") items available in Turtle inventory(="..textutils.serialise(turtleInventory, {compact = true})..")") return Callback.ErrorCall(callback) end
 
         -- determine destinationItemsLocator
         local destinationItemsLocator = itemsLocator:copy()
@@ -409,7 +410,7 @@ function Turtle:getInventoryAsItemTable()
     if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventoryAsItemTable() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
 
     -- why multiline when it can be done in a single line? Well, for readablilty and debugging ofcourse!
-    local inventory = Turtle:getInventory()
+    local inventory = self:getInventory()
     local itemTable = inventory:getItemTable()
 
     -- return the table as an object ItemTable

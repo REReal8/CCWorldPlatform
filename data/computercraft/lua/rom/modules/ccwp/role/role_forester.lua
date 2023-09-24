@@ -11,6 +11,12 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
+local InputChecker = require "input_checker"
+
+local ItemTable = require "obj_item_table"
+
+local enterprise_turtle
+
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
 --      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
@@ -108,34 +114,36 @@ function role_forester.HarvestForest_MetaData(taskData)
     }
 end
 
-function role_forester.HarvestForest_Task(taskData)
-    --[[
+function role_forester.HarvestForest_Task(...)
+    -- get & check input from description
+    local checkSuccess, forestLevel, firstTreeLocation, nTrees, waitForFirstTree = InputChecker.Check([[
         This Task function harvests a forest.
 
         Return value:
-            task result                 - (table)
-                success                 - (boolean) whether the task was succesfull
+            task result                     - (table)
+                success                     - (boolean) whether the task was succesfull
+                turtleOutputLogsLocator     - (URL) locating the logs that where harvested (in a turtle)
+                turtleOutputSaplingsLocator - (URL) locating the saplings that where harvested (in a turtle)
 
         Parameters:
-            taskData                    - (table) data about the task
-                forestLevel             - (number) forest level
-                firstTreeLocation       - (table) location of first tree of the forest
-                nTrees                  - (number) the number of trees in (the y direction of) the forest
-                waitForFirstTree        - (boolean) if harvesting should wait for the first tree
-    ]]
-
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid taskData") return {success = false} end
-    local forestLevel = taskData.forestLevel
-    if type(forestLevel) ~= "number" then corelog.Error("role_settler.HarvestForest_Task: Invalid forestLevel") return {success = false} end
-    local firstTreeLocation = taskData.firstTreeLocation
-    if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_Task: Invalid firstTreeLocation") return {success = false} end
-    local nTrees = taskData.nTrees
-    if type(nTrees) ~= "number" then corelog.Error("role_settler.HarvestForest_Task: Invalid nTrees") return {success = false} end
-    local waitForFirstTree = taskData.waitForFirstTree
-    if type(waitForFirstTree) ~= "boolean" then corelog.Error("role_settler.HarvestForest_Task: Invalid waitForFirstTree") return {success = false} end
+            taskData                        - (table) data about the task
+                forestLevel                 + (number) forest level
+                firstTreeLocation           + (table) location of first tree of the forest
+                nTrees                      + (number) the number of trees in (the y direction of) the forest
+                waitForFirstTree            + (boolean) if harvesting should wait for the first tree
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_forester.HarvestForest_Task: Invalid input") return {success = false} end
 
 --    corelog.WriteToLog(" Harvesting Forest")
+
+    -- get turtle we are doing task with
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local turtleObj = enterprise_turtle:getObject(turtleLocator)
+    if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current Turtle") return {success = false} end
+
+    -- remember input items
+    local beginTurtleItemTable = turtleObj:getInventoryAsItemTable()
 
     -- go to first tree position
     coremove.GoTo(firstTreeLocation)
@@ -161,8 +169,35 @@ function role_forester.HarvestForest_Task(taskData)
         })
     end
 
+    -- determine output items
+    local endTurtleItemTable = turtleObj:getInventoryAsItemTable()
+    local uniqueEndItemTable, _commonItemTable, _uniqueBeginItemTable = ItemTable.compare(endTurtleItemTable, beginTurtleItemTable)
+    if not uniqueEndItemTable then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining uniqueEndItemTable") return {success = false} end
+    local logName = "minecraft:birch_log"
+    local saplingName = "minecraft:birch_sapling"
+    local logCount = uniqueEndItemTable[logName]
+    local saplingCount = uniqueEndItemTable[saplingName]
+
+    -- determine output locators
+    local turtleOutputLogsLocator = enterprise_turtle.GetItemsLocator_SSrv({
+        turtleId    = turtleObj:getTurtleId(),
+        itemsQuery  = {
+            [logName]       = logCount,
+        }
+    }).itemsLocator
+    local turtleOutputSaplingsLocator = enterprise_turtle.GetItemsLocator_SSrv({
+        turtleId    = turtleObj:getTurtleId(),
+        itemsQuery  = {
+            [saplingName]   = saplingCount
+        }
+    }).itemsLocator
+
     -- end
-    return {success = true}
+    return {
+        success                     = true,
+        turtleOutputLogsLocator     = turtleOutputLogsLocator,
+        turtleOutputSaplingsLocator = turtleOutputSaplingsLocator,
+    }
 end
 
 --    _                 _    __                  _   _

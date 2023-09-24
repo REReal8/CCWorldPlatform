@@ -487,10 +487,12 @@ function BirchForest:provideItemsTo_AOSrv(...)
 
         -- check for birchlog or sapling
         local localItemSupplierLocator = nil
+        local localLogsLocator = self:getLocalLogsLocator()
+        local localSaplingsLocator = self:getLocalSaplingsLocator()
         if itemName == "minecraft:birch_log" then
-            localItemSupplierLocator = self:getLocalLogsLocator()
+            localItemSupplierLocator = localLogsLocator
         elseif itemName == "minecraft:birch_sapling" then
-            localItemSupplierLocator = self:getLocalSaplingsLocator()
+            localItemSupplierLocator = localSaplingsLocator
         else
             corelog.Error("BirchForest:provideItemsTo_AOSrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
@@ -536,19 +538,30 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
                         { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
                     }, description = "Doing Harvesting task"},
-                    -- ToDo: consider storing the harvested goods in the local localItemSupplierLocator's for birch_log and birchSapling
-                    --          (or will this be part of harvestForest?)
+                    -- store logs to localLogsLocator
+                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputLogsLocator" },
+                        { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "localLogsLocator" },
+                        { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                    }},
+                    -- store saplings to localSaplingsLocator
+                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                        { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputSaplingsLocator" },
+                        { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "localSaplingsLocator" },
+                        { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+                    }},
                     -- ToDo: consider storing rest/ waste materials (e.g. sticks)
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = { -- note: recursive call
+                    -- recursive call to provide (remaining) items
+                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
                         { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "itemsLocator" },
                         { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                         { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                         { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                         { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-                    }, description = "Providing more logs recursively"},
+                    }, description = "Providing "..textutils.serialise(item, {compact = true}).." recursively"},
                 },
                 returnData  = {
-                    { keyDef = "destinationItemsLocator"            , sourceStep = 2, sourceKeyDef = "destinationItemsLocator" },
+                    { keyDef = "destinationItemsLocator"            , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
                 }
             }
             local projectData = {
@@ -557,6 +570,8 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
                 itemDepotLocator                = itemDepotLocator:copy(),
 
+                localLogsLocator                = localLogsLocator,
+                localSaplingsLocator            = localSaplingsLocator,
                 harvestForestMetaData           = role_forester.HarvestForest_MetaData(harvestForestTaskData),
                 harvestForestTaskCall           = TaskCall:newInstance("role_forester", "HarvestForest_Task", harvestForestTaskData),
 
