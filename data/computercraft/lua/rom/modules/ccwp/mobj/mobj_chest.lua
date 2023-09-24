@@ -62,6 +62,7 @@ function Chest:_init(...)
     self._inventory         = inventory
 end
 
+-- ToDo: should be renamed to newFromTable at some point
 function Chest:new(...)
     -- get & check input from description
     local checkSuccess, o = InputChecker.Check([[
