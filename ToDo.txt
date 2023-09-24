@@ -107,6 +107,8 @@ R  Improve MObjHost                                                             
 
 -  consider merging enterprise_chest into enterprise_storage
 
+-  BirchForest: support more than 6 trees (in the one column)
+
 -  Generalised IItemSupplier test functions for MObj's
    -  generalise IItemSupplier test functions
    -  use in mobj_birchforest

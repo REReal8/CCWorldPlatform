@@ -186,6 +186,7 @@ function BirchForest:construct(...)
 
     -- determine BirchForest fields
     local id = coreutils.NewId()
+    if nTrees > 6 then corelog.Error("BirchForest:construct: "..nTrees.." trees not (yet) supported") return nil end
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local localLogsLocator = nil
     local localSaplingsLocator = nil
@@ -222,7 +223,7 @@ end
 
 function BirchForest:upgrade(...)
     -- get & check input from description
-    local checkSuccess, upgradeLevel, nTrees = InputChecker.Check([[
+    local checkSuccess, upgradeLevel, upgradeNTrees = InputChecker.Check([[
         This method upgrades a BirchForest instance from a table of parameters.
 
         The upgraded BirchForest is not yet saved in it's Host.
@@ -237,7 +238,15 @@ function BirchForest:upgrade(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("BirchForest:upgrade: Invalid input") return false end
 
-    -- upgrade if possible
+    -- nTrees
+    local nTrees = self._nTrees
+    if nTrees > upgradeNTrees then corelog.Error("BirchForest:upgrade: Downgradging # trees (from "..nTrees.." to "..upgradeNTrees..") not supported") return false end
+    if nTrees < upgradeNTrees then
+        if upgradeNTrees > 6 then corelog.Error("BirchForest:upgrade: Upgrading to "..upgradeNTrees.." trees not (yet) supported") return false end
+        self._nTrees = upgradeNTrees
+    end
+
+    -- local storage
     local level = self:getLevel()
     local baseLocation = self:getBaseLocation()
     if level == upgradeLevel then
@@ -259,14 +268,11 @@ function BirchForest:upgrade(...)
         if not localSaplingsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localSaplingsLocator for level "..upgradeLevel) return false end
         self._localSaplingsLocator = localSaplingsLocator
     else
-        corelog.Error("BirchForest:construct: Don't know how to upgrade a BirchForest from level "..level.." to "..upgradeLevel) return false
+        corelog.Error("BirchForest:upgrade: Don't know how to upgrade a BirchForest from level "..level.." to "..upgradeLevel) return false
     end
 
     -- level
     self._level = upgradeLevel
-
-    -- nTrees
-    self._nTrees = nTrees
 
     -- end
     return true
