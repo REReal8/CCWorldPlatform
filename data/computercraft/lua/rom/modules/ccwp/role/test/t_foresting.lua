@@ -28,7 +28,7 @@ function t_foresting.T_BirchGrow()
     -- remove the ground under us, usefull for crafting later
     --turtle.digDown()
 
-    -- plant the sappling
+    -- plant the sapling
     turtle.suckDown(1)
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()

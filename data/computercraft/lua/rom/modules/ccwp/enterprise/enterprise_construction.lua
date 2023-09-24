@@ -88,7 +88,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "Getting building materials"},
+            }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
             -- obtain turtleId
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
                 { keyDef = "turtleLocator"                  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
@@ -98,7 +98,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
                 { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "turtleId" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
-            }, description = "Buidling the blueprint"},
+            }, description = "Building blueprint at "..textutils.serialise(blueprintStartpoint, {compact = true})},
         },
         returnData  = {
         }

@@ -123,7 +123,7 @@ function DoAssignment(assignment)
 
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)
-    corelog.WriteToLog("Starting "..taskCall:getModuleName().."."..taskCall:getMethodName())
+--    corelog.WriteToLog("Starting "..taskCall:getModuleName().."."..taskCall:getMethodName())
     corelog.SetStatus("assignment", "Module: "..taskCall:getModuleName(), "Method: "..taskCall:getMethodName())
     local taskResult = taskCall:call()
     corelog.WriteToAssignmentLog("Completed task (result="..textutils.serialize(taskResult)..")", assignmentId)

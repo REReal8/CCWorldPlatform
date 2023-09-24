@@ -44,7 +44,7 @@ function BirchForest:_init(...)
 
         Parameters:
             id                      + (string) id of the BirchForest
-            level                   + (number) level of the forest
+            level                   + (number) level of the BirchForest
             baseLocation            + (Location) base location of the BirchForest
             nTrees                  + (number) # trees in the BirchForest
             localLogsLocator        + (URL) locating the local ItemSupplier of logs (e.g. a chest)
@@ -71,7 +71,7 @@ function BirchForest:new(...)
         Parameters:
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the BirchForest
-                _level                  - (number) level of the forest
+                _level                  - (number) level of the BirchForest
                 _baseLocation           - (Location) base location of the BirchForest
                 _nTrees                 - (number) # trees in the BirchForest
                 _localLogsLocator       - (URL) locating the local ItemSupplier of logs (e.g. a chest)
@@ -512,7 +512,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
 --            corelog.WriteToLog(">Storing "..localItemsLocator:getURI().." from local ItemSupplier in Forest")
             scheduleResult = scheduleResult and enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
         else
-            -- construct new itemsLocator for this forest
+            -- construct new itemsLocator for this BirchForest
             local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
             local mobjLocator = host:getObjectLocator(self)
             local itemsLocator = mobjLocator:copy()
@@ -537,7 +537,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                         { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "harvestForestMetaData" },
                         { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
-                    }, description = "Doing Harvesting task"},
+                    }, description = "Harvesting "..textutils.serialise(item, {compact = true}).." task"},
                     -- store logs to localLogsLocator
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputLogsLocator" },
@@ -580,7 +580,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
             local projectServiceData = {
                 projectDef  = projectDef,
                 projectData = projectData,
-                projectMeta = { title = "Harvesting forest", description = "The most usefull task in the world", wipId = self:getWIPId() },
+                projectMeta = { title = "Harvesting BirchForest", description = "The most usefull task in the world", wipId = self:getWIPId() },
             }
 
             -- start project

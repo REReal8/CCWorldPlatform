@@ -39,12 +39,12 @@ end
 
 function role_forester.PlantFirstSapling_Task(taskData)
      --[[
-        This Task function plants the first sappling.
+        This Task function plants the first sapling.
 
         Return value:
             task result                 - (table)
                 success                 - (boolean) whether the task was succesfull
-                turtleId                - (number) id of turtle that planted the sappling
+                turtleId                - (number) id of turtle that planted the sapling
 
         Parameters:
             taskData                    - (table) data about the task
@@ -53,8 +53,8 @@ function role_forester.PlantFirstSapling_Task(taskData)
     -- check input
     if type(taskData) ~= "table" or type(taskData.startLocation) ~= "table" then corelog.Error("role_settler.PlantFirstSapling_Task: taskData not valid") return {success = false} end
 
-    -- plant the sappling
-    corelog.WriteToLog(">Planting first sapling")
+    -- plant the sapling
+--    corelog.WriteToLog(">Planting first sapling")
     coreinventory.SelectItem("minecraft:birch_sapling")
     turtle.place()
 
@@ -378,7 +378,7 @@ function KapBoom() -- kost ongeveer 37 movement (inclusief buiten bladeren) - 1 
         -- als er een blok staat, weghalen
         if success then turtle.digDown() end
 
-        -- hebben we nu een sappling?
+        -- hebben we nu een sapling?
         if coreinventory.SelectItem("minecraft:birch_sapling")  then turtle.placeDown()
                                                                 else corelog.Error("No birch sapling to plant") end
     end

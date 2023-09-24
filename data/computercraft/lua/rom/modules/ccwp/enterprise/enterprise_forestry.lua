@@ -120,7 +120,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingMetaData" },
                 { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingTaskCall" },
-            }, description = "Planting sappling"}
+            }, description = "Planting sapling"}
         )
 
         -- add step data

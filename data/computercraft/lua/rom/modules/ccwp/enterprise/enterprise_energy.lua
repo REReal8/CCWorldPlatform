@@ -89,11 +89,11 @@ local function Refuel_ASrv(...)
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }, description = "Getting fuel for turtle"},
+            }, description = "Getting fuel for turtle "..turtleId},
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "refuelMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "refuelTaskCall" },
-            }, description = "refuelling the turtle"},
+            }, description = "Refuelling turtle "..turtleId},
         },
         returnData  = {
         }

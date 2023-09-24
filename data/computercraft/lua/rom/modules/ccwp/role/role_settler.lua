@@ -91,7 +91,7 @@ function role_settler.CollectCobbleStone_Task(...)
     coremove.GoTo(startLocation)
 
     -- get into digging position
-    corelog.WriteToLog (">Collecting cobblestone")
+--    corelog.WriteToLog (">Collecting cobblestone")
     coreinventory.Equip("minecraft:diamond_pickaxe")
     turtle.digDown()
     coremove.Down()

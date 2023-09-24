@@ -408,6 +408,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
 
         -- write to project log file
         corelog.WriteToProjectsLog("Starting step with description '"..stepDesc.."'", projectId)
+        corelog.WriteToLog("Starting step '"..step.description.."' (project "..projectId..")")
     end
 
     -- update the status
