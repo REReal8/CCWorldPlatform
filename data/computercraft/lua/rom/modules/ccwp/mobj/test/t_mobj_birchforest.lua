@@ -385,7 +385,8 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
         provideItems    = provideItems,
         itemDepotLocator= itemDepotLocator,
     })
-    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees1)
+    local storeFuelPerRound = 1 + 1
+    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees1) + storeFuelPerRound
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")

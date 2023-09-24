@@ -198,13 +198,13 @@ function BirchForest:construct(...)
     elseif level == 2 then
         -- localLogsLocator
         localLogsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-            baseLocation    = baseLocation:getRelativeLocation(2, 1, 0),
+            baseLocation    = baseLocation:getRelativeLocation(2, 1, 0):getRelativeLocationRight(),
             accessDirection = "front",
         }}).mobjLocator
 
         -- localSaplingsLocator
         localSaplingsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-            baseLocation    = baseLocation:getRelativeLocation(4, 1, 0),
+            baseLocation    = baseLocation:getRelativeLocation(4, 1, 0):getRelativeLocationLeft(),
             accessDirection = "front",
         }}).mobjLocator
     else
@@ -245,7 +245,7 @@ function BirchForest:upgrade(...)
     elseif level < 2 and upgradeLevel == 2 then
         -- localLogsLocator
         local localLogsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-            baseLocation    = baseLocation:getRelativeLocation(2, 1, 0),
+            baseLocation    = baseLocation:getRelativeLocation(2, 1, 0):getRelativeLocationRight(),
             accessDirection = "front",
         }}).mobjLocator
         if not localLogsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localLogsLocator for level "..upgradeLevel) return false end
@@ -253,7 +253,7 @@ function BirchForest:upgrade(...)
 
         -- localSaplingsLocator
         local localSaplingsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
-            baseLocation    = baseLocation:getRelativeLocation(4, 1, 0),
+            baseLocation    = baseLocation:getRelativeLocation(4, 1, 0):getRelativeLocationLeft(),
             accessDirection = "front",
         }}).mobjLocator
         if not localSaplingsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localSaplingsLocator for level "..upgradeLevel) return false end
@@ -657,21 +657,25 @@ function BirchForest:needsTo_ProvideItemsTo_SOSrv(...)
 
         -- check for birchlog or sapling
         local itemPerRound = 1
+        local localLogsLocator = self:getLocalLogsLocator()
+        local localSaplingsLocator = self:getLocalSaplingsLocator()
         local localItemSupplierLocator = nil
         if itemName == "minecraft:birch_log" then
             itemPerRound = 5 * nTrees -- using minimum birch_log per tree (based on data in birchgrow.xlsx)
-            localItemSupplierLocator = self:getLocalLogsLocator()
+            localItemSupplierLocator = localLogsLocator
         elseif itemName == "minecraft:birch_sapling" then
             itemPerRound = 1.4 * nTrees -- using average birch_sapling per tree (based on data in birchgrow.xlsx)
             -- ToDo: consider some safety margin for small forests as average ~= minimum (minimum = -1 in 9% of the cases)
-            localItemSupplierLocator = self:getLocalSaplingsLocator()
+            localItemSupplierLocator = localSaplingsLocator
         else
             corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Provider does not provide "..itemName.."'s") return {success = false}
         end
         if not localItemSupplierLocator then corelog.Error("BirchForest:needsTo_ProvideItemsTo_SOSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return {success = false} end
 
         -- fuelNeed per round
-        local fuelPerRound = role_forester.FuelNeededPerRound(nTrees)
+        local storeFuelPerRound = 1 + 1 -- first tree to front localLogsLocator/ localSaplingsLocator + back to first tree (note: hardcoded distances + ignored that <L2 will use turtle inventory)
+        local harvestFuelPerRound = role_forester.FuelNeededPerRound(nTrees)
+        local fuelPerRound = harvestFuelPerRound + storeFuelPerRound
         local nRounds = math.ceil(itemCount / itemPerRound)
         local fuelNeed_Rounds = nRounds * fuelPerRound
 

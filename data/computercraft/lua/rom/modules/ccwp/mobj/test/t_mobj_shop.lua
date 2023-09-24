@@ -464,7 +464,8 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
     })
-    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees)
+    local storeFuelPerRound = 1 + 1
+    local expectedFuelNeed = role_forester.FuelNeededPerRound(nTrees) + storeFuelPerRound
     assert(needsTo_Provide.success, "needsTo_ProvideItemsTo_SOSrv failed")
     assert(needsTo_Provide.fuelNeed == expectedFuelNeed, "fuelNeed(="..needsTo_Provide.fuelNeed..") not the same as expected(="..expectedFuelNeed..")")
     assert(#needsTo_Provide.ingredientsNeed == 0, "ingredientsNeed(="..#needsTo_Provide.ingredientsNeed..") not the same as expected(=0)")
