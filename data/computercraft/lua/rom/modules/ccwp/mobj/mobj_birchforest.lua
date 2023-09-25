@@ -184,9 +184,13 @@ function BirchForest:construct(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("BirchForest:construct: Invalid input") return nil end
 
-    -- determine BirchForest fields
-    local id = coreutils.NewId()
+    -- nTrees
     if nTrees > 6 then corelog.Error("BirchForest:construct: "..nTrees.." trees not (yet) supported") return nil end
+
+    -- level
+    if level < -1 or level > 2 then corelog.Error("BirchForest:construct: Don't know how to construct a BirchForest of level "..level) return nil end
+
+    -- local storage
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local localLogsLocator = nil
     local localSaplingsLocator = nil
@@ -208,13 +212,12 @@ function BirchForest:construct(...)
             baseLocation    = baseLocation:getRelativeLocation(4, 1, 0):getRelativeLocationLeft(),
             accessDirection = "front",
         }}).mobjLocator
-    else
-        corelog.Error("BirchForest:construct: Don't know how to construct a BirchForest of level "..level) return nil
     end
     if not localLogsLocator then corelog.Error("BirchForest:construct: Failed obtaining localLogsLocator for level "..level) return nil end
     if not localSaplingsLocator then corelog.Error("BirchForest:construct: Failed obtaining localSaplingsLocator for level "..level) return nil end
 
     -- construct new BirchForest
+    local id = coreutils.NewId()
     local obj = BirchForest:newInstance(id, level, baseLocation:copy(), nTrees, localLogsLocator:copy(), localSaplingsLocator:copy())
 
     -- end
@@ -223,7 +226,7 @@ end
 
 function BirchForest:upgrade(...)
     -- get & check input from description
-    local checkSuccess, upgradeLevel, upgradeNTrees = InputChecker.Check([[
+    local checkSuccess, upgradedLevel, upgradedNTrees = InputChecker.Check([[
         This method upgrades a BirchForest instance from a table of parameters.
 
         The upgraded BirchForest is not yet saved in it's Host.
@@ -239,25 +242,27 @@ function BirchForest:upgrade(...)
     if not checkSuccess then corelog.Error("BirchForest:upgrade: Invalid input") return false end
 
     -- nTrees
-    local nTrees = self._nTrees
-    if nTrees > upgradeNTrees then corelog.Error("BirchForest:upgrade: Downgradging # trees (from "..nTrees.." to "..upgradeNTrees..") not supported") return false end
-    if nTrees < upgradeNTrees then
-        if upgradeNTrees > 6 then corelog.Error("BirchForest:upgrade: Upgrading to "..upgradeNTrees.." trees not (yet) supported") return false end
-        self._nTrees = upgradeNTrees
+    local nTrees = self:getNTrees()
+    if nTrees > upgradedNTrees then corelog.Error("BirchForest:upgrade: Downgradging # trees (from "..nTrees.." to "..upgradedNTrees..") not supported") return false end
+    if nTrees < upgradedNTrees then
+        if upgradedNTrees > 6 then corelog.Error("BirchForest:upgrade: Upgrading to "..upgradedNTrees.." trees not (yet) supported") return false end
+        self._nTrees = upgradedNTrees
     end
 
-    -- local storage
+    -- level
     local level = self:getLevel()
+    if level < -1 or level > 2 or upgradedLevel < -1 or upgradedLevel > 2 then corelog.Error("BirchForest:upgrade: Don't know how to upgrade a BirchForest from level "..level.." to "..upgradedLevel) return nil end
+    self._level = upgradedLevel
+
+    -- local storage
     local baseLocation = self:getBaseLocation()
-    if level == upgradeLevel then
-    elseif level < 2 and upgradeLevel < 2 then
-    elseif level < 2 and upgradeLevel == 2 then
+    if level < 2 and upgradedLevel == 2 then
         -- localLogsLocator
         local localLogsLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
             baseLocation    = baseLocation:getRelativeLocation(2, 1, 0):getRelativeLocationRight(),
             accessDirection = "front",
         }}).mobjLocator
-        if not localLogsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localLogsLocator for level "..upgradeLevel) return false end
+        if not localLogsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localLogsLocator for level "..upgradedLevel) return false end
         self._localLogsLocator = localLogsLocator
 
         -- localSaplingsLocator
@@ -265,14 +270,9 @@ function BirchForest:upgrade(...)
             baseLocation    = baseLocation:getRelativeLocation(4, 1, 0):getRelativeLocationLeft(),
             accessDirection = "front",
         }}).mobjLocator
-        if not localSaplingsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localSaplingsLocator for level "..upgradeLevel) return false end
+        if not localSaplingsLocator then corelog.Error("BirchForest:upgrade: Failed obtaining localSaplingsLocator for level "..upgradedLevel) return false end
         self._localSaplingsLocator = localSaplingsLocator
-    else
-        corelog.Error("BirchForest:upgrade: Don't know how to upgrade a BirchForest from level "..level.." to "..upgradeLevel) return false
     end
-
-    -- level
-    self._level = upgradeLevel
 
     -- end
     return true
@@ -412,6 +412,151 @@ function BirchForest:getTreeLayer(level)
     elseif level == 1 then  return Tree_layerL1()
     elseif level == 2 then  return Tree_layerL1() -- same as L1
     else                    corelog.Error("BirchForest:getTreeLayer: Don't know layer for level "..level) return nil end
+end
+
+function BirchForest:getBuildBlueprint()
+    --[[
+        This method returns a blueprint for building the BirchForest in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- nTrees
+    local nTrees = self:getNTrees()
+    if nTrees > 6 then corelog.Error("BirchForest:getBuildBlueprint: "..nTrees.." trees not (yet) supported") return nil end
+
+    -- level
+    local level = self:getLevel()
+    if level < -1 or level > 2 then corelog.Error("BirchForest:getBuildBlueprint: Don't know how to build a BirchForest of level "..level) return nil end
+
+    -- determine layerList
+    local layerList = {}
+    for iTree=1,nTrees  do
+        local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
+        if iTree == 1 then
+            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = self:getBaseLayer(level)})
+        else
+            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = self:getTreeLayer(level)})
+        end
+    end
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence,
+    }
+
+    -- determine buildLocation
+    local baseLocation = self:getBaseLocation()
+    local buildLocation = baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
+end
+
+function BirchForest:getExtendBlueprint(...)
+    -- get & check input from description
+    local checkSuccess, upgradedLevel, upgradedNTrees = InputChecker.Check([[
+        This method returns a blueprint for extending the BirchForest in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+            upgradeParameters           - (table) parameters for upgrading the current BirchForest
+                level                   + (number) with BirchForest level to upgrade to
+                nTrees                  + (number) number of trees
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("BirchForest:getExtendBlueprint: Invalid input") return nil end
+
+    -- nTrees
+    local nTrees = self:getNTrees()
+    if nTrees > 6 then corelog.Error("BirchForest:getExtendBlueprint: "..nTrees.." trees not (yet) supported") return nil end
+    if nTrees > upgradedNTrees then corelog.Error("BirchForest:getExtendBlueprint: Downgradging # trees (from "..nTrees.." to "..upgradedNTrees..") not supported") return nil end
+
+    -- level
+    local level = self:getLevel()
+    if level < -1 or level > 2 or upgradedLevel < -1 or upgradedLevel > 2 then corelog.Error("BirchForest:getExtendBlueprint: Don't know how to extend a BirchForest from level "..level.." to "..upgradedLevel) return nil end
+
+    -- upgraded layer data
+    local upgradedTreeLayer = self:getTreeLayer(upgradedLevel)
+    if not upgradedTreeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..upgradedLevel) return nil end
+    local upgradedBaseLayer = self:getBaseLayer(upgradedLevel)
+    if not upgradedBaseLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining baseLayer for level "..upgradedLevel) return nil end
+
+    -- existing trees
+    local layerList = {}
+    if level < 2 and upgradedLevel == 2 then
+        -- current layer data
+        local treeLayer = self:getTreeLayer(level)
+        if not treeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..level) return nil end
+        local baseLayer = self:getBaseLayer(level)
+        if not baseLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining baseLayer for level "..level) return nil end
+
+        -- extend data
+        local transformLayer = treeLayer:transformToLayer(upgradedTreeLayer)
+        if not transformLayer then corelog.Error("BirchForest:getExtendBlueprint: No tree transformLayer") return nil end
+        local treeColOffset, treeRowOffset, treeBuildLayer = transformLayer:buildData()
+        transformLayer = baseLayer:transformToLayer(upgradedBaseLayer)
+        if not transformLayer then corelog.Error("BirchForest:getExtendBlueprint: No base transformLayer") return nil end
+        local baseColOffset, baseRowOffset, baseBuildLayer = transformLayer:buildData()
+
+        -- layers for existing trees
+        for iTree=1, nTrees do
+            -- determine layer extend data
+            local buildLayer = treeBuildLayer
+            local colOffset = treeColOffset
+            local rowOffset = treeRowOffset
+            if iTree == 1 then
+                buildLayer = baseBuildLayer
+                colOffset = baseColOffset
+                rowOffset = baseRowOffset
+            end
+            local buildLayerLocation = Location:newInstance(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
+
+            -- add layer
+            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayer:copy()})
+        end
+    end
+
+    -- new trees
+    if nTrees < upgradedNTrees then
+        for iTree = nTrees + 1, upgradedNTrees do
+            -- determine layer build data
+            local buildLayer = upgradedTreeLayer
+            if iTree == 1 then
+                buildLayer = upgradedBaseLayer
+            end
+            local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
+
+            -- add layer
+            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayer:copy()})
+        end
+    end
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence,
+    }
+
+    -- determine buildLocation
+    local baseLocation = self:getBaseLocation()
+    local buildLocation = baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
 end
 
 --                        _                           _   _               _

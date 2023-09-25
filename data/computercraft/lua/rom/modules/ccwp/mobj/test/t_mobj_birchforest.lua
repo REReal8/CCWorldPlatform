@@ -25,6 +25,7 @@ local FieldValueEqualTest = require "field_value_equal_test"
 local ValueTypeTest = require "value_type_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
+local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_IInterface = require "test.t_i_interface"
 local T_Class = require "test.t_class"
@@ -234,8 +235,9 @@ end
 function T_BirchForest.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
-    local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj, "Failed obtaining "..testClassName)
+    local obj0 = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
     local testObjName0 = testObjName.."0"
+    local obj1 = T_BirchForest.CreateTestObj(id, level1, baseLocation0, nTrees2, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
     local testObjName1 = testObjName.."1"
     local testObjName2 = testObjName.."2"
 
@@ -284,11 +286,11 @@ function T_BirchForest.T_IMObj_All()
     local fieldsTest1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation0, nTrees2, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees6, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
-    -- local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
+    local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
     -- test type
-    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
-    -- T_IMObj.pt_Implements_IMObj(testClassName, obj)
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
+    -- T_IMObj.pt_Implements_IMObj(testClassName, obj0)
 
     -- test construct/ upgrade/ destruct
     T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters0, testObjName0, destructFieldsTest0, logOk)
@@ -299,12 +301,14 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters1, testObjName1, upgradeParametersTo2, fieldsTest2, logOk)
 
     -- test getters
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+    T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
-    -- T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
-    -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo1, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
+    -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 
     -- cleanup test
 end
