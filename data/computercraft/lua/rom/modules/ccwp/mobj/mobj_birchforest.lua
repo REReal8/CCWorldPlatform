@@ -607,7 +607,7 @@ function BirchForest:getDismantleBlueprint()
 
         -- tree
         for iLog=1, 7 do
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog), buildFromAbove = false, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog - 1), buildFromAbove = true, layer = BlockDismantle_layer()})
         end
 
         -- torch2
