@@ -267,7 +267,7 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
 
             -- check layer needs update
             if buildLayer:getNRows() > 0 then
-                    -- add build tree step
+                -- add build tree step
                 iStep = iStep + 1
                 local iStepStr = tostring(iStep)
                 local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
