@@ -290,7 +290,7 @@ function T_BirchForest.T_IMObj_All()
 
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
-    -- T_IMObj.pt_Implements_IMObj(testClassName, obj0)
+    T_IMObj.pt_Implements_IMObj(testClassName, obj0)
 
     -- test construct/ upgrade/ destruct
     T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters0, testObjName0, destructFieldsTest0, logOk)

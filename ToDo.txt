@@ -65,7 +65,7 @@ R  Improve MObjHost                                                             
 -  ensure all MObj's implement and follow IMObj interface                                                               (....)
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc                                              (done)
    R  mobj_test                                                                                                         (done)
-   R  mobj_birchforest                                                                                                  (....)
+   R  mobj_birchforest                                                                                                  (done)
    R  mobj_chest                                                                                                        (done)
    R  mobj_factory                                                                                                      (done)
    -  mobj_mine                                                                                                         (....)
