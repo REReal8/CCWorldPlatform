@@ -134,7 +134,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         -- add build tree step
         table.insert(projectSteps,
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
-                { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "treeBaseLocation" },
+                { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "buildLayerLocation" },
                 { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
                 { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
                 { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "treeLayer" },
@@ -145,7 +145,7 @@ function enterprise_forestry.AddNewSite_ASrv(...)
 
         -- add step data
         local targetBaseLayer = mobj:getBaseLayer(forestLevel)
-        projectData.treeBaseLocation            = baseLocation:copy()
+        projectData.buildLayerLocation          = baseLocation:copy()
         projectData.buildFromAbove              = true
         projectData.replacePresentObjects       = false
         projectData.treeLayer                   = targetBaseLayer
@@ -255,12 +255,12 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
         for iTree = 1, startingNTrees do
             -- get layer
             local buildLayer = treeBuildLayer
-            local layerStr = "treeBuildLayer"
+            local buildLayerStr = "treeBuildLayer"
             local colOffset = treeColOffset
             local rowOffset = treeRowOffset
             if iTree == 1 then
                 buildLayer = baseBuildLayer
-                layerStr = "baseBuildLayer"
+                buildLayerStr = "baseBuildLayer"
                 colOffset = baseColOffset
                 rowOffset = baseRowOffset
             end
@@ -270,21 +270,21 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
                 -- add build tree step
                 iStep = iStep + 1
                 local iStepStr = tostring(iStep)
-                local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
-                local treeBaseLocationStr = "treeBaseLocation"..iStepStr
+                local buildLayerLocation = forest:getBaseLocation():getRelativeLocation(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
+                local buildLayerLocationStr = "buildLayerLocation"..iStepStr
                 table.insert(projectSteps,
                     { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
-                        { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
+                        { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = buildLayerLocationStr },
                         { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
                         { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
-                        { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = layerStr },
+                        { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = buildLayerStr },
                         { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                         { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                    }, description = "Building tree (Forest layer) at "..textutils.serialise(treeBaseLocation, { compact = true })}
+                    }, description = "Building tree (Forest layer) at "..textutils.serialise(buildLayerLocation, { compact = true })}
                 )
 
                 -- add step data
-                projectData[treeBaseLocationStr] = treeBaseLocation
+                projectData[buildLayerLocationStr] = buildLayerLocation
 
                 -- add success stepDataDef
                 table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, sourceKeyDef = "success" })
@@ -313,21 +313,21 @@ function enterprise_forestry.UpgradeSite_ASrv(...)
             -- add build tree step
             iStep = iStep + 1
             local iStepStr = tostring(iStep)
-            local treeBaseLocation = forest:getBaseLocation():getRelativeLocation(0, 6 * (iTree - 1), 0)
-            local treeBaseLocationStr = "treeBaseLocation"..iStepStr
+            local buildLayerLocation = forest:getBaseLocation():getRelativeLocation(0, 6 * (iTree - 1), 0)
+            local buildLayerLocationStr = "buildLayerLocation"..iStepStr
             table.insert(projectSteps,
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
-                    { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = treeBaseLocationStr },
+                    { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = buildLayerLocationStr },
                     { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
                     { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
                     { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "treeLayer" },
                     { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                     { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-                }, description = "Building tree (Forest layer) at "..textutils.serialise(treeBaseLocation, { compact = true })}
+                }, description = "Building tree (Forest layer) at "..textutils.serialise(buildLayerLocation, { compact = true })}
             )
 
             -- add step data
-            projectData[treeBaseLocationStr] = treeBaseLocation
+            projectData[buildLayerLocationStr] = buildLayerLocation
 
             -- add success stepDataDef
             table.insert(areAllTrueStepDataDef, { keyDef = "success"..iStepStr, sourceStep = iStep, sourceKeyDef = "success" })
