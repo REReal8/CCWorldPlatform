@@ -61,6 +61,7 @@ local testClassName = "BirchForest"
 local testObjName = "birchForest"
 local logOk = false
 
+local levelm1 = -1
 local level0 = 0
 local level1 = 1
 local level2 = 2
@@ -235,12 +236,20 @@ end
 function T_BirchForest.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
+    local objm1 = T_BirchForest.CreateTestObj(id, levelm1, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(objm1, "Failed obtaining "..testClassName)
+    local testObjNamem1 = testObjName.."-1"
     local obj0 = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
     local testObjName0 = testObjName.."0"
     local obj1 = T_BirchForest.CreateTestObj(id, level1, baseLocation0, nTrees2, localLogsLocator0, localSaplingsLocator0) assert(obj0, "Failed obtaining "..testClassName)
     local testObjName1 = testObjName.."1"
     local testObjName2 = testObjName.."2"
 
+    local constructParametersm1 = {
+        level           = levelm1,
+
+        baseLocation    = baseLocation0,
+        nTrees          = nTrees1,
+    }
     local constructParameters0 = {
         level           = level0,
 
@@ -282,6 +291,7 @@ function T_BirchForest.T_IMObj_All()
         MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
     ))
 
+    local fieldsTestm1 = T_BirchForest.CreateInitialisedTest(nil, levelm1, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation0, nTrees2, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
@@ -294,6 +304,7 @@ function T_BirchForest.T_IMObj_All()
 
     -- test construct/ upgrade/ destruct
     T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters0, testObjName0, destructFieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, BirchForest, constructParametersm1, testObjNamem1, fieldsTestm1, logOk)
     T_IMObj.pt_construct(testClassName, BirchForest, constructParameters0, testObjName0, fieldsTest0, logOk)
     T_IMObj.pt_construct(testClassName, BirchForest, constructParameters1, testObjName1, fieldsTest1, logOk)
     T_IMObj.pt_construct(testClassName, BirchForest, constructParameters2, testObjName2, fieldsTest2, logOk)
@@ -305,6 +316,7 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
+    T_IMObj.pt_getBuildBlueprint(testClassName, objm1, testObjNamem1, isBlueprintTest, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo1, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
