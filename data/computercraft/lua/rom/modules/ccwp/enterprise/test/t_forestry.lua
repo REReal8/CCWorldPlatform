@@ -32,14 +32,15 @@ function t_forestry.T_AllPhysical()
     -- IObj methods
 
     -- MObjHost methods
-    local mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
+    local mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L0T1()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
+    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
-    t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo2(mobjLocator)
+    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
+    t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
-    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest2()
+    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L2T2()
+    t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
 end
 
@@ -64,25 +65,31 @@ local localSaplingsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local localLogsLocatorTest0 = FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator0)
 local localSaplingsLocatorTest0 = FieldValueEqualTest:newInstance("_localSaplingsLocator", localSaplingsLocator0)
 
-local constructParameters0 = {
+local constructParameters_L0T1 = {
     level           = level0,
 
     baseLocation    = baseLocation0,
     nTrees          = nTrees1,
 }
-local constructParameters1 = {
+local constructParameters_L1T2 = {
     level           = level1,
 
     baseLocation    = baseLocation0,
     nTrees          = nTrees2,
 }
-local constructParameters2 = {
+local constructParameters_L2T2 = {
+    level           = level2,
+
+    baseLocation    = baseLocation0,
+    nTrees          = nTrees2,
+}
+local constructParameters_L2T4 = {
     level           = level2,
 
     baseLocation    = baseLocation0,
     nTrees          = nTrees4,
 }
-local upgradeParametersTo2 = {
+local upgradeParametersTo_L2T4 = {
     level           = level2,
 
     nTrees          = nTrees4,
@@ -252,7 +259,7 @@ function t_forestry.T_hostMObj_SSrv_BirchForest()
     local fieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters0, testMObjName0, fieldsTest0, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, fieldsTest0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -260,11 +267,11 @@ end
 
 local mobjLocator_BirchForest = nil
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
+function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L0T1()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L0T1, testMObjName0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -274,11 +281,11 @@ function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
     return serviceResults.mobjLocator
 end
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
+function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L1T2()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -288,11 +295,11 @@ function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
     return serviceResults.mobjLocator
 end
 
-function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest2()
+function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_L2T2()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters2, testMObjName2, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters_L2T2, testMObjName2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -315,13 +322,13 @@ function t_forestry.T_upgradeMObj_SSrv_BirchForest()
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     -- test
-    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, fieldsTest2, logOk)
+    local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, upgradeParametersTo_L2T4, testMObjName1, fieldsTest2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
 end
 
-function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo2(mobjLocator)
+function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     -- prepare test
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("URL"),
@@ -340,7 +347,7 @@ function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo2(mobjLocator)
     end
 
     -- test
-    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_forestry, mobjLocator, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
+    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_forestry, mobjLocator, upgradeParametersTo_L2T4, mobjLocator:getURI(), upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -350,7 +357,7 @@ function t_forestry.T_releaseMObj_SSrv_BirchForest()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters_L1T2, testMObjName1, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
