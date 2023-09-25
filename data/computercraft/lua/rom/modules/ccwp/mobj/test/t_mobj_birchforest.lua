@@ -308,7 +308,7 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo1, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
-    -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
+    T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 
     -- cleanup test
 end

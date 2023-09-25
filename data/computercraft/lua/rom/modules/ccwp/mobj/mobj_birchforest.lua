@@ -435,7 +435,7 @@ function BirchForest:getBuildBlueprint()
 
     -- determine layerList
     local layerList = {}
-    for iTree=1,nTrees  do
+    for iTree=1, nTrees  do
         local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
         if iTree == 1 then
             table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = self:getBaseLayer(level)})
@@ -554,6 +554,75 @@ function BirchForest:getExtendBlueprint(...)
     -- determine buildLocation
     local baseLocation = self:getBaseLocation()
     local buildLocation = baseLocation:copy()
+
+    -- end
+    return buildLocation, blueprint
+end
+
+local function BlockDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(blockClassName, {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = " ",
+        })
+    )
+end
+
+function BirchForest:getDismantleBlueprint()
+    --[[
+        This method returns a blueprint for dismantling the BirchForest in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- nTrees
+    local nTrees = self:getNTrees()
+    if nTrees > 6 then corelog.Error("BirchForest:getDismantleBlueprint: "..nTrees.." trees not (yet) supported") return nil end
+
+    -- level
+    local level = self:getLevel()
+    if level < -1 or level > 2 then corelog.Error("BirchForest:getDismantleBlueprint: Don't know how to dismantle a BirchForest of level "..level) return nil end
+
+    -- determine layerList
+    local layerList = {}
+    for iTree=1, nTrees  do
+        -- tree
+        local dismantleLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
+        for iLog=1, 7 do
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog), buildFromAbove = false, layer = BlockDismantle_layer()})
+        end
+
+        -- torches
+        if level > 0 then
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(0, 3, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 0, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+        end
+
+        -- chests
+        if level == 2 then
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(2, 1, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(4, 1, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(5, 2, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+        end
+    end
+
+    -- determine escapeSequence
+    local escapeSequence = {}
+
+    -- determine blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence
+    }
+
+    -- determine buildLocation
+    local buildLocation = self._baseLocation:copy()
 
     -- end
     return buildLocation, blueprint

@@ -28,6 +28,14 @@ function t_forestry.T_All()
     t_forestry.T_releaseMObj_SSrv_BirchForest()
 end
 
+function t_forestry.T_AllPhysical()
+    -- IObj methods
+
+    -- MObjHost methods
+    local mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
+    t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
+end
+
 local testMObjClassName = "BirchForest"
 local testMObjName = "birchForest"
 local testMObjName0 = testMObjName.."0"
@@ -236,6 +244,22 @@ function t_forestry.T_hostMObj_SSrv_BirchForest()
     -- cleanup test
 end
 
+local mobjLocator_BirchForest = nil
+
+function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_BirchForest = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
 function t_forestry.T_upgradeMObj_SSrv_BirchForest()
     -- prepare test
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
@@ -263,6 +287,22 @@ function t_forestry.T_releaseMObj_SSrv_BirchForest()
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
+end
+
+function t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
+    -- prepare test
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator
+        assert(mobjLocator_BirchForest, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_BirchForest
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_forestry, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_BirchForest = nil
 end
 
 return t_forestry

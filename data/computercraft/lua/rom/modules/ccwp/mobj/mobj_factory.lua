@@ -569,7 +569,6 @@ function Factory:getDismantleBlueprint()
             table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2Dismantle_layer()})
         end
     else
-        -- ToDo: implement for L1 and L2
         corelog.Warning("Factory:getDismantleBlueprint: Don't know how to make a dismantle blueprint for a Factory of level "..self._level)
     end
 
