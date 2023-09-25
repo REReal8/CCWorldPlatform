@@ -36,6 +36,9 @@ function t_forestry.T_AllPhysical()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
     mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
+    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
+    t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo2(mobjLocator)
+    t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
     mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest2()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
 end
@@ -313,6 +316,31 @@ function t_forestry.T_upgradeMObj_SSrv_BirchForest()
 
     -- test
     local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, fieldsTest2, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo2(mobjLocator)
+    -- prepare test
+    local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL"),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
+    ))
+    local localSaplingsLocatorTest2 = FieldTest:newInstance("_localSaplingsLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL"),
+        MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
+    ))
+    local upgradeFieldsTest = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
+
+    if not mobjLocator then
+        -- check if we locally remembered a mobjLocator
+        assert(mobjLocator_BirchForest, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_BirchForest
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_extendAndUpgradeMObj_ASrv(enterprise_forestry, mobjLocator, upgradeParametersTo2, testMObjName1, upgradeFieldsTest, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
