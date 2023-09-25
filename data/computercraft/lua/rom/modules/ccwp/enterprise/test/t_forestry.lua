@@ -83,12 +83,6 @@ local constructParameters_L2T2 = {
     baseLocation    = baseLocation0,
     nTrees          = nTrees2,
 }
-local constructParameters_L2T4 = {
-    level           = level2,
-
-    baseLocation    = baseLocation0,
-    nTrees          = nTrees4,
-}
 local upgradeParametersTo_L2T4 = {
     level           = level2,
 
@@ -97,14 +91,6 @@ local upgradeParametersTo_L2T4 = {
 
 function t_forestry.T_AddNewSite_ASrv_Levelm1()
     AddNewSite_ASrv(levelm1, nTrees1)
-end
-
-function t_forestry.T_AddNewSite_ASrv_Level0()
-    AddNewSite_ASrv(level0, nTrees1)
-end
-
-function t_forestry.T_AddNewSite_ASrv_Level2()
-    AddNewSite_ASrv(level2, nTrees1)
 end
 
 function AddNewSite_ASrv(level, nTrees)
@@ -142,26 +128,6 @@ end
 
 function t_forestry.T_UpgradeSite_ASrv_Levelm1_Level0Trees1()
     UpgradeSite_ASrv(levelm1, nTrees1, level0, nTrees1)
-end
-
-function t_forestry.T_UpgradeSite_ASrv_Level1Trees1()
-    UpgradeSite_ASrv(level0, nTrees1, level1, nTrees1)
-end
-
-function t_forestry.T_UpgradeSite_ASrv_Level1Trees3()
-    UpgradeSite_ASrv(level0, nTrees1, level1, nTrees3)
-end
-
-function t_forestry.T_UpgradeSite_ASrv_Level2Trees1()
-    UpgradeSite_ASrv(level0, nTrees1, level2, nTrees1)
-end
-
-function t_forestry.T_UpgradeSite_ASrv_Level2Trees2()
-    UpgradeSite_ASrv(level0, nTrees1, level2, nTrees2)
-end
-
-function t_forestry.T_UpgradeSite_ASrv_Level1Trees3_Level2Trees3()
-    UpgradeSite_ASrv(level1, nTrees1, level1, nTrees3, "ExtraCallback", { levelWanted = level2, treesWanted = nTrees3 })
 end
 
 function t_forestry.ExtraCallback(...)
