@@ -55,7 +55,7 @@ local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
 local nTrees1 = 1
 local nTrees2 = 2
 local nTrees3 = 3
-local nTrees6 = 6
+local nTrees4 = 4
 local localLogsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local localSaplingsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local localLogsLocatorTest0 = FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator0)
@@ -77,12 +77,12 @@ local constructParameters2 = {
     level           = level2,
 
     baseLocation    = baseLocation0,
-    nTrees          = nTrees6,
+    nTrees          = nTrees4,
 }
 local upgradeParametersTo2 = {
     level           = level2,
 
-    nTrees          = nTrees6,
+    nTrees          = nTrees4,
 }
 
 function t_forestry.T_AddNewSite_ASrv_Levelm1()
@@ -309,7 +309,7 @@ function t_forestry.T_upgradeMObj_SSrv_BirchForest()
         ValueTypeTest:newInstance("URL"),
         MethodResultEqualTest:newInstance("getHost", "enterprise_chests")
     ))
-    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees6, localLogsLocatorTest2, localSaplingsLocatorTest2)
+    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     -- test
     local serviceResults = T_MObjHost.pt_upgradeMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters1, upgradeParametersTo2, testMObjName1, fieldsTest2, logOk)

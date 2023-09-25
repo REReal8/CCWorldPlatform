@@ -68,7 +68,7 @@ local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
 local baseLocation2 = Location:newInstance(6, 12, 1, 0, 1)
 local nTrees1 = 1
 local nTrees2 = 2
-local nTrees6 = 6
+local nTrees4 = 4
 local localLogsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local localSaplingsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
 local localLogsLocatorTest0 = FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator0)
@@ -257,7 +257,7 @@ function T_BirchForest.T_IMObj_All()
         level           = level2,
 
         baseLocation    = baseLocation0,
-        nTrees          = nTrees6,
+        nTrees          = nTrees4,
     }
 
     local destructFieldsTest0 = TestArrayTest:newInstance()
@@ -270,7 +270,7 @@ function T_BirchForest.T_IMObj_All()
     local upgradeParametersTo2 = {
         level           = level2,
 
-        nTrees          = nTrees6,
+        nTrees          = nTrees4,
     }
 
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
@@ -284,7 +284,7 @@ function T_BirchForest.T_IMObj_All()
 
     local fieldsTest0 = T_BirchForest.CreateInitialisedTest(nil, level0, baseLocation0, nTrees1, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation0, nTrees2, localLogsLocatorTest0, localSaplingsLocatorTest0)
-    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees6, localLogsLocatorTest2, localSaplingsLocatorTest2)
+    local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 

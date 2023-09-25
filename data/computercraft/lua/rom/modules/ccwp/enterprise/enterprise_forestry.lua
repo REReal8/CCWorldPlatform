@@ -18,7 +18,6 @@ local role_forester = require "role_forester"
 local BirchForest = require "mobj_birchforest"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_construction = require "enterprise_construction"
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
