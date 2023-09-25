@@ -592,23 +592,27 @@ function BirchForest:getDismantleBlueprint()
     -- determine layerList
     local layerList = {}
     for iTree=1, nTrees  do
-        -- tree
+        -- torch1
         local dismantleLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
-        for iLog=1, 7 do
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog), buildFromAbove = false, layer = BlockDismantle_layer()})
-        end
-
-        -- torches
         if level > 0 then
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(0, 3, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
             table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 0, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
         end
 
         -- chests
-        if level == 2 then
+        if iTree == 1 and level == 2 then
             table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(2, 1, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
             table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(4, 1, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
             table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(5, 2, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+        end
+
+        -- tree
+        for iLog=1, 7 do
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog), buildFromAbove = false, layer = BlockDismantle_layer()})
+        end
+
+        -- torch2
+        if level > 0 then
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(0, 3, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
         end
     end
 

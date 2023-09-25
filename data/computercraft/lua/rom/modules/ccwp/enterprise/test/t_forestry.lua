@@ -34,12 +34,17 @@ function t_forestry.T_AllPhysical()
     -- MObjHost methods
     local mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
+    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
+    t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
+    mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest2()
+    t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)
 end
 
 local testMObjClassName = "BirchForest"
 local testMObjName = "birchForest"
 local testMObjName0 = testMObjName.."0"
 local testMObjName1 = testMObjName.."1"
+local testMObjName2 = testMObjName.."2"
 local logOk = false
 
 local levelm1 = -1
@@ -67,6 +72,12 @@ local constructParameters1 = {
 
     baseLocation    = baseLocation0,
     nTrees          = nTrees2,
+}
+local constructParameters2 = {
+    level           = level2,
+
+    baseLocation    = baseLocation0,
+    nTrees          = nTrees6,
 }
 local upgradeParametersTo2 = {
     level           = level2,
@@ -251,6 +262,34 @@ function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest0()
 
     -- test
     local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters0, testMObjName0, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_BirchForest = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest1()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters1, testMObjName1, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_BirchForest = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
+function t_forestry.T_hostAndBuildMObj_ASrv_BirchForest2()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters2, testMObjName2, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
