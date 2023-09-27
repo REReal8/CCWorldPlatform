@@ -2,7 +2,8 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local IMObj = require "i_mobj"
-local UtilStation = Class.NewClass(ObjBase, IMObj)
+local IItemDepot = require "i_item_depot"
+local UtilStation = Class.NewClass(ObjBase, IMObj, IItemDepot)
 
 --[[
     The UtilStation mobj represents a util station in the minecraft world and provides (production) services to operate on that UtilStation.
@@ -47,12 +48,13 @@ local enterprise_manufacturing
 
 function UtilStation:_init(...)
     -- get & check input from description
-    local checkSuccess, id, baseLocation = InputChecker.Check([[
+    local checkSuccess, id, baseLocation, outputLocator = InputChecker.Check([[
         Initialise a UtilStation.
 
         Parameters:
             id                      + (string) id of the UtilStation
             baseLocation            + (Location) base location of the UtilStation
+            outputLocator           + (URL) output chest of the UtilStation
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UtilStation:_init: Invalid input") return nil end
 
@@ -60,6 +62,7 @@ function UtilStation:_init(...)
     ObjBase._init(self)
     self._id                = id
     self._baseLocation      = baseLocation
+    self._outputLocator     = outputLocator
 end
 
 -- ToDo: should be renamed to newFromTable at some point
@@ -72,6 +75,7 @@ function UtilStation:new(...)
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the UtilStation
                 _baseLocation           - (Location) location of the UtilStation
+                _outputLocator          - (URL) output chest of the UtilStation
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UtilStation:new: Invalid input") return nil end
 
@@ -85,6 +89,10 @@ end
 
 function UtilStation:getBaseLocation()
     return self._baseLocation
+end
+
+function UtilStation:getOutputLocator()
+    return self._outputLocator
 end
 
 --    _____ ____  _     _                  _   _               _
@@ -129,9 +137,13 @@ function UtilStation:construct(...)
 
     -- determine UtilStation fields
     local id = coreutils.NewId()
+    local outputLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+        baseLocation    = baseLocation:getRelativeLocation(2, 3, 0),
+        accessDirection = "top",
+    }}).mobjLocator
 
     -- construct new UtilStation
-    local obj = UtilStation:newInstance(id, baseLocation:copy())
+    local obj = UtilStation:newInstance(id, baseLocation:copy(), outputLocator)
 
     -- end
     return obj
@@ -151,8 +163,18 @@ function UtilStation:destruct()
         Parameters:
     ]]
 
+    -- release outputLocator
+    local destructSuccess = true
+    local outputLocator = self._outputLocator
+    local hostName = outputLocator:getHost()
+    if hostName == enterprise_chests:getHostName() then
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("UtilStation:destruct(): failed releasing output locator "..outputLocator:getURI()) destructSuccess = false end
+    end
+    self._outputLocator = nil
+
     -- end
-    return true
+    return destructSuccess
 end
 
 function UtilStation:getId()
@@ -287,6 +309,101 @@ function UtilStation:getDismantleBlueprint()
 
     -- end
     return buildLocation, blueprint
+end
+
+--    _____ _____ _                 _____                   _                    _   _               _
+--   |_   _|_   _| |               |  __ \                 | |                  | | | |             | |
+--     | |   | | | |_ ___ _ __ ___ | |  | | ___ _ __   ___ | |_   _ __ ___   ___| |_| |__   ___   __| |___
+--     | |   | | | __/ _ \ '_ ` _ \| |  | |/ _ \ '_ \ / _ \| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_ _| |_| ||  __/ | | | | | |__| |  __/ |_) | (_) | |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|_____|\__\___|_| |_| |_|_____/ \___| .__/ \___/ \__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                                             | |
+--                                             |_|
+
+function UtilStation:storeItemsFrom_AOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator, assignmentsPriorityKey, callback = InputChecker.Check([[
+        This async public ItemDepot service stores items from an ItemSupplier.
+
+        An ItemDepot should take special care the transfer from the turtle inventory gets priority over other assignments to the turtle.
+
+        Return value:
+                                        - (boolean) whether the service was scheduled successfully
+
+        Async service return value (to Callback):
+                                        - (table)
+                success                 - (boolean) whether the service executed successfully
+                destinationItemsLocator - (URL) stating the final ItemDepot and the items that where stored
+                                            (upon service succes the "base" component of this URL should be equal to itemDepotLocator
+                                            and the "query" should be equal to the "query" component of the itemsLocator)
+
+        Parameters:
+            serviceData                 - (table) data about the service
+                itemsLocator            + (URL) locating the items to store
+                                            (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                            (the "query" component of the URL specifies the items)
+                assignmentsPriorityKey  + (string, "") priorityKey that should be set for all assignments triggered by this service
+            callback                    + (Callback) to call once service is ready
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("UtilStation:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
+
+    -- get output chest
+    local outputChest = enterprise_chests:getObject(self._outputLocator)
+    if not outputChest then corelog.Error("UtilStation:storeItemsFrom_AOSrv: Failed getting outputChest object") return Callback.ErrorCall(callback) end
+
+    -- pass to output chest
+    return outputChest:storeItemsFrom_AOSrv(table.unpack(arg))
+end
+
+function UtilStation:can_StoreItems_QOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator = InputChecker.Check([[
+        This sync public query service answers the question whether the ItemDepot can store specific items.
+
+        Return value:
+                                    - (table)
+                success             - (boolean) whether the answer to the question is true
+
+        Parameters:
+            serviceData             - (table) data to the query
+                itemsLocator        + (URL) locating the items that need to be stored
+                                        (the "base" component of the URL specifies the ItemDepot to store the items in)
+                                        (the "query" component of the URL specifies the items to query for)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("UtilStation:can_StoreItems_QOSrv: Invalid input") return {success = false} end
+
+    -- get output chest
+    local outputChest = enterprise_chests:getObject(self._outputLocator)
+    if not outputChest then corelog.Error("UtilStation:can_StoreItems_QOSrv: Failed getting outputChest object") return {success = false} end
+
+    -- pass to output chest
+    return outputChest:can_StoreItems_QOSrv(table.unpack(arg))
+end
+
+function UtilStation:needsTo_StoreItemsFrom_SOSrv(...)
+    -- get & check input from description
+    local checkSuccess, itemsLocator = InputChecker.Check([[
+        This sync public service returns the needs to store specific items from an ItemSupplier.
+
+        Return value:
+                                                - (table)
+                success                         - (boolean) whether the service executed correctly
+                fuelNeed                        - (number) amount of fuel needed to store items
+
+        Parameters:
+            serviceData                         - (table) data to the query
+                itemsLocator                    + (URL) locating the items to store
+                                                    (the "base" component of the URL specifies the ItemSupplier that provides the items)
+                                                    (the "query" component of the URL specifies the items)
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("UtilStation:needsTo_StoreItemsFrom_SOSrv: Invalid input") return {success = false} end
+
+    -- get output chest
+    local outputChest = enterprise_chests:getObject(self._outputLocator)
+    if not outputChest then corelog.Error("UtilStation:needsTo_StoreItemsFrom_SOSrv: Failed getting outputChest object") return {success = false} end
+
+    -- pass to output chest
+    return outputChest:needsTo_StoreItemsFrom_SOSrv(table.unpack(arg))
 end
 
 --                        _  __ _                       _   _               _

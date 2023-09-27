@@ -62,6 +62,8 @@ R  Initialisation: v2.0                                                         
 R  Improve MObjHost                                                                                                     (done)
    R  Support extending and upgrading of MObj's                                                                         (done)
 
+RG UtilStation v1.0 input & output chest UI                                                                             (....)
+
 -  ensure all MObj's implement and follow IMObj interface                                                               (....)
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc                                              (done)
    R  mobj_test                                                                                                         (done)
@@ -329,9 +331,6 @@ RG mine v2
 
 -  enterprise management
    -  for claiming manament execution time
-
--  player station
-   -  v1.0: input & output chest UI
 
 -  IItemSupplier & IItemDepot interface
    -  consider better name for provideTo and storeFrom reflecting the fact that storeFrom is simpler
