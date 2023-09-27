@@ -380,7 +380,6 @@ function Turtle:getLocation()
     return location
 end
 
-
 function Turtle:getInventory()
     -- check current Turtle
     if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end

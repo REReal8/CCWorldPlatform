@@ -158,7 +158,7 @@ function Inventory:hasItems(...)
         if type(itemCount) ~= "number" then corelog.Error("Inventory:hasItems: itemCount of wrong type = "..type(itemCount)..".") return false end
 
         local inventoryCount = itemTable[itemName]
-        if inventoryCount == nil or inventoryCount < itemCount then
+        if itemCount ~= 0 and (inventoryCount == nil or inventoryCount < itemCount) then
             return false
         end
     end

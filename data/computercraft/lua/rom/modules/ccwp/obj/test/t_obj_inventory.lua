@@ -392,10 +392,17 @@ function T_Inventory.T_hasItems()
     hasItems = obj:hasItems({ [itemName] = itemCount} )
     assert(not hasItems, "hasItems incorrectly success for "..itemCount.." "..itemName.."'s")
 
+    -- test item not pressent
     itemName = "minecraft:furnace"
     itemCount = 1
     hasItems = obj:hasItems({ [itemName] = itemCount} )
     assert(not hasItems, "hasItems incorrectly success for "..itemCount.." "..itemName.."'s")
+
+    -- test 0 items returns true when item not present
+    itemName = "minecraft:furnace"
+    itemCount = 0
+    hasItems = obj:hasItems({ [itemName] = itemCount} )
+    assert(hasItems, "hasItems incorrectly failed for "..itemCount.." "..itemName.."'s")
 
     -- cleanup test
 end
