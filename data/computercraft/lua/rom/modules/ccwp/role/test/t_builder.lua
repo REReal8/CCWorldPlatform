@@ -11,9 +11,14 @@ local LayerRectangle = require "obj_layer_rectangle"
 local role_builder = require "role_builder"
 
 function t_builder.T_All()
---    T_PatternsSubstract()
+    -- role_builder methods
     t_builder.T_BuildLayer_MetaData()
     t_builder.T_BuildBlueprint_MetaData()
+end
+
+function t_builder.T_AllPhysical()
+    -- role_builder methods
+    t_builder.T_BuildLayer_Task()
 end
 
 local testStartLocation = Location:newInstance(-6, 0, 1, 0, 1)
@@ -76,12 +81,23 @@ local compact = { compact = true }
 function t_builder.T_BuildLayer_MetaData()
     -- prepare test
     corelog.WriteToLog("* role_builder BuildLayer_MetaData test")
-    local buildFromAbove = true
-    local buildData = {startpoint = testStartLocation, buildFromAbove = buildFromAbove, layer = testBuildLayer1}
+    local buildDirection = "Down"
+    local buildData = {
+        startpoint      = testStartLocation,
+        buildDirection  = buildDirection,
+        layer           = testBuildLayer1
+    }
 
     -- test
     local metaData = role_builder.BuildLayer_MetaData(buildData)
-    local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
+    local deltaZ = 1
+    if buildDirection == "Down" then
+        deltaZ =  1
+    elseif buildDirection == "Up" then
+        deltaZ = -1
+    else
+        assert(false, "Don't know how to handle buildDirection '"..buildDirection.."'")
+    end
     local expectedLocation = testStartLocation:getRelativeLocation(0, 0, deltaZ)
     assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
@@ -99,8 +115,8 @@ function t_builder.T_BuildBlueprint_MetaData()
     corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
     local testBlueprint = {
         layerList = {
-            { startpoint = Location:newInstance(0, 0, 0), buildFromAbove  = true, layer = testBuildLayer1:copy()},
-            { startpoint = Location:newInstance(3, 3, -1), buildFromAbove  = false, layer = testBuildLayer2:copy()},
+            { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = testBuildLayer1:copy()},
+            { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = false, layer = testBuildLayer2:copy()},
         },
         escapeSequence = {
             Location:newInstance(3, 3, 1),
@@ -126,7 +142,12 @@ function t_builder.T_BuildLayer_Task()
     -- prepare test
     corelog.WriteToLog("* role_builder BuildLayer_Task test")
     local testBuildLayer = testBuildLayer3:copy()
-    local buildData = {startpoint = testStartLocation, buildFromAbove = true, replacePresentObjects = false, layer = testBuildLayer}
+    local buildData = {
+        startpoint              = testStartLocation,
+        buildDirection          = "Down",
+        replacePresentObjects   = false,
+        layer                   = testBuildLayer
+    }
 
     -- test
     role_builder.BuildLayer_Task(buildData)

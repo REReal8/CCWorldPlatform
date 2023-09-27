@@ -146,10 +146,15 @@ function enterprise_construction.BuildLayer_ASrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    local buildDirection = "Up"
+    if buildFromAbove then
+        buildDirection = "Down"
+    end
+
     -- get assignment metadata
     local taskData = {
         startpoint              = startpoint,
-        buildFromAbove          = buildFromAbove,
+        buildDirection          = buildDirection,
         replacePresentObjects   = replacePresentObjects,
         layer                   = layer,
     }

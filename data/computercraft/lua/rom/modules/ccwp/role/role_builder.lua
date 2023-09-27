@@ -54,9 +54,13 @@ function role_builder.BuildBlueprint_MetaData(...)
     for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
         local startpoint = Location:new(buildLayer.startpoint)
+        local buildDirection = "Up"
+        if buildLayer.buildFromAbove then
+            buildDirection = "Down"
+        end
         local layerBuildData = {
             startpoint              = startpoint:getRelativeLocation(blueprintStartpoint:getX(), blueprintStartpoint:getY(), blueprintStartpoint:getZ()),
-            buildFromAbove          = buildLayer.buildFromAbove,
+            buildDirection          = buildDirection,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
         }
@@ -65,7 +69,15 @@ function role_builder.BuildBlueprint_MetaData(...)
         local layerMetaData = role_builder.BuildLayer_MetaData(layerBuildData)
 
         -- determine startLocation (correcting for buildFromAbove)
-        local deltaZ = 1 if not layerBuildData.buildFromAbove then deltaZ = -1 end
+        local deltaZ = 1
+        if buildDirection == "Down" then
+            deltaZ =  1
+        elseif buildDirection == "Up" then
+            deltaZ = -1
+        else
+            corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return {}
+        end
+
         local startLocation = layerBuildData.startpoint:getRelativeLocation(0, 0, deltaZ)
 
         -- update blueprint metadata
@@ -112,12 +124,17 @@ function role_builder.BuildBlueprint_Task(...)
 
     -- loop on layers
     for i, buildLayer in ipairs(layerList) do
+        local buildDirection = "Up"
+        if buildLayer.buildFromAbove then
+            buildDirection = "Down"
+        end
+
         -- determine buildData for this layer
         local startpoint = Location:new(buildLayer.startpoint)
         local layerBuildData = {
             startpoint              = startpoint:getRelativeLocation(blueprintStartpoint:getX(), blueprintStartpoint:getY(), blueprintStartpoint:getZ()),
             forceToStartPoint       = true, -- note: forcing, to ensure we get to the layer startpoint directly (blueprint's should ensure this doesn't destroy anything!)
-            buildFromAbove          = buildLayer.buildFromAbove,
+            buildDirection          = buildDirection,
             replacePresentObjects   = buildLayer.replacePresentObjects,
             layer                   = buildLayer.layer,
         }
@@ -141,7 +158,7 @@ end
 
 function role_builder.BuildLayer_MetaData(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, layer = InputChecker.Check([[
+    local checkSuccess, startpoint, buildDirection, layer = InputChecker.Check([[
         This function returns the MetaData for BuildLayer_Task
 
         Return value:
@@ -150,7 +167,7 @@ function role_builder.BuildLayer_MetaData(...)
         Parameters:
             buildData                   - (table) data about the layer
                 startpoint              + (Location) lower left coordinate to start building the layer
-                buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
+                buildDirection          + (string) direction to build from (Up, Down, XXX)
                 replacePresentObjects   - (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
     ]], table.unpack(arg))
@@ -160,8 +177,15 @@ function role_builder.BuildLayer_MetaData(...)
     local itemList = layer:itemsNeeded()
     local fuelNeeded = (layer:getNColumns() * layer:getNRows() - 1)
 
-    -- determine startLocation (correcting for buildFromAbove)
-    local deltaZ = 1 if not buildFromAbove then deltaZ = -1 end
+    -- determine startLocation (correcting for buildDirection)
+    local deltaZ = 1
+    if buildDirection == "Down" then
+        deltaZ =  1
+    elseif buildDirection == "Up" then
+        deltaZ = -1
+    else
+        corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return {}
+    end
     local startLocation = startpoint:getRelativeLocation(0, 0, deltaZ)
 
     -- return metadata
@@ -177,7 +201,7 @@ end
 
 function role_builder.BuildLayer_Task(...)
     -- get & check input from description
-    local checkSuccess, startpoint, forceToStartPoint, buildFromAbove, replacePresentObjects, layer = InputChecker.Check([[
+    local checkSuccess, startpoint, forceToStartPoint, buildDirection, replacePresentObjects, layer = InputChecker.Check([[
         This Task builds a rectangular layer in the x,y plane.
 
         Return value:
@@ -187,7 +211,7 @@ function role_builder.BuildLayer_Task(...)
             buildData                   - (table) data about the layer
                 startpoint              + (Location) lower left coordinate to start building the layer
                 forceToStartPoint       + (boolean, false) whether to force going to startpoint
-                buildFromAbove          + (boolean) whether build should be done from above (true) or below (false)
+                buildDirection          + (string) direction to build from (Up, Down, XXX)
                 replacePresentObjects   + (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
     ]], table.unpack(arg))
@@ -210,9 +234,13 @@ function role_builder.BuildLayer_Task(...)
     end
 
     -- orientatie
-    local deltaZ    = 1
-    if buildFromAbove   then deltaZ    =  1
-                        else deltaZ    = -1
+    local deltaZ = 1
+    if buildDirection == "Down" then
+        deltaZ =  1
+    elseif buildDirection == "Up" then
+        deltaZ = -1
+    else
+        corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
     end
 
     -- go to starting location
@@ -248,10 +276,12 @@ function role_builder.BuildLayer_Task(...)
                 -- check current block present
                 local has_block, block_data
                 if not replacePresentObjects then
-                    if buildFromAbove then
+                    if buildDirection == "Down" then
                         has_block, block_data = turtle.inspectDown()
-                    else
+                    elseif buildDirection == "Up" then
                         has_block, block_data = turtle.inspectUp()
+                    else
+                        corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
                     end
                 end
 
@@ -260,8 +290,14 @@ function role_builder.BuildLayer_Task(...)
                 if replacePresentObjects or not has_block or type(block_data) ~= "table" or block_data.name ~= block_name then
                     -- place block
                     if coreinventory.SelectItem(block_name) then
-                        if buildFromAbove   then turtle.digDown()   turtle.placeDown()
-                                            else turtle.digUp()     turtle.placeUp()
+                        if buildDirection == "Down" then
+                            turtle.digDown()
+                            turtle.placeDown()
+                        elseif buildDirection == "Up" then
+                            turtle.digUp()
+                            turtle.placeUp()
+                        else
+                            corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
                         end
                     else
                         -- mandatory item not in inventory, error message and ignore
@@ -270,8 +306,12 @@ function role_builder.BuildLayer_Task(...)
                 end
             elseif block:isNoneBlock() then
                 -- clear block
-                if buildFromAbove then turtle.digDown()
-                else turtle.digUp()
+                if buildDirection == "Down" then
+                    turtle.digDown()
+                elseif buildDirection == "Up" then
+                    turtle.digUp()
+                else
+                    corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
                 end
             elseif block:isAnyBlock() then
                 -- leave current block be
