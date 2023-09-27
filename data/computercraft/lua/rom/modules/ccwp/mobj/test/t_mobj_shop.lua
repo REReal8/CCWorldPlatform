@@ -67,8 +67,7 @@ local testClassName = "Shop"
 local testObjName = "shop"
 local logOk = false
 
-local locatorClassName = "URL"
-local itemSuppliersLocators1 = ObjArray:newInstance(locatorClassName)
+local itemSuppliersLocators1 = ObjArray:newInstance(URL:getClassName())
 
 local compact = { compact = true }
 

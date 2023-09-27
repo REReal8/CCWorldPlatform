@@ -72,11 +72,10 @@ local level2 = 2
 local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
 
 local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
-local locatorClassName = "URL"
-local inputLocators0 = ObjArray:newInstance(locatorClassName, { inputLocator0, })
+local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0, })
 
 local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
-local outputLocators0 = ObjArray:newInstance(locatorClassName, { outputLocator0, })
+local outputLocators0 = ObjArray:newInstance(URL:getClassName(), { outputLocator0, })
 
 local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(0, 0, 0), true)
 local productionSpotClassName = "ProductionSpot"
@@ -239,23 +238,23 @@ function T_Factory.T_IMObj_All()
         baseLocation    = baseLocation1:getRelativeLocation(2, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(inputChestLocator, "Failed obtaining Chest")
-    local inputLocators2 = ObjArray:newInstance(locatorClassName, { inputChestLocator, })
+    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { inputChestLocator, })
     local outputChestLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
         baseLocation    = baseLocation1:getRelativeLocation(4, 5, 0),
         accessDirection = "top",
     }}).mobjLocator assert(outputChestLocator, "Failed obtaining Chest")
-    local outputLocators2 = ObjArray:newInstance(locatorClassName, { outputChestLocator, })
+    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { outputChestLocator, })
     local obj2 = T_Factory.CreateTestObj(id, level2, baseLocation1, inputLocators2, outputLocators2, craftingSpots1, smeltingSpots1) assert(obj2, "Failed obtaining "..testClassName)
     local testObjName2 = testObjName.."2"
 
     local topChestsDestructTest = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local storageChestsDestructTest = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local destructFieldsTest = TestArrayTest:newInstance(
@@ -271,12 +270,12 @@ function T_Factory.T_IMObj_All()
 
     local inputLocatorsTest2 = FieldTest:newInstance("_inputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
     local outputLocatorsTest2 = FieldTest:newInstance("_outputLocators", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 1)
     ))
     local fieldsTest2 = T_Factory.CreateInitialisedTest(nil, level2, baseLocation1, inputLocatorsTest2, outputLocatorsTest2, craftingSpots1, smeltingSpots1)
@@ -495,7 +494,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not produce without available inputLocator
     -- ToDo: improve by changing the availability of the inputLocator
-    local inputLocators2 = ObjArray:newInstance(locatorClassName, { })
+    local inputLocators2 = ObjArray:newInstance(URL:getClassName(), { })
     obj._inputLocators = inputLocators2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")
@@ -503,7 +502,7 @@ function T_Factory.T_can_ProvideItems_QOSrv()
 
     -- test can not produce without available outputLocator
     -- ToDo: improve by changing the availability of the _outputLocators
-    local outputLocators2 = ObjArray:newInstance(locatorClassName, { })
+    local outputLocators2 = ObjArray:newInstance(URL:getClassName(), { })
     obj._outputLocators = outputLocators2
     serviceResults = obj:can_ProvideItems_QOSrv({ provideItems = { [itemName] = itemCount} })
     assert(not serviceResults.success, "can_ProvideItems_QOSrv incorrectly success for "..itemCount.." "..itemName.."'s")

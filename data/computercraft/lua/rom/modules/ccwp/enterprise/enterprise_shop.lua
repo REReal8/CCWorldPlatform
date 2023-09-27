@@ -13,6 +13,7 @@ local coreutils = require "coreutils"
 local InputChecker = require "input_checker"
 
 local ObjArray = require "obj_array"
+local URL = require "obj_url"
 
 local Shop = require "mobj_shop"
 
@@ -68,8 +69,7 @@ function enterprise_shop:getShop()
     local nShops = self:getNumberOfObjects("Shop")
     if nShops == 0 then
         -- the Shop is not there yet => create it
-        local locatorClassName = "URL"
-        shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(locatorClassName))
+        shop = Shop:newInstance(coreutils.NewId(), ObjArray:newInstance(URL:getClassName()))
         corelog.WriteToLog("Creating Shop "..shop:getId())
 
         -- save it

@@ -61,9 +61,8 @@ local baseLocation1  = Location:newInstance(12, -12, 1, 0, 1)
 local entryLocation1 = baseLocation1:getRelativeLocation(3, 3, 0)
 local dropLocation1 = 0
 local pickupLocation1 = 0
-local locatorClassName = "URL"
-local topChests1 = ObjArray:newInstance(locatorClassName) assert(topChests1, "Failed obtaining ObjArray")
-local storageChests1 = ObjArray:newInstance(locatorClassName) assert(storageChests1, "Failed obtaining ObjArray")
+local topChests1 = ObjArray:newInstance(URL:getClassName()) assert(topChests1, "Failed obtaining ObjArray")
+local storageChests1 = ObjArray:newInstance(URL:getClassName()) assert(storageChests1, "Failed obtaining ObjArray")
 local nTopChests1 = 4
 local nLayers1 = 3
 local constructParameters1 = {
@@ -200,12 +199,12 @@ function T_Silo.T_IMObj_All()
 
     local topChestsDestructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local storageChestsDestructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", 0)
     ))
     local destructFieldsTest = TestArrayTest:newInstance(
@@ -217,12 +216,12 @@ function T_Silo.T_IMObj_All()
     local pickupLocation = 2
     local topChestsConstructTest = FieldTest:newInstance("_topChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nTopChests1)
     ))
     local storageChestsConstructTest = FieldTest:newInstance("_storageChests", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("ObjArray"),
-        MethodResultEqualTest:newInstance("getObjClassName", locatorClassName),
+        MethodResultEqualTest:newInstance("getObjClassName", URL:getClassName()),
         MethodResultEqualTest:newInstance("nObjs", nLayers1*4)
     ))
     local constructFieldsTest = T_Silo.CreateInitialisedTest(nil, baseLocation1, entryLocation1, dropLocation, pickupLocation, topChestsConstructTest, storageChestsConstructTest)
