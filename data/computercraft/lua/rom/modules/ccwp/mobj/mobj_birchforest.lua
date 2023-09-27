@@ -494,7 +494,7 @@ function BirchForest:getExtendBlueprint(...)
 
     -- existing trees
     local layerList = {}
-    if level < 2 and upgradedLevel == 2 then
+    if level < 2 and upgradedLevel ~= level then
         -- current layer data
         local treeLayer = self:getTreeLayer(level)
         if not treeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..level) return nil end
