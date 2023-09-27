@@ -1097,7 +1097,7 @@ function Factory.ProduceItem_ASrv(...)
             { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
             { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-        }, description = "Getting items "..localInputItemsLocator:getURI().." (local input) into turtle"},
+        }, description = "Getting items "..localInputItemsLocator:getURI().." (local input) into Turtle"},
     }
 
     -- add production steps

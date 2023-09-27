@@ -611,7 +611,7 @@ function Chest:storeItemsFrom_AOSrv(...)
     }
 
     -- start project
-    corelog.WriteToLog(">Store "..itemsLocator:getURI().." into Chest")
+    corelog.WriteToLog(">Store "..itemsLocator:getURI().." into Chest "..self:getId())
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
