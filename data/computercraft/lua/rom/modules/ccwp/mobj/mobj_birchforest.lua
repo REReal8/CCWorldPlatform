@@ -793,7 +793,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
                     }, description = "Providing "..textutils.serialise(item, {compact = true}).." recursively"},
                 },
                 returnData  = {
-                    { keyDef = "destinationItemsLocator"            , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
+                    { keyDef = "destinationItemsLocator"            , sourceStep = 5, sourceKeyDef = "destinationItemsLocator" },
                 }
             }
             local projectData = {
