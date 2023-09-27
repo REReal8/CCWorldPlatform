@@ -237,14 +237,14 @@ function UtilStation:getBuildBlueprint()
 
     corelog.Warning("UtilStation:getBuildBlueprint(): blueprint does not work because is needs to be build from the front, which is something the builder does not yet support.")
     local layerList = {
-    --     { startpoint = Location:newInstance(8, 3, 0), buildFromAbove = true, layer = Chest_layer()},
-    --     { startpoint = Location:newInstance(9, 3, 0), buildFromAbove = true, layer = Computer_layer()},
-    --     { startpoint = Location:newInstance(9, 2, 0), buildFromAbove = true, layer = Modem_layer()},
-    --     { startpoint = Location:newInstance(9, 3, 2), buildFromAbove = true, layer = Computer_layer()},
-    --     { startpoint = Location:newInstance(9, 2, 2), buildFromAbove = true, layer = Modem_layer()},
+    --     { startpoint = Location:newInstance(8, 3, 0), buildDirection = "Down", layer = Chest_layer()},
+    --     { startpoint = Location:newInstance(9, 3, 0), buildDirection = "Down", layer = Computer_layer()},
+    --     { startpoint = Location:newInstance(9, 2, 0), buildDirection = "Down", layer = Modem_layer()},
+    --     { startpoint = Location:newInstance(9, 3, 2), buildDirection = "Down", layer = Computer_layer()},
+    --     { startpoint = Location:newInstance(9, 2, 2), buildDirection = "Down", layer = Modem_layer()},
     }
     -- for i=2,8 do
-    --     table.insert(layerList, { startpoint = Location:newInstance(1, 3, i), buildFromAbove = true, layer = Monitor_Only_layer()})
+    --     table.insert(layerList, { startpoint = Location:newInstance(1, 3, i), buildDirection = "Down", layer = Monitor_Only_layer()})
     -- end
 
     -- determine escapeSequence

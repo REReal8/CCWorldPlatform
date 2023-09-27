@@ -203,7 +203,7 @@ function Chest:getBuildBlueprint()
 
     -- construct layer list
     local layerList = {
-        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = Chest_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = Chest_layer()},
     }
 
     -- construct blueprint
@@ -244,7 +244,7 @@ function Chest:getDismantleBlueprint()
 
     -- construct layer list
     local layerList = {
-        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = ChestDismantle_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = ChestDismantle_layer()},
     }
 
     -- construct blueprint

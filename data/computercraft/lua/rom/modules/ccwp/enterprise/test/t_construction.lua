@@ -80,7 +80,7 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
     corelog.WriteToLog("* BuildLayer_ASrv (from turtle) test")
     local buildData = {
         startpoint                  = testStartLocation,
-        buildFromAbove              = true,
+        buildDirection              = "Down",
         layer                       = testBuildLayer1,
         materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
         wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
@@ -106,7 +106,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
             -- BuildLayer_ASrv
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
                 { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "startpoint" },
-                { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
+                { keyDef = "buildDirection"                 , sourceStep = 0, sourceKeyDef = "buildDirection" },
                 { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "layer" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 1, sourceKeyDef = "chestLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 1, sourceKeyDef = "chestLocator" },
@@ -136,7 +136,7 @@ function t_construction.T_BuildLayer_ASrv_FromChest()
 
             -- build data
             startpoint              = testStartLocation2,
-            buildFromAbove          = true,
+            buildDirection          = "Down",
             layer                   = testBuildLayer1,
         },
         projectMeta = { title = "Test: Build Layer from Chest", description = "Building a test layer" },
@@ -152,10 +152,10 @@ function t_construction.T_BuildBlueprint_ASrv()
     corelog.WriteToLog("* BuildBlueprint_ASrv test")
     local testBlueprint1 = {
         layerList = {
-            { startpoint = Location:newInstance(0, 0, 0), buildFromAbove  = true, layer = testBuildLayer3:copy()},
-            { startpoint = Location:newInstance(3, 3, -1), buildFromAbove  = false, layer = testBuildLayer4:copy()},
-            { startpoint = Location:newInstance(2, 2, -2), buildFromAbove  = false, layer = testBuildLayer2:copy()},
-            { startpoint = Location:newInstance(2, 2, -3), buildFromAbove  = false, layer = testBuildLayer2:copy()}
+            { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = testBuildLayer3:copy()},
+            { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = testBuildLayer4:copy()},
+            { startpoint = Location:newInstance(2, 2, -2), buildDirection = "Up", layer = testBuildLayer2:copy()},
+            { startpoint = Location:newInstance(2, 2, -3), buildDirection = "Up", layer = testBuildLayer2:copy()}
         },
         escapeSequence = {
             Location:newInstance(3, 3, 1),

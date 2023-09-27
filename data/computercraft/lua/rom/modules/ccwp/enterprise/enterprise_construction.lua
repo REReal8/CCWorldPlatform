@@ -125,7 +125,7 @@ end
 
 function enterprise_construction.BuildLayer_ASrv(...)
     -- get & check input from description
-    local checkSuccess, startpoint, buildFromAbove, replacePresentObjects, layer, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
+    local checkSuccess, startpoint, buildDirection, replacePresentObjects, layer, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
         This async public service builds a rectangular layer in the x,y plane as a single assignment/ task.
 
         Return value:
@@ -137,7 +137,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
         Parameters:
             buildData                           - (table) data about what to build
                 startpoint                      + (table) lower left coordinate to start building the layer
-                buildFromAbove                  + (boolean) whether build should be done from above (true) or below (false)
+                buildDirection                  + (string) direction to build from (Up, Down, XXX)
                 replacePresentObjects           + (boolean, false) whether objects should be replaced if it is already present in the minecraft world (default = false)
                 layer                           + (LayerRectangle) layer to build
                 materialsItemSupplierLocator    + (URL) locating the host of the building materials
@@ -145,11 +145,6 @@ function enterprise_construction.BuildLayer_ASrv(...)
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_construction.BuildLayer_ASrv: Invalid input") return Callback.ErrorCall(callback) end
-
-    local buildDirection = "Up"
-    if buildFromAbove then
-        buildDirection = "Down"
-    end
 
     -- get assignment metadata
     local taskData = {

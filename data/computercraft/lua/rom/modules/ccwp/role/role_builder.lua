@@ -54,10 +54,7 @@ function role_builder.BuildBlueprint_MetaData(...)
     for i, buildLayer in ipairs(layerList) do
         -- determine buildData for this layer
         local startpoint = Location:new(buildLayer.startpoint)
-        local buildDirection = "Up"
-        if buildLayer.buildFromAbove then
-            buildDirection = "Down"
-        end
+        local buildDirection = buildLayer.buildDirection
         local layerBuildData = {
             startpoint              = startpoint:getRelativeLocation(blueprintStartpoint:getX(), blueprintStartpoint:getY(), blueprintStartpoint:getZ()),
             buildDirection          = buildDirection,
@@ -68,7 +65,7 @@ function role_builder.BuildBlueprint_MetaData(...)
         -- get metadata for layer
         local layerMetaData = role_builder.BuildLayer_MetaData(layerBuildData)
 
-        -- determine startLocation (correcting for buildFromAbove)
+        -- determine startLocation (correcting for buildDirection)
         local deltaZ = 1
         if buildDirection == "Down" then
             deltaZ =  1
@@ -77,7 +74,6 @@ function role_builder.BuildBlueprint_MetaData(...)
         else
             corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return {}
         end
-
         local startLocation = layerBuildData.startpoint:getRelativeLocation(0, 0, deltaZ)
 
         -- update blueprint metadata
@@ -124,10 +120,7 @@ function role_builder.BuildBlueprint_Task(...)
 
     -- loop on layers
     for i, buildLayer in ipairs(layerList) do
-        local buildDirection = "Up"
-        if buildLayer.buildFromAbove then
-            buildDirection = "Down"
-        end
+        local buildDirection = buildLayer.buildDirection
 
         -- determine buildData for this layer
         local startpoint = Location:new(buildLayer.startpoint)

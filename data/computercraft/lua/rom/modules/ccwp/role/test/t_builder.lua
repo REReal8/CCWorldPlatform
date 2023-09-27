@@ -115,8 +115,8 @@ function t_builder.T_BuildBlueprint_MetaData()
     corelog.WriteToLog("* role_builder BuildBlueprint_MetaData test")
     local testBlueprint = {
         layerList = {
-            { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = testBuildLayer1:copy()},
-            { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = false, layer = testBuildLayer2:copy()},
+            { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = testBuildLayer1:copy()},
+            { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = testBuildLayer2:copy()},
         },
         escapeSequence = {
             Location:newInstance(3, 3, 1),

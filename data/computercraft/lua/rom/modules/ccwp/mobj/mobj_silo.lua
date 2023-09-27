@@ -321,12 +321,12 @@ function Silo:getBuildBlueprint()
     local nTopChests = self:getNTopChests()
     if nTopChests ~= 2 then corelog.Warning("Silo:getBuildBlueprint: Not yet implemented for other (="..nTopChests..") than 2 top chests") end
     local layerList = {
-        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL0_layer()}, -- ToDo: use nTopChests
-        { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = false, layer = Shaft_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TopL0_layer()}, -- ToDo: use nTopChests
+        { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = Shaft_layer()},
     }
     local nLayers = self:getNStorageLayers()
     for i=1, nLayers, 1 do
-        table.insert(layerList, { startpoint = Location:newInstance(2, 2, -1-i), buildFromAbove = false, layer = Storage_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(2, 2, -1-i), buildDirection = "Up", layer = Storage_layer()})
     end
 
     -- construct blueprint
@@ -399,20 +399,20 @@ function Silo:getDismantleBlueprint()
     -- construct layer list
     local layerList = {
         -- dismantle top layer
-        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopDismantle_layer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TopDismantle_layer()},
         -- position in shaft of first storage layer
-        { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = false, layer = Shaft_layer()},
+        { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = Shaft_layer()},
     }
     local nLayers = self:getNStorageLayers()
     for i=1, nLayers, 1 do
         -- dismantle storage layer i
-        table.insert(layerList, { startpoint = Location:newInstance(2, 2, -1-i), buildFromAbove = false, layer = StorageDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(2, 2, -1-i), buildDirection = "Up", layer = StorageDismantle_layer()})
     end
     -- position in shaft below last storage layer
-    table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1-nLayers), buildFromAbove = false, layer = Shaft_layer()})
+    table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1-nLayers), buildDirection = "Up", layer = Shaft_layer()})
     for i=1, nLayers+1, 1 do
         -- dismantle shaft layer i
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2-nLayers+i), buildFromAbove = true, layer = ShaftDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2-nLayers+i), buildDirection = "Down", layer = ShaftDismantle_layer()})
     end
 
     -- note: this dismantle blueprint does not restore the layer below the last storage layer

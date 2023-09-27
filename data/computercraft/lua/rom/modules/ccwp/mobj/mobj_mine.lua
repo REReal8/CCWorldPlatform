@@ -280,7 +280,7 @@ end
 function Mine.GetV1SiteBuildData(serviceData)
     -- construct layer list
     local layerList = {
-        { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true,    layer = TopLayerlayer()},
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down",    layer = TopLayerlayer()},
     }
 
     -- construct blueprint

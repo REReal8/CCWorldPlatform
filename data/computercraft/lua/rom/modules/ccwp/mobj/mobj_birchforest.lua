@@ -437,9 +437,9 @@ function BirchForest:getBuildBlueprint()
     for iTree=1, nTrees  do
         local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
         if iTree == 1 then
-            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = self:getBaseLayer(level)})
+            table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = self:getBaseLayer(level)})
         else
-            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = self:getTreeLayer(level)})
+            table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = self:getTreeLayer(level)})
         end
     end
 
@@ -556,7 +556,7 @@ function BirchForest:getExtendBlueprint(...)
         local buildLayerLocation = buildLayerData.location:getRelativeLocation(-xOffset, -yOffset, -zOffset)
 
         -- add layer
-        table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayerData.layer})
+        table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = buildLayerData.layer})
     end
 
     -- determine escapeSequence
@@ -612,24 +612,24 @@ function BirchForest:getDismantleBlueprint()
         -- torch1
         local dismantleLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
         if level > 0 then
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 0, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 0, 0), buildDirection = "Down", layer = BlockDismantle_layer()})
         end
 
         -- chests
         if iTree == 1 and level == 2 then
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(2, 1, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(4, 1, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(5, 2, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(2, 1, 0), buildDirection = "Down", layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(4, 1, 0), buildDirection = "Down", layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(5, 2, 0), buildDirection = "Down", layer = BlockDismantle_layer()})
         end
 
         -- tree
         for iLog=1, 7 do
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog - 1), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(3, 3, iLog - 1), buildDirection = "Down", layer = BlockDismantle_layer()})
         end
 
         -- torch2
         if level > 0 then
-            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(0, 3, 0), buildFromAbove = true, layer = BlockDismantle_layer()})
+            table.insert(layerList, { startpoint = dismantleLayerLocation:getRelativeLocation(0, 3, 0), buildDirection = "Down", layer = BlockDismantle_layer()})
         end
     end
 

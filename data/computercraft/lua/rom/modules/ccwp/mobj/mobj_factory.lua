@@ -467,18 +467,18 @@ function Factory:getBuildBlueprint()
     local layerList = {}
     local level = self:getLevel()
     if level == 0 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildDirection = "Down", layer = Shaft_layer()})
     elseif level == 1 then
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnance_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = Furnance_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Down", layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildDirection = "Up", layer = AboveOrBelowFurnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildDirection = "Up", layer = Furnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildDirection = "Down", layer = Shaft_layer()})
     elseif level == 2 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = Shaft_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = false, layer = AboveOrBelowFurnance_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = false, layer = Furnance_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = CraftingSpotChest_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TopL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Down", layer = Shaft_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildDirection = "Up", layer = AboveOrBelowFurnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildDirection = "Up", layer = Furnance_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildDirection = "Down", layer = CraftingSpotChest_layer()})
     else
         corelog.Warning("Factory:getBuildBlueprint: Don't know how to make a build blueprint for a Factory of level "..level)
     end
@@ -521,8 +521,8 @@ function Factory:getExtendBlueprint(...)
     local layerList = {}
     local level = self:getLevel()
     if level == 1 and upgradeLevel == 2 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = CraftingSpotChest_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TopL2_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildDirection = "Down", layer = CraftingSpotChest_layer()})
     else
         corelog.Warning("Factory:getExtendBlueprint: Don't know how to make a extend blueprint for a Factory from level "..level.." to "..upgradeLevel)
     end
@@ -557,15 +557,15 @@ function Factory:getDismantleBlueprint()
     -- determine layerList
     local layerList = {}
     if self._level == 0 then
-        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildFromAbove = true, layer = ShaftDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(0, 0, -1), buildDirection = "Down", layer = ShaftDismantle_layer()})
     elseif self._level == 1 or self._level == 2 then
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildFromAbove = true, layer = ShaftDismantle_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -4), buildFromAbove = true, layer = FurnanceDismantle_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildFromAbove = true, layer = FurnanceDismantle_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildFromAbove = true, layer = FurnanceDismantle_layer()})
-        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildFromAbove = true, layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -5), buildDirection = "Down", layer = ShaftDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -4), buildDirection = "Down", layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -3), buildDirection = "Down", layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -2), buildDirection = "Down", layer = FurnanceDismantle_layer()})
+        table.insert(layerList, { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Down", layer = FurnanceDismantle_layer()})
         if self._level == 2 then
-            table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildFromAbove = true, layer = TopL2Dismantle_layer()})
+            table.insert(layerList, { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TopL2Dismantle_layer()})
         end
     else
         corelog.Warning("Factory:getDismantleBlueprint: Don't know how to make a dismantle blueprint for a Factory of level "..self._level)
