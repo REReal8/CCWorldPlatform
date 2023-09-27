@@ -217,7 +217,6 @@ function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L0T1(mobjLocator)
     -- cleanup test
 end
 
-
 function t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L2T4(mobjLocator)
     -- prepare test
     local localLogsLocatorTest2 = FieldTest:newInstance("_localLogsLocator", TestArrayTest:newInstance(
