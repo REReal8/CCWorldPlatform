@@ -154,6 +154,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
         layer                   = layer,
     }
     local metaData = role_builder.BuildLayer_MetaData(taskData)
+    if not metaData then corelog.Error("enterprise_construction.BuildLayer_ASrv: Failed obtaining metaData") return Callback.ErrorCall(callback) end
 
     -- check if materials needed
     local materialsNeeded = coreutils.DeepCopy(metaData.itemsNeeded)

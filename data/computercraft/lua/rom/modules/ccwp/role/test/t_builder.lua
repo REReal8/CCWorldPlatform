@@ -18,10 +18,12 @@ end
 
 function t_builder.T_AllPhysical()
     -- role_builder methods
-    t_builder.T_BuildLayer_Task()
+    t_builder.T_BuildLayer_Task_Down()
+    t_builder.T_BuildLayer_Task_Up()
 end
 
-local testStartLocation = Location:newInstance(-6, 0, 1, 0, 1)
+local testStartLocation_Down = Location:newInstance(-6, 0, 1, 0, 1)
+local testStartLocation_Up = Location:newInstance(-12, 6, 2, 0, 1)
 
 local size_x1 = 4
 local size_y1 = 6
@@ -43,7 +45,7 @@ local codeMap1 = CodeMap:newInstance({
 }) assert(codeMap1, "Failed obtaining codeMap1")
 local testBuildLayer1 = LayerRectangle:newInstance(codeTable1:copy(), codeMap1:copy()) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
-local testBuildLayer2 = LayerRectangle:newInstance(
+local testBuildLayer_Up = LayerRectangle:newInstance(
     ObjTable:newInstance(Block:getClassName(), {
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
         ["D"]   = Block:newInstance(chestItemName, 0, 1),
@@ -56,9 +58,9 @@ local testBuildLayer2 = LayerRectangle:newInstance(
         [2] = "C F",
         [1] = "CEE",
     })
-) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
+) assert(testBuildLayer_Up, "Failed obtaining testBuildLayer_Up")
 
-local testBuildLayer3 = LayerRectangle:newInstance(
+local testBuildLayer_Down = LayerRectangle:newInstance(
     ObjTable:newInstance(Block:getClassName(), {
         ["T"]   = Block:newInstance(torchItemName),
         ["C"]   = Block:newInstance(chestItemName, -1, 0),
@@ -74,31 +76,24 @@ local testBuildLayer3 = LayerRectangle:newInstance(
         [2] = " T    ",
         [1] = "T    D",
     })
-) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
+) assert(testBuildLayer_Down, "Failed obtaining testBuildLayer_Down")
+
 
 local compact = { compact = true }
 
 function t_builder.T_BuildLayer_MetaData()
     -- prepare test
-    corelog.WriteToLog("* role_builder BuildLayer_MetaData test")
+    corelog.WriteToLog("* role_builder.BuildLayer_MetaData() tests")
     local buildDirection = "Down"
     local buildData = {
-        startpoint      = testStartLocation,
+        startpoint      = testStartLocation_Down,
         buildDirection  = buildDirection,
         layer           = testBuildLayer1
     }
 
-    -- test
-    local metaData = role_builder.BuildLayer_MetaData(buildData)
-    local deltaZ = 1
-    if buildDirection == "Down" then
-        deltaZ =  1
-    elseif buildDirection == "Up" then
-        deltaZ = -1
-    else
-        assert(false, "Don't know how to handle buildDirection '"..buildDirection.."'")
-    end
-    local expectedLocation = testStartLocation:getRelativeLocation(0, 0, deltaZ)
+    -- test Down
+    local metaData = role_builder.BuildLayer_MetaData(buildData) assert(metaData, "Failed obtaining metaData")
+    local expectedLocation = testStartLocation_Down:getLocationUp()
     assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
@@ -106,6 +101,12 @@ function t_builder.T_BuildLayer_MetaData()
     assert(metaData.fuelNeeded == expectedFuelNeeded, "gotten fuelNeeded(="..metaData.fuelNeeded..") not the same as expected(="..expectedFuelNeeded..")")
     assert(metaData.itemsNeeded[chestItemName] == 1, "gotten itemCount(="..metaData.itemsNeeded[chestItemName]..") for "..chestItemName.."'s not the same as expected(=1)")
     assert(metaData.itemsNeeded[torchItemName] == 2, "gotten itemCount(="..metaData.itemsNeeded[torchItemName]..") for "..torchItemName.."'s not the same as expected(=2)")
+
+    -- test Up
+    buildData.buildDirection = "Up"
+    metaData = role_builder.BuildLayer_MetaData(buildData) assert(metaData, "Failed obtaining metaData")
+    expectedLocation = testStartLocation_Down:getLocationDown()
+    assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
 
     -- cleanup test
 end
@@ -116,17 +117,17 @@ function t_builder.T_BuildBlueprint_MetaData()
     local testBlueprint = {
         layerList = {
             { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = testBuildLayer1:copy()},
-            { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = testBuildLayer2:copy()},
+            { startpoint = Location:newInstance(3, 3, -1), buildDirection = "Up", layer = testBuildLayer_Up:copy()},
         },
         escapeSequence = {
             Location:newInstance(3, 3, 1),
         }
     }
-    local blueprintBuildData = {blueprintStartpoint = testStartLocation:getRelativeLocation(6, 0, 0), blueprint = testBlueprint}
+    local blueprintBuildData = {blueprintStartpoint = testStartLocation_Down:getRelativeLocation(6, 0, 0), blueprint = testBlueprint}
 
     -- test
     local metaData = role_builder.BuildBlueprint_MetaData(blueprintBuildData)
-    local expectedLocation = testStartLocation:getRelativeLocation(6, 0, 0)
+    local expectedLocation = testStartLocation_Down:getRelativeLocation(6, 0, 0)
     assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
     assert(metaData.needTool, "gotten needTool(="..tostring(metaData.needTool)..") not the same as expected(=true)")
     assert(metaData.needTurtle, "gotten needTurtle(="..tostring(metaData.needTurtle)..") not the same as expected(=true)")
@@ -138,19 +139,39 @@ function t_builder.T_BuildBlueprint_MetaData()
     -- cleanup test
 end
 
-function t_builder.T_BuildLayer_Task()
+function t_builder.pt_BuildLayer_Task(startpoint, buildDirection, layer)
     -- prepare test
-    corelog.WriteToLog("* role_builder BuildLayer_Task test")
-    local testBuildLayer = testBuildLayer3:copy()
+    assert(startpoint, "no startpoint provided")
+    assert(buildDirection, "no buildDirection provided")
+    assert(layer, "no layer provided")
+    corelog.WriteToLog("* role_builder.BuildLayer_Task() test ("..buildDirection..")")
     local buildData = {
-        startpoint              = testStartLocation,
-        buildDirection          = "Down",
+        startpoint              = startpoint:copy(),
+        buildDirection          = buildDirection,
         replacePresentObjects   = false,
-        layer                   = testBuildLayer
+        layer                   = layer:copy()
     }
 
     -- test
     role_builder.BuildLayer_Task(buildData)
+
+    -- cleanup test
+end
+
+function t_builder.T_BuildLayer_Task_Down()
+    -- prepare test
+
+    -- test
+    t_builder.pt_BuildLayer_Task(testStartLocation_Down, "Down", testBuildLayer_Down)
+
+    -- cleanup test
+end
+
+function t_builder.T_BuildLayer_Task_Up()
+    -- prepare test
+
+    -- test
+    t_builder.pt_BuildLayer_Task(testStartLocation_Up, "Up", testBuildLayer_Up)
 
     -- cleanup test
 end

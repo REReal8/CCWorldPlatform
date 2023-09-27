@@ -64,6 +64,7 @@ function role_builder.BuildBlueprint_MetaData(...)
 
         -- get metadata for layer
         local layerMetaData = role_builder.BuildLayer_MetaData(layerBuildData)
+        if not layerMetaData then corelog.Error("role_builder.BuildBlueprint_MetaData: Failed obtaining layerMetaData") return {success = false} end
 
         -- determine startLocation (correcting for buildDirection)
         local deltaZ = 1
@@ -164,7 +165,7 @@ function role_builder.BuildLayer_MetaData(...)
                 replacePresentObjects   - (boolean, false) whether objects should be replaced if it is already present in the minecraft world
                 layer                   + (LayerRectangle) layer to build
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_builder.BuildLayer_MetaData: Invalid input") return {} end
+    if not checkSuccess then corelog.Error("role_builder.BuildLayer_MetaData: Invalid input") return nil end
 
     -- determine needed items
     local itemList = layer:itemsNeeded()
@@ -177,7 +178,7 @@ function role_builder.BuildLayer_MetaData(...)
     elseif buildDirection == "Up" then
         deltaZ = -1
     else
-        corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return {}
+        corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return nil
     end
     local startLocation = startpoint:getRelativeLocation(0, 0, deltaZ)
 
