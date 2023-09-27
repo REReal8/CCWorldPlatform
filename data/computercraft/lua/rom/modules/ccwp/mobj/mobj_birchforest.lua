@@ -520,10 +520,13 @@ function BirchForest:getExtendBlueprint(...)
                 colOffset = baseColOffset
                 rowOffset = baseRowOffset
             end
-            local buildLayerLocation = Location:newInstance(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
 
-            -- add layer
-            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayer:copy()})
+            -- check layer needs to be extended
+            if buildLayer:getNRows() > 0 then
+                -- add layer
+                local buildLayerLocation = Location:newInstance(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
+                table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayer:copy()})
+            end
         end
     end
 
