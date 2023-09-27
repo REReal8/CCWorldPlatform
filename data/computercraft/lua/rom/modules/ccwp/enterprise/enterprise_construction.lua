@@ -63,12 +63,11 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     local taskCall = TaskCall:newInstance("role_builder", "BuildBlueprint_Task", taskData)
     if next(materialsNeeded) == nil then
         -- directly do assignment
---        corelog.WriteToLog(">Building (zero materials) blueprint "..textutils.serialise(blueprintStartpoint))
         local assignmentServiceData = {
             metaData    = metaData,
             taskCall    = taskCall,
         }
-        corelog.WriteToLog(">Starting task 'Building blueprint at "..textutils.serialise(blueprintStartpoint, {compact = true}).."' (without materials)")
+        corelog.WriteToLog("Starting task 'Building blueprint at "..textutils.serialise(blueprintStartpoint, {compact = true}).."' (without materials)")
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
@@ -161,14 +160,11 @@ function enterprise_construction.BuildLayer_ASrv(...)
     local taskCall = TaskCall:newInstance("role_builder", "BuildLayer_Task", taskData)
     if next(materialsNeeded) == nil then
         -- directly do assignment
---        corelog.WriteToLog(">Building (zero materials) layer at "..textutils.serialise(startpoint))
         local assignmentServiceData = {
             metaData    = metaData,
             taskCall    = taskCall,
         }
-        corelog.WriteToLog(">Starting task 'Building blueprint layer at "..textutils.serialise(startpoint, {compact = true}).."' (without materials)")
-
-        corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
+        corelog.WriteToLog("Starting task 'Building blueprint layer at "..textutils.serialise(startpoint, {compact = true}).."' (without materials)")
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
