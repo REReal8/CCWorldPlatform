@@ -325,6 +325,7 @@ function ExecuteEnterpriseTest(t)
 		{key = "f", desc = "forestry", 			func = ExecuteEnterpriseTest, param = {filename = "t_forestry"}},
 		{key = "o", desc = "shop", 				func = ExecuteEnterpriseTest, param = {filename = "t_shop"}},
 		{key = "n", desc = "colonization", 		func = ExecuteEnterpriseTest, param = {filename = "t_colonization"}},
+		{key = "u", desc = "utilities", 		func = ExecuteEnterpriseTest, param = {filename = "t_utilities"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
 	}
 	return ExecuteXObjTest(t, "enterprise", options, ExecuteEnterpriseTest)

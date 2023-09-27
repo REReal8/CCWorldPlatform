@@ -21,6 +21,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_construction")
     moduleRegistry:requireAndRegisterModule("enterprise_energy")
     moduleRegistry:requireAndRegisterModule("enterprise_manufacturing")
+    moduleRegistry:requireAndRegisterModule("enterprise_utilities")
     moduleRegistry:requireAndRegisterModule("enterprise_forestry")
     moduleRegistry:requireAndRegisterModule("enterprise_isp")
     moduleRegistry:requireAndRegisterModule("enterprise_projects")
@@ -45,6 +46,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModuleTests("enterprise_test")
     moduleRegistry:requireAndRegisterModuleTests("t_test")
     moduleRegistry:requireAndRegisterModuleTests("t_turtle")
+    moduleRegistry:requireAndRegisterModuleTests("t_utilities")
 
     -- do other stuff
 end
