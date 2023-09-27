@@ -493,7 +493,8 @@ function BirchForest:getExtendBlueprint(...)
     if not upgradedBaseLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining baseLayer for level "..upgradedLevel) return nil end
 
     -- existing trees
-    local layerList = {}
+    local buildLayersData = {}
+    local minBuildLocation = Location.FarLocation()
     if level < 2 and upgradedLevel ~= level then
         -- current layer data
         local treeLayer = self:getTreeLayer(level)
@@ -525,7 +526,8 @@ function BirchForest:getExtendBlueprint(...)
             if buildLayer:getNRows() > 0 then
                 -- add layer
                 local buildLayerLocation = Location:newInstance(colOffset + 0, rowOffset + 6 * (iTree - 1), 0)
-                table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayer:copy()})
+                minBuildLocation = minBuildLocation:minLocation(buildLayerLocation)
+                table.insert(buildLayersData, { location = buildLayerLocation, layer = buildLayer:copy()})
             end
         end
     end
@@ -538,11 +540,24 @@ function BirchForest:getExtendBlueprint(...)
             if iTree == 1 then
                 buildLayer = upgradedBaseLayer
             end
-            local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
 
             -- add layer
-            table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayer:copy()})
+            local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
+            minBuildLocation = minBuildLocation:minLocation(buildLayerLocation)
+            table.insert(buildLayersData, { location = buildLayerLocation, layer = buildLayer:copy()})
         end
+    end
+
+    -- determine layerList
+    local layerList = {}
+    local xOffset = minBuildLocation:getX()
+    local yOffset = minBuildLocation:getY()
+    local zOffset = minBuildLocation:getZ()
+    for i, buildLayerData in ipairs(buildLayersData) do
+        local buildLayerLocation = buildLayerData.location:getRelativeLocation(-xOffset, -yOffset, -zOffset)
+
+        -- add layer
+        table.insert(layerList, { startpoint = buildLayerLocation, buildFromAbove = true, layer = buildLayerData.layer})
     end
 
     -- determine escapeSequence
@@ -556,7 +571,7 @@ function BirchForest:getExtendBlueprint(...)
 
     -- determine buildLocation
     local baseLocation = self:getBaseLocation()
-    local buildLocation = baseLocation:copy()
+    local buildLocation = baseLocation:getRelativeLocation(xOffset, yOffset, zOffset)
 
     -- end
     return buildLocation, blueprint

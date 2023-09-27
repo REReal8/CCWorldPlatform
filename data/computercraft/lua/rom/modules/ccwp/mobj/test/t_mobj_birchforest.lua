@@ -296,6 +296,8 @@ function T_BirchForest.T_IMObj_All()
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
+    local buildLocation_FromL1T2_ToL2T4 = baseLocation0:getRelativeLocation(0, 1, 0) -- note: offset because row 1 is already build
+    local isBlueprintTest_FromL1T2_ToL2T4 = IsBlueprintTest:newInstance(buildLocation_FromL1T2_ToL2T4)
 
     -- test type
     T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj0)
@@ -317,8 +319,8 @@ function T_BirchForest.T_IMObj_All()
     -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, objm1, testObjNamem1, isBlueprintTest, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
-    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo_L1T2, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo_L2T4, isBlueprintTest_FromL1T2_ToL2T4, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 
     -- cleanup test
