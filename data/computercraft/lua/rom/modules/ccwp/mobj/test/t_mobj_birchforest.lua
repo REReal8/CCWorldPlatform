@@ -232,7 +232,6 @@ end
 --                            _/ |
 --                           |__/
 
--- ToDo: further implement IMObj methods in BirchForest
 function T_BirchForest.T_IMObj_All()
     -- prepare test
     local id = coreutils.NewId()
@@ -244,25 +243,25 @@ function T_BirchForest.T_IMObj_All()
     local testObjName1 = testObjName.."1"
     local testObjName2 = testObjName.."2"
 
-    local constructParametersm1 = {
+    local constructParameters_Lm1T1 = {
         level           = levelm1,
 
         baseLocation    = baseLocation0,
         nTrees          = nTrees1,
     }
-    local constructParameters0 = {
+    local constructParameters_L0T1 = {
         level           = level0,
 
         baseLocation    = baseLocation0,
         nTrees          = nTrees1,
     }
-    local constructParameters1 = {
+    local constructParameters_L1T2 = {
         level           = level1,
 
         baseLocation    = baseLocation0,
         nTrees          = nTrees2,
     }
-    local constructParameters2 = {
+    local constructParameters_L2T4 = {
         level           = level2,
 
         baseLocation    = baseLocation0,
@@ -271,12 +270,12 @@ function T_BirchForest.T_IMObj_All()
 
     local destructFieldsTest0 = TestArrayTest:newInstance()
 
-    local upgradeParametersTo1 = {
+    local upgradeParametersTo_L1T2 = {
         level           = level1,
 
         nTrees          = nTrees2,
     }
-    local upgradeParametersTo2 = {
+    local upgradeParametersTo_L2T4 = {
         level           = level2,
 
         nTrees          = nTrees4,
@@ -303,13 +302,13 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
 
     -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters0, testObjName0, destructFieldsTest0, logOk)
-    T_IMObj.pt_construct(testClassName, BirchForest, constructParametersm1, testObjNamem1, fieldsTestm1, logOk)
-    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters0, testObjName0, fieldsTest0, logOk)
-    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters1, testObjName1, fieldsTest1, logOk)
-    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters2, testObjName2, fieldsTest2, logOk)
-    T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters0, testObjName0, upgradeParametersTo1, fieldsTest1, logOk)
-    T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters1, testObjName1, upgradeParametersTo2, fieldsTest2, logOk)
+    T_IMObj.pt_destruct(testClassName, BirchForest, constructParameters_L0T1, testObjName0, destructFieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters_Lm1T1, testObjNamem1, fieldsTestm1, logOk)
+    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters_L0T1, testObjName0, fieldsTest0, logOk)
+    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters_L1T2, testObjName1, fieldsTest1, logOk)
+    T_IMObj.pt_construct(testClassName, BirchForest, constructParameters_L2T4, testObjName2, fieldsTest2, logOk)
+    T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters_L0T1, testObjName0, upgradeParametersTo_L1T2, fieldsTest1, logOk)
+    T_IMObj.pt_upgrade(testClassName, BirchForest, constructParameters_L1T2, testObjName1, upgradeParametersTo_L2T4, fieldsTest2, logOk)
 
     -- test getters
     T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk)
@@ -318,8 +317,8 @@ function T_BirchForest.T_IMObj_All()
     -- test blueprints
     T_IMObj.pt_getBuildBlueprint(testClassName, objm1, testObjNamem1, isBlueprintTest, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
-    T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo1, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo2, isBlueprintTest, logOk)
+    T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo_L1T2, isBlueprintTest, logOk)
     T_IMObj.pt_getDismantleBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
 
     -- cleanup test
