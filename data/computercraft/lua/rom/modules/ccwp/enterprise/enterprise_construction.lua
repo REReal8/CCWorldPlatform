@@ -68,7 +68,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
             metaData    = metaData,
             taskCall    = taskCall,
         }
-        corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
+        corelog.WriteToLog(">Starting task 'Building blueprint at "..textutils.serialise(blueprintStartpoint, {compact = true}).."' (without materials)")
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
@@ -166,6 +166,8 @@ function enterprise_construction.BuildLayer_ASrv(...)
             metaData    = metaData,
             taskCall    = taskCall,
         }
+        corelog.WriteToLog(">Starting task 'Building blueprint layer at "..textutils.serialise(startpoint, {compact = true}).."' (without materials)")
+
         corelog.WriteToLog(">starting task "..textutils.serialize(taskCall, { compact = true }))
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
@@ -218,7 +220,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
     local projectServiceData = {
         projectDef  = buildRectangularPatternProjectDef,
         projectData = projectData,
-        projectMeta = { title = "Building blueprint layer", description = "Use unknown" },
+        projectMeta = { title = "Building blueprint layer at "..textutils.serialise(startpoint, {compact = true}), description = "Use unknown" },
     }
 
     -- start project
