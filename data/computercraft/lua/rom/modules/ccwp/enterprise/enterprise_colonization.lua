@@ -103,9 +103,13 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         },
 
         forestHostLocator               = enterprise_forestry:getHostLocator(),
-        forestLocation                  = forestLocation:copy(),
-        forestLm1                       = -1,
-        forestFirstTree                 = 1,
+        forestClassName                 = "BirchForest",
+        forestConstructParameters_Lm1T1 = {
+            level                           = -1,
+
+            baseLocation                    = forestLocation:copy(),
+            nTrees                          = 1,
+        },
 
         upgradeParametersToForestL0T1   = {
             level                           = 0,
@@ -188,13 +192,12 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
                 { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "mobjLocator" },
             }},
             -- host, build and register initial (L-1) BirchForest (1 sapling in front of turtle)
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_forestry", serviceName = "AddNewSite_ASrv" }, stepDataDef = {
-                { keyDef = "baseLocation"                   , sourceStep = 0, sourceKeyDef = "forestLocation" },
-                { keyDef = "forestLevel"                    , sourceStep = 0, sourceKeyDef = "forestLm1" },
-                { keyDef = "nTrees"                         , sourceStep = 0, sourceKeyDef = "forestFirstTree" },
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "hostAndBuildMObj_ASrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters_Lm1T1" },
                 { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "Starting first BirchForest"},
+            }, description = "Building first BirchForest"},
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
                 { keyDef = "itemSupplierLocator"        , sourceStep = 5, sourceKeyDef = "mobjLocator" },
             }},

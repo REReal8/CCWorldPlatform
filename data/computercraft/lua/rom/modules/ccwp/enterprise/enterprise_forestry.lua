@@ -53,10 +53,14 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function enterprise_forestry.AddNewSite_ASrv(...)
+function enterprise_forestry:hostAndBuildMObj_ASrv(...)
     -- get & check input from description
-    local checkSuccess, baseLocation, forestLevel, nTrees, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
-        This async public service builds a new Forest site and ensures it's ready for use.
+    local checkSuccess, className, constructParameters, materialsItemSupplierLocator, wasteItemDepotLocator, callback = InputChecker.Check([[
+        This async public service hosts and builds a new MObj. It consist of
+            - hosting a new MObj
+            - building the MObj in the world
+
+        This method extends MObjHost:hostAndBuildMObj_ASrv by allowing building a -1 level BirchForest
 
         Return value:
                                                 - (boolean) whether the service was scheduled successfully
@@ -64,115 +68,67 @@ function enterprise_forestry.AddNewSite_ASrv(...)
         Async service return value (to Callback):
                                                 - (table)
                 success                         - (boolean) whether the service executed successfully
-                mobjLocator                     - (URL) locating the created MObj
+                mobjLocator                     - (URL) locating the hosted and build MObj
 
         Parameters:
             serviceData                         - (table) data about this site
-                baseLocation                    + (Location) world location of the base (lower left corner) of this site
-                forestLevel                     + (number) level of the site
-                nTrees                          + (number) number of initial trees
-                materialsItemSupplierLocator    + (URL) locating the host of the building materials
+                className                       + (string, "") with the name of the class of the MObj
+                constructParameters             + (table) parameters for constructing the MObj
+                materialsItemSupplierLocator    + (URL) locating the host for building materials
                 wasteItemDepotLocator           + (URL) locating where waste material can be delivered
             callback                            + (Callback) to call once service is ready
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Invalid input") return Callback.ErrorCall(callback) end
+    if not checkSuccess then corelog.Error("enterprise_forestry:hostAndBuildMObj_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
-    -- check nTrees == 1  -- ToDo: remove this restriction
-    if nTrees ~=1 then corelog.Warning("enterprise_forestry.AddNewSite_ASrv: not yet implemented for nTrees="..nTrees) return Callback.ErrorCall(callback) end
+    -- check for special case: BirchForest level -1
+    if className == "BirchForest" and constructParameters.level == -1 then
+        -- special case
+        corelog.WriteToLog("special case ...")
 
-    -- create constructParameters
-    local className = "BirchForest"
-    local constructParameters = {
-        level           = forestLevel,
+        -- construct new MObj
+        local mobj = BirchForest:construct(constructParameters)
+        if not mobj then corelog.Error("enterprise_forestry:hostAndBuildMObj_ASrv: Failed constructing "..className.." from constructParameters(="..textutils.serialise(constructParameters)..")") return Callback.ErrorCall(callback) end
 
-        baseLocation    = baseLocation,
-        nTrees          = 0,
-    }
+        -- save the MObj
+        local mobjLocator = enterprise_forestry:saveObject(mobj)
+        if not mobjLocator then corelog.Error("enterprise_forestry:hostAndBuildMObj_ASrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return Callback.ErrorCall(callback) end
 
-    -- construct new MObj
-    local mobj = BirchForest:construct(constructParameters)
-    if not mobj then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Failed constructing "..className.." from constructParameters(="..textutils.serialise(constructParameters)..")") return Callback.ErrorCall(callback) end
-
-    -- save the MObj
-    local mobjLocator = enterprise_forestry:saveObject(mobj)
-    if not mobjLocator then corelog.Error("enterprise_forestry.AddNewSite_ASrv: Failed saving "..className.." "..textutils.serialise(mobj)..")") return Callback.ErrorCall(callback) end
-
-    -- log
-    corelog.WriteToLog(">Hosting new "..className.." "..mobj:getId()..".")
-
-    -- create projectDef and projectData
-    local projectData = {
-        hostLocator                 = enterprise_forestry:getHostLocator(),
-
-        mobjLocator                 = mobjLocator,
-        upgradeParameters           = {
-            level                   = forestLevel,
-
-            nTrees                  = nTrees,
-        }
-    }
-
-    local projectSteps = { }
-    if forestLevel == -1 then
-        -- add build tree step
-        table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
-                { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingMetaData" },
-                { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingTaskCall" },
-            }, description = "Planting sapling"}
-        )
-
-        -- add step data
-        local firstTreeLocation         = baseLocation:getRelativeLocation(3, 2, 0)
+        -- create project
         local plantFirstSaplingTaskData =  {
-            startLocation               = firstTreeLocation:copy(),
+            startLocation               = constructParameters.baseLocation:getRelativeLocation(3, 2, 0),
         }
-        projectData.plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData)
-        projectData.plantFirstSaplingTaskCall   = TaskCall:newInstance("role_forester", "PlantFirstSapling_Task", plantFirstSaplingTaskData)
+        local projectData = {
+            hostLocator                 = enterprise_forestry:getHostLocator(),
+
+            mobjLocator                 = mobjLocator,
+
+            plantFirstSaplingMetaData   = role_forester.PlantFirstSapling_MetaData(plantFirstSaplingTaskData),
+            plantFirstSaplingTaskCall   = TaskCall:newInstance("role_forester", "PlantFirstSapling_Task", plantFirstSaplingTaskData),
+        }
+        local projectDef = {
+            steps = {
+                -- planting sapling
+                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
+                    { keyDef = "metaData"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingMetaData" },
+                    { keyDef = "taskCall"                   , sourceStep = 0, sourceKeyDef = "plantFirstSaplingTaskCall" },
+                }, description = "Planting sapling"}
+            },
+            returnData  = {
+                { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
+            }
+        }
+        local projectServiceData = {
+            projectDef  = projectDef,
+            projectData = projectData,
+            projectMeta = { title = "New BirchForest level -1", description = "More trees == more fun" },
+        }
+
+        -- end
+        return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
     else
-        -- add build tree step
-        table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_construction", serviceName = "BuildLayer_ASrv" }, stepDataDef = {
-                { keyDef = "startpoint"                     , sourceStep = 0, sourceKeyDef = "buildLayerLocation" },
-                { keyDef = "buildFromAbove"                 , sourceStep = 0, sourceKeyDef = "buildFromAbove" },
-                { keyDef = "replacePresentObjects"          , sourceStep = 0, sourceKeyDef = "replacePresentObjects" },
-                { keyDef = "layer"                          , sourceStep = 0, sourceKeyDef = "treeLayer" },
-                { keyDef = "materialsItemSupplierLocator"   , sourceStep = 0, sourceKeyDef = "materialsItemSupplierLocator" },
-                { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }, description = "Building tree (Forest layer) at "..textutils.serialise(baseLocation, { compact = true })}
-        )
-
-        -- add step data
-        local targetBaseLayer = mobj:getBaseLayer(forestLevel)
-        projectData.buildLayerLocation          = baseLocation:copy()
-        projectData.buildFromAbove              = true
-        projectData.replacePresentObjects       = false
-        projectData.treeLayer                   = targetBaseLayer
-        projectData.materialsItemSupplierLocator= materialsItemSupplierLocator
-        projectData.wasteItemDepotLocator       = wasteItemDepotLocator
+        -- normal case
+        return MObjHost.hostAndBuildMObj_ASrv(self, table.unpack(arg))
     end
-
-    table.insert(projectSteps,
-        -- upgrade MObj
-        { stepType = "LSOSrv", stepTypeDef = { serviceName = "upgradeMObj_SSrv", locatorStep = 0, locatorKeyDef = "hostLocator" }, stepDataDef = {
-            { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-            { keyDef = "upgradeParameters"              , sourceStep = 0, sourceKeyDef = "upgradeParameters" },
-        }}
-    )
-    local projectDef = {
-        steps = projectSteps,
-        returnData  = {
-            { keyDef = "mobjLocator"                    , sourceStep = 0, sourceKeyDef = "mobjLocator" },
-        }
-    }
-    local projectServiceData = {
-        projectDef  = projectDef,
-        projectData = projectData,
-        projectMeta = { title = "New Forest", description = "More trees == more fun" },
-    }
-
-    -- start project
-    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
 return enterprise_forestry
