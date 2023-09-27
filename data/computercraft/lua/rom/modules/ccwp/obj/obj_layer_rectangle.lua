@@ -141,8 +141,7 @@ function LayerRectangle:transformToLayer(...)
     local transformCodeMap, anyBlockInserted = self._codeMap:transformToMap(toMap, anyBlockCode)
 
     -- construct transformCodeTable
-    local blockClassName = "Block"
-    local transformCodeTable = ObjTable:newInstance(blockClassName)
+    local transformCodeTable = ObjTable:newInstance(Block:getClassName())
     for code, codeCount in pairs(toMap:codesNeeded()) do
         transformCodeTable[code] = toLayer._codeTable[code]:copy()
     end

@@ -33,12 +33,12 @@ end
 
 local testClassName = "LayerRectangle"
 local logOk = false
-local blockClassName = "Block"
+
 local torchItemName = "minecraft:torch"
 local saplingItemName = "minecraft:birch_sapling"
 local chestItemName = "minecraft:chest"
 local computerItemName = "computercraft:computer_normal"
-local codeTable1 = ObjTable:newInstance(blockClassName, {
+local codeTable1 = ObjTable:newInstance(Block:getClassName(), {
     ["T"]   = Block:newInstance(torchItemName),
     ["S"]   = Block:newInstance(saplingItemName),
     ["C"]   = Block:newInstance(chestItemName, -1, 0),
@@ -206,7 +206,7 @@ function T_LayerRectangle.T_transformToLayer()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:transformToLayer() tests")
     local fromLayer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -221,7 +221,7 @@ function T_LayerRectangle.T_transformToLayer()
         })
     ) assert(fromLayer, "Failed obtaining layer")
     local toLayer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
@@ -243,7 +243,7 @@ function T_LayerRectangle.T_transformToLayer()
     local expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     local expectedLayer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName,{
+        ObjTable:newInstance(Block:getClassName(),{
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
@@ -262,7 +262,7 @@ function T_LayerRectangle.T_transformToLayer()
 
     -- test anyBlock added to _codeTable
     toLayer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -281,7 +281,7 @@ function T_LayerRectangle.T_transformToLayer()
     expectedIsInstanceOf = true
     assert(isInstanceOf, "gotten isInstanceOf(="..tostring(isInstanceOf)..") not the same as expected(="..tostring(expectedIsInstanceOf)..")")
     expectedLayer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
@@ -305,7 +305,7 @@ function T_LayerRectangle.T_cleanCodeTable()
     -- prepare test
     corelog.WriteToLog("* LayerRectangle:cleanCodeTable() tests")
     local layer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance(torchItemName),
             ["S"]   = Block:newInstance(saplingItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
@@ -322,7 +322,7 @@ function T_LayerRectangle.T_cleanCodeTable()
 
     -- test
     layer:cleanCodeTable()
-    local expectedCodeTable  = ObjTable:newInstance(blockClassName, {
+    local expectedCodeTable  = ObjTable:newInstance(Block:getClassName(), {
         ["T"]   = Block:newInstance(torchItemName),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     })
@@ -349,7 +349,7 @@ function T_LayerRectangle.T_buildData()
 
     -- test right
     local layer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
@@ -370,7 +370,7 @@ function T_LayerRectangle.T_buildData()
     expectedOffset = 2
     assert(colOffset == expectedOffset, "gotten colOffset(="..tostring(colOffset)..") for not the same as expected(="..tostring(expectedOffset)..")")
     local expectedLayer = LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance(torchItemName),
             ["C"]   = Block:newInstance(chestItemName, -1, 0),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),

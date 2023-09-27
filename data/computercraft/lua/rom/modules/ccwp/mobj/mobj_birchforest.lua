@@ -325,10 +325,9 @@ function BirchForest:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
-local blockClassName = "Block"
 local function Tree_layerLm1()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
@@ -345,7 +344,7 @@ end
 
 local function Tree_layerL0()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
@@ -362,7 +361,7 @@ end
 
 local function Tree_layerL1()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -380,7 +379,7 @@ end
 
 local function Base_layerL2()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["S"]   = Block:newInstance("minecraft:birch_sapling"),
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
@@ -579,7 +578,7 @@ end
 
 local function BlockDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({

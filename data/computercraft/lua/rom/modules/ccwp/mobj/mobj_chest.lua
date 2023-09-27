@@ -179,10 +179,9 @@ function Chest:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
-local blockClassName = "Block"
 local function Chest_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
         CodeMap:newInstance({
@@ -223,7 +222,7 @@ end
 
 local function ChestDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({

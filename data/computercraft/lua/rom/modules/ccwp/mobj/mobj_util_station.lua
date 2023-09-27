@@ -175,10 +175,9 @@ function UtilStation:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
-local blockClassName = "Block"
 local function Chest_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),
@@ -190,7 +189,7 @@ end
 
 local function Computer_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["C"]   = Block:newInstance("computercraft:computer_normal", 0, -1),
         }),
         CodeMap:newInstance({
@@ -201,7 +200,7 @@ end
 
 local function Modem_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["M"]   = Block:newInstance("computercraft:wireless_modem_normal"),
         }),
         CodeMap:newInstance({
@@ -212,7 +211,7 @@ end
 
 local function Monitor_Only_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["M"]   = Block:newInstance("computercraft:monitor_normal"),
             [" "]   = Block:newInstance(Block.AnyBlockName()),
         }),

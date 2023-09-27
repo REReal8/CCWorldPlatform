@@ -259,10 +259,9 @@ function Mine:needsTo_ProvideItemsTo_SOSrv(...)
     return {success = true, fuelNeed = 1000}
 end
 
-local blockClassName = "Block"
 local function TopLayerlayer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),

@@ -348,10 +348,9 @@ function Factory:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
-local blockClassName = "Block"
 local function Shaft_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
@@ -362,7 +361,7 @@ end
 
 local function ShaftDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
         CodeMap:newInstance({
@@ -373,7 +372,7 @@ end
 
 local function AboveOrBelowFurnance_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
@@ -385,7 +384,7 @@ end
 
 local function FurnanceDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
         CodeMap:newInstance({
@@ -397,7 +396,7 @@ end
 
 local function Furnance_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["F"]   = Block:newInstance("minecraft:furnace"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
@@ -410,7 +409,7 @@ end
 
 local function CraftingSpotChest_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["C"]   = Block:newInstance("minecraft:chest"),
         }),
         CodeMap:newInstance({
@@ -421,7 +420,7 @@ end
 
 local function TopL2_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest"),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -439,7 +438,7 @@ end
 
 local function TopL2Dismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({

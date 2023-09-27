@@ -260,10 +260,9 @@ function Silo:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
-local blockClassName = "Block"
 local function TopL0_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["T"]   = Block:newInstance("minecraft:torch"),
             ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
             [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -281,7 +280,7 @@ end
 
 local function Shaft_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
@@ -292,7 +291,7 @@ end
 
 local function Storage_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
             ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
             ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
@@ -347,7 +346,7 @@ end
 
 local function StorageDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["D"]   = Block:newInstance("minecraft:dirt"),
             ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
@@ -361,7 +360,7 @@ end
 
 local function ShaftDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             ["D"]   = Block:newInstance("minecraft:dirt"),
         }),
         CodeMap:newInstance({
@@ -372,7 +371,7 @@ end
 
 local function TopDismantle_layer()
     return LayerRectangle:newInstance(
-        ObjTable:newInstance(blockClassName, {
+        ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({

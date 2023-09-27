@@ -1,10 +1,6 @@
 local t_forestry = {}
 local corelog = require "corelog"
 
-local InputChecker = require "input_checker"
-local MethodExecutor = require "method_executor"
-
-local URL = require "obj_url"
 local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
@@ -18,8 +14,6 @@ local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 local T_MObjHost = require "test.t_eobj_mobj_host"
-
-local t_turtle = require "test.t_turtle"
 
 function t_forestry.T_All()
     -- MObjHost methods

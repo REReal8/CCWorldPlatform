@@ -16,12 +16,11 @@ local enterprise_chests = require "enterprise_chests"
 local t_chests = require "test.t_chests"
 local t_turtle = require "test.t_turtle"
 
-local blockClassName = "Block"
 local testStartLocation     = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
 
 local testBuildLayer1 = LayerRectangle:newInstance(
-    ObjTable:newInstance(blockClassName, {
+    ObjTable:newInstance(Block:getClassName(), {
         ["T"]   = Block:newInstance("minecraft:torch"),
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -37,7 +36,7 @@ local testBuildLayer1 = LayerRectangle:newInstance(
 ) assert(testBuildLayer1, "Failed obtaining testBuildLayer1")
 
 local testBuildLayer2 = LayerRectangle:newInstance(
-    ObjTable:newInstance(blockClassName, {
+    ObjTable:newInstance(Block:getClassName(), {
         ["C"]   = Block:newInstance("minecraft:chest", -1, 0),
         ["D"]   = Block:newInstance("minecraft:chest", 0, 1),
         ["E"]   = Block:newInstance("minecraft:chest", 0, -1),
@@ -52,7 +51,7 @@ local testBuildLayer2 = LayerRectangle:newInstance(
 ) assert(testBuildLayer2, "Failed obtaining testBuildLayer2")
 
 local testBuildLayer3 = LayerRectangle:newInstance(
-    ObjTable:newInstance(blockClassName, {
+    ObjTable:newInstance(Block:getClassName(), {
         ["T"]   = Block:newInstance("minecraft:torch"),
         ["C"]   = Block:newInstance("minecraft:chest", 0, 1),
         [" "]   = Block:newInstance(Block.NoneBlockName()),
@@ -68,7 +67,7 @@ local testBuildLayer3 = LayerRectangle:newInstance(
 ) assert(testBuildLayer3, "Failed obtaining testBuildLayer3")
 
 local testBuildLayer4 = LayerRectangle:newInstance(
-    ObjTable:newInstance(blockClassName, {
+    ObjTable:newInstance(Block:getClassName(), {
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
     CodeMap:newInstance({
