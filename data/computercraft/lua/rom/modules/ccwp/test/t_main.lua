@@ -146,6 +146,10 @@ function t_main.T_ResetWorld()
 --    os.reboot()
 end
 
+function t_main.T_ClearLogfile()
+    corelog.ClearLog()
+end
+
 function t_main.Func1_Callback(callbackData, taskResult)
 --    corelog.WriteToLog("  doing t_main.Func1_Callback("..textutils.serialise(callbackData)..", "..textutils.serialise(taskResult)..")")
     return true

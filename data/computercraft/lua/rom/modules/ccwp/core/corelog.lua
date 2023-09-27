@@ -85,6 +85,11 @@ function CoreLogEventReadySetup()
 	if monitorLeft and monitorRight then coreevent.CreateTimeEvent(db.heartbeatTimer, db.protocol, "heartbeat timer") end
 end
 
+function corelog.ClearLog()
+	-- just overwrite the logfile, this does create a first empty line
+	coreutils.WriteToFile(db.logfile, nil, "overwrite")
+end
+
 function corelog.WriteToLog(message, writeMode)
 	-- set the default
 	writeMode = writeMode or "append"
