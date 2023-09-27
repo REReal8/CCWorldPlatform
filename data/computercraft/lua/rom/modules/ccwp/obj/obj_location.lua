@@ -302,9 +302,32 @@ end
 
 function Location:blockDistanceTo(o)
     -- check input
-    if not Class.IsInstanceOf(o, Location) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return 9999 end
+    if not Class.IsInstanceOf(o, Location) then corelog.Warning("Location:blockDistanceTo: object not a Location (type="..type(o)..")") return Location.FarX() + Location.FarY() + Location.FarZ() end
 
     return math.abs(o._x - self._x) + math.abs(o._y - self._y) + math.abs(o._z - self._z)
+end
+
+--        _        _   _                       _   _               _
+--       | |      | | (_)                     | | | |             | |
+--    ___| |_ __ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
+--   / __| __/ _` | __| |/ __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   \__ \ || (_| | |_| | (__  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |___/\__\__,_|\__|_|\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function Location.FarX()
+    return 99999
+end
+
+function Location.FarY()
+    return 99999
+end
+
+function Location.FarZ()
+    return 99999
+end
+
+function Location.FarLocation()
+    return Location:newInstance(Location.FarX(), Location.FarY(), Location.FarZ())
 end
 
 return Location

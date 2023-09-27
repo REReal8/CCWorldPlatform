@@ -304,7 +304,7 @@ function T_Shop.T_bestItemSupplier()
     local closeItemSupplierLocator = enterprise_chests:saveObject(chest)
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = closeItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
-    local farLocation = location1:getRelativeLocation(99999, 1, 0)
+    local farLocation = location1:getRelativeLocation(Location.FarX(), 1, 0)
     chest = T_Chest.CreateTestObj(nil, farLocation) assert(chest, "Failed obtaining Chest")
     local farItemSupplierLocator = enterprise_chests:saveObject(chest)
     result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = farItemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")

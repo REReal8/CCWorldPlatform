@@ -721,17 +721,17 @@ function Factory:getProductionLocation_Att(...)
         Parameters:
             items   + (table) items to produce
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("Factory:getSiteLocation_Att: Invalid input") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    if not checkSuccess then corelog.Error("Factory:getSiteLocation_Att: Invalid input") return Location.FarLocation() end
 
     -- check for recipe to provide items
     local itemName, itemCount = next(items, nil)
     enterprise_manufacturing = enterprise_manufacturing or require "enterprise_manufacturing"
     local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
-    if type(recipe) ~= "table" then corelog.Error("Factory:getSiteLocation_Att: Factory does not provide "..itemName.."'s") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    if type(recipe) ~= "table" then corelog.Error("Factory:getSiteLocation_Att: Factory does not provide "..itemName.."'s") return Location.FarLocation() end
 
     -- get location
     local productionSpot = self:getAvailableProductionSpot(recipe)
-    if not productionSpot then corelog.Error("Factory:getSiteLocation_Att: No ProductionSpot available.") return {_x=9999, _y=9999, _z= 9999, _dx=0, _dy=1} end
+    if not productionSpot then corelog.Error("Factory:getSiteLocation_Att: No ProductionSpot available.") return Location.FarLocation() end
     local location = productionSpot:getBaseLocation()
 
     -- end
