@@ -16,28 +16,14 @@ local UtilStation = Class.NewClass(ObjBase, IMObj, IItemDepot)
 local corelog = require "corelog"
 local coreutils = require "coreutils"
 
-local ObjArray = require "obj_array"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
-local TaskCall = require "obj_task_call"
 local ObjTable = require "obj_table"
-local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
-local ProductionSpot = require "mobj_production_spot"
-
-local role_alchemist = require "role_alchemist"
-local role_fuel_worker = require "role_fuel_worker"
-
-local enterprise_projects = require "enterprise_projects"
-local enterprise_isp = require "enterprise_isp"
-local enterprise_turtle = require "enterprise_turtle"
-local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_chests = require "enterprise_chests"
-local enterprise_energy = require "enterprise_energy"
-local enterprise_manufacturing
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
