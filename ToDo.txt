@@ -62,6 +62,10 @@ R  Initialisation: v2.0                                                         
 R  Improve MObjHost                                                                                                     (done)
    R  Support extending and upgrading of MObj's                                                                         (done)
 
+-  Building blueprints/layers from front                                                                                (....)
+   R  Support building blueprints (layers) from front                                                                   (done)
+   -  Figure out how to properly orient Monitors...
+
 RG UtilStation v1.0 input & output chest UI                                                                             (....)
 
 -  ensure all MObj's implement and follow IMObj interface                                                               (....)
@@ -296,9 +300,6 @@ RG mine v2
       -  mobj_shop can however have WIP. Waiting for WIP to be completed now is done in dismantleAndReleaseMObj_ASrv
       -  the above will also be the case for enterprise_wastehandling/(m)obj_wastehandler, and possibly also when we introduce ItemSupplierGroup and ItemDepotGroup
       -  should we introduce some intermediate abstraction between IObj and IMObj, e.g. IHObj (hostable Obj), or IWObj (Workable Obj), or IAObj (async Obj)?
-
--  Construction from front
-   -  Support building blueprints (layers) from front
 
 -  enterprise_project
    !  consider introducing a Project object (class)!, and using that in enterprise_project

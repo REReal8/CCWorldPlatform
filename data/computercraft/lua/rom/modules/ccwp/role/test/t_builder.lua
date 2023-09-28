@@ -20,15 +20,18 @@ function t_builder.T_AllPhysical()
     -- role_builder methods
     t_builder.T_BuildLayer_Task_Down()
     t_builder.T_BuildLayer_Task_Up()
+    t_builder.T_BuildLayer_Task_Front()
 end
 
 local testStartLocation_Down = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation_Up = Location:newInstance(-12, 6, 2, 0, 1)
+local testStartLocation_Front = Location:newInstance(-12, 1, 1, 0, 1)
 
 local size_x1 = 4
 local size_y1 = 6
 local chestItemName = "minecraft:chest"
 local torchItemName = "minecraft:torch"
+local saplingItemName = "minecraft:birch_sapling"
 local codeTable1 = ObjTable:newInstance(Block:getClassName(), {
     ["T"]   = Block:newInstance(torchItemName),
     ["C"]   = Block:newInstance(chestItemName, 0, 1),
@@ -78,6 +81,21 @@ local testBuildLayer_Down = LayerRectangle:newInstance(
     })
 ) assert(testBuildLayer_Down, "Failed obtaining testBuildLayer_Down")
 
+local testBuildLayer_Front = LayerRectangle:newInstance(
+    ObjTable:newInstance(Block:getClassName(), {
+        ["T"]   = Block:newInstance(torchItemName),
+        ["C"]   = Block:newInstance(chestItemName),
+        ["S"]   = Block:newInstance(saplingItemName),
+        ["M"]   = Block:newInstance("computercraft:monitor_normal"),
+        ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        [" "]   = Block:newInstance(Block.NoneBlockName()),
+    }),
+    CodeMap:newInstance({
+        [3] = "M M?",
+        [2] = "M C?",
+        [1] = "M ST",
+    })
+) assert(testBuildLayer_Front, "Failed obtaining testBuildLayer_Front")
 
 local compact = { compact = true }
 
@@ -106,6 +124,12 @@ function t_builder.T_BuildLayer_MetaData()
     buildData.buildDirection = "Up"
     metaData = role_builder.BuildLayer_MetaData(buildData) assert(metaData, "Failed obtaining metaData")
     expectedLocation = testStartLocation_Down:getLocationDown()
+    assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
+
+    -- test Front
+    buildData.buildDirection = "Front"
+    metaData = role_builder.BuildLayer_MetaData(buildData) assert(metaData, "Failed obtaining metaData")
+    expectedLocation = testStartLocation_Down:getLocationFront(-1)
     assert(metaData.location:isEqual(expectedLocation), "gotten location(="..textutils.serialize(metaData.location, compact)..") not the same as expected(="..textutils.serialize(expectedLocation, compact)..")")
 
     -- cleanup test
@@ -172,6 +196,15 @@ function t_builder.T_BuildLayer_Task_Up()
 
     -- test
     t_builder.pt_BuildLayer_Task(testStartLocation_Up, "Up", testBuildLayer_Up)
+
+    -- cleanup test
+end
+
+function t_builder.T_BuildLayer_Task_Front()
+    -- prepare test
+
+    -- test
+    t_builder.pt_BuildLayer_Task(testStartLocation_Front, "Front", testBuildLayer_Front)
 
     -- cleanup test
 end

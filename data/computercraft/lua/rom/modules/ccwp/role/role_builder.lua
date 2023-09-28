@@ -67,15 +67,20 @@ function role_builder.BuildBlueprint_MetaData(...)
         if not layerMetaData then corelog.Error("role_builder.BuildBlueprint_MetaData: Failed obtaining layerMetaData") return {success = false} end
 
         -- determine startLocation (correcting for buildDirection)
-        local deltaZ = 1
+        local offsetX = 0
+        local offsetY = 0
+        local offsetZ = 0
         if buildDirection == "Down" then
-            deltaZ =  1
+            offsetZ = 1
         elseif buildDirection == "Up" then
-            deltaZ = -1
+            offsetZ = -1
+        elseif buildDirection == "Front" then
+            offsetX = startpoint:getDX()
+            offsetY = startpoint:getDY()
         else
-            corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return {}
+            corelog.Error("role_builder.BuildBlueprint_MetaData: Don't know how to determine offsets for buildDirection '"..buildDirection.."'") return {success = false}
         end
-        local startLocation = layerBuildData.startpoint:getRelativeLocation(0, 0, deltaZ)
+        local startLocation = layerBuildData.startpoint:getRelativeLocation(offsetX, offsetY, offsetZ)
 
         -- update blueprint metadata
         metaData.fuelNeeded = metaData.fuelNeeded + role_fuel_worker.NeededFuelToFrom(startLocation, lastLocation) + layerMetaData.fuelNeeded
@@ -84,7 +89,17 @@ function role_builder.BuildBlueprint_MetaData(...)
             metaData.itemsNeeded[layerItemName] = (metaData.itemsNeeded[layerItemName] or 0) + layerItemCount
         end
 
-        lastLocation = startpoint:getRelativeLocation(layerBuildData.layer:getNColumns(), layerBuildData.layer:getNRows(), deltaZ)
+        -- remember last location
+        local lastX = offsetX + layerBuildData.layer:getNColumns()
+        local lastY = offsetY
+        if buildDirection == "Down" or buildDirection == "Up" then
+            lastY = lastY + layerBuildData.layer:getNRows()
+        end
+        local lastZ = offsetZ
+        if buildDirection == "Front" then
+            lastZ = lastZ + layerBuildData.layer:getNRows()
+        end
+        lastLocation = startpoint:getRelativeLocation(lastX, lastY, lastZ)
     end
 
     -- update metadata with escapeSequence (if present)
@@ -172,15 +187,20 @@ function role_builder.BuildLayer_MetaData(...)
     local fuelNeeded = (layer:getNColumns() * layer:getNRows() - 1)
 
     -- determine startLocation (correcting for buildDirection)
-    local deltaZ = 1
+    local offsetX = 0
+    local offsetY = 0
+    local offsetZ = 0
     if buildDirection == "Down" then
-        deltaZ =  1
+        offsetZ = 1
     elseif buildDirection == "Up" then
-        deltaZ = -1
+        offsetZ = -1
+    elseif buildDirection == "Front" then
+        offsetX = -startpoint:getDX()
+        offsetY = -startpoint:getDY()
     else
-        corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to handle buildDirection '"..buildDirection.."'") return nil
+        corelog.Error("role_builder.BuildLayer_MetaData: Don't know how to determine offsets for buildDirection '"..buildDirection.."'") return nil
     end
-    local startLocation = startpoint:getRelativeLocation(0, 0, deltaZ)
+    local startLocation = startpoint:getRelativeLocation(offsetX, offsetY, offsetZ)
 
     -- return metadata
     return {
@@ -227,24 +247,33 @@ function role_builder.BuildLayer_Task(...)
         end
     end
 
-    -- orientatie
-    local deltaZ = 1
+    -- corelog.WriteToLog("startpoint: "..textutils.serialise(startpoint, {compact = true}))
+
+    -- offsets
+    local offsetX = 0
+    local offsetY = 0
+    local offsetZ = 0
     if buildDirection == "Down" then
-        deltaZ =  1
+        offsetZ = 1
     elseif buildDirection == "Up" then
-        deltaZ = -1
+        offsetZ = -1
+    elseif buildDirection == "Front" then
+        offsetX = -startpoint:getDX()
+        offsetY = -startpoint:getDY()
     else
-        corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
+        corelog.Error("role_builder.BuildLayer_Task: Don't know how to determine offsets for buildDirection '"..buildDirection.."'") return {success = false}
     end
 
     -- go to starting location
-    coremove.GoTo(startpoint:getRelativeLocation(0, 0, deltaZ), forceToStartPoint)
+    local startLocation = startpoint:getRelativeLocation(offsetX, offsetY, offsetZ)
+    -- corelog.WriteToLog("startLocation: "..textutils.serialise(startLocation, {compact = true}))
+    coremove.GoTo(startLocation, forceToStartPoint)
 
     -- walk along columns
     for col=1, layer:getNColumns() do
         -- walk along rows
         for iRow=1, layer:getNRows() do
-            -- determine row value such that path is back and forth in rows
+            -- determine row value such that path is back and forth (or up and down) in rows
             local row = iRow
             if col % 2 == 0 then
                 row = layer:getNRows() + 1 - iRow
@@ -252,8 +281,18 @@ function role_builder.BuildLayer_Task(...)
 
             -- go to location
             local x = col - 1
-            local y = row - 1
-            coremove.MoveTo(startpoint:getRelativeLocation(x, y, deltaZ), true)
+            if buildDirection == "Down" or buildDirection == "Up" then
+                local y = row - 1
+                local location = startpoint:getRelativeLocation(offsetX + x, offsetY + y, offsetZ)
+                -- corelog.WriteToLog("location: "..textutils.serialise(location, {compact = true}).."  ("..col..","..row..")")
+                coremove.MoveTo(location, true)
+            elseif buildDirection == "Front" then
+                local z = row - 1
+                local location = startpoint:getRelativeLocation(offsetX + x, offsetY, offsetZ + z)
+                -- corelog.WriteToLog("location: "..textutils.serialise(location, {compact = true}).."  ("..col..","..row..")")
+                coremove.GoTo(location, true)
+            end
+
 
             -- get block
             local block = layer:getBlock(col, row)
@@ -263,6 +302,9 @@ function role_builder.BuildLayer_Task(...)
             if block:isMinecraftItem() or block:isComputercraftItem() then
                 -- optionally turn in specific direction
                 if block:hasValidDirection() then
+                    if buildDirection == "Front" then
+                        corelog.Warning("role_builder.BuildLayer_Task: Turning not very usefull for buildDirection '"..buildDirection.."'")
+                    end
                     -- turn in the right direction
                     coremove.TurnTo({_dx = block:getDx(), _dy = block:getDy()})
                 end
@@ -274,8 +316,8 @@ function role_builder.BuildLayer_Task(...)
                         has_block, block_data = turtle.inspectDown()
                     elseif buildDirection == "Up" then
                         has_block, block_data = turtle.inspectUp()
-                    else
-                        corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
+                    elseif buildDirection == "Front" then
+                        has_block, block_data = turtle.inspect()
                     end
                 end
 
@@ -290,8 +332,9 @@ function role_builder.BuildLayer_Task(...)
                         elseif buildDirection == "Up" then
                             turtle.digUp()
                             turtle.placeUp()
-                        else
-                            corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
+                        elseif buildDirection == "Front" then
+                            turtle.dig()
+                            turtle.place()
                         end
                     else
                         -- mandatory item not in inventory, error message and ignore
@@ -304,8 +347,8 @@ function role_builder.BuildLayer_Task(...)
                     turtle.digDown()
                 elseif buildDirection == "Up" then
                     turtle.digUp()
-                else
-                    corelog.Error("role_builder.BuildLayer_Task: Don't know how to handle buildDirection '"..buildDirection.."'") return {success = false}
+                elseif buildDirection == "Front" then
+                    turtle.dig()
                 end
             elseif block:isAnyBlock() then
                 -- leave current block be
