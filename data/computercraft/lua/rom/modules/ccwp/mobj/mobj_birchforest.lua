@@ -325,6 +325,17 @@ function BirchForest:getWIPId()
     return self:getClassName().." "..self:getId()
 end
 
+local function Inline_Tree_layerLm1()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["S"]   = Block:newInstance("minecraft:birch_sapling"),
+        }),
+        CodeMap:newInstance({
+            [1] = "S",
+        })
+    )
+end
+
 local function Tree_layerLm1()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
@@ -432,29 +443,42 @@ function BirchForest:getBuildBlueprint()
     local level = self:getLevel()
     if level < -1 or level > 2 then corelog.Error("BirchForest:getBuildBlueprint: Don't know how to build a BirchForest of level "..level) return nil end
 
-    -- determine layerList
+    -- buildLocation
+    local baseLocation = self:getBaseLocation()
+    local buildLocation = baseLocation:copy()
+
+    -- layerList
     local layerList = {}
+    local buildDirection = "Down"
+    local baseLayer = self:getBaseLayer(level)
+    local treeLayer = self:getTreeLayer(level)
+    local yOffset = 0
+    if level == -1 then
+        if nTrees ~= 1 then corelog.Error("BirchForest:getBuildBlueprint: "..nTrees.." trees not supported for level -1") return nil end
+
+        -- specific values for -1 level
+        buildDirection = "Front"
+        buildLocation = buildLocation:getRelativeLocation(3, 2, 0)
+        yOffset = 1
+        baseLayer = Inline_Tree_layerLm1()
+    end
     for iTree=1, nTrees  do
-        local buildLayerLocation = Location:newInstance(0, 6 * (iTree - 1), 0)
+        local buildLayerLocation = Location:newInstance(0, yOffset + 6 * (iTree - 1), 0)
         if iTree == 1 then
-            table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = self:getBaseLayer(level)})
+            table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = buildDirection, layer = baseLayer})
         else
-            table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = self:getTreeLayer(level)})
+            table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = buildDirection, layer = treeLayer})
         end
     end
 
-    -- determine escapeSequence
+    -- escapeSequence
     local escapeSequence = {}
 
-    -- determine blueprint
+    -- blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = escapeSequence,
     }
-
-    -- determine buildLocation
-    local baseLocation = self:getBaseLocation()
-    local buildLocation = baseLocation:copy()
 
     -- end
     return buildLocation, blueprint
@@ -496,10 +520,10 @@ function BirchForest:getExtendBlueprint(...)
     local minBuildLocation = Location.FarLocation()
     if level < 2 and upgradedLevel ~= level then
         -- current layer data
-        local treeLayer = self:getTreeLayer(level)
-        if not treeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..level) return nil end
         local baseLayer = self:getBaseLayer(level)
         if not baseLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining baseLayer for level "..level) return nil end
+        local treeLayer = self:getTreeLayer(level)
+        if not treeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..level) return nil end
 
         -- extend data
         local transformLayer = treeLayer:transformToLayer(upgradedTreeLayer)
@@ -547,7 +571,7 @@ function BirchForest:getExtendBlueprint(...)
         end
     end
 
-    -- determine layerList
+    -- layerList
     local layerList = {}
     local xOffset = minBuildLocation:getX()
     local yOffset = minBuildLocation:getY()
@@ -559,16 +583,16 @@ function BirchForest:getExtendBlueprint(...)
         table.insert(layerList, { startpoint = buildLayerLocation, buildDirection = "Down", layer = buildLayerData.layer})
     end
 
-    -- determine escapeSequence
+    -- escapeSequence
     local escapeSequence = {}
 
-    -- determine blueprint
+    -- blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = escapeSequence,
     }
 
-    -- determine buildLocation
+    -- buildLocation
     local baseLocation = self:getBaseLocation()
     local buildLocation = baseLocation:getRelativeLocation(xOffset, yOffset, zOffset)
 
@@ -606,7 +630,7 @@ function BirchForest:getDismantleBlueprint()
     local level = self:getLevel()
     if level < -1 or level > 2 then corelog.Error("BirchForest:getDismantleBlueprint: Don't know how to dismantle a BirchForest of level "..level) return nil end
 
-    -- determine layerList
+    -- layerList
     local layerList = {}
     for iTree=1, nTrees  do
         -- torch1
@@ -633,16 +657,16 @@ function BirchForest:getDismantleBlueprint()
         end
     end
 
-    -- determine escapeSequence
+    -- escapeSequence
     local escapeSequence = {}
 
-    -- determine blueprint
+    -- blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = escapeSequence
     }
 
-    -- determine buildLocation
+    -- buildLocation
     local buildLocation = self._baseLocation:copy()
 
     -- end

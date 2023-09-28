@@ -295,6 +295,8 @@ function T_BirchForest.T_IMObj_All()
     local fieldsTest1 = T_BirchForest.CreateInitialisedTest(nil, level1, baseLocation0, nTrees2, localLogsLocatorTest0, localSaplingsLocatorTest0)
     local fieldsTest2 = T_BirchForest.CreateInitialisedTest(nil, level2, baseLocation0, nTrees4, localLogsLocatorTest2, localSaplingsLocatorTest2)
 
+    local buildLocation_Lm1 = baseLocation0:getRelativeLocation(3, 2, 0)
+    local isBlueprintTest_Lm1 = IsBlueprintTest:newInstance(buildLocation_Lm1)
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
     local buildLocation_FromL1T2_ToL2T4 = baseLocation0:getRelativeLocation(0, 1, 0) -- note: offset because row 1 is already build
     local isBlueprintTest_FromL1T2_ToL2T4 = IsBlueprintTest:newInstance(buildLocation_FromL1T2_ToL2T4)
@@ -317,7 +319,7 @@ function T_BirchForest.T_IMObj_All()
     T_IMObj.pt_getWIPId(testClassName, obj0, testObjName0, logOk)
 
     -- test blueprints
-    T_IMObj.pt_getBuildBlueprint(testClassName, objm1, testObjNamem1, isBlueprintTest, logOk)
+    T_IMObj.pt_getBuildBlueprint(testClassName, objm1, testObjNamem1, isBlueprintTest_Lm1, logOk)
     T_IMObj.pt_getBuildBlueprint(testClassName, obj0, testObjName0, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj0, testObjName0, upgradeParametersTo_L1T2, isBlueprintTest, logOk)
     T_IMObj.pt_getExtendBlueprint(testClassName, obj1, testObjName1, upgradeParametersTo_L2T4, isBlueprintTest_FromL1T2_ToL2T4, logOk)

@@ -81,7 +81,7 @@ RG UtilStation v1.0 input & output chest UI                                     
 
 -  use MObjHost class                                                                                                   (....)
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)
-   R  enterprise_forestry                                                                                               (....)
+   R  enterprise_forestry                                                                                               (done)
       R  upgrade to a MObjHost                                                                                          (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
