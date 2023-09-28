@@ -205,6 +205,7 @@ function t_builder.T_BuildLayer_Task_Front()
 
     -- test
     t_builder.pt_BuildLayer_Task(testStartLocation_Front, "Front", testBuildLayer_Front)
+    -- ToDo: investigate how Monitor's can be oriented as we want to
 
     -- cleanup test
 end

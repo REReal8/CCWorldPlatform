@@ -64,7 +64,7 @@ R  Improve MObjHost                                                             
 
 -  Building blueprints/layers from front                                                                                (....)
    R  Support building blueprints (layers) from front                                                                   (done)
-   -  Figure out how to properly orient Monitors...
+   -  Figure out how to properly orient Monitors... (see t_builder.T_BuildLayer_Task_Front)
 
 RG UtilStation v1.0 input & output chest UI                                                                             (....)
 
