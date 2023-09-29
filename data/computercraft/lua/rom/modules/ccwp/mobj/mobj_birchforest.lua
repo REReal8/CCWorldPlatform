@@ -408,20 +408,20 @@ local function Base_layerL2()
     )
 end
 
-function BirchForest:getBaseLayer(level)
+local function Base_layer(level)
     if level == -1 then     return Tree_layerLm1()
     elseif level == 0 then  return Tree_layerL0()
     elseif level == 1 then  return Tree_layerL1()
     elseif level == 2 then  return Base_layerL2()
-    else                    corelog.Error("BirchForest:getBaseLayer: Don't know layer for level "..level) return nil end
+    else                    corelog.Error("Base_layer: Don't know layer for level "..level) return nil end
 end
 
-function BirchForest:getTreeLayer(level)
+local function Tree_layer(level)
     if level == -1 then     return Tree_layerLm1()
     elseif level == 0 then  return Tree_layerL0()
     elseif level == 1 then  return Tree_layerL1()
     elseif level == 2 then  return Tree_layerL1() -- same as L1
-    else                    corelog.Error("BirchForest:getTreeLayer: Don't know layer for level "..level) return nil end
+    else                    corelog.Error("Tree_layer: Don't know layer for level "..level) return nil end
 end
 
 function BirchForest:getBuildBlueprint()
@@ -450,8 +450,8 @@ function BirchForest:getBuildBlueprint()
     -- layerList
     local layerList = {}
     local buildDirection = "Down"
-    local baseLayer = self:getBaseLayer(level)
-    local treeLayer = self:getTreeLayer(level)
+    local baseLayer = Base_layer(level)
+    local treeLayer = Tree_layer(level)
     local yOffset = 0
     if level == -1 then
         if nTrees ~= 1 then corelog.Error("BirchForest:getBuildBlueprint: "..nTrees.." trees not supported for level -1") return nil end
@@ -510,9 +510,9 @@ function BirchForest:getExtendBlueprint(...)
     if level < -1 or level > 2 or upgradedLevel < -1 or upgradedLevel > 2 then corelog.Error("BirchForest:getExtendBlueprint: Don't know how to extend a BirchForest from level "..level.." to "..upgradedLevel) return nil end
 
     -- upgraded layer data
-    local upgradedTreeLayer = self:getTreeLayer(upgradedLevel)
+    local upgradedTreeLayer = Tree_layer(upgradedLevel)
     if not upgradedTreeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..upgradedLevel) return nil end
-    local upgradedBaseLayer = self:getBaseLayer(upgradedLevel)
+    local upgradedBaseLayer = Base_layer(upgradedLevel)
     if not upgradedBaseLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining baseLayer for level "..upgradedLevel) return nil end
 
     -- existing trees
@@ -520,9 +520,9 @@ function BirchForest:getExtendBlueprint(...)
     local minBuildLocation = Location.FarLocation()
     if level < 2 and upgradedLevel ~= level then
         -- current layer data
-        local baseLayer = self:getBaseLayer(level)
+        local baseLayer = Base_layer(level)
         if not baseLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining baseLayer for level "..level) return nil end
-        local treeLayer = self:getTreeLayer(level)
+        local treeLayer = Tree_layer(level)
         if not treeLayer then corelog.Error("BirchForest:getExtendBlueprint: Failed obtaining treeLayer for level "..level) return nil end
 
         -- extend data
