@@ -19,10 +19,7 @@ ToDo List
          to the ToDo history section of this file to indicate he/ she has taken notice of the completion of the ToDo.
 ]]
 
-G  Debug: Modem events send but not received                                                                            (....)
-   - understand (seems buffer issue inside computercraft)
-   - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))     (done)
-   - option to bundle messages, reduces count, not size.                                                                (done)
+-  Robuste way to initialize and setup (like the core files do)
 
 -  Building blueprints/layers from front                                                                                (....)
    R  Support building blueprints (layers) from front                                                                   (done)
@@ -347,6 +344,11 @@ ToDo history
    ToDo History conventions:
    -  Newly completed and acknowledged ToDo's should be added at the top of this list. Hence, older ToDo's will be lower on the list.
 ]]
+
+G  Debug: Modem events send but not received                                                                            (....)
+   - understand (seems buffer issue inside computercraft)
+   - resolve/ workaround (workaround, not solved. Synchronious code should consider yielding ("coroutine.yield()"))     (done)
+   - option to bundle messages, reduces count, not size.                                                                (done)
 
 R  Initialisation: v2.0                                                                                                 (done)
    R  use Class:newInstance & instance:_init to create and initialise objects instances                                 (done)
