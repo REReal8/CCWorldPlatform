@@ -25,6 +25,48 @@ local db    = {
 }
 local screen    = {}
 
+-- init function for the display
+function coredisplay.Init()
+	-- get current position
+    db.x, db.y = term.getSize()
+
+	-- direct even doen
+	if turtle then
+		db.defaultMainMenu = {
+			clear   = true,
+			intro   = "Choose your action",
+			option  = {
+				{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
+				{key = "2", desc = "Exec tests", 				func = ExecuteTest,	    		param = {}},
+				{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
+				{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
+				{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
+				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
+				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
+				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
+				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
+				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
+			},
+			question	= "Make your choice",
+		}
+	else
+		db.defaultMainMenu = {
+			clear   = true,
+			intro   = "Choose your action",
+			option  = {
+				{key = "1", desc = "Execute code",  			func = ExecuteCode,	    	param = {step = 1}},
+				{key = "2", desc = "Execute general tests",  	func = ExecuteTest,	    	param = {}},
+				{key = "3", desc = "Load event",				func = LoadEvent,			param = {}},
+				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,	param = {}},
+			},
+			question	= "Make your choice",
+		}
+	end
+
+    -- set default screen
+    MainMenu(DefaultMainMenu())
+end
+
 -- setup function for the display
 function coredisplay.Setup()
 end
@@ -56,48 +98,6 @@ function coredisplay.Run()
 
 	-- next line
 	print("")
-end
-
--- function to get or set the main menu
-local function MainMenu(t)
-	if t then db.mainmenu = t
-	else return db.mainmenu
-	end
-end
-
--- a nice default main menu, very usefull
-local function DefaultMainMenu()
-	if turtle then
-		return {
-			clear   = true,
-			intro   = "Choose your action",
-			option  = {
-				{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
-				{key = "2", desc = "Exec tests", 				func = ExecuteTest,	    		param = {}},
-				{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
-				{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
-				{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
-				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
-				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
-				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
-				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
-				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
-			},
-			question	= "Make your choice",
-		}
-	else
-		return {
-			clear   = true,
-			intro   = "Choose your action",
-			option  = {
-				{key = "1", desc = "Execute code",  			func = ExecuteCode,	    	param = {step = 1}},
-				{key = "2", desc = "Execute general tests",  	func = ExecuteTest,	    	param = {}},
-				{key = "3", desc = "Load event",				func = LoadEvent,			param = {}},
-				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,	param = {}},
-			},
-			question	= "Make your choice",
-		}
-	end
 end
 
 -- gets or sets the next screen
@@ -506,13 +506,16 @@ function coredisplay.UpdateToDisplay(update, alive)
 	term.setCursorPos( x, y )
 end
 
--- init function for the display
-function coredisplay.Init()
-	-- get current position
-    db.x, db.y = term.getSize()
+-- function to get or set the main menu
+function MainMenu(t)
+	if t then db.mainmenu = t
+	else return db.mainmenu
+	end
+end
 
-    -- set default screen
-    MainMenu(DefaultMainMenu())
+-- a nice default main menu, very usefull
+function DefaultMainMenu()
+	return db.defaultMainMenu
 end
 
 return coredisplay
