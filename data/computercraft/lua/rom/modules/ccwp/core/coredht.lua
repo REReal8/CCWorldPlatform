@@ -185,8 +185,13 @@ function coredht.Setup()
 end
 
 function coredht.DHTReadyFunction(func)
-	-- just add function to the list
-	dhtReadyFunctions[#dhtReadyFunctions + 1] = func
+    if coredht.IsReady() then
+        -- can be executed right away!
+        func()
+    else
+        -- just add function to the list
+        dhtReadyFunctions[#dhtReadyFunctions + 1] = func
+    end
 end
 
 function coredht.IsReady()
