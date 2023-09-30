@@ -44,11 +44,13 @@ function coredisplay.Init()
 				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
 				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
 				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
-				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
+--				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
 				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
 		}
+
+		MainMenuAddItem("m", "Move turtle", MoveTurtle, {})
 	else
 		db.defaultMainMenu = {
 			clear   = true,
@@ -504,6 +506,23 @@ function coredisplay.UpdateToDisplay(update, alive)
 
 	-- resotre cursor
 	term.setCursorPos( x, y )
+end
+
+function MainMenuAddItem(key, desc, func, param)
+	if type(key) ~= "string" and type(desc) ~= "string" and type(func) ~= "function" then
+		return corelog.Warning("coredisplay.MainMenuAddItem(): New menu item ignored")
+	end
+
+	-- default value
+	if type(param) ~= "table" then param = {} end
+
+	-- add the menu item
+	table.insert(db.defaultMainMenu.option, #db.defaultMainMenu.option, {
+		key		= string.sub(key, 1, 1),
+		desc	= desc,
+		func	= func,
+		param	= param,
+	})
 end
 
 -- function to get or set the main menu
