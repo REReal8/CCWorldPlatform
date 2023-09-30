@@ -31,25 +31,27 @@ function coredisplay.Init()
     db.x, db.y = term.getSize()
 
 	-- direct even doen
-	db.defaultMainMenu = {
-		clear   = true,
-		intro   = "Choose your action",
-		option  = {
-			{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
-			{key = "2", desc = "Exec general tests",		func = ExecuteTest,	    		param = {}},
-			{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
-			{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
-			{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
-			{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
-			{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
-			{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
-			{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
-		},
-		question	= "Make your choice",
-	}
+	if db.defaultMainMenu == nil then
+		db.defaultMainMenu = {
+			clear   = true,
+			intro   = "Choose your action",
+			option  = {
+				{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
+				{key = "2", desc = "Exec general tests",		func = ExecuteTest,	    		param = {}},
+				{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
+				{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
+				{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
+				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
+				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
+				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
+				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
+			},
+			question	= "Make your choice",
+		}
 
-	-- alleen een turtle kan bewogen worden
-	if turtle then MainMenuAddItem("m", "Move turtle", MoveTurtle) end
+		-- alleen een turtle kan bewogen worden
+		if turtle then coredisplay.MainMenuAddItem("m", "Move turtle", MoveTurtle) end
+	end
 
     -- set default screen
     MainMenu(DefaultMainMenu())
@@ -188,7 +190,15 @@ function DoScreen(t)
 end
 
 function IndexToKey(i) if i < 10 then return tostring(i) else return string.char(87 + i) end end
-function ReadChar() while true do local event, c = os.pullEvent() if event == "char" then return c end end end
+
+function ReadChar()
+	-- just wait for a char event
+	while true do
+		local event, c = os.pullEvent()
+		if event == "char" then return c end
+	end
+end
+
 function ReadLine() return read() end
 
 -- for executing custom code
@@ -494,13 +504,16 @@ function coredisplay.UpdateToDisplay(update, alive)
 	term.setCursorPos( x, y )
 end
 
-function MainMenuAddItem(key, desc, func, param)
+function coredisplay.MainMenuAddItem(key, desc, func, param)
 	if type(key) ~= "string" and type(desc) ~= "string" and type(func) ~= "function" then
 		return corelog.Warning("coredisplay.MainMenuAddItem(): New menu item ignored")
 	end
 
 	-- default value
 	if type(param) ~= "table" then param = {} end
+
+	-- before init.... not so nice
+	if db.defaultMainMenu == nil then coredisplay.Init() end
 
 	-- add the menu item
 	table.insert(db.defaultMainMenu.option, #db.defaultMainMenu.option, {
