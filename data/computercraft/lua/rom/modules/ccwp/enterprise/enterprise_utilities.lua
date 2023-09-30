@@ -64,17 +64,19 @@ end
 
 function enterprise_utilities.SetAsLoggerFunction()
     corelog.WriteToLog("I am assigned as logger (also in the DHT now, me so happy)!!")
-    coredht.SaveData(true, enterprise_utilities.DHTroot, "loggers", os.getComputerID())
+    coredht.SaveData(true, enterprise_utilities.DHTroot, "loggers",         os.getComputerID())
+    coredht.SaveData(nil,  enterprise_utilities.DHTroot, "user stations",   os.getComputerID())
 end
 
 function enterprise_utilities.SetAsUserStationFunction()
     corelog.WriteToLog("I am assigned as user station (also in the DHT now, me so happy)!!")
-    coredht.SaveData(true, enterprise_utilities.DHTroot, "user stations", os.getComputerID())
+    coredht.SaveData(nil,   enterprise_utilities.DHTroot, "loggers",        os.getComputerID())
+    coredht.SaveData(true,  enterprise_utilities.DHTroot, "user stations",  os.getComputerID())
 end
 
 function enterprise_utilities.RemoveRolesFunction()
-    coredht.SaveData(nil, enterprise_utilities.DHTroot, "loggers", os.getComputerID())
-    coredht.SaveData(nil, enterprise_utilities.DHTroot, "user stations", os.getComputerID())
+    coredht.SaveData(nil, enterprise_utilities.DHTroot, "loggers",          os.getComputerID())
+    coredht.SaveData(nil, enterprise_utilities.DHTroot, "user stations",    os.getComputerID())
 end
 
 function enterprise_utilities.ActAsLogger()
