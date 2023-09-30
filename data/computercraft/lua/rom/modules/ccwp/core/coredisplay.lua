@@ -36,15 +36,15 @@ function coredisplay.Init()
 			clear   = true,
 			intro   = "Choose your action",
 			option  = {
-				{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
-				{key = "2", desc = "Exec general tests",		func = ExecuteTest,	    		param = {}},
-				{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
-				{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
-				{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
-				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
-				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
-				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
-				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
+				{key = "1", desc = "Exec code",  		func = ExecuteCode,	    		param = {step = 1}},
+				{key = "2", desc = "General tests",		func = ExecuteTest,	    		param = {}},
+				{key = "3", desc = "Core tests", 		func = ExecuteCoreTest,	    	param = {}},
+				{key = "4", desc = "Role tests",		func = ExecuteRoleTest,			param = {}},
+				{key = "5", desc = "obj tests",			func = ExecuteObjTest,			param = {}},
+				{key = "6", desc = "mobj tests",		func = ExecuteMObjTest,			param = {}},
+				{key = "7", desc = "Enterprise tests",	func = ExecuteEnterpriseTest,	param = {}},
+				{key = "8", desc = "Load event",		func = LoadEvent,				param = {}},
+				{key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
 			},
 			question	= "Make your choice",
 		}
@@ -78,7 +78,7 @@ function coredisplay.Run()
 	-- only continue as long as there is a main menu defined
 	while db.mainmenu ~= nil and coresystem.IsRunning() do
 		-- get de next screen definition
-		local nextScreenData = NextScreen()
+		local nextScreenData = coredisplay.NextScreen()
 
 		-- custom screen?
 		if nextScreenData.custom	then nextScreenData.custom(nextScreenData)
@@ -91,7 +91,7 @@ function coredisplay.Run()
 end
 
 -- gets or sets the next screen
-function NextScreen(t)
+function coredisplay.NextScreen(t)
 	if t				then screen[#screen + 1] = t
 	elseif #screen > 0	then return table.remove(screen)
 						else return MainMenu()
@@ -205,7 +205,7 @@ function ReadLine() return read() end
 function ExecuteCode(t, code)
 	-- first screen?
 	if t.step == 1 then
-		NextScreen({
+		coredisplay.NextScreen({
 			clear       = true,
 			func	    = ExecuteCode,
 			intro       = "Please type your line of code below\n",
@@ -369,7 +369,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		table.insert(options, {key = "x", desc = "Back to "..menuName.." test menu", func = ExecuteXObjTest, param = {}})
 
 		-- this is the next screen
-		NextScreen({
+		coredisplay.NextScreen({
 			clear       = true,
 			intro       = "Choose a "..menuName.." test function",
 			option      = options,
@@ -379,7 +379,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		-- test files screen
 
 		-- this is the next screen
-		NextScreen({
+		coredisplay.NextScreen({
 			clear       = true,
 			intro       = "Choose a "..menuName.." test type",
 			option      = menuOptions,
@@ -405,7 +405,7 @@ function LoadEvent(t)
 		tmp[#tmp + 1] = {key = "x", desc = "Back to main menu", func = function () return true end}
 
 		-- this is the next screen
-		NextScreen({
+		coredisplay.NextScreen({
 			clear       = true,
 			intro       = "Choose a protocol",
 			option      = tmp,
@@ -423,7 +423,7 @@ function LoadEvent(t)
 		tmp[#tmp + 1] = {key = "x", desc = "Back to protocol selection", func = LoadEvent, param = {}}
 
 		-- this is the next screen
-		NextScreen({
+		coredisplay.NextScreen({
 			clear       = true,
 			intro       = "Choose a file (protocol="..t.dir..")",
 			option      = tmp,
@@ -445,7 +445,7 @@ function MoveTurtle( t )
 
 	-- first screen?
 	if t == nil or t.direction == nil then
-		NextScreen({
+		coredisplay.NextScreen({
 			clear = true,
 			intro = "Available actions",
 			option = {
@@ -516,12 +516,8 @@ function coredisplay.MainMenuAddItem(key, desc, func, param)
 	if db.defaultMainMenu == nil then coredisplay.Init() end
 
 	-- add the menu item
-	table.insert(db.defaultMainMenu.option, #db.defaultMainMenu.option, {
-		key		= string.sub(key, 1, 1),
-		desc	= desc,
-		func	= func,
-		param	= param,
-	})
+	local o = db.defaultMainMenu.option
+	table.insert(o, #o, {key = string.sub(key, 1, 1), desc = desc, func = func, param = param})
 end
 
 -- function to get or set the main menu

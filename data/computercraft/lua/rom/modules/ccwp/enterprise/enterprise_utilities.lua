@@ -4,6 +4,7 @@ local MObjHost = require "eobj_mobj_host"
 local enterprise_utilities = Class.NewClass(MObjHost)
 
 local coredisplay		= require "coredisplay"
+local corelog   		= require "corelog"
 --[[
     The enterprise_utilities is a MObjHost. It hosts object for different utilities like the logger and UtilStation. For now just development utilities.
 --]]
@@ -42,7 +43,13 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
+function enterprise_utilities.SetAsLogger()
+    corelog.WriteToLog("I am a logger!!")
+end
 
+function enterprise_utilities.SetAsUserStation()
+    corelog.WriteToLog("I am a user station!!")
+end
 
 --        _ _           _
 --       | (_)         | |
@@ -53,8 +60,32 @@ end
 --               | |             __/ |
 --               |_|            |___/
 
--- sneaky init code
-coredisplay.MainMenuAddItem("u", "Utilities", function() end)
+-- screen for the utilities
+function UtilitiesMenu( t )
+    -- first screen?
+	if t == nil or t.role == nil then
+		coredisplay.NextScreen({
+			clear = true,
+			intro = "Available actions",
+			option = {
+				{key = "l", desc = "Set as logger",		    func = UtilitiesMenu, param = {role = "logger"}},
+				{key = "u", desc = "Set as user station",   func = UtilitiesMenu, param = {role = "user station"}},
+				{key = "x", desc = "Back to main menu",     func = function () return true end }
+			},
+			question = "Tell me who I am!"
+		})
+		return true
+	else
+			if t.role == "logger"	    then enterprise_utilities.SetAsLogger()
+		elseif t.role == "user station" then enterprise_utilities.SetAsUserStation()
+		end
 
+        -- we are done here, go back
+		return true
+	end
+end
+
+-- sneaky init code
+coredisplay.MainMenuAddItem("u", "Utilities", UtilitiesMenu)
 
 return enterprise_utilities
