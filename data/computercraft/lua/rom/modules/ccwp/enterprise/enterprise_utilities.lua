@@ -66,12 +66,14 @@ function enterprise_utilities.SetAsLoggerFunction()
     corelog.WriteToLog("I am assigned as logger (also in the DHT now, me so happy)!!")
     coredht.SaveData(true, enterprise_utilities.DHTroot, "loggers",         os.getComputerID())
     coredht.SaveData(nil,  enterprise_utilities.DHTroot, "user stations",   os.getComputerID())
+    ActAsLogger()
 end
 
 function enterprise_utilities.SetAsUserStationFunction()
     corelog.WriteToLog("I am assigned as user station (also in the DHT now, me so happy)!!")
     coredht.SaveData(nil,   enterprise_utilities.DHTroot, "loggers",        os.getComputerID())
     coredht.SaveData(true,  enterprise_utilities.DHTroot, "user stations",  os.getComputerID())
+    ActAsUserStation()
 end
 
 function enterprise_utilities.RemoveRolesFunction()
@@ -79,11 +81,19 @@ function enterprise_utilities.RemoveRolesFunction()
     coredht.SaveData(nil, enterprise_utilities.DHTroot, "user stations",    os.getComputerID())
 end
 
-function enterprise_utilities.ActAsLogger()
+function CheckUtilitiesRole()
+    -- are we the logger?
+    if coredht.GetData(enterprise_utilities.DHTroot, "loggers", os.getComputerID()) then ActAsLogger() end
+
+    -- are we the user station?
+    if coredht.GetData(enterprise_utilities.DHTroot, "user stations", os.getComputerID()) then ActAsUserStation() end
+end
+
+function ActAsLogger()
     corelog.WriteToLog("I will be the logger!!")
 end
 
-function enterprise_utilities.ActAsUserStation()
+function ActAsUserStation()
     corelog.WriteToLog("I will be the user station!!")
 end
 
@@ -125,5 +135,7 @@ end
 
 -- sneaky init code
 coredisplay.MainMenuAddItem("u", "Utilities", UtilitiesMenu)
+coredht.DHTReadyFunction(CheckUtilitiesRole)
 
+-- return who we really are!
 return enterprise_utilities
