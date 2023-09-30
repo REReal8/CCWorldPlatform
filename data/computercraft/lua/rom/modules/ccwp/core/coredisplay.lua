@@ -31,39 +31,25 @@ function coredisplay.Init()
     db.x, db.y = term.getSize()
 
 	-- direct even doen
-	if turtle then
-		db.defaultMainMenu = {
-			clear   = true,
-			intro   = "Choose your action",
-			option  = {
-				{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
-				{key = "2", desc = "Exec tests", 				func = ExecuteTest,	    		param = {}},
-				{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
-				{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
-				{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
-				{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
-				{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
-				{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
---				{key = "9", desc = "Move turtle",   			func = MoveTurtle,	    		param = {}},
-				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
-			},
-			question	= "Make your choice",
-		}
+	db.defaultMainMenu = {
+		clear   = true,
+		intro   = "Choose your action",
+		option  = {
+			{key = "1", desc = "Exec code",  				func = ExecuteCode,	    		param = {step = 1}},
+			{key = "2", desc = "Exec general tests",		func = ExecuteTest,	    		param = {}},
+			{key = "3", desc = "Exec core tests", 			func = ExecuteCoreTest,	    	param = {}},
+			{key = "4", desc = "Exec role tests",			func = ExecuteRoleTest,			param = {}},
+			{key = "5", desc = "Exec obj tests",			func = ExecuteObjTest,			param = {}},
+			{key = "6", desc = "Exec mobj tests",			func = ExecuteMObjTest,			param = {}},
+			{key = "7", desc = "Exec enterprise tests",		func = ExecuteEnterpriseTest,	param = {}},
+			{key = "8", desc = "Load event",				func = LoadEvent,				param = {}},
+			{key = "q", desc = "Quit",          			func = coresystem.DoQuit,		param = {}},
+		},
+		question	= "Make your choice",
+	}
 
-		MainMenuAddItem("m", "Move turtle", MoveTurtle, {})
-	else
-		db.defaultMainMenu = {
-			clear   = true,
-			intro   = "Choose your action",
-			option  = {
-				{key = "1", desc = "Execute code",  			func = ExecuteCode,	    	param = {step = 1}},
-				{key = "2", desc = "Execute general tests",  	func = ExecuteTest,	    	param = {}},
-				{key = "3", desc = "Load event",				func = LoadEvent,			param = {}},
-				{key = "q", desc = "Quit",          			func = coresystem.DoQuit,	param = {}},
-			},
-			question	= "Make your choice",
-		}
-	end
+	-- alleen een turtle kan bewogen worden
+	if turtle then MainMenuAddItem("m", "Move turtle", MoveTurtle) end
 
     -- set default screen
     MainMenu(DefaultMainMenu())
