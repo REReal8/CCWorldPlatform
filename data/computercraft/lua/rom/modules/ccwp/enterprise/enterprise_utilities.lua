@@ -3,8 +3,12 @@ local Class = require "class"
 local MObjHost = require "eobj_mobj_host"
 local enterprise_utilities = Class.NewClass(MObjHost)
 
+local coredht   		= require "coredht"
 local coredisplay		= require "coredisplay"
 local corelog   		= require "corelog"
+
+enterprise_utilities.DHTroot    = "enterprise_utilities"
+
 --[[
     The enterprise_utilities is a MObjHost. It hosts object for different utilities like the logger and UtilStation. For now just development utilities.
 --]]
@@ -44,11 +48,41 @@ end
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
 function enterprise_utilities.SetAsLogger()
-    corelog.WriteToLog("I am a logger!!")
+    corelog.WriteToLog("I am assigned as logger!!")
+    coredht.DHTReadyFunction(enterprise_utilities.SetAsLoggerFunction)
 end
 
 function enterprise_utilities.SetAsUserStation()
-    corelog.WriteToLog("I am a user station!!")
+    corelog.WriteToLog("I am assigned as user station!!")
+    coredht.DHTReadyFunction(enterprise_utilities.SetAsUserStationFunction)
+end
+
+function enterprise_utilities.RemoveRoles()
+    corelog.WriteToLog("I am useless ;-(")
+    coredht.DHTReadyFunction(enterprise_utilities.RemoveRolesFunction)
+end
+
+function enterprise_utilities.SetAsLoggerFunction()
+    corelog.WriteToLog("I am assigned as logger (also in the DHT now, me so happy)!!")
+    coredht.SaveData(true, enterprise_utilities.DHTroot, "loggers", os.getComputerID())
+end
+
+function enterprise_utilities.SetAsUserStationFunction()
+    corelog.WriteToLog("I am assigned as user station (also in the DHT now, me so happy)!!")
+    coredht.SaveData(true, enterprise_utilities.DHTroot, "user stations", os.getComputerID())
+end
+
+function enterprise_utilities.RemoveRolesFunction()
+    coredht.SaveData(nil, enterprise_utilities.DHTroot, "loggers", os.getComputerID())
+    coredht.SaveData(nil, enterprise_utilities.DHTroot, "user stations", os.getComputerID())
+end
+
+function enterprise_utilities.ActAsLogger()
+    corelog.WriteToLog("I will be the logger!!")
+end
+
+function enterprise_utilities.ActAsUserStation()
+    corelog.WriteToLog("I will be the user station!!")
 end
 
 --        _ _           _
@@ -68,17 +102,19 @@ function UtilitiesMenu( t )
 			clear = true,
 			intro = "Available actions",
 			option = {
-				{key = "l", desc = "Set as logger",		    func = UtilitiesMenu, param = {role = "logger"}},
-				{key = "u", desc = "Set as user station",   func = UtilitiesMenu, param = {role = "user station"}},
+				{key = "l", desc = "Set as logger",             func = UtilitiesMenu, param = {role = "logger"}},
+				{key = "u", desc = "Set as user station",       func = UtilitiesMenu, param = {role = "user station"}},
+				{key = "r", desc = "Remove known functions",    func = UtilitiesMenu, param = {role = "remove"}},
 				{key = "x", desc = "Back to main menu",     func = function () return true end }
 			},
 			question = "Tell me who I am!"
 		})
 		return true
 	else
-			if t.role == "logger"	    then enterprise_utilities.SetAsLogger()
-		elseif t.role == "user station" then enterprise_utilities.SetAsUserStation()
-		end
+			    if t.role == "logger"	    then enterprise_utilities.SetAsLogger()
+            elseif t.role == "user station" then enterprise_utilities.SetAsUserStation()
+            elseif t.role == "remove"       then enterprise_utilities.RemoveRoles()
+            end
 
         -- we are done here, go back
 		return true
