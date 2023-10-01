@@ -237,6 +237,7 @@ local function Dismantle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
             [" "]   = Block:newInstance(Block.NoneBlockName()),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
         CodeMap:newInstance({
             [8] = "                 ",
