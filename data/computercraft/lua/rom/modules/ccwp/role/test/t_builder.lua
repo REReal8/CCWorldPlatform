@@ -91,10 +91,12 @@ local testBuildLayer_Front = LayerRectangle:newInstance(
         [" "]   = Block:newInstance(Block.NoneBlockName()),
     }),
     CodeMap:newInstance({
-        [3] = "M M?",
-        [2] = "M C?",
-        [1] = "M ST",
+        [4] = " M M?",
+        [3] = " M C?",
+        [2] = " M   ",
+        [1] = "   ST",
     })
+    -- note: directional block placement is a bit tricky, see https://github.com/cc-tweaked/CC-Tweaked/issues/204 for the algorithm
 ) assert(testBuildLayer_Front, "Failed obtaining testBuildLayer_Front")
 
 local compact = { compact = true }
@@ -205,7 +207,6 @@ function t_builder.T_BuildLayer_Task_Front()
 
     -- test
     t_builder.pt_BuildLayer_Task(testStartLocation_Front, "Front", testBuildLayer_Front)
-    -- ToDo: investigate how Monitor's can be oriented as we want to
 
     -- cleanup test
 end
