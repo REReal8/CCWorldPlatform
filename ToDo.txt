@@ -20,6 +20,8 @@ ToDo List
 ]]
 
 -  Robuste way to initialize and setup (like the core files do)
+   -  "not exactly sure what is meant by this ToDo, but probably the library.lua files are intended for this ..." (R)
+      (see also startup.lua => ccwp.lua, and follow the code to the library.lua 's)
 
 -  Building blueprints/layers from front                                                                                (....)
    R  Support building blueprints (layers) from front                                                                   (done)
