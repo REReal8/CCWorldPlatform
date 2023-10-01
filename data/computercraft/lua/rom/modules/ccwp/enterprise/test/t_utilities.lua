@@ -25,7 +25,7 @@ local testMObjClassName = "UtilStation"
 local testMObjName = "utilStation"
 local logOk = false
 
-local baseLocation = Location:newInstance(-6, -18, 1, 0, 1)
+local baseLocation = Location:newInstance(-6, -12, 1, 0, 1)
 
 local constructParameters = {
     baseLocation    = baseLocation,

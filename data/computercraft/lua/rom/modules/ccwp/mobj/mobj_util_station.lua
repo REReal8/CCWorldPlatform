@@ -239,7 +239,14 @@ local function Dismantle_layer()
             [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
-            [1] = "                 ",
+            [8] = "                 ",
+            [7] = "                 ",
+            [6] = "                 ",
+            [5] = "                 ",
+            [4] = "                 ",
+            [3] = "                 ",
+            [2] = "                 ",
+            [1] = "???????   ???????",
         })
     )
 end
@@ -298,10 +305,8 @@ function UtilStation:getDismantleBlueprint()
     local layerList = {
         { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Down", layer = ModemDismantle_layer()},
         { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Down", layer = ModemDismantle_layer()},
+        { startpoint = Location:newInstance(-5, 3, 0), buildDirection = "Front", layer = Dismantle_layer()}
     }
-    for i=0,7 do
-        table.insert(layerList, { startpoint = Location:newInstance(-5, 3, i), buildDirection = "Down", layer = Dismantle_layer()})
-    end
 
     -- escapeSequence
     local escapeSequence = {}
