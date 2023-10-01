@@ -78,7 +78,7 @@ RG UtilStation v1.0 input & output chest UI                                     
 
 -  BirchForest: support more than 6 trees (in the one column)
 
--  replace table.unpack(arg) with ...
+-  replace table.unpack(arg) with ... everywhere
 
 -  Generalised IItemSupplier test functions for MObj's
    -  generalise IItemSupplier test functions
