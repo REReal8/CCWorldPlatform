@@ -27,7 +27,7 @@ R  Building blueprints/layers from front                                        
    R  Support building blueprints (layers) from front                                                                   (done)
    R  Figure out how to properly orient Monitors... (see t_builder.T_BuildLayer_Task_Front)                             (done)
 
--  Propely Build UtilStation bu using role_builder
+R  Propely Build UtilStation by using role_builder                                                                      (....)
 
 RG UtilStation v1.0 input & output chest UI                                                                             (....)
 

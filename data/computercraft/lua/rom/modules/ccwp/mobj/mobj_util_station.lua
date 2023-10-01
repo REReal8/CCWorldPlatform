@@ -20,6 +20,7 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjTable = require "obj_table"
 local Block = require "obj_block"
+local Location = require "obj_location"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
@@ -178,11 +179,11 @@ end
 local function Chest_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
-            ["C"]   = Block:newInstance("minecraft:chest"),
-            [" "]   = Block:newInstance(Block.AnyBlockName()),
+            ["C"]   = Block:newInstance("minecraft:chest", 0, -1),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
         }),
         CodeMap:newInstance({
-            [1] = "C C",
+            [1] = "C?C",
         })
     )
 end
@@ -209,19 +210,40 @@ local function Modem_layer()
     )
 end
 
-local function Monitor_Only_layer()
+local function ModemDismantle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
-            ["M"]   = Block:newInstance("computercraft:monitor_normal"),
-            [" "]   = Block:newInstance(Block.AnyBlockName()),
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
         }),
         CodeMap:newInstance({
-            [1] = "MMMMMMMM MMMMMMMM",
+            [1] = " ",
         })
     )
 end
 
--- ToDo blueprint does not work because is needs to be build from the front, which is something the builder does not yet support.
+local function Monitor_Only_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["M"]   = Block:newInstance("computercraft:monitor_normal"),
+            ["?"]   = Block:newInstance(Block.AnyBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = "MMMMMMMM?MMMMMMMM",
+        })
+    )
+end
+
+local function Dismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = "                 ",
+        })
+    )
+end
+
 function UtilStation:getBuildBlueprint()
     --[[
         This method returns a blueprint for building the UtilStation in the physical minecraft world.
@@ -233,30 +255,28 @@ function UtilStation:getBuildBlueprint()
         Parameters:
     ]]
 
-    -- construct layer list
-
-    corelog.Warning("UtilStation:getBuildBlueprint(): blueprint does not work because is needs to be build from the front, which is something the builder does not yet support.")
+    -- layer list
     local layerList = {
-    --     { startpoint = Location:newInstance(8, 3, 0), buildDirection = "Down", layer = Chest_layer()},
-    --     { startpoint = Location:newInstance(9, 3, 0), buildDirection = "Down", layer = Computer_layer()},
-    --     { startpoint = Location:newInstance(9, 2, 0), buildDirection = "Down", layer = Modem_layer()},
-    --     { startpoint = Location:newInstance(9, 3, 2), buildDirection = "Down", layer = Computer_layer()},
-    --     { startpoint = Location:newInstance(9, 2, 2), buildDirection = "Down", layer = Modem_layer()},
+        { startpoint = Location:newInstance(2, 3, 0), buildDirection = "Down", layer = Chest_layer()},
+        { startpoint = Location:newInstance(3, 3, 0), buildDirection = "Down", layer = Computer_layer()},
+        { startpoint = Location:newInstance(3, 3, 2), buildDirection = "Down", layer = Computer_layer()},
     }
-    -- for i=2,8 do
-    --     table.insert(layerList, { startpoint = Location:newInstance(1, 3, i), buildDirection = "Down", layer = Monitor_Only_layer()})
-    -- end
+    for i=7,2,-1 do
+        table.insert(layerList, { startpoint = Location:newInstance(-5, 3, i), buildDirection = "Front", layer = Monitor_Only_layer()})
+    end
+    table.insert(layerList, { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Front", layer = Modem_layer()})
+    table.insert(layerList, { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Front", layer = Modem_layer()})
 
-    -- determine escapeSequence
+    -- escapeSequence
     local escapeSequence = {}
 
-    -- determine blueprint
+    -- blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = escapeSequence,
     }
 
-    -- determine buildLocation
+    -- buildLocation
     local buildLocation = self._baseLocation:copy()
 
     -- end
@@ -274,22 +294,25 @@ function UtilStation:getDismantleBlueprint()
         Parameters:
     ]]
 
-    -- not implemented ToDo
-    corelog.Warning("UtilStation:getDismantleBlueprint(): Don't know how to make a dismantle blueprint for a UtilStation, we returned an empty blueprint (we so nauty)")
+    -- layerList
+    local layerList = {
+        { startpoint = Location:newInstance(3, 2, 0), buildDirection = "Down", layer = ModemDismantle_layer()},
+        { startpoint = Location:newInstance(3, 2, 2), buildDirection = "Down", layer = ModemDismantle_layer()},
+    }
+    for i=0,7 do
+        table.insert(layerList, { startpoint = Location:newInstance(-5, 3, i), buildDirection = "Down", layer = Dismantle_layer()})
+    end
 
-    -- determine layerList
-    local layerList = {}
-
-    -- determine escapeSequence
+    -- escapeSequence
     local escapeSequence = {}
 
-    -- determine blueprint
+    -- blueprint
     local blueprint = {
         layerList = layerList,
         escapeSequence = escapeSequence
     }
 
-    -- determine buildLocation
+    -- buildLocation
     local buildLocation = self._baseLocation:copy()
 
     -- end
