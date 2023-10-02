@@ -215,7 +215,7 @@ function UserStationMenuOrder(t, amount)
         return true
     else
         -- not good!
-        coredisplay.UpdateToDisplay("Not a number", 2)
+        coredisplay.UpdateToDisplay("Not a number ('"..amount.."')", 2)
         return false
     end
 end
