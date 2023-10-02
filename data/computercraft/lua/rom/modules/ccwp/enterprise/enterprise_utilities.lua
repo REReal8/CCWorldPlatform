@@ -179,10 +179,10 @@ function UserStationMenuSearch(t, searchString)
 
         -- do the screen
         coredisplay.NextScreen({
-			clear = true,
-			intro = "Choose an item",
-			option = options,
-			question	= "Make your choice",
+			clear       = true,
+			intro       = "Choose an item",
+			option      = options,
+			question    = "Make your choice",
 		})
 
         -- screeen complete (fake)
@@ -191,7 +191,33 @@ function UserStationMenuSearch(t, searchString)
 end
 
 function UserStationMenuAmount(t)
+    coredisplay.NextScreen({
+        clear       = true,
+        func	    = UserStationMenuOrder,
+        intro       = "How many items of "..t.item.."?",
+        param       = t,
+        question    = nil
+    })
     return true
+end
+
+function UserStationMenuOrder(t, amount)
+--    local count, stack
+
+    -- check the amount
+    local _, _, count, stack = string.find(amount, "(%d+)(s?)")
+    count = tonumber(count)
+
+    if type(count) == "number" and count > 0 then
+        -- not good!
+        if stack == "s" then stack = " stack" else stack = "" end
+        coredisplay.UpdateToDisplay("Delivering "..count..stack.." of "..t.item, 2)
+        return true
+    else
+        -- not good!
+        coredisplay.UpdateToDisplay("Not a number", 2)
+        return false
+    end
 end
 
 -- sneaky init code
