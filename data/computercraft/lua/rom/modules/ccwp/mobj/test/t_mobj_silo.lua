@@ -405,10 +405,10 @@ function T_Silo.T_GetRandomSilo()
     if not silo then return nil end
 
     -- see what's inside
---    silo:IntegretyCheck()
+    silo:IntegretyCheck()
 
     -- usefull if this silo is active
-    silo:Activate()
+--    silo:Activate()
 
     -- do the testing
 --    corelog.WriteToLog("can_ProvideItems_QOSrv test")
