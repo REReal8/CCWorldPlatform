@@ -95,6 +95,15 @@ end
 
 function ActAsUserStation()
     corelog.WriteToLog("I will be the user station!!")
+
+	-- our main menu
+    coredisplay.MainMenu({
+        clear       = true,
+        func	    = UserStationMenuSearch,
+        intro       = "Please type a part of an itemname to order\n",
+        param	    = {},
+        question    = nil
+    })
 end
 
 --        _ _           _
@@ -131,6 +140,58 @@ function UtilitiesMenu( t )
         -- we are done here, go back
 		return true
 	end
+end
+
+function UserStationMenuSearch(t, searchString)
+    -- get all items
+    local allItems      = coredht.GetData("allItems")
+    local options       = {}
+    local lastNumber    = 0
+
+    -- security check
+    if type(allItems) ~= "table" then return false end
+
+    -- loop all items
+    for k, v in pairs(allItems) do
+
+        -- if the search string for matches, add found items to the options!
+        local findStart, findEnd = string.find(k, searchString)
+        if type(findStart) =="number" and type(findEnd) == "number" then
+            lastNumber = lastNumber + 1
+            table.insert(options, {key = tostring(lastNumber), desc = k, func = UserStationMenuAmount, param = {item = k}})
+        end
+    end
+
+    -- do we have found anything?
+    if lastNumber == 0 then
+
+            -- not good!
+            coredisplay.UpdateToDisplay("No items found :-(", 2)
+
+    elseif lastNumber > 10 then
+
+            -- Too much
+            coredisplay.UpdateToDisplay(lastNumber.." items found, specify your search", 2)
+
+    else
+        -- add exit option
+        table.insert(options, {key = "x", desc = "Back to main menu", func = function () return true end })
+
+        -- do the screen
+        coredisplay.NextScreen({
+			clear = true,
+			intro = "Choose an item",
+			option = options,
+			question	= "Make your choice",
+		})
+
+        -- screeen complete (fake)
+        return true
+    end
+end
+
+function UserStationMenuAmount(t)
+    return true
 end
 
 -- sneaky init code

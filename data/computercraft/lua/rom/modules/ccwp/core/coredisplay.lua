@@ -54,7 +54,7 @@ function coredisplay.Init()
 	end
 
     -- set default screen
-    MainMenu(DefaultMainMenu())
+    coredisplay.MainMenu(DefaultMainMenu())
 end
 
 -- setup function for the display
@@ -81,7 +81,7 @@ function coredisplay.Run()
 		local nextScreenData = coredisplay.NextScreen()
 
 		-- custom screen?
-		if nextScreenData.custom	then nextScreenData.custom(nextScreenData)
+		if nextScreenData.custom	then nextScreenData.custom(nextScreenData)	-- zo te zien wordt deze optie nergens gebruikt
 									else DoScreen(nextScreenData)
 		end
 	end
@@ -94,7 +94,7 @@ end
 function coredisplay.NextScreen(t)
 	if t				then screen[#screen + 1] = t
 	elseif #screen > 0	then return table.remove(screen)
-						else return MainMenu()
+						else return coredisplay.MainMenu()
 	end
 end
 
@@ -521,7 +521,7 @@ function coredisplay.MainMenuAddItem(key, desc, func, param)
 end
 
 -- function to get or set the main menu
-function MainMenu(t)
+function coredisplay.MainMenu(t)
 	if t then db.mainmenu = t
 	else return db.mainmenu
 	end
