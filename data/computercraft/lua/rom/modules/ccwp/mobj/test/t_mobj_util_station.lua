@@ -232,17 +232,15 @@ function T_UtilStation.T_IItemDepot_All()
     T_IInterface.pt_ImplementsInterface("IItemDepot", IItemDepot, testClassName, obj)
 end
 
-local function storeItemsFrom_AOSrv_Test(itemsLocator, fromStr)
+local function storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, fromStr)
     -- prepare test (cont)
     assert(itemsLocator, "no className provided")
+    assert(provideItems, "no provideItems provided")
     assert(fromStr, "no fromStr provided")
     corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (from "..fromStr..")")
     local obj = UtilStation:construct(constructParameters0) assert(obj, "Failed obtaining "..testClassName)
     local itemDepotLocator = obj:getOutputLocator() assert(itemDepotLocator, "Failed obtaining outputLocator")
 
-    local provideItems = {
-        ["minecraft:birch_log"]  = 5,
-    }
     itemsLocator:setQuery(provideItems)
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
@@ -268,10 +266,27 @@ end
 function T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
     t_turtle = t_turtle or require "test.t_turtle"
-    local itemsLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+    }
 
     -- test
-    storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")
+    storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, "Turtle")
+end
+
+function T_UtilStation.T_shop_storeItemsFrom_AOSrv_Shop()
+    -- prepare test
+    local enterprise_shop = require "enterprise_shop"
+    local itemsLocator = enterprise_shop.GetShopLocator() assert(itemsLocator, "Failed obtaining Shop locator")
+    local provideItems = {
+        ["minecraft:birch_log"]  = 5,
+        ["minecraft:birch_planks"]  = 20,
+        ["minecraft:coal_block"]  = 2,
+    }
+
+    -- test
+    storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, "Shop")
 end
 
 return T_UtilStation
