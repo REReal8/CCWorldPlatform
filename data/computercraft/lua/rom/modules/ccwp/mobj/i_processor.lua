@@ -1,11 +1,11 @@
 -- define interface
-local IComputer = {
+local IProcessor = {
 }
 
 --[[
-    This module specifies the interface IComputer.
+    This module specifies the interface IProcessor.
 
-    The IComputer interface defines methods for computational entities in CCWP (e.g. computercraft computers and turtiles). They are the
+    The IProcessor interface defines methods for computational entities in CCWP (e.g. computercraft computers and turtiles). They are the
     objects on which the CCWP code is run.
 --]]
 
@@ -20,7 +20,7 @@ local IInterface = require "i_interface"
 --                              | |
 --                              |_|
 
-function IComputer:getComputerID()
+function IProcessor:getComputerID()
     --[[
         Get the computer's ID.
 
@@ -28,13 +28,13 @@ function IComputer:getComputerID()
                                 - (number) the computer's ID
     ]]
 
-    IInterface.UnimplementedMethodError("IComputer", "getComputerId")
+    IInterface.UnimplementedMethodError("IProcessor", "getComputerId")
 
     -- end
     return -1
 end
 
-function IComputer:turnOn()
+function IProcessor:turnOn()
     --[[
         Turn the other computer on.
 
@@ -42,13 +42,13 @@ function IComputer:turnOn()
                                 - (boolean) if the computer is on
     ]]
 
-    IInterface.UnimplementedMethodError("IComputer", "turnOn")
+    IInterface.UnimplementedMethodError("IProcessor", "turnOn")
 
     -- end
     return false
 end
 
-function IComputer:getMainUIMenu()
+function IProcessor:getMainUIMenu()
     --[[
         Get the main (start) UI menu of the computer.
 
@@ -63,13 +63,13 @@ function IComputer:getMainUIMenu()
                 question        - (string, nil) final question to print
     ]]
 
-    IInterface.UnimplementedMethodError("IComputer", "getMainUIMenu")
+    IInterface.UnimplementedMethodError("IProcessor", "getMainUIMenu")
 
     -- end
     return {}
 end
 
-function IComputer:getAssignmentFilterAndResume()
+function IProcessor:getAssignmentFilterAndResume()
     --[[
         Get assignment filter and computer resume for finding the next best assignment.
 
@@ -85,10 +85,10 @@ function IComputer:getAssignmentFilterAndResume()
                 resume              - (table) computer "resume" to consider in finding an Assignment
     --]]
 
-    IInterface.UnimplementedMethodError("IComputer", "getAssignmentFilterAndResume")
+    IInterface.UnimplementedMethodError("IProcessor", "getAssignmentFilterAndResume")
 
     -- end
     return {}
 end
 
-return IComputer
+return IProcessor
