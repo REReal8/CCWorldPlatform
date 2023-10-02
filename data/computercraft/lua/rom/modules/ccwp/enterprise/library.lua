@@ -49,6 +49,8 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModuleTests("t_utilities")
 
     -- do other stuff
+    local enterprise_utilities = require "enterprise_utilities"
+    enterprise_utilities.Setup()
 end
 
 return library

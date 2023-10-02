@@ -27,6 +27,12 @@ enterprise_utilities.DHTroot    = "enterprise_utilities"
 --          - adopt other classes to these changes
 enterprise_utilities._hostName   = "enterprise_utilities"
 
+-- setup code
+function enterprise_utilities.Setup()
+    coredisplay.MainMenuAddItem("u", "Utilities", UtilitiesMenu)
+    coredht.DHTReadyFunction(CheckUtilitiesRole)
+end
+
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
 --     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
@@ -219,10 +225,6 @@ function UserStationMenuOrder(t, amount)
         return false
     end
 end
-
--- sneaky init code
-coredisplay.MainMenuAddItem("u", "Utilities", UtilitiesMenu)
-coredht.DHTReadyFunction(CheckUtilitiesRole)
 
 -- return who we really are!
 return enterprise_utilities
