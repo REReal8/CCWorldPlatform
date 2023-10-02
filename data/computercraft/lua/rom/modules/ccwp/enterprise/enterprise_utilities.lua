@@ -209,7 +209,7 @@ function UserStationMenuOrder(t, amount)
     count = tonumber(count)
 
     if type(count) == "number" and count > 0 then
-        -- not good!
+        -- Yahoo, we can do something for master
         if stack == "s" then stack = " stack" else stack = "" end
         coredisplay.UpdateToDisplay("Delivering "..count..stack.." of "..t.item, 2)
         return true
