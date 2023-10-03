@@ -84,7 +84,7 @@ function enterprise_shop:getShop()
         -- get locator of (first) Shop
         local shops = self:getObjects("Shop")
         if not shops then corelog.Error("enterprise_shop:getShop: Failed obtaining Shop's") return nil end
-        for k, objTable in pairs(shops) do
+        for k, objTable in pairs(shops) do -- use next(shops)
             shop = Shop:new(objTable)
             break
         end
