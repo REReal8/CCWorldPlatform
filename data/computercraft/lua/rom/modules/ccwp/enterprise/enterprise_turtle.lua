@@ -39,6 +39,21 @@ local enterprise_energy = require "enterprise_energy"
 --          - adopt other classes to these changes
 enterprise_turtle._hostName   = "enterprise_turtle"
 
+local function GetATurtle()
+    -- get all Turtles
+    local turtles = enterprise_turtle:getObjects(Turtle:getClassName())
+    if not turtles then corelog.Error("enterprise_turtle:GetATurtle: Failed obtaining Turtle's") return nil end
+
+    -- select first Turtle
+    -- ToDo: consider selecting a free Turtle (also based on some criteria) (maybe do this via assignments?)
+    local _, turtleObjTable = next(turtles) -- first Turtle
+    if not turtleObjTable then corelog.Error("enterprise_turtle:GetATurtle: Failed obtaining a Turtle") return nil end
+    local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_turtle:GetATurtle: failed converting turtle objTable to Turtle") return nil end
+
+    -- end
+    return turtleObj
+end
+
 function enterprise_turtle:getObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
@@ -56,12 +71,7 @@ function enterprise_turtle:getObject(...)
     if objectLocator:sameBase(enterprise_turtle.GetAnyTurtleLocator()) then
 
         -- get a Turtle
-        local turtles = self:getObjects(Turtle:getClassName())
-        if not turtles then corelog.Error("enterprise_turtle:getObject: Failed obtaining Turtle's") return nil end
-        local _, turtleObjTable = next(turtles) -- first Turtle
-        -- ToDo: consider selecting a free Turtle (also based on some criteria) (maybe do this via assignments?)
-        if not turtleObjTable then corelog.Error("enterprise_turtle:getObject: Failed obtaining a Turtle") return nil end
-        local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_turtle:getObject: failed converting turtle objTable to Turtle") return nil end
+        local turtleObj = GetATurtle()
 
         -- return Turtle
         -- corelog.WriteToLog("Selecting Turtle "..turtleObj:getTurtleId().." as 'any Turtle'")
