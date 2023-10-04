@@ -14,32 +14,6 @@ local URL           = require "obj_url"
 -- enterprises
 local enterprise_turtle = require "enterprise_turtle"
 
--- for storing the data
-local dumpData      = {}
-
---    _       _ _   _       _ _           _   _
---   (_)     (_) | (_)     | (_)         | | (_)
---    _ _ __  _| |_ _  __ _| |_ ___  __ _| |_ _  ___  _ __
---   | | '_ \| | __| |/ _` | | / __|/ _` | __| |/ _ \| '_ \
---   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
---   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
-
--- note: currently enterprise is treated like a singleton, but by directly using the name of the module
-
--- setup code
-function enterprise_dump.Setup()
-    -- only when the dht is ready
-    coredht.DHTReadyFunction(DHTReadySetup)
-end
-
-function DHTReadySetup()
-    -- load the data
-    LoadDump()
-
-    -- see if data is valid
-    if type(dumpData) ~= "table" or type(dumpData[1]) ~= "table" then Reset() end
-end
-
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
@@ -53,7 +27,7 @@ end
 function enterprise_dump.GetDumpLocator()
 
     -- get the data
-    LoadDump()
+    local dumpData = LoadData()
 
     -- we return the last known dump, usually the best
     return dumpData[#dumpData]
@@ -72,7 +46,7 @@ function enterprise_dump.ListItemDepot(...)
     if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot: Invalid input") return nil end
 
     -- get the data
-    LoadDump()
+    local dumpData = LoadData()
 
     -- add the locator, depending on the mode
     if mode == "overwrite" or mode == "w" then
@@ -84,13 +58,14 @@ function enterprise_dump.ListItemDepot(...)
     end
 
     -- save this shit
-    SaveDump()
+    SaveData(dumpData)
 end
 
 -- remove a depot to the dump
 function enterprise_dump.DelistItemDepot(itemDepotLocator)
-    -- load the data first
-    LoadDump()
+    -- vars
+    local found     = false
+    local dumpData  = LoadData()
 
     -- check if this one is in our list
     for i, loc in ipairs(dumpData) do
@@ -98,6 +73,9 @@ function enterprise_dump.DelistItemDepot(itemDepotLocator)
         -- check if both URL's are the same
 
     end
+
+    -- save this shit
+    if found then SaveData(dumpData) end
 end
 
 --    _                 _
@@ -111,25 +89,37 @@ end
 
 local dhtRoot = "enterprise_dump" -- just a list of available depot locators
 
-function LoadDump()
+function LoadData()
+    local dumpData  = nil                       -- silly two liner to suppress lua warning
+    dumpData        = coredht.GetData(dhtRoot)  -- silly two liner to suppress lua warning
+
+    -- check data
+    if type(dumpData) ~= "table" or type(dumpData[1]) ~= "table" then dumpData = Reset() end
+
     -- check if we are present...
-    dumpData = coredht.GetData(dhtRoot)
+    return dumpData
 end
 
-function SaveDump()
+function SaveData(dumpData)
     -- check if we are present...
     coredht.SaveData(dumpData, dhtRoot)
 end
 
 function Reset()
     -- start over
-    dumpData = {}
+    local dumpData = {}
 
     -- add any turtle
     table.insert(dumpData, enterprise_turtle.GetAnyTurtleLocator())
 
     -- save!
-    SaveDump()
+    SaveData(dumpData)
+
+    -- yahoo!
+    return dumpData
+
+    --    -- if you like one liners, not so readable
+--    return SaveData({enterprise_turtle.GetAnyTurtleLocator()})
 end
 
 -- done
