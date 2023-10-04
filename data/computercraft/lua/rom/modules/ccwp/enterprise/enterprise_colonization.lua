@@ -326,6 +326,109 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
 end
 
+function enterprise_colonization.RecoverNewWorld_SSrv(...)
+    -- get & check input from description
+    local checkSuccess = InputChecker.Check([[
+        This public async service recovers an earlier created CCWorldPlatform world.
+
+        It assumed the CreateNewWorld_ASrv had been run earlier but the corresponding created objects got lost in the dht. It recreates them.
+
+        Return value:
+                success         - (boolean) whether the service executed successfully
+
+        Parameters:
+            serviceData         - (table) data about the service
+                <currently none>
+    --]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Invalid input") return { success = false } end
+
+    -- register current turtle in shop
+    -- ToDo: figure out where/ how to register (other) turtles that get added
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local currentTurtleLocator = enterprise_turtle:GetCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
+    local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return { success = false } end
+
+    -- construct arguments
+    local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
+    local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
+    local nTreeswanted = 6
+    local settleData = {
+        factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
+        factoryClassName                = "Factory",
+        factoryConstructParameters      = {
+            level                           = 2,
+
+            baseLocation                    = factoryLocation:copy(),
+        },
+
+        forestHostLocator               = enterprise_forestry:getHostLocator(),
+        forestClassName                 = "BirchForest",
+        forestConstructParameters       = {
+            level                           = 2,
+
+            baseLocation                    = forestLocation:copy(),
+            nTrees                          = nTreeswanted,
+        },
+
+        energyL3                        = 3,
+
+        siloHostLocator                 = enterprise_storage:getHostLocator(),
+        siloClassName                   = "Silo",
+        siloConstructParameters         = {
+            baseLocation                    = Location:newInstance(12, -12, 1, 0, 1),
+            nTopChests                      = 2,
+            nLayers                         = 2,
+        },
+    }
+    local callback = Callback.GetNewDummyCallBack()
+
+    -- create project definition
+    local createNewWorldProjectDef = {
+        steps   = {
+            -- host and register BirchForest
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "forestClassName" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "forestConstructParameters" },
+            }, description = "Hosting Factory"},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 1, sourceKeyDef = "mobjLocator" },
+            }},
+            -- host and register Factory
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "factoryHostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "factoryClassName" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "factoryConstructParameters" },
+            }, description = "Hosting Factory"},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"        , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            }},
+            -- host and register Silo
+            { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "siloHostLocator" }, stepDataDef = {
+                { keyDef = "className"                      , sourceStep = 0, sourceKeyDef = "siloClassName" },
+                { keyDef = "constructParameters"            , sourceStep = 0, sourceKeyDef = "siloConstructParameters" },
+            }, description = "Hosting Silo"},
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_shop", serviceName = "RegisterItemSupplier_SSrv" }, stepDataDef = {
+                { keyDef = "itemSupplierLocator"            , sourceStep = 5, sourceKeyDef = "mobjLocator" },
+            }},
+            -- update enterprise_energy to L3 (refuelAmount = 6 trees = 1800, fuelNeed_Refuel = fuelNeed_Harvest + fuelNeed_ExtraTree + fuelNeed_Production + fuelNeed_ForestFactoryTravel)
+            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
+                { keyDef = "enterpriseLevel"            , sourceStep = 0, sourceKeyDef = "energyL3" },
+                { keyDef = "forestLocator"              , sourceStep = 1, sourceKeyDef = "mobjLocator" },
+                { keyDef = "factoryLocator"             , sourceStep = 3, sourceKeyDef = "mobjLocator" },
+            }},
+        },
+        returnData  = {
+        }
+    }
+    local projectServiceData = {
+        projectDef  = createNewWorldProjectDef,
+        projectData = settleData,
+        projectMeta = { title = "Project colonize", description = "Creating a new world" },
+    }
+
+    -- start project
+    return enterprise_projects.StartProject_ASrv(projectServiceData, callback)
+end
+
 --    _                 _    __                  _   _
 --   | |               | |  / _|                | | (_)
 --   | | ___   ___ __ _| | | |_ _   _ _ __   ___| |_ _  ___  _ __  ___
