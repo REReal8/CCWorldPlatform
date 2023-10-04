@@ -123,11 +123,11 @@ function UtilStation:construct(...)
 
     -- determine UtilStation fields
     local id = coreutils.NewId()
-    local outputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
+    local inputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(4, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
-    local inputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
+    local outputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(2, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
