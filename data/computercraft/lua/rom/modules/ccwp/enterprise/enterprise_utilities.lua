@@ -5,6 +5,7 @@ local enterprise_utilities = Class.NewClass(MObjHost)
 
 local coredht   		= require "coredht"
 local coredisplay		= require "coredisplay"
+local coreevent 		= require "coreevent"
 local corelog   		= require "corelog"
 
 enterprise_utilities.DHTroot    = "enterprise_utilities"
@@ -25,7 +26,7 @@ enterprise_utilities.DHTroot    = "enterprise_utilities"
 --          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
 --          - properly initialise it (by adding and implementing the _init method)
 --          - adopt other classes to these changes
-enterprise_utilities._hostName   = "enterprise_utilities"
+enterprise_utilities._hostName = "enterprise_utilities"
 
 -- setup code
 function enterprise_utilities.Setup()
@@ -101,6 +102,10 @@ end
 
 function ActAsUserStation()
     corelog.WriteToLog("I will be the user station!!")
+
+    -- set timer for input box (15 sec)
+    coreevent.AddEventListener(function() corelog.WriteToLog("Time to check the input chest") end, "mobj_util_station", "input chest timer")
+    coreevent.CreateTimeEvent(20 * 15, "mobj_util_station", "input chest timer")
 
 	-- our main menu
     coredisplay.MainMenu({
