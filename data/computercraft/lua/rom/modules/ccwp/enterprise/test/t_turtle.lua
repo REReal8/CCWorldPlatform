@@ -158,6 +158,9 @@ function t_turtle.GetCurrentTurtleLocator()
         Parameters:
     --]]
 
+    -- check turtle
+    assert(turtle, "Current computer(ID="..os.getComputerID()..") not a Turtle")
+
     -- construct URL
     local currentTurtleLocator = enterprise_turtle:GetCurrentTurtleLocator()
 
