@@ -35,13 +35,14 @@ local enterprise_chests = require "enterprise_chests"
 
 function UtilStation:_init(...)
     -- get & check input from description
-    local checkSuccess, id, baseLocation, outputLocator = InputChecker.Check([[
+    local checkSuccess, id, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
         Initialise a UtilStation.
 
         Parameters:
             id                      + (string) id of the UtilStation
             baseLocation            + (Location) base location of the UtilStation
-            outputLocator           + (URL) output chest of the UtilStation
+            inputLocator            + (URL) input  chest of the UtilStation (where items will be picked up from)
+            outputLocator           + (URL) output chest of the UtilStation (where items will be delivered)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UtilStation:_init: Invalid input") return nil end
 
@@ -49,6 +50,7 @@ function UtilStation:_init(...)
     ObjBase._init(self)
     self._id                = id
     self._baseLocation      = baseLocation
+    self._inputLocator      = inputLocator
     self._outputLocator     = outputLocator
 end
 
@@ -62,6 +64,7 @@ function UtilStation:new(...)
             o                           + (table, {}) with object fields
                 _id                     - (string) id of the UtilStation
                 _baseLocation           - (Location) location of the UtilStation
+                _inputLocator           - (URL) input chest of the UtilStation
                 _outputLocator          - (URL) output chest of the UtilStation
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UtilStation:new: Invalid input") return nil end
@@ -74,13 +77,9 @@ function UtilStation:new(...)
     return o
 end
 
-function UtilStation:getBaseLocation()
-    return self._baseLocation
-end
-
-function UtilStation:getOutputLocator()
-    return self._outputLocator
-end
+function UtilStation:getBaseLocation()  return self._baseLocation   end
+function UtilStation:getInputLocator()  return self._inputLocator   end
+function UtilStation:getOutputLocator() return self._outputLocator  end
 
 --    _____ ____  _     _                  _   _               _
 --   |_   _/ __ \| |   (_)                | | | |             | |
@@ -124,13 +123,17 @@ function UtilStation:construct(...)
 
     -- determine UtilStation fields
     local id = coreutils.NewId()
-    local outputLocator = enterprise_chests:hostMObj_SSrv({ className = "Chest", constructParameters = {
+    local outputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
+        baseLocation    = baseLocation:getRelativeLocation(4, 3, 0),
+        accessDirection = "top",
+    }}).mobjLocator
+    local inputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(2, 3, 0),
         accessDirection = "top",
     }}).mobjLocator
 
     -- construct new UtilStation
-    local obj = UtilStation:newInstance(id, baseLocation:copy(), outputLocator)
+    local obj = UtilStation:newInstance(id, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return obj
@@ -150,13 +153,20 @@ function UtilStation:destruct()
         Parameters:
     ]]
 
-    -- release outputLocator
+    -- release input/output locators
     local destructSuccess = true
-    local outputLocator = self._outputLocator
-    local hostName = outputLocator:getHost()
-    if hostName == enterprise_chests:getHostName() then
-        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = outputLocator })
-        if not releaseResult or not releaseResult.success then corelog.Warning("UtilStation:destruct(): failed releasing output locator "..outputLocator:getURI()) destructSuccess = false end
+
+    -- input locator
+    if self._inputLocator:getHost() == enterprise_chests:getHostName() then
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = self._inputLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("UtilStation:destruct(): failed releasing input locator "..self._inputLocator:getURI()) destructSuccess = false end
+    end
+    self._inputLocator = nil
+
+    -- output locator
+    if self._outputLocator:getHost() == enterprise_chests:getHostName() then
+        local releaseResult = enterprise_chests:releaseMObj_SSrv({ mobjLocator = self._outputLocator })
+        if not releaseResult or not releaseResult.success then corelog.Warning("UtilStation:destruct(): failed releasing output locator "..self._outputLocator:getURI()) destructSuccess = false end
     end
     self._outputLocator = nil
 

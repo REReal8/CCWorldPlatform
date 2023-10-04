@@ -57,6 +57,7 @@ local logOk = false
 
 local baseLocation0 = Location:newInstance(-6, -12, 1, 0, 1)
 
+local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator() assert(inputLocator0, "Failed obtaining inputLocator0")
 local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator() assert(outputLocator0, "Failed obtaining outputLocator0")
 
 local constructParameters0 = {
@@ -72,20 +73,21 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_UtilStation.CreateTestObj(id, baseLocation, outputLocator)
+function T_UtilStation.CreateTestObj(id, baseLocation, inputLocator, outputLocator)
     -- check input
     id = id or coreutils.NewId()
     baseLocation = baseLocation or baseLocation0
+    inputLocator = inputLocator or inputLocator0
     outputLocator = outputLocator or outputLocator0
 
     -- create testObj
-    local testObj = UtilStation:newInstance(id, baseLocation:copy(), outputLocator)
+    local testObj = UtilStation:newInstance(id, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return testObj
 end
 
-function T_UtilStation.CreateInitialisedTest(id, baseLocation, outputLocatorTest)
+function T_UtilStation.CreateInitialisedTest(id, baseLocation, inputLocatorTest, outputLocatorTest)
     -- check input
 
     -- create test
@@ -94,6 +96,7 @@ function T_UtilStation.CreateInitialisedTest(id, baseLocation, outputLocatorTest
     local test = TestArrayTest:newInstance(
         idTest,
         FieldValueEqualTest:newInstance("_baseLocation", baseLocation),
+        inputLocatorTest,
         outputLocatorTest
     )
 
@@ -107,9 +110,10 @@ function T_UtilStation.T__init()
     local id = coreutils.NewId()
 
     -- test
-    local obj = T_UtilStation.CreateTestObj(id, baseLocation0, outputLocator0) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_UtilStation.CreateTestObj(id, baseLocation0, inputLocator0, outputLocator0) assert(obj, "Failed obtaining "..testClassName)
+    local inputLocatorTest = FieldValueEqualTest:newInstance("_inputLocator", inputLocator0)
     local outputLocatorTest = FieldValueEqualTest:newInstance("_outputLocator", outputLocator0)
-    local test = T_UtilStation.CreateInitialisedTest(id, baseLocation0, outputLocatorTest)
+    local test = T_UtilStation.CreateInitialisedTest(id, baseLocation0, inputLocatorTest, outputLocatorTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -124,10 +128,12 @@ function T_UtilStation.T_new()
     local obj = UtilStation:new({
         _id             = id,
         _baseLocation   = baseLocation0:copy(),
+        _inputLocator   = inputLocator0:copy(),
         _outputLocator  = outputLocator0:copy(),
     })
+    local inputLocatorTest = FieldValueEqualTest:newInstance("_inputLocator", inputLocator0)
     local outputLocatorTest = FieldValueEqualTest:newInstance("_outputLocator", outputLocator0)
-    local test = T_UtilStation.CreateInitialisedTest(id, baseLocation0, outputLocatorTest)
+    local test = T_UtilStation.CreateInitialisedTest(id, baseLocation0, inputLocatorTest, outputLocatorTest)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -188,10 +194,13 @@ function T_UtilStation.T_IMObj_All()
 
     local destructFieldsTest = TestArrayTest:newInstance(
     )
+    local inputLocatorTest = FieldTest:newInstance("_inputLocator", TestArrayTest:newInstance(
+        ValueTypeTest:newInstance("URL")
+    ))
     local outputLocatorTest = FieldTest:newInstance("_outputLocator", TestArrayTest:newInstance(
         ValueTypeTest:newInstance("URL")
     ))
-    local fieldsTest0 = T_UtilStation.CreateInitialisedTest(nil, baseLocation0, outputLocatorTest)
+    local fieldsTest0 = T_UtilStation.CreateInitialisedTest(nil, baseLocation0, inputLocatorTest, outputLocatorTest)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation0)
 
