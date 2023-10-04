@@ -69,6 +69,7 @@ function enterprise_turtle:getObject(...)
 
     -- check for "any turtle"
     if objectLocator:sameBase(enterprise_turtle.GetAnyTurtleLocator()) then
+        -- ToDo: consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
 
         -- get a Turtle
         local turtleObj = GetATurtle()

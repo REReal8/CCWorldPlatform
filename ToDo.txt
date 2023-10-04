@@ -107,8 +107,11 @@ G  Descriptions for blueprints and project steps
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
+-  enterprise_turtle improvements
+   -  getObject: consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
+
 -  Turtle improvements
-   - getInventory(): implement allowing getting inventory of a turtle from any computer
+   -  getInventory(): implement allowing getting inventory of a turtle from any computer
 
 R  Factory improvements
    -  remove static method style code (remaining from before it was a mobj)
