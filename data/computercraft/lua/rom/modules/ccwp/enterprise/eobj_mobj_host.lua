@@ -196,6 +196,7 @@ function MObjHost:upgradeMObj_SSrv(...)
     local mobj = Host.GetObject(mobjLocator)
     if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:upgradeMObj_SSrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return {success = false} end
     if not mobj.upgrade then corelog.Error("MObjHost:upgradeMObj_SSrv: MObj "..mobjLocator:getURI().." does not have upgrade method (yet)") return {success = false} end
+    -- ToDo: consider if we want to make upgrade a mandatory method of IMObj
 
     -- upgrade MObj
     local success = mobj:upgrade(upgradeParameters)
@@ -239,6 +240,7 @@ function MObjHost:extendAndUpgradeMObj_ASrv(...)
     local mobj = Host.GetObject(mobjLocator)
     if not mobj or not Class.IsInstanceOf(mobj, IMObj) then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: Failed obtaining an IMObj from mobjLocator "..mobjLocator:getURI()) return Callback.ErrorCall(callback) end
     if not mobj.getExtendBlueprint then corelog.Error("MObjHost:extendAndUpgradeMObj_ASrv: MObj "..mobjLocator:getURI().." does not have getExtendBlueprint method (yet)") return {success = false} end
+    -- ToDo: consider if we want to make getExtendBlueprint a mandatory method of IMObj
 
     -- get blueprint
     local buildLocation, blueprint = mobj:getExtendBlueprint(upgradeParameters)
