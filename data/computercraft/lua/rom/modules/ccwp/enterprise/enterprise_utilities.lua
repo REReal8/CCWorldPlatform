@@ -3,12 +3,18 @@ local Class = require "class"
 local MObjHost = require "eobj_mobj_host"
 local enterprise_utilities = Class.NewClass(MObjHost)
 
+--[[
+    The enterprise_utilities is a MObjHost. It hosts object for different utilities like the logger and UtilStation. For now just development utilities.
+--]]
+
 local coredht   		= require "coredht"
 local coredisplay		= require "coredisplay"
 local coreevent 		= require "coreevent"
 local corelog   		= require "corelog"
 local coretask   		= require "coretask"
 
+local Callback          = require "obj_callback"
+local Host              = require "obj_host"
 local ItemTable         = require "obj_item_table"
 local Location          = require "obj_location"
 
@@ -16,10 +22,6 @@ local enterprise_chests = require "enterprise_chests"
 local enterprise_dump   = require "enterprise_dump"
 
 enterprise_utilities.DHTroot    = "enterprise_utilities"
-
---[[
-    The enterprise_utilities is a MObjHost. It hosts object for different utilities like the logger and UtilStation. For now just development utilities.
---]]
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -175,10 +177,6 @@ function CheckInputChest()
     -- did we find anything
     if not itemTable:isEmpty() then
 
-        -- usefull logging
-        corelog.WriteToLog("itemTable = ")
-        corelog.WriteToLog(itemTable)
-
         -- create items locator (temp solution) ToDo !!
         local inputChestLocator = enterprise_chests:hostMObj_SSrv({
             className           = "Chest",
@@ -186,13 +184,18 @@ function CheckInputChest()
                 baseLocation        = Location:newInstance(-2, -9, 1, 0, 1),
                 accessDirection     = "top"
             }
-        })
+        }).mobjLocator
 
         -- add the items to the locator
         inputChestLocator:setQuery(itemTable)
 
         -- store the items in the default dump site
-        enterprise_dump.GetDumpLocator():storeItemsFrom_AOSrv(inputChestLocator)
+        local dumpLocator = enterprise_dump.GetDumpLocator()
+        local dumpObject  = Host.GetObject(dumpLocator)
+
+        -- ask the dump to store our items
+        if dumpObject == nil then return end
+        dumpObject:storeItemsFrom_AOSrv({itemsLocator = inputChestLocator}, Callback.GetNewDummyCallBack())
     end
 end
 
