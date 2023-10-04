@@ -630,7 +630,7 @@ function Silo:storeItemsFrom_AOSrv(...)
     -- set (expected) destinationItemsLocator
     enterprise_storage = enterprise_storage or require "enterprise_storage"
     local destinationItemsLocator = enterprise_storage:getObjectLocator(self)
-    destinationItemsLocator:setQuery(coreutils.DeepCopy(itemsLocator:getQuery()))
+    destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
 
     -- create project definition
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
