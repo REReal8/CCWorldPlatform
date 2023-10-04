@@ -34,37 +34,51 @@ function enterprise_dump.GetDumpLocator()
     -- get the data
     local dumpData = LoadData()
 
-    -- we return the last known dump, usually the best
-    return dumpData[#dumpData]
+    -- the requested URL, create from table
+    local depotLocator = URL:new(dumpData[#dumpData])
+
+    -- we return
+    return depotLocator
 end
 
 -- add a depot to the dump
-function enterprise_dump.ListItemDepot(...)
+function enterprise_dump.ListItemDepot_SSrv(...)
     local checkSuccess, itemDepotLocator, mode = InputChecker.Check([[
         For enlisting a new item depot to the dump
 
         Return value:
+                                    - (table)
+            success                 - (boolean) whether the service executed successfully
 
         Parameters:
-            itemDepotLocator        + (URL) the depot locator to add to the dump
-            mode                    + (string, "append") append or overwrite the last known depot in the dump]], ...)
-    if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot: Invalid input") return nil end
+            serviceData             - (table) data for the service
+                itemDepotLocator    + (URL) the depot locator to add to the dump
+                mode                + (string, "append") append or overwrite the last known depot in the dump]], ...)
+    if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot_SSrv: Invalid input") return {succes = false} end
 
     -- check if the URL is an item depot
     local itemDepot = Host.GetObject(itemDepotLocator)
-    if not itemDepot                                    then corelog.Error("enterprise_dump.ListItemDepot: itemDepotLocator invalid")           return nil end
-    if not Class.IsInstanceOf(itemDepot, IItemDepot)    then corelog.Error("enterprise_dump.ListItemDepot: itemDepotLocator not an IItemDepot") return nil end
+
+    -- do some checks
+    if not itemDepot                                    then corelog.Error("enterprise_dump.ListItemDepot_SSrv: itemDepotLocator invalid")           return {succes = false} end
+    if not Class.IsInstanceOf(itemDepot, IItemDepot)    then corelog.Error("enterprise_dump.ListItemDepot_SSrv: itemDepotLocator not an IItemDepot") return {succes = false} end
+
+    -- do the works
+    ListItemDepot(itemDepotLocator, mode)
+
+    -- done!
+    return {success = true}
+end
+
+-- local function, placed here for readability
+function ListItemDepot(itemDepotLocator, mode)
 
     -- get the data
     local dumpData = LoadData()
 
-    -- add the locator, depending on the mode
-    if mode == "overwrite" or mode == "w" then
-        -- overwrite last element
-        dumpData[#dumpData] = itemDepotLocator
-    else
-        -- append at the end of the array
-        table.insert(dumpData, itemDepotLocator)
+    -- add the locator, depending on the mode overwrite or append
+    if mode == "overwrite" or mode == "w"   then dumpData[#dumpData] = itemDepotLocator
+                                            else table.insert(dumpData, itemDepotLocator)
     end
 
     -- save this shit
