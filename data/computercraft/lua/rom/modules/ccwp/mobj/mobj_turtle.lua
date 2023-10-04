@@ -382,7 +382,11 @@ end
 
 function Turtle:getInventory()
     -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+    -- ToDo: implement allowing getting inventory of a turtle from any computer (cache inventory in dht objects?)
+    if self:getTurtleId() ~= os.getComputerID() then
+        corelog.Warning("Turtle:getInventory() not yet supported on Turtle(="..self:getTurtleId()..") other than current computer(="..os.getComputerID()..") => returning empty Inventory")
+        return Inventory:newInstance()
+    end
 
     -- get current Turtle inventory slots
     local slotTable = {}
