@@ -19,6 +19,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("eobj_mobj_host") -- ToDo: beetje dubbel op met ook in ObjectFactory...
     moduleRegistry:requireAndRegisterModule("enterprise_chests")
     moduleRegistry:requireAndRegisterModule("enterprise_construction")
+    moduleRegistry:requireAndRegisterModule("enterprise_dump")
     moduleRegistry:requireAndRegisterModule("enterprise_energy")
     moduleRegistry:requireAndRegisterModule("enterprise_manufacturing")
     moduleRegistry:requireAndRegisterModule("enterprise_utilities")
