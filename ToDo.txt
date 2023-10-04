@@ -107,8 +107,33 @@ G  Descriptions for blueprints and project steps
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
+-  ObjLocator/ ObjHost/ IConstructable/ CObjHost/ IMObj/ (I)PObj: to discuss
+   -  introduce ObjLocator class extending URL class representing a locator of an IObj, with method
+      -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
+   -  introduce ObjHost class extending Host class by splitting of all Object related code (from Host:getObject and further)
+      -  it can host any IObj which can than be located by an ObjLocator
+   -  Split off IConstructable (or <better name>) interface from IMObj
+      -  with methods
+         -  getId
+         -  construct
+         -  upgrade (optional?)
+         -  destruct
+      -  (note: an Constructable is assumed to also be an IObj)
+   -  introduce CObjLocator class extending ObjLocator class representing a locator for an IConstructable, with method
+      -  getId
+   -  introduce CObjHost class extending ObjHost
+      -  it can host any IConstructable which can than be located by an CObjLocator
+      -  by splitting of from MObjHost
+         -  hostMObj_SSrv
+         -  upgradeMObj_SSrv
+         -  releaseMObj_SSrv
+   -  MObjHost extends CObjHost
+   -  Extend IMObj (and all MObj's) with
+      -  get(Base)Location
+   -  consider renaming (I)MObj to (I)PObj where P stands for Physical
+
 -  enterprise_turtle improvements
-   -  getObject: consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
+   -  getObject(): consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
 
 -  Turtle improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
