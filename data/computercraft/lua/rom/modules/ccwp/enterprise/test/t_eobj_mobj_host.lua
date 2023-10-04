@@ -360,7 +360,6 @@ end
 -- test MObjHost with TestMObj
 local testMObjClassName = "TestMObj"
 local testMObjName = "testMObj"
-local logOk = false
 local baseLocation1 = Location:newInstance(-12, 0, 1, 0, 1)
 local field1_1 = "field1 1"
 local field1_2 = "field1 2"
