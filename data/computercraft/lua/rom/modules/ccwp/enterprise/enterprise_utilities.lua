@@ -7,6 +7,7 @@ local coredht   		= require "coredht"
 local coredisplay		= require "coredisplay"
 local coreevent 		= require "coreevent"
 local corelog   		= require "corelog"
+local coretask   		= require "coretask"
 
 enterprise_utilities.DHTroot    = "enterprise_utilities"
 
@@ -103,9 +104,11 @@ end
 function ActAsUserStation()
     corelog.WriteToLog("I will be the user station!!")
 
-    -- set timer for input box (15 sec)
-    coreevent.AddEventListener(function() corelog.WriteToLog("Time to check the input chest") end, "mobj_util_station", "input chest timer")
-    coreevent.CreateTimeEvent(20 * 15, "mobj_util_station", "input chest timer")
+    -- setup timer for input chest checking
+    coreevent.AddEventListener(DoEventInputChestTimer, "mobj_util_station", "input chest timer")
+
+    -- check input box for the first time!
+    DoEventInputChestTimer()
 
 	-- our main menu
     coredisplay.MainMenu({
@@ -115,6 +118,22 @@ function ActAsUserStation()
         param	    = {},
         question    = nil
     })
+end
+
+function DoEventInputChestTimer()
+    -- debug
+    corelog.WriteToLog("Time to check the input chest")
+
+    -- add the work, the real stuff
+    coretask.AddWork(CheckInputChest, {})
+
+    -- create new event
+    coreevent.CreateTimeEvent(20 * 15, "mobj_util_station", "input chest timer")
+end
+
+function CheckInputChest()
+    -- set timer for input box (15 sec)
+
 end
 
 --        _ _           _
