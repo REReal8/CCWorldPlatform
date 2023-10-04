@@ -410,9 +410,8 @@ function Chest:provideItemsTo_AOSrv(...)
                 { keyDef = "itemsQuery"             , sourceStep = 1, sourceKeyDef = "itemResultQuery" },
             }},
             -- store items to ItemDepot
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"           , sourceStep = 3, sourceKeyDef = "itemsLocator" },
-                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
         },
@@ -579,9 +578,8 @@ function Chest:storeItemsFrom_AOSrv(...)
     local projectDef = {
         steps   = {
             -- get items into a turtle
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "turtleLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
-                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "turtleLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             -- obtain turtleId

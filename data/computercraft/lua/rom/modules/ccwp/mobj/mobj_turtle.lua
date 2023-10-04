@@ -18,6 +18,7 @@ local Callback = require "obj_callback"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local ItemTable = require "obj_item_table"
+local Host = require "obj_host"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -152,14 +153,16 @@ function Turtle:provideItemsTo_AOSrv(...)
     local turtleItemsLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
+    -- get ItemDepot
+    local itemDepot = Host.GetObject(itemDepotLocator)
+    if type(itemDepot) ~= "table" then corelog.Error("Turtle:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
     -- store items from this turtle to ItemDepot
-    local serviceData = {
-        itemsLocator                = turtleItemsLocator,
-        itemDepotLocator            = itemDepotLocator,
-        assignmentsPriorityKey      = assignmentsPriorityKey,
-    }
     --    corelog.WriteToLog(">Store "..turtleItemsLocator:getURI().." from Turtle")
-    return enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
+    return itemDepot:storeItemsFrom_AOSrv({
+        itemsLocator                = turtleItemsLocator,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }, callback)
 end
 
 function Turtle:can_ProvideItems_QOSrv(...)
