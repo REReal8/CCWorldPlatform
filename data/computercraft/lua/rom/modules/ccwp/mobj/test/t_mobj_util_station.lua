@@ -274,10 +274,10 @@ end
 
 function T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
-    t_turtle = t_turtle or require "test.t_turtle"
-    local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
+    local itemsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
+
     local provideItems = {
-        ["minecraft:birch_log"]  = 5,
+        ["minecraft:birch_log"]  = 3,
     }
 
     -- test
@@ -289,7 +289,7 @@ function T_UtilStation.T_shop_storeItemsFrom_AOSrv_Shop()
     local enterprise_shop = require "enterprise_shop"
     local itemsLocator = enterprise_shop.GetShopLocator() assert(itemsLocator, "Failed obtaining Shop locator")
     local provideItems = {
-        ["minecraft:birch_log"]  = 5,
+        ["minecraft:birch_log"]  = 3,
         ["minecraft:birch_planks"]  = 20,
         ["minecraft:coal_block"]  = 2,
     }
