@@ -54,11 +54,18 @@ function enterprise_turtle:getObject(...)
 
     -- check for "any turtle"
     if objectLocator:sameBase(enterprise_turtle.GetAnyTurtleLocator()) then
-        -- convert to "current turtle"
---        corelog.WriteToLog("convert to current Turtle")
-        local currentTurtleId = os.getComputerID()
-        local objectPath = objectLocator:getPath():gsub("any", tostring(currentTurtleId))
-        objectLocator:setPath(objectPath)
+
+        -- get a Turtle
+        local turtles = self:getObjects(Turtle:getClassName())
+        if not turtles then corelog.Error("enterprise_turtle:getObject: Failed obtaining Turtle's") return nil end
+        local _, turtleObjTable = next(turtles) -- first Turtle
+        -- ToDo: consider selecting a free Turtle (also based on some criteria) (maybe do this via assignments?)
+        if not turtleObjTable then corelog.Error("enterprise_turtle:getObject: Failed obtaining a Turtle") return nil end
+        local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_turtle:getObject: failed converting turtle objTable to Turtle") return nil end
+
+        -- return Turtle
+        -- corelog.WriteToLog("Selecting Turtle "..turtleObj:getTurtleId().." as 'any Turtle'")
+        return turtleObj
     end
 
     -- have base class Host provide the object
