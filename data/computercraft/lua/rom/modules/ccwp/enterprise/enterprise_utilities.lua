@@ -121,9 +121,6 @@ function ActAsUserStation()
 end
 
 function DoEventInputChestTimer()
-    -- debug
-    corelog.WriteToLog("Time to check the input chest")
-
     -- add the work, the real stuff
     coretask.AddWork(CheckInputChest, {})
 
@@ -133,7 +130,42 @@ end
 
 function CheckInputChest()
     -- set timer for input box (15 sec)
+    local inputChest    = peripheral.wrap("left")
+    local itemTable     = {}
 
+    -- find first empty slot from the end
+    local firstEmpty    = 27
+    while firstEmpty > 0 do
+        -- we are done if this slot is empty
+        if inputChest.getItemDetail(firstEmpty) == nil then break end
+
+        -- check another
+        firstEmpty = firstEmpty - 1
+    end
+
+    -- any new items?
+    local numberOfNewItems  = 0
+    while numberOfNewItems < 27 do
+        -- get the details of this slot
+        local itemDetail = inputChest.getItemDetail(numberOfNewItems + 1)
+
+        -- is the slot filled?
+        if type(itemDetail) == "nil" then break end
+
+        -- add items to the order
+        itemTable[itemDetail.name] = (itemTable[itemDetail.name] or 0) + itemDetail.count
+
+        -- move the item to the end
+        inputChest.pushItems("left", numberOfNewItems + 1, itemDetail.count, firstEmpty)
+
+        -- update
+        firstEmpty          = firstEmpty - 1
+        numberOfNewItems    = numberOfNewItems + 1
+    end
+
+    -- we should be fine!
+    corelog.WriteToLog("itemTable = ")
+    corelog.WriteToLog(itemTable)
 end
 
 --        _ _           _
