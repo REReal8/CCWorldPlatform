@@ -1,23 +1,21 @@
--- define class
-local Class             = require "class"
-local Host              = require "obj_host"
-local enterprise_dump   = Class.NewClass(Host)
+-- defines the class (nothing special)
+local enterprise_dump       = {} --Class.NewClass(Host)
 
 --[[
-    The enterprise_dump is a Host. It hosts one waste processer (dump) to store items (hopefully for later use).
+    The enterprise_dump is not a Host. It remembers the possible depot's for waste processing.
 --]]
 
 -- basics
 local coredht       = require "coredht"
 local corelog       = require "corelog"
-local coreutils     = require "coreutils"
 local InputChecker  = require "input_checker"
-
-local ObjArray      = require "obj_array"
 local URL           = require "obj_url"
 
--- mobj specific of the dump (no plans to have somehting physical yet)
-local Dump          = require "mobj_dump"
+-- enterprises
+local enterprise_turtle = require "enterprise_turtle"
+
+-- for storing the data
+local dumpData      = {}
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -27,47 +25,19 @@ local Dump          = require "mobj_dump"
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
 -- note: currently enterprise is treated like a singleton, but by directly using the name of the module
--- ToDo: consider making changes to enterprise to
---          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
---          - properly initialise it (by adding and implementing the _init method)
---          - adopt other classes to these changes
-enterprise_dump._hostName   = "enterprise_dump"
 
 -- setup code
 function enterprise_dump.Setup()
+    -- only when the dht is ready
     coredht.DHTReadyFunction(DHTReadySetup)
 end
 
 function DHTReadySetup()
-    local dump
-    local nDumps = enterprise_dump:getNumberOfObjects("Dump")
-    corelog.WriteToLog("nDumps = ")
-    corelog.WriteToLog(nDumps)
-    if nDumps == 0 then
-        -- the Dump is not there yet => create it
-        dump = Dump:newInstance(coreutils.NewId(), ObjArray:newInstance(URL:getClassName()))
-        corelog.WriteToLog("dump = ")
-        corelog.WriteToLog(dump)
+    -- load the data
+    LoadDump()
 
-        -- save it
-        local objLocator = enterprise_dump:saveObject(dump)
-        corelog.WriteToLog("objLocator = ")
-        corelog.WriteToLog(objLocator)
-        if not objLocator then corelog.Error("enterprise_dump:DHTReadySetup: Failed saving Dump") return nil end
-    end
-end
-
---    _____ ____  _     _                  _   _               _
---   |_   _/ __ \| |   (_)                | | | |             | |
---     | || |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | || |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| || |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                    _/ |
---                   |__/
-
-function enterprise_dump:getClassName()
-    return "enterprise_dump"
+    -- see if data is valid
+    if type(dumpData) ~= "table" or type(dumpData[1]) ~= "table" then Reset() end
 end
 
 --                        _  __ _                       _   _               _
@@ -79,126 +49,88 @@ end
 --       | |
 --       |_|
 
--- ToDo: consider allowing multiple Dump's in the future, and hence do this and it's usage different.
-function enterprise_dump:getDump()
-    --[[
-        This function returns the dump object.
-
-        In the current implementation there should be only 1 dump in the world.
-
-        Return value:
-            dump                    - (Dump) the Dump
-    --]]
-
-    -- there is a Dump unless someone has alters our way of living
-
-    -- get list of Dumps
-    local tableOfDumps = self:getObjects("Dump")
-    if type(tableOfDumps) ~= "table" then corelog.Error("enterprise_dump:getDump: Failed obtaining Dump's") return nil end
-
-    -- use a random Dump (probebly just 1 present so who cares)
-    local _, objTable   = next(tableOfDumps)
-    if type(objTable) ~= "table" then corelog.Error("enterprise_dump:getDump: Failed obtaining Dump from the tableOfDumps") return nil end
-
-    -- this is what the user requested
-    local dump          = Dump:new(objTable)
-
-    -- end
-    return dump
-end
-
+-- get your locator for the best dump (just 1 at the moment)
 function enterprise_dump.GetDumpLocator()
-    --[[
-        This function returns the Dump locator.
+
+    -- get the data
+    LoadDump()
+
+    -- we return the last known dump, usually the best
+    return dumpData[#dumpData]
+end
+
+-- add a depot to the dump
+function enterprise_dump.ListItemDepot(...)
+    local checkSuccess, itemDepotLocator, mode = InputChecker.Check([[
+        For enlisting a new item depot to the dump
 
         Return value:
-            dumpLocator             - (URL) locating the Dump
-    --]]
-
-    -- get Dump
-    local dump = enterprise_dump:getDump()
-
-    -- get locator
-    local dumpLocator = enterprise_dump:getObjectLocator(dump)
-    if not dumpLocator then corelog.Error("enterprise_dump.GetDumpLocator: Failed getting dumpLocator") return nil end
-
-    -- end
-    return dumpLocator
-end
-
-function enterprise_dump:deleteDump()
-    enterprise_dump:deleteObjects("Dump")
-end
-
-function enterprise_dump:reset()
-    -- get Dump
-    local dump = enterprise_dump:getDump()
-    if not dump then corelog.Error("enterprise_dump:reset: Failed getting Dump") return nil end
-
-    -- delist Suppliers
-    dump:delistAllItemStores()
-end
-
---                        _                           _   _               _
---                       (_)                         | | | |             | |
---    ___  ___ _ ____   ___  ___ ___   _ __ ___   ___| |_| |__   ___   __| |___
---   / __|/ _ \ '__\ \ / / |/ __/ _ \ | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
-
-function enterprise_dump.RegisterItemSupplier_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemSupplierLocator = InputChecker.Check([[
-        This sync public service registers ("adds") an ItemSupplier to the enterprise.
-
-        Note that the ItemSupplier should already be available in the world.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
 
         Parameters:
-            serviceData             - (table) data for the service
-                itemSupplierLocator + (URL) locating the ItemSupplier
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_dump.RegisterItemSupplier_SSrv: Invalid input") return {success = false} end
+            itemDepotLocator        + (URL) the depot locator to add to the dump
+            mode                    + (string, "append") append or overwrite the last known depot in the dump]], ...)
+    if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot: Invalid input") return nil end
 
-    -- get Obj
-    local dumpLocator = enterprise_dump.GetDumpLocator()
-    local obj = enterprise_dump:getObject(dumpLocator)
-    if type(obj) ~="table" then corelog.Error("enterprise_dump.RegisterItemSupplier_SSrv: Dump not found.") return {success = false} end
+    -- get the data
+    LoadDump()
 
-    -- have Obj register ItemSupplier
-    return obj:registerItemSupplier_SOSrv({
-        itemSupplierLocator = itemSupplierLocator,
-    })
+    -- add the locator, depending on the mode
+    if mode == "overwrite" or mode == "w" then
+        -- overwrite last element
+        dumpData[#dumpData] = itemDepotLocator
+    else
+        -- append at the end of the array
+        table.insert(dumpData, itemDepotLocator)
+    end
+
+    -- save this shit
+    SaveDump()
 end
 
-function enterprise_dump.DelistItemSupplier_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemSupplierLocator = InputChecker.Check([[
-        This sync public service delists ("removes") an ItemSupplier from the enterprise.
+-- remove a depot to the dump
+function enterprise_dump.DelistItemDepot(itemDepotLocator)
+    -- load the data first
+    LoadDump()
 
-        Note that the ItemSupplier is not removed from the world.
+    -- check if this one is in our list
+    for i, loc in ipairs(dumpData) do
 
-        Return value:
-            success                 - (boolean) whether the service executed successfully
+        -- check if both URL's are the same
 
-        Parameters:
-            serviceData             - (table) data for the service
-                itemSupplierLocator + (URL) locating the ItemSupplier
-    ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_dump.DelistItemSupplier_SSrv: Invalid input") return {success = false} end
-
-    -- get Obj
-    local dumpLocator = enterprise_dump.GetDumpLocator()
-    local obj = enterprise_dump:getObject(dumpLocator)
-    if type(obj) ~="table" then corelog.Error("enterprise_dump.DelistItemSupplier_SSrv: Dump not found.") return {success = false} end
-
-    -- have Obj register ItemSupplier
-    return obj:delistItemSupplier_SOSrv({
-        itemSupplierLocator = itemSupplierLocator,
-    })
+    end
 end
 
+--    _                 _
+--   | |               | |
+--   | | ___   ___ __ _| |
+--   | |/ _ \ / __/ _` | |
+--   | | (_) | (_| (_| | |
+--   |_|\___/ \___\__,_|_|
+--
+--
+
+local dhtRoot = "enterprise_dump" -- just a list of available depot locators
+
+function LoadDump()
+    -- check if we are present...
+    dumpData = coredht.GetData(dhtRoot)
+end
+
+function SaveDump()
+    -- check if we are present...
+    coredht.SaveData(dumpData, dhtRoot)
+end
+
+function Reset()
+    -- start over
+    dumpData = {}
+
+    -- add any turtle
+    table.insert(dumpData, enterprise_turtle.GetAnyTurtleLocator())
+
+    -- save!
+    SaveDump()
+end
+
+-- done
 return enterprise_dump
