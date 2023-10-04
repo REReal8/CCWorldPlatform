@@ -8,8 +8,13 @@ local enterprise_dump       = {} --Class.NewClass(Host)
 -- basics
 local coredht       = require "coredht"
 local corelog       = require "corelog"
+local Class         = require "class"
+local Host          = require "obj_host"
 local InputChecker  = require "input_checker"
 local URL           = require "obj_url"
+
+-- interfaces
+local IItemDepot = require "i_item_depot"
 
 -- enterprises
 local enterprise_turtle = require "enterprise_turtle"
@@ -44,6 +49,11 @@ function enterprise_dump.ListItemDepot(...)
             itemDepotLocator        + (URL) the depot locator to add to the dump
             mode                    + (string, "append") append or overwrite the last known depot in the dump]], ...)
     if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot: Invalid input") return nil end
+
+    -- check if the URL is an item depot
+    local itemDepot = Host.GetObject(itemDepotLocator)
+    if not itemDepot                                    then corelog.Error("enterprise_dump.ListItemDepot: itemDepotLocator invalid")           return nil end
+    if not Class.IsInstanceOf(itemDepot, IItemDepot)    then corelog.Error("enterprise_dump.ListItemDepot: itemDepotLocator not an IItemDepot") return nil end
 
     -- get the data
     local dumpData = LoadData()
