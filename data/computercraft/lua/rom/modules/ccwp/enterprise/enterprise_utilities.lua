@@ -9,6 +9,12 @@ local coreevent 		= require "coreevent"
 local corelog   		= require "corelog"
 local coretask   		= require "coretask"
 
+local ItemTable         = require "obj_item_table"
+local Location          = require "obj_location"
+
+local enterprise_chests = require "enterprise_chests"
+local enterprise_dump   = require "enterprise_dump"
+
 enterprise_utilities.DHTroot    = "enterprise_utilities"
 
 --[[
@@ -131,7 +137,10 @@ end
 function CheckInputChest()
     -- set timer for input box (15 sec)
     local inputChest    = peripheral.wrap("left")
-    local itemTable     = {}
+    local itemTable     = ItemTable:new({})
+
+    -- debugging
+    corelog.WriteToLog("dump - CheckInputChest()")
 
     -- find first empty slot from the end
     local firstEmpty    = 27
@@ -163,9 +172,28 @@ function CheckInputChest()
         numberOfNewItems    = numberOfNewItems + 1
     end
 
-    -- we should be fine!
-    corelog.WriteToLog("itemTable = ")
-    corelog.WriteToLog(itemTable)
+    -- did we find anything
+    if not itemTable:isEmpty() then
+
+        -- usefull logging
+        corelog.WriteToLog("itemTable = ")
+        corelog.WriteToLog(itemTable)
+
+        -- create items locator (temp solution) ToDo !!
+        local inputChestLocator = enterprise_chests:hostMObj_SSrv({
+            className           = "Chest",
+            constructParameters = {
+                baseLocation        = Location:newInstance(-2, -9, 1, 0, 1),
+                accessDirection     = "top"
+            }
+        })
+
+        -- add the items to the locator
+        inputChestLocator:setQuery(itemTable)
+
+        -- store the items in the default dump site
+        enterprise_dump.GetDumpLocator():storeItemsFrom_AOSrv(inputChestLocator)
+    end
 end
 
 --        _ _           _
