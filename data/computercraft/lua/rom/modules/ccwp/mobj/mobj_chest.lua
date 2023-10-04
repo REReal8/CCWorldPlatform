@@ -545,12 +545,16 @@ function Chest:storeItemsFrom_AOSrv(...)
     -- set (expected) destinationItemsLocator
     enterprise_chests = enterprise_chests or require "enterprise_chests"
     local destinationItemsLocator = enterprise_chests:getObjectLocator(self)
-    destinationItemsLocator:setQuery(coreutils.DeepCopy(itemsLocator:getQuery()))
+    destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
+
+    -- work around
+    local itemsLocatorCopy = itemsLocator:copy()
 
     -- create project definition
     local taskData = {
         turtleId        = -1,
-        itemsQuery      = coreutils.DeepCopy(itemsLocator:getQuery()),
+--        itemsQuery      = coreutils.DeepCopy(itemsLocator:getQuery()),
+        itemsQuery      = itemsLocatorCopy:getQuery(),
         location        = self:getBaseLocation():copy(),
         accessDirection = self:getAccessDirection(),
 
