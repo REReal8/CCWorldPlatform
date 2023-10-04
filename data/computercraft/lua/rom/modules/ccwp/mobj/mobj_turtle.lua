@@ -279,7 +279,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
         local sourceTurtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemsLocator }).turtleId if not sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining sourceTurtleId from itemsLocator="..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
-        local currentTurtleId = os.getComputerID()
+        local currentTurtleId = self:getTurtleId()
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
 
         -- verify turtle has items (aleady)
@@ -382,7 +382,11 @@ end
 
 function Turtle:getInventory()
     -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventory() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+    -- ToDo: implement allowing getting inventory of a turtle from any computer (cache inventory in dht objects?)
+    if self:getTurtleId() ~= os.getComputerID() then
+        corelog.Warning("Turtle:getInventory() not yet supported on Turtle(="..self:getTurtleId()..") other than current computer(="..os.getComputerID()..") => returning empty Inventory")
+        return Inventory:newInstance()
+    end
 
     -- get current Turtle inventory slots
     local slotTable = {}

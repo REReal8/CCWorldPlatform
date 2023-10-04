@@ -107,7 +107,10 @@ G  Descriptions for blueprints and project steps
       en worden gebruikt voor sourceStep's, e.g.
          { keyDef = "testArg"        , sourceStep = "kaas", sourceKeyDef = "testArgSource" },
 
-R  Factory:
+-  Turtle improvements
+   - getInventory(): implement allowing getting inventory of a turtle from any computer
+
+R  Factory improvements
    -  remove static method style code (remaining from before it was a mobj)
    -  ensure no longer need to register it as a module in the mobj library
    -  split into CraftSpot & SmeltSpot MObj's

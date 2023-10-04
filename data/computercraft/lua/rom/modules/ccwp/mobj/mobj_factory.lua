@@ -791,12 +791,6 @@ function Factory:provideItemsTo_AOSrv(...)
         local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
         ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
 
-        -- determine wasteItemsLocator
-        -- ToDo: consider fixing: we assume the current turtle will eventually have the waste. Remove this hack.
-        local wasteItemsLocator = enterprise_turtle:GetCurrentTurtleLocator() if not wasteItemsLocator then corelog.Error("Factory.provideItemsTo_AOSrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
-
-        wasteItemsLocator:setQuery({ [itemName] = productSurplus })
-
         -- retrieve site input & output locator's
         local localInputLocator = self:getAvailableInputLocator():copy()
         local localOutputLocator = self:getAvailableOutputLocator():copy()
@@ -834,7 +828,7 @@ function Factory:provideItemsTo_AOSrv(...)
                 }},
                 -- store waste items
                 { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "wasteItemsLocator" },
+                    { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "wasteItemsLocator" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
@@ -857,7 +851,6 @@ function Factory:provideItemsTo_AOSrv(...)
             itemCount                       = itemCount,
             productionRecipe                = productionRecipe,
 
-            wasteItemsLocator               = wasteItemsLocator,
             wasteItemDepotLocator           = wasteItemDepotLocator,
 
             assignmentsPriorityKey          = assignmentsPriorityKey,
@@ -1073,6 +1066,7 @@ function Factory.ProduceItem_ASrv(...)
                 localOutputItemsLocator - (URL) locating the items that where produced
                                             (upon service succes the "host" component of this URL should be equal to localOutputLocator, and
                                             the "query" should be equal to the "query" component of the localInputItemLocator)
+                wasteItemsLocator       - (URL) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service
@@ -1152,6 +1146,7 @@ function Factory.ProduceItem_ASrv(...)
     local projectDef = {
         steps = projectSteps,
         returnData  = {
+            { keyDef = "wasteItemsLocator"          , sourceStep = 2 + extraStep, sourceKeyDef = "turtleWasteItemsLocator" },
             { keyDef = "localOutputItemsLocator"    , sourceStep = 3 + extraStep, sourceKeyDef = "destinationItemsLocator" },
         }
     }
@@ -1197,6 +1192,7 @@ function Factory.CraftItem_ASrv(...)
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
                 turtleOutputItemsLocator- (URL) locating the items that where produced (in a turtle)
+                turtleWasteItemsLocator - (URL) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service
@@ -1296,6 +1292,7 @@ function Factory.Pickup_ASrv(...)
                                         - (table)
                 success                 - (boolean) whether the service executed correctly
                 turtleOutputItemsLocator- (URL) locating the items that where pickedup (in a turtle)
+                turtleWasteItemsLocator - (URL) locating waste items produced during production
 
         Parameters:
             serviceData                 - (table) data for the service
