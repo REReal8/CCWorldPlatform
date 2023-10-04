@@ -136,7 +136,7 @@ function enterprise_dump:reset()
     if not dump then corelog.Error("enterprise_dump:reset: Failed getting Dump") return nil end
 
     -- delist Suppliers
-    dump:delistAllItemSuppliers()
+    dump:delistAllItemStores()
 end
 
 --                        _                           _   _               _

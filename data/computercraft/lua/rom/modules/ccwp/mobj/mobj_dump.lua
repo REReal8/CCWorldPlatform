@@ -204,7 +204,7 @@ function Dump:getCanProvideItemSuppliers(item)
     return canProvideItemSupplierLocators
 end
 
-function Dump:delistAllItemSuppliers()
+function Dump:delistAllItemStores()
     -- remove all ItemSupplier's from Dump
     local nLocators = #(self._itemSuppliersLocators)
     for i=nLocators, 1, -1 do
@@ -218,7 +218,7 @@ function Dump:delistAllItemSuppliers()
     -- save Dump
     enterprise_dump = require "enterprise_dump"
     local objLocator = enterprise_dump:saveObject(self)
-    if not objLocator then corelog.Error("Dump:delistAllItemSuppliers: Failed saving Dump") return {success = false} end
+    if not objLocator then corelog.Error("Dump:delistAllItemStores: Failed saving Dump") return {success = false} end
 end
 
 --                        _                           _   _               _
