@@ -170,6 +170,9 @@ function enterprise_turtle.GetCurrentTurtleLocator()
         Parameters:
     --]]
 
+    -- check turtle
+    if not turtle then corelog.Error("enterprise_turtle.GetCurrentTurtleLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
+
     -- construct URL
     local currentTurtleId = os.getComputerID()
     local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
