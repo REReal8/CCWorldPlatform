@@ -226,6 +226,9 @@ function role_alchemist.Craft_Task(craftData)
     local workingLocation = craftData.workingLocation
     if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid workingLocation") return {success = false} end
 
+    -- equip crafting_table
+    coreinventory.Equip("minecraft:crafting_table")
+
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
@@ -242,7 +245,6 @@ function role_alchemist.Craft_Task(craftData)
     coremove.GoTo(workingLocation)
 
     -- do the magic!
-    coreinventory.Equip("minecraft:crafting_table")
     PrepareCraftingArea(recipe, times)
     turtle.craft()
 
