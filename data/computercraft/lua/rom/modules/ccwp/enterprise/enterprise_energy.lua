@@ -72,8 +72,6 @@ local function Refuel_ASrv(...)
     -- create project service data
     local enterprise_turtle = require "enterprise_turtle"
     local turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = turtleLocator }).turtleId if not turtleId then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtleId from turtleLocator="..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
-    local fuelItemsLocator = ingredientsItemSupplierLocator:copy()
-    fuelItemsLocator:setQuery(coreutils.DeepCopy(fuelItems))
     local refuelTaskData = {
         -- ToDo: consider passing turtleLocator
         turtleId    = turtleId,
@@ -83,13 +81,15 @@ local function Refuel_ASrv(...)
     }
     local buildBlueprintProjectDef = {
         steps   = {
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "fuelItemsLocator" },
+            -- get fuel
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "ingredientsItemSupplierLocator" }, stepDataDef = {
+                { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "fuelItems" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "turtleLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }, description = "Getting fuel for turtle "..turtleId},
+            -- refuel turtle
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "refuelMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "refuelTaskCall" },
@@ -101,7 +101,6 @@ local function Refuel_ASrv(...)
     local projectData = {
         fuelItems                       = coreutils.DeepCopy(fuelItems),
 
-        fuelItemsLocator                = fuelItemsLocator,
         turtleLocator                   = turtleLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
         wasteItemDepotLocator           = wasteItemDepotLocator,

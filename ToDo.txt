@@ -76,8 +76,6 @@ RG UtilStation v1.0 input & output chest UI                                     
 
 -  consider merging enterprise_chest into enterprise_storage
 
--  BirchForest: support more than 6 trees (in the one column)
-
 -  replace table.unpack(arg) with ... everywhere
 
 -  Generalised IItemSupplier test functions for MObj's
@@ -134,6 +132,10 @@ G  Descriptions for blueprints and project steps
 
 -  enterprise_turtle improvements
    -  getObject(): consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
+   -  example places to investigate:
+      -  Turtle:storeItemsFrom_AOSrv: if source is not a turtle
+      -  Factory.ProduceItem_ASrv: Getting items (local input) into Turtle (first project step)
+      -  Chest:storeItemsFrom_AOSrv: get items into a turtle (first project step)
 
 -  Turtle improvements
    -  getInventory(): implement allowing getting inventory of a turtle from any computer
@@ -142,6 +144,9 @@ R  Factory improvements
    -  remove static method style code (remaining from before it was a mobj)
    -  ensure no longer need to register it as a module in the mobj library
    -  split into CraftSpot & SmeltSpot MObj's
+
+-  BirchForest improvements
+   - support more than 6 trees (in the one column)
 
 -  blueprint
    -  Introduce Blueprint objects

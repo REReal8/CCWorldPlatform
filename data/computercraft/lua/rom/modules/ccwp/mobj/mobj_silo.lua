@@ -485,9 +485,8 @@ function Silo:provideItemsTo_AOSrv(...)
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             -- roept functie aan die goederen van top chest naar destination brengt
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
         },
@@ -646,9 +645,8 @@ function Silo:storeItemsFrom_AOSrv(...)
     local projectDef = {
         steps   = {
             -- roept functie aan die goederen van pickup locati enaar silo topchest
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "dropLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
-                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "dropLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             -- roept functie aan die goederen van topchest opslaat in de silo
@@ -806,9 +804,8 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
 
         -- add new project step
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "pickupLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "sourceChestLocator" .. i },
-                { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "pickupLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }}
         )
@@ -826,11 +823,10 @@ function Silo:fromSiloIntoTopchest_AOSrv(...)
             steps   = projectSteps,
 --            {
                 -- roept functie aan die goederen van pickup locatie naar silo topchest
---                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
---                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "sourceChestLocator" },
---                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "pickupLocator" },
---                    { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
---                }},
+            --    { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "pickupLocator" }, stepDataDef = {
+            --        { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "sourceChestLocator" },
+            --        { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
+            --    }},
             returnData  = {
                 { keyDef = "destinationItemsLocator"    , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" }, -- todo: merge different URLs when items came from different chests, see enterprise_isp.AddItemsLocators_SSrv
             }
@@ -878,9 +874,8 @@ function Silo:fromTopchestIntoSilo_AOSrv(...)
     local projectDef = {
         steps   = {
             -- roept functie aan die goederen van pickup locati enaar silo topchest
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "chestOneLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
-                { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "chestOneLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
         },

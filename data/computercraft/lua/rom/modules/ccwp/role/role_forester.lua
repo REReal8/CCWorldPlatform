@@ -137,6 +137,10 @@ function role_forester.HarvestForest_Task(...)
 
 --    corelog.WriteToLog(" Harvesting Forest")
 
+    -- equip diamond_pickaxe
+    local axePresent = coreinventory.Equip("minecraft:diamond_pickaxe")
+    if not axePresent then corelog.Error("role_forester.HarvestForest_Task: No axePresent ") return {success = false} end
+
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
@@ -251,19 +255,6 @@ end
 function Rondje(funcData)
     -- debug
     corelog.WriteToLog(">Forester.Rondje()")
---    corelog.WriteToLog("Forester.Rondje("..textutils.serialize(funcData)..")")
-
-    local axePresent    = coreinventory.Equip("minecraft:diamond_pickaxe")
-
-    -- stop if we don't meet the needs
-    if not axePresent then
-        -- no good
-        print("Missing item(s) for Rondje:")
-        if not axePresent       then print ("* Need a diamond axe") end
-
-        -- done here
-        return false
-    end
 
     -- init
     local depth = funcData.depth

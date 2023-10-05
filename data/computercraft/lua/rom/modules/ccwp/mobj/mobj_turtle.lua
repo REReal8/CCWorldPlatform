@@ -18,6 +18,7 @@ local Callback = require "obj_callback"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local ItemTable = require "obj_item_table"
+local Host = require "obj_host"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -152,14 +153,16 @@ function Turtle:provideItemsTo_AOSrv(...)
     local turtleItemsLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
+    -- get ItemDepot
+    local itemDepot = Host.GetObject(itemDepotLocator)
+    if type(itemDepot) ~= "table" then corelog.Error("Turtle:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
     -- store items from this turtle to ItemDepot
-    local serviceData = {
-        itemsLocator                = turtleItemsLocator,
-        itemDepotLocator            = itemDepotLocator,
-        assignmentsPriorityKey      = assignmentsPriorityKey,
-    }
     --    corelog.WriteToLog(">Store "..turtleItemsLocator:getURI().." from Turtle")
-    return enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
+    return itemDepot:storeItemsFrom_AOSrv({
+        itemsLocator                = turtleItemsLocator,
+        assignmentsPriorityKey      = assignmentsPriorityKey,
+    }, callback)
 end
 
 function Turtle:can_ProvideItems_QOSrv(...)
@@ -274,6 +277,9 @@ function Turtle:storeItemsFrom_AOSrv(...)
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
+    -- get storeItems
+    local storeItems = itemsLocator:getQuery()
+
     -- check source is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
@@ -283,7 +289,6 @@ function Turtle:storeItemsFrom_AOSrv(...)
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
 
         -- verify turtle has items (aleady)
-        local storeItems = itemsLocator:getQuery()
         local turtleInventory = self:getInventory()
         local hasItems = turtleInventory:hasItems(storeItems)
         if not hasItems then corelog.Error("Turtle:storeItemsFrom_AOSrv: storeItems not (all="..textutils.serialise(storeItems, {compact = true})..") items available in Turtle inventory(="..textutils.serialise(turtleInventory, {compact = true})..")") return Callback.ErrorCall(callback) end
@@ -298,20 +303,25 @@ function Turtle:storeItemsFrom_AOSrv(...)
         }
         return callback:call(result)
     else -- source is not a turtle
+        -- ToDo: investigate if there are ways to prevent this (as below code seems a bit ackward)
         -- create turtleLocator
         local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
+        -- get source ItemSupplier
+        local itemSupplierLocator = itemsLocator:baseCopy()
+        local itemSupplier = Host.GetObject(itemSupplierLocator)
+        if type(itemSupplier) ~= "table" then corelog.Error("Turtle:storeItemsFrom_AOSrv:ItemDepot "..itemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
         -- have source ItemSupplier provideItemsTo Turtle
         local ingredientsItemSupplierLocator = itemsLocator:copy() -- note: this is intended as a dummy ingredientsItemSupplierLocator, it should not be needed here as we are asked to store items from and ItemSupplier so I guess it is safe to assume the ItemSupplier already has the items (otherwise why store it)
-        local wasteItemDepotLocator = turtleLocator:copy() -- note: only added because ProvideItemsTo_ASrv asks for it. It will/ should also not be used/ needed as storing items implies no waste.
-        local serviceData = {
-            itemsLocator                = itemsLocator,
+        local wasteItemDepotLocator = turtleLocator:copy() -- note: only added because provideItemsTo_AOSrv asks for it. It will/ should also not be used/ needed as storing items implies no waste.
+        return itemSupplier:provideItemsTo_AOSrv({
+            provideItems                = storeItems,
             itemDepotLocator            = turtleLocator,
             ingredientsItemSupplierLocator = ingredientsItemSupplierLocator,
             wasteItemDepotLocator       = wasteItemDepotLocator,
             assignmentsPriorityKey      = assignmentsPriorityKey,
-        }
-        return enterprise_isp.ProvideItemsTo_ASrv(serviceData, callback)
+        }, callback)
     end
 end
 

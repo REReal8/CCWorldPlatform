@@ -44,6 +44,7 @@ local URL = require "obj_url"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
+local Host = require "obj_host"
 
 local ProductionSpot = require "mobj_production_spot"
 
@@ -784,12 +785,10 @@ function Factory:provideItemsTo_AOSrv(...)
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("Factory:provideItemsTo_AOSrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
-        -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
+        -- determine ingredientsNeeded
         local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)
         if not productionSpot then corelog.Error("Factory:provideItemsTo_AOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return Callback.ErrorCall(callback) end
         local ingredientsNeeded, productSurplus = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
-        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
 
         -- retrieve site input & output locator's
         local localInputLocator = self:getAvailableInputLocator():copy()
@@ -803,8 +802,8 @@ function Factory:provideItemsTo_AOSrv(...)
         local projectDef = {
             steps = {
                 -- get ingredients
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "ingredientsItemSupplierLocator" }, stepDataDef = {
+                    { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "ingredientsNeeded" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localInputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                     { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
@@ -821,15 +820,13 @@ function Factory:provideItemsTo_AOSrv(...)
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- deliver items
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
                     { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "localOutputItemsLocator" },
-                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
                 -- store waste items
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "wasteItemDepotLocator" }, stepDataDef = {
                     { keyDef = "itemsLocator"                   , sourceStep = 2, sourceKeyDef = "wasteItemsLocator" },
-                    { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                     { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                 }},
             },
@@ -840,7 +837,7 @@ function Factory:provideItemsTo_AOSrv(...)
         local projectData = {
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
 
-            ingredientsItemsLocator         = ingredientsItemsLocator,
+            ingredientsNeeded               = ingredientsNeeded,
             itemDepotLocator                = itemDepotLocator,
 
             localInputLocator               = localInputLocator,
@@ -935,6 +932,10 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
+    -- get ingredientsItemSupplier
+    local ingredientsItemSupplier = Host.GetObject(ingredientsItemSupplierLocator)
+    if type(ingredientsItemSupplier) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: ingredientsItemSupplier "..ingredientsItemSupplierLocator:getURI().." not found.") return {success = false} end
+
     -- loop on items
     local fuelNeed = 0
     local ingredientsNeed = {}
@@ -955,23 +956,20 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
 
         -- fuelNeed ingredients
-        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
         local localInputLocator = self:getAvailableInputLocator():copy()
-        local serviceData = {
-            itemsLocator                    = ingredientsItemsLocator,
+        local serviceResults = ingredientsItemSupplier:needsTo_ProvideItemsTo_SOSrv({
+            provideItems                    = itemIngredientsNeed,
             itemDepotLocator                = localInputLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
-        }
-        local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
+        })
+        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..textutils.serialise(itemIngredientsNeed).." ingredients") return {success = false} end
         local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
 
         -- fuelNeed production
         local localInputItemsLocator = localInputLocator:copy()
         localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
         local localOutputLocator = self:getAvailableOutputLocator():copy()
-        serviceData = {
+        local serviceData = {
             localInputItemsLocator  = localInputItemsLocator,
             localOutputLocator      = localOutputLocator,
             productionSpot          = productionSpot:copy(),
@@ -1086,9 +1084,10 @@ function Factory.ProduceItem_ASrv(...)
 
     -- determine production steps
     local projectSteps = {
-        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+        -- get items into Turtle
+        -- ToDo: consider using provideItemsTo_AOSrv here...
+        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "turtleInputLocator" }, stepDataDef = {
             { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
-            { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "turtleInputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }, description = "Getting items "..localInputItemsLocator:getURI().." (local input) into Turtle"},
     }
@@ -1135,9 +1134,8 @@ function Factory.ProduceItem_ASrv(...)
 
     -- add remaining steps
     table.insert(projectSteps,
-        { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+        { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localOutputLocator" }, stepDataDef = {
             { keyDef = "itemsLocator"               , sourceStep = 2 + extraStep, sourceKeyDef = "turtleOutputItemsLocator" },
-            { keyDef = "itemDepotLocator"           , sourceStep = 0, sourceKeyDef = "localOutputLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
         }, description = "Storing items into "..localOutputLocator:getURI().." (local output)" }
     )

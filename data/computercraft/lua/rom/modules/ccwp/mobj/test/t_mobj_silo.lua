@@ -434,9 +434,6 @@ function T_Silo.T_GetRandomSilo()
     local turtleLocator = daTurtle.GetCurrentTurtleLocator()
     local daCallback = Callback.GetNewDummyCallBack()
 
-    -- da command
-    --enterprise_isp.ProvideItemsTo_ASrv(...)
-
     -- test
     return daShop:provideItemsTo_AOSrv({
         provideItems                    = { [""] = 64},

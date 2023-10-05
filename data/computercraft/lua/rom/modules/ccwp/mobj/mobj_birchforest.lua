@@ -761,27 +761,33 @@ function BirchForest:provideItemsTo_AOSrv(...)
         else
             corelog.Error("BirchForest:provideItemsTo_AOSrv: This is not a producer for item "..itemName) return Callback.ErrorCall(callback)
         end
-        if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return {success = false} end
+        if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return Callback.ErrorCall(callback) end
+
+        -- get local ItemSupplier
+        local itemSupplier = Host.GetObject(localItemSupplierLocator)
+        if type(itemSupplier) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: ItemSupplier "..localItemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
         -- check items already available in localItemSupplierLocator
-        local localItemsLocator = localItemSupplierLocator:copy()
         local item = { [itemName] = itemCount }
-        localItemsLocator:setQuery(item)
-        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
+        if itemSupplier:can_ProvideItems_QOSrv({ provideItems = item }).success then
+            -- get localItemsLocator
+            local localItemsLocator = localItemSupplierLocator:copy()
+            localItemsLocator:setQuery(item)
+
+            -- get ItemDepot
+            local itemDepot = Host.GetObject(itemDepotLocator)
+            if type(itemDepot) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
             -- yes: store items from local ItemSupplier to requested ItemDepot
-            local serviceData = {
-                itemsLocator                = localItemsLocator,
-                itemDepotLocator            = itemDepotLocator,
-                assignmentsPriorityKey      = assignmentsPriorityKey,
-            }
---            corelog.WriteToLog(">Storing "..localItemsLocator:getURI().." from local ItemSupplier in Forest")
-            scheduleResult = scheduleResult and enterprise_isp.StoreItemsFrom_ASrv(serviceData, callback)
+--            corelog.WriteToLog(">Storing "..localItemsLocator:getURI().." from BirchForest to "..itemDepotLocator:getURI())
+            scheduleResult = scheduleResult and itemDepot:storeItemsFrom_AOSrv({
+                itemsLocator                    = localItemsLocator,
+                assignmentsPriorityKey          = assignmentsPriorityKey,
+            }, callback)
         else
-            -- construct new itemsLocator for this BirchForest
+            -- get locator for this BirchForest
             local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
-            local mobjLocator = host:getObjectLocator(self)
-            local itemsLocator = mobjLocator:copy()
-            itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
+            local forestLocator = host:getObjectLocator(self)
 
             -- construct taskData
             local harvestForestTaskData = {
@@ -804,26 +810,23 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "harvestForestTaskCall" },
                     }, description = "Harvesting "..textutils.serialise(item, {compact = true}).." task"},
                     -- store logs to localLogsLocator
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localLogsLocator" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputLogsLocator" },
-                        { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "localLogsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- store saplings to localSaplingsLocator
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "localSaplingsLocator" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputSaplingsLocator" },
-                        { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "localSaplingsLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- store waste (e.g. sticks) to wasteItemDepotLocator
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "StoreItemsFrom_ASrv" }, stepDataDef = {
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "wasteItemDepotLocator" }, stepDataDef = {
                         { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleWasteItemsLocator" },
-                        { keyDef = "itemDepotLocator"       , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- recursive call to provide (remaining) items
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                        { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "itemsLocator" },
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "forestLocator" }, stepDataDef = {
+                        { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "item" },
                         { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                         { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                         { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
@@ -835,7 +838,8 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 }
             }
             local projectData = {
-                itemsLocator                    = itemsLocator,
+                forestLocator                   = forestLocator,
+                item                            = item, -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
                 ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
                 wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
                 itemDepotLocator                = itemDepotLocator:copy(),
