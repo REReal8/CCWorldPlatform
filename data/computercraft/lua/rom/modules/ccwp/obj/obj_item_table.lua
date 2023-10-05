@@ -93,6 +93,14 @@ function ItemTable:hasNoItems()
     return true
 end
 
+function ItemTable:add(itemName, itemCount)
+    -- check parameters
+    if type(itemName) ~= "string" or type(itemCount) ~= "number" then corelog.Warning("ItemTable:add(): bad parameter(s)") return end
+
+    -- just add this one item to the self
+    self[itemName]  = (self[itemName] or 0) + itemCount
+end
+
 function ItemTable.combine(...)
     -- get & check input from description
     local checkSuccess, firstItemList, secondItemList = InputChecker.Check([[
