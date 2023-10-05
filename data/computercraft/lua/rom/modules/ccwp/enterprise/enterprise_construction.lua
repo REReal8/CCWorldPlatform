@@ -71,10 +71,6 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
-    -- determine materialsItemsLocator (by update materialsItemSupplierLocator with itemsNeeded)
-    local materialsItemsLocator = materialsItemSupplierLocator:copy()
-    materialsItemsLocator:setQuery(materialsNeeded)
-
     -- set local output location
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildBlueprint_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
@@ -83,8 +79,8 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     local buildBlueprintProjectDef = {
         steps   = {
             -- get materials
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "materialsItemSupplierLocator" }, stepDataDef = {
+                { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "materialsNeeded" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
@@ -104,7 +100,8 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
         }
     }
     local projectData = {
-        materialsItemsLocator           = materialsItemsLocator:copy(),
+        materialsItemSupplierLocator    = materialsItemSupplierLocator,
+        materialsNeeded                 = materialsNeeded,
         itemDepotLocator                = itemDepotLocator:copy(),
         ingredientsItemSupplierLocator  = materialsItemSupplierLocator:copy(),
         wasteItemDepotLocator           = wasteItemDepotLocator,
@@ -169,10 +166,6 @@ function enterprise_construction.BuildLayer_ASrv(...)
         return enterprise_assignmentboard.DoAssignment_ASrv(assignmentServiceData, callback)
     end
 
-    -- determine materialsItemsLocator (by update materialsItemSupplierLocator with itemsNeeded)
-    local materialsItemsLocator = materialsItemSupplierLocator:copy()
-    materialsItemsLocator:setQuery(materialsNeeded)
-
     -- set local output location
     -- note:    Because BuildLayer_Task requires a turtle to have the goods in it's inventory at this point specify that a turtle
     --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of)
@@ -185,12 +178,12 @@ function enterprise_construction.BuildLayer_ASrv(...)
     local buildRectangularPatternProjectDef = {
         steps   = {
             -- get materials
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "materialsItemsLocator" },
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "materialsItemSupplierLocator" }, stepDataDef = {
+                { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "materialsNeeded" },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
-            }},
+            }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
             -- obtain turtleId
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
                 { keyDef = "turtleLocator"                  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
@@ -206,7 +199,8 @@ function enterprise_construction.BuildLayer_ASrv(...)
         }
     }
     local projectData = {
-        materialsItemsLocator           = materialsItemsLocator:copy(),
+        materialsItemSupplierLocator    = materialsItemSupplierLocator,
+        materialsNeeded                 = materialsNeeded,
         itemDepotLocator                = itemDepotLocator:copy(),
         ingredientsItemSupplierLocator  = materialsItemSupplierLocator:copy(),
         wasteItemDepotLocator           = wasteItemDepotLocator,

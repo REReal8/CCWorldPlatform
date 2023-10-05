@@ -784,12 +784,10 @@ function Factory:provideItemsTo_AOSrv(...)
         local recipe = enterprise_manufacturing.GetRecipes()[ itemName ]
         if type(recipe) ~= "table" then corelog.Error("Factory:provideItemsTo_AOSrv: No recipe for item "..itemName) return Callback.ErrorCall(callback) end
 
-        -- determine ingredientsItemsLocator (by updating ingredientsItemSupplierLocator with ingredientsNeeded)
+        -- determine ingredientsNeeded
         local productionSpot, productionRecipe = self:getAvailableProductionSpot(recipe)
         if not productionSpot then corelog.Error("Factory:provideItemsTo_AOSrv: Failed obtaining available ProductionSpot to produce "..itemName) return Callback.ErrorCall(callback) end
         local ingredientsNeeded, productSurplus = productionSpot:produceIngredientsNeeded(productionRecipe, itemCount)
-        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(ingredientsNeeded))
 
         -- retrieve site input & output locator's
         local localInputLocator = self:getAvailableInputLocator():copy()
@@ -803,8 +801,8 @@ function Factory:provideItemsTo_AOSrv(...)
         local projectDef = {
             steps = {
                 -- get ingredients
-                { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                    { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "ingredientsItemsLocator" },
+                { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "ingredientsItemSupplierLocator" }, stepDataDef = {
+                    { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "ingredientsNeeded" },
                     { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "localInputLocator" },
                     { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                     { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
@@ -838,7 +836,7 @@ function Factory:provideItemsTo_AOSrv(...)
         local projectData = {
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
 
-            ingredientsItemsLocator         = ingredientsItemsLocator,
+            ingredientsNeeded               = ingredientsNeeded,
             itemDepotLocator                = itemDepotLocator,
 
             localInputLocator               = localInputLocator,

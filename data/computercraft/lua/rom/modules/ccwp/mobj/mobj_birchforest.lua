@@ -779,11 +779,9 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 assignmentsPriorityKey          = assignmentsPriorityKey,
             }, callback)
         else
-            -- construct new itemsLocator for this BirchForest
+            -- get locator for this BirchForest
             local host = Host.GetHost("enterprise_forestry") if not host then corelog.Error("BirchForest:provideItemsTo_AOSrv: host not found") return Callback.ErrorCall(callback) end
-            local mobjLocator = host:getObjectLocator(self)
-            local itemsLocator = mobjLocator:copy()
-            itemsLocator:setQuery(item)  -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
+            local forestLocator = host:getObjectLocator(self)
 
             -- construct taskData
             local harvestForestTaskData = {
@@ -821,8 +819,8 @@ function BirchForest:provideItemsTo_AOSrv(...)
                         { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
                     }},
                     -- recursive call to provide (remaining) items
-                    { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                        { keyDef = "itemsLocator"                   , sourceStep = 0, sourceKeyDef = "itemsLocator" },
+                    { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = 0, locatorKeyDef = "forestLocator" }, stepDataDef = {
+                        { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = "item" },
                         { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                         { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                         { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
@@ -834,7 +832,8 @@ function BirchForest:provideItemsTo_AOSrv(...)
                 }
             }
             local projectData = {
-                itemsLocator                    = itemsLocator,
+                forestLocator                   = forestLocator,
+                item                            = item, -- ToDo: consider lower count with possible # items already present in localItemSupplierLocator
                 ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
                 wasteItemDepotLocator           = wasteItemDepotLocator:copy(),
                 itemDepotLocator                = itemDepotLocator:copy(),

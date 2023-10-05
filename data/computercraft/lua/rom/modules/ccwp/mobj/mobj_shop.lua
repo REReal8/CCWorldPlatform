@@ -319,7 +319,8 @@ function Shop:getBestItemLocator_SOSrv(...)
         Return value:
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
-                itemLocator                     - (URL) locating the best ItemSupplier of the items
+                bestItemSupplierLocator         - (URL) locating the best ItemSupplier of the items
+                itemLocator                     - (URL) locating the best ItemSupplier with the items
 
         Parameters:
             serviceData                         - (table) data for the service
@@ -348,8 +349,9 @@ function Shop:getBestItemLocator_SOSrv(...)
 
     -- end
     return {
-        success             = true,
-        itemLocator         = itemLocator,
+        success                 = true,
+        bestItemSupplierLocator = bestItemSupplierLocator:copy(),
+        itemLocator             = itemLocator,
     }
 end
 
@@ -423,8 +425,8 @@ function Shop:provideItemsTo_AOSrv(...)
         iStep = iStep + 1
         iStepStr = tostring(iStep)
         table.insert(projectSteps,
-            { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_isp", serviceName = "ProvideItemsTo_ASrv" }, stepDataDef = {
-                { keyDef = "itemsLocator"                   , sourceStep = iStep - 1, sourceKeyDef = "itemLocator" }, -- note: from itemLocator to itemsLocator as ProvideItemsTo_ASrv method could handle multiple
+            { stepType = "LAOSrv", stepTypeDef = { serviceName = "provideItemsTo_AOSrv", locatorStep = iStep - 1, locatorKeyDef = "bestItemSupplierLocator" }, stepDataDef = {
+                { keyDef = "provideItems"                   , sourceStep = 0, sourceKeyDef = itemKey },  -- note: from item to items as provideItemsTo_AOSrv method could handle multiple
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
