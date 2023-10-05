@@ -76,8 +76,6 @@ RG UtilStation v1.0 input & output chest UI                                     
 
 -  consider merging enterprise_chest into enterprise_storage
 
--  BirchForest: support more than 6 trees (in the one column)
-
 -  replace table.unpack(arg) with ... everywhere
 
 -  Generalised IItemSupplier test functions for MObj's
@@ -146,6 +144,9 @@ R  Factory improvements
    -  remove static method style code (remaining from before it was a mobj)
    -  ensure no longer need to register it as a module in the mobj library
    -  split into CraftSpot & SmeltSpot MObj's
+
+-  BirchForest improvements
+   - support more than 6 trees (in the one column)
 
 -  blueprint
    -  Introduce Blueprint objects
