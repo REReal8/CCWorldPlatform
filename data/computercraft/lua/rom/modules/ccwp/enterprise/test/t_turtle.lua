@@ -8,7 +8,6 @@ local enterprise_turtle = require "enterprise_turtle"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_manufacturing = require "enterprise_manufacturing"
-local enterprise_isp = require "enterprise_isp"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 local TestObj = require "test.obj_test"
@@ -32,20 +31,6 @@ local itemsQuery = {
 
 local level0 = 0
 local turtleId1 = 999999
-
-function t_turtle.T_Can_ProvideItems()
-    corelog.WriteToLog("* Test Can_ProvideItems_QSrv for turtles:")
-    -- create transferData
-    local itemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = turtleId1, itemsQuery = itemsQuery }).itemsLocator
-    local queryData = {
-        itemsLocator = itemsLocator,
-    }
-
-    -- call test method
-    corelog.WriteToLog("  calling enterprise_isp.Can_ProvideItems_QSrv("..textutils.serialize(queryData)..")")
-    local result = enterprise_isp.Can_ProvideItems_QSrv(queryData)
-    corelog.WriteToLog("  result="..textutils.serialize(result))
-end
 
 -- print("GetFuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
 function t_turtle.T_GetFuelLevels_Att()

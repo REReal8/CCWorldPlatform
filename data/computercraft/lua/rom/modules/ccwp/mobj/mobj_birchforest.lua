@@ -763,11 +763,17 @@ function BirchForest:provideItemsTo_AOSrv(...)
         end
         if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return Callback.ErrorCall(callback) end
 
+        -- get local ItemSupplier
+        local itemSupplier = Host.GetObject(localItemSupplierLocator)
+        if type(itemSupplier) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: ItemSupplier "..localItemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
+
         -- check items already available in localItemSupplierLocator
-        local localItemsLocator = localItemSupplierLocator:copy()
         local item = { [itemName] = itemCount }
-        localItemsLocator:setQuery(item)
-        if enterprise_isp.Can_ProvideItems_QSrv( { itemsLocator = localItemsLocator} ).success then
+        if itemSupplier:can_ProvideItems_QOSrv({ provideItems = item }).success then
+            -- get localItemsLocator
+            local localItemsLocator = localItemSupplierLocator:copy()
+            localItemsLocator:setQuery(item)
+
             -- get ItemDepot
             local itemDepot = Host.GetObject(itemDepotLocator)
             if type(itemDepot) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end

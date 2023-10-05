@@ -31,38 +31,6 @@ local role_fuel_worker = require "role_fuel_worker"
 --   \__ \  __/ |   \ V /| | (_|  __/ | | | | | |  __/ |_| | | | (_) | (_| \__ \
 --   |___/\___|_|    \_/ |_|\___\___| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
 
-function enterprise_isp.Can_ProvideItems_QSrv(...)
-    -- get & check input from description
-    local checkSuccess, itemsLocator = InputChecker.Check([[
-        This sync public query service answers the question whether the ItemSupplier can provide specific items.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the answer to the question is true
-
-        Parameters:
-            serviceData             - (table) data to the query
-                itemsLocator        + (URL) locating the items that need to be queried for providability
-                                        (the "base" component of the URL specifies the ItemSupplier that provides the items)
-                                        (the "query" component of the URL specifies the items to query for)
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: Invalid input") return {success = false} end
-
-    -- get obj
-    local itemSupplierLocator = itemsLocator:baseCopy()
-    local obj = Host.GetObject(itemSupplierLocator)
-    if type(obj) ~= "table" then corelog.Error("enterprise_isp.Can_ProvideItems_QSrv: obj "..itemSupplierLocator:getURI().." not found.") return {success = false} end
-
-    -- check obj can provide items
-    local provideItems = itemsLocator:getQuery()
-    local canProvide = obj:can_ProvideItems_QOSrv({
-        provideItems    = provideItems,
-    })
-
-    -- end
-    return canProvide
-end
-
 function enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[

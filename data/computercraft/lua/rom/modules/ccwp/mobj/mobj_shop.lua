@@ -190,12 +190,12 @@ function Shop:getCanProvideItemSuppliers(item)
     -- select ItemSuppliers than can provide items
     local canProvideItemSupplierLocators = {}
     for i, itemSupplierLocator in ipairs(self._itemSuppliersLocators) do
-        -- determine itemLocator
-        local itemsLocator = itemSupplierLocator:copy()
-        itemsLocator:setQuery(item)
+        -- get ItemSupplier
+        local itemSupplier = Host.GetObject(itemSupplierLocator)
+        if type(itemSupplier) ~= "table" then corelog.Error("Shop:getCanProvideItemSuppliers: ItemSupplier "..itemSupplierLocator:getURI().." not found.") return canProvideItemSupplierLocators end
 
         -- check ItemSupplier can provide items
-        if enterprise_isp.Can_ProvideItems_QSrv({itemsLocator = itemsLocator }).success then
+        if itemSupplier:can_ProvideItems_QOSrv({ provideItems = item }).success then
             table.insert(canProvideItemSupplierLocators, itemSupplierLocator)
         end
     end
