@@ -44,6 +44,7 @@ local URL = require "obj_url"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
+local Host = require "obj_host"
 
 local ProductionSpot = require "mobj_production_spot"
 
@@ -931,6 +932,10 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
     --]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
+    -- get ingredientsItemSupplier
+    local ingredientsItemSupplier = Host.GetObject(ingredientsItemSupplierLocator)
+    if type(ingredientsItemSupplier) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: ingredientsItemSupplier "..ingredientsItemSupplierLocator:getURI().." not found.") return {success = false} end
+
     -- loop on items
     local fuelNeed = 0
     local ingredientsNeed = {}
@@ -951,23 +956,20 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
         if not enterprise_isp.AddItemsTo(ingredientsNeed, itemIngredientsNeed).success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed adding items "..textutils.serialise(itemIngredientsNeed).." to ingredientsNeed.") return {success = false} end
 
         -- fuelNeed ingredients
-        local ingredientsItemsLocator = ingredientsItemSupplierLocator:copy()
-        ingredientsItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
         local localInputLocator = self:getAvailableInputLocator():copy()
-        local serviceData = {
-            itemsLocator                    = ingredientsItemsLocator,
+        local serviceResults = ingredientsItemSupplier:needsTo_ProvideItemsTo_SOSrv({
+            provideItems                    = itemIngredientsNeed,
             itemDepotLocator                = localInputLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator:copy(),
-        }
-        local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(serviceData)
-        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..ingredientsItemsLocator:getURI().." ingredients") return {success = false} end
+        })
+        if not serviceResults.success then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..textutils.serialise(itemIngredientsNeed).." ingredients") return {success = false} end
         local fuelNeed_IngredientsSupply = serviceResults.fuelNeed
 
         -- fuelNeed production
         local localInputItemsLocator = localInputLocator:copy()
         localInputItemsLocator:setQuery(coreutils.DeepCopy(itemIngredientsNeed))
         local localOutputLocator = self:getAvailableOutputLocator():copy()
-        serviceData = {
+        local serviceData = {
             localInputItemsLocator  = localInputItemsLocator,
             localOutputLocator      = localOutputLocator,
             productionSpot          = productionSpot:copy(),

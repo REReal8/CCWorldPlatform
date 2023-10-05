@@ -138,26 +138,24 @@ function Shop:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLo
     end
 
     -- get needs 1
-    local itemLocator1 = itemSupplierLocator1:copy()
-    itemLocator1:setQuery(item)
-    local itemServiceData = {
-        itemsLocator                    = itemLocator1,
+    local itemSupplier1 = Host.GetObject(itemSupplierLocator1)
+    if type(itemSupplier1) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier1 "..itemSupplierLocator1:getURI().." not found.") return nil end
+    local serviceResults1 = itemSupplier1:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = item,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    }
-    local serviceResults1 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-    if not serviceResults1.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemLocator1(="..textutils.serialise(itemLocator1)..")") return nil end
+    })
+    if not serviceResults1.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator1(="..itemSupplierLocator1:getURI()..")") return nil end
 
     -- get needs 2
-    local itemLocator2 = itemSupplierLocator2:copy()
-    itemLocator2:setQuery(item)
-    itemServiceData = {
-        itemsLocator                    = itemLocator2,
+    local itemSupplier2 = Host.GetObject(itemSupplierLocator2)
+    if type(itemSupplier2) ~= "table" then corelog.Error("Shop:bestItemSupplier: itemSupplier2 "..itemSupplierLocator2:getURI().." not found.") return nil end
+    local serviceResults2 = itemSupplier2:needsTo_ProvideItemsTo_SOSrv({
+        provideItems                    = item,
         itemDepotLocator                = itemDepotLocator,
         ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-    }
-    local serviceResults2 = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
-    if not serviceResults2.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemLocator2(="..textutils.serialise(itemLocator2)..")") return nil end
+    })
+    if not serviceResults2.success then corelog.Error("Shop:bestItemSupplier: Failed obtaining needs for itemSupplierLocator2(="..itemSupplierLocator2:getURI()..")") return nil end
 
     -- check lowest fuelNeed
     local fuelNeed1 = serviceResults1.fuelNeed
@@ -310,7 +308,7 @@ function Shop:delistItemSupplier_SOSrv(...)
     return result
 end
 
-function Shop:getBestItemLocator_SOSrv(...)
+function Shop:getBestItemSupplierLocator_SOSrv(...)
     -- get & check input from description
     local checkSuccess, item, itemDepotLocator, ingredientsItemSupplierLocator = InputChecker.Check([[
         This sync services determibes the "best" ItemSupplier that can provide a specific item to an ItemDepot. It returns the
@@ -320,7 +318,6 @@ function Shop:getBestItemLocator_SOSrv(...)
                                                 - (table)
                 success                         - (boolean) whether the service executed correctly
                 bestItemSupplierLocator         - (URL) locating the best ItemSupplier of the items
-                itemLocator                     - (URL) locating the best ItemSupplier with the items
 
         Parameters:
             serviceData                         - (table) data for the service
@@ -328,10 +325,10 @@ function Shop:getBestItemLocator_SOSrv(...)
                 itemDepotLocator                + (URL) locating the ItemDepot where the items need to be provided to
                 ingredientsItemSupplierLocator  + (URL) locating where ingredients can be retrieved
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_shop:getBestItemLocator_SOSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_shop:getBestItemSupplierLocator_SOSrv: Invalid input") return {success = false} end
 
     -- check input
-    if type(item) ~= "table" then corelog.Error("enterprise_shop:getBestItemLocator_SOSrv: Invalid item (type="..type(item)..")") return {success = false} end
+    if type(item) ~= "table" then corelog.Error("enterprise_shop:getBestItemSupplierLocator_SOSrv: Invalid item (type="..type(item)..")") return {success = false} end
 
     -- select ItemSuppliers than can provide items
     local canProvideItemSupplierLocators = self:getCanProvideItemSuppliers(item)
@@ -341,17 +338,12 @@ function Shop:getBestItemLocator_SOSrv(...)
     for i, itemSupplierLocator in ipairs(canProvideItemSupplierLocators) do
         bestItemSupplierLocator = self:bestItemSupplier(item, itemDepotLocator, ingredientsItemSupplierLocator, bestItemSupplierLocator, itemSupplierLocator)
     end
-    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop:getBestItemLocator_SOSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
-
-    -- determine itemLocator
-    local itemLocator = bestItemSupplierLocator:copy()
-    itemLocator:setQuery(item)
+    if not bestItemSupplierLocator then corelog.Warning("enterprise_shop:getBestItemSupplierLocator_SOSrv: No ItemSupplier can provide "..textutils.serialise(item)) return {success = false} end
 
     -- end
     return {
         success                 = true,
         bestItemSupplierLocator = bestItemSupplierLocator:copy(),
-        itemLocator             = itemLocator,
     }
 end
 
@@ -407,7 +399,7 @@ function Shop:provideItemsTo_AOSrv(...)
         -- add step determining best ItemSupplier for item
         local itemKey = "item"..iStepStr
         table.insert(projectSteps,
-            { stepType = "SOSrv", stepTypeDef = { className = "Shop", serviceName = "getBestItemLocator_SOSrv", objStep = 0, objKeyDef = "shop" }, stepDataDef = {
+            { stepType = "SOSrv", stepTypeDef = { className = "Shop", serviceName = "getBestItemSupplierLocator_SOSrv", objStep = 0, objKeyDef = "shop" }, stepDataDef = {
                 { keyDef = "item"                           , sourceStep = 0, sourceKeyDef = itemKey },
                 { keyDef = "itemDepotLocator"               , sourceStep = 0, sourceKeyDef = "itemDepotLocator" },
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
@@ -537,21 +529,22 @@ function Shop:needsTo_ProvideItemsTo_SOSrv(...)
         if type(itemCount) ~= "number" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Invalid itemCount (type="..type(itemCount)..")") return {success = false} end
         local item = { [itemName] = itemCount }
 
-        -- get best itemLocator
-        local itemLocator = self:getBestItemLocator_SOSrv({
+        -- get bestItemSupplierLocator
+        local bestItemSupplierLocator = self:getBestItemSupplierLocator_SOSrv({
             item                            = item,
             itemDepotLocator                = itemDepotLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator}
-        ).itemLocator
-        if not itemLocator then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
+        ).bestItemSupplierLocator
+        if not bestItemSupplierLocator then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: No ItemSupplier can provide "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get provide needs
-        local itemServiceData = {
-            itemsLocator                    = itemLocator,
+        local bestItemSupplier = Host.GetObject(bestItemSupplierLocator)
+        if type(bestItemSupplier) ~= "table" then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: bestItemSupplier "..bestItemSupplierLocator:getURI().." not found.") return {success = false} end
+        local serviceResults = bestItemSupplier:needsTo_ProvideItemsTo_SOSrv({
+            provideItems                    = item,
             itemDepotLocator                = itemDepotLocator,
             ingredientsItemSupplierLocator  = ingredientsItemSupplierLocator,
-        }
-        local serviceResults = enterprise_isp.NeedsTo_ProvideItemsTo_SSrv(itemServiceData)
+        })
         if not serviceResults.success then corelog.Error("Shop:needsTo_ProvideItemsTo_SOSrv: Failed obtaining needs for "..itemCount.." "..itemName.."'s") return {success = false} end
 
         -- get fuelNeed to provide
