@@ -176,7 +176,7 @@ function CheckInputChest()
     end
 
     -- did we find anything
-    if not itemTable:isEmpty() then
+    if itemTable and not itemTable:isEmpty() then
 
         -- create items locator (temp solution) ToDo !!
         local inputChestLocator = enterprise_chests:hostMObj_SSrv({
