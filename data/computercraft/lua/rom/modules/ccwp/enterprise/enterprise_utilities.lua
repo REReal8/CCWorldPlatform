@@ -161,8 +161,7 @@ function CheckInputChest()
         if type(itemDetail) == "nil" then break end
 
         -- add items to the order
-        itemTable = ItemTable.combine(itemTable, {[itemDetail.name] = itemDetail.count})
-        --itemTable[itemDetail.name] = (itemTable[itemDetail.name] or 0) + itemDetail.count
+        itemTable:add(itemDetail.name, itemDetail.count)
 
         -- move the item to the end
         inputChest.pushItems("left", numberOfNewItems + 1, itemDetail.count, firstEmpty)
