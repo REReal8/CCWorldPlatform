@@ -141,9 +141,6 @@ function CheckInputChest()
     local inputChest    = peripheral.wrap("left")
     local itemTable     = ItemTable:new({})
 
-    -- debugging
-    corelog.WriteToLog("dump - CheckInputChest()")
-
     -- find first empty slot from the end
     local firstEmpty    = 27
     while firstEmpty > 0 do
