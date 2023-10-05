@@ -303,6 +303,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
         }
         return callback:call(result)
     else -- source is not a turtle
+        -- ToDo: investigate if there are ways to prevent this (as below code seems a bit ackward)
         -- create turtleLocator
         local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 

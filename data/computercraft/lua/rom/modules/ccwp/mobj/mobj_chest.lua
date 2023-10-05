@@ -578,6 +578,7 @@ function Chest:storeItemsFrom_AOSrv(...)
     local projectDef = {
         steps   = {
             -- get items into a turtle
+            -- ToDo: consider using provideItemsTo_AOSrv here
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "turtleLocator" }, stepDataDef = {
                 { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },

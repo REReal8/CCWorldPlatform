@@ -1085,6 +1085,7 @@ function Factory.ProduceItem_ASrv(...)
     -- determine production steps
     local projectSteps = {
         -- get items into Turtle
+        -- ToDo: consider using provideItemsTo_AOSrv here...
         { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "turtleInputLocator" }, stepDataDef = {
             { keyDef = "itemsLocator"               , sourceStep = 0, sourceKeyDef = "localInputItemsLocator" },
             { keyDef = "assignmentsPriorityKey"     , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
