@@ -13,7 +13,7 @@ local URL = require "obj_url"
 local Location = require "obj_location"
 local Host = require "obj_host"
 
-local MObjHost = require "eobj_mobj_host"
+local MObjHost = require "mobj_host"
 
 local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"

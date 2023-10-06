@@ -11,7 +11,7 @@ local ValueTypeTest = require "value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_Silo = require "test.t_mobj_silo"
-local T_MObjHost = require "test.t_eobj_mobj_host"
+local T_MObjHost = require "test.t_mobj_host"
 local enterprise_storage
 
 function t_storage.T_All()

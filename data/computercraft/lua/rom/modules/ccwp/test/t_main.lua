@@ -55,7 +55,7 @@ local enterprise_storage = require "enterprise_storage"
 local t_test = require "test.t_test"
 local t_assignmentboard = require "test.t_assignmentboard"
 local t_projects = require "test.t_projects"
-local t_eobj_mobj_host = require "test.t_eobj_mobj_host"
+local t_mobj_host = require "test.t_mobj_host"
 local t_isp = require "test.t_isp"
 local t_energy = require "test.t_energy"
 local t_chests = require "test.t_chests"
@@ -101,7 +101,7 @@ function t_main.T_All()
 
     -- mobj tests
     T_TestMObj.T_All()
-    t_eobj_mobj_host.T_All()
+    t_mobj_host.T_All()
     T_BirchForest.T_All()
     T_Chest.T_All()
     T_Factory.T_All()

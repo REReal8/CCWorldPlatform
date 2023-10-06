@@ -5,7 +5,7 @@ local Location = require "obj_location"
 local enterprise_utilities = require "enterprise_utilities"
 
 local T_UtilStation = require "test.t_mobj_util_station"
-local T_MObjHost = require "test.t_eobj_mobj_host"
+local T_MObjHost = require "test.t_mobj_host"
 
 function t_utilities.T_All()
     -- MObjHost methods

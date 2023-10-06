@@ -12,7 +12,7 @@ function library.Setup()
     local objectFactory = ObjectFactory:getInstance()
     objectFactory:registerClass("TestMObj",     require "test.mobj_test")
 
-    objectFactory:registerClass("MObjHost",     require "eobj_mobj_host")
+    objectFactory:registerClass("MObjHost",     require "mobj_host")
     objectFactory:registerClass("Chest",        require "mobj_chest")
     objectFactory:registerClass("BirchForest",  require "mobj_birchforest")
     objectFactory:registerClass("Factory",      require "mobj_factory")
@@ -26,14 +26,14 @@ function library.Setup()
     -- register library modules
     local ModuleRegistry = require "module_registry"
     local moduleRegistry = ModuleRegistry:getInstance()
-    moduleRegistry:requireAndRegisterModule("eobj_mobj_host") -- ToDo: beetje dubbel op met ook in ObjectFactory...
+    moduleRegistry:requireAndRegisterModule("mobj_host") -- ToDo: beetje dubbel op met ook in ObjectFactory...
     moduleRegistry:requireAndRegisterModule("Factory", "mobj_factory") -- ToDo: refactor Factory to no longer need to register it also as a module
     moduleRegistry:requireAndRegisterModule("IMObj", "i_mobj")
 
     -- register library modules test modules
     moduleRegistry:requireAndRegisterModule("T_TestMObj", "test.t_mobj_test")
 
-    moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_eobj_mobj_host")
+    moduleRegistry:requireAndRegisterModule("T_MObjHost", "test.t_mobj_host")
     moduleRegistry:requireAndRegisterModule("T_BirchForest", "test.t_mobj_birchforest")
     moduleRegistry:requireAndRegisterModule("T_Chest", "test.t_mobj_chest")
     moduleRegistry:requireAndRegisterModule("T_ProductionSpot", "test.t_mobj_production_spot")

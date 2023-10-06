@@ -11,7 +11,7 @@ local enterprise_projects = require "enterprise_projects"
 local enterprise_chests = require "enterprise_chests"
 
 local T_Chest = require "test.t_mobj_chest"
-local T_MObjHost = require "test.t_eobj_mobj_host"
+local T_MObjHost = require "test.t_mobj_host"
 
 function t_chests.T_All()
     -- MObjHost methods

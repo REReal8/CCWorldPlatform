@@ -13,7 +13,7 @@ local ValueTypeTest = require "value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
-local T_MObjHost = require "test.t_eobj_mobj_host"
+local T_MObjHost = require "test.t_mobj_host"
 
 function t_forestry.T_All()
     -- MObjHost methods
