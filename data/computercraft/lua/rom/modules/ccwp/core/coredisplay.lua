@@ -291,6 +291,7 @@ end
 function ExecuteMObjTest(t)
 	-- forward call with options
 	local options	= {
+		{key = "h", desc = "MObjHost",			func = ExecuteMObjTest, param = {filename = "T_MObjHost"}},
 		{key = "1", desc = "TestMObj",			func = ExecuteMObjTest, param = {filename = "T_TestMObj"}},
 		{key = "b", desc = "BirchForest",		func = ExecuteMObjTest, param = {filename = "T_BirchForest"}},
 		{key = "c", desc = "Chest",				func = ExecuteMObjTest, param = {filename = "T_Chest"}},
@@ -298,7 +299,7 @@ function ExecuteMObjTest(t)
 		{key = "p", desc = "ProductionSpot",	func = ExecuteMObjTest, param = {filename = "T_ProductionSpot"}},
 		{key = "s", desc = "Silo",				func = ExecuteMObjTest, param = {filename = "T_Silo"}},
 		{key = "m", desc = "Mine",				func = ExecuteMObjTest, param = {filename = "T_Mine"}},
-		{key = "h", desc = "Shop",				func = ExecuteMObjTest, param = {filename = "T_Shop"}},
+		{key = "w", desc = "Shop",				func = ExecuteMObjTest, param = {filename = "T_Shop"}},
 		{key = "t", desc = "Turtle",			func = ExecuteMObjTest, param = {filename = "T_Turtle"}},
 		{key = "u", desc = "Util Station",		func = ExecuteMObjTest, param = {filename = "T_UtilStation"}},
 		{key = "x", desc = "Back to main menu", func = function () return true end }
@@ -311,7 +312,6 @@ function ExecuteEnterpriseTest(t)
 	local options	= {
 		{key = "1", desc = "enterprise_test",	func = ExecuteEnterpriseTest, param = {filename = "t_test"}},
 		{key = "a", desc = "assignmentboard",	func = ExecuteEnterpriseTest, param = {filename = "t_assignmentboard"}},
-		{key = "h", desc = "MObjHost",			func = ExecuteEnterpriseTest, param = {filename = "T_MObjHost"}},
 		{key = "t", desc = "turtle", 			func = ExecuteEnterpriseTest, param = {filename = "t_turtle"}},
 		{key = "p", desc = "projects", 			func = ExecuteEnterpriseTest, param = {filename = "t_projects"}},
 		{key = "e", desc = "energy", 			func = ExecuteEnterpriseTest, param = {filename = "t_energy"}},
