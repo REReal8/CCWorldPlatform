@@ -20,6 +20,7 @@ local TestArrayTest = require "test_array_test"
 local FieldValueEqualTest = require "field_value_equal_test"
 local FieldValueTypeTest = require "field_value_type_test"
 local MethodResultEqualTest = require "method_result_equal_test"
+local IsBlueprintTest = require "test.is_blueprint_test"
 
 local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
@@ -176,24 +177,35 @@ end
 
 function T_Turtle.T_IMObj_All()
     -- prepare test
-    local id = coreutils.NewId()
+    local turtleId = os.getComputerID()
+    local id = tostring(turtleId)
     local obj = T_Turtle.CreateTestObj(id, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
 
-    -- local destructFieldsTest = TestArrayTest:newInstance()
+    local constructParameters = {
+        turtleId        = turtleId,
+    }
 
-    -- local constructFieldsTest = T_Turtle.CreateInitialisedTest(nil, fuelPriorityKey1)
+    local destructFieldsTest = TestArrayTest:newInstance()
 
-    -- local isBlueprintTest = IsBlueprintTest:newInstance(baseLocation1)
+    local constructFieldsTest = T_Turtle.CreateInitialisedTest(id, fuelPriorityKey1)
 
-    -- test
-    -- T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
-    -- T_IMObj.pt_Implements_IMObj(testClassName, obj)
-    -- T_IMObj.pt_destruct(testClassName, Chest, constructParameters1, testObjName, destructFieldsTest, logOk)
-    -- T_IMObj.pt_construct(testClassName, Chest, constructParameters1, testObjName, constructFieldsTest, logOk)
+    local isBlueprintTest = IsBlueprintTest:newInstance(obj:getLocation())
+
+    -- test type
+    T_IMObj.pt_IsInstanceOf_IMObj(testClassName, obj)
+    T_IMObj.pt_Implements_IMObj(testClassName, obj)
+
+    -- test construct/ upgrade/ destruct
+    T_IMObj.pt_destruct(testClassName, Turtle, constructParameters, testObjName, destructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, Turtle, constructParameters, testObjName, constructFieldsTest, logOk)
+
+    -- test getters
     T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
-    -- T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
-    -- T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
-    -- T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
+
+    -- test blueprints
+    T_IMObj.pt_getBuildBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
+    T_IMObj.pt_getDismantleBlueprint(testClassName, obj, testObjName, isBlueprintTest, logOk)
 end
 
 --                        _                           _   _               _

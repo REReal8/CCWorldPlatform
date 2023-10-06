@@ -40,7 +40,7 @@ RG UtilStation v1.0 input & output chest UI                                     
    -  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
    -  mobj_shop
-   -  mobj_turtle
+   R  mobj_turtle                                                                                                       (done)
 
 -  use MObjHost class                                                                                                   (....)
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)

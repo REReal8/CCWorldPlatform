@@ -1,9 +1,10 @@
 -- define class
 local Class = require "class"
 local ObjBase = require "obj_base"
+local IMObj = require "i_mobj"
 local IItemSupplier = require "i_item_supplier"
 local IItemDepot = require "i_item_depot"
-local Turtle = Class.NewClass(ObjBase, IItemSupplier, IItemDepot)
+local Turtle = Class.NewClass(ObjBase, IMObj, IItemSupplier, IItemDepot)
 
 --[[
     The Turtle mobj represents a Turtle in the minecraft world and provides services to operate on that Turtle.
@@ -17,8 +18,12 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
+local ObjTable = require "obj_table"
 local ItemTable = require "obj_item_table"
 local Host = require "obj_host"
+local Block = require "obj_block"
+local CodeMap = require "obj_code_map"
+local LayerRectangle = require "obj_layer_rectangle"
 
 local role_fuel_worker = require "role_fuel_worker"
 
@@ -107,8 +112,143 @@ end
 --                            _/ |
 --                           |__/
 
+function Turtle:construct(...)
+    -- get & check input from description
+    local checkSuccess, turtleId = InputChecker.Check([[
+        This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
+
+        The constructed Turtle is not yet saved in the Host.
+
+        Return value:
+                                        - (Turtle) the constructed Turtle
+
+        Parameters:
+            constructParameters         - (table) parameters for constructing the Turtle
+                turtleId                + (number) id of the turtle
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("Turtle:construct: Invalid input") return nil end
+
+    -- construct new Turtle
+    local obj = Turtle:newInstance(tostring(turtleId))
+
+    -- end
+    return obj
+end
+
+function Turtle:destruct()
+    --[[
+        This method destructs a Turtle instance.
+
+        The Turtle is not yet deleted from the Host.
+
+        Return value:
+                                        - (boolean) whether the Turtle was succesfully destructed.
+
+        Parameters:
+    ]]
+
+    -- end
+    local destructSuccess = true
+    return destructSuccess
+end
+
 function Turtle:getId()
     return self._id
+end
+
+function Turtle:getWIPId()
+    --[[
+        Returns the unique Id of the Turtle used for administering WIP.
+    ]]
+
+    return self:getClassName().." "..self:getId()
+end
+
+local function Turtle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            ["C"]   = Block:newInstance("computercraft:turtle"),
+        }),
+        CodeMap:newInstance({
+            [1] = "C",
+        })
+    )
+end
+
+function Turtle:getBuildBlueprint()
+    --[[
+        This method returns a blueprint for building the Turtle in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- buildLocation
+    local location = self:getLocation()
+    local buildLocation = location:copy()
+
+    -- layerList
+    local layerList = {
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = Turtle_layer()},
+    }
+
+    -- escapeSequence
+    local escapeSequence = {}
+
+    -- blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence,
+    }
+
+    -- end
+    return buildLocation, blueprint
+end
+
+local function TurtleDismantle_layer()
+    return LayerRectangle:newInstance(
+        ObjTable:newInstance(Block:getClassName(), {
+            [" "]   = Block:newInstance(Block.NoneBlockName()),
+        }),
+        CodeMap:newInstance({
+            [1] = " ",
+        })
+    )
+end
+
+function Turtle:getDismantleBlueprint()
+    --[[
+        This method returns a blueprint for dismantling the Turtle in the physical minecraft world.
+
+        Return value:
+            buildLocation               - (Location) the location to build the blueprint
+            blueprint                   - (table) the blueprint
+
+        Parameters:
+    ]]
+
+    -- layerList
+    local layerList = {
+        { startpoint = Location:newInstance(0, 0, 0), buildDirection = "Down", layer = TurtleDismantle_layer()},
+    }
+
+    -- escapeSequence
+    local escapeSequence = {}
+
+    -- blueprint
+    local blueprint = {
+        layerList = layerList,
+        escapeSequence = escapeSequence
+    }
+
+    -- buildLocation
+    local buildLocation = self:getLocation():copy()
+
+    -- end
+    return buildLocation, blueprint
 end
 
 --    _____ _____ _                  _____                   _ _                            _   _               _
