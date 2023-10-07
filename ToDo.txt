@@ -39,7 +39,6 @@ RG UtilStation v1.0 input & output chest UI                                     
    R  mobj_factory                                                                                                      (done)
    -  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
-   -  mobj_shop
    R  mobj_turtle                                                                                                       (done)
 
 -  use MObjHost class                                                                                                   (....)
@@ -64,11 +63,6 @@ RG UtilStation v1.0 input & output chest UI                                     
       R  upgrade into an MObjHost                                                                                       (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
-   -  enterprise_shop
-      -  upgrade into an MObjHost
-      -  use new MObjHost methods instead of current equivalent
-      -  use generalised test functions
-      -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
    R  enterprise_turtle                                                                                                 (done)
       R  upgrade into an MObjHost                                                                                       (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
@@ -129,6 +123,15 @@ G  Descriptions for blueprints and project steps
    -  Extend IMObj (and all MObj's) with
       -  get(Base)Location
    -  consider renaming (I)MObj to (I)PObj where P stands for Physical
+
+-  ensure mobj_shop/ enterprise_shop implement IConstructable/ CObjHost
+   -  mobj_shop
+      -  implement IConstructable
+   -  enterprise_shop
+      -  upgrade into an CObjHost
+      -  use new CObjHost methods instead of current equivalent
+      -  use generalised test functions
+      -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
 
 -  enterprise_turtle improvements
    -  getObject(): consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
