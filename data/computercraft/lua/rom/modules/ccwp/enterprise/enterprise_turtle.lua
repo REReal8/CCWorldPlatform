@@ -1,13 +1,10 @@
 -- define class
 local Class = require "class"
-local Host = require "obj_host"
-local enterprise_turtle = Class.NewClass(Host)
+local MObjHost = require "mobj_host"
+local enterprise_turtle = Class.NewClass(MObjHost)
 
 --[[
-    The enterprise_turtle provides services related to turtles.
-
-    Furthermore it provides the following additional services
-        GetItemsLocator_SSrv   - provide the URL of items in a turtle
+    The enterprise_turtle is a MObjHost. It hosts Turtle's that can perform work in the pysical world.
 --]]
 
 local coreutils = require "coreutils"
@@ -18,6 +15,7 @@ local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
+local Host = require "obj_host"
 
 local Turtle = require "mobj_turtle"
 

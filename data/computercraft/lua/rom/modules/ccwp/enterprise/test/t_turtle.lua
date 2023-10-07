@@ -11,6 +11,8 @@ local enterprise_manufacturing = require "enterprise_manufacturing"
 
 local T_BirchForest = require "test.t_mobj_birchforest"
 local TestObj = require "test.obj_test"
+local T_MObjHost = require "test.t_mobj_host"
+local T_Turtle
 
 function t_turtle.T_All()
 --    t_turtle.T_GetFuelLevels_Att()
@@ -22,15 +24,27 @@ function t_turtle.T_All()
     -- service methods
     t_turtle.T_RegisterTurtle_SSrv()
     t_turtle.T_DelistTurtle_ASrv()
+
+    -- MObjHost methods
+    t_turtle.T_hostMObj_SSrv_Turtle()
+    t_turtle.T_releaseMObj_SSrv_Turtle()
 end
 
-local itemsQuery = {
-    ["minecraft:birch_log"] = 1,
-    ["minecraft:torch"]     = 5,
-}
+function t_turtle.T_AllPhysical()
+    -- IObj methods
 
+end
+
+local logOk = true
+local testMObjClassName = "Turtle"
+local testMObjName = "turtle"
 local level0 = 0
-local turtleId1 = 999999
+local turtleId = 999999
+local fuelPriorityKey = ""
+
+local constructParameters = {
+    turtleId        = turtleId,
+}
 
 -- print("GetFuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
 function t_turtle.T_GetFuelLevels_Att()
@@ -38,7 +52,7 @@ function t_turtle.T_GetFuelLevels_Att()
     corelog.WriteToLog("# Test GetFuelLevels_Att")
     local forest = T_BirchForest.CreateTestObj() assert(forest, "Failed obtaining BirchForest")
     local forestLocator = enterprise_forestry:saveObject(forest)
-    local T_Turtle = require "test.t_mobj_turtle"
+    T_Turtle = T_Turtle or require "test.t_mobj_turtle"
     local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
     local location = turtleObj:getLocation()
     local factoryClassName = "Factory"
@@ -76,7 +90,7 @@ function t_turtle.T_RegisterTurtle_SSrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_turtle.RegisterTurtle_SSrv() tests")
     local objParameters = {
-        turtleId    = turtleId1
+        turtleId    = turtleId
     }
 
     -- test
@@ -95,7 +109,7 @@ function t_turtle.T_DelistTurtle_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_turtle.DelistTurtle_ASrv() tests")
     local objParameters = {
-        turtleId        = turtleId1
+        turtleId        = turtleId
     }
     local objLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator if not objLocator then corelog.Error("failed registering Obj") return end
     local callback = Callback:newInstance("t_turtle", "DelistTurtle_ASrv_callback", { ["objLocator"] = objLocator, })
@@ -174,6 +188,40 @@ function t_turtle.T_getObject()
     -- cleanup test
     enterprise_turtle:deleteResource(objectLocator)
     assert(not enterprise_turtle:getResource(objectLocator), "resource not deleted")
+end
+
+--    __  __  ____  _     _ _    _           _                    _   _               _
+--   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--                      _/ |
+--                     |__/
+
+function t_turtle.T_hostMObj_SSrv_Turtle()
+    -- prepare test
+    local id = tostring(turtleId)
+    T_Turtle = T_Turtle or require "test.t_mobj_turtle"
+    local fieldsTest0 = T_Turtle.CreateInitialisedTest(id, fuelPriorityKey)
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+end
+
+local mobjLocator_Turtle = nil
+
+function t_turtle.T_releaseMObj_SSrv_Turtle()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
 end
 
 return t_turtle
