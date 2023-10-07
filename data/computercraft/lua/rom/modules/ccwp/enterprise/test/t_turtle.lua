@@ -30,6 +30,9 @@ end
 function t_turtle.T_AllPhysical()
     -- IObj methods
 
+    -- MObjHost methods
+    local mobjLocator = t_turtle.T_hostAndBuildMObj_ASrv_Turtle()
+    t_turtle.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
 end
 
 local logOk = false
@@ -83,20 +86,6 @@ function t_turtle.T_GetFuelLevels_Att()
     result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
-end
-
-function t_turtle.DelistTurtle_ASrv_callback(callbackData, serviceResults)
-    -- test (cont)
-    assert(serviceResults.success, "failed executing async service")
-
-    local objLocator = callbackData["objLocator"]
-    local objResourceTable = enterprise_turtle:getResource(objLocator)
-    assert(not objResourceTable, "Obj wasn't deleted")
-
-    -- cleanup test
-
-    -- end
-    return true
 end
 
 local compact = { compact = true }
@@ -181,6 +170,20 @@ end
 
 local mobjLocator_Turtle = nil
 
+function t_turtle.T_hostAndBuildMObj_ASrv_Turtle()
+    -- prepare test
+
+    -- test
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Turtle = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
 function t_turtle.T_releaseMObj_SSrv_Turtle()
     -- prepare test
 
@@ -189,6 +192,22 @@ function t_turtle.T_releaseMObj_SSrv_Turtle()
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
+end
+
+function t_turtle.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
+    -- prepare test
+    if not mobjLocator then
+        -- see if we locally remembered a mobjLocator
+        assert(mobjLocator_Turtle, "no mobjLocator to operate on")
+        mobjLocator = mobjLocator_Turtle
+    end
+
+    -- test
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_forestry, mobjLocator, logOk)
+    assert(serviceResults, "no serviceResults returned")
+
+    -- cleanup test
+    mobjLocator_Turtle = nil
 end
 
 return t_turtle

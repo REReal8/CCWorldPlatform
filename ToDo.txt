@@ -69,10 +69,10 @@ RG UtilStation v1.0 input & output chest UI                                     
       -  use new MObjHost methods instead of current equivalent
       -  use generalised test functions
       -  rename enterprise_shop to better name: e.g. enterprise_shopping or enterprise_itemsupplier
-   -  enterprise_turtle
+   R  enterprise_turtle                                                                                                 (done)
       R  upgrade into an MObjHost                                                                                       (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
-      -  use generalised test functions
+      R  use generalised test functions                                                                                 (done)
 
 -  consider merging enterprise_chest into enterprise_storage
 

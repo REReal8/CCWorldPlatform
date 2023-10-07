@@ -171,7 +171,7 @@ end
 local function Turtle_layer()
     return LayerRectangle:newInstance(
         ObjTable:newInstance(Block:getClassName(), {
-            ["C"]   = Block:newInstance("computercraft:turtle"),
+            ["C"]   = Block:newInstance("computercraft:turtle_normal"),
         }),
         CodeMap:newInstance({
             [1] = "C",
