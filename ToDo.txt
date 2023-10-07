@@ -64,7 +64,7 @@ R  use MObjHost class                                                           
       R  use generalised test functions                                                                                 (done)
 
 -  enterprise_workforce/ IWorker, a generalisation of enterprise_turtle/ Turtle
-      -  introduce IWorker interface
+      -  introduce IWorker interface (rename IProcessor + improve definition)
       -  have Turtle implement IWorker
       -  rename enterprise_turtle to enterprise_workforce
       -  generalize specific enterprise_workforce methods to handle any IWorker
