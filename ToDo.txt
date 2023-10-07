@@ -37,7 +37,6 @@ RG UtilStation v1.0 input & output chest UI                                     
    R  mobj_birchforest                                                                                                  (done)
    R  mobj_chest                                                                                                        (done)
    R  mobj_factory                                                                                                      (done)
-   -  mobj_mine                                                                                                         (....)
    R  mobj_silo                                                                                                         (done)
    R  mobj_turtle                                                                                                       (done)
 
@@ -55,10 +54,6 @@ RG UtilStation v1.0 input & output chest UI                                     
       R  upgrade to a MObjHost                                                                                          (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
-   -  enterprise_gathering
-      R  upgrade into an MObjHost                                                                                       (done)
-      R  use new MObjHost methods instead of current equivalent                                                         (done)
-      -  introduce test module with generalised test functions
    R  enterprise_storage                                                                                                (done)
       R  upgrade into an MObjHost                                                                                       (done)
       R  use new MObjHost methods instead of current equivalent                                                         (done)
