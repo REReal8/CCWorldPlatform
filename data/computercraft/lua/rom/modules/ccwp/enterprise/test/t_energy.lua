@@ -32,7 +32,8 @@ function t_energy.T_GetFuelNeed_Refuel_Att()
     -- prepare test
     corelog.WriteToLog("* enterprise_energy.GetFuelNeed_Refuel_Att() tests")
     local T_Turtle = require "test.t_mobj_turtle"
-    local turtleObj = T_Turtle.CreateTestObj() assert (turtleObj, "Failed obtaining Turtle")
+    local turtleObjId = tostring(os.getComputerID())
+    local turtleObj = T_Turtle.CreateTestObj(turtleObjId) assert (turtleObj, "Failed obtaining Turtle")
     local turtleLocation = turtleObj:getLocation()
     local forestLocation = turtleLocation:getRelativeLocation(-3, -2, 0)
     local forest = T_BirchForest.CreateTestObj(nil, levelm1, forestLocation) assert(forest, "Failed obtaining BirchForest")

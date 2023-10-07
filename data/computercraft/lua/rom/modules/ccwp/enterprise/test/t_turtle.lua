@@ -3,6 +3,7 @@ local t_turtle = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
+local Location = require "obj_location"
 
 local enterprise_turtle = require "enterprise_turtle"
 local enterprise_energy = require "enterprise_energy"
@@ -21,10 +22,6 @@ function t_turtle.T_All()
     t_turtle.T_GetAnyTurtleLocator()
     t_turtle.T_getObject()
 
-    -- service methods
-    t_turtle.T_RegisterTurtle_SSrv()
-    t_turtle.T_DelistTurtle_ASrv()
-
     -- MObjHost methods
     t_turtle.T_hostMObj_SSrv_Turtle()
     t_turtle.T_releaseMObj_SSrv_Turtle()
@@ -35,15 +32,17 @@ function t_turtle.T_AllPhysical()
 
 end
 
-local logOk = true
+local logOk = false
 local testMObjClassName = "Turtle"
 local testMObjName = "turtle"
 local level0 = 0
 local turtleId = 999999
+local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey = ""
 
 local constructParameters = {
     turtleId        = turtleId,
+    location        = location1,
 }
 
 -- print("GetFuelLevels_Att="..textutils.serialize(enterprise_turtle.GetFuelLevels_Att()))
@@ -84,38 +83,6 @@ function t_turtle.T_GetFuelLevels_Att()
     result = enterprise_manufacturing:releaseMObj_SSrv({ mobjLocator = factoryLocator}) assert(result, "Failed releasing Factory")
 
     enterprise_forestry:deleteResource(forestLocator)
-end
-
-function t_turtle.T_RegisterTurtle_SSrv()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_turtle.RegisterTurtle_SSrv() tests")
-    local objParameters = {
-        turtleId    = turtleId
-    }
-
-    -- test
-    local result = enterprise_turtle.RegisterTurtle_SSrv(objParameters)
-    assert(result.success, "failed registering Obj")
-    local objLocator = result.turtleLocator
-    assert(objLocator, "Failed obtaining objLocator")
-    local obj = enterprise_turtle:getObject(objLocator)
-    assert(obj, "Failed obtaining obj")
-
-    -- cleanup test
-    enterprise_turtle:deleteResource(objLocator)
-end
-
-function t_turtle.T_DelistTurtle_ASrv()
-    -- prepare test
-    corelog.WriteToLog("* enterprise_turtle.DelistTurtle_ASrv() tests")
-    local objParameters = {
-        turtleId        = turtleId
-    }
-    local objLocator = enterprise_turtle.RegisterTurtle_SSrv(objParameters).turtleLocator if not objLocator then corelog.Error("failed registering Obj") return end
-    local callback = Callback:newInstance("t_turtle", "DelistTurtle_ASrv_callback", { ["objLocator"] = objLocator, })
-
-    -- test
-    return enterprise_turtle.DelistTurtle_ASrv({ turtleLocator = objLocator}, callback)
 end
 
 function t_turtle.DelistTurtle_ASrv_callback(callbackData, serviceResults)
@@ -203,7 +170,7 @@ function t_turtle.T_hostMObj_SSrv_Turtle()
     -- prepare test
     local id = tostring(turtleId)
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest0 = T_Turtle.CreateInitialisedTest(id, fuelPriorityKey)
+    local fieldsTest0 = T_Turtle.CreateInitialisedTest(id, location1, fuelPriorityKey)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)

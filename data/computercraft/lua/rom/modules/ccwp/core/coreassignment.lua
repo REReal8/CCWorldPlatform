@@ -25,6 +25,7 @@ local coremove   = require "coremove"
 
 local Callback   = require "obj_callback"
 local TaskCall   = require "obj_task_call"
+local Location  = require "obj_location"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_turtle
@@ -67,13 +68,16 @@ function coreassignment.Run()
     local objResourceTable = enterprise_turtle:getResource(turtleLocator)
     if not objResourceTable then
         local turtleId = os.getComputerID()
-        turtleLocator = enterprise_turtle.RegisterTurtle_SSrv({ turtleId = turtleId }).turtleLocator
-        if not turtleLocator then corelog.Error("coreassignment.Run: Failed registering Turtle "..turtleId) return false end
+        local coremove_location = Location:new(coremove.GetLocation())
+        turtleLocator = enterprise_turtle:hostMObj_SSrv({ className = "Turtle", constructParameters = {
+            turtleId    = turtleId,
+            location    = coremove_location,
+        }}).mobjLocator
+        if not turtleLocator then corelog.Error("coreassignment.Run: Failed hosting Turtle "..turtleId) return false end
     end
 
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do
-
         -- try get assignment for turtle
         local serviceResults = enterprise_turtle.GetAssignmentForTurtle_SSrv({ turtleLocator = turtleLocator })
         if not serviceResults or not serviceResults.success then corelog.Error("coreassignment.Run: failure in getting new assignment") end

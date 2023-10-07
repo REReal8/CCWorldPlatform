@@ -39,11 +39,12 @@ local enterprise_turtle
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, id, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, id, location, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
             id                      + (string, "any") id of the Turtle
+            location                + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Turtle:_init: Invalid input") return nil end
@@ -51,6 +52,7 @@ function Turtle:_init(...)
     -- initialisation
     ObjBase._init(self)
     self._id                = id
+    self._location          = location
     self._fuelPriorityKey   = fuelPriorityKey
 end
 
@@ -63,6 +65,7 @@ function Turtle:new(...)
         Parameters:
             o                           + (table, {}) table with object fields
                 _id                     - (string, "any") id of the Turtle
+                _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Turtle:new: Invalid input") return nil end
@@ -114,7 +117,7 @@ end
 
 function Turtle:construct(...)
     -- get & check input from description
-    local checkSuccess, turtleId = InputChecker.Check([[
+    local checkSuccess, turtleId, location = InputChecker.Check([[
         This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         The constructed Turtle is not yet saved in the Host.
@@ -125,11 +128,12 @@ function Turtle:construct(...)
         Parameters:
             constructParameters         - (table) parameters for constructing the Turtle
                 turtleId                + (number) id of the turtle
+                location                + (Location) location of the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Turtle:construct: Invalid input") return nil end
 
     -- construct new Turtle
-    local obj = Turtle:newInstance(tostring(turtleId))
+    local obj = Turtle:newInstance(tostring(turtleId), location)
 
     -- end
     return obj
@@ -521,13 +525,25 @@ end
 
 function Turtle:getLocation()
     -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getLocation() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+    if self:getTurtleId() == os.getComputerID() then
+        -- get coremove location
+        local coremove_location = Location:new(coremove.GetLocation())
 
-    -- get location
-    local location = Location:new(coremove.GetLocation())
+        -- check coremove location has changed
+        if not coremove_location:isEqual(self._location) then
+            -- update location in turtle object
+--            corelog.WriteToLog("Turtle:getLocation(): Turtle "..self:getTurtleId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
+            -- ToDo: consider changes to prevent TurtleObj location and coremove_location going out of date (to the extreme: incorporate coremove into Turtle class)
+            self._location = coremove_location
+
+            -- save change in host
+            enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+            enterprise_turtle:saveObject(self)
+        end
+    end
 
     -- end
-    return location
+    return self._location
 end
 
 function Turtle:getInventory()
