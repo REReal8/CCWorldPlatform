@@ -31,7 +31,7 @@ R  Propely Build UtilStation by using role_builder                              
 
 RG UtilStation v1.0 input & output chest UI                                                                             (....)
 
--  ensure all MObj's implement and follow IMObj interface                                                               (....)
+R  ensure all MObj's implement and follow IMObj interface                                                               (done)
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc                                              (done)
    R  mobj_test                                                                                                         (done)
    R  mobj_birchforest                                                                                                  (done)
@@ -40,7 +40,7 @@ RG UtilStation v1.0 input & output chest UI                                     
    R  mobj_silo                                                                                                         (done)
    R  mobj_turtle                                                                                                       (done)
 
--  use MObjHost class                                                                                                   (....)
+R  use MObjHost class                                                                                                   (done)
    R  generalise MObjHost test functions; i.e. for hosting, building, releasing, etc                                    (done)
    R  enterprise_forestry                                                                                               (done)
       R  upgrade to a MObjHost                                                                                          (done)
