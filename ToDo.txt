@@ -63,6 +63,19 @@ R  use MObjHost class                                                           
       R  use new MObjHost methods instead of current equivalent                                                         (done)
       R  use generalised test functions                                                                                 (done)
 
+-  enterprise_workforce/ IWorker, a generalisation of enterprise_turtle/ Turtle
+      -  introduce IWorker interface
+      -  have Turtle implement IWorker
+      -  rename enterprise_turtle to enterprise_workforce
+      -  generalize specific enterprise_workforce methods to handle any IWorker
+      -  modify bootstrapping users of enterprise_workforce/ Turtle to use generalised enterprise_workforce methods
+         -  enterprise_assignment_board
+         -  enterprise_colonization
+         -  ...
+      -  enable booting a new IWorker, possibly after supplying it with some starting resources
+         -  in general: startup, getComputerID, set in Obj, reboot
+         -  in case of a turtle: provide with some fuel?, maybe a pickaxe, a modem and a crafting station?
+
 -  consider merging enterprise_chest into enterprise_storage
 
 -  replace table.unpack(arg) with ... everywhere
