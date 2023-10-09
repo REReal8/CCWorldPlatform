@@ -14,6 +14,8 @@ local coreinventory = require "coreinventory"
 local InputChecker = require "input_checker"
 local Inventory = require "obj_inventory"
 
+local enterprise_turtle
+
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
 --      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
@@ -350,15 +352,19 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
     -- ToDo: consider double checking only exactly the requested items were moved to the turtle => itemResultQuery
     local inventory = Inventory:newInstance(slots)
 
-    -- get turtleId
+    -- determine output locator
     local currentTurtleId = os.getComputerID()
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
+        turtleId    = currentTurtleId,
+        itemsQuery  = itemResultQuery
+    }).itemsLocator
 
     -- end
     local result = {
-        success         = true,
-        inventory       = inventory,
-        turtleId        = currentTurtleId,
-        itemResultQuery = itemResultQuery,
+        success                 = true,
+        inventory               = inventory,
+        turtleOutputItemsLocator= turtleOutputItemsLocator,
     }
     return result
 end

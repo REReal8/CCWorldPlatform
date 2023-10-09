@@ -406,19 +406,14 @@ function Chest:provideItemsTo_AOSrv(...)
                 { keyDef = "objectTable"            , sourceStep = 0, sourceKeyDef = "chest" },
                 { keyDef = "objectTable._inventory" , sourceStep = 1, sourceKeyDef = "inventory" },
             }},
-            -- get turtle itemsLocator
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetItemsLocator_SSrv" }, stepDataDef = {
-                { keyDef = "turtleId"               , sourceStep = 1, sourceKeyDef = "turtleId" },
-                { keyDef = "itemsQuery"             , sourceStep = 1, sourceKeyDef = "itemResultQuery" },
-            }},
             -- store items to ItemDepot
             { stepType = "LAOSrv", stepTypeDef = { serviceName = "storeItemsFrom_AOSrv", locatorStep = 0, locatorKeyDef = "itemDepotLocator" }, stepDataDef = {
-                { keyDef = "itemsLocator"           , sourceStep = 3, sourceKeyDef = "itemsLocator" },
+                { keyDef = "itemsLocator"           , sourceStep = 1, sourceKeyDef = "turtleOutputItemsLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
         },
         returnData  = {
-            { keyDef = "destinationItemsLocator"    , sourceStep = 4, sourceKeyDef = "destinationItemsLocator" },
+            { keyDef = "destinationItemsLocator"    , sourceStep = 3, sourceKeyDef = "destinationItemsLocator" },
         }
     }
     local projectServiceData = {
