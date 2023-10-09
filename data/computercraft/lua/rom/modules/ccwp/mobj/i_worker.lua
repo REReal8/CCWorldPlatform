@@ -1,12 +1,12 @@
 -- define interface
-local IProcessor = {
+local IWorker = {
 }
 
 --[[
-    This module specifies the interface IProcessor.
+    This module specifies the interface IWorker.
 
-    The IProcessor interface defines methods for computational entities in CCWP (e.g. computercraft computers and turtiles). They are the
-    objects on which the CCWP code is run.
+    The IWorker interface defines methods for computational entities (i.e. computercraft computers and turtles) that can perform work (i.e. assignments). They are the
+    objects on which the CCWP code is run. Objects of a class implementing the interface are referred to as Worker's.
 --]]
 
 local IInterface = require "i_interface"
@@ -20,37 +20,23 @@ local IInterface = require "i_interface"
 --                              | |
 --                              |_|
 
-function IProcessor:getComputerID()
+function IWorker:getWorkerId()
     --[[
-        Get the computer's ID.
+        Get the Worker Id.
 
         Return value:
-                                - (number) the computer's ID
+                                - (number) the Worker Id
     ]]
 
-    IInterface.UnimplementedMethodError("IProcessor", "getComputerId")
+    IInterface.UnimplementedMethodError("IWorker", "getWorkerId")
 
     -- end
     return -1
 end
 
-function IProcessor:turnOn()
+function IWorker:getMainUIMenu()
     --[[
-        Turn the other computer on.
-
-        Return value:
-                                - (boolean) if the computer is on
-    ]]
-
-    IInterface.UnimplementedMethodError("IProcessor", "turnOn")
-
-    -- end
-    return false
-end
-
-function IProcessor:getMainUIMenu()
-    --[[
-        Get the main (start) UI menu of the computer.
+        Get the main (start) UI menu of the Worker.
 
         This menu can be used in conjuction with coredisplay.MainMenu.
 
@@ -63,32 +49,44 @@ function IProcessor:getMainUIMenu()
                 question        - (string, nil) final question to print
     ]]
 
-    IInterface.UnimplementedMethodError("IProcessor", "getMainUIMenu")
+    IInterface.UnimplementedMethodError("IWorker", "getMainUIMenu")
 
     -- end
     return {}
 end
 
-function IProcessor:getAssignmentFilterAndResume()
+function IWorker:getAssignmentFilter()
     --[[
-        Get assignment filter and computer resume for finding the next best assignment.
+        Get assignment filter for finding the next best Assignment for the Worker.
 
         The assignment filter is used to indicate to only accept assignments that satisfy certain conditions. This can e.g. be used
             to only accept assignments with high priority.
 
-        The resume gives information on the computer and is used to determine if the computer is (best) suitable to take an assignment.
-            This is can e.g. be used to indicate location, fuel level and equiped items.
-
         Return value:
-                                    - (table)
-                assignmentFilter    - (table) filter to apply in finding an Assignment
-                resume              - (table) computer "resume" to consider in finding an Assignment
+            assignmentFilter    - (table) filter to apply in finding an Assignment
     --]]
 
-    IInterface.UnimplementedMethodError("IProcessor", "getAssignmentFilterAndResume")
+    IInterface.UnimplementedMethodError("IWorker", "getAssignmentFilter")
 
     -- end
     return {}
 end
 
-return IProcessor
+function IWorker:getWorkerResume()
+    --[[
+        Get Worker resume for selecting Assignment's.
+
+        The resume gives information on the Worker and is used to determine if the Worker is (best) suitable to take an Assignment.
+            This is can e.g. be used to indicate location, fuel level and equiped items.
+
+        Return value:
+            resume              - (table) Worker "resume" to consider in selecting Assignment's
+    --]]
+
+    IInterface.UnimplementedMethodError("IWorker", "getWorkerResume")
+
+    -- end
+    return {}
+end
+
+return IWorker
