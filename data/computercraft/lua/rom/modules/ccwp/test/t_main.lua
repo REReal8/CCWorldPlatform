@@ -37,7 +37,6 @@ local T_Chest = require "test.t_mobj_chest"
 local T_ProductionSpot = require "test.t_mobj_production_spot"
 local T_Factory = require "test.t_mobj_factory"
 local T_Silo = require "test.t_mobj_silo"
-local T_Mine = require "test.t_mobj_mine"
 local T_Shop = require "test.t_mobj_shop"
 local T_Turtle = require "test.t_mobj_turtle"
 
@@ -107,7 +106,6 @@ function t_main.T_All()
     T_Factory.T_All()
     T_ProductionSpot.T_All()
     T_Silo.T_All()
-    T_Mine.T_All()
     T_Shop.T_All()
     T_Turtle.T_All()
 
