@@ -39,7 +39,7 @@ local logOk = false
 local testMObjClassName = "Turtle"
 local testMObjName = "turtle"
 local level0 = 0
-local turtleId = 999999
+local turtleId = 111111
 local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey = ""
 
@@ -162,7 +162,7 @@ function t_turtle.T_hostMObj_SSrv_Turtle()
     local fieldsTest0 = T_Turtle.CreateInitialisedTest(id, location1, fuelPriorityKey)
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)
+    local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_turtle, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -174,7 +174,7 @@ function t_turtle.T_hostAndBuildMObj_ASrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(enterprise_turtle, testMObjClassName, constructParameters, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -188,7 +188,7 @@ function t_turtle.T_releaseMObj_SSrv_Turtle()
     -- prepare test
 
     -- test
-    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_forestry, testMObjClassName, constructParameters, testMObjName, logOk)
+    local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(enterprise_turtle, testMObjClassName, constructParameters, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
@@ -203,7 +203,7 @@ function t_turtle.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
     end
 
     -- test
-    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_forestry, mobjLocator, logOk)
+    local serviceResults = T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(enterprise_turtle, mobjLocator, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test

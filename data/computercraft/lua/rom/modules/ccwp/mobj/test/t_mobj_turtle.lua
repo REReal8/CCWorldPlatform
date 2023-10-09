@@ -55,7 +55,7 @@ local testClassName = "Turtle"
 local testObjName = "turtle"
 local logOk = false
 
-local turtleId = 999999
+local turtleId = 111111
 local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
