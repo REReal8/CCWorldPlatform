@@ -352,12 +352,11 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
     local inventory = Inventory:newInstance(slots)
 
     -- determine output locator
-    local currentTurtleId = os.getComputerID()
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = currentTurtleId,
-        itemsQuery  = itemResultQuery
-    }).itemsLocator
+    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    if not turtleLocator then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current turtleLocator") return {success = false} end
+    local turtleOutputItemsLocator = turtleLocator:copy()
+    turtleOutputItemsLocator:setQuery(itemResultQuery)
 
     -- end
     local result = {

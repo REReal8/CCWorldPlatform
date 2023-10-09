@@ -21,11 +21,18 @@ function t_isp.T_AddItemsLocators()
         ["minecraft:birch_log"] = 1,
         ["minecraft:charcoal"]  = 100,
     }
-    local turtleId = os.getComputerID()
+    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator() assert(turtleLocator, "Failed obtaining turtleLocator")
+    local itemsLocator1 = turtleLocator:copy()
+    itemsLocator1:setQuery(itemsQuery1)
+    local itemsLocator2 = turtleLocator:copy()
+    itemsLocator2:setQuery(itemsQuery2)
+    local itemsLocator3 = turtleLocator:copy()
+    itemsLocator3:setQuery(itemsQuery3)
+
     local testData = {
-        itemsLocator1 = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = turtleId, itemsQuery = itemsQuery1 }).itemsLocator,
-        itemsLocator2 = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = turtleId, itemsQuery = itemsQuery2 }).itemsLocator,
-        itemsLocator3 = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = turtleId, itemsQuery = itemsQuery3 }).itemsLocator,
+        itemsLocator1 = itemsLocator1,
+        itemsLocator2 = itemsLocator2,
+        itemsLocator3 = itemsLocator3,
     }
 
     -- call test method
@@ -38,7 +45,8 @@ function t_isp.T_AddItemsLocators()
         ["minecraft:birch_log"] = 3,
         ["minecraft:torch"]     = 10,
     }
-    local expectedItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({ turtleId = turtleId, itemsQuery = expectedItemsQuery }).itemsLocator
+    local expectedItemsLocator = turtleLocator:copy()
+    expectedItemsLocator:setQuery(expectedItemsQuery)
     assert(expectedItemsLocator:sameBase(result.itemsLocator), "result itemsLocator (="..result.itemsLocator:getURI()..") different base from expected (="..expectedItemsLocator:getURI()..")")
     assert(expectedItemsLocator:sameQuery(result.itemsLocator), "result itemsLocator (="..result.itemsLocator:getURI()..") different query from expected (="..expectedItemsLocator:getURI()..")")
 end

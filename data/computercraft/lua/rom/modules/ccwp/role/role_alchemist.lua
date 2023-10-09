@@ -232,6 +232,7 @@ function role_alchemist.Craft_Task(craftData)
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    if not turtleLocator then corelog.Error("role_alchemist.Craft_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining current Turtle") return {success = false} end
 
@@ -268,14 +269,10 @@ function role_alchemist.Craft_Task(craftData)
     end
 
     -- determine output & waste locators
-    local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery   = { [productItemName] = productItemCount }
-    }).itemsLocator
-    local turtleWasteItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery  = wasteItems
-    }).itemsLocator
+    local turtleOutputItemsLocator = turtleLocator:copy()
+    turtleOutputItemsLocator:setQuery({ [productItemName] = productItemCount })
+    local turtleWasteItemsLocator = turtleLocator:copy()
+    turtleWasteItemsLocator:setQuery(wasteItems)
 
     -- end
     local result = {
@@ -471,6 +468,7 @@ function role_alchemist.Pickup_Task(pickupData)
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    if not turtleLocator then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current Turtle") return {success = false} end
 
@@ -521,14 +519,10 @@ function role_alchemist.Pickup_Task(pickupData)
     end
 
     -- determine output & waste locators
-    local turtleOutputItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery   = { [productItemName] = producedProductItems }
-    }).itemsLocator
-    local turtleWasteItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery  = wasteItems
-    }).itemsLocator
+    local turtleOutputItemsLocator = turtleLocator:copy()
+    turtleOutputItemsLocator:setQuery({ [productItemName] = producedProductItems })
+    local turtleWasteItemsLocator = turtleLocator:copy()
+    turtleWasteItemsLocator:setQuery(wasteItems)
 
     -- end
     local result = {

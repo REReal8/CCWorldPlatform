@@ -144,6 +144,7 @@ function role_forester.HarvestForest_Task(...)
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    if not turtleLocator then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current Turtle") return {success = false} end
 
@@ -194,22 +195,12 @@ function role_forester.HarvestForest_Task(...)
     end
 
     -- determine output & waste locators
-    local turtleOutputLogsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery  = {
-            [logName]       = logCount,
-        }
-    }).itemsLocator
-    local turtleOutputSaplingsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery  = {
-            [saplingName]   = saplingCount
-        }
-    }).itemsLocator
-    local turtleWasteItemsLocator = enterprise_turtle.GetItemsLocator_SSrv({
-        turtleId    = turtleObj:getTurtleId(),
-        itemsQuery  = wasteItems
-    }).itemsLocator
+    local turtleOutputLogsLocator = turtleLocator:copy()
+    turtleOutputLogsLocator:setQuery({ [logName] = logCount })
+    local turtleOutputSaplingsLocator = turtleLocator:copy()
+    turtleOutputSaplingsLocator:setQuery({ [saplingName] = saplingCount })
+    local turtleWasteItemsLocator = turtleLocator:copy()
+    turtleWasteItemsLocator:setQuery(wasteItems)
 
     -- end
     return {
