@@ -63,7 +63,7 @@ function coreassignment.Run()
 
     -- get (locator for) current Turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:GetCurrentTurtleLocator() if not turtleLocator then corelog.Error("coreassignment.Run: Failed obtaining current turtleLocator") return false end
+    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not turtleLocator then corelog.Error("coreassignment.Run: Failed obtaining current turtleLocator") return false end
     -- register current Turtle if not yet registered
     local objResourceTable = enterprise_turtle:getResource(turtleLocator)
     if not objResourceTable then

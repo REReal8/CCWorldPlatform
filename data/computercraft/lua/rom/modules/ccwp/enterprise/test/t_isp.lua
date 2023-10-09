@@ -21,7 +21,7 @@ function t_isp.T_AddItemsLocators()
         ["minecraft:birch_log"] = 1,
         ["minecraft:charcoal"]  = 100,
     }
-    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator() assert(turtleLocator, "Failed obtaining turtleLocator")
+    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator() assert(turtleLocator, "Failed obtaining turtleLocator")
     local itemsLocator1 = turtleLocator:copy()
     itemsLocator1:setQuery(itemsQuery1)
     local itemsLocator2 = turtleLocator:copy()

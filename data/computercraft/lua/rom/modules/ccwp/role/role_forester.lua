@@ -143,7 +143,7 @@ function role_forester.HarvestForest_Task(...)
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
     if not turtleLocator then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current Turtle") return {success = false} end

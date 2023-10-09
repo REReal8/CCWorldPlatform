@@ -231,7 +231,7 @@ function role_alchemist.Craft_Task(craftData)
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
     if not turtleLocator then corelog.Error("role_alchemist.Craft_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining current Turtle") return {success = false} end
@@ -467,7 +467,7 @@ function role_alchemist.Pickup_Task(pickupData)
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
     if not turtleLocator then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current Turtle") return {success = false} end

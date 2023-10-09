@@ -159,7 +159,7 @@ function enterprise_turtle.GetAnyTurtleLocator()
     return GetTurtleLocator("any")
 end
 
-function enterprise_turtle.GetCurrentTurtleLocator()
+function enterprise_turtle:getCurrentTurtleLocator()
     --[[
         This method provides the locator of the current turtle (in enterprise_turtle).
 
@@ -170,7 +170,7 @@ function enterprise_turtle.GetCurrentTurtleLocator()
     --]]
 
     -- check turtle
-    if not turtle then corelog.Error("enterprise_turtle.GetCurrentTurtleLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
+    if not turtle then corelog.Error("enterprise_turtle:getCurrentTurtleLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
 
     -- construct URL
     local currentTurtleId = os.getComputerID()

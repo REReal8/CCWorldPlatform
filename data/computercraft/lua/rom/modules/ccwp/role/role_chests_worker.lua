@@ -353,7 +353,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
 
     -- determine output locator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetCurrentTurtleLocator()
+    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
     if not turtleLocator then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleOutputItemsLocator = turtleLocator:copy()
     turtleOutputItemsLocator:setQuery(itemResultQuery)

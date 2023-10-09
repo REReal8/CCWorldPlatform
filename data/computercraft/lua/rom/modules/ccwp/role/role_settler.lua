@@ -23,7 +23,7 @@ local Host = require "obj_host"
 
 function role_settler.InitialiseCoordinates_MetaData(taskData)
     local enterprise_turtle = require "enterprise_turtle"
-    local currentTurtleLocator = enterprise_turtle:GetCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtleLocator") return nil end
+    local currentTurtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtleLocator") return nil end
 
     local turtleObj = Host.GetObject(currentTurtleLocator) if not turtleObj then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtle") return nil end
     local location = turtleObj:getLocation() --> use the current location for proper bootstrapping
