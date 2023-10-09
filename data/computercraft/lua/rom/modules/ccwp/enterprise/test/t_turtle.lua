@@ -96,7 +96,8 @@ function t_turtle.T_GetAnyTurtleLocator()
 
     -- test
     local turtleLocator = enterprise_turtle.GetAnyTurtleLocator() assert(turtleLocator, "t_turtle.T_GetAnyTurtleLocator: Failed obtaining turtleLocator")
-    local expectedLocator = enterprise_turtle:getTurtleLocator("any")
+    local expectedLocator = enterprise_turtle.GetAnyTurtleLocator()
+
     assert(turtleLocator:isEqual(expectedLocator), "gotten locator(="..textutils.serialise(turtleLocator, compact)..") not the same as expected(="..textutils.serialise(expectedLocator, compact)..")")
 
     -- cleanup test

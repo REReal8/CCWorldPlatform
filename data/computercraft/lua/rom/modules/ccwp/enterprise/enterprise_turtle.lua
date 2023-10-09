@@ -121,7 +121,7 @@ function enterprise_turtle:reset()
     end
 end
 
-function enterprise_turtle:getTurtleLocator(turtleIdStr)
+local function GetTurtleLocator(turtleIdStr)
     --[[
         This method provides the locator of a turtle in the enterprise based on a 'turtleIdStr'.
 
@@ -134,11 +134,11 @@ function enterprise_turtle:getTurtleLocator(turtleIdStr)
 
     -- get resourcePath
     local objectPath = Host.GetObjectPath("Turtle", turtleIdStr)
-    if not objectPath then corelog.Error("enterprise_turtle:getTurtleLocator: Failed obtaining objectPath") return nil end
+    if not objectPath then corelog.Error("enterprise_turtle.GetTurtleLocator: Failed obtaining objectPath") return nil end
 
     -- get objectLocator
-    local turtleLocator = self:getResourceLocator(objectPath)
-    if not turtleLocator then corelog.Error("enterprise_turtle:getTurtleLocator: Failed obtaining turtleLocator") return nil end
+    local turtleLocator = enterprise_turtle:getResourceLocator(objectPath)
+    if not turtleLocator then corelog.Error("enterprise_turtle.GetTurtleLocator: Failed obtaining turtleLocator") return nil end
 
     -- end
     return turtleLocator
@@ -156,7 +156,7 @@ function enterprise_turtle.GetAnyTurtleLocator()
     --]]
 
     -- end
-    return enterprise_turtle:getTurtleLocator("any")
+    return GetTurtleLocator("any")
 end
 
 function enterprise_turtle.GetCurrentTurtleLocator()
@@ -174,7 +174,7 @@ function enterprise_turtle.GetCurrentTurtleLocator()
 
     -- construct URL
     local currentTurtleId = os.getComputerID()
-    local currentTurtleLocator = enterprise_turtle:getTurtleLocator(tostring(currentTurtleId))
+    local currentTurtleLocator = GetTurtleLocator(tostring(currentTurtleId))
 
     -- end
     return currentTurtleLocator

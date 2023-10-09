@@ -314,7 +314,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(objTurtle:getTurtleId())) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
+    local turtleLocator = enterprise_turtle:getObjectLocator(objTurtle) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,

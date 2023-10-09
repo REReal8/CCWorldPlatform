@@ -294,7 +294,7 @@ function Turtle:provideItemsTo_AOSrv(...)
 
     -- create turtleItemsLocator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleItemsLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
+    local turtleItemsLocator = enterprise_turtle:getObjectLocator(self) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
     -- get ItemDepot
@@ -450,7 +450,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     else -- source is not a turtle
         -- ToDo: investigate if there are ways to prevent this (as below code seems a bit ackward)
         -- create turtleLocator
-        local turtleLocator = enterprise_turtle:getTurtleLocator(tostring(self:getTurtleId())) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
+        local turtleLocator = enterprise_turtle:getObjectLocator(self) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
         -- get source ItemSupplier
         local itemSupplierLocator = itemsLocator:baseCopy()
