@@ -272,18 +272,17 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
         This Task function fetches items from a chest into the inventory of a turtle.
 
         Return value:
-                                - (table)
-                success         - (boolean) whether the items were successfully fetched
-                inventory       - (Inventory) the Inventory of the chest (after the items have been removed)
-                turtleId        - (number) id of the turtle that has items in it's inventory
-                itemResultQuery - (table) items retrieved into turtle
+                                        - (table)
+                success                 - (boolean) whether the items were successfully fetched
+                inventory               - (Inventory) the Inventory of the chest (after the items have been removed)
+                turtleOutputItemsLocator- (URL) locating the items that where fetched (into a turtle)
 
         Parameters:
-            taskData            - (table) data about the task
-                turtleId        - (number, -1) optional id of the turtle that should get the items
-                location        + (Location) location of the chest
-                accessDirection + (string) whether to access chest from front, back, up, down, left or right (relative to location)
-                itemsQuery      + (table) which items to be fetched
+            taskData                    - (table) data about the task
+                turtleId                - (number, -1) optional id of the turtle that should get the items
+                location                + (Location) location of the chest
+                accessDirection         + (string) whether to access chest from front, back, up, down, left or right (relative to location)
+                itemsQuery              + (table) which items to be fetched
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Invalid input") return {success = false} end
 
