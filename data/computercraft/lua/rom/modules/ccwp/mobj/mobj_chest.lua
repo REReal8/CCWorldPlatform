@@ -19,6 +19,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+local Host = require "obj_host"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
@@ -367,7 +368,8 @@ function Chest:provideItemsTo_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local turtleId = -1
     if enterprise_turtle:isLocatorFromHost(itemDepotLocator) then
-        turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemDepotLocator }).turtleId
+        local turtleObj = Host.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
+        turtleId = turtleObj:getTurtleId()
     end
 
     -- create project definition
@@ -584,15 +586,14 @@ function Chest:storeItemsFrom_AOSrv(...)
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
             -- obtain turtleId
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
-                { keyDef = "turtleLocator"          , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+            { stepType = "LSMtd", stepTypeDef = { methodName = "getTurtleId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- put items into chest
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"               , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"  , sourceStep = 2, sourceKeyDef = "turtleId" },
+                { keyDef = "metaData.needTurtleId"  , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"               , sourceStep = 0, sourceKeyDef = "taskCall" },
-                { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "turtleId" },
+                { keyDef = "taskCall._data.turtleId", sourceStep = 2, sourceKeyDef = "methodResults" },
             }},
             -- save chest
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_chests", serviceName = "SaveObject_SSrv" }, stepDataDef = {

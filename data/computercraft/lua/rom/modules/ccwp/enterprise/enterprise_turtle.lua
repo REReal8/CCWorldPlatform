@@ -312,34 +312,6 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     return result
 end
 
-function enterprise_turtle.GetTurtleId_SSrv(...)
-    -- get & check input from description
-    local checkSuccess, turtleLocator = InputChecker.Check([[
-        This sync public services provides the turtleId from a turtleLocator.
-
-        Return value:
-                                    - (table)
-                success             - (boolean) whether the service executed successfully
-                turtleId            - (number) id of the turtle
-
-        Parameters:
-            serviceData             - (table) data for this service
-                turtleLocator       + (URL) locating the turtle
-    --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.GetTurtleId_SSrv: Invalid input") return {success = false} end
-
-    -- get turtleId
-    local turtleObj = enterprise_turtle:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetTurtleId_SSrv: Failed obtaining turtleObj from turtleLocator="..turtleLocator:getURI()) return {success = false} end
-    local turtleId = turtleObj:getTurtleId()
-
-    -- end
-    local result = {
-        success     = true,
-        turtleId    = turtleId,
-    }
-    return result
-end
-
 function enterprise_turtle.GetItemsLocator_SSrv(...)
     -- get & check input from description
     local checkSuccess, turtleId, itemsQuery = InputChecker.Check([[

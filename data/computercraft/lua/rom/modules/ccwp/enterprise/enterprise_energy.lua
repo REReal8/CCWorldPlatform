@@ -14,6 +14,7 @@ local role_fuel_worker = require "role_fuel_worker"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
+local Host = require "obj_host"
 
 local enterprise_projects = require "enterprise_projects"
 
@@ -70,8 +71,8 @@ local function Refuel_ASrv(...)
     if not checkSuccess then corelog.Error("enterprise_energy.Refuel_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project service data
-    local enterprise_turtle = require "enterprise_turtle"
-    local turtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = turtleLocator }).turtleId if not turtleId then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtleId from turtleLocator="..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleObj = Host.GetObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtle "..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleId = turtleObj:getTurtleId()
     local refuelTaskData = {
         -- ToDo: consider passing turtleLocator
         turtleId    = turtleId,

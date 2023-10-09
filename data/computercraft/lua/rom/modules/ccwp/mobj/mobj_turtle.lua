@@ -428,7 +428,8 @@ function Turtle:storeItemsFrom_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
-        local sourceTurtleId = enterprise_turtle.GetTurtleId_SSrv({ turtleLocator = itemsLocator }).turtleId if not sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining sourceTurtleId from itemsLocator="..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
+        local sourceTurtleObj = Host.GetObject(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
+        local sourceTurtleId = sourceTurtleObj:getTurtleId()
         local currentTurtleId = self:getTurtleId()
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
 

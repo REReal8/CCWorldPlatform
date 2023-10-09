@@ -86,13 +86,12 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
             -- obtain turtleId
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
-                { keyDef = "turtleLocator"                  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+            { stepType = "LSMtd", stepTypeDef = { methodName = "getTurtleId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "turtleId" },
+                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
             }, description = "Building blueprint at "..textutils.serialise(blueprintStartpoint, {compact = true})},
         },
@@ -185,13 +184,12 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
             -- obtain turtleId
-            { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_turtle", serviceName = "GetTurtleId_SSrv" }, stepDataDef = {
-                { keyDef = "turtleLocator"                  , sourceStep = 1, sourceKeyDef = "destinationItemsLocator" },
+            { stepType = "LSMtd", stepTypeDef = { methodName = "getTurtleId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- do build assignment
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "metaData" },
-                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "turtleId" },
+                { keyDef = "metaData.needTurtleId"          , sourceStep = 2, sourceKeyDef = "methodResults" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "taskCall" },
             }},
         },
