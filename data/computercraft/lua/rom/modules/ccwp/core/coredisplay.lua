@@ -52,13 +52,12 @@ function coredisplay.Init()
 		-- alleen een turtle kan bewogen worden
 		if turtle then coredisplay.MainMenuAddItem("m", "Move turtle", MoveTurtle) end
 	end
-
-    -- set default screen
-    coredisplay.MainMenu(DefaultMainMenu())
 end
 
 -- setup function for the display
 function coredisplay.Setup()
+    -- set start screen
+    coredisplay.MainMenu(coredisplay.DefaultMainMenu())
 end
 
 -- to know if the dislay is still being used
@@ -527,7 +526,7 @@ function coredisplay.MainMenu(t)
 end
 
 -- a nice default main menu, very usefull
-function DefaultMainMenu()
+function coredisplay.DefaultMainMenu()
 	return db.defaultMainMenu
 end
 

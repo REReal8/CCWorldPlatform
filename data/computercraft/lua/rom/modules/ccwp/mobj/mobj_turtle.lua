@@ -2,9 +2,10 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local IMObj = require "i_mobj"
+local IWorker = require "i_worker"
 local IItemSupplier = require "i_item_supplier"
 local IItemDepot = require "i_item_depot"
-local Turtle = Class.NewClass(ObjBase, IMObj, IItemSupplier, IItemDepot)
+local Turtle = Class.NewClass(ObjBase, IMObj, IWorker, IItemSupplier, IItemDepot)
 
 --[[
     The Turtle mobj represents a Turtle in the minecraft world and provides services to operate on that Turtle.
@@ -13,6 +14,7 @@ local Turtle = Class.NewClass(ObjBase, IMObj, IItemSupplier, IItemDepot)
 local corelog = require "corelog"
 local coreinventory = require "coreinventory"
 local coremove = require "coremove"
+local coredisplay = require "coredisplay"
 
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
@@ -39,11 +41,11 @@ local enterprise_turtle
 
 function Turtle:_init(...)
     -- get & check input from description
-    local checkSuccess, id, location, fuelPriorityKey = InputChecker.Check([[
+    local checkSuccess, workerId, location, fuelPriorityKey = InputChecker.Check([[
         Initialise a Turtle.
 
         Parameters:
-            id                      + (string, "any") id of the Turtle
+            workerId                + (number) workerId of the Turtle
             location                + (Location) location of the Turtle
             fuelPriorityKey         + (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
@@ -51,7 +53,7 @@ function Turtle:_init(...)
 
     -- initialisation
     ObjBase._init(self)
-    self._id                = id
+    self._workerId          = workerId
     self._location          = location
     self._fuelPriorityKey   = fuelPriorityKey
 end
@@ -64,7 +66,7 @@ function Turtle:new(...)
 
         Parameters:
             o                           + (table, {}) table with object fields
-                _id                     - (string, "any") id of the Turtle
+                _workerId               + (number) workerId of the Turtle
                 _location               - (Location, {}) location of the Turtle
                 _fuelPriorityKey        - (string, "") fuel priority key of the Turtle
     ]], table.unpack(arg))
@@ -79,7 +81,7 @@ function Turtle:new(...)
 end
 
 function Turtle:getTurtleId()
-    return tonumber(self:getId())
+    return self:getWorkerId()
 end
 
 function Turtle:getFuelPriorityKey()
@@ -117,7 +119,7 @@ end
 
 function Turtle:construct(...)
     -- get & check input from description
-    local checkSuccess, turtleId, location = InputChecker.Check([[
+    local checkSuccess, workerId, location = InputChecker.Check([[
         This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         The constructed Turtle is not yet saved in the Host.
@@ -127,13 +129,13 @@ function Turtle:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the Turtle
-                turtleId                + (number) id of the turtle
+                workerId                + (number) workerId of the Turtle
                 location                + (Location) location of the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("Turtle:construct: Invalid input") return nil end
 
     -- construct new Turtle
-    local obj = Turtle:newInstance(tostring(turtleId), location)
+    local obj = Turtle:newInstance(workerId, location)
 
     -- end
     return obj
@@ -157,7 +159,7 @@ function Turtle:destruct()
 end
 
 function Turtle:getId()
-    return self._id
+    return tostring(self._workerId)
 end
 
 function Turtle:getWIPId()
@@ -253,6 +255,84 @@ function Turtle:getDismantleBlueprint()
 
     -- end
     return buildLocation, blueprint
+end
+
+--    _______          __        _                              _   _               _
+--   |_   _\ \        / /       | |                            | | | |             | |
+--     | |  \ \  /\  / /__  _ __| | _____ _ __   _ __ ___   ___| |_| |__   ___   __| |___
+--     | |   \ \/  \/ / _ \| '__| |/ / _ \ '__| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
+--    _| |_   \  /\  / (_) | |  |   <  __/ |    | | | | | |  __/ |_| | | | (_) | (_| \__ \
+--   |_____|   \/  \/ \___/|_|  |_|\_\___|_|    |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+
+function Turtle:getWorkerId()
+    --[[
+        Get the Turtle workerId.
+
+        Return value:
+                                - (number) the Turtle workerId
+    ]]
+
+    -- end
+    return self._workerId
+end
+
+function Turtle:getMainUIMenu()
+    --[[
+        Get the main (start) UI menu of the Turtle.
+
+        This menu can be used in conjuction with coredisplay.MainMenu.
+
+        Return value:
+                                - (table)
+                clear           - (boolean) whether or not to clear the display,
+                func	        - (function) menu function to call
+                param	        - (table, {}) parameter to pass to menu function
+                intro           - (string) intro to print
+                question        - (string, nil) final question to print
+    ]]
+
+    -- end
+    return coredisplay.DefaultMainMenu()
+end
+
+function Turtle:getAssignmentFilter()
+    --[[
+        Get assignment filter for finding the next best Assignment for the Turtle.
+
+        The assignment filter is used to indicate to only accept assignments that satisfy certain conditions. This can e.g. be used
+            to only accept assignments with high priority.
+
+        Return value:
+            assignmentFilter    - (table) filter to apply in finding an Assignment
+    --]]
+
+    -- end
+    return {
+        priorityKeyNeeded   = self:getFuelPriorityKey()
+    }
+end
+
+function Turtle:getWorkerResume()
+    --[[
+        Get Turtle resume for selecting Assignment's.
+
+        The resume gives information on the Turtle and is used to determine if the Turtle is (best) suitable to take an Assignment.
+            This is can e.g. be used to indicate location, fuel level and equiped items.
+
+        Return value:
+            resume              - (table) Turtle "resume" to consider in selecting Assignment's
+    --]]
+
+    -- end
+    return {
+        turtleId        = self:getTurtleId(),
+        location        = self:getLocation(),
+        fuelLevel       = turtle.getFuelLevel(),
+        axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
+        inventoryItems  = coreinventory.GetInventoryDetail().items,
+        leftEquiped     = coreinventory.LeftEquiped(),
+        rightEquiped    = coreinventory.RightEquiped(),
+    }
 end
 
 --    _____ _____ _                  _____                   _ _                            _   _               _

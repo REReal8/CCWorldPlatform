@@ -396,8 +396,8 @@ function T_Factory.T_getFuelNeed_Production_Att()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":getFuelNeed_Production_Att() tests")
     local T_Turtle = require "test.t_mobj_turtle"
-    local turtleObjId = tostring(os.getComputerID())
-    local turtleObj = T_Turtle.CreateTestObj(turtleObjId) assert (turtleObj, "Failed obtaining Turtle")
+    local workerId1 = os.getComputerID()
+    local turtleObj = T_Turtle.CreateTestObj(workerId1) assert (turtleObj, "Failed obtaining Turtle")
     local location2 = turtleObj:getLocation()
     local craftingSpot2 = ProductionSpot:newInstance(location2:getRelativeLocation(3, 3, -4), true)
     local craftingSpots2 = ObjArray:newInstance(productionSpotClassName, { craftingSpot2, })

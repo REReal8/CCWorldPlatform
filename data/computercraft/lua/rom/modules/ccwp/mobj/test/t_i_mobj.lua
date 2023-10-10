@@ -99,16 +99,17 @@ function T_IMObj.pt_upgrade(className, class, constructParameters, objName, upgr
     obj:destruct()
 end
 
-function T_IMObj.pt_getId(className, obj, objName, logOk)
+function T_IMObj.pt_getId(className, obj, objName, logOk, expectedId)
     -- prepare test
     assert(className, "no className provided")
     assert(obj, "no obj provided")
     assert(objName, "no objName provided")
     assert(type(logOk) == "boolean", "no logOk provided")
+    expectedId = expectedId or obj._id
     corelog.WriteToLog("* "..className..":getId() tests")
 
     -- test
-    local test = MethodResultEqualTest:newInstance("getId", obj._id)
+    local test = MethodResultEqualTest:newInstance("getId", expectedId)
     test:test(obj, objName, "", logOk)
 end
 

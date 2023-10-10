@@ -55,7 +55,7 @@ local testClassName = "Turtle"
 local testObjName = "turtle"
 local logOk = false
 
-local turtleId = 111111
+local workerId1 = 111111
 local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey1 = ""
 local fuelPriorityKey2 = "99:111"
@@ -69,27 +69,25 @@ local compact = { compact = true }
 --   | | | | | | |_| | (_| | | \__ \ (_| | |_| | (_) | | | |
 --   |_|_| |_|_|\__|_|\__,_|_|_|___/\__,_|\__|_|\___/|_| |_|
 
-function T_Turtle.CreateTestObj(id, location, fuelPriorityKey)
+function T_Turtle.CreateTestObj(workerId, location, fuelPriorityKey)
     -- check input
-    id = id or tostring(turtleId)
+    workerId = workerId or workerId1
     location = location or location1
     fuelPriorityKey = fuelPriorityKey or fuelPriorityKey1
 
     -- create Turtle object
-    local turtle = Turtle:newInstance(id, location, fuelPriorityKey)
+    local turtle = Turtle:newInstance(workerId, location, fuelPriorityKey)
 
     -- end
     return turtle
 end
 
-function T_Turtle.CreateInitialisedTest(id, location, fuelPriorityKey)
+function T_Turtle.CreateInitialisedTest(workerId, location, fuelPriorityKey)
     -- check input
 
     -- create test
-    local idTest = FieldValueTypeTest:newInstance("_id", "string") -- note: allow for testing only the type (instead of also the value)
-    if id then idTest = FieldValueEqualTest:newInstance("_id", id) end
     local test = TestArrayTest:newInstance(
-        idTest,
+        FieldValueEqualTest:newInstance("_workerId", workerId),
         FieldValueEqualTest:newInstance("_location", location),
         FieldValueEqualTest:newInstance("_fuelPriorityKey", fuelPriorityKey)
     )
@@ -101,11 +99,10 @@ end
 function T_Turtle.T__init()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":_init() tests")
-    local id = coreutils.NewId()
 
     -- test
-    local obj = T_Turtle.CreateTestObj(id, location1, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
-    local test = T_Turtle.CreateInitialisedTest(id, location1, fuelPriorityKey1)
+    local obj = T_Turtle.CreateTestObj(workerId1, location1, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
+    local test = T_Turtle.CreateInitialisedTest(workerId1, location1, fuelPriorityKey1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -118,12 +115,12 @@ function T_Turtle.T_new()
 
     -- test
     local obj = Turtle:new({
-        _id                     = id,
+        _workerId               = workerId1,
 
         _location               = location1,
         _fuelPriorityKey        = fuelPriorityKey1,
     })
-    local test = T_Turtle.CreateInitialisedTest(id, location1, fuelPriorityKey1)
+    local test = T_Turtle.CreateInitialisedTest(workerId1, location1, fuelPriorityKey1)
     test:test(obj, testObjName, "", logOk)
 
     -- cleanup test
@@ -132,12 +129,11 @@ end
 function T_Turtle.T_Getters()
     -- prepare test
     corelog.WriteToLog("* "..testClassName.." getter tests")
-    local id = tostring(turtleId)
-    local obj = T_Turtle.CreateTestObj(id, location1, fuelPriorityKey2) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Turtle.CreateTestObj(workerId1, location1, fuelPriorityKey2) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getTurtleId", turtleId),
+        MethodResultEqualTest:newInstance("getTurtleId", workerId1),
         MethodResultEqualTest:newInstance("getLocation", location1),
         MethodResultEqualTest:newInstance("getFuelPriorityKey", fuelPriorityKey2)
     )
@@ -157,9 +153,8 @@ end
 
 function T_Turtle.T_IObj_All()
     -- prepare test
-    local id = coreutils.NewId()
-    local obj = T_Turtle.CreateTestObj(id) assert(obj, "Failed obtaining "..testClassName)
-    local otherObj = T_Turtle.CreateTestObj(id) assert(otherObj, "Failed obtaining "..testClassName)
+    local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local otherObj = T_Turtle.CreateTestObj() assert(otherObj, "Failed obtaining "..testClassName)
 
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
@@ -178,17 +173,16 @@ end
 
 function T_Turtle.T_IMObj_All()
     -- prepare test
-    local id = tostring(turtleId)
-    local obj = T_Turtle.CreateTestObj(id, location1, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
+    local obj = T_Turtle.CreateTestObj(workerId1, location1, fuelPriorityKey1) assert(obj, "Failed obtaining "..testClassName)
 
     local constructParameters = {
-        turtleId    = turtleId,
+        workerId    = workerId1,
         location    = location1,
     }
 
     local destructFieldsTest = TestArrayTest:newInstance()
 
-    local constructFieldsTest = T_Turtle.CreateInitialisedTest(id, location1, fuelPriorityKey1)
+    local constructFieldsTest = T_Turtle.CreateInitialisedTest(workerId1, location1, fuelPriorityKey1)
 
     local isBlueprintTest = IsBlueprintTest:newInstance(location1)
 
@@ -201,7 +195,8 @@ function T_Turtle.T_IMObj_All()
     T_IMObj.pt_construct(testClassName, Turtle, constructParameters, testObjName, constructFieldsTest, logOk)
 
     -- test getters
-    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk)
+    local expectedId = tostring(workerId1)
+    T_IMObj.pt_getId(testClassName, obj, testObjName, logOk, expectedId)
     T_IMObj.pt_getWIPId(testClassName, obj, testObjName, logOk)
 
     -- test blueprints

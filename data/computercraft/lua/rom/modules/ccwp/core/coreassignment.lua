@@ -67,13 +67,13 @@ function coreassignment.Run()
     -- register current Turtle if not yet registered
     local objResourceTable = enterprise_turtle:getResource(turtleLocator)
     if not objResourceTable then
-        local turtleId = os.getComputerID()
+        local workerId = os.getComputerID()
         local coremove_location = Location:new(coremove.GetLocation())
         turtleLocator = enterprise_turtle:hostMObj_SSrv({ className = "Turtle", constructParameters = {
-            turtleId    = turtleId,
+            workerId    = workerId,
             location    = coremove_location,
         }}).mobjLocator
-        if not turtleLocator then corelog.Error("coreassignment.Run: Failed hosting Turtle "..turtleId) return false end
+        if not turtleLocator then corelog.Error("coreassignment.Run: Failed hosting Turtle "..workerId) return false end
     end
 
     -- infinite loop

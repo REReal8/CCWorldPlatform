@@ -39,12 +39,12 @@ local logOk = false
 local testMObjClassName = "Turtle"
 local testMObjName = "turtle"
 local level0 = 0
-local turtleId = 111111
+local workerId1 = 111111
 local location1  = Location:newInstance(-6, 6, 1, 0, 1)
 local fuelPriorityKey = ""
 
 local constructParameters = {
-    turtleId        = turtleId,
+    workerId        = workerId1,
     location        = location1,
 }
 
@@ -158,9 +158,8 @@ end
 
 function t_turtle.T_hostMObj_SSrv_Turtle()
     -- prepare test
-    local id = tostring(turtleId)
     T_Turtle = T_Turtle or require "test.t_mobj_turtle"
-    local fieldsTest0 = T_Turtle.CreateInitialisedTest(id, location1, fuelPriorityKey)
+    local fieldsTest0 = T_Turtle.CreateInitialisedTest(workerId1, location1, fuelPriorityKey)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_turtle, testMObjClassName, constructParameters, testMObjName, fieldsTest0, logOk)

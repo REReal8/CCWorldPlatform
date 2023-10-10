@@ -269,23 +269,9 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
     TriggerRefuelIfNeeded(turtleObj)
 
     -- look for best next assignment
-    local assignmentFilter = {
-        priorityKeyNeeded   = turtleObj:getFuelPriorityKey(),
-    }
+    local assignmentFilter = turtleObj:getAssignmentFilter()
     local turtleId = turtleObj:getTurtleId()
-    local turtleResume = nil
-    -- ToDo: consider obtaining resume from Turtle
-    if turtle then
-        turtleResume = {
-            turtleId        = turtleId,
-            location        = turtleObj:getLocation(),
-            fuelLevel       = turtle.getFuelLevel(),
-            axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
-            inventoryItems  = coreinventory.GetInventoryDetail().items,
-            leftEquiped     = coreinventory.LeftEquiped(),
-            rightEquiped    = coreinventory.RightEquiped(),
-        }
-    end
+    local turtleResume = turtleObj:getWorkerResume()
     local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = turtleResume })
     -- ToDo: consider if an assignment board should determine what is best...
     if not serviceResults.success then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: FindBestAssignment_SSrv failed.") end

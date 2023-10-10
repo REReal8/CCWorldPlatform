@@ -65,9 +65,10 @@ R  use MObjHost class                                                           
 
 -  enterprise_workforce/ IWorker, a generalisation of enterprise_turtle/ Turtle
       R  introduce IWorker interface (rename IProcessor + improve definition)                                           (done)
-      -  have Turtle implement IWorker
+      R  have Turtle implement IWorker                                                                                  (....)
+      -  introduce and apply IWorker tests
       -  rename enterprise_turtle to enterprise_workforce
-      -  generalize specific enterprise_workforce methods to handle any IWorker
+      -  generalize specific enterprise_workforce methods to handle any IWorker                                         (....)
       -  modify bootstrapping users of enterprise_workforce/ Turtle to use generalised enterprise_workforce methods
          -  enterprise_assignment_board
          -  enterprise_colonization
