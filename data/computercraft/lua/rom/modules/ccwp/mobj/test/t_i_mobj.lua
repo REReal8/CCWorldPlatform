@@ -11,14 +11,14 @@ local MethodResultEqualTest = require "method_result_equal_test"
 
 local compact = { compact = true }
 
---    _____ __  __  ____  _     _                  _   _               _
---   |_   _|  \/  |/ __ \| |   (_)                | | | |             | |
---     | | | \  / | |  | | |__  _   _ __ ___   ___| |_| |__   ___   __| |___
---     | | | |\/| | |  | | '_ \| | | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---    _| |_| |  | | |__| | |_) | | | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_____|_|  |_|\____/|_.__/| | |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
---                            _/ |
---                           |__/
+--    _
+--   | |
+--   | |_ _   _ _ __   ___
+--   | __| | | | '_ \ / _ \
+--   | |_| |_| | |_) |  __/
+--    \__|\__, | .__/ \___|
+--         __/ | |
+--        |___/|_|
 
 function T_IMObj.pt_IsInstanceOf_IMObj(className, obj)
     -- prepare test
@@ -37,6 +37,15 @@ function T_IMObj.pt_Implements_IMObj(className, obj)
     -- test
     T_IInterface.pt_ImplementsInterface("IMObj", IMObj, className, obj)
 end
+
+--    _____ __  __  ____  _     _
+--   |_   _|  \/  |/ __ \| |   (_)
+--     | | | \  / | |  | | |__  _
+--     | | | |\/| | |  | | '_ \| |
+--    _| |_| |  | | |__| | |_) | |
+--   |_____|_|  |_|\____/|_.__/| |
+--                            _/ |
+--                           |__/
 
 function T_IMObj.pt_destruct(className, class, constructParameters, objName, destructFieldsTest, logOk)
     -- prepare test
