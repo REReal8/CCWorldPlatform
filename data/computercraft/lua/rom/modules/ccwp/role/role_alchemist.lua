@@ -35,9 +35,6 @@ function role_alchemist.Craft_MetaData(...)
             taskData                    - (table) data about the crafting task
                 recipe                  + (table) crafting recipe
                     yield               - (number) of items produced by recipe
-                    [slot]              - (table) for each slot
-                        itemName        - (string) name of smelting ingredient to use in specific slot
-                        itemCount       - (number) number it items to put in slot
                 productItemName         - (string) name of item to produce
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
@@ -226,9 +223,6 @@ function role_alchemist.Craft_Task(...)
             taskData                    - (table) data about the crafting task
                 recipe                  + (table) crafting recipe
                     yield               + (number) of items produced by recipe
-                    [slot]              - (table) for each slot
-                        itemName        - (string) name of smelting ingredient to use in specific slot
-                        itemCount       - (number) number it items to put in slot
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
