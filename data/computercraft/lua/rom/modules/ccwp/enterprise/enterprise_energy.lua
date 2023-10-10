@@ -72,7 +72,7 @@ local function Refuel_ASrv(...)
 
     -- create project service data
     local turtleObj = Host.GetObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtle "..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
-    local turtleId = turtleObj:getTurtleId()
+    local turtleId = turtleObj:getWorkerId()
     local refuelTaskData = {
         -- ToDo: consider passing turtleLocator
         turtleId    = turtleId,

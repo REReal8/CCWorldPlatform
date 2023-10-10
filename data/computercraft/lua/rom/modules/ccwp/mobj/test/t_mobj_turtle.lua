@@ -137,7 +137,6 @@ function T_Turtle.T_Getters()
 
     -- test
     local test = TestArrayTest:newInstance(
-        MethodResultEqualTest:newInstance("getTurtleId", workerId1),
         MethodResultEqualTest:newInstance("getLocation", location1),
         MethodResultEqualTest:newInstance("getFuelPriorityKey", fuelPriorityKey2)
     )

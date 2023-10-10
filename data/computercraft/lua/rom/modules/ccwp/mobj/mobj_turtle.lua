@@ -80,10 +80,6 @@ function Turtle:new(...)
     return o
 end
 
-function Turtle:getTurtleId()
-    return self:getWorkerId()
-end
-
 function Turtle:getFuelPriorityKey()
     return self._fuelPriorityKey
 end
@@ -289,7 +285,7 @@ function Turtle:getWorkerResume()
 
     -- end
     return {
-        turtleId        = self:getTurtleId(),
+        turtleId        = self:getWorkerId(),
         location        = self:getLocation(),
         fuelLevel       = turtle.getFuelLevel(),
         axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
@@ -509,8 +505,8 @@ function Turtle:storeItemsFrom_AOSrv(...)
     if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
         local sourceTurtleObj = Host.GetObject(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
-        local sourceTurtleId = sourceTurtleObj:getTurtleId()
-        local currentTurtleId = self:getTurtleId()
+        local sourceTurtleId = sourceTurtleObj:getWorkerId()
+        local currentTurtleId = self:getWorkerId()
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
 
         -- verify turtle has items (aleady)
@@ -606,14 +602,14 @@ end
 
 function Turtle:getLocation()
     -- check current Turtle
-    if self:getTurtleId() == os.getComputerID() then
+    if self:getWorkerId() == os.getComputerID() then
         -- get coremove location
         local coremove_location = Location:new(coremove.GetLocation())
 
         -- check coremove location has changed
         if not coremove_location:isEqual(self._location) then
             -- update location in turtle object
---            corelog.WriteToLog("Turtle:getLocation(): Turtle "..self:getTurtleId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
+--            corelog.WriteToLog("Turtle:getLocation(): Turtle "..self:getWorkerId().." coremove_location(="..textutils.serialise(coremove_location, {compact = true})..") different from obj_location(="..textutils.serialise(self._location, {compact = true})..") => updating obj_location.")
             -- ToDo: consider changes to prevent TurtleObj location and coremove_location going out of date (to the extreme: incorporate coremove into Turtle class)
             self._location = coremove_location
 
@@ -630,8 +626,8 @@ end
 function Turtle:getInventory()
     -- check current Turtle
     -- ToDo: implement allowing getting inventory of a turtle from any computer (cache inventory in dht objects?)
-    if self:getTurtleId() ~= os.getComputerID() then
-        corelog.Warning("Turtle:getInventory() not yet supported on Turtle(="..self:getTurtleId()..") other than current computer(="..os.getComputerID()..") => returning empty Inventory")
+    if self:getWorkerId() ~= os.getComputerID() then
+        corelog.Warning("Turtle:getInventory() not yet supported on Turtle(="..self:getWorkerId()..") other than current computer(="..os.getComputerID()..") => returning empty Inventory")
         return Inventory:newInstance()
     end
 
@@ -657,7 +653,7 @@ end
 
 function Turtle:getInventoryAsItemTable()
     -- check current Turtle
-    if self:getTurtleId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventoryAsItemTable() not yet supported on other Turtle(="..self:getTurtleId()..") than current(="..os.getComputerID()..")") end
+    if self:getWorkerId() ~= os.getComputerID() then corelog.Warning("Turtle:getInventoryAsItemTable() not yet supported on other Turtle(="..self:getWorkerId()..") than current(="..os.getComputerID()..")") end
 
     -- why multiline when it can be done in a single line? Well, for readablilty and debugging ofcourse!
     local inventory = self:getInventory()

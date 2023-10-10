@@ -1216,7 +1216,7 @@ function Factory.CraftItem_ASrv(...)
     }
     local metaData = role_alchemist.Craft_MetaData(craftData)
     local turtleObj = Host.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.CraftItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
-    metaData.needTurtleId = turtleObj:getTurtleId()
+    metaData.needTurtleId = turtleObj:getWorkerId()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
     -- do assignment
@@ -1267,7 +1267,7 @@ function Factory.SmeltItem_ASrv(...)
     }
     local metaData = role_alchemist.Smelt_MetaData(smeltData)
     local turtleObj = Host.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.SmeltItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
-    metaData.needTurtleId = turtleObj:getTurtleId()
+    metaData.needTurtleId = turtleObj:getWorkerId()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
     -- do assignment

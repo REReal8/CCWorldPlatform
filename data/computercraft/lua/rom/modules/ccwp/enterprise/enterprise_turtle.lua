@@ -73,7 +73,7 @@ function enterprise_turtle:getObject(...)
         local turtleObj = GetATurtle()
 
         -- return Turtle
-        -- corelog.WriteToLog("Selecting Turtle "..turtleObj:getTurtleId().." as 'any Turtle'")
+        -- corelog.WriteToLog("Selecting Turtle "..turtleObj:getWorkerId().." as 'any Turtle'")
         return turtleObj
     end
 
@@ -270,7 +270,7 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
 
     -- look for best next assignment
     local assignmentFilter = turtleObj:getAssignmentFilter()
-    local turtleId = turtleObj:getTurtleId()
+    local turtleId = turtleObj:getWorkerId()
     local turtleResume = turtleObj:getWorkerResume()
     local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = turtleResume })
     -- ToDo: consider if an assignment board should determine what is best...
@@ -351,7 +351,7 @@ function enterprise_turtle.GetItemDepotLocation_SSrv(...)
     -- get turtle
     local currentTurtleId = os.getComputerID()
     local turtleObj = enterprise_turtle:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
-    if currentTurtleId ~= turtleObj:getTurtleId() then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getTurtleId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
     local location = turtleObj:getLocation()
