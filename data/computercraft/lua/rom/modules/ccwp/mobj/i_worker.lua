@@ -32,6 +32,23 @@ function IWorker:getWorkerId()
     return -1
 end
 
+function IWorker:getWorkerResume()
+    --[[
+        Get Worker resume for selecting Assignment's.
+
+        The resume gives information on the Worker and is used to determine if the Worker is (best) suitable to take an Assignment.
+            This is can e.g. be used to indicate location, fuel level and equiped items.
+
+        Return value:
+            resume              - (table) Worker "resume" to consider in selecting Assignment's
+    --]]
+
+    IInterface.UnimplementedMethodError("IWorker", "getWorkerResume")
+
+    -- end
+    return {}
+end
+
 function IWorker:getMainUIMenu()
     --[[
         Get the main (start) UI menu of the Worker.
@@ -65,23 +82,6 @@ function IWorker:getAssignmentFilter()
     --]]
 
     IInterface.UnimplementedMethodError("IWorker", "getAssignmentFilter")
-
-    -- end
-    return {}
-end
-
-function IWorker:getWorkerResume()
-    --[[
-        Get Worker resume for selecting Assignment's.
-
-        The resume gives information on the Worker and is used to determine if the Worker is (best) suitable to take an Assignment.
-            This is can e.g. be used to indicate location, fuel level and equiped items.
-
-        Return value:
-            resume              - (table) Worker "resume" to consider in selecting Assignment's
-    --]]
-
-    IInterface.UnimplementedMethodError("IWorker", "getWorkerResume")
 
     -- end
     return {}

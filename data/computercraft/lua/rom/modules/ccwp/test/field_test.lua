@@ -63,7 +63,8 @@ function FieldTest:test(testObj, testObjName, indent, logOk)
 
     local fieldValue = testObj[self._fieldName]
     if self._fieldTest._expectedType ~= "nil" then
-        assert(fieldValue, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have field")
+--        assert(fieldValue, indent..testFieldStr..": test "..testObjName.."(="..textutils.serialise(testObj, compact)..") does not have field")
+        assert(fieldValue, indent..testFieldStr..": test "..testObjName.." does not have field") -- note: serialising testObj is a bit dangerous as it might contain functions
     end
 
     -- test (via _fieldTest)

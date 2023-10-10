@@ -26,6 +26,7 @@ local T_Class = require "test.t_class"
 local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_IMObj = require "test.t_i_mobj"
+local T_IWorker = require "test.t_i_worker"
 local T_Chest = require "test.t_mobj_chest"
 
 local t_turtle = require "test.t_turtle"
@@ -36,18 +37,21 @@ function T_Turtle.T_All()
     T_Turtle.T_new()
     T_Turtle.T_Getters()
 
-    -- IObj methods
+    -- IObj
     T_Turtle.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_Turtle.T_IMObj_All()
 
-    -- IItemSupplier methods
+    -- IWorker
+    T_Turtle.T_IWorker_All()
+
+    -- IItemSupplier
     T_Turtle.T_IItemSupplier_All()
 --    T_Turtle.T_needsTo_ProvideItemsTo_SOSrv()
 --    T_Turtle.T_can_ProvideItems_QOSrv()
 
-    -- IItemDepot methods
+    -- IItemDepot
     T_Turtle.T_IItemDepot_All()
 end
 
@@ -210,6 +214,32 @@ end
 --     | |   \ \/  \/ / _ \| '__| |/ / _ \ '__|
 --    _| |_   \  /\  / (_) | |  |   <  __/ |
 --   |_____|   \/  \/ \___/|_|  |_|\_\___|_|
+
+function T_Turtle.T_IWorker_All()
+    -- prepare test
+    local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
+    local workerResumeTest = TestArrayTest:newInstance(
+        FieldValueTypeTest:newInstance("turtleId", "number"),
+        FieldValueTypeTest:newInstance("location", "Location"),
+        FieldValueTypeTest:newInstance("fuelLevel", "number"),
+        FieldValueTypeTest:newInstance("axePresent", "boolean"),
+        FieldValueTypeTest:newInstance("inventoryItems", "table"),
+        FieldValueTypeTest:newInstance("leftEquiped", "string"),
+        FieldValueTypeTest:newInstance("rightEquiped", "string")
+    )
+    local isMainUIMenuTest = TestArrayTest:newInstance(
+        FieldValueTypeTest:newInstance("clear", "boolean"),
+        FieldValueTypeTest:newInstance("intro", "string"),
+        FieldValueTypeTest:newInstance("option", "table"),
+        FieldValueTypeTest:newInstance("question", "string")
+    )
+    local assignmentFilterTest = TestArrayTest:newInstance(
+        FieldValueTypeTest:newInstance("priorityKeyNeeded", "string")
+    )
+
+    -- test
+    T_IWorker.pt_all(testClassName, obj, testObjName, workerResumeTest, isMainUIMenuTest, assignmentFilterTest, logOk)
+end
 
 --                        _
 --                       (_)

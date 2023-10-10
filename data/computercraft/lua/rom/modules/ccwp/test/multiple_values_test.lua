@@ -61,7 +61,8 @@ function MultipleValuesTest:test(values, valuesName, indent, logOk)
     assert(type(logOk) == "boolean", "logOk not a boolean")
 
     -- prepare test
-    local testContextStr = valuesName.." values "..textutils.serialise(values, compact)
+--    local testContextStr = valuesName.." values "..textutils.serialise(values, compact)
+    local testContextStr = valuesName.." values" -- note: serialising values is a bit dangerous as it might contain functions
 
     -- test all tests
     assert(self._valueTests, indent..testContextStr..": no tests provided")

@@ -276,6 +276,29 @@ function Turtle:getWorkerId()
     return self._workerId
 end
 
+function Turtle:getWorkerResume()
+    --[[
+        Get Turtle resume for selecting Assignment's.
+
+        The resume gives information on the Turtle and is used to determine if the Turtle is (best) suitable to take an Assignment.
+            This is can e.g. be used to indicate location, fuel level and equiped items.
+
+        Return value:
+            resume              - (table) Turtle "resume" to consider in selecting Assignment's
+    --]]
+
+    -- end
+    return {
+        turtleId        = self:getTurtleId(),
+        location        = self:getLocation(),
+        fuelLevel       = turtle.getFuelLevel(),
+        axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
+        inventoryItems  = coreinventory.GetInventoryDetail().items,
+        leftEquiped     = coreinventory.LeftEquiped(),
+        rightEquiped    = coreinventory.RightEquiped(),
+    }
+end
+
 function Turtle:getMainUIMenu()
     --[[
         Get the main (start) UI menu of the Turtle.
@@ -309,29 +332,6 @@ function Turtle:getAssignmentFilter()
     -- end
     return {
         priorityKeyNeeded   = self:getFuelPriorityKey()
-    }
-end
-
-function Turtle:getWorkerResume()
-    --[[
-        Get Turtle resume for selecting Assignment's.
-
-        The resume gives information on the Turtle and is used to determine if the Turtle is (best) suitable to take an Assignment.
-            This is can e.g. be used to indicate location, fuel level and equiped items.
-
-        Return value:
-            resume              - (table) Turtle "resume" to consider in selecting Assignment's
-    --]]
-
-    -- end
-    return {
-        turtleId        = self:getTurtleId(),
-        location        = self:getLocation(),
-        fuelLevel       = turtle.getFuelLevel(),
-        axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),
-        inventoryItems  = coreinventory.GetInventoryDetail().items,
-        leftEquiped     = coreinventory.LeftEquiped(),
-        rightEquiped    = coreinventory.RightEquiped(),
     }
 end
 
