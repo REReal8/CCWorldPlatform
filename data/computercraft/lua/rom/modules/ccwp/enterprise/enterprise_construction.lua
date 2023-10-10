@@ -85,7 +85,7 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
-            -- obtain turtleId
+            -- obtain workerId
             { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- do build assignment
@@ -183,7 +183,7 @@ function enterprise_construction.BuildLayer_ASrv(...)
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
             }, description = "Getting building materials(="..textutils.serialise(materialsNeeded, {compact = true})..")"},
-            -- obtain turtleId
+            -- obtain workerId
             { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- do build assignment

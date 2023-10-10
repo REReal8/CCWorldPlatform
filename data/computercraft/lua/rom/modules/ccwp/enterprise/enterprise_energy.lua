@@ -72,10 +72,10 @@ local function Refuel_ASrv(...)
 
     -- create project service data
     local turtleObj = Host.GetObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_energy.Refuel_ASrv: Failed obtaining turtle "..turtleLocator:getURI()) return Callback.ErrorCall(callback) end
-    local turtleId = turtleObj:getWorkerId()
+    local workerId = turtleObj:getWorkerId()
     local refuelTaskData = {
         -- ToDo: consider passing turtleLocator
-        turtleId    = turtleId,
+        turtleId    = workerId,
         fuelItems   = coreutils.DeepCopy(fuelItems),
 
         priorityKey = assignmentsPriorityKey,
@@ -89,12 +89,12 @@ local function Refuel_ASrv(...)
                 { keyDef = "ingredientsItemSupplierLocator" , sourceStep = 0, sourceKeyDef = "ingredientsItemSupplierLocator" },
                 { keyDef = "wasteItemDepotLocator"          , sourceStep = 0, sourceKeyDef = "wasteItemDepotLocator" },
                 { keyDef = "assignmentsPriorityKey"         , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
-            }, description = "Getting fuel for turtle "..turtleId},
+            }, description = "Getting fuel for turtle "..workerId},
             -- refuel turtle
             { stepType = "ASrv", stepTypeDef = { moduleName = "enterprise_assignmentboard", serviceName = "DoAssignment_ASrv" }, stepDataDef = {
                 { keyDef = "metaData"                       , sourceStep = 0, sourceKeyDef = "refuelMetaData" },
                 { keyDef = "taskCall"                       , sourceStep = 0, sourceKeyDef = "refuelTaskCall" },
-            }, description = "Refuelling turtle "..turtleId},
+            }, description = "Refuelling turtle "..workerId},
         },
         returnData  = {
         }

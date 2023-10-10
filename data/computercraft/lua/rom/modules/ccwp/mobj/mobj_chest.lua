@@ -366,10 +366,10 @@ function Chest:provideItemsTo_AOSrv(...)
 
     -- check if ItemDepot is a turtle
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleId = -1
+    local workerId = -1
     if enterprise_turtle:isLocatorFromHost(itemDepotLocator) then
         local turtleObj = Host.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
-        turtleId = turtleObj:getWorkerId()
+        workerId = turtleObj:getWorkerId()
     end
 
     -- create project definition
@@ -378,7 +378,7 @@ function Chest:provideItemsTo_AOSrv(...)
         accessDirection = self:getAccessDirection(),
         itemsQuery      = provideItems,
 
-        turtleId        = turtleId,
+        turtleId        = workerId,
         priorityKey     = assignmentsPriorityKey,
     }
     local projectData = {
@@ -580,7 +580,7 @@ function Chest:storeItemsFrom_AOSrv(...)
                 { keyDef = "itemsLocator"           , sourceStep = 0, sourceKeyDef = "itemsLocator" },
                 { keyDef = "assignmentsPriorityKey" , sourceStep = 0, sourceKeyDef = "assignmentsPriorityKey" },
             }},
-            -- obtain turtleId
+            -- obtain workerId
             { stepType = "LSMtd", stepTypeDef = { methodName = "getWorkerId", locatorStep = 1, locatorKeyDef = "destinationItemsLocator" }, stepDataDef = {
             }},
             -- put items into chest
