@@ -26,10 +26,10 @@ function T_TestMObj.T_All()
     T_TestMObj.T_new()
     T_TestMObj.T_Getters()
 
-    -- IObj methods
+    -- IObj
     T_TestMObj.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_TestMObj.T_IMObj_All()
 end
 

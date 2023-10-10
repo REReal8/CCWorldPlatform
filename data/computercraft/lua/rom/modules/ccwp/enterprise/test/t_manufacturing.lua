@@ -20,16 +20,16 @@ local T_Factory = require "test.t_mobj_factory"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_manufacturing.T_All()
-    -- MObjHost methods
+    -- MObjHost
     t_manufacturing.T_hostMObj_SSrv_Factory()
     t_manufacturing.T_upgradeMObj_SSrv_Factory()
     t_manufacturing.T_releaseMObj_SSrv_Factory()
 end
 
 function t_manufacturing.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory0()
     t_manufacturing.T_dismantleAndReleaseMObj_ASrv_Factory(mobjLocator)
     mobjLocator = t_manufacturing.T_hostAndBuildMObj_ASrv_Factory1()

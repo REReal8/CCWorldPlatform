@@ -29,19 +29,19 @@ function T_MObjHost.T_All()
     -- initialisation
     T_MObjHost.T_new()
 
-    -- IObj methods
+    -- IObj
     T_MObjHost.T_IObj_All()
 
-    -- MObjHost methods
+    -- MObjHost
     T_MObjHost.T_hostMObj_SSrv_TestMObj()
     T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     T_MObjHost.T_releaseMObj_SSrv_TestMObj()
 end
 
 function T_MObjHost.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)

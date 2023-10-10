@@ -20,10 +20,10 @@ function T_ObjArray.T_All()
     T_ObjArray.T__init()
     T_ObjArray.T_new()
 
-    -- IObj methods
+    -- IObj
     T_ObjArray.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_ObjArray.T_nObjs()
     T_ObjArray.T_transformObjectTables()
     T_ObjArray.T_new_transformsObjTables()

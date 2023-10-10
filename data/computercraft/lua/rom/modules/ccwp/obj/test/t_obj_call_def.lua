@@ -18,10 +18,10 @@ function T_CallDef.T_All()
     T_CallDef.T__init()
     T_CallDef.T_new()
 
-    -- IObj methods
+    -- IObj
     T_CallDef.T_IObj_All()
 
-    -- specific methods
+    -- specific
 end
 
 local testClassName = "CallDef"

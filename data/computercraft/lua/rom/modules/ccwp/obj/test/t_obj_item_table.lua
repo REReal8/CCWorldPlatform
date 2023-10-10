@@ -10,10 +10,10 @@ local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 
 function T_ItemTable.T_All()
-    -- IObj methods
+    -- IObj
     T_ItemTable.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_ItemTable.T_isEmpty()
     T_ItemTable.T_hasNoItems()
     T_ItemTable.T_combine()

@@ -41,17 +41,17 @@ function T_BirchForest.T_All()
     T_BirchForest.T_Getters()
     T_BirchForest.T_Setters()
 
-    -- IObj methods
+    -- IObj
     T_BirchForest.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_BirchForest.T_IMObj_All()
 
-    -- service methods
+    -- service
     T_BirchForest.T_getFuelNeed_Harvest_Att()
     T_BirchForest.T_getFuelNeedExtraTree_Att()
 
-    -- IItemSupplier methods
+    -- IItemSupplier
     T_BirchForest.T_IItemSupplier_All()
     T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     T_BirchForest.T_can_ProvideItems_QOSrv()

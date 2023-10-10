@@ -24,10 +24,10 @@ function T_URL.T_All()
     T_URL.T_SettersFromURI()
     T_URL.T_NewFromURI()
 
-    -- IObj methods
+    -- IObj
     T_URL.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_URL.T_SameURLComponents()
     T_URL.T_baseCopy()
 end

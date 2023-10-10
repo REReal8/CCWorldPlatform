@@ -23,10 +23,10 @@ function T_Host.T_All()
     T_Host.T__init()
     T_Host.T_new()
 
-    -- IObj methods
+    -- IObj
     T_Host.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_Host.T_getHostLocator()
     T_Host.T_isLocatorFromHost()
     T_Host.T_getResourceLocator()

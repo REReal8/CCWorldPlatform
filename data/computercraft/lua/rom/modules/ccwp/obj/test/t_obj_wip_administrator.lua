@@ -22,10 +22,10 @@ function T_WIPAdministrator.T_All()
     T_WIPAdministrator.T__init()
     T_WIPAdministrator.T_new()
 
-    -- IObj methods
+    -- IObj
     T_WIPAdministrator.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_WIPAdministrator.T_removeWIPQueue()
     T_WIPAdministrator.T_getWIPQueue()
     T_WIPAdministrator.T_reset()

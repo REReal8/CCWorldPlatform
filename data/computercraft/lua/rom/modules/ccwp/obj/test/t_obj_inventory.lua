@@ -26,10 +26,10 @@ function T_Inventory.T_All()
     T_Inventory.T__init()
     T_Inventory.T_new()
 
-    -- IObj methods
+    -- IObj
     T_Inventory.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_Inventory.T_isEmpty()
     T_Inventory.T_hasNoItems()
     T_Inventory.T_getItemTable()

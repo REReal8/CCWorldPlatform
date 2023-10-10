@@ -16,16 +16,16 @@ local T_BirchForest = require "test.t_mobj_birchforest"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_forestry.T_All()
-    -- MObjHost methods
+    -- MObjHost
     t_forestry.T_hostMObj_SSrv_BirchForest()
     t_forestry.T_upgradeMObj_SSrv_BirchForest()
     t_forestry.T_releaseMObj_SSrv_BirchForest()
 end
 
 function t_forestry.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = t_forestry.T_hostAndBuildMObj_ASrv_BirchForest_Lm1T1()
     t_forestry.T_extendAndUpgradeMObj_ASrv_BirchForestTo_L0T1(mobjLocator)
     t_forestry.T_dismantleAndReleaseMObj_ASrv_BirchForest(mobjLocator)

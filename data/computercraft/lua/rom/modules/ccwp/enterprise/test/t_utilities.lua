@@ -8,15 +8,15 @@ local T_UtilStation = require "test.t_mobj_util_station"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_utilities.T_All()
-    -- MObjHost methods
+    -- MObjHost
     t_utilities.T_hostMObj_SSrv_UtilStation()
     t_utilities.T_releaseMObj_SSrv_UtilStation()
 end
 
 function t_utilities.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = t_utilities.T_hostAndBuildMObj_ASrv_UtilStation()
     t_utilities.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
 end

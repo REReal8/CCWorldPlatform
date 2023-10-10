@@ -6,7 +6,7 @@ local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 
 function T_ObjectFactory.T_All()
-    -- specific methods
+    -- specific
     T_ObjectFactory.T_registerClass()
     T_ObjectFactory.T_create()
 end

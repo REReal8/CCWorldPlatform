@@ -14,15 +14,15 @@ local T_Chest = require "test.t_mobj_chest"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_chests.T_All()
-    -- MObjHost methods
+    -- MObjHost
     t_chests.T_hostMObj_SSrv_Chest()
     t_chests.T_releaseMObj_SSrv_Chest()
 end
 
 function t_chests.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = t_chests.T_hostAndBuildMObj_ASrv_Chest()
     t_chests.T_dismantleAndReleaseMObj_ASrv_Chest(mobjLocator)
 end

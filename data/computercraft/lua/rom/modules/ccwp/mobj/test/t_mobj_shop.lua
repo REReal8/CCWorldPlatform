@@ -45,19 +45,19 @@ function T_Shop.T_All()
     T_Shop.T_new()
     T_Shop.T_Getters()
 
-    -- IObj methods
+    -- IObj
     T_Shop.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_Shop.T_IMObj_All()
 
-    -- service methods
+    -- service
     T_Shop.T_registerItemSupplier_SOSrv()
     T_Shop.T_delistItemSupplier_SOSrv()
     T_Shop.T_delistAllItemSuppliers()
     T_Shop.T_bestItemSupplier()
 
-    -- IItemSupplier methods
+    -- IItemSupplier
     T_Shop.T_IItemSupplier_All()
     T_Shop.T_can_ProvideItems_QOSrv()
     T_Shop.T_needsTo_ProvideItemsTo_SOSrv()

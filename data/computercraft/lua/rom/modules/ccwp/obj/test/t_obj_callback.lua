@@ -5,7 +5,7 @@ local corelog = require "corelog"
 local Callback = require "obj_callback"
 
 function T_Callback.T_All()
-    -- specific methods
+    -- specific
     T_Callback.T_call()
 
     -- helper functions

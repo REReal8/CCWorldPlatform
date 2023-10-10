@@ -41,16 +41,16 @@ function T_Silo.T_All()
     T_Silo.T__init()
     T_Silo.T_new()
 
-    -- IObj methods
+    -- IObj
     T_Silo.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_Silo.T_IMObj_All()
 
-    -- IItemSupplier methods
+    -- IItemSupplier
     T_Silo.T_IItemSupplier_All()
 
-    -- IItemDepot methods
+    -- IItemDepot
     T_Silo.T_IItemDepot_All()
 end
 

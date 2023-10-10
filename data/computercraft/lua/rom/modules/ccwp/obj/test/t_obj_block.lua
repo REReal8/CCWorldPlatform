@@ -16,10 +16,10 @@ function T_Block.T_All()
     T_Block.T__init()
     T_Block.T_new()
 
-    -- IObj methods
+    -- IObj
     T_Block.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_Block.T_isMinecraftItem()
     T_Block.T_isAnyBlock()
     T_Block.T_isNoneBlock()

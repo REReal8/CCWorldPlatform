@@ -15,7 +15,7 @@ function T_ObjBase.T_All()
     -- initialisation
     T_ObjBase.T_init()
 
-    -- IObj methods
+    -- IObj
     T_ObjBase.T_IObj_All()
 end
 

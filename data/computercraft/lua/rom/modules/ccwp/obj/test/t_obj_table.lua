@@ -20,10 +20,10 @@ function T_ObjTable.T_All()
     T_ObjTable.T__init()
     T_ObjTable.T_new()
 
-    -- IObj methods
+    -- IObj
     T_ObjTable.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_ObjTable.T_nObjs()
     T_ObjTable.T_verifyObjsOfCorrectType()
     T_ObjTable.T_transformObjectTables()

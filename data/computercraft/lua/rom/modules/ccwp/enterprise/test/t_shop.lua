@@ -5,9 +5,9 @@ local enterprise_shop = require "enterprise_shop"
 function t_shop.T_All()
     -- initialisation
 
-    -- specific methods
+    -- specific
 
-    -- service methods
+    -- service
 end
 
 function t_shop.T_reset()

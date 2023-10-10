@@ -40,23 +40,23 @@ function T_Factory.T_All()
     T_Factory.T_new()
     T_Factory.T_Getters()
 
-    -- IObj methods
+    -- IObj
     T_Factory.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_Factory.T_IMObj_All()
 
-    -- specific methods
+    -- specific
     T_Factory.T_getAvailableInputLocator()
     T_Factory.T_getAvailableOutputLocator()
     T_Factory.T_getAvailableCraftSpot()
     T_Factory.T_getAvailableSmeltSpot()
 
-    -- service methods
+    -- service
     T_Factory.T_getFuelNeed_Production_Att()
     T_Factory.T_getProductionLocation_Att()
 
-    -- IItemSupplier methods
+    -- IItemSupplier
     T_Factory.T_IItemSupplier_All()
     T_Factory.T_can_ProvideItems_QOSrv()
 end

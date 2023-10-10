@@ -36,18 +36,18 @@ function T_UtilStation.T_All()
     T_UtilStation.T_new()
     T_UtilStation.T_Getters()
 
-    -- IObj methods
+    -- IObj
     T_UtilStation.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_UtilStation.T_IMObj_All()
 
-    -- IItemDepot methods
+    -- IItemDepot
     T_UtilStation.T_IItemDepot_All()
 end
 
 function T_UtilStation.T_AllPhysical()
-    -- IItemDepot methods
+    -- IItemDepot
     T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
 end
 

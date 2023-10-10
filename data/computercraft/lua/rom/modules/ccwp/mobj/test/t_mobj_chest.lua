@@ -40,19 +40,19 @@ function T_Chest.T_All()
     T_Chest.T_new()
     T_Chest.T_Getters()
 
-    -- IObj methods
+    -- IObj
     T_Chest.T_IObj_All()
 
-    -- IMObj methods
+    -- IMObj
     T_Chest.T_IMObj_All()
 
-    -- IItemSupplier methods
+    -- IItemSupplier
     T_Chest.T_IItemSupplier_All()
 
     T_Chest.T_needsTo_ProvideItemsTo_SOSrv() -- ToDo: generalise
     T_Chest.T_can_ProvideItems_QOSrv()  -- ToDo: generalise
 
-    -- IItemDepot methods
+    -- IItemDepot
     T_Chest.T_IItemDepot_All()
 end
 

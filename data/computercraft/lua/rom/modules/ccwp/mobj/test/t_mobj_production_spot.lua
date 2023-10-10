@@ -18,10 +18,10 @@ function T_ProductionSpot.T_All()
     T_ProductionSpot.T__init()
     T_ProductionSpot.T_new()
 
-    -- IObj methods
+    -- IObj
     T_ProductionSpot.T_IObj_All()
 
-    -- specific methods
+    -- specific
 end
 
 local testClassName = "ProductionSpot"

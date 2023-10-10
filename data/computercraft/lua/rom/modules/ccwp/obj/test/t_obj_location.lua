@@ -17,10 +17,10 @@ function T_Location.T_All()
     T_Location.T__init()
     T_Location.T_new()
 
-    -- IObj methods
+    -- IObj
     T_Location.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_Location.T_reset()
     T_Location.T_minLocation()
     T_Location.T_maxLocation()

@@ -23,10 +23,10 @@ function T_WIPQueue.T_All()
     T_WIPQueue.T_noWIP()
     T_WIPQueue.T_addCallback()
 
-    -- IObj methods
+    -- IObj
     T_WIPQueue.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_WIPQueue.T_callAndReleaseCallbacks()
 end
 

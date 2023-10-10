@@ -18,19 +18,19 @@ local T_Turtle
 function t_turtle.T_All()
 --    t_turtle.T_GetFuelLevels_Att()
 
-    -- specific methods
+    -- specific
     t_turtle.T_GetAnyTurtleLocator()
     t_turtle.T_getObject()
 
-    -- MObjHost methods
+    -- MObjHost
     t_turtle.T_hostMObj_SSrv_Turtle()
     t_turtle.T_releaseMObj_SSrv_Turtle()
 end
 
 function t_turtle.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = t_turtle.T_hostAndBuildMObj_ASrv_Turtle()
     t_turtle.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
 end

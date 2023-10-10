@@ -20,10 +20,10 @@ function T_LayerRectangle.T_All()
     T_LayerRectangle.T__init()
     T_LayerRectangle.T_new()
 
-    -- IObj methods
+    -- IObj
     T_LayerRectangle.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_LayerRectangle.T_getBlock()
     T_LayerRectangle.T_itemsNeeded()
     T_LayerRectangle.T_transformToLayer()

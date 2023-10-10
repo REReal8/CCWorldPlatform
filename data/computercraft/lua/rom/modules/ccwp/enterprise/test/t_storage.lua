@@ -15,17 +15,17 @@ local T_MObjHost = require "test.t_mobj_host"
 local enterprise_storage
 
 function t_storage.T_All()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     t_storage.T_hostMObj_SSrv_Silo()
     t_storage.T_releaseMObj_SSrv_Silo()
 end
 
 function t_storage.T_AllPhysical()
-    -- IObj methods
+    -- IObj
 
-    -- MObjHost methods
+    -- MObjHost
     local mobjLocator = t_storage.T_hostAndBuildMObj_ASrv_Silo()
     t_storage.T_dismantleAndReleaseMObj_ASrv_Silo(mobjLocator)
 end

@@ -7,7 +7,7 @@ local TaskCall = require "obj_task_call"
 function T_TaskCall.T_All()
     -- initialisation methods
 
-    -- specific methods
+    -- specific
     T_TaskCall.T_call()
 end
 

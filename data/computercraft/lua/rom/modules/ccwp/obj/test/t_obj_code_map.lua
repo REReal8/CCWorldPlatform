@@ -17,10 +17,10 @@ function T_CodeMap.T_All()
     T_CodeMap.T__init()
     T_CodeMap.T_new()
 
-    -- IObj methods
+    -- IObj
     T_CodeMap.T_IObj_All()
 
-    -- specific methods
+    -- specific
     T_CodeMap.T_getCode()
     T_CodeMap.T_transformToMap()
     T_CodeMap.T_removeRow()
