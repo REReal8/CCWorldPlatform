@@ -325,6 +325,10 @@ function Turtle:getAssignmentFilter()
             assignmentFilter    - (table) filter to apply in finding an Assignment
     --]]
 
+    -- (re)fuel turtle if needed
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    enterprise_turtle:triggerTurtleRefuelIfNeeded(self) -- note: if refuel is triggered fuelPriorityKey will get set
+
     -- end
     return {
         priorityKeyNeeded   = self:getFuelPriorityKey()

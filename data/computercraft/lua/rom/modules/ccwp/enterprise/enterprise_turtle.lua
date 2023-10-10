@@ -180,10 +180,10 @@ function enterprise_turtle:getCurrentTurtleLocator()
     return currentTurtleLocator
 end
 
-local function TriggerRefuelIfNeeded(turtleObj)
+function enterprise_turtle:triggerTurtleRefuelIfNeeded(turtleObj)
     -- get fuelLevels
     local turtleFuelLevel = turtle.getFuelLevel()
-    local fuelLevels = enterprise_turtle.GetFuelLevels_Att()
+    local fuelLevels = self.GetFuelLevels_Att()
 
     -- check fuelLevels
     local fuelLevel_Assignment = fuelLevels.fuelLevel_Assignment
@@ -191,7 +191,7 @@ local function TriggerRefuelIfNeeded(turtleObj)
         -- ensure this turtle now only starts taking new assignments with the priority key
         local priorityKey = coreutils.NewId()
         turtleObj:setFuelPriorityKey(priorityKey)
-        local turtleLocator = enterprise_turtle:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle.TriggerRefuelIfNeeded: failed saving turtle") return end
+        local turtleLocator = self:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
@@ -264,9 +264,6 @@ function enterprise_turtle.GetAssignmentForTurtle_SSrv(...)
 
     -- get Turtle
     local turtleObj = enterprise_turtle:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetAssignmentForTurtle_SSrv: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
-
-    -- (re)fuel turtle if needed
-    TriggerRefuelIfNeeded(turtleObj)
 
     -- look for best next assignment
     local assignmentFilter = turtleObj:getAssignmentFilter()

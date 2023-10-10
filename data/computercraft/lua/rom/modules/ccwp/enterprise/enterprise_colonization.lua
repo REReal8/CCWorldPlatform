@@ -85,14 +85,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local nTreeswanted = 6
     local settleData = {
         materialsItemSupplierLocator    = enterprise_shop.GetShopLocator(),
-        wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_turtle:TriggerRefuelIfNeeded
+        wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_turtle:triggerTurtleRefuelIfNeeded
 
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:newInstance("role_settler", "InitialiseCoordinates_Task", initialiseCoordinatesTaskData),
 
-        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle:TriggerRefuelIfNeeded
+        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle:triggerTurtleRefuelIfNeeded
 
         factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
         factoryClassName                = "Factory",
