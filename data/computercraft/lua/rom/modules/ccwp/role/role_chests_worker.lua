@@ -268,7 +268,7 @@ end
 
 function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
     -- get & check input from description
-    local checkSuccess, location, accessDirection, itemsQuery = InputChecker.Check([[
+    local checkSuccess, location, accessDirection, itemsQuery, turtleLocator = InputChecker.Check([[
         This Task function fetches items from a chest into the inventory of a turtle.
 
         Return value:
@@ -283,6 +283,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
                 location                + (Location) location of the chest
                 accessDirection         + (string) whether to access chest from front, back, up, down, left or right (relative to location)
                 itemsQuery              + (table) which items to be fetched
+                workerLocator           + (URL) locating the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Invalid input") return {success = false} end
 
@@ -353,8 +354,6 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
 
     -- determine output locator
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
-    if not turtleLocator then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleOutputItemsLocator = turtleLocator:copy()
     turtleOutputItemsLocator:setQuery(itemResultQuery)
 

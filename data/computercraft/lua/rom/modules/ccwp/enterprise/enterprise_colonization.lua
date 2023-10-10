@@ -76,6 +76,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
     local initialiseCoordinatesTaskData =  {
         startLocation               = startLocation:copy(),
+        workerLocator               = currentTurtleLocator,
     }
     local collectCobbleStoneTaskData =  {
         startLocation               = startLocation:copy(),

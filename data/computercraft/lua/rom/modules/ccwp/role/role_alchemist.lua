@@ -210,7 +210,7 @@ end
 
 function role_alchemist.Craft_Task(...)
     -- get & check input from description
-    local checkSuccess, recipe, yield, productItemName, productItemCount, workingLocation = InputChecker.Check([[
+    local checkSuccess, recipe, yield, productItemName, productItemCount, workingLocation, turtleLocator = InputChecker.Check([[
         This Task function crafts items. The ingredients for crafting should be present in the turtle executing this task.
 
         Return value:
@@ -226,6 +226,7 @@ function role_alchemist.Craft_Task(...)
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the crafting
+                workerLocator           + (URL) locating the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_alchemist.Craft_Task: Invalid input") return {success = false} end
 
@@ -234,10 +235,8 @@ function role_alchemist.Craft_Task(...)
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
-    if not turtleLocator then corelog.Error("role_alchemist.Craft_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
-    if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining current Turtle") return {success = false} end
+    if not turtleObj then corelog.Error("role_alchemist.Craft_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- remember input items
     local beginTurtleItemTable = turtleObj:getInventoryAsItemTable()
@@ -436,7 +435,7 @@ end
 
 function role_alchemist.Pickup_Task(...)
     -- get & check input from description
-    local checkSuccess, productItemName, productItemCount, workingLocation = InputChecker.Check([[
+    local checkSuccess, productItemName, productItemCount, workingLocation, turtleLocator = InputChecker.Check([[
         This Task picks up smelted items from a furnace.
 
         Return value:
@@ -450,13 +449,12 @@ function role_alchemist.Pickup_Task(...)
                 productItemName         + (string) name of item to produce
                 productItemCount        + (number) of items to produce
                 workingLocation         + (Location) world location to do the smelting (in front of the furnance)
+                workerLocator           + (URL) locating the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_alchemist.Pickup_Task: Invalid input") return {success = false} end
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
-    if not turtleLocator then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_alchemist.Pickup_Task: Failed obtaining current Turtle") return {success = false} end
 

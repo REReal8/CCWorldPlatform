@@ -25,6 +25,7 @@ local coremove   = require "coremove"
 
 local Callback   = require "obj_callback"
 local TaskCall   = require "obj_task_call"
+local InputChecker = require "input_checker"
 local Location  = require "obj_location"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
@@ -80,6 +81,7 @@ function coreassignment.Run()
     while coresystem.IsRunning() and not db.rejectAllAssignments do
         -- get Worker
         local workerObj = enterprise_turtle:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+        -- note: we getObject every loop as it might have changed
 
         -- find best next Worker assignment
         local assignmentFilter = workerObj:getAssignmentFilter()
@@ -106,7 +108,7 @@ function coreassignment.Run()
         -- did we get an assignment?
         if nextAssignment then
             -- do the assignment
-            DoAssignment(nextAssignment)
+            DoAssignment(workerLocator, nextAssignment)
         else
             -- update status
             corelog.SetStatus("assignment", "Idle (no assignment)", coremove.GetLocationAsString(), coremove.GetDirectionAsString())
@@ -134,16 +136,29 @@ end
 --   | | (_) | (_| (_| | | | | | |_| | | | | (__| |_| | (_) | | | \__ \
 --   |_|\___/ \___\__,_|_| |_|  \__,_|_| |_|\___|\__|_|\___/|_| |_|___/
 
-function DoAssignment(assignment)
+function DoAssignment(...)
+    -- get & check input from description
+    local checkSuccess, workerLocator, assignmentId, taskCall, callback  = InputChecker.Check([[
+        Execute an assignment on a Worker
+
+        Return value:
+
+        Parameters:
+            workerLocator               + (URL) locating the Worker
+            assignment                  - (table) location of first tree of the forest
+                assignmentId            + (string) with id of the assignment
+                taskCall                + (TaskCall) with the task to call
+                callback                + (Callback) with the callback to call
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_forester.HarvestForest_Task: Invalid input") return {success = false} end
+
     -- we have taken this assignment!
-    local assignmentId = assignment.assignmentId
     enterprise_assignmentboard.TakeAssignment(assignmentId)
 
-    -- get & check CallDef's
-    local taskCall = TaskCall:new(assignment.taskCall)
-    if not taskCall then corelog.Error("coreassignment.DoAssignment: Invalid taskCall for assignment "..assignmentId) return end
-    local callback = Callback:new(assignment.callback)
-    if not callback then corelog.Error("coreassignment.DoAssignment: Invalid callback for assignment "..assignmentId) return end
+    -- enhance task data with Worker executing the task
+    if not taskCall._data.workerLocator then
+        taskCall._data.workerLocator = workerLocator
+    end
 
     -- call task function
     corelog.WriteToAssignmentLog("Starting task", assignmentId)

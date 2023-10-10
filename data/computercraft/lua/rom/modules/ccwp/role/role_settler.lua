@@ -14,6 +14,8 @@ local coreinventory = require "coreinventory"
 local InputChecker = require "input_checker"
 local Host = require "obj_host"
 
+local enterprise_turtle
+
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
 --      | | __ _ ___| | _____   ( _ )   | \  / | ___| |_ __ _| |  | | __ _| |_ __ _
@@ -23,7 +25,7 @@ local Host = require "obj_host"
 
 function role_settler.InitialiseCoordinates_MetaData(...)
     -- get & check input from description
-    local checkSuccess = InputChecker.Check([[
+    local checkSuccess, turtleLocator = InputChecker.Check([[
         This function returns the MetaData for InitialiseCoordinates_Task.
 
         Return value:
@@ -32,13 +34,14 @@ function role_settler.InitialiseCoordinates_MetaData(...)
         Parameters:
             taskData                    - (table) data about the task
                 startLocation           - (Location) locaton where the task should start
+                workerLocator           + (URL) locating the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Invalid input") return {success = false} end
 
-    local enterprise_turtle = require "enterprise_turtle"
-    local currentTurtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtleLocator") return nil end
-
-    local turtleObj = Host.GetObject(currentTurtleLocator) if not turtleObj then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtle") return nil end
+    -- get turtle we are doing task with
+    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    local turtleObj = enterprise_turtle:getObject(turtleLocator)
+    if not turtleObj then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
     local location = turtleObj:getLocation() --> use the current location for proper bootstrapping
 
     return {

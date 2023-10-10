@@ -83,7 +83,7 @@ end
 
 function role_forester.HarvestForest_Task(...)
     -- get & check input from description
-    local checkSuccess, forestLevel, firstTreeLocation, nTrees, waitForFirstTree = InputChecker.Check([[
+    local checkSuccess, forestLevel, firstTreeLocation, nTrees, waitForFirstTree, turtleLocator = InputChecker.Check([[
         This Task function harvests a forest.
 
         Return value:
@@ -99,6 +99,7 @@ function role_forester.HarvestForest_Task(...)
                 firstTreeLocation           + (table) location of first tree of the forest
                 nTrees                      + (number) the number of trees in (the y direction of) the forest
                 waitForFirstTree            + (boolean) if harvesting should wait for the first tree
+                workerLocator               + (URL) locating the Turtle
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("role_forester.HarvestForest_Task: Invalid input") return {success = false} end
 
@@ -110,10 +111,8 @@ function role_forester.HarvestForest_Task(...)
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator()
-    if not turtleLocator then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current turtleLocator") return {success = false} end
     local turtleObj = enterprise_turtle:getObject(turtleLocator)
-    if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining current Turtle") return {success = false} end
+    if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- remember input items
     local beginTurtleItemTable = turtleObj:getInventoryAsItemTable()
