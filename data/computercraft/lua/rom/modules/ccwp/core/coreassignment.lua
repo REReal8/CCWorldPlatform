@@ -59,29 +59,49 @@ function coreassignment.Run()
     end
 
     -- only turtles take assignments
-    if not turtle then corelog.WriteToLog("coreassignment.Run(): Not a turtle, not taking assignments") return end
+    if not turtle then corelog.WriteToLog("coreassignment.Run(): Not a turtle, not taking assignments") return false end
 
-    -- get (locator for) current Turtle
+    -- get (locator for) current Worker
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not turtleLocator then corelog.Error("coreassignment.Run: Failed obtaining current turtleLocator") return false end
-    -- register current Turtle if not yet registered
-    local objResourceTable = enterprise_turtle:getResource(turtleLocator)
+    local workerLocator = enterprise_turtle:getCurrentTurtleLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
+    -- register current Worker if not yet registered
+    local objResourceTable = enterprise_turtle:getResource(workerLocator)
     if not objResourceTable then
         local workerId = os.getComputerID()
         local coremove_location = Location:new(coremove.GetLocation())
-        turtleLocator = enterprise_turtle:hostMObj_SSrv({ className = "Turtle", constructParameters = {
+        workerLocator = enterprise_turtle:hostMObj_SSrv({ className = "Turtle", constructParameters = {
             workerId    = workerId,
             location    = coremove_location,
         }}).mobjLocator
-        if not turtleLocator then corelog.Error("coreassignment.Run: Failed hosting Turtle "..workerId) return false end
+        if not workerLocator then corelog.Error("coreassignment.Run: Failed hosting Worker "..workerId) return false end
     end
 
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do
-        -- try get assignment for turtle
-        local serviceResults = enterprise_turtle.GetAssignmentForTurtle_SSrv({ turtleLocator = turtleLocator })
-        if not serviceResults or not serviceResults.success then corelog.Error("coreassignment.Run: failure in getting new assignment") end
-        local nextAssignment = serviceResults.assignment
+        -- get Worker
+        local workerObj = enterprise_turtle:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+
+        -- find best next Worker assignment
+        local assignmentFilter = workerObj:getAssignmentFilter()
+        local workerId = workerObj:getWorkerId()
+        local workerResume = workerObj:getWorkerResume()
+        -- ToDo: consider if an assignment board should determine what is best...
+        local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = workerResume })
+        if not serviceResults.success then corelog.Error("coreassignment.Run: FindBestAssignment_SSrv failed.") return false end
+        local bestAssignmentId = serviceResults.assignmentId
+
+        -- apply if we found a suitable assignment
+        local nextAssignment = nil
+        if bestAssignmentId then
+            -- apply
+            enterprise_assignmentboard.ApplyToAssignment(workerId, bestAssignmentId)
+
+            -- wait, maybe more turtles have applied
+            os.sleep(1.25)
+
+            -- check who gets the assignment
+            nextAssignment = enterprise_assignmentboard.AssignmentSelectionProcedure(workerId, bestAssignmentId)
+        end
 
         -- did we get an assignment?
         if nextAssignment then
