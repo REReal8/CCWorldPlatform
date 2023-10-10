@@ -18,16 +18,24 @@ local InputChecker = require "input_checker"
 --      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
-function role_fuel_worker.Refuel_MetaData(taskData)
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid taskData") return {success = false} end
-    local turtleId = taskData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid turtleId") return {success = false} end
-    local fuelItems = taskData.fuelItems
-    if type(fuelItems) ~= "table" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid fuelItems") return {success = false} end
-    local priorityKey = taskData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid priorityKey") return {success = false} end
+function role_fuel_worker.Refuel_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, turtleId, fuelItems, priorityKey = InputChecker.Check([[
+        This function returns the MetaData for Refuel_Task.
 
+        Return value:
+            task result                 - (table)
+                success                 - (boolean) whether the task was succesfull
+
+        Parameters:
+            taskData                    - (table) data about the task
+                turtleId                + (number) id of the turtle to (re)fuel
+                fuelItems               + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
+                priorityKey             + (string, "") priorityKey for this assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_fuel_worker.Refuel_MetaData: Invalid input") return {success = false} end
+
+    -- end
     return {
         startTime   = coreutils.UniversalTime(),
         location    = nil,
@@ -70,8 +78,9 @@ local function Refuel(fuel)
     return true
 end
 
-function role_fuel_worker.Refuel_Task(taskData)
-    --[[
+function role_fuel_worker.Refuel_Task(...)
+    -- get & check input from description
+    local checkSuccess, turtleId, fuelItems = InputChecker.Check([[
         This Task function (re)fuels a (the current) turtle.
 
         Return value:
@@ -80,16 +89,10 @@ function role_fuel_worker.Refuel_Task(taskData)
 
         Parameters:
             taskData                    - (table) data about the task
-                turtleId                - (number) id of the turtle to (re)fuel
-                fuelItems               - (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
-    ]]
-
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid taskData") return {success = false} end
-    local turtleId = taskData.turtleId
-    if type(turtleId) ~= "number" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid turtleId") return {success = false} end
-    local fuelItems = taskData.fuelItems
-    if type(fuelItems) ~= "table" then corelog.Error("role_fuel_worker.Refuel_Task: Invalid fuelItems") return {success = false} end
+                turtleId                + (number) id of the turtle to (re)fuel
+                fuelItems               + (table) with one or more items (formatted as an array of [itemName] = itemCount key-value pairs) to refuel with
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_fuel_worker.Refuel_Task: Invalid input") return {success = false} end
 
     -- check correct turtle
     local currentTurtleId = os.getComputerID()

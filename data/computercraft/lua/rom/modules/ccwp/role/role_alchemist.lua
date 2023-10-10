@@ -11,6 +11,7 @@ local corelog = require "corelog"
 local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
+local InputChecker = require "input_checker"
 local ItemTable = require "obj_item_table"
 
 local enterprise_turtle
@@ -22,23 +23,31 @@ local enterprise_turtle
 --      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
-function role_alchemist.Craft_MetaData(craftData)
-    --[[
-       This function returns the metadata for the Craft_Task supplied with argument craftData.
-   ]]
+function role_alchemist.Craft_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, recipe, productItemCount, workingLocation, priorityKey = InputChecker.Check([[
+        This function returns the MetaData for Craft_Task.
 
-    -- check input
-    if type(craftData) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: craftData not a valid") return { } end
-    if type(craftData.recipe) ~= "table" or type(craftData.recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: recipe not valid") return { } end
-    local productItemCount = craftData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_MetaData: Invalid productItemCount") return { } end
-    if type(craftData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_MetaData: workingLocation not valid") return { } end
-    local priorityKey = craftData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_alchemist.Craft_MetaData: Invalid priorityKey") return {success = false} end
+        Return value:
+                                        - (table) metadata
+
+        Parameters:
+            taskData                    - (table) data about the crafting task
+                recipe                  + (table) crafting recipe
+                    yield               - (number) of items produced by recipe
+                    [slot]              - (table) for each slot
+                        itemName        - (string) name of smelting ingredient to use in specific slot
+                        itemCount       - (number) number it items to put in slot
+                productItemName         - (string) name of item to produce
+                productItemCount        + (number) of items to produce
+                workingLocation         + (Location) world location to do the crafting
+                priorityKey             + (string, "") priorityKey for this assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Craft_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
-    local itemList = role_alchemist.Craft_ItemsNeeded(craftData.recipe, productItemCount)
-    local workingLocation = craftData.workingLocation
+    local itemList = role_alchemist.Craft_ItemsNeeded(recipe, productItemCount)
+    if not itemList then corelog.Error("role_alchemist.Craft_MetaData: Failed obtaining itemList") return {success = false} end
     local fuelNeeded = 0 -- task starts at workingLocation, 0 movement from there
 
     -- return metadata
@@ -54,10 +63,21 @@ function role_alchemist.Craft_MetaData(craftData)
     }
 end
 
-function role_alchemist.Craft_ItemsNeeded(recipe, productItemCount)
-    -- check input
-    if type(recipe) ~= "table" or type(recipe.yield) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: recipe not valid") return { } end
-    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_ItemsNeeded: itemProduceCount not valid") return { } end
+function role_alchemist.Craft_ItemsNeeded(...)
+    -- get & check input from description
+    local checkSuccess, recipe, productItemCount = InputChecker.Check([[
+        This function returns the ingredientsNeeded for crafting a recipe.
+
+        Return value:
+            ingredientsNeeded       - (table) ingredientsNeeded to produce items
+            productSurplus          - (number) number of surplus requested products
+
+        Parameters:
+            recipe                  + (table) crafting recipe
+                yield               - (number) of items produced by recipe
+            productItemCount        + (number) of items to produce
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Craft_ItemsNeeded: Invalid input") return nil end
 
     -- build item list
     local itemList = {}
@@ -191,8 +211,9 @@ local function PrepareCraftingArea(recipe, times)
    end
 end
 
-function role_alchemist.Craft_Task(craftData)
-    --[[
+function role_alchemist.Craft_Task(...)
+    -- get & check input from description
+    local checkSuccess, recipe, yield, productItemName, productItemCount, workingLocation = InputChecker.Check([[
         This Task function crafts items. The ingredients for crafting should be present in the turtle executing this task.
 
         Return value:
@@ -202,29 +223,17 @@ function role_alchemist.Craft_Task(craftData)
                 turtleWasteItemsLocator - (URL) locating waste items produced during production
 
         Parameters:
-            craftData                   - (table) data about the crafting task
-                recipe                  - (table) crafting recipe
-                    yield               - (number) of items produced by recipe
+            taskData                    - (table) data about the crafting task
+                recipe                  + (table) crafting recipe
+                    yield               + (number) of items produced by recipe
                     [slot]              - (table) for each slot
                         itemName        - (string) name of smelting ingredient to use in specific slot
                         itemCount       - (number) number it items to put in slot
-                productItemName         - (string) name of item to produce
-                productItemCount        - (number) of items to produce
-                workingLocation         - (Location) world location to do the crafting
-    ]]
-
-    -- check input
-    if type(craftData) ~= "table" then corelog.Error("role_alchemist.Craft_Task: craftData not a valid") return {success = false} end
-    local recipe = craftData.recipe
-    if type(recipe) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid recipe") return {success = false} end
-    local yield = recipe.yield
-    if type(yield) ~= "number" then corelog.Error("role_alchemist.Craft_Task: Invalid yield") return {success = false} end
-    local productItemName = craftData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("role_alchemist.Craft_Task: Invalid productItemName") return {success = false} end
-    local productItemCount = craftData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Craft_Task: Invalid productItemCount") return {success = false} end
-    local workingLocation = craftData.workingLocation
-    if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Craft_Task: Invalid workingLocation") return {success = false} end
+                productItemName         + (string) name of item to produce
+                productItemCount        + (number) of items to produce
+                workingLocation         + (Location) world location to do the crafting
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Craft_Task: Invalid input") return {success = false} end
 
     -- equip crafting_table
     coreinventory.Equip("minecraft:crafting_table")
@@ -265,7 +274,7 @@ function role_alchemist.Craft_Task(craftData)
         end
     end
     if next(wasteItems) ~= nil then
-        corelog.WriteToLog(">harvested waste: "..textutils.serialise(wasteItems, {compact = true}))
+        corelog.WriteToLog(">crafting waste: "..textutils.serialise(wasteItems, {compact = true}))
     end
 
     -- determine output & waste locators
@@ -283,24 +292,29 @@ function role_alchemist.Craft_Task(craftData)
     return result
 end
 
-function role_alchemist.Smelt_MetaData(smeltData)
-    --[[
-       This function returns the metadata for the Smelt_Task supplied with argument smeltData.
-   ]]
+function role_alchemist.Smelt_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, recipe, productItemCount, workingLocation, fuelItemName, fuelItemCount, priorityKey = InputChecker.Check([[
+        This function returns the MetaData for Smelt_Task.
 
-    -- check input
-    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid craftData") return { } end
-    if type(smeltData.recipe) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid recipe") return { } end
-    if type(smeltData.productItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid productItemCount") return { } end
-    if type(smeltData.workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid workingLocation") return { } end
-    if type(smeltData.fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid fuelItemName") return { } end
-    if type(smeltData.fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid fuelItemCount") return { } end
-    local priorityKey = smeltData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_alchemist.Smelt_MetaData: Invalid priorityKey") return {success = false} end
+        Return value:
+                                        - (table) metadata
+
+        Parameters:
+            taskData                    - (table) data about the task
+                recipe                  + (table) smelting recipe
+                    itemName            - (string) name of smelting ingredient to use
+                    yield               - (number) of items produced by recipe
+                productItemCount        + (number) of items to produce
+                workingLocation         + (Location) world location to do the smelting (in front of the furnance)
+                fuelItemName            + (string) name of fuel item to use
+                fuelItemCount           + (number) of fuel items to use
+                priorityKey             + (string, "") priorityKey for this assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Smelt_MetaData: Invalid input") return {success = false} end
 
     -- determine needed items
-    local itemList = role_alchemist.Smelt_ItemsNeeded(smeltData.recipe, smeltData.productItemCount, smeltData.fuelItemName, smeltData.fuelItemCount)
-    local workingLocation = smeltData.workingLocation
+    local itemList = role_alchemist.Smelt_ItemsNeeded(recipe, productItemCount, fuelItemName, fuelItemCount)
     local fuelNeeded = 4 -- task starts at workingLocation, very little (4) movement from there
 
     -- return metadata
@@ -341,8 +355,9 @@ function role_alchemist.Smelt_ItemsNeeded(recipe, productItemCount, fuelItemName
     return itemList, productSurplus
 end
 
-function role_alchemist.Smelt_Task(smeltData)
-    --[[
+function role_alchemist.Smelt_Task(...)
+    -- get & check input from description
+    local checkSuccess, itemName, yield, productItemCount, workingLocation, fuelItemName, fuelItemCount = InputChecker.Check([[
         This Task function smelts items. The ingredients for smelting should be present in the turtle executing this task.
 
         Return value:
@@ -351,31 +366,16 @@ function role_alchemist.Smelt_Task(smeltData)
                 smeltReadyTime          - (number) the time when the smelting is expexted to be ready
 
         Parameters:
-            smeltData                   - (table) data about the smelting task
+            taskData                    - (table) data about the task
                 recipe                  - (table) smelting recipe
-                    itemName            - (string) name of smelting ingredient to use
-                    yield               - (number) of items produced by recipe
-                productItemCount        - (number) of items to produce
-                workingLocation         - (Location) world location to do the smelting (in front of the furnance)
-                fuelItemName            - (string) name of fuel item to use
-                fuelItemCount           - (number) of fuel items to use
-    ]]
-    -- check input
-    if type(smeltData) ~= "table" then corelog.Error("role_alchemist.Smelt_Task: smeltData not a valid") return {success = false} end
-    local recipe = smeltData.recipe
-    if type(recipe) ~= "table" then corelog.Error("role_alchemist.Smelt_Task: Invalid recipe") return {success = false} end
-    local itemName = recipe.itemName
-    if type(itemName) ~= "string" then corelog.Error("role_alchemist.Smelt_Task: Invalid itemName") return {success = false} end
-    local yield = recipe.yield
-    if type(yield) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid yield") return {success = false} end
-    local productItemCount = smeltData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid productItemCount") return {success = false} end
-    local workingLocation = smeltData.workingLocation
-    if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Smelt_Task: Invalid workingLocation") return {success = false} end
-    local fuelItemName = smeltData.fuelItemName
-    if type(fuelItemName) ~= "string" then corelog.Error("role_alchemist.Smelt_Task: Invalid fuelItemName") return {success = false} end
-    local fuelItemCount = smeltData.fuelItemCount
-    if type(fuelItemCount) ~= "number" then corelog.Error("role_alchemist.Smelt_Task: Invalid fuelItemName") return {success = false} end
+                    itemName            + (string) name of smelting ingredient to use
+                    yield               + (number) of items produced by recipe
+                productItemCount        + (number) of items to produce
+                workingLocation         + (Location) world location to do the smelting (in front of the furnance)
+                fuelItemName            + (string) name of fuel item to use
+                fuelItemCount           + (number) of fuel items to use
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Smelt_Task: Invalid input") return {success = false} end
 
     -- prepare
     local times = math.ceil(productItemCount / yield)
@@ -407,21 +407,22 @@ function role_alchemist.Smelt_Task(smeltData)
     return {success = true, smeltReadyTime = smeltReadyTime}
 end
 
-function role_alchemist.Pickup_MetaData(pickupData)
-    --[[
-       This function returns the metadata for the Pickup_Task supplied with argument pickupData.
-   ]]
+function role_alchemist.Pickup_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, workingLocation, priorityKey = InputChecker.Check([[
+        This function returns the MetaData for Pickup_Task.
 
-    -- check input
-    if type(pickupData) ~= "table" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid pickupData") return {success = false} end
-    local productItemName = pickupData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid productItemName") return {success = false} end
-    local productItemCount = pickupData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid productItemCount") return {success = false} end
-    local workingLocation = pickupData.workingLocation
-    if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid workingLocation") return {success = false} end
-    local priorityKey = pickupData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_alchemist.Pickup_MetaData: Invalid priorityKey") return {success = false} end
+        Return value:
+                                        - (table) metadata
+
+        Parameters:
+            taskData                    - (table) data about the task
+                productItemName         - (string) name of item to produce
+                productItemCount        - (number) of items to produce
+                workingLocation         + (Location) world location to do the smelting (in front of the furnance)
+                priorityKey             + (string, "") priorityKey for this assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Pickup_MetaData: Invalid input") return {success = false} end
 
     -- determine needed fuel
     local fuelNeeded = 4 -- task starts at workingLocation, very little (4) movement from there
@@ -439,8 +440,9 @@ function role_alchemist.Pickup_MetaData(pickupData)
     }
 end
 
-function role_alchemist.Pickup_Task(pickupData)
-    --[[
+function role_alchemist.Pickup_Task(...)
+    -- get & check input from description
+    local checkSuccess, productItemName, productItemCount, workingLocation = InputChecker.Check([[
         This Task picks up smelted items from a furnace.
 
         Return value:
@@ -450,20 +452,12 @@ function role_alchemist.Pickup_Task(pickupData)
                 turtleWasteItemsLocator - (URL) locating waste items produced during production
 
         Parameters:
-            smeltData                   - (table) data about the smelting task
-                productItemName         - (string) name of item to produce
-                productItemCount        - (number) of items to produce
-                workingLocation         - (Location) world location to do the smelting (in front of the furnance)
-    ]]
-
-    -- check input
-    if type(pickupData) ~= "table" then corelog.Error("role_alchemist.Pickup_Task: Invalid pickupData") return {success = false} end
-    local productItemName = pickupData.productItemName
-    if type(productItemName) ~= "string" then corelog.Error("role_alchemist.Pickup_Task: Invalid productItemName") return {success = false} end
-    local productItemCount = pickupData.productItemCount
-    if type(productItemCount) ~= "number" then corelog.Error("role_alchemist.Pickup_Task: Invalid productItemCount") return {success = false} end
-    local workingLocation = pickupData.workingLocation
-    if type(workingLocation) ~= "table" then corelog.Error("role_alchemist.Pickup_Task: Invalid workingLocation") return {success = false} end
+            taskData                    - (table) data about the task
+                productItemName         + (string) name of item to produce
+                productItemCount        + (number) of items to produce
+                workingLocation         + (Location) world location to do the smelting (in front of the furnance)
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_alchemist.Pickup_Task: Invalid input") return {success = false} end
 
     -- get turtle we are doing task with
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
@@ -515,7 +509,7 @@ function role_alchemist.Pickup_Task(pickupData)
         end
     end
     if next(wasteItems) ~= nil then
-        corelog.WriteToLog(">harvested waste: "..textutils.serialise(wasteItems, {compact = true}))
+        corelog.WriteToLog(">smelting waste: "..textutils.serialise(wasteItems, {compact = true}))
     end
 
     -- determine output & waste locators

@@ -21,7 +21,20 @@ local Host = require "obj_host"
 --      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
-function role_settler.InitialiseCoordinates_MetaData(taskData)
+function role_settler.InitialiseCoordinates_MetaData(...)
+    -- get & check input from description
+    local checkSuccess = InputChecker.Check([[
+        This function returns the MetaData for InitialiseCoordinates_Task.
+
+        Return value:
+                                        - (table) metadata
+
+        Parameters:
+            taskData                    - (table) data about the task
+                startLocation           - (Location) locaton where the task should start
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Invalid input") return {success = false} end
+
     local enterprise_turtle = require "enterprise_turtle"
     local currentTurtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining current turtleLocator") return nil end
 
@@ -51,7 +64,7 @@ function role_settler.InitialiseCoordinates_Task(...)
             taskData                    - (table) data about the task
                 startLocation           + (Location) locaton where first steps are to be taken
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_settler:InitialiseCoordinates_Task: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_Task: Invalid input") return {success = false} end
 
     -- coordinaten stelsel goed zetten
     coremove.SetLocation(startLocation)
@@ -60,10 +73,23 @@ function role_settler.InitialiseCoordinates_Task(...)
     return {success = true}
 end
 
-function role_settler.CollectCobbleStone_MetaData(taskData)
+function role_settler.CollectCobbleStone_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, startLocation = InputChecker.Check([[
+        This function returns the MetaData for CollectCobbleStone_Task.
+
+        Return value:
+                                        - (table) metadata
+
+        Parameters:
+            taskData                    - (table) data about the task
+                startLocation           + (Location) locaton where the task should start
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_settler.CollectCobbleStone_MetaData: Invalid input") return {success = false} end
+
     return {
         startTime = coreutils.UniversalTime(),
-        location = taskData.startLocation:copy(),
+        location = startLocation:copy(),
         needTool = true,
         needTurtle = true,
         fuelNeeded = 100, -- ToDo: how much is needed for this step?
@@ -85,13 +111,12 @@ function role_settler.CollectCobbleStone_Task(...)
             taskData                    - (table) data about the task
                 startLocation           + (Location) locaton where the task should start
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_settler:CollectCobbleStone_Task: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("role_settler.CollectCobbleStone_Task: Invalid input") return {success = false} end
 
     -- move to the workingLocation
     coremove.GoTo(startLocation)
 
     -- get into digging position
---    corelog.WriteToLog (">Collecting cobblestone")
     coreinventory.Equip("minecraft:diamond_pickaxe")
     turtle.digDown()
     coremove.Down()

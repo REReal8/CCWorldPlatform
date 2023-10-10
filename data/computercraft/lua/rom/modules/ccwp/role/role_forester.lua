@@ -24,45 +24,6 @@ local enterprise_turtle
 --      | | (_| \__ \   <\__ \ | (_>  < | |  | |  __/ || (_| | |__| | (_| | || (_| |
 --      |_|\__,_|___/_|\_\___/  \___/\/ |_|  |_|\___|\__\__,_|_____/ \__,_|\__\__,_|
 
-function role_forester.PlantFirstSapling_MetaData(taskData)
-    return {
-        startTime = coreutils.UniversalTime(),
-        location = taskData.startLocation:copy(),
-        needTool = false,
-        needTurtle = true,
-        fuelNeeded = 0,                         --> per definition the settler starts without fuel
-        itemsNeeded = {
-            ["minecraft:birch_sapling"] = 1,
-        }
-    }
-end
-
-function role_forester.PlantFirstSapling_Task(taskData)
-     --[[
-        This Task function plants the first sapling.
-
-        Return value:
-            task result                 - (table)
-                success                 - (boolean) whether the task was succesfull
-                turtleId                - (number) id of turtle that planted the sapling
-
-        Parameters:
-            taskData                    - (table) data about the task
-    ]]
-
-    -- check input
-    if type(taskData) ~= "table" or type(taskData.startLocation) ~= "table" then corelog.Error("role_settler.PlantFirstSapling_Task: taskData not valid") return {success = false} end
-
-    -- plant the sapling
---    corelog.WriteToLog(">Planting first sapling")
-    coreinventory.SelectItem("minecraft:birch_sapling")
-    turtle.place()
-
-    -- end
-    local currentTurtleId = os.getComputerID()
-    return {success = true, turtleId = currentTurtleId}
-end
-
 function FuelNeededPerTree()
     return 35 + 1
 end
@@ -75,17 +36,23 @@ function role_forester.FuelNeededPerRound(nTrees)
     return nTrees*FuelNeededPerTree() + 2 * fuelNeededPerColumn + 2 * fuelNeededBetweenRows -- ToDo: make more accurate once we have a better forest implementation
 end
 
-function role_forester.HarvestForest_MetaData(taskData)
-    -- check input
-    if type(taskData) ~= "table" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid taskData") return {success = false} end
-    local forestLevel = taskData.forestLevel
-    if type(forestLevel) ~= "number" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid forestLevel") return {success = false} end
-    local firstTreeLocation = taskData.firstTreeLocation
-    if type(firstTreeLocation) ~= "table" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid firstTreeLocation") return {success = false} end
-    local nTrees = taskData.nTrees
-    if type(nTrees) ~= "number" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid nTrees") return {success = false} end
-    local priorityKey = taskData.priorityKey
-    if priorityKey and type(priorityKey) ~= "string" then corelog.Error("role_settler.HarvestForest_MetaData: Invalid priorityKey") return {success = false} end
+function role_forester.HarvestForest_MetaData(...)
+    -- get & check input from description
+    local checkSuccess, forestLevel, firstTreeLocation, nTrees, priorityKey = InputChecker.Check([[
+        This function returns the MetaData for HarvestForest_Task.
+
+        Return value:
+                                            - (table) metadata
+
+        Parameters:
+            taskData                        - (table) data about the task
+                forestLevel                 + (number) forest level
+                firstTreeLocation           + (table) location of first tree of the forest
+                nTrees                      + (number) the number of trees in (the y direction of) the forest
+                waitForFirstTree            - (boolean) if harvesting should wait for the first tree
+                priorityKey                 + (string, "") priorityKey for this assignment
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("role_forester.HarvestForest_MetaData: Invalid input") return {success = false} end
 
     -- determine fuelNeed
     local fuelNeed = 0
@@ -191,7 +158,7 @@ function role_forester.HarvestForest_Task(...)
         end
     end
     if next(wasteItems) ~= nil then
-        corelog.WriteToLog(">harvested waste: "..textutils.serialise(wasteItems, {compact = true}))
+        corelog.WriteToLog(">harvesting waste: "..textutils.serialise(wasteItems, {compact = true}))
     end
 
     -- determine output & waste locators

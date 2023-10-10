@@ -165,11 +165,11 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData(...)
                 itemsQuery      - (table) which items to be fetched
                 priorityKey     + (string, "") priorityKey for this assignment
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Invalid input") return { } end
+    if not checkSuccess then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: Invalid input") return { } end
 
     -- determine needed items
     local workingLocation = GetWorkingLocation(location, accessDirection)
-    if not workingLocation then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_Task: Failed to determine workingLocation") return {} end
+    if not workingLocation then corelog.Error("role_chests_worker.FetchItemsFromChestIntoTurtle_MetaData: Failed to determine workingLocation") return {} end
     local fuelNeeded = 5 -- task starts at workingLocation, very little (0) movement from there, a few extra to be sure
 
     -- check if specific turtle is needed
