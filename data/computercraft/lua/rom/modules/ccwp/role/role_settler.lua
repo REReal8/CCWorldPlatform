@@ -12,7 +12,7 @@ local coremove = require "coremove"
 local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
-local Host = require "obj_host"
+local Host = require "host"
 
 local enterprise_turtle
 

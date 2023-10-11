@@ -23,7 +23,7 @@ local corelog = require "corelog"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
-local Host = require "obj_host"
+local Host = require "host"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"

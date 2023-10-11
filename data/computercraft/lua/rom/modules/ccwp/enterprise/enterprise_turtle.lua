@@ -15,7 +15,7 @@ local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
-local Host = require "obj_host"
+local Host = require "host"
 
 local Turtle = require "mobj_turtle"
 

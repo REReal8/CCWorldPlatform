@@ -18,7 +18,7 @@ local coredht = require "coredht"
 local InputChecker = require "input_checker"
 local MethodExecutor = require "method_executor"
 local Callback = require "obj_callback"
-local Host = require "obj_host"
+local Host = require "host"
 
 local enterprise_administration = require "enterprise_administration"
 

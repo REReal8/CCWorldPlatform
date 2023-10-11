@@ -11,7 +11,7 @@ local ObjBase = require "obj_base"
 
 local URL = require "obj_url"
 local Location = require "obj_location"
-local Host = require "obj_host"
+local Host = require "host"
 
 local MObjHost = require "mobj_host"
 

@@ -9,7 +9,7 @@ local enterprise_dump       = {} --Class.NewClass(Host)
 local coredht       = require "coredht"
 local corelog       = require "corelog"
 local Class         = require "class"
-local Host          = require "obj_host"
+local Host          = require "host"
 local InputChecker  = require "input_checker"
 local URL           = require "obj_url"
 

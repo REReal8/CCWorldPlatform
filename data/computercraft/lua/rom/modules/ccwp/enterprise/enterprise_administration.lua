@@ -1,6 +1,6 @@
 -- define class
 local Class = require "class"
-local Host = require "obj_host"
+local Host = require "host"
 local enterprise_administration = Class.NewClass(Host)
 
 --[[

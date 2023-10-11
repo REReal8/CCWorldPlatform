@@ -14,7 +14,7 @@ local role_fuel_worker = require "role_fuel_worker"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-local Host = require "obj_host"
+local Host = require "host"
 
 local enterprise_projects = require "enterprise_projects"
 

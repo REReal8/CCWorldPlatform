@@ -7,7 +7,7 @@ local Callback = require "obj_callback"
 local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
-local Host = require "obj_host"
+local Host = require "host"
 
 local TestObj = require "test.obj_test"
 

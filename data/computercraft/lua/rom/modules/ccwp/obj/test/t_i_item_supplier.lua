@@ -4,7 +4,7 @@ local corelog = require "corelog"
 local Callback = require "obj_callback"
 
 local URL = require "obj_url"
-local Host = require "obj_host"
+local Host = require "host"
 
 local enterprise_chests = require "enterprise_chests"
 

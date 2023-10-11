@@ -36,7 +36,7 @@ local MethodResultEqualTest = require "method_result_equal_test"
 local T_IMObj = require "test.t_i_mobj"
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
-local T_Host = require "test.t_obj_host"
+local T_Host = require "test.t_host"
 local t_turtle = require "test.t_turtle"
 
 function T_Shop.T_All()

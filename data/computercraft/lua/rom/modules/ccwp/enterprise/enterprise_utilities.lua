@@ -14,7 +14,7 @@ local corelog   		= require "corelog"
 local coretask   		= require "coretask"
 
 local Callback          = require "obj_callback"
-local Host              = require "obj_host"
+local Host              = require "host"
 local ItemTable         = require "obj_item_table"
 local Location          = require "obj_location"
 

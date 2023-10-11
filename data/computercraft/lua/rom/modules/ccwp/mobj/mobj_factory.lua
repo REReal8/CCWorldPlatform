@@ -44,7 +44,7 @@ local URL = require "obj_url"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
-local Host = require "obj_host"
+local Host = require "host"
 
 local ProductionSpot = require "mobj_production_spot"
 

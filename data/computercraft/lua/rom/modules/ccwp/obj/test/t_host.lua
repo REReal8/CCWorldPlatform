@@ -8,7 +8,7 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local ObjBase = require "obj_base"
 local URL = require "obj_url"
-local Host = require "obj_host"
+local Host = require "host"
 
 local TestObj = require "test.obj_test"
 
