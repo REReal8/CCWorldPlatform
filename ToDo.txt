@@ -112,7 +112,8 @@ G  Descriptions for blueprints and project steps
 -  ObjLocator/ ObjHost/ IConstructable/ CObjHost/ IMObj/ (I)PObj: to discuss
    -  introduce ObjLocator class extending URL class representing a locator of an IObj, with method
       -  getObjClassName   (note: not getClassName as that is already reserved for the method to identify the ObjLocator class itself)
-   -  introduce ObjHost class extending Host class by splitting of all Object related code (from Host:getObject and further)
+   R  introduce ObjHost class extending Host class                                                                      (....)
+      R  by splitting of all Object related code (from Host:getObject and further)                                      (....)
       -  it can host any IObj which can than be located by an ObjLocator
    -  Split off IConstructable (or <better name>) interface from IMObj
       -  with methods

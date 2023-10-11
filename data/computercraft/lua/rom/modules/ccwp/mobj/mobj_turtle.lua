@@ -22,7 +22,7 @@ local Location = require "obj_location"
 local Inventory = require "obj_inventory"
 local ObjTable = require "obj_table"
 local ItemTable = require "obj_item_table"
-local Host = require "host"
+local ObjHost = require "obj_host"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
@@ -118,7 +118,7 @@ function Turtle:construct(...)
     local checkSuccess, workerId, location = InputChecker.Check([[
         This method constructs a Turtle instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed Turtle is not yet saved in the Host.
+        The constructed Turtle is not yet saved in the MObjHost.
 
         Return value:
                                         - (Turtle) the constructed Turtle
@@ -141,7 +141,7 @@ function Turtle:destruct()
     --[[
         This method destructs a Turtle instance.
 
-        The Turtle is not yet deleted from the Host.
+        The Turtle is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the Turtle was succesfully destructed.
@@ -378,7 +378,7 @@ function Turtle:provideItemsTo_AOSrv(...)
     turtleItemsLocator:setQuery(provideItems)
 
     -- get ItemDepot
-    local itemDepot = Host.GetObject(itemDepotLocator)
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
     if type(itemDepot) ~= "table" then corelog.Error("Turtle:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
     -- store items from this turtle to ItemDepot
@@ -508,7 +508,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
-        local sourceTurtleObj = Host.GetObject(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
+        local sourceTurtleObj = ObjHost.GetObject(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
         local sourceTurtleId = sourceTurtleObj:getWorkerId()
         local currentTurtleId = self:getWorkerId()
         if sourceTurtleId and currentTurtleId ~= sourceTurtleId then corelog.Error("Turtle:storeItemsFrom_AOSrv: Store items from one (id="..sourceTurtleId..") turtle to another (id="..currentTurtleId..") not implemented (?yet).") return Callback.ErrorCall(callback) end
@@ -534,7 +534,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
 
         -- get source ItemSupplier
         local itemSupplierLocator = itemsLocator:baseCopy()
-        local itemSupplier = Host.GetObject(itemSupplierLocator)
+        local itemSupplier = ObjHost.GetObject(itemSupplierLocator)
         if type(itemSupplier) ~= "table" then corelog.Error("Turtle:storeItemsFrom_AOSrv:ItemDepot "..itemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
         -- have source ItemSupplier provideItemsTo Turtle

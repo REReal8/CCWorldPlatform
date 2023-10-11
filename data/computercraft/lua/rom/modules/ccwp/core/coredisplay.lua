@@ -274,6 +274,7 @@ function ExecuteObjTest(t)
 		{key = "e", desc = "MethodExecutor", 	func = ExecuteObjTest, param = {filename = "T_MethodExecutor"}},
 		{key = "u", desc = "URL", 				func = ExecuteObjTest, param = {filename = "T_URL"}},
 		{key = "h", desc = "Host", 				func = ExecuteObjTest, param = {filename = "T_Host"}},
+		{key = "j", desc = "ObjHost", 			func = ExecuteObjTest, param = {filename = "T_ObjHost"}},
 		{key = "l", desc = "Location",			func = ExecuteObjTest, param = {filename = "T_Location"}},
 		{key = "b", desc = "Block",				func = ExecuteObjTest, param = {filename = "T_Block"}},
 		{key = "p", desc = "CodeMap",			func = ExecuteObjTest, param = {filename = "T_CodeMap"}},

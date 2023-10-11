@@ -14,7 +14,7 @@ local corelog   		= require "corelog"
 local coretask   		= require "coretask"
 
 local Callback          = require "obj_callback"
-local Host              = require "host"
+local ObjHost           = require "obj_host"
 local ItemTable         = require "obj_item_table"
 local Location          = require "obj_location"
 
@@ -188,7 +188,7 @@ function CheckInputChest()
 
         -- store the items in the default dump site
         local dumpLocator = enterprise_dump.GetDumpLocator()
-        local dumpObject  = Host.GetObject(dumpLocator)
+        local dumpObject  = ObjHost.GetObject(dumpLocator)
 
         -- ask the dump to store our items
         if dumpObject == nil then return end

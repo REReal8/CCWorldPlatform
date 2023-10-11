@@ -19,7 +19,7 @@ local corelog = require "corelog"
 local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local TaskCall = require "obj_task_call"
-local Host = require "host"
+local ObjHost = require "obj_host"
 local ObjTable = require "obj_table"
 local Location = require "obj_location"
 local Inventory = require "obj_inventory"
@@ -125,7 +125,7 @@ function Chest:construct(...)
     local checkSuccess, baseLocation, accessDirection = InputChecker.Check([[
         This method constructs a Chest instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
-        The constructed Chest is not yet saved in the Host.
+        The constructed Chest is not yet saved in the MObjHost.
 
         Return value:
                                         - (Chest) the constructed Chest
@@ -152,7 +152,7 @@ function Chest:destruct()
     --[[
         This method destructs a Chest instance.
 
-        The Chest is not yet deleted from the Host.
+        The Chest is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the Chest was succesfully destructed.
@@ -368,7 +368,7 @@ function Chest:provideItemsTo_AOSrv(...)
     enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
     local workerId = -1
     if enterprise_turtle:isLocatorFromHost(itemDepotLocator) then
-        local turtleObj = Host.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
+        local turtleObj = ObjHost.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
         workerId = turtleObj:getWorkerId()
     end
 

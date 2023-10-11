@@ -107,7 +107,7 @@ function TestMObj:construct(...)
 
         It also ensures all child MObj's the TestMObj spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
-        The constructed TestMObj is not activated or saved in the Host.
+        The constructed TestMObj is not yet saved in the MObjHost.
 
         Return value:
                                         - (TestMObj) the constructed TestMObj
@@ -134,7 +134,7 @@ function TestMObj:upgrade(...)
     local checkSuccess, field1 = InputChecker.Check([[
         This method upgrades a TestMObj instance from a table of parameters.
 
-        The upgraded TestMObj is not yet saved in it's Host.
+        The upgraded TestMObj is not yet saved in the MObjHost.
 
         Return value:
                                         - (boolean) whether the TestMObj was succesfully upgraded.
@@ -159,7 +159,7 @@ function TestMObj:destruct()
 
         It also ensures all child MObj's the TestMObj is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
-        The TestMObj is not yet deleted from the Host.
+        The TestMObj is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the TestMObj was succesfully destructed.

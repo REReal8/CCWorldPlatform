@@ -15,7 +15,7 @@ local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
-local Host = require "host"
+local ObjHost = require "obj_host"
 
 local Turtle = require "mobj_turtle"
 
@@ -55,13 +55,13 @@ end
 function enterprise_turtle:getObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
-        This method retrieves an object from the Host using a URL (that was once provided by the Host).
+        This method retrieves an object from the ObjHost using a URL (that was once provided by the ObjHost).
 
         Return value:
-            object                  - (?) object obtained from the Host
+            object                  - (?) object obtained from the ObjHost
 
         Parameters:
-            objectLocator           + (URL) locator of the object within the Host
+            objectLocator           + (URL) locator of the object within the ObjHost
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_turtle:getObject: Invalid input") return nil end
 
@@ -77,8 +77,8 @@ function enterprise_turtle:getObject(...)
         return turtleObj
     end
 
-    -- have base class Host provide the object
-    return Host.getObject(self, objectLocator)
+    -- have base class ObjHost provide the object
+    return ObjHost.getObject(self, objectLocator)
 end
 
 --    _____ ____  _     _
@@ -133,7 +133,7 @@ local function GetTurtleLocator(turtleIdStr)
     --]]
 
     -- get resourcePath
-    local objectPath = Host.GetObjectPath("Turtle", turtleIdStr)
+    local objectPath = ObjHost.GetObjectPath("Turtle", turtleIdStr)
     if not objectPath then corelog.Error("enterprise_turtle.GetTurtleLocator: Failed obtaining objectPath") return nil end
 
     -- get objectLocator

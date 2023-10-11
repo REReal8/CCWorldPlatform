@@ -44,7 +44,7 @@ local URL = require "obj_url"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
-local Host = require "host"
+local ObjHost = require "obj_host"
 
 local ProductionSpot = require "mobj_production_spot"
 
@@ -172,7 +172,7 @@ function Factory:construct(...)
 
         It also ensures all child MObj's the Factory spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
-        The constructed Factory is not yet saved in the Host.
+        The constructed Factory is not yet saved in the MObjHost.
 
         Return value:
                                         - (Factory) the constructed Factory
@@ -251,7 +251,7 @@ function Factory:upgrade(...)
     local checkSuccess, upgradeLevel = InputChecker.Check([[
         This method upgrades a Factory instance from a table of parameters.
 
-        The upgraded Factory is not yet saved in it's Host.
+        The upgraded Factory is not yet saved in it's MObjHost.
 
         Return value:
                                         - (boolean) whether the Factory was succesfully upgraded.
@@ -304,7 +304,7 @@ function Factory:destruct()
 
         It also ensures all child MObj's the Factory is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
-        The Factory is not yet deleted from the Host.
+        The Factory is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the Factory was succesfully destructed.
@@ -933,7 +933,7 @@ function Factory:needsTo_ProvideItemsTo_SOSrv(...)
     if not checkSuccess then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: Invalid input") return {success = false} end
 
     -- get ingredientsItemSupplier
-    local ingredientsItemSupplier = Host.GetObject(ingredientsItemSupplierLocator)
+    local ingredientsItemSupplier = ObjHost.GetObject(ingredientsItemSupplierLocator)
     if type(ingredientsItemSupplier) ~= "table" then corelog.Error("Factory:needsTo_ProvideItemsTo_SOSrv: ingredientsItemSupplier "..ingredientsItemSupplierLocator:getURI().." not found.") return {success = false} end
 
     -- loop on items
@@ -1215,7 +1215,7 @@ function Factory.CraftItem_ASrv(...)
         priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Craft_MetaData(craftData)
-    local turtleObj = Host.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.CraftItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleObj = ObjHost.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.CraftItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
     metaData.needTurtleId = turtleObj:getWorkerId()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 
@@ -1266,7 +1266,7 @@ function Factory.SmeltItem_ASrv(...)
         priorityKey     = assignmentsPriorityKey,
     }
     local metaData = role_alchemist.Smelt_MetaData(smeltData)
-    local turtleObj = Host.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.SmeltItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
+    local turtleObj = ObjHost.GetObject(turtleInputItemsLocator) if not turtleObj then corelog.Error("Factory.SmeltItem_ASrv: Failed obtaining turtle "..turtleInputItemsLocator:getURI()) return Callback.ErrorCall(callback) end
     metaData.needTurtleId = turtleObj:getWorkerId()
     -- ToDo: consider setting metaData.itemList from turtleInputItemsLocator path (as we already have it)
 

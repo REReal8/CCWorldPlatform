@@ -20,7 +20,7 @@ local InputChecker = require "input_checker"
 local Callback = require "obj_callback"
 local ObjArray = require "obj_array"
 local ObjTable = require "obj_table"
-local Host = require "host"
+local ObjHost = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
@@ -152,7 +152,7 @@ function Silo:construct(...)
 
         It also ensures all child MObj's the Silo spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
-        The constructed Silo is not yet saved in the Host.
+        The constructed Silo is not yet saved in the MObjHost.
 
         Return value:
                                         - (Silo) the constructed Silo
@@ -216,7 +216,7 @@ function Silo:destruct()
 
         It also ensures all child MObj's the Silo is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
-        The Silo is not yet deleted from the Host.
+        The Silo is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the Silo was succesfully destructed.
@@ -533,7 +533,7 @@ function Silo:can_ProvideItems_QOSrv(...)
     -- version 0.2, only intersted if 1 chest can fully deliver (no partial deliveries yet)
     for i, chestLocator in ipairs(self._storageChests) do
         -- get the chest
-        local chest     = Host.GetObject(chestLocator)
+        local chest     = ObjHost.GetObject(chestLocator)
 
         -- valid opbject?
         if chest then
@@ -912,19 +912,19 @@ end
 function Silo:IntegretyCheck(...)
     -- check all top chests
     for i, chestLocator in ipairs(self._topChests) do
-        local chest = Host.GetObject(chestLocator)
+        local chest = ObjHost.GetObject(chestLocator)
         if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
     end
 
     -- check all storage chests
     for i, chestLocator in ipairs(self._storageChests) do
-        local chest = Host.GetObject(chestLocator)
+        local chest = ObjHost.GetObject(chestLocator)
         if chest then chest:updateChestRecord_AOSrv({}, Callback.GetNewDummyCallBack()) end
     end
 end
 
 function Silo:GetChestInventory(chestLocator)
-    local chest = Host.GetObject(chestLocator)
+    local chest = ObjHost.GetObject(chestLocator)
     if chest then corelog.WriteToLog("Getting chest inventory") return chest:getInventory() end
 end
 

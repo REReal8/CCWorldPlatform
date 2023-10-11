@@ -1,15 +1,15 @@
 -- defines the class (nothing special)
-local enterprise_dump       = {} --Class.NewClass(Host)
+local enterprise_dump       = {} --Class.NewClass(ObjHost)
 
 --[[
-    The enterprise_dump is not a Host. It remembers the possible depot's for waste processing.
+    The enterprise_dump is not a ObjHost. It remembers the possible depot's for waste processing.
 --]]
 
 -- basics
 local coredht       = require "coredht"
 local corelog       = require "corelog"
 local Class         = require "class"
-local Host          = require "host"
+local ObjHost       = require "obj_host"
 local InputChecker  = require "input_checker"
 local URL           = require "obj_url"
 
@@ -57,7 +57,7 @@ function enterprise_dump.ListItemDepot_SSrv(...)
     if not checkSuccess then corelog.Error("enterprise_dump.ListItemDepot_SSrv: Invalid input") return {succes = false} end
 
     -- check if the URL is an item depot
-    local itemDepot = Host.GetObject(itemDepotLocator)
+    local itemDepot = ObjHost.GetObject(itemDepotLocator)
 
     -- do some checks
     if not itemDepot                                    then corelog.Error("enterprise_dump.ListItemDepot_SSrv: itemDepotLocator invalid")           return {succes = false} end

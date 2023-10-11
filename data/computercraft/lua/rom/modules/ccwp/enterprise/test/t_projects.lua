@@ -8,6 +8,7 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 
 local Host = require "host"
+local ObjHost = require "obj_host"
 
 local TestObj = require "test.obj_test"
 
@@ -65,7 +66,7 @@ function t_projects.T_StartProject_ASrv()
     -- prepare test
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
     local hostName = "TestHost"
-    local host = Host:newInstance(hostName)
+    local host = ObjHost:newInstance(hostName)
     moduleRegistry:registerModule(hostName, host)
     local objLocator = host:saveObject(testObj)
 

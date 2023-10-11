@@ -110,7 +110,7 @@ function UtilStation:construct(...)
 
         It also ensures all child MObj's the UtilStation spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
-        The constructed UtilStation is not yet saved in the Host.
+        The constructed UtilStation is not yet saved in the MObjHost.
 
         Return value:
                                         - (UtilStation) the constructed UtilStation
@@ -145,7 +145,7 @@ function UtilStation:destruct()
 
         It also ensures all child MObj's the UtilStation is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
-        The UtilStation is not yet deleted from the Host.
+        The UtilStation is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the UtilStation was succesfully destructed.

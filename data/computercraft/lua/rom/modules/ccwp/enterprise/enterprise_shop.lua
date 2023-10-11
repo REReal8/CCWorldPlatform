@@ -1,10 +1,10 @@
 -- define class
 local Class = require "class"
-local Host = require "host"
-local enterprise_shop = Class.NewClass(Host)
+local ObjHost = require "obj_host"
+local enterprise_shop = Class.NewClass(ObjHost)
 
 --[[
-    The enterprise_shop is a Host. It hosts one ItemSupplier Shop to provide items.
+    The enterprise_shop is a ObjHost. It hosts one ItemSupplier Shop to provide items.
 --]]
 
 local corelog = require "corelog"

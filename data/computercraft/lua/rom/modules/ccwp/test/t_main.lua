@@ -23,6 +23,7 @@ local T_Callback = require "test.t_obj_callback"
 local T_TaskCall = require "test.t_obj_task_call"
 local T_URL = require "test.t_obj_url"
 local T_Host = require "test.t_host"
+local T_ObjHost = require "test.t_obj_host"
 local T_Location = require "test.t_obj_location"
 local T_Block = require "test.t_obj_block"
 local T_CodeMap = require "test.t_obj_code_map"
@@ -90,6 +91,7 @@ function t_main.T_All()
     T_MethodExecutor.T_All()
     T_URL.T_All()
     T_Host.T_All()
+    T_ObjHost.T_All()
     T_Location.T_All()
     T_Block.T_All()
     T_CodeMap.T_All()

@@ -17,7 +17,6 @@ local Shop = require "mobj_shop"
 
 local role_forester = require "role_forester"
 
-local enterprise_turtle = require "enterprise_turtle"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 local enterprise_shop = require "enterprise_shop"
@@ -36,7 +35,7 @@ local MethodResultEqualTest = require "method_result_equal_test"
 local T_IMObj = require "test.t_i_mobj"
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
-local T_Host = require "test.t_host"
+local T_ObjHost = require "test.t_obj_host"
 local t_turtle = require "test.t_turtle"
 
 function T_Shop.T_All()
@@ -216,9 +215,9 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
 
     local testObject = TestObj:newInstance("field1", 4)
-    local testHost = T_Host.CreateTestObj()
-    moduleRegistry:registerModule(testHost:getHostName(), testHost)
-    local nonItemSupplierLocator = testHost:saveObject(testObject)
+    local testObjHost = T_ObjHost.CreateTestObj()
+    moduleRegistry:registerModule(testObjHost:getHostName(), testObjHost)
+    local nonItemSupplierLocator = testObjHost:saveObject(testObject)
 
     -- test IItemSupplier
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator })
@@ -233,8 +232,8 @@ function T_Shop.T_registerItemSupplier_SOSrv()
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
-    moduleRegistry:delistModule(testHost:getHostName())
-    testHost:deleteResource(nonItemSupplierLocator)
+    moduleRegistry:delistModule(testObjHost:getHostName())
+    testObjHost:deleteResource(nonItemSupplierLocator)
 end
 
 function T_Shop.T_delistItemSupplier_SOSrv()

@@ -301,7 +301,7 @@ end
 
 function T_URL.T_SameURLComponents()
     corelog.WriteToLog("* "..testClassName.." same components tests")
-    -- same Host
+    -- sameHost
     local obj = URL:newInstance(host1)
     local aSameObj = URL:newInstance(host1)
     assert(obj:sameHost(aSameObj), "hosts should be the same")

@@ -18,6 +18,7 @@ local InputChecker = require "input_checker"
 local ObjTable = require "obj_table"
 local URL = require "obj_url"
 local Host = require "host"
+local ObjHost = require "obj_host"
 local Location = require "obj_location"
 local Block = require "obj_block"
 local CodeMap = require "obj_code_map"
@@ -171,7 +172,7 @@ function BirchForest:construct(...)
 
         It also ensures all child MObj's the BirchForest spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
-        The constructed BirchForest is not yet saved in the Host.
+        The constructed BirchForest is not yet saved in the MObjHost.
 
         Return value:
                                         - (BirchForest) the constructed BirchForest
@@ -229,7 +230,7 @@ function BirchForest:upgrade(...)
     local checkSuccess, upgradedLevel, upgradedNTrees = InputChecker.Check([[
         This method upgrades a BirchForest instance from a table of parameters.
 
-        The upgraded BirchForest is not yet saved in it's Host.
+        The upgraded BirchForest is not yet saved in the MObjHost.
 
         Return value:
                                         - (boolean) whether the BirchForest was succesfully upgraded.
@@ -284,7 +285,7 @@ function BirchForest:destruct()
 
         It also ensures all child MObj's the BirchForest is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
-        The BirchForest is not yet deleted from the Host.
+        The BirchForest is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the BirchForest was succesfully destructed.
@@ -764,7 +765,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
         if not localItemSupplierLocator then corelog.Error("BirchForest:provideItemsTo_AOSrv: Invalid localItemSupplierLocator (type="..type(localItemSupplierLocator)..")") return Callback.ErrorCall(callback) end
 
         -- get local ItemSupplier
-        local itemSupplier = Host.GetObject(localItemSupplierLocator)
+        local itemSupplier = ObjHost.GetObject(localItemSupplierLocator)
         if type(itemSupplier) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: ItemSupplier "..localItemSupplierLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
         -- check items already available in localItemSupplierLocator
@@ -775,7 +776,7 @@ function BirchForest:provideItemsTo_AOSrv(...)
             localItemsLocator:setQuery(item)
 
             -- get ItemDepot
-            local itemDepot = Host.GetObject(itemDepotLocator)
+            local itemDepot = ObjHost.GetObject(itemDepotLocator)
             if type(itemDepot) ~= "table" then corelog.Error("BirchForest:provideItemsTo_AOSrv: itemDepot "..itemDepotLocator:getURI().." not found.") return Callback.ErrorCall(callback) end
 
             -- yes: store items from local ItemSupplier to requested ItemDepot

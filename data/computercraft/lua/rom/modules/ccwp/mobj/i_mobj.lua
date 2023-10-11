@@ -34,7 +34,7 @@ function IMObj:construct(...)
 
         It also ensures all child MObj's the XXXMObj spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
 
-        The constructed XXXMObj is not yet saved in the Host.
+        The constructed XXXMObj is not yet saved in the MObjHost.
 
         Return value:
                                         - (XXXMObj) the constructed XXXMObj
@@ -59,7 +59,7 @@ function IMObj:destruct()
 
         It also ensures all child MObj's the XXXMObj is the parent of are released from the appropriate MObjHost (by calling releaseMObj_SSrv).
 
-        The XXXMObj is not yet deleted from the Host.
+        The XXXMObj is not yet deleted from the MObjHost.
 
         Return value:
                                         - (boolean) whether the XXXMObj was succesfully destructed.

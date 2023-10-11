@@ -11,7 +11,7 @@ local ObjBase = require "obj_base"
 
 local URL = require "obj_url"
 local Location = require "obj_location"
-local Host = require "host"
+local ObjHost = require "obj_host"
 
 local MObjHost = require "mobj_host"
 
@@ -115,7 +115,7 @@ function T_MObjHost.T_IObj_All()
     -- test
     T_Class.pt_IsInstanceOf(testClassName, obj, "IObj", IObj)
     T_Class.pt_IsInstanceOf(testClassName, obj, "ObjBase", ObjBase)
-    T_Class.pt_IsInstanceOf(testClassName, obj, "Host", Host) -- ToDo: consider moving to different section
+    T_Class.pt_IsInstanceOf(testClassName, obj, "ObjHost", ObjHost) -- ToDo: consider moving to different section
     T_IObj.pt_all(testClassName, obj, otherObj)
 end
 
