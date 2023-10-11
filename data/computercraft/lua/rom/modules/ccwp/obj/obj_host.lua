@@ -385,7 +385,7 @@ function ObjHost.GetObject(...)
     if not checkSuccess then corelog.Error("ObjHost.GetObject: Invalid input") return nil end
 
     -- get ObjHost
-    local host = ObjHost.GetHost(objectLocator:getHost()) if not host then corelog.Error("ObjHost.GetObject: ObjHost of "..objectLocator:getURI().." not found") return nil end
+    local host = Host.GetHost(objectLocator:getHost()) if not host then corelog.Error("ObjHost.GetObject: ObjHost of "..objectLocator:getURI().." not found") return nil end
 
     -- check the ObjHost itself is wanted
     if objectLocator:isEqual(host:getHostLocator()) then
@@ -420,7 +420,7 @@ function ObjHost.SaveObject_SSrv(...)
     if not checkSuccess then corelog.Error("ObjHost.SaveObject_SSrv: Invalid input") return {success = false} end
 
     -- get ObjHost
-    local host = ObjHost.GetHost(hostName)
+    local host = Host.GetHost(hostName)
     if not host then corelog.Error("ObjHost.SaveObject_SSrv: host "..hostName.." not found") return {success = false} end
 
     -- convert to object
