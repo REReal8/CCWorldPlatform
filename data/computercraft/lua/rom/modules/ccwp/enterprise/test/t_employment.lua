@@ -227,6 +227,7 @@ function t_employment.T_getWorkerLocator()
     corelog.WriteToLog("* "..testClassName..":getWorkerLocator() tests")
 
     -- test
+    corelog.Warning("  test not implemented yet")
 
     -- cleanup test
 end
@@ -236,6 +237,7 @@ function t_employment.T_registerWorkerLocator()
     corelog.WriteToLog("* "..testClassName..":registerWorkerLocator() tests")
 
     -- test
+    corelog.Warning("  test not implemented yet")
 
     -- cleanup test
 end
@@ -245,6 +247,7 @@ function t_employment.T_delistWorkerLocator()
     corelog.WriteToLog("* "..testClassName..":delistWorkerLocator() tests")
 
     -- test
+    corelog.Warning("  test not implemented yet")
 
     -- cleanup test
 end
