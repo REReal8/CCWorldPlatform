@@ -23,8 +23,6 @@ local coredht    = require "coredht"
 local corelog    = require "corelog"
 local coremove   = require "coremove"
 
-local Callback   = require "obj_callback"
-local TaskCall   = require "obj_task_call"
 local InputChecker = require "input_checker"
 local Location  = require "obj_location"
 

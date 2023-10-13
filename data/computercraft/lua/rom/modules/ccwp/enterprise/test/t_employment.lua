@@ -25,6 +25,11 @@ function t_employment.T_All()
     -- MObjHost
     t_employment.T_hostMObj_SSrv_Turtle()
     t_employment.T_releaseMObj_SSrv_Turtle()
+
+    -- workerLocator
+    t_employment.T_getWorkerLocator()
+    t_employment.T_registerWorkerLocator()
+    t_employment.T_delistWorkerLocator()
 end
 
 function t_employment.T_AllPhysical()
@@ -36,6 +41,7 @@ function t_employment.T_AllPhysical()
 end
 
 local logOk = false
+local testClassName = "enterprise_employment"
 local testMObjClassName = "Turtle"
 local testMObjName = "turtle"
 local level0 = 0
@@ -146,12 +152,12 @@ function t_employment.T_getObject()
     assert(not enterprise_employment:getResource(objectLocator), "resource not deleted")
 end
 
---    __  __  ____  _     _ _    _           _                    _   _               _
---   |  \/  |/ __ \| |   (_) |  | |         | |                  | | | |             | |
---   | \  / | |  | | |__  _| |__| | ___  ___| |_   _ __ ___   ___| |_| |__   ___   __| |___
---   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __| | '_ ` _ \ / _ \ __| '_ \ / _ \ / _` / __|
---   | |  | | |__| | |_) | | |  | | (_) \__ \ |_  | | | | | |  __/ |_| | | | (_) | (_| \__ \
---   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__| |_| |_| |_|\___|\__|_| |_|\___/ \__,_|___/
+--    __  __  ____  _     _ _    _           _
+--   |  \/  |/ __ \| |   (_) |  | |         | |
+--   | \  / | |  | | |__  _| |__| | ___  ___| |_
+--   | |\/| | |  | | '_ \| |  __  |/ _ \/ __| __|
+--   | |  | | |__| | |_) | | |  | | (_) \__ \ |_
+--   |_|  |_|\____/|_.__/| |_|  |_|\___/|___/\__|
 --                      _/ |
 --                     |__/
 
@@ -207,6 +213,40 @@ function t_employment.T_dismantleAndReleaseMObj_ASrv_Turtle(mobjLocator)
 
     -- cleanup test
     mobjLocator_Turtle = nil
+end
+
+--                       _             _                     _
+--                      | |           | |                   | |
+--   __      _____  _ __| | _____ _ __| |     ___   ___ __ _| |_ ___  _ __
+--   \ \ /\ / / _ \| '__| |/ / _ \ '__| |    / _ \ / __/ _` | __/ _ \| '__|
+--    \ V  V / (_) | |  |   <  __/ |  | |___| (_) | (_| (_| | || (_) | |
+--     \_/\_/ \___/|_|  |_|\_\___|_|  |______\___/ \___\__,_|\__\___/|_|
+
+function t_employment.T_getWorkerLocator()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":getWorkerLocator() tests")
+
+    -- test
+
+    -- cleanup test
+end
+
+function t_employment.T_registerWorkerLocator()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":registerWorkerLocator() tests")
+
+    -- test
+
+    -- cleanup test
+end
+
+function t_employment.T_delistWorkerLocator()
+    -- prepare test
+    corelog.WriteToLog("* "..testClassName..":delistWorkerLocator() tests")
+
+    -- test
+
+    -- cleanup test
 end
 
 return t_employment

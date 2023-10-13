@@ -311,7 +311,7 @@ function ExecuteEnterpriseTest(t)
 	local options	= {
 		{key = "1", desc = "enterprise_test",	func = ExecuteEnterpriseTest, param = {filename = "t_test"}},
 		{key = "a", desc = "assignmentboard",	func = ExecuteEnterpriseTest, param = {filename = "t_assignmentboard"}},
-		{key = "t", desc = "turtle", 			func = ExecuteEnterpriseTest, param = {filename = "t_employment"}},
+		{key = "t", desc = "employment", 		func = ExecuteEnterpriseTest, param = {filename = "t_employment"}},
 		{key = "p", desc = "projects", 			func = ExecuteEnterpriseTest, param = {filename = "t_projects"}},
 		{key = "e", desc = "energy", 			func = ExecuteEnterpriseTest, param = {filename = "t_energy"}},
 		{key = "c", desc = "chests", 			func = ExecuteEnterpriseTest, param = {filename = "t_chests"}},
