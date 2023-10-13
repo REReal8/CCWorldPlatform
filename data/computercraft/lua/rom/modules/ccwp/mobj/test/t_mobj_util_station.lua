@@ -13,7 +13,7 @@ local URL = require "obj_url"
 
 local UtilStation = require "mobj_util_station"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 
 local TestArrayTest = require "test_array_test"
 local FieldTest = require "field_test"
@@ -28,7 +28,7 @@ local T_IInterface = require "test.t_i_interface"
 local T_IObj = require "test.t_i_obj"
 local T_IMObj = require "test.t_i_mobj"
 
-local t_turtle
+local t_employment
 
 function T_UtilStation.T_All()
     -- initialisation
@@ -57,8 +57,8 @@ local logOk = false
 
 local baseLocation0 = Location:newInstance(-6, -12, 1, 0, 1)
 
-local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator() assert(inputLocator0, "Failed obtaining inputLocator0")
-local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator() assert(outputLocator0, "Failed obtaining outputLocator0")
+local inputLocator0 = enterprise_employment.GetAnyTurtleLocator() assert(inputLocator0, "Failed obtaining inputLocator0")
+local outputLocator0 = enterprise_employment.GetAnyTurtleLocator() assert(outputLocator0, "Failed obtaining outputLocator0")
 
 local constructParameters0 = {
     baseLocation    = baseLocation0,
@@ -274,7 +274,7 @@ end
 
 function T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
-    local itemsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
+    local itemsLocator = enterprise_employment.GetAnyTurtleLocator() assert(itemsLocator, "Failed obtaining Turtle locator")
 
     local provideItems = {
         ["minecraft:birch_log"]  = 3,

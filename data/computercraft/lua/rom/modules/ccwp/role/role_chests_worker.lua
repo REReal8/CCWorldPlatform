@@ -14,7 +14,7 @@ local coreinventory = require "coreinventory"
 local InputChecker = require "input_checker"
 local Inventory = require "obj_inventory"
 
-local enterprise_turtle
+local enterprise_employment
 
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
@@ -353,7 +353,7 @@ function role_chests_worker.FetchItemsFromChestIntoTurtle_Task(...)
     local inventory = Inventory:newInstance(slots)
 
     -- determine output locator
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local turtleOutputItemsLocator = turtleLocator:copy()
     turtleOutputItemsLocator:setQuery(itemResultQuery)
 

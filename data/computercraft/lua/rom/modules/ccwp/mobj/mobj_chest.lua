@@ -32,7 +32,7 @@ local role_chests_worker = require "role_chests_worker"
 
 local enterprise_isp = require "enterprise_isp"
 local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
+local enterprise_employment
 local enterprise_chests
 
 --    _       _ _   _       _ _           _   _
@@ -365,9 +365,9 @@ function Chest:provideItemsTo_AOSrv(...)
     if not checkSuccess then corelog.Error("Chest:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- check if ItemDepot is a turtle
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerId = -1
-    if enterprise_turtle:isLocatorFromHost(itemDepotLocator) then
+    if enterprise_employment:isLocatorFromHost(itemDepotLocator) then
         local turtleObj = ObjHost.GetObject(itemDepotLocator) if not turtleObj then corelog.Error("Chest:provideItemsTo_AOSrv: Failed obtaining turtle "..itemDepotLocator:getURI()) return Callback.ErrorCall(callback) end
         workerId = turtleObj:getWorkerId()
     end
@@ -556,7 +556,7 @@ function Chest:storeItemsFrom_AOSrv(...)
 
         priorityKey     = assignmentsPriorityKey,
     }
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local projectData = {
         hostName                = "enterprise_chests",
         className               = "Chest",
@@ -566,7 +566,7 @@ function Chest:storeItemsFrom_AOSrv(...)
         taskCall                = TaskCall:newInstance("role_chests_worker", "PutItemsFromTurtleIntoChest_Task", taskData),
 
         itemsLocator            = itemsLocator,
-        turtleLocator           = enterprise_turtle.GetAnyTurtleLocator(),
+        turtleLocator           = enterprise_employment.GetAnyTurtleLocator(),
 
         destinationItemsLocator = destinationItemsLocator,
 

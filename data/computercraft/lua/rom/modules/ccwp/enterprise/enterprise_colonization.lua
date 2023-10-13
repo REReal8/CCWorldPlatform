@@ -15,7 +15,7 @@ local Location = require "obj_location"
 local role_settler = require "role_settler"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
+local enterprise_employment
 local enterprise_shop = require "enterprise_shop"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 local enterprise_forestry = require "enterprise_forestry"
@@ -67,8 +67,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     -- register current turtle in shop
     -- ToDo: figure out where/ how to register (other) turtles that get added
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local currentTurtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local currentTurtleLocator = enterprise_employment:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
     local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return Callback.ErrorCall(callback) end
 
     -- construct arguments
@@ -86,14 +86,14 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     local nTreeswanted = 6
     local settleData = {
         materialsItemSupplierLocator    = enterprise_shop.GetShopLocator(),
-        wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_turtle:triggerTurtleRefuelIfNeeded
+        wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
 
         startLocation                   = startLocation:copy(),
 
         initialiseCoordinatesMetaData   = role_settler.InitialiseCoordinates_MetaData(initialiseCoordinatesTaskData),
         initialiseCoordinatesTaskCall   = TaskCall:newInstance("role_settler", "InitialiseCoordinates_Task", initialiseCoordinatesTaskData),
 
-        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_turtle:triggerTurtleRefuelIfNeeded
+        ingredientsItemSupplierLocator  = enterprise_shop.GetShopLocator(), -- ToDo: somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
 
         factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
         factoryClassName                = "Factory",
@@ -348,8 +348,8 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
 
     -- register current turtle in shop
     -- ToDo: figure out where/ how to register (other) turtles that get added
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local currentTurtleLocator = enterprise_turtle:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local currentTurtleLocator = enterprise_employment:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
     local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return { success = false } end
 
     -- construct arguments

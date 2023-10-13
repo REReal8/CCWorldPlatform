@@ -2,7 +2,7 @@ local t_isp = {}
 
 local corelog = require "corelog"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_isp = require "enterprise_isp"
 
 function t_isp.T_All()
@@ -26,7 +26,7 @@ function t_isp.T_AddItemsLocators()
         ["minecraft:birch_log"] = 1,
         ["minecraft:charcoal"]  = 100,
     }
-    local turtleLocator = enterprise_turtle:GetAnyTurtleLocator() assert(turtleLocator, "Failed obtaining turtleLocator")
+    local turtleLocator = enterprise_employment:GetAnyTurtleLocator() assert(turtleLocator, "Failed obtaining turtleLocator")
     local itemsLocator1 = turtleLocator:copy()
     itemsLocator1:setQuery(itemsQuery1)
     local itemsLocator2 = turtleLocator:copy()

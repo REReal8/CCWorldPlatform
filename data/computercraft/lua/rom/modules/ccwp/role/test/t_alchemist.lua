@@ -6,7 +6,7 @@ local Location = require "obj_location"
 
 local role_alchemist = require "role_alchemist"
 
-local t_turtle
+local t_employment
 
 function t_alchemist.T_All()
 end
@@ -23,7 +23,7 @@ local baseLocationV1 = Location:newInstance(12, 0, 1, 0, 1)
 function t_alchemist.T_Craft_Task()
     -- prepare test
     corelog.WriteToLog("* role_alchemist.Craft_Task() tests")
-    t_turtle = t_turtle or require "test.t_turtle"
+    t_employment = t_employment or require "test.t_employment"
     local craftData = {
         recipe = {
             [6]         = { itemName = "minecraft:birch_log", itemCount = 1 },
@@ -32,7 +32,7 @@ function t_alchemist.T_Craft_Task()
         productItemName = "minecraft:birch_planks",
         productItemCount= 4,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -4),
-        workerLocator   = t_turtle.GetCurrentTurtleLocator()
+        workerLocator   = t_employment.GetCurrentTurtleLocator()
     }
 
     -- test
@@ -45,7 +45,7 @@ end
 function t_alchemist.T_Smelt_Task()
     -- prepare test
     corelog.WriteToLog("* role_alchemist.Smelt_Task() tests")
-    t_turtle = t_turtle or require "test.t_turtle"
+    t_employment = t_employment or require "test.t_employment"
     local smeltData = {
         recipe = {
             itemName    = "minecraft:birch_log",
@@ -55,7 +55,7 @@ function t_alchemist.T_Smelt_Task()
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -3),
         fuelItemName    = "minecraft:birch_planks",
         fuelItemCount   = 3,
-        workerLocator   = t_turtle.GetCurrentTurtleLocator()
+        workerLocator   = t_employment.GetCurrentTurtleLocator()
     }
 
     -- test
@@ -68,12 +68,12 @@ end
 function t_alchemist.T_Pickup_Task()
     -- prepare test
     corelog.WriteToLog("* role_alchemist.Pickup_Task() tests")
-    t_turtle = t_turtle or require "test.t_turtle"
+    t_employment = t_employment or require "test.t_employment"
     local pickupData = {
         productItemName = "minecraft:charcoal",
         productItemCount= 3,
         workingLocation = baseLocationV1:getRelativeLocation(3, 3, -3),
-        workerLocator   = t_turtle.GetCurrentTurtleLocator()
+        workerLocator   = t_employment.GetCurrentTurtleLocator()
     }
 
     -- test

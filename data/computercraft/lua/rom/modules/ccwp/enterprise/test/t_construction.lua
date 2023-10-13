@@ -14,7 +14,7 @@ local enterprise_construction = require "enterprise_construction"
 local enterprise_chests = require "enterprise_chests"
 
 local t_chests = require "test.t_chests"
-local t_turtle = require "test.t_turtle"
+local t_employment = require "test.t_employment"
 
 local testStartLocation     = Location:newInstance(-6, 0, 1, 0, 1)
 local testStartLocation2    = testStartLocation:getRelativeLocation(0, 6, 0)
@@ -82,8 +82,8 @@ function t_construction.T_BuildLayer_ASrv_FromTurtle()
         startpoint                  = testStartLocation,
         buildDirection              = "Down",
         layer                       = testBuildLayer1,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
     }
     local callback = Callback.GetNewDummyCallBack()
 
@@ -164,8 +164,8 @@ function t_construction.T_BuildBlueprint_ASrv()
     local blueprintBuildData = {
         blueprintStartpoint         = testStartLocation:getRelativeLocation(0, 12, 0),
         blueprint                   = testBlueprint1,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
     }
     local callback = Callback.GetNewDummyCallBack()
 

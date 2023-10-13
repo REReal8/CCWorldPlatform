@@ -3,7 +3,7 @@ local corelog = require "corelog"
 
 local Location = require "obj_location"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_forestry = require "enterprise_forestry"
 
 local TestArrayTest = require "test_array_test"
@@ -57,8 +57,8 @@ local baseLocation0 = Location:newInstance(0, 0, 1, 0, 1)
 local nTrees1 = 1
 local nTrees2 = 2
 local nTrees4 = 4
-local localLogsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
-local localSaplingsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local localLogsLocator0 = enterprise_employment.GetAnyTurtleLocator()
+local localSaplingsLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local localLogsLocatorTest0 = FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator0)
 local localSaplingsLocatorTest0 = FieldValueEqualTest:newInstance("_localSaplingsLocator", localSaplingsLocator0)
 

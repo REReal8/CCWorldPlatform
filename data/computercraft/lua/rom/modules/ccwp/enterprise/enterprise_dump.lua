@@ -17,7 +17,7 @@ local URL           = require "obj_url"
 local IItemDepot = require "i_item_depot"
 
 -- enterprises
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
@@ -134,7 +134,7 @@ function Reset()
     local dumpData = {}
 
     -- add any turtle
-    table.insert(dumpData, enterprise_turtle.GetAnyTurtleLocator())
+    table.insert(dumpData, enterprise_employment.GetAnyTurtleLocator())
 
     -- save!
     SaveData(dumpData)
@@ -143,7 +143,7 @@ function Reset()
     return dumpData
 
     --    -- if you like one liners, not so readable
---    return SaveData({enterprise_turtle.GetAnyTurtleLocator()})
+--    return SaveData({enterprise_employment.GetAnyTurtleLocator()})
 end
 
 -- done

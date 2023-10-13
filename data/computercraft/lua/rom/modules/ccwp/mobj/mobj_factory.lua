@@ -53,7 +53,7 @@ local role_fuel_worker = require "role_fuel_worker"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_isp = require "enterprise_isp"
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_energy = require "enterprise_energy"
@@ -193,10 +193,10 @@ function Factory:construct(...)
     local smeltingSpots = ObjArray:newInstance(productionSpotClassName)
     if level == 0 then
         -- inputLocators
-        table.insert(inputLocators, enterprise_turtle.GetAnyTurtleLocator())
+        table.insert(inputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- outputLocators
-        table.insert(outputLocators, enterprise_turtle.GetAnyTurtleLocator())
+        table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
         table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(0, 0, 0), true))
@@ -205,10 +205,10 @@ function Factory:construct(...)
         -- note: none
     elseif level == 1 then
         -- inputLocators
-        table.insert(inputLocators, enterprise_turtle.GetAnyTurtleLocator())
+        table.insert(inputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- outputLocators
-        table.insert(outputLocators, enterprise_turtle.GetAnyTurtleLocator())
+        table.insert(outputLocators, enterprise_employment.GetAnyTurtleLocator())
 
         -- craftingSpots
         table.insert(craftingSpots, ProductionSpot:newInstance(baseLocation:getRelativeLocation(3, 3, -4), true))
@@ -697,8 +697,8 @@ function Factory:getFuelNeed_Production_Att(...)
     if not checkSuccess then corelog.Error("Factory:getFuelNeed_Production_Att: Invalid input") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- create locator
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleLocator = enterprise_turtle.GetAnyTurtleLocator() if not turtleLocator then corelog.Error("Factory:getFuelNeed_Production_Att: Failed obtaining turtleLocator") return enterprise_energy.GetLargeFuelAmount_Att() end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local turtleLocator = enterprise_employment.GetAnyTurtleLocator() if not turtleLocator then corelog.Error("Factory:getFuelNeed_Production_Att: Failed obtaining turtleLocator") return enterprise_energy.GetLargeFuelAmount_Att() end
 
     -- determine fuelNeed
     local serviceResults = self:needsTo_ProvideItemsTo_SOSrv({
@@ -1080,7 +1080,7 @@ function Factory.ProduceItem_ASrv(...)
     if not checkSuccess then corelog.Error("Factory.ProduceItem_ASrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- determine turtleInputLocator
-    local turtleInputLocator = enterprise_turtle.GetAnyTurtleLocator()
+    local turtleInputLocator = enterprise_employment.GetAnyTurtleLocator()
 
     -- determine production steps
     local projectSteps = {

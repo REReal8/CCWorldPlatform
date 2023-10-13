@@ -46,7 +46,7 @@ local enterprise_administration = require "enterprise_administration"
 local enterprise_projects = require "enterprise_projects"
 local enterprise_energy = require "enterprise_energy"
 local enterprise_manufacturing = require "enterprise_manufacturing"
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_shop = require "enterprise_shop"
 local enterprise_forestry = require "enterprise_forestry"
@@ -62,7 +62,7 @@ local t_chests = require "test.t_chests"
 local t_manufacturing = require "test.t_manufacturing"
 local t_forestry = require "test.t_forestry"
 local t_shop = require "test.t_shop"
-local t_turtle = require "test.t_turtle"
+local t_employment = require "test.t_employment"
 
 function t_main.T_dummy()
     corelog.WriteToLog("Running T_()")
@@ -121,7 +121,7 @@ function t_main.T_All()
     t_energy.T_All()
     t_chests.T_All()
     t_shop.T_All()
-    t_turtle.T_All()
+    t_employment.T_All()
 end
 
 function t_main.T_ResetWorld()
@@ -132,7 +132,7 @@ function t_main.T_ResetWorld()
     enterprise_projects.DeleteProjects()
     enterprise_energy.ResetParameters()
     enterprise_manufacturing:deleteObjects("Factory")
-    enterprise_turtle:reset()
+    enterprise_employment:reset()
     enterprise_chests:deleteObjects("Chest")
     enterprise_shop:reset()
     enterprise_forestry:deleteObjects("BirchForest")

@@ -30,7 +30,7 @@ local LayerRectangle = require "obj_layer_rectangle"
 local role_fuel_worker = require "role_fuel_worker"
 
 local enterprise_isp = require "enterprise_isp"
-local enterprise_turtle
+local enterprise_employment
 
 --    _       _ _   _       _ _           _   _
 --   (_)     (_) | (_)     | (_)         | | (_)
@@ -326,8 +326,8 @@ function Turtle:getAssignmentFilter()
     --]]
 
     -- (re)fuel turtle if needed
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    enterprise_turtle:triggerTurtleRefuelIfNeeded(self) -- note: if refuel is triggered fuelPriorityKey will get set
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    enterprise_employment:triggerTurtleRefuelIfNeeded(self) -- note: if refuel is triggered fuelPriorityKey will get set
 
     -- end
     return {
@@ -373,8 +373,8 @@ function Turtle:provideItemsTo_AOSrv(...)
     if not hasItems then corelog.Error("Turtle:provideItemsTo_AOSrv: provideItems(="..textutils.serialise(provideItems)..") not (all) available in Turtle") return Callback.ErrorCall(callback) end
 
     -- create turtleItemsLocator
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleItemsLocator = enterprise_turtle:getObjectLocator(self) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local turtleItemsLocator = enterprise_employment:getObjectLocator(self) if not turtleItemsLocator then corelog.Error("Turtle:provideItemsTo_AOSrv: Invalid turtleItemsLocator created.") return Callback.ErrorCall(callback) end
     turtleItemsLocator:setQuery(provideItems)
 
     -- get ItemDepot
@@ -505,8 +505,8 @@ function Turtle:storeItemsFrom_AOSrv(...)
     local storeItems = itemsLocator:getQuery()
 
     -- check source is a turtle
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    if enterprise_turtle:isLocatorFromHost(itemsLocator) then -- source is a turtle
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    if enterprise_employment:isLocatorFromHost(itemsLocator) then -- source is a turtle
         -- check same turtle
         local sourceTurtleObj = ObjHost.GetObject(itemsLocator) if not sourceTurtleObj then corelog.Error("Turtle:storeItemsFrom_AOSrv: Failed obtaining turtle "..itemsLocator:getURI()) return Callback.ErrorCall(callback) end
         local sourceTurtleId = sourceTurtleObj:getWorkerId()
@@ -530,7 +530,7 @@ function Turtle:storeItemsFrom_AOSrv(...)
     else -- source is not a turtle
         -- ToDo: investigate if there are ways to prevent this (as below code seems a bit ackward)
         -- create turtleLocator
-        local turtleLocator = enterprise_turtle:getObjectLocator(self) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
+        local turtleLocator = enterprise_employment:getObjectLocator(self) if not turtleLocator then corelog.Error("Turtle:storeItemsFrom_AOSrv: Invalid turtleLocator created.") return Callback.ErrorCall(callback) end
 
         -- get source ItemSupplier
         local itemSupplierLocator = itemsLocator:baseCopy()
@@ -618,8 +618,8 @@ function Turtle:getLocation()
             self._location = coremove_location
 
             -- save change in host
-            enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-            enterprise_turtle:saveObject(self)
+            enterprise_employment = enterprise_employment or require "enterprise_employment"
+            enterprise_employment:saveObject(self)
         end
     end
 

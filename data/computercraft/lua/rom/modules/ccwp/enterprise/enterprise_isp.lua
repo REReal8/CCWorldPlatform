@@ -108,7 +108,7 @@ local function GetItemDepotName_SSrv(...)
     if type(host) ~= "string" then corelog.Error("enterprise_isp.GetItemDepotName_SSrv: host of wrong type = "..type(host)..".") return {success = false} end
     local enterpriseName = nil
         if host == "enterprise_chests"  then enterpriseName = "enterprise_chests"
-    elseif host == "enterprise_turtle"  then enterpriseName = "enterprise_turtle"
+    elseif host == "enterprise_employment"  then enterpriseName = "enterprise_employment"
     else corelog.Error("enterprise_isp.GetItemDepotName_SSrv: Not implemented for "..host .." host.") return {success = false} end
 
     -- end

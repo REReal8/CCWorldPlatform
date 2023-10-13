@@ -16,7 +16,7 @@ local role_builder = require "role_builder"
 
 local enterprise_projects = require "enterprise_projects"
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
-local enterprise_turtle
+local enterprise_employment
 
 --                _     _ _         __                  _   _
 --               | |   | (_)       / _|                | | (_)
@@ -72,8 +72,8 @@ function enterprise_construction.BuildBlueprint_ASrv(...)
     end
 
     -- set local output location
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildBlueprint_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local itemDepotLocator = enterprise_employment.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildBlueprint_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
 
     -- create project service data
     local buildBlueprintProjectDef = {
@@ -170,8 +170,8 @@ function enterprise_construction.BuildLayer_ASrv(...)
     --          should pick up the materials. We however do not yet specify which turtle as we leave it up to the (relayed services of)
     --          the service to find that out. Because of below statement the resulting destinationItemsLocator return value
     --          of that service should specify which turtle has the items in it's inventory.
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local itemDepotLocator = enterprise_turtle.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildLayer_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local itemDepotLocator = enterprise_employment.GetAnyTurtleLocator() if not itemDepotLocator then corelog.Error("enterprise_construction:BuildLayer_ASrv: Failed obtaining itemDepotLocator") return Callback.ErrorCall(callback) end
 
     -- create project service data
     local buildRectangularPatternProjectDef = {

@@ -15,7 +15,7 @@ local InputChecker = require "input_checker"
 
 local ItemTable = require "obj_item_table"
 
-local enterprise_turtle
+local enterprise_employment
 
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
@@ -110,8 +110,8 @@ function role_forester.HarvestForest_Task(...)
     if not axePresent then corelog.Error("role_forester.HarvestForest_Task: No axePresent ") return {success = false} end
 
     -- get turtle we are doing task with
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleObj = enterprise_turtle:getObject(turtleLocator)
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local turtleObj = enterprise_employment:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_forester.HarvestForest_Task: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
 
     -- remember input items

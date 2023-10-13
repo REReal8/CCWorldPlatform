@@ -27,7 +27,7 @@ local CodeMap = require "obj_code_map"
 local LayerRectangle = require "obj_layer_rectangle"
 
 local enterprise_projects = require "enterprise_projects"
-local enterprise_turtle
+local enterprise_employment
 local enterprise_chests = require "enterprise_chests"
 local enterprise_storage
 
@@ -466,7 +466,7 @@ function Silo:provideItemsTo_AOSrv(...)
     if not checkSuccess then corelog.Error("Silo:provideItemsTo_AOSrv: Invalid input") return Callback.ErrorCall(callback) end
 
     -- create project definition
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local projectData = {
         provideItems            = provideItems,
         pickupLocator           = self:getPickupLocation(),
@@ -632,7 +632,7 @@ function Silo:storeItemsFrom_AOSrv(...)
     destinationItemsLocator:setQueryURI(itemsLocator:getQueryURI())
 
     -- create project definition
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
     local projectData = {
         itemsLocator            = itemsLocator,
         dropLocator             = self:getDropLocation(),

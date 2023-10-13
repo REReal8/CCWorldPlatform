@@ -1,21 +1,22 @@
 -- define class
 local Class = require "class"
 local MObjHost = require "mobj_host"
-local enterprise_turtle = Class.NewClass(MObjHost)
+local enterprise_employment = Class.NewClass(MObjHost)
 
 --[[
-    The enterprise_turtle is a MObjHost. It hosts Turtle's that can perform work in the pysical world.
+    The enterprise_employment is a MObjHost. It hosts Turtle's that can perform work in the pysical world.
 --]]
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
-local coreinventory = require "coreinventory"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
 local ObjectFactory = require "object_factory"
 local objectFactory = ObjectFactory:getInstance()
 local ObjHost = require "obj_host"
+local ObjTable = require "obj_table"
+local URL = require "obj_url"
 
 local Turtle = require "mobj_turtle"
 
@@ -35,24 +36,24 @@ local enterprise_energy = require "enterprise_energy"
 --          - explicitly make it a singleton (by construction with :newInstance(hostName) and using the singleton pattern)
 --          - properly initialise it (by adding and implementing the _init method)
 --          - adopt other classes to these changes
-enterprise_turtle._hostName   = "enterprise_turtle"
+enterprise_employment._hostName   = "enterprise_employment"
 
 local function GetATurtle()
     -- get all Turtles
-    local turtles = enterprise_turtle:getObjects(Turtle:getClassName())
-    if not turtles then corelog.Error("enterprise_turtle:GetATurtle: Failed obtaining Turtle's") return nil end
+    local turtles = enterprise_employment:getObjects(Turtle:getClassName())
+    if not turtles then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining Turtle's") return nil end
 
     -- select first Turtle
     -- ToDo: consider selecting a free Turtle (also based on some criteria) (maybe do this via assignments?)
     local _, turtleObjTable = next(turtles) -- first Turtle
-    if not turtleObjTable then corelog.Error("enterprise_turtle:GetATurtle: Failed obtaining a Turtle") return nil end
-    local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_turtle:GetATurtle: failed converting turtle objTable to Turtle") return nil end
+    if not turtleObjTable then corelog.Error("enterprise_employment:GetATurtle: Failed obtaining a Turtle") return nil end
+    local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:GetATurtle: failed converting turtle objTable to Turtle") return nil end
 
     -- end
     return turtleObj
 end
 
-function enterprise_turtle:getObject(...)
+function enterprise_employment:getObject(...)
     -- get & check input from description
     local checkSuccess, objectLocator = InputChecker.Check([[
         This method retrieves an object from the ObjHost using a URL (that was once provided by the ObjHost).
@@ -63,10 +64,10 @@ function enterprise_turtle:getObject(...)
         Parameters:
             objectLocator           + (URL) locator of the object within the ObjHost
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle:getObject: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("enterprise_employment:getObject: Invalid input") return nil end
 
     -- check for "any turtle"
-    if objectLocator:sameBase(enterprise_turtle.GetAnyTurtleLocator()) then
+    if objectLocator:sameBase(enterprise_employment.GetAnyTurtleLocator()) then
         -- ToDo: consider adjusting calling code/ project logic to select a specific Turtle as late as possible, as we probably now fix a Turtle to specific work
 
         -- get a Turtle
@@ -90,8 +91,8 @@ end
 --                    _/ |
 --                   |__/
 
-function enterprise_turtle:getClassName()
-    return "enterprise_turtle"
+function enterprise_employment:getClassName()
+    return "enterprise_employment"
 end
 
 --                        _  __ _                       _   _               _
@@ -103,21 +104,21 @@ end
 --       | |
 --       |_|
 
-function enterprise_turtle:reset()
+function enterprise_employment:reset()
     -- get Turtle's
     local turtles = self:getObjects("Turtle")
-    if not turtles then corelog.Error("enterprise_turtle:reset: Failed obtaining Turtle's") return nil end
+    if not turtles then corelog.Error("enterprise_employment:reset: Failed obtaining Turtle's") return nil end
 
     -- reset all Turtle's
     for id, turtleObjTable in pairs(turtles) do
         -- convert to Turtle
-        local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_turtle:reset: failed converting turtle "..id.." objTable to Turtle") return nil end
+        local turtleObj = objectFactory:create("Turtle", turtleObjTable) if not turtleObj then corelog.Error("enterprise_employment:reset: failed converting turtle "..id.." objTable to Turtle") return nil end
 
         -- reset Turtle
         turtleObj:setFuelPriorityKey("")
 
         -- save Turtle
-        local turtleLocator = enterprise_turtle:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle:reset: failed saving turtle") return nil end
+        local turtleLocator = enterprise_employment:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:reset: failed saving turtle") return nil end
     end
 end
 
@@ -134,17 +135,17 @@ local function GetTurtleLocator(turtleIdStr)
 
     -- get resourcePath
     local objectPath = ObjHost.GetObjectPath("Turtle", turtleIdStr)
-    if not objectPath then corelog.Error("enterprise_turtle.GetTurtleLocator: Failed obtaining objectPath") return nil end
+    if not objectPath then corelog.Error("enterprise_employment.GetTurtleLocator: Failed obtaining objectPath") return nil end
 
     -- get objectLocator
-    local turtleLocator = enterprise_turtle:getResourceLocator(objectPath)
-    if not turtleLocator then corelog.Error("enterprise_turtle.GetTurtleLocator: Failed obtaining turtleLocator") return nil end
+    local turtleLocator = enterprise_employment:getResourceLocator(objectPath)
+    if not turtleLocator then corelog.Error("enterprise_employment.GetTurtleLocator: Failed obtaining turtleLocator") return nil end
 
     -- end
     return turtleLocator
 end
 
-function enterprise_turtle.GetAnyTurtleLocator()
+function enterprise_employment.GetAnyTurtleLocator()
     --[[
         This method provides a locator for any turtle (in the enterprise). The locator provided will be subsituted to the current
         turtle once it is to be used.
@@ -159,9 +160,9 @@ function enterprise_turtle.GetAnyTurtleLocator()
     return GetTurtleLocator("any")
 end
 
-function enterprise_turtle:getCurrentTurtleLocator()
+function enterprise_employment:getCurrentTurtleLocator()
     --[[
-        This method provides the locator of the current turtle (in enterprise_turtle).
+        This method provides the locator of the current turtle (in enterprise_employment).
 
         Return value:
             turtleLocator       - (URL) locating the current turtle
@@ -170,7 +171,7 @@ function enterprise_turtle:getCurrentTurtleLocator()
     --]]
 
     -- check turtle
-    if not turtle then corelog.Error("enterprise_turtle:getCurrentTurtleLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
+    if not turtle then corelog.Error("enterprise_employment:getCurrentTurtleLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
 
     -- construct URL
     local currentTurtleId = os.getComputerID()
@@ -180,7 +181,7 @@ function enterprise_turtle:getCurrentTurtleLocator()
     return currentTurtleLocator
 end
 
-function enterprise_turtle:triggerTurtleRefuelIfNeeded(turtleObj)
+function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)
     -- get fuelLevels
     local turtleFuelLevel = turtle.getFuelLevel()
     local fuelLevels = self.GetFuelLevels_Att()
@@ -191,12 +192,12 @@ function enterprise_turtle:triggerTurtleRefuelIfNeeded(turtleObj)
         -- ensure this turtle now only starts taking new assignments with the priority key
         local priorityKey = coreutils.NewId()
         turtleObj:setFuelPriorityKey(priorityKey)
-        local turtleLocator = self:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
+        local turtleLocator = self:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment:triggerTurtleRefuelIfNeeded: failed saving turtle") return end
 
         -- prepare service call
         local refuelAmount = enterprise_energy.GetRefuelAmount_Att()
-        local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator() -- ToDo: somehow get this passed into enterprise_turtle
-        local wasteItemDepotLocator = turtleLocator:copy()                      -- ToDo: somehow get this passed into enterprise_turtle
+        local ingredientsItemSupplierLocator = enterprise_shop.GetShopLocator() -- ToDo: somehow get this passed into enterprise_employment
+        local wasteItemDepotLocator = turtleLocator:copy()                      -- ToDo: somehow get this passed into enterprise_employment
         local serviceData = {
             turtleLocator                   = turtleLocator,
             fuelAmount                      = refuelAmount,
@@ -205,14 +206,14 @@ function enterprise_turtle:triggerTurtleRefuelIfNeeded(turtleObj)
 
             assignmentsPriorityKey          = priorityKey,
         }
-        local callback = Callback:newInstance("enterprise_turtle", "Fuel_Callback", { turtleLocator = turtleLocator, })
+        local callback = Callback:newInstance("enterprise_employment", "Fuel_Callback", { turtleLocator = turtleLocator, })
 
         -- call service
         enterprise_energy.ProvideFuelTo_ASrv(serviceData, callback)
     end
 end
 
-function enterprise_turtle.Fuel_Callback(...)
+function enterprise_employment.Fuel_Callback(...)
     -- get & check input from description
     local checkSuccess, turtleLocator = InputChecker.Check([[
         This callback should cleanup after enterprise_energy.ProvideFuelTo_ASrv is finished
@@ -226,14 +227,14 @@ function enterprise_turtle.Fuel_Callback(...)
                 turtleLocator       + (URL) locator of the turtle
             serviceResults          + (table) result of service that calls back
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.Fuel_Callback: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_employment.Fuel_Callback: Invalid input") return {success = false} end
 
     -- get Turtle
-    local turtleObj = enterprise_turtle:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_turtle.Fuel_Callback: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
+    local turtleObj = enterprise_employment:getObject(turtleLocator) if not turtleObj then corelog.Error("enterprise_employment.Fuel_Callback: Failed obtaining Turtle from turtleLocator="..turtleLocator:getURI()) return {success = false} end
 
     -- release priority key condition
     turtleObj:setFuelPriorityKey("")
-    turtleLocator = enterprise_turtle:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_turtle.Fuel_Callback: failed saving turtle") return {success = false} end
+    turtleLocator = enterprise_employment:saveObject(turtleObj) if not turtleLocator then corelog.Error("enterprise_employment.Fuel_Callback: failed saving turtle") return {success = false} end
 
     -- end
     return {success = true}
@@ -246,7 +247,7 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
-function enterprise_turtle.GetItemsLocations_SSrv(...)
+function enterprise_employment.GetItemsLocations_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemsLocator = InputChecker.Check([[
         This sync public service provides the current world locations of different items in an ItemDepot.
@@ -262,11 +263,11 @@ function enterprise_turtle.GetItemsLocations_SSrv(...)
                                         (the "base" component of the URL specifies the ItemDepot that provides the items)
                                         (the "query" component of the URL specifies the items)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: Invalid input") return {success = false} end
 
     -- get location
-    local serviceResults = enterprise_turtle.GetItemDepotLocation_SSrv({ itemDepotLocator = itemsLocator})
-    if not serviceResults.success then corelog.Error("enterprise_turtle.GetItemsLocations_SSrv: failed obtaining location for ItemDepot "..itemsLocator:getURI()..".") return {success = false} end
+    local serviceResults = enterprise_employment.GetItemDepotLocation_SSrv({ itemDepotLocator = itemsLocator})
+    if not serviceResults.success then corelog.Error("enterprise_employment.GetItemsLocations_SSrv: failed obtaining location for ItemDepot "..itemsLocator:getURI()..".") return {success = false} end
     local location = serviceResults.location
 
     -- end
@@ -276,7 +277,7 @@ function enterprise_turtle.GetItemsLocations_SSrv(...)
     }
 end
 
-function enterprise_turtle.GetItemDepotLocation_SSrv(...)
+function enterprise_employment.GetItemDepotLocation_SSrv(...)
     -- get & check input from description
     local checkSuccess, itemDepotLocator = InputChecker.Check([[
         This sync public service provides the world location of an ItemDepot.
@@ -291,15 +292,15 @@ function enterprise_turtle.GetItemDepotLocation_SSrv(...)
                 itemDepotLocator    + (URL) locating the ItemDepot for which to get the location
                                         (the "base" component of the URL should specify this ItemDepot enterprise)
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
+    if not checkSuccess then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Invalid input") return {success = false} end
 
     -- check itemDepotLocator is for this enterprise
-    if not enterprise_turtle:isLocatorFromHost(itemDepotLocator)  then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
+    if not enterprise_employment:isLocatorFromHost(itemDepotLocator)  then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Invalid itemDepotLocator (="..itemDepotLocator:getURI()..").") return {success = false} end
 
     -- get turtle
     local currentTurtleId = os.getComputerID()
-    local turtleObj = enterprise_turtle:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
-    if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_turtle.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
+    local turtleObj = enterprise_employment:getObject(itemDepotLocator) if not turtleObj then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Failed obtaining turtleObj from itemDepotLocator="..itemDepotLocator:getURI()) return {success = false} end
+    if currentTurtleId ~= turtleObj:getWorkerId() then corelog.Error("enterprise_employment.GetItemDepotLocation_SSrv: Getting ItemDepot location in one (id="..turtleObj:getWorkerId() ..") turtle from another (id="..currentTurtleId..") not implemented (?yet).") return {success = false} end
 
     -- get location
     local location = turtleObj:getLocation()
@@ -311,7 +312,7 @@ function enterprise_turtle.GetItemDepotLocation_SSrv(...)
     }
 end
 
-function enterprise_turtle.GetFuelLevels_Att()
+function enterprise_employment.GetFuelLevels_Att()
     -- determine fuelLevel_Priority
     local fuelNeed_Refuel = enterprise_energy.GetFuelNeed_Refuel_Att()
     local assignmentStatistics = enterprise_assignmentboard.GetStatistics_Att()
@@ -330,4 +331,4 @@ function enterprise_turtle.GetFuelLevels_Att()
     return fuelLevels
 end
 
-return enterprise_turtle
+return enterprise_employment

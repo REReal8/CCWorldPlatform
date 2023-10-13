@@ -23,7 +23,7 @@ local T_IObj = require "test.t_i_obj"
 
 local T_TestMObj = require "test.t_mobj_test"
 
-local t_turtle
+local t_employment
 
 function T_MObjHost.T_All()
     -- initialisation
@@ -179,14 +179,14 @@ function T_MObjHost.pt_hostAndBuildMObj_ASrv(mobjHost, className, constructParam
     assert(type(objName) == "string", "no objName provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":hostAndBuildMObj_ASrv() tests (of "..objName..")")
-    t_turtle = t_turtle or require "test.t_turtle"
+    t_employment = t_employment or require "test.t_employment"
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "hostAndBuildMObj_ASrv", {
         className                   = className,
         constructParameters         = constructParameters,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
     })
 
     -- check: service success
@@ -259,14 +259,14 @@ function T_MObjHost.pt_extendAndUpgradeMObj_ASrv(mobjHost, mobjLocator, upgradeP
     assert(type(fieldsTest) == "table", "no fieldsTest provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":extendAndUpgradeMObj_ASrv() tests (of "..objName..")")
-    t_turtle = t_turtle or require "test.t_turtle"
+    t_employment = t_employment or require "test.t_employment"
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "extendAndUpgradeMObj_ASrv", {
         mobjLocator                 = mobjLocator,
         upgradeParameters           = upgradeParameters,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
     })
 
     -- check: service success
@@ -330,13 +330,13 @@ function T_MObjHost.pt_dismantleAndReleaseMObj_ASrv(mobjHost, mobjLocator, logOk
     assert(type(mobjLocator) == "table", "no mobjLocator provided")
     assert(type(logOk) == "boolean", "no logOk provided")
     corelog.WriteToLog("* "..mobjHost:getHostName()..":dismantleAndReleaseMObj_ASrv() tests (of "..mobjLocator:getURI()..")")
-    t_turtle = t_turtle or require "test.t_turtle"
+    t_employment = t_employment or require "test.t_employment"
 
     -- test
     local serviceResults = MethodExecutor.DoASyncObjService_Sync(mobjHost, "dismantleAndReleaseMObj_ASrv", {
         mobjLocator                 = mobjLocator,
-        materialsItemSupplierLocator= t_turtle.GetCurrentTurtleLocator(),
-        wasteItemDepotLocator       = t_turtle.GetCurrentTurtleLocator(),
+        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
     })
 
     -- check: service success

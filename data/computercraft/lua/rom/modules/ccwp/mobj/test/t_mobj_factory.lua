@@ -15,7 +15,7 @@ local URL = require "obj_url"
 local ProductionSpot = require "mobj_production_spot"
 local Factory = require "mobj_factory"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
 
 local TestArrayTest = require "test_array_test"
@@ -32,7 +32,7 @@ local T_IObj = require "test.t_i_obj"
 local T_IMObj = require "test.t_i_mobj"
 
 local T_Chest = require "test.t_mobj_chest"
-local t_turtle
+local t_employment
 
 function T_Factory.T_All()
     -- initialisation
@@ -71,10 +71,10 @@ local level2 = 2
 
 local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
 
-local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local inputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0, })
 
-local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(URL:getClassName(), { outputLocator0, })
 
 local craftingSpot0 = ProductionSpot:newInstance(baseLocation1:getRelativeLocation(0, 0, 0), true)
@@ -516,9 +516,9 @@ local function t_provideItemsTo_AOSrv(provideItems, productionMethod)
     -- prepare test
     corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() tests ("..productionMethod..")")
     local obj = T_Factory.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
-    t_turtle = t_turtle or require "test.t_turtle"
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
 
     local chest2 = T_Chest.CreateTestObj(nil, baseLocation1:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")
 

@@ -13,7 +13,7 @@ local URL = require "obj_url"
 
 local Turtle = require "mobj_turtle"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
 
 local TestArrayTest = require "test_array_test"
@@ -29,7 +29,7 @@ local T_IMObj = require "test.t_i_mobj"
 local T_IWorker = require "test.t_i_worker"
 local T_Chest = require "test.t_mobj_chest"
 
-local t_turtle = require "test.t_turtle"
+local t_employment = require "test.t_employment"
 
 function T_Turtle.T_All()
     -- initialisation
@@ -290,7 +290,7 @@ end
 
 function T_Turtle.T_provideItemsTo_AOSrv_Turtle()
     -- prepare test
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
 
     -- test
     provideItemsTo_AOSrv_Test(itemDepotLocator, "Turtle")
@@ -345,7 +345,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, toStr)
     -- prepare test (cont)
     corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (to "..toStr..")")
     local objTurtle = T_Turtle.CreateTestObj() if not objTurtle then corelog.Error("Failed obtaining Turtle") return end
-    local turtleLocator = enterprise_turtle:getObjectLocator(objTurtle) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
+    local turtleLocator = enterprise_employment:getObjectLocator(objTurtle) assert(turtleLocator, "Failed obtaining locator for "..testClassName)
 
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
@@ -368,7 +368,7 @@ end
 
 function T_Turtle.T_storeItemsFrom_AOSrv_Turtle()
     -- prepare test
-    local itemsLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemsLocator = t_employment.GetCurrentTurtleLocator()
 
     -- test
     storeItemsFrom_AOSrv_Test(itemsLocator, "Turtle")

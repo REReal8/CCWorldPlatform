@@ -29,7 +29,7 @@ local InputChecker = require "input_checker"
 local Location  = require "obj_location"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
-local enterprise_turtle
+local enterprise_employment
 
 local db = {
     rejectAllAssignments    = false,
@@ -63,14 +63,14 @@ function coreassignment.Run()
     if not turtle then corelog.WriteToLog("coreassignment.Run(): Not a turtle, not taking assignments") return false end
 
     -- get (locator for) current Worker
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local workerLocator = enterprise_turtle:getCurrentTurtleLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local workerLocator = enterprise_employment:getCurrentTurtleLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
     -- register current Worker if not yet registered
-    local objResourceTable = enterprise_turtle:getResource(workerLocator)
+    local objResourceTable = enterprise_employment:getResource(workerLocator)
     if not objResourceTable then
         local workerId = os.getComputerID()
         local coremove_location = Location:new(coremove.GetLocation())
-        workerLocator = enterprise_turtle:hostMObj_SSrv({ className = "Turtle", constructParameters = {
+        workerLocator = enterprise_employment:hostMObj_SSrv({ className = "Turtle", constructParameters = {
             workerId    = workerId,
             location    = coremove_location,
         }}).mobjLocator
@@ -80,7 +80,7 @@ function coreassignment.Run()
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do
         -- get Worker
-        local workerObj = enterprise_turtle:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
+        local workerObj = enterprise_employment:getObject(workerLocator) if not workerObj then corelog.Error("coreassignment.Run: Failed obtaining Worker "..workerLocator:getURI()) return false end
         -- note: we getObject every loop as it might have changed
 
         -- find best next Worker assignment

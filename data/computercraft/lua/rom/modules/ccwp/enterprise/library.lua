@@ -26,7 +26,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("enterprise_projects")
     moduleRegistry:requireAndRegisterModule("enterprise_shop")
     moduleRegistry:requireAndRegisterModule("enterprise_storage")
-    moduleRegistry:requireAndRegisterModule("enterprise_turtle")
+    moduleRegistry:requireAndRegisterModule("enterprise_employment")
     moduleRegistry:requireAndRegisterModule("enterprise_administration")
 
     -- register library modules test modules
@@ -43,7 +43,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModuleTests("t_storage")
     moduleRegistry:requireAndRegisterModuleTests("enterprise_test")
     moduleRegistry:requireAndRegisterModuleTests("t_test")
-    moduleRegistry:requireAndRegisterModuleTests("t_turtle")
+    moduleRegistry:requireAndRegisterModuleTests("t_employment")
     moduleRegistry:requireAndRegisterModuleTests("t_utilities")
 
     -- do other stuff

@@ -34,7 +34,7 @@ local T_IMObj = require "test.t_i_mobj"
 local T_IItemSupplier = require "test.t_i_item_supplier"
 local T_IItemDepot = require "test.t_i_item_depot"
 
-local t_turtle = require "test.t_turtle"
+local t_employment = require "test.t_employment"
 
 function T_Silo.T_All()
     -- initialisation
@@ -282,7 +282,7 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     obj:Activate()
 
     local siloLocator = enterprise_storage:getObjectLocator(obj)
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
@@ -348,7 +348,7 @@ end
 function T_Silo.T_storeItemsFrom_AOSrv()
     -- prepare test
     corelog.WriteToLog("* Silo:storeItemsFrom_AOSrv() test")
-    local itemsLocator = t_turtle.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
+    local itemsLocator = t_employment.GetCurrentTurtleLocator() assert(itemsLocator, "Failed obtaining itemsLocator")
     local obj = Silo:construct({baseLocation=baseLocation1, nTopChests=2, nLayers=2}) assert(obj, "Failed obtaining "..testClassName)
     local siloLocator = enterprise_storage:saveObject(obj)
 
@@ -422,7 +422,7 @@ function T_Silo.T_GetRandomSilo()
     }
 
     -- test
-    silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_turtle.GetCurrentTurtleLocator()}, Callback.GetNewDummyCallBack())
+    silo:provideItemsTo_AOSrv({provideItems = provideItems, itemDepotLocator = t_employment.GetCurrentTurtleLocator()}, Callback.GetNewDummyCallBack())
  ]]
 --[[
     -- da silo
@@ -430,7 +430,7 @@ function T_Silo.T_GetRandomSilo()
 
     -- da shop
     local daShop = enterprise_shop.GetShopLocator()             assert(daShop, "Oops")
-    local daTurtle = t_turtle.GetCurrentTurtleLocator()         assert(daTurtle, "Oops")
+    local daTurtle = t_employment.GetCurrentTurtleLocator()         assert(daTurtle, "Oops")
     local turtleLocator = daTurtle.GetCurrentTurtleLocator()
     local daCallback = Callback.GetNewDummyCallBack()
 

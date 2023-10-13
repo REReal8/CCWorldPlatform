@@ -15,7 +15,7 @@ local BirchForest = require "mobj_birchforest"
 
 local role_forester = require "role_forester"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_chests = require "enterprise_chests"
 local enterprise_forestry = require "enterprise_forestry"
 
@@ -32,7 +32,7 @@ local T_Class = require "test.t_class"
 local T_IObj = require "test.t_i_obj"
 local T_IMObj = require "test.t_i_mobj"
 
-local t_turtle
+local t_employment
 
 function T_BirchForest.T_All()
     -- initialisation
@@ -70,8 +70,8 @@ local baseLocation2 = Location:newInstance(6, 12, 1, 0, 1)
 local nTrees1 = 1
 local nTrees2 = 2
 local nTrees4 = 4
-local localLogsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
-local localSaplingsLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local localLogsLocator0 = enterprise_employment.GetAnyTurtleLocator()
+local localSaplingsLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local localLogsLocatorTest0 = FieldValueEqualTest:newInstance("_localLogsLocator", localLogsLocator0)
 local localSaplingsLocatorTest0 = FieldValueEqualTest:newInstance("_localSaplingsLocator", localSaplingsLocator0)
 
@@ -159,8 +159,8 @@ function T_BirchForest.T_Getters()
     corelog.WriteToLog("* "..testClassName.." getter tests")
     local id = coreutils.NewId()
     local className = "BirchForest"
-    local localLogsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(localLogsLocator, "Failed obtaining localLogsLocator")
-    local localSaplingsLocator = enterprise_turtle.GetAnyTurtleLocator() assert(localSaplingsLocator, "Failed obtaining localLogsLocator")
+    local localLogsLocator = enterprise_employment.GetAnyTurtleLocator() assert(localLogsLocator, "Failed obtaining localLogsLocator")
+    local localSaplingsLocator = enterprise_employment.GetAnyTurtleLocator() assert(localSaplingsLocator, "Failed obtaining localLogsLocator")
     local obj = T_BirchForest.CreateTestObj(id, level0, baseLocation0, nTrees1, localLogsLocator0, localSaplingsLocator0) assert(obj, "Failed obtaining "..testClassName)
 
     -- test
@@ -396,8 +396,8 @@ function T_BirchForest.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    t_turtle = t_turtle or require "test.t_turtle"
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
 
     -- test
     local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
@@ -442,9 +442,9 @@ local function t_provideItemsTo_AOSrv(provideItems)
     corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() tests ("..next(provideItems)..")")
     local obj = T_BirchForest.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local objLocator = enterprise_forestry:saveObject(obj)
-    t_turtle = t_turtle or require "test.t_turtle"
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
-    local ingredientsItemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+    t_employment = t_employment or require "test.t_employment"
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local ingredientsItemSupplierLocator = t_employment.GetCurrentTurtleLocator()
 
     local T_Chest = require "test.t_mobj_chest"
     local chest2 = T_Chest.CreateTestObj(nil, baseLocation0:getRelativeLocation(0, 0, -1)) assert(chest2, "Failed obtaining Chest 2")

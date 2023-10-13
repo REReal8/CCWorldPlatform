@@ -7,7 +7,7 @@ local URL = require "obj_url"
 
 local ProductionSpot = require "mobj_production_spot"
 
-local enterprise_turtle = require "enterprise_turtle"
+local enterprise_employment = require "enterprise_employment"
 local enterprise_manufacturing = require "enterprise_manufacturing"
 
 local TestArrayTest = require "test_array_test"
@@ -56,10 +56,10 @@ local baseLocation0 = Location:newInstance(6, 0, 1, 0, 1)
 local baseLocation1 = Location:newInstance(12, 0, 1, 0, 1)
 local baseLocation2 = baseLocation1:copy()
 
-local inputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local inputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local inputLocators0 = ObjArray:newInstance(URL:getClassName(), { inputLocator0, })
 
-local outputLocator0 = enterprise_turtle.GetAnyTurtleLocator()
+local outputLocator0 = enterprise_employment.GetAnyTurtleLocator()
 local outputLocators0 = ObjArray:newInstance(URL:getClassName(), { outputLocator0, })
 
 local productionSpotClassName = "ProductionSpot"

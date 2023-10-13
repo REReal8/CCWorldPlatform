@@ -13,7 +13,7 @@ local coreinventory = require "coreinventory"
 
 local InputChecker = require "input_checker"
 
-local enterprise_turtle
+local enterprise_employment
 
 --    _______        _                   __  __      _        _____        _
 --   |__   __|      | |          ___    |  \/  |    | |      |  __ \      | |
@@ -38,8 +38,8 @@ function role_settler.InitialiseCoordinates_MetaData(...)
     if not checkSuccess then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Invalid input") return {success = false} end
 
     -- get turtle we are doing task with
-    enterprise_turtle = enterprise_turtle or require "enterprise_turtle"
-    local turtleObj = enterprise_turtle:getObject(turtleLocator)
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local turtleObj = enterprise_employment:getObject(turtleLocator)
     if not turtleObj then corelog.Error("role_settler.InitialiseCoordinates_MetaData: Failed obtaining Turtle "..turtleLocator:getURI()) return {success = false} end
     local location = turtleObj:getLocation() --> use the current location for proper bootstrapping
 

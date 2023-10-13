@@ -36,7 +36,7 @@ local T_IMObj = require "test.t_i_mobj"
 local T_Chest = require "test.t_mobj_chest"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local T_ObjHost = require "test.t_obj_host"
-local t_turtle = require "test.t_turtle"
+local t_employment = require "test.t_employment"
 
 function T_Shop.T_All()
     -- initialisation
@@ -212,7 +212,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
-    local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
 
     local testObject = TestObj:newInstance("field1", 4)
     local testObjHost = T_ObjHost.CreateTestObj()
@@ -242,7 +242,7 @@ function T_Shop.T_delistItemSupplier_SOSrv()
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
-    local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
 
     -- test
@@ -262,7 +262,7 @@ function T_Shop.T_delistAllItemSuppliers()
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
     local nItemSuppliers = #obj:getItemSuppliersLocators() assert(nItemSuppliers == 0, "Shop "..obj:getId().." not empty at start")
-    local itemSupplierLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemSupplierLocator = t_employment.GetCurrentTurtleLocator()
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemSupplierLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local location1 = Location:newInstance(10, 0, 1, 0, 1)
 
@@ -341,10 +341,10 @@ local function provideItemsTo_AOSrv_Test(provideItems)
     corelog.WriteToLog("* "..testClassName..":provideItemsTo_AOSrv() test (of "..textutils.serialize(provideItems, compact)..")")
     local obj = T_Shop.CreateTestObj() if not obj then corelog.Error("Failed obtaining Shop") return end
     local objectLocator = enterprise_shop:getObjectLocator(obj)
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator() assert(itemDepotLocator, "Failed obtaining itemDepotLocator")
     local result = obj:registerItemSupplier_SOSrv({ itemSupplierLocator = itemDepotLocator}) assert(result.success == true, "registerItemSupplier_SOSrv services failed")
     local ingredientsItemSupplierLocator = objectLocator
-    local wasteItemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local wasteItemDepotLocator = t_employment.GetCurrentTurtleLocator()
 
     local expectedDestinationItemsLocator = itemDepotLocator:copy()
     expectedDestinationItemsLocator:setQuery(provideItems)
@@ -454,7 +454,7 @@ function T_Shop.T_needsTo_ProvideItemsTo_SOSrv()
     local provideItems = {
         ["minecraft:birch_log"]  = 5,
     }
-    local itemDepotLocator = t_turtle.GetCurrentTurtleLocator()
+    local itemDepotLocator = t_employment.GetCurrentTurtleLocator()
 
     -- test
     local needsTo_Provide = obj:needsTo_ProvideItemsTo_SOSrv({
