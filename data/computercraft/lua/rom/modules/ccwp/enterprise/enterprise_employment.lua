@@ -336,7 +336,6 @@ function enterprise_employment.GetAnyTurtleLocator()
     return GetTurtleLocator("any")
 end
 
--- ToDo: rename to getCurrentWorkerLocator
 function enterprise_employment:getCurrentWorkerLocator()
     --[[
         This method provides the locator of the current turtle (in enterprise_employment).
