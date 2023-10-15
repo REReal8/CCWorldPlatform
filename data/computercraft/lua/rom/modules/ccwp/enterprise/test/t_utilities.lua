@@ -29,6 +29,7 @@ local workerId1 = 111111
 local baseLocation = Location:newInstance(-6, -12, 1, 0, 1)
 
 local constructParameters = {
+    workerId        = workerId1,
     baseLocation    = baseLocation,
 }
 

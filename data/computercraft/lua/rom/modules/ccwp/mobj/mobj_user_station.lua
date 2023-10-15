@@ -78,7 +78,6 @@ function UserStation:new(...)
     return o
 end
 
--- ToDo: remove getBaseLocation
 function UserStation:getBaseLocation()  return self._baseLocation   end
 function UserStation:getLocation()  return self._baseLocation   end
 function UserStation:getInputLocator()  return self._inputLocator   end
