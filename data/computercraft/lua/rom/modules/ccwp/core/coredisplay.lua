@@ -74,7 +74,7 @@ local function DHTReadySetup()
 	-- get main menu of current worker
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerLocator = enterprise_employment:getCurrentWorkerLocator()
-	if not workerLocator then corelog.Warning("coredisplay.Setup: Failed obtaining current workerLocator")
+	if not workerLocator then corelog.Error("coredisplay.Setup: Failed obtaining current workerLocator")
 	else
 		local workerObj = enterprise_employment:getObject(workerLocator)
 		if not workerObj then corelog.Warning("coredisplay.Run: Failed obtaining Worker "..workerLocator:getURI())

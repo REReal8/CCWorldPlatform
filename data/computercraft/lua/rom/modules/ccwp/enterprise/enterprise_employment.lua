@@ -283,9 +283,6 @@ function enterprise_employment:getCurrentWorkerLocator()
         Parameters:
     --]]
 
-    -- check turtle
-    if not turtle then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return nil end
-
     -- get current workerLocator
     local workerId = os.getComputerID()
     -- local currentWorkerLocator = GetTurtleLocator(tostring(workerId))

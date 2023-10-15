@@ -56,10 +56,7 @@ function coreassignment.Run()
         os.sleep(0.25)
     end
 
-    -- only turtles take assignments
-    if not turtle then corelog.WriteToLog("coreassignment.Run(): Not a turtle, not taking assignments") return false end
-
-    -- get (locator for) current Worker
+    -- get current workerLocator
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
 
