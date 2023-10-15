@@ -62,7 +62,7 @@ function coreassignment.Run()
 
     -- get (locator for) current Worker
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local workerLocator = enterprise_employment:getCurrentTurtleLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
+    local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
     -- register current Worker if not yet registered
     local objResourceTable = enterprise_employment:getResource(workerLocator)
     if not objResourceTable then

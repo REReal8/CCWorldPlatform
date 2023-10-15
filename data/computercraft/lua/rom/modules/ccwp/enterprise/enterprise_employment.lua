@@ -5,7 +5,7 @@ local IRegistry = require "i_registry"
 local enterprise_employment = Class.NewClass(MObjHost, IRegistry)
 
 --[[
-    The enterprise_employment is a MObjHost. It hosts Turtle's that can perform work in the pysical world.
+    The enterprise_employment is a MObjHost. It hosts Worker's that can perform work (i.e. assignments).
 --]]
 
 local coreutils = require "coreutils"
@@ -336,7 +336,8 @@ function enterprise_employment.GetAnyTurtleLocator()
     return GetTurtleLocator("any")
 end
 
-function enterprise_employment:getCurrentTurtleLocator()
+-- ToDo: rename to getCurrentWorkerLocator
+function enterprise_employment:getCurrentWorkerLocator()
     --[[
         This method provides the locator of the current turtle (in enterprise_employment).
 
@@ -347,7 +348,7 @@ function enterprise_employment:getCurrentTurtleLocator()
     --]]
 
     -- check turtle
-    if not turtle then corelog.Error("enterprise_employment:getCurrentTurtleLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
+    if not turtle then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
 
     -- construct URL
     local workerId = os.getComputerID()

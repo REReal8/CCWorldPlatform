@@ -123,7 +123,7 @@ function t_employment.GetCurrentTurtleLocator()
     assert(turtle, "Current computer(ID="..os.getComputerID()..") not a Turtle")
 
     -- construct URL
-    local currentTurtleLocator = enterprise_employment:getCurrentTurtleLocator()
+    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator()
 
     -- end
     return currentTurtleLocator

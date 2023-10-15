@@ -68,7 +68,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     -- register current turtle in shop
     -- ToDo: figure out where/ how to register (other) turtles that get added
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local currentTurtleLocator = enterprise_employment:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
+    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.CreateNewWorld_ASrv: Failed obtaining current turtleLocator") return Callback.ErrorCall(callback) end
     local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return Callback.ErrorCall(callback) end
 
     -- construct arguments
@@ -349,7 +349,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     -- register current turtle in shop
     -- ToDo: figure out where/ how to register (other) turtles that get added
     enterprise_employment = enterprise_employment or require "enterprise_employment"
-    local currentTurtleLocator = enterprise_employment:getCurrentTurtleLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
+    local currentTurtleLocator = enterprise_employment:getCurrentWorkerLocator() if not currentTurtleLocator then corelog.Error("enterprise_colonization.RecoverNewWorld_Srv: Failed obtaining current turtleLocator") return { success = false } end
     local serviceResult = enterprise_shop.RegisterItemSupplier_SSrv({itemSupplierLocator = currentTurtleLocator}) if not serviceResult.success then corelog.Error("failed registering Turtle in Shop") return { success = false } end
 
     -- construct arguments
