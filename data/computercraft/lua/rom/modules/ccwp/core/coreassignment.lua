@@ -24,7 +24,6 @@ local corelog    = require "corelog"
 local coremove   = require "coremove"
 
 local InputChecker = require "input_checker"
-local Location  = require "obj_location"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_employment
@@ -63,17 +62,6 @@ function coreassignment.Run()
     -- get (locator for) current Worker
     enterprise_employment = enterprise_employment or require "enterprise_employment"
     local workerLocator = enterprise_employment:getCurrentWorkerLocator() if not workerLocator then corelog.Error("coreassignment.Run: Failed obtaining current workerLocator") return false end
-    -- register current Worker if not yet registered
-    local objResourceTable = enterprise_employment:getResource(workerLocator)
-    if not objResourceTable then
-        local workerId = os.getComputerID()
-        local coremove_location = Location:new(coremove.GetLocation())
-        workerLocator = enterprise_employment:hostMObj_SSrv({ className = "Turtle", constructParameters = {
-            workerId    = workerId,
-            location    = coremove_location,
-        }}).mobjLocator
-        if not workerLocator then corelog.Error("coreassignment.Run: Failed hosting Worker "..workerId) return false end
-    end
 
     -- infinite loop
     while coresystem.IsRunning() and not db.rejectAllAssignments do

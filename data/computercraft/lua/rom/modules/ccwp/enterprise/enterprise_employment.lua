@@ -10,6 +10,7 @@ local enterprise_employment = Class.NewClass(MObjHost, IRegistry)
 
 local coreutils = require "coreutils"
 local corelog = require "corelog"
+local coremove = require "coremove"
 
 local Callback = require "obj_callback"
 local InputChecker = require "input_checker"
@@ -18,6 +19,7 @@ local objectFactory = ObjectFactory:getInstance()
 local ObjHost = require "obj_host"
 local ObjTable = require "obj_table"
 local URL = require "obj_url"
+local Location  = require "obj_location"
 
 local Turtle = require "mobj_turtle"
 
@@ -196,7 +198,7 @@ function enterprise_employment:register(...)
     if not workerLocators then corelog.Error("enterprise_employment:register: Failed obtaining workerLocators") return false end
 
     -- register the Worker
-    corelog.WriteToLog(">Registering Worker (workerId="..workerId..", workerLocator="..theWorkerLocator:getURI()..") in enterprise_employment")
+    corelog.WriteToLog(">Registering Worker (workerId="..workerId..", workerLocator="..theWorkerLocator:getURI()..")")
     table.insert(workerLocators, workerId, theWorkerLocator)
 
     -- save workerLocators
@@ -271,6 +273,48 @@ function enterprise_employment:delist(...)
     return false -- did not find it!
 end
 
+function enterprise_employment:getCurrentWorkerLocator()
+    --[[
+        This method provides the locator of the current Worker (in enterprise_employment).
+
+        Return value:
+            workerLocator       - (URL) locating the current Worker
+
+        Parameters:
+    --]]
+
+    -- check turtle
+    if not turtle then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return nil end
+
+    -- get current workerLocator
+    local workerId = os.getComputerID()
+    -- local currentWorkerLocator = GetTurtleLocator(tostring(workerId))
+    local currentWorkerLocator = self:getRegistered(workerId)
+    if not currentWorkerLocator then
+        -- check if this is the first turtle
+        if turtle and self:getNumberOfObjects("Turtle") == 0 then
+            corelog.WriteToLog("This seems to be the first Turtle, we will make an exception and host and register it")
+            -- note:    in all other cases we want the programmic logic that created the Worker to also host and register it in enterprise_employment,
+            --          however for the first one this is a bit hard. Hence we do it here as an exception to this special case.
+
+            -- host the first Turtle
+            local coremove_location = Location:new(coremove.GetLocation())
+            currentWorkerLocator = self:hostMObj_SSrv({ className = "Turtle", constructParameters = {
+                workerId    = workerId,
+                location    = coremove_location,
+            }}).mobjLocator
+            if not currentWorkerLocator then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed hosting 1st Turtle "..workerId) return nil end
+
+            -- register this first Turtle
+            local registered = self:register(workerId, currentWorkerLocator)
+            if not registered then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed registering 1st Turtle "..workerId) return nil end
+        end
+    end
+
+    -- end
+    return currentWorkerLocator
+end
+
 --                        _  __ _                       _   _               _
 --                       (_)/ _(_)                     | | | |             | |
 --    ___ _ __   ___  ___ _| |_ _  ___   _ __ ___   ___| |_| |__   ___   __| |___
@@ -334,27 +378,6 @@ function enterprise_employment.GetAnyTurtleLocator()
 
     -- end
     return GetTurtleLocator("any")
-end
-
-function enterprise_employment:getCurrentWorkerLocator()
-    --[[
-        This method provides the locator of the current turtle (in enterprise_employment).
-
-        Return value:
-            turtleLocator       - (URL) locating the current turtle
-
-        Parameters:
-    --]]
-
-    -- check turtle
-    if not turtle then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Current computer(ID="..os.getComputerID()..") not a Turtle") return end
-
-    -- construct URL
-    local workerId = os.getComputerID()
-    local currentWorkerLocator = GetTurtleLocator(tostring(workerId))
-
-    -- end
-    return currentWorkerLocator
 end
 
 function enterprise_employment:triggerTurtleRefuelIfNeeded(turtleObj)

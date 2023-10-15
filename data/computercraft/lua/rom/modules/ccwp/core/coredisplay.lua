@@ -17,6 +17,8 @@ local ModuleRegistry = require "module_registry"
 local moduleRegistry = ModuleRegistry:getInstance()
 local MethodExecutor = require "method_executor"
 
+local enterprise_employment
+
 -- declare display space
 local db    = {
     x           = 0,
@@ -54,10 +56,41 @@ function coredisplay.Init()
 	end
 end
 
+local function DummyMainMenu()
+	return {
+		clear   = true,
+		intro   = "I am not a properly registered Worker!\nHence I do not know what to display.\nChoose your action",
+		option  = {
+			{key = "q", desc = "Quit",          	func = coresystem.DoQuit,		param = {}},
+		},
+		question	= "Make your choice",
+	}
+end
+
+local function DHTReadySetup()
+	-- determine mainMenu
+	local mainMenu = DummyMainMenu()
+
+	-- get main menu of current worker
+    enterprise_employment = enterprise_employment or require "enterprise_employment"
+    local workerLocator = enterprise_employment:getCurrentWorkerLocator()
+	if not workerLocator then corelog.Warning("coredisplay.Setup: Failed obtaining current workerLocator")
+	else
+		local workerObj = enterprise_employment:getObject(workerLocator)
+		if not workerObj then corelog.Warning("coredisplay.Run: Failed obtaining Worker "..workerLocator:getURI())
+		else
+			mainMenu = workerObj:getMainUIMenu()
+		end
+	end
+
+    -- set start screen
+    coredisplay.MainMenu(mainMenu)
+end
+
 -- setup function for the display
 function coredisplay.Setup()
-    -- set start screen
-    coredisplay.MainMenu(coredisplay.DefaultMainMenu())
+	-- pas als de dht klaar is...
+	coredht.DHTReadyFunction(DHTReadySetup)
 end
 
 -- to know if the dislay is still being used
