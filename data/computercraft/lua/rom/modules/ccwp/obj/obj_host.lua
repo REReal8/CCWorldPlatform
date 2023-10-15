@@ -127,11 +127,11 @@ function ObjHost:getObjectLocator(...)
 
     -- get resourcePath
     local objectPath = ObjHost.GetObjectPath(className, objectId, object)
-    if not objectPath then corelog.Error("ObjHost:getObjectLocator: Failed obtainng objectPath") return nil end
+    if not objectPath then corelog.Error("ObjHost:getObjectLocator: Failed obtaining objectPath") return nil end
 
     -- get objectLocator
     local objectLocator = self:getResourceLocator(objectPath)
-    if not objectLocator then corelog.Error("ObjHost:getObjectLocator: Failed obtainng objectLocator") return nil end
+    if not objectLocator then corelog.Error("ObjHost:getObjectLocator: Failed obtaining objectLocator") return nil end
 
     -- end
     return objectLocator
@@ -204,7 +204,7 @@ function ObjHost:getObjects(...)
 
     -- get objectsPath
     local objectsPath = GetObjectsPath(className)
-    if not objectsPath then corelog.Error("ObjHost:getObjects: Failed obtainng objectsPath") return nil end
+    if not objectsPath then corelog.Error("ObjHost:getObjects: Failed obtaining objectsPath") return nil end
 
     -- get objectsLocator
     local objectsLocator = self:getResourceLocator(objectsPath)

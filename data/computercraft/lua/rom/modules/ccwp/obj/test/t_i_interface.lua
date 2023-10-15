@@ -33,7 +33,7 @@ function T_IInterface.pt_ImplementsInterface(interfaceName, interface, className
         assert(type(classFunc) == "function", "key "..key.." of class "..className.." not a function (type="..type(classFunc)..")")
 
         -- check functions are not identical (as that implies classFunc is not overridden in class)
-        assert(classFunc ~= interface_func, "key "..key.." of interface "..interfaceName.." not implemented in in class "..className)
+        assert(classFunc ~= interface_func, "key "..key.." of interface "..interfaceName.." not implemented in class "..className)
     end
 
     -- cleanup test
