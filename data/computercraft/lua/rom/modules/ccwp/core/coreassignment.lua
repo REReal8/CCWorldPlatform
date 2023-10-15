@@ -71,7 +71,7 @@ function coreassignment.Run()
         local workerId = workerObj:getWorkerId()
         local workerResume = workerObj:getWorkerResume()
         -- ToDo: consider if an assignment board should determine what is best...
-        local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, turtleResume = workerResume })
+        local serviceResults = enterprise_assignmentboard.FindBestAssignment_SSrv({ assignmentFilter = assignmentFilter, workerResume = workerResume })
         if not serviceResults.success then corelog.Error("coreassignment.Run: FindBestAssignment_SSrv failed.") return false end
         local bestAssignmentId = serviceResults.assignmentId
 

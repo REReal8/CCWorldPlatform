@@ -70,7 +70,7 @@ function enterprise_assignmentboard.DoAssignment_ASrv(...)
     metaData.location       = metaData.location     or nil      --> nil-waarde voor locatie geeft aan dat locatie geen rol speelt bij de selectie
     metaData.needTool       = metaData.needTool     or false    --> needTool geeft aan dat de turtle zelf voor een tool moet zorgen
     metaData.needTurtle     = metaData.needTurtle   or true
-    metaData.needTurtleId   = metaData.needTurtleId or nil      --> nil-waarde voor needTurtleId geeft aan dat turtleId geen rol speelt bij de selectie
+    metaData.needTurtleId   = metaData.needTurtleId or nil      --> nil-waarde voor needTurtleId geeft aan dat workerId geen rol speelt bij de selectie
     metaData.fuelNeeded     = metaData.fuelNeeded   or 500      --> minimum amount of fuel needed to grant assignment
     metaData.itemsNeeded    = metaData.itemsNeeded  or {}       --> items needed in inventory to grant assignment
     metaData.priorityKey    = metaData.priorityKey  or ""       --> priorityKey given to assignment (it fuelTurtlePriorityKey is set for a turtle, it will only take assignments with that key)
@@ -178,8 +178,8 @@ end
 
 function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
     -- get & check input from description
-    local checkSuccess, assignmentFilter, turtleResume = InputChecker.Check([[
-        This sync public service finds the best available Assignment for a turtle based on an assignmentFilter and turtleResume.
+    local checkSuccess, assignmentFilter, workerResume = InputChecker.Check([[
+        This sync public service finds the best available Assignment for a Worker based on an assignmentFilter and workerResume.
 
         Return value:
                                     - (table)
@@ -189,7 +189,7 @@ function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
         Parameters:
             serviceData             - (table) data for this service
                 assignmentFilter    + (table) filter to apply in finding an Assignment
-                turtleResume        + (table) turtle "resume" to consider in finding an Assignment
+                workerResume        + (table) Worker "resume" to consider in finding an Assignment
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("enterprise_assignmentboard.FindBestAssignment_SSrv: Invalid input") return {success = false} end
 
@@ -211,7 +211,7 @@ function enterprise_assignmentboard.FindBestAssignment_SSrv(...)
         -- check assignment open
         if assignmentData.status == "open" then
             -- check metaconditions
-            local conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(assignmentData.metaData, assignmentFilter, turtleResume)
+            local conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(assignmentData.metaData, assignmentFilter, workerResume)
             if conditionsMet then
                 table.insert(candidateList, {
                     id = assignmentId,
@@ -303,7 +303,7 @@ function enterprise_assignmentboard.AssignmentSelectionProcedure(...)
         -- see who got the highest dice
         local highestDiceTurtle = nil
         local highestDiceValue = 0
-        for turtleId, applicationData in pairs(applications) do
+        for _, applicationData in pairs(applications) do
             if applicationData.dice >= highestDiceValue then
                 highestDiceValue = applicationData.dice
                 highestDiceTurtle = applicationData.applicant
@@ -404,7 +404,7 @@ function enterprise_assignmentboard.BestCandidate(candidateData1, candidateData2
     return candidateData1
 end
 
-function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     -- check startTime
     local now = coreutils.UniversalTime()
     if metaData.startTime > now then
@@ -422,15 +422,15 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
     -- check optional turtle conditions
     if metaData.needTurtle then
         -- check mandatory turtle
-        if not turtleResume then
+        if not workerResume then
             return false, "mandatory turtle (resume) not present"
         end
 
         -- check needTurtleId
-        local turtleId = turtleResume.turtleId
+        local workerId = workerResume.workerId
         if metaData.needTurtleId then
-            if turtleId ~= metaData.needTurtleId then
-                return false, "turtle does not have(="..turtleId..") mandatory turtleId (="..metaData.needTurtleId..")"
+            if workerId ~= metaData.needTurtleId then
+                return false, "Worker does not have(="..workerId..") mandatory workerId (="..metaData.needTurtleId..")"
             end
         end
 
@@ -438,12 +438,12 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
         local fuelNeeded = metaData.fuelNeeded
         if metaData.location then -- optionally include traveling to assignment location from current location
             local metaDataLocation = Location:new(metaData.location) -- ToDo: consider doing elsewhere
-            local location = turtleResume.location
+            local location = workerResume.location
             fuelNeeded = fuelNeeded + role_fuel_worker.NeededFuelToFrom(metaDataLocation, location)
         end
         if fuelNeeded > 0 then
             -- check fuel available
-            local fuelLevel = turtleResume.fuelLevel
+            local fuelLevel = workerResume.fuelLevel
             if fuelLevel < fuelNeeded then
                 return false, "turtle does not have(="..fuelLevel..") enough(="..fuelNeeded..") fuel"
             end
@@ -452,23 +452,23 @@ function enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFi
         -- check need pickaxe
         if metaData.needTool then
             -- check mandatory pickaxe
-            local axePresent = turtleResume.axePresent
+            local axePresent = workerResume.axePresent
             if not axePresent then
                 return false, "turtle does not have mandatory pickaxe"
             end
         end
 
         -- check itemsNeeded
-        local inventoryItems = turtleResume.inventoryItems
+        local inventoryItems = workerResume.inventoryItems
         for itemName, itemCount in pairs(metaData.itemsNeeded) do
             -- get items in inventory
             local availableItemCount = inventoryItems[itemName] or 0
 
             -- add possibly equiped items (i.e., tools)
-            if turtleResume.leftEquiped == itemName then
+            if workerResume.leftEquiped == itemName then
                 availableItemCount = availableItemCount + 1
             end
-            if turtleResume.rightEquiped == itemName then
+            if workerResume.rightEquiped == itemName then
                 availableItemCount = availableItemCount + 1
             end
 

@@ -285,7 +285,7 @@ function Turtle:getWorkerResume()
 
     -- end
     return {
-        turtleId        = self:getWorkerId(),
+        workerId        = self:getWorkerId(),
         location        = self:getLocation(),
         fuelLevel       = turtle.getFuelLevel(),
         axePresent      = coreinventory.CanEquip("minecraft:diamond_pickaxe"),

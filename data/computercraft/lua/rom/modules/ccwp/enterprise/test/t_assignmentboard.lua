@@ -49,12 +49,12 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     local assignmentFilter = {
         priorityKeyNeeded   = "",
     }
-    local turtleResume = nil
+    local workerResume = nil
 
     -- test startTime
     corelog.WriteToLog("  # Test startTime condition")
     metaData.startTime = now + 1000
-    local conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    local conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     local expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.startTime = now
@@ -63,21 +63,21 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (not set)")
     local priorityKey = coreutils.NewId()
     metaData.priorityKey = priorityKey
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.priorityKey = ""
 
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, no key)")
     assignmentFilter.priorityKeyNeeded = priorityKey
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.priorityKey = ""
 
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, same key)")
     metaData.priorityKey = priorityKey
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.priorityKey = ""
@@ -85,7 +85,7 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     corelog.WriteToLog("  # Test fuelTurtlePriorityKey (set, other key)")
     local otherPriorityKey = coreutils.NewId()
     metaData.priorityKey = otherPriorityKey
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.priorityKey = ""
@@ -94,94 +94,94 @@ function t_assignmentboard.T_MetaDataConditionsMet()
     -- test needTurtle
     corelog.WriteToLog("  # Test needTurtle")
     metaData.needTurtle = true
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
-    turtleResume = { }
+    workerResume = { }
 
     -- test needTurtleId
     corelog.WriteToLog("  # Test needTurtleId (other id)")
-    turtleResume.turtleId = computerId
+    workerResume.workerId = computerId
     metaData.needTurtleId = computerId + 1000
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.needTurtleId = computerId
 
     corelog.WriteToLog("  # Test needTurtleId (current id)")
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.needTurtleId = nil
 
     -- test fuelNeeded
-    -- ToDo: consider also testing with turtleResume.location
+    -- ToDo: consider also testing with workerResume.location
     corelog.WriteToLog("  # Test fuelNeeded (not enough)")
-    turtleResume.fuelLevel = 100
+    workerResume.fuelLevel = 100
     metaData.fuelNeeded = 10000
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     corelog.WriteToLog("  # Test fuelNeeded (enough)")
-    metaData.fuelNeeded = turtleResume.fuelLevel - 10
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    metaData.fuelNeeded = workerResume.fuelLevel - 10
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     -- test need pickaxe
     corelog.WriteToLog("  # Test need pickaxe (not needed)")
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     corelog.WriteToLog("  # Test need pickaxe (not present)")
-    turtleResume.axePresent = false
+    workerResume.axePresent = false
     metaData.needTool = true
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     corelog.WriteToLog("  # Test need pickaxe (present)")
-    turtleResume.axePresent = true
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    workerResume.axePresent = true
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.needTool = false
 
     -- test itemsNeeded
     corelog.WriteToLog("  # Test itemsNeeded (empty inventory)")
-    turtleResume.inventoryItems = {}
+    workerResume.inventoryItems = {}
     local itemsNeeded = {
         ["minecraft:torch"] = 10,
         ["minecraft:chest"] = 1,
     }
     metaData.itemsNeeded = itemsNeeded
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     corelog.WriteToLog("  # Test itemsNeeded (some in inventory)")
-    turtleResume.inventoryItems = {
+    workerResume.inventoryItems = {
         ["minecraft:torch"] = 20,
     }
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = false
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
 
     corelog.WriteToLog("  # Test itemsNeeded (all in inventory)")
-    turtleResume.inventoryItems = {
+    workerResume.inventoryItems = {
         ["minecraft:torch"] = 20,
         ["minecraft:chest"] = 2,
     }
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     expectedconditionsMet = true
     assert(conditionsMet == expectedconditionsMet, "gotten conditionsMet(="..tostring(conditionsMet)..") not the same as expected(="..tostring(expectedconditionsMet)..")")
     metaData.itemsNeeded = {}
 
     -- test other conditions
     corelog.WriteToLog("  # Test Other conditions")
-    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, turtleResume)
+    conditionsMet, skipReason = enterprise_assignmentboard.MetaDataConditionsMet(metaData, assignmentFilter, workerResume)
     if not conditionsMet then
         corelog.WriteToLog("    ondition not met: "..skipReason)
     else

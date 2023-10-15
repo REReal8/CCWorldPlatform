@@ -218,7 +218,7 @@ function T_Turtle.T_IWorker_All()
     -- prepare test
     local obj = T_Turtle.CreateTestObj() assert(obj, "Failed obtaining "..testClassName)
     local workerResumeTest = TestArrayTest:newInstance(
-        FieldValueTypeTest:newInstance("turtleId", "number"),
+        FieldValueTypeTest:newInstance("workerId", "number"),
         FieldValueTypeTest:newInstance("location", "Location"),
         FieldValueTypeTest:newInstance("fuelLevel", "number"),
         FieldValueTypeTest:newInstance("axePresent", "boolean"),
