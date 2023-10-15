@@ -226,6 +226,7 @@ end
 --   \__ \  __/ |   \ V /| | (_|  __/
 --   |___/\___|_|    \_/ |_|\___\___|
 
+-- ToDo: consider adopting IRegistry interface + tests
 function Shop:registerItemSupplier_SOSrv(...)
     -- get & check input from description
     local checkSuccess, itemSupplierLocator, suppressWarning = InputChecker.Check([[

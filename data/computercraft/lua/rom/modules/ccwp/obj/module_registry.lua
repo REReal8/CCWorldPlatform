@@ -38,6 +38,8 @@ end
 
 function ModuleRegistry:register(name, module)
     self._modules[name] = module
+
+    return true
 end
 
 function ModuleRegistry:isRegistered(name)
@@ -46,6 +48,8 @@ end
 
 function ModuleRegistry:delist(name)
     self._modules[name] = nil
+
+    return true
 end
 
 function ModuleRegistry:requireAndRegisterModule(name, requireName)

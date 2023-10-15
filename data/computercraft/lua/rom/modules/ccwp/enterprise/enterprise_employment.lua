@@ -1,7 +1,8 @@
 -- define class
 local Class = require "class"
 local MObjHost = require "mobj_host"
-local enterprise_employment = Class.NewClass(MObjHost)
+local IRegistry = require "i_registry"
+local enterprise_employment = Class.NewClass(MObjHost, IRegistry)
 
 --[[
     The enterprise_employment is a MObjHost. It hosts Turtle's that can perform work in the pysical world.
@@ -102,17 +103,24 @@ end
 --    \ V  V / (_) | |  |   <  __/ |  | |___| (_) | (_| (_| | || (_) | |
 --     \_/\_/ \___/|_|  |_|\_\___|_|  |______\___/ \___\__,_|\__\___/|_|
 
+local function GetWorkLocatorsPath()
+    return ObjHost.GetObjectPath(ObjTable:getClassName(), "workerLocators")
+end
+
 local function GetWorkerLocators(employmentHost)
     -- get workerLocatorsLocator
-    local workerLocatorsPath = ObjHost.GetObjectPath(ObjTable:getClassName(), "workerLocators")
+    local workerLocatorsPath = GetWorkLocatorsPath()
     local workerLocatorsLocator = employmentHost:getResourceLocator(workerLocatorsPath)
     if not workerLocatorsLocator then corelog.Error("enterprise_employment.GetWorkerLocators: Failed obtaining workerLocatorsLocator") return nil end
 
     -- get workerLocators
     local workerLocatorsTable = employmentHost:getResource(workerLocatorsLocator)
     if not workerLocatorsTable then
+        corelog.WriteToLog("enterprise_employment.GetWorkerLocators: Creating new workerLocatorsTable")
+
         -- (re)set workerLocators
-        employmentHost:saveResource({}, workerLocatorsPath)
+        local workerLocators = ObjTable:newInstance(URL:getClassName())
+        employmentHost:saveResource(workerLocators, workerLocatorsPath)
 
         -- retrieve again
         workerLocatorsTable = employmentHost:getResource(workerLocatorsLocator)
@@ -127,7 +135,18 @@ local function GetWorkerLocators(employmentHost)
     return workerLocators
 end
 
-function enterprise_employment:getWorkerLocator(...)
+local function SaveWorkerLocators(employmentHost, workerLocators)
+    -- get workerLocatorsLocator
+    local workerLocatorsPath = GetWorkLocatorsPath()
+
+    -- save workerLocators
+    local workerLocatorsLocator = employmentHost:saveResource(workerLocators, workerLocatorsPath)
+
+    -- end
+    return workerLocatorsLocator
+end
+
+function enterprise_employment:getRegistered(...)
     -- get & check input from description
     local checkSuccess, workerId = InputChecker.Check([[
         This method provides the locator of a Worker 'workerId'.
@@ -138,11 +157,11 @@ function enterprise_employment:getWorkerLocator(...)
         Parameters:
             workerId            + (number) workerId of the Worker
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:getWorkerLocator: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("enterprise_employment:getRegistered: Invalid input") return nil end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(enterprise_employment)
-    if not workerLocators then corelog.Error("enterprise_employment:getWorkerLocator: Failed obtaining workerLocators") return nil end
+    local workerLocators = GetWorkerLocators(self)
+    if not workerLocators then corelog.Error("enterprise_employment:getRegistered: Failed obtaining workerLocators") return nil end
 
     -- get workerLocator
     for workerKey, aWorkerLocator in workerLocators:objs() do
@@ -152,14 +171,14 @@ function enterprise_employment:getWorkerLocator(...)
     end
 
     -- end
-    corelog.Warning("enterprise_employment:getWorkerLocator: workerLocator for Worker "..workerId.." not found")
+    corelog.Warning("enterprise_employment:getRegistered: workerLocator for Worker "..workerId.." not found")
     return nil
 end
 
-function enterprise_employment:registerWorkerLocator(...)
+function enterprise_employment:register(...)
     -- get & check input from description
     local checkSuccess, workerId, theWorkerLocator = InputChecker.Check([[
-        This method registers a workerLocator of a Worker 'workerId' in enterprise_employment.
+        This method registers the locator of a Worker 'workerId' in enterprise_employment.
 
         Note that the Worker itself should already be available in the world/ hosted by enterprise_employment.
 
@@ -170,28 +189,52 @@ function enterprise_employment:registerWorkerLocator(...)
             workerId                + (number) workerId of the Worker
             workerLocator           + (URL) locating the Worker
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:registerWorkerLocator: Invalid input") return false end
+    if not checkSuccess then corelog.Error("enterprise_employment:register: Invalid input") return false end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(enterprise_employment)
-    if not workerLocators then corelog.Error("enterprise_employment:registerWorkerLocator: Failed obtaining workerLocators") return false end
+    local workerLocators = GetWorkerLocators(self)
+    if not workerLocators then corelog.Error("enterprise_employment:register: Failed obtaining workerLocators") return false end
 
     -- register the Worker
     corelog.WriteToLog(">Registering Worker (workerId="..workerId..", workerLocator="..theWorkerLocator:getURI()..") in enterprise_employment")
-    table.insert(workerLocators, theWorkerLocator)
+    table.insert(workerLocators, workerId, theWorkerLocator)
 
     -- save workerLocators
-    local workerLocatorsLocator = enterprise_employment:saveObject(workerLocators)
-    if not workerLocatorsLocator then corelog.Error("enterprise_employment:registerWorkerLocator: Failed saving workerLocators") return false end
+    local workerLocatorsLocator = SaveWorkerLocators(self, workerLocators)
+    if not workerLocatorsLocator then corelog.Error("enterprise_employment:register: Failed saving workerLocators") return false end
 
     -- end
     return true
 end
 
-function enterprise_employment:delistWorkerLocator(...)
+function enterprise_employment:isRegistered(...)
     -- get & check input from description
-    local checkSuccess, theWorkerLocator = InputChecker.Check([[
-        This method delists an ItemSupplier from the Shop.
+    local checkSuccess, workerId = InputChecker.Check([[
+        This method returns if a locator of a Worker 'workerId' is registered enterprise_employment.
+
+        Return value:
+                                    - (boolean) whether a locator is registered by 'workerId'
+
+        Parameters:
+            workerId                + (number) workerId of the Worker
+    ]], table.unpack(arg))
+    if not checkSuccess then corelog.Error("enterprise_employment:isRegistered: Invalid input") return false end
+
+    -- get workerLocators
+    local workerLocators = GetWorkerLocators(self)
+    if not workerLocators then corelog.Error("enterprise_employment:isRegistered: Failed obtaining workerLocators") return false end
+
+    -- check if registered
+    local isRegistered = workerLocators[workerId] ~= nil
+
+    -- end
+    return isRegistered
+end
+
+function enterprise_employment:delist(...)
+    -- get & check input from description
+    local checkSuccess, workerId = InputChecker.Check([[
+        This method delists the locator of a Worker 'workerId' from enterprise_employment.
 
         Note that the Worker is not removed from the world/ released from enterprise_employment.
 
@@ -199,25 +242,25 @@ function enterprise_employment:delistWorkerLocator(...)
                                     - (boolean) whether the method executed successfully
 
         Parameters:
-            workerLocator           + (URL) locating the Worker
+            workerId                + (number) workerId of the Worker
     ]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("enterprise_employment:delistWorkerLocator: Invalid input") return false end
+    if not checkSuccess then corelog.Error("enterprise_employment:delist: Invalid input") return false end
 
     -- get workerLocators
-    local workerLocators = GetWorkerLocators(enterprise_employment)
-    if not workerLocators then corelog.Error("enterprise_employment:delistWorkerLocator: Failed obtaining workerLocators") return false end
+    local workerLocators = GetWorkerLocators(self)
+    if not workerLocators then corelog.Error("enterprise_employment:delist: Failed obtaining workerLocators") return false end
 
-    -- get ItemSuppliers
-    for i, registeredWorkerLocator in ipairs(workerLocators) do
+    -- get Workers
+    for registeredWorkedId, _ in pairs(workerLocators) do
         -- check we found it
-        if theWorkerLocator.isEqual(registeredWorkerLocator) then
+        if registeredWorkedId == workerId then
             -- remove from list
-            corelog.WriteToLog(">Delisting Worker "..theWorkerLocator:getURI().." from enterprise_employment")
-            table.remove(workerLocators, i)
+            corelog.WriteToLog(">Delisting Worker "..registeredWorkedId.." from enterprise_employment")
+            workerLocators[registeredWorkedId] = nil
 
             -- save workerLocators
-            local workerLocatorsLocator = enterprise_employment:saveObject(workerLocators)
-            if not workerLocatorsLocator then corelog.Error("enterprise_employment:delistWorkerLocator: Failed saving workerLocators") return false end
+            local workerLocatorsLocator = SaveWorkerLocators(self, workerLocators)
+            if not workerLocatorsLocator then corelog.Error("enterprise_employment:delist: Failed saving workerLocators") return false end
 
             -- found and delisted it!
             return true

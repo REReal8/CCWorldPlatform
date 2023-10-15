@@ -13,6 +13,7 @@ local enterprise_manufacturing = require "enterprise_manufacturing"
 local T_BirchForest = require "test.t_mobj_birchforest"
 local TestObj = require "test.obj_test"
 local T_MObjHost = require "test.t_mobj_host"
+local T_IRegistry = require "test.t_i_registry"
 local T_Turtle
 
 function t_employment.T_All()
@@ -27,9 +28,7 @@ function t_employment.T_All()
     t_employment.T_releaseMObj_SSrv_Turtle()
 
     -- workerLocator
-    t_employment.T_getWorkerLocator()
-    t_employment.T_registerWorkerLocator()
-    t_employment.T_delistWorkerLocator()
+    t_employment.T_IRegistry_All()
 end
 
 function t_employment.T_AllPhysical()
@@ -222,34 +221,15 @@ end
 --    \ V  V / (_) | |  |   <  __/ |  | |___| (_) | (_| (_| | || (_) | |
 --     \_/\_/ \___/|_|  |_|\_\___|_|  |______\___/ \___\__,_|\__\___/|_|
 
-function t_employment.T_getWorkerLocator()
+function t_employment.T_IRegistry_All()
     -- prepare test
-    corelog.WriteToLog("* "..testClassName..":getWorkerLocator() tests")
+    local thingName = "Worker"
+    local workerLocator1 = enterprise_employment:getResourceLocator(enterprise_employment.GetObjectPath("AWorkerClass", "worker1")) assert(workerLocator1, "Failed obtaining workerLocator1")
+    local workerId2 = 222222
+    local workerLocator2 = enterprise_employment:getResourceLocator(enterprise_employment.GetObjectPath("AWorkerClass", "worker2")) assert(workerLocator2, "Failed obtaining workerLocator2")
 
     -- test
-    corelog.Warning("  test not implemented yet")
-
-    -- cleanup test
-end
-
-function t_employment.T_registerWorkerLocator()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":registerWorkerLocator() tests")
-
-    -- test
-    corelog.Warning("  test not implemented yet")
-
-    -- cleanup test
-end
-
-function t_employment.T_delistWorkerLocator()
-    -- prepare test
-    corelog.WriteToLog("* "..testClassName..":delistWorkerLocator() tests")
-
-    -- test
-    corelog.Warning("  test not implemented yet")
-
-    -- cleanup test
+    T_IRegistry.pt_all(testClassName, enterprise_employment, workerId1, workerLocator1, workerId2, workerLocator2, thingName)
 end
 
 return t_employment

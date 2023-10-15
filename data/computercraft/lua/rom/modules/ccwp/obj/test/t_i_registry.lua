@@ -1,12 +1,25 @@
 local T_IRegistry = {}
+
 local corelog = require "corelog"
+local IRegistry = require "i_registry"
+local Class = require "class"
+local IObj = require "i_obj"
+
+local T_IInterface = require "test.t_i_interface"
+local T_Class = require "test.t_class"
 
 function T_IRegistry.pt_all(registryName, registry, key, thing, key2, thing2, thingName)
+    -- type
+    T_Class.pt_IsInstanceOf(registryName, registry, "IRegistry", IRegistry)
+    T_IInterface.pt_ImplementsInterface("IRegistry", IRegistry, registryName, registry)
+
     -- IRegistry
     T_IRegistry.pt_register_isRegistered(registryName, registry, key, thing, thingName)
     T_IRegistry.pt_delist(registryName, registry, key, thing, thingName)
     T_IRegistry.pt_getRegistered(registryName, registry, key, thing, key2, thing2, thingName)
 end
+
+local compact = { compact = true }
 
 --    _____ _____            _     _
 --   |_   _|  __ \          (_)   | |
@@ -29,7 +42,8 @@ function T_IRegistry.pt_register_isRegistered(registryName, registry, key, thing
     assert(not registry:isRegistered(key), thingName.." "..key.." already registered")
 
     -- test
-    registry:register(key, thing)
+    local registered = registry:register(key, thing)
+    assert(registered, "Failed registering "..thingName.." "..key)
     assert(registry:isRegistered(key), thingName.." "..key.." not registered")
 
     -- cleanup test
@@ -49,8 +63,9 @@ function T_IRegistry.pt_delist(registryName, registry, key, thing, thingName)
     assert(registry:isRegistered(key), thingName.." "..key.." not registered")
 
     -- test
-    registry:delist(key)
-    assert(not registry:isRegistered(key), thingName.." not delisted")
+    local delisted = registry:delist(key)
+    assert(delisted, "Failed delisting "..thingName.." "..key)
+    assert(not registry:isRegistered(key), thingName.." "..key.." not delisted")
 
     -- cleanup
 end
@@ -74,9 +89,17 @@ function T_IRegistry.pt_getRegistered(registryName, registry, key, thing, key2, 
 
     -- test
     local retrievedThing1 = registry:getRegistered(key)
-    assert(retrievedThing1 == thing, "Retrieved "..thingName.." 1 does not match original "..thingName.." 1")
+    local retrievedIsEqual = retrievedThing1 == thing
+    if Class.IsInstanceOf(thing, IObj) then
+        retrievedIsEqual = thing:isEqual(retrievedThing1)
+    end
+    assert(retrievedIsEqual, "Retrieved "..thingName.."1 (="..textutils.serialise(retrievedThing1, compact)..") does not match original "..thingName.."1 (="..textutils.serialise(thing, compact)..")")
     local retrievedThing2 = registry:getRegistered(key2)
-    assert(retrievedThing2 == thing2, "Retrieved "..thingName.." 2 does not match original "..thingName.." 2")
+    retrievedIsEqual = retrievedThing2 == thing2
+    if Class.IsInstanceOf(thing2, IObj) then
+        retrievedIsEqual = thing2:isEqual(retrievedThing2)
+    end
+    assert(retrievedIsEqual, "Retrieved "..thingName.."2 (="..textutils.serialise(retrievedThing1, compact)..") does not match original "..thingName.."2 (="..textutils.serialise(thing, compact)..")")
 
     -- cleanup test
     registry:delist(key)
