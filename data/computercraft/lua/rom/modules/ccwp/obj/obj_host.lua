@@ -235,11 +235,11 @@ function ObjHost:getNumberOfObjects(...)
         Parameters:
             className               + (string) with the name of the class of the objects
     --]], table.unpack(arg))
-    if not checkSuccess then corelog.Error("ObjHost:getNumberOfObjects: Invalid input") return nil end
+    if not checkSuccess then corelog.Error("ObjHost:getNumberOfObjects: Invalid input") return -1 end
 
     -- get objects
     local objects = self:getObjects(className)
-    if type(objects) ~= "table" then corelog.Error("ObjHost:getNumberOfObjects: Failed obtaining objects of class "..className) return nil end
+    if type(objects) ~= "table" then corelog.Error("ObjHost:getNumberOfObjects: Failed obtaining objects of class "..className) return -1 end
 
     -- loop on objects
     local count = 0
