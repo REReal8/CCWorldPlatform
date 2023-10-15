@@ -2,8 +2,9 @@
 local Class = require "class"
 local ObjBase = require "obj_base"
 local IMObj = require "i_mobj"
+local IWorker = require "i_worker"
 local IItemDepot = require "i_item_depot"
-local UserStation = Class.NewClass(ObjBase, IMObj, IItemDepot)
+local UserStation = Class.NewClass(ObjBase, IMObj, IWorker, IItemDepot)
 
 --[[
     The UserStation mobj represents a util station in the minecraft world and provides (production) services to operate on that UserStation.
@@ -35,11 +36,11 @@ local enterprise_chests = require "enterprise_chests"
 
 function UserStation:_init(...)
     -- get & check input from description
-    local checkSuccess, id, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
+    local checkSuccess, workerId, baseLocation, inputLocator, outputLocator = InputChecker.Check([[
         Initialise a UserStation.
 
         Parameters:
-            id                      + (string) id of the UserStation
+            workerId                + (number) workerId of the UserStation
             baseLocation            + (Location) base location of the UserStation
             inputLocator            + (URL) input  chest of the UserStation (where items will be picked up from)
             outputLocator           + (URL) output chest of the UserStation (where items will be delivered)
@@ -48,7 +49,7 @@ function UserStation:_init(...)
 
     -- initialisation
     ObjBase._init(self)
-    self._id                = id
+    self._workerId          = workerId
     self._baseLocation      = baseLocation
     self._inputLocator      = inputLocator
     self._outputLocator     = outputLocator
@@ -62,7 +63,7 @@ function UserStation:new(...)
 
         Parameters:
             o                           + (table, {}) with object fields
-                _id                     - (string) id of the UserStation
+                _workerId               + (number) workerId of the UserStation
                 _baseLocation           - (Location) location of the UserStation
                 _inputLocator           - (URL) input chest of the UserStation
                 _outputLocator          - (URL) output chest of the UserStation
@@ -77,7 +78,9 @@ function UserStation:new(...)
     return o
 end
 
+-- ToDo: remove getBaseLocation
 function UserStation:getBaseLocation()  return self._baseLocation   end
+function UserStation:getLocation()  return self._baseLocation   end
 function UserStation:getInputLocator()  return self._inputLocator   end
 function UserStation:getOutputLocator() return self._outputLocator  end
 
@@ -105,7 +108,7 @@ end
 
 function UserStation:construct(...)
     -- get & check input from description
-    local checkSuccess, baseLocation = InputChecker.Check([[
+    local checkSuccess, workerId, baseLocation = InputChecker.Check([[
         This method constructs a UserStation instance from a table of parameters with all necessary fields (in an objectTable) and methods (by setmetatable) as defined in the class.
 
         It also ensures all child MObj's the UserStation spawns are hosted on the appropriate MObjHost (by calling hostMObj_SSrv).
@@ -117,12 +120,12 @@ function UserStation:construct(...)
 
         Parameters:
             constructParameters         - (table) parameters for constructing the UserStation
+                workerId                + (number) workerId of the UserStation
                 baseLocation            + (Location) base location of the UserStation
     ]], table.unpack(arg))
     if not checkSuccess then corelog.Error("UserStation:construct: Invalid input") return nil end
 
     -- determine UserStation fields
-    local id = coreutils.NewId()
     local inputLocator = enterprise_chests:hostMObj_SSrv({className = "Chest", constructParameters = {
         baseLocation    = baseLocation:getRelativeLocation(4, 3, 0),
         accessDirection = "top",
@@ -133,7 +136,7 @@ function UserStation:construct(...)
     }}).mobjLocator
 
     -- construct new UserStation
-    local obj = UserStation:newInstance(id, baseLocation:copy(), inputLocator, outputLocator)
+    local obj = UserStation:newInstance(workerId, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return obj
@@ -175,7 +178,7 @@ function UserStation:destruct()
 end
 
 function UserStation:getId()
-    return self._id
+    return tostring(self._workerId)
 end
 
 function UserStation:getWIPId()
@@ -333,6 +336,84 @@ function UserStation:getDismantleBlueprint()
 
     -- end
     return buildLocation, blueprint
+end
+
+--    _______          __        _
+--   |_   _\ \        / /       | |
+--     | |  \ \  /\  / /__  _ __| | _____ _ __
+--     | |   \ \/  \/ / _ \| '__| |/ / _ \ '__|
+--    _| |_   \  /\  / (_) | |  |   <  __/ |
+--   |_____|   \/  \/ \___/|_|  |_|\_\___|_|
+
+function UserStation:getWorkerId()
+    --[[
+        Get the UserStation workerId.
+
+        Return value:
+                                - (number) the UserStation workerId
+    ]]
+
+    -- end
+    return self._workerId
+end
+
+function UserStation:getWorkerResume()
+    --[[
+        Get UserStation resume for selecting Assignment's.
+
+        The resume gives information on the UserStation and is used to determine if the UserStation is (best) suitable to take an Assignment.
+            This is can e.g. be used to indicate location, fuel level and equiped items.
+
+        Return value:
+            resume              - (table) UserStation "resume" to consider in selecting Assignment's
+    --]]
+
+    -- end
+    return {
+        workerId        = self:getWorkerId(),
+        location        = self:getLocation(),
+    }
+end
+
+function UserStation:getMainUIMenu()
+    --[[
+        Get the main (start) UI menu of the UserStation.
+
+        This menu can be used in conjuction with coredisplay.MainMenu.
+
+        Return value:
+                                - (table)
+                clear           - (boolean) whether or not to clear the display,
+                func	        - (function) menu function to call
+                param	        - (table, {}) parameter to pass to menu function
+                intro           - (string) intro to print
+                question        - (string, nil) final question to print
+    ]]
+
+    -- end
+    return {
+        clear       = true,
+        func	    = UserStationMenuSearch,
+        intro       = "Please type a part of an itemname to order\n",
+        param	    = {},
+        question    = nil
+    }
+end
+
+function UserStation:getAssignmentFilter()
+    --[[
+        Get assignment filter for finding the next best Assignment for the UserStation.
+
+        The assignment filter is used to indicate to only accept assignments that satisfy certain conditions. This can e.g. be used
+            to only accept assignments with high priority.
+
+        Return value:
+            assignmentFilter    - (table) filter to apply in finding an Assignment
+    --]]
+
+    -- end
+    return {
+    }
 end
 
 --    _____ _____ _                 _____                   _

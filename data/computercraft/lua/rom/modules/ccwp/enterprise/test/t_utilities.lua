@@ -25,6 +25,7 @@ local testMObjClassName = "UserStation"
 local testMObjName = "userStation"
 local logOk = false
 
+local workerId1 = 111111
 local baseLocation = Location:newInstance(-6, -12, 1, 0, 1)
 
 local constructParameters = {
@@ -42,7 +43,7 @@ local constructParameters = {
 
 function t_utilities.T_hostMObj_SSrv_UtilStation()
     -- prepare test
-    local constructFieldsTest = T_UtilStation.CreateInitialisedTest(nil, baseLocation)
+    local constructFieldsTest = T_UtilStation.CreateInitialisedTest(workerId1, baseLocation)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostMObj_SSrv(enterprise_utilities, testMObjClassName, constructParameters, testMObjName, constructFieldsTest, logOk)

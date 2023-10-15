@@ -40,6 +40,7 @@ local T_Factory = require "test.t_mobj_factory"
 local T_Silo = require "test.t_mobj_silo"
 local T_Shop = require "test.t_mobj_shop"
 local T_Turtle = require "test.t_mobj_turtle"
+local T_UtilStation = require "test.t_mobj_user_station"
 
 local enterprise_assignmentboard = require "enterprise_assignmentboard"
 local enterprise_administration = require "enterprise_administration"
@@ -110,6 +111,7 @@ function t_main.T_All()
     T_Silo.T_All()
     T_Shop.T_All()
     T_Turtle.T_All()
+    T_UtilStation.T_All()
 
     -- enterprise tests
     t_test.T_All()
