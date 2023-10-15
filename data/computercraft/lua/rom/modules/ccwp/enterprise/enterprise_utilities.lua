@@ -4,7 +4,7 @@ local MObjHost = require "mobj_host"
 local enterprise_utilities = Class.NewClass(MObjHost)
 
 --[[
-    The enterprise_utilities is a MObjHost. It hosts object for different utilities like the logger and UtilStation. For now just development utilities.
+    The enterprise_utilities is a MObjHost. It hosts object for different utilities like the logger and UserStation. For now just development utilities.
 --]]
 
 local coredht   		= require "coredht"
@@ -113,7 +113,7 @@ function ActAsUserStation()
     corelog.WriteToLog("I will be the user station!!")
 
     -- setup timer for input chest checking
-    coreevent.AddEventListener(DoEventInputChestTimer, "mobj_util_station", "input chest timer")
+    coreevent.AddEventListener(DoEventInputChestTimer, "mobj_user_station", "input chest timer")
 
     -- check input box for the first time!
     DoEventInputChestTimer()
@@ -133,7 +133,7 @@ function DoEventInputChestTimer()
     coretask.AddWork(CheckInputChest, {})
 
     -- create new event
-    coreevent.CreateTimeEvent(20 * 15, "mobj_util_station", "input chest timer")
+    coreevent.CreateTimeEvent(20 * 15, "mobj_user_station", "input chest timer")
 end
 
 function CheckInputChest()

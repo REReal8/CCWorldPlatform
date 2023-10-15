@@ -27,9 +27,9 @@ R  Building blueprints/layers from front                                        
    R  Support building blueprints (layers) from front                                                                   (done)
    R  Figure out how to properly orient Monitors... (see t_builder.T_BuildLayer_Task_Front)                             (done)
 
-R  Propely Build UtilStation by using role_builder                                                                      (done)
+R  Propely Build UserStation by using role_builder                                                                      (done)
 
-RG UtilStation v1.0 input & output chest UI                                                                             (....)
+RG UserStation v1.0 input & output chest UI                                                                             (....)
 
 R  ensure all MObj's implement and follow IMObj interface                                                               (done)
    R  generalise (I)MObj test functions; i.e. for construct, destruct, etc                                              (done)

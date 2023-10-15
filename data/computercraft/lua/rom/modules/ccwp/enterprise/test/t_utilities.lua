@@ -4,7 +4,7 @@ local Location = require "obj_location"
 
 local enterprise_utilities = require "enterprise_utilities"
 
-local T_UtilStation = require "test.t_mobj_util_station"
+local T_UtilStation = require "test.t_mobj_user_station"
 local T_MObjHost = require "test.t_mobj_host"
 
 function t_utilities.T_All()
@@ -21,8 +21,8 @@ function t_utilities.T_AllPhysical()
     t_utilities.T_dismantleAndReleaseMObj_ASrv_UtilStation(mobjLocator)
 end
 
-local testMObjClassName = "UtilStation"
-local testMObjName = "utilStation"
+local testMObjClassName = "UserStation"
+local testMObjName = "userStation"
 local logOk = false
 
 local baseLocation = Location:newInstance(-6, -12, 1, 0, 1)

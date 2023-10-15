@@ -20,7 +20,7 @@ function library.Setup()
     objectFactory:registerClass("Silo",         require "mobj_silo")
     objectFactory:registerClass("Shop",         require "mobj_shop")
     objectFactory:registerClass("Turtle",       require "mobj_turtle")
-    objectFactory:registerClass("UtilStation",  require "mobj_util_station")
+    objectFactory:registerClass("UserStation",  require "mobj_user_station")
 
     -- register library modules
     local ModuleRegistry = require "module_registry"
@@ -40,7 +40,7 @@ function library.Setup()
     moduleRegistry:requireAndRegisterModule("T_Silo", "test.t_mobj_silo")
     moduleRegistry:requireAndRegisterModule("T_Shop", "test.t_mobj_shop")
     moduleRegistry:requireAndRegisterModule("T_Turtle", "test.t_mobj_turtle")
-    moduleRegistry:requireAndRegisterModule("T_UtilStation", "test.t_mobj_util_station")
+    moduleRegistry:requireAndRegisterModule("T_UtilStation", "test.t_mobj_user_station")
 
     -- do other stuff
 end

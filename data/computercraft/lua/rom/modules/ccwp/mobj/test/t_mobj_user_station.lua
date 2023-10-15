@@ -11,7 +11,7 @@ local IItemDepot = require "i_item_depot"
 local Location = require "obj_location"
 local URL = require "obj_url"
 
-local UtilStation = require "mobj_util_station"
+local UserStation = require "mobj_user_station"
 
 local enterprise_employment = require "enterprise_employment"
 
@@ -51,7 +51,7 @@ function T_UtilStation.T_AllPhysical()
     T_UtilStation.T_storeItemsFrom_AOSrv_Turtle()
 end
 
-local testClassName = "UtilStation"
+local testClassName = "UserStation"
 local testObjName = "utilStation"
 local logOk = false
 
@@ -81,7 +81,7 @@ function T_UtilStation.CreateTestObj(id, baseLocation, inputLocator, outputLocat
     outputLocator = outputLocator or outputLocator0
 
     -- create testObj
-    local testObj = UtilStation:newInstance(id, baseLocation:copy(), inputLocator, outputLocator)
+    local testObj = UserStation:newInstance(id, baseLocation:copy(), inputLocator, outputLocator)
 
     -- end
     return testObj
@@ -125,7 +125,7 @@ function T_UtilStation.T_new()
     local id = coreutils.NewId()
 
     -- test
-    local obj = UtilStation:new({
+    local obj = UserStation:new({
         _id             = id,
         _baseLocation   = baseLocation0:copy(),
         _inputLocator   = inputLocator0:copy(),
@@ -209,8 +209,8 @@ function T_UtilStation.T_IMObj_All()
     T_IMObj.pt_Implements_IMObj(testClassName, obj0)
 
     -- test construct/ upgrade/ destruct
-    T_IMObj.pt_destruct(testClassName, UtilStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
-    T_IMObj.pt_construct(testClassName, UtilStation, constructParameters0, testObjName0, fieldsTest0, logOk)
+    T_IMObj.pt_destruct(testClassName, UserStation, constructParameters0, testObjName0, destructFieldsTest, logOk)
+    T_IMObj.pt_construct(testClassName, UserStation, constructParameters0, testObjName0, fieldsTest0, logOk)
 
     -- test getters
     T_IMObj.pt_getId(testClassName, obj0, testObjName0, logOk)
@@ -247,7 +247,7 @@ local function storeItemsFrom_AOSrv_Test(itemsLocator, provideItems, fromStr)
     assert(provideItems, "no provideItems provided")
     assert(fromStr, "no fromStr provided")
     corelog.WriteToLog("* "..testClassName..":storeItemsFrom_AOSrv() test (from "..fromStr..")")
-    local obj = UtilStation:construct(constructParameters0) assert(obj, "Failed obtaining "..testClassName)
+    local obj = UserStation:construct(constructParameters0) assert(obj, "Failed obtaining "..testClassName)
     local itemDepotLocator = obj:getOutputLocator() assert(itemDepotLocator, "Failed obtaining outputLocator")
 
     itemsLocator:setQuery(provideItems)
