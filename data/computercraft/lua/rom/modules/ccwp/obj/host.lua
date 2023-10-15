@@ -281,7 +281,7 @@ function Host.GetHost(...)
     if not checkSuccess then corelog.Error("Host.GetHost: Invalid input") return nil end
 
     -- get Host
-    local host = moduleRegistry:getModule(hostName)
+    local host = moduleRegistry:getRegistered(hostName)
     if not host then if not suppressWarning then corelog.Warning("Host.GetHost: No module registered with hostName="..hostName) end return nil end
     if not Class.IsInstanceOf(host, Host) then if not suppressWarning then corelog.Warning("Host.GetHost: Module "..hostName.." is not of type Host") end return nil end
 

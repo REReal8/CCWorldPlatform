@@ -48,14 +48,14 @@ function T_MethodExecutor.T_CallModuleMethod()
     local myModule = {
         increment = testMethod
     }
-    moduleRegistry:registerModule("myModule", myModule)
+    moduleRegistry:register("myModule", myModule)
 
     -- test
     local result = MethodExecutor.CallModuleMethod("myModule", "increment", {5})
     assert(result == 6, "Unexpected result from increment method: " .. tostring(result))
 
     -- cleanup test
-    moduleRegistry:delistModule("myModule")
+    moduleRegistry:delist("myModule")
 end
 
 function T_MethodExecutor.T_CallInstanceMethod()
@@ -75,7 +75,7 @@ function T_MethodExecutor.T_CallInstanceMethod()
     assert(result == expectedResult, "Unexpected result(="..result..") from method, expected "..expectedResult)
 
     -- cleanup test
-    moduleRegistry:delistModule("myModule")
+    moduleRegistry:delist("myModule")
 end
 
 function T_MethodExecutor.T_CallObjMethod()
@@ -99,7 +99,7 @@ function T_MethodExecutor.T_CallObjMethod()
     assert(result == expectedResult, "Unexpected result(="..result..") from method, expected "..expectedResult)
 
     -- cleanup test
-    moduleRegistry:delistModule("myModule")
+    moduleRegistry:delist("myModule")
 end
 
 local testValue = 20

@@ -216,7 +216,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
 
     local testObject = TestObj:newInstance("field1", 4)
     local testObjHost = T_ObjHost.CreateTestObj()
-    moduleRegistry:registerModule(testObjHost:getHostName(), testObjHost)
+    moduleRegistry:register(testObjHost:getHostName(), testObjHost)
     local nonItemSupplierLocator = testObjHost:saveObject(testObject)
 
     -- test IItemSupplier
@@ -232,7 +232,7 @@ function T_Shop.T_registerItemSupplier_SOSrv()
 
     -- cleanup test
     enterprise_shop:deleteResource(objectLocator) -- note: registerItemSupplier_SOSrv saved the test Shop
-    moduleRegistry:delistModule(testObjHost:getHostName())
+    moduleRegistry:delist(testObjHost:getHostName())
     testObjHost:deleteResource(nonItemSupplierLocator)
 end
 

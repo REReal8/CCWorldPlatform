@@ -1,63 +1,36 @@
 local T_ModuleRegistry = {}
-local corelog = require "corelog"
 
 local ModuleRegistry = require "module_registry"
 
+local T_IRegistry = require "test.t_i_registry"
+
 function T_ModuleRegistry.T_All()
-    T_ModuleRegistry.T_registerModule_isRegistered()
-    T_ModuleRegistry.T_delistModule()
-    T_ModuleRegistry.T_getModule()
+    -- IRegistry
+    T_ModuleRegistry.T_IRegistry_All()
 end
 
-local registry = ModuleRegistry:getInstance()
-local module1Name = "module1"
-local module1 = {aValue = 1}
 
-function T_ModuleRegistry.T_registerModule_isRegistered()
+--    _____ _____            _     _
+--   |_   _|  __ \          (_)   | |
+--     | | | |__) |___  __ _ _ ___| |_ _ __ _   _
+--     | | |  _  // _ \/ _` | / __| __| '__| | | |
+--    _| |_| | \ \  __/ (_| | \__ \ |_| |  | |_| |
+--   |_____|_|  \_\___|\__, |_|___/\__|_|   \__, |
+--                      __/ |                __/ |
+--                     |___/                |___/
+
+function T_ModuleRegistry.T_IRegistry_All()
     -- prepare test
-    corelog.WriteToLog("* ModuleRegistry:registerModule() and ModuleRegistry:isRegistered() tests")
-    assert(not registry:isRegistered(module1Name), "Module "..module1Name.." already registered")
-
-    -- test
-    registry:registerModule(module1Name, module1)
-    assert(registry:isRegistered(module1Name), "Module "..module1Name.." not registered")
-
-    -- cleanup test
-    registry:delistModule(module1Name)
-end
-
-function T_ModuleRegistry.T_delistModule()
-    -- prepare test
-    corelog.WriteToLog("* ModuleRegistry:delistModule() test")
-    registry:registerModule(module1Name, module1)
-    assert(registry:isRegistered(module1Name), "Module not registered")
-
-    -- test
-    registry:delistModule(module1Name)
-    assert(not registry:isRegistered(module1Name), "Module not delisted")
-
-    -- cleanup
-end
-
-function T_ModuleRegistry.T_getModule()
-    -- prepare test
-    corelog.WriteToLog("* ModuleRegistry:getModule() tests")
-    assert(not registry:isRegistered(module1Name), "Module "..module1Name.." already registered")
-    registry:registerModule(module1Name, module1)
+    local testRegistryName = "ModuleRegistry"
+    local registry = ModuleRegistry:getInstance()
+    local thingName = "Module"
+    local module1Name = "module1"
+    local module1 = {aValue = 1}
     local module2Name = "module2"
     local module2 = {aValue = 2}
-    assert(not registry:isRegistered(module2Name), "Module "..module2Name.." already registered")
-    registry:registerModule(module2Name, module2)
 
     -- test
-    local retrievedObject1 = registry:getModule(module1Name)
-    assert(retrievedObject1 == module1, "Retrieved module 1 does not match original module 1")
-    local retrievedObject2 = registry:getModule(module2Name)
-    assert(retrievedObject2 == module2, "Retrieved module 2 does not match original module 2")
-
-    -- cleanup test
-    registry:delistModule(module1Name)
-    registry:delistModule(module2Name)
+    T_IRegistry.pt_all(testRegistryName, registry, module1Name, module1, module2Name, module2, thingName)
 end
 
 return T_ModuleRegistry

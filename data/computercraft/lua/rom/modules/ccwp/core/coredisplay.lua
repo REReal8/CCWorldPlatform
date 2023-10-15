@@ -347,7 +347,7 @@ function ExecuteXObjTest(t, menuName, menuOptions, ExecuteXObjTest)
 		-- test functions screen
 
 		-- get file
-		local file = moduleRegistry:getModule(t.filename)
+		local file = moduleRegistry:getRegistered(t.filename)
     	if not file then corelog.Warning("coredisplay.ExecuteXObjTest(...): File "..t.filename.." not found") return false end
 
 		-- variables

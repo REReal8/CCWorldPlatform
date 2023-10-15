@@ -1,11 +1,10 @@
 -- define module
-local ModuleRegistry = {
-    modules = {},
-}
+local Class = require "class"
+local IRegistry = require "i_registry"
+local ModuleRegistry = Class.NewClass(IRegistry)
 
--- ToDo: add proper description here
 --[[
-    The InputChecker ...
+    The ModuleRegistry is a Registry of LUA modules.
 --]]
 
 --    _       _ _   _       _ _           _   _
@@ -18,7 +17,8 @@ local ModuleRegistry = {
 local instance = nil
 function ModuleRegistry:getInstance()
     if not instance then
-        instance = setmetatable({}, { __index = ModuleRegistry })
+        instance = Class.newInstance(ModuleRegistry)
+        instance._modules = {}
     end
     return instance
 end
@@ -32,16 +32,20 @@ end
 --       | |
 --       |_|
 
-function ModuleRegistry:getModule(name)
-    return self.modules[name]
+function ModuleRegistry:getRegistered(name)
+    return self._modules[name]
 end
 
-function ModuleRegistry:registerModule(name, module)
-    self.modules[name] = module
+function ModuleRegistry:register(name, module)
+    self._modules[name] = module
 end
 
 function ModuleRegistry:isRegistered(name)
-    return self.modules[name] ~= nil
+    return self._modules[name] ~= nil
+end
+
+function ModuleRegistry:delist(name)
+    self._modules[name] = nil
 end
 
 function ModuleRegistry:requireAndRegisterModule(name, requireName)
@@ -50,15 +54,11 @@ function ModuleRegistry:requireAndRegisterModule(name, requireName)
     local module = require(requireName)
 
     -- register object
-    self:registerModule(name, module)
+    self:register(name, module)
 end
 
 function ModuleRegistry:requireAndRegisterModuleTests(name)
     self:requireAndRegisterModule(name, "test."..name)
-end
-
-function ModuleRegistry:delistModule(name)
-    self.modules[name] = nil
 end
 
 return ModuleRegistry

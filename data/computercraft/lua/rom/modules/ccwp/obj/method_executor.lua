@@ -244,7 +244,7 @@ function MethodExecutor.GetModuleMethod(...)
     if not checkSuccess then corelog.Error("MethodExecutor.GetModuleMethod(...): Invalid input") return nil end
 
     -- get module
-    local module = moduleRegistry:getModule(moduleName)
+    local module = moduleRegistry:getRegistered(moduleName)
     if not module then corelog.Warning("MethodExecutor.GetModuleMethod(...): Module "..moduleName.." not found") return nil end
 
     -- get method
@@ -271,7 +271,7 @@ function MethodExecutor.CallModuleMethod(...)
     if not checkSuccess then corelog.Error("MethodExecutor.CallModuleMethod(...): Invalid input") return nil end
 
     -- get module
-    local module = moduleRegistry:getModule(moduleName)
+    local module = moduleRegistry:getRegistered(moduleName)
     if not module then corelog.Warning("MethodExecutor.CallModuleMethod(...): Module "..moduleName.." not found") return nil end
 
     -- call method

@@ -386,14 +386,14 @@ local mobjLocator_TestMObj = nil
 
 function T_MObjHost.T_hostAndBuildMObj_ASrv_TestMObj()
     -- prepare test
-    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
 
     -- test
     local serviceResults = T_MObjHost.pt_hostAndBuildMObj_ASrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    moduleRegistry:delistModule(test_mobjHostName1)
+    moduleRegistry:delist(test_mobjHostName1)
     mobjLocator_TestMObj = serviceResults.mobjLocator
 
     -- return mobjLocator
@@ -402,7 +402,7 @@ end
 
 function T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     -- prepare test
-    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
     local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
     -- test
@@ -410,12 +410,12 @@ function T_MObjHost.T_upgradeMObj_SSrv_TestMObj()
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    moduleRegistry:delistModule(test_mobjHostName1)
+    moduleRegistry:delist(test_mobjHostName1)
 end
 
 function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     -- prepare test
-    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
     local upgradeFieldsTest = T_TestMObj.CreateInitialisedTest(nil, baseLocation1, field1_2)
 
     if not mobjLocator then
@@ -429,24 +429,24 @@ function T_MObjHost.T_extendAndUpgradeMObj_ASrv_TestMObj(mobjLocator)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    moduleRegistry:delistModule(test_mobjHostName1)
+    moduleRegistry:delist(test_mobjHostName1)
 end
 
 function T_MObjHost.T_releaseMObj_SSrv_TestMObj()
     -- prepare test
-    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
 
     -- test
     local serviceResults = T_MObjHost.pt_releaseMObj_SSrv(test_mobjHost1, testMObjClassName, constructParameters1, testMObjName, logOk)
     assert(serviceResults, "no serviceResults returned")
 
     -- cleanup test
-    moduleRegistry:delistModule(test_mobjHostName1)
+    moduleRegistry:delist(test_mobjHostName1)
 end
 
 function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
     -- prepare test
-    moduleRegistry:registerModule(test_mobjHostName1, test_mobjHost1)
+    moduleRegistry:register(test_mobjHostName1, test_mobjHost1)
 
     if not mobjLocator then
         -- check if we locally remembered a mobjLocator
@@ -460,7 +460,7 @@ function T_MObjHost.T_dismantleAndReleaseMObj_ASrv_TestMObj(mobjLocator)
 
     -- cleanup test
     mobjLocator_TestMObj = nil
-    moduleRegistry:delistModule(test_mobjHostName1)
+    moduleRegistry:delist(test_mobjHostName1)
 end
 
 return T_MObjHost

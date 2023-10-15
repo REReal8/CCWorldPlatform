@@ -253,7 +253,7 @@ end
 function T_ObjHost.T_GetObject()
     -- prepare test
     corelog.WriteToLog("* ObjHost.GetObject(...) tests")
-    moduleRegistry:registerModule(hostName1, objHost1)
+    moduleRegistry:register(hostName1, objHost1)
 
     -- test get object hosted by objHost1
     local objectLocator = objHost1:saveObject(testObject, className)
@@ -267,7 +267,7 @@ function T_ObjHost.T_GetObject()
 
     -- cleanup test
     objHost1:deleteResource(objectLocator)
-    moduleRegistry:delistModule(hostName1)
+    moduleRegistry:delist(hostName1)
 end
 
 return T_ObjHost

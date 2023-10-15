@@ -67,7 +67,7 @@ function t_projects.T_StartProject_ASrv()
     corelog.WriteToLog("* enterprise_projects.StartProject_ASrv() tests")
     local hostName = "TestHost"
     local host = ObjHost:newInstance(hostName)
-    moduleRegistry:registerModule(hostName, host)
+    moduleRegistry:register(hostName, host)
     local objLocator = host:saveObject(testObj)
 
     local projectDef = {
@@ -233,7 +233,7 @@ function t_projects.StartProject_ASrv_Callback(callbackData, serviceResults)
     local hostName = callbackData["hostName"]
     local host = Host.GetHost(hostName) if not host then corelog.Error("host not found") return end
     host:deleteResource(objLocator)
-    moduleRegistry:delistModule(hostName)
+    moduleRegistry:delist(hostName)
 end
 
 function t_projects.T_StartProject_ASrv_registersWIP()

@@ -242,7 +242,7 @@ end
 function T_Host.T_GetHost()
     -- prepare test
     corelog.WriteToLog("* "..testClassName..".GetHost(...) tests")
-    local module = moduleRegistry:getModule(hostName1)
+    local module = moduleRegistry:getRegistered(hostName1)
     assert(not module, "a module with name="..hostName1.." already registered")
 
     -- test not registered Host
@@ -250,18 +250,18 @@ function T_Host.T_GetHost()
     assert(not obj, "unexpectedly got a Host with hostName="..hostName1)
 
     -- test registered Host
-    moduleRegistry:registerModule(hostName1, host1)
+    moduleRegistry:register(hostName1, host1)
     obj = Host.GetHost(hostName1)
     assert(obj, "Host with hostName="..hostName1.." not gotten")
-    moduleRegistry:delistModule(hostName1)
+    moduleRegistry:delist(hostName1)
 
     -- test other registered object
     local otherTestObj = TestObj:newInstance("field1", 4)
     local otherTestObjName = "testObj"
-    moduleRegistry:registerModule(otherTestObjName, otherTestObj)
+    moduleRegistry:register(otherTestObjName, otherTestObj)
     obj = Host.GetHost(otherTestObjName, true)
     assert(not obj, "unexpectedly got a 'Host' with name="..testObjName)
-    moduleRegistry:delistModule(otherTestObjName)
+    moduleRegistry:delist(otherTestObjName)
 
     -- cleanup test
 end
