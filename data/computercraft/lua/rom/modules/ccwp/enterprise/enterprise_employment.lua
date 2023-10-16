@@ -307,9 +307,10 @@ function enterprise_employment:getCurrentWorkerLocator()
             if not registered then corelog.Error("enterprise_employment:getCurrentWorkerLocator: Failed registering 1st Turtle "..workerId) return nil end
         end
     end
+    if not currentWorkerLocator then corelog.Warning("enterprise_employment:getCurrentWorkerLocator: workerLocator for (current) Worker "..workerId.." not found") return nil end
 
     -- end
-    return currentWorkerLocator
+    return currentWorkerLocator:copy()
 end
 
 --                        _  __ _                       _   _               _
