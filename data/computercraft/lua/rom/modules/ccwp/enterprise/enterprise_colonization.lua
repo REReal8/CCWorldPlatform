@@ -84,7 +84,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
 
     local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
     local nTreeswanted = 6
-    local settleData = {
+    local projectData = {
         materialsItemSupplierLocator    = enterprise_shop.GetShopLocator(),
         wasteItemDepotLocator           = currentTurtleLocator:copy(), -- ToDo: at some point use obj_wastehandler here + somehow pass this to enterprise_employment:triggerTurtleRefuelIfNeeded
 
@@ -171,7 +171,7 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
     }
 
     -- create project definition
-    local createNewWorldProjectDef = {
+    local projectDef = {
         steps   = { -- ToDo: introduce enterprise_energy.UpgradeSite_ASrv and wrap create steps in it as documented here https://docs.google.com/spreadsheets/d/1yqShiBSVzldGMauvwqLkRrJOjc38RUuAtjk7L1cR7Uk/edit#gid=91593168
             -- initial (L0) enterprise_energy (refuelAmount = 0, fuelNeed_Refuel = 0)
             { stepType = "SSrv", stepTypeDef = { moduleName = "enterprise_energy", serviceName = "UpdateEnterprise_SSrv" }, stepDataDef = {
@@ -321,8 +321,8 @@ function enterprise_colonization.CreateNewWorld_ASrv(...)
         }
     }
     local projectServiceData = {
-        projectDef  = createNewWorldProjectDef,
-        projectData = settleData,
+        projectDef  = projectDef,
+        projectData = projectData,
         projectMeta = { title = "Project colonize", description = "Creating a new world" },
     }
 
@@ -356,7 +356,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     local forestLocation            = Location:newInstance(0, 0, 1, 0, 1)
     local factoryLocation           = Location:newInstance(12, 0, 1, 0, 1)
     local nTreeswanted = 6
-    local settleData = {
+    local projectData = {
         factoryHostLocator              = enterprise_manufacturing:getHostLocator(),
         factoryClassName                = "Factory",
         factoryConstructParameters      = {
@@ -387,7 +387,7 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
     local callback = Callback.GetNewDummyCallBack()
 
     -- create project definition
-    local createNewWorldProjectDef = {
+    local projectDef = {
         steps   = {
             -- host and register BirchForest
             { stepType = "LSOSrv", stepTypeDef = { serviceName = "hostMObj_SSrv", locatorStep = 0, locatorKeyDef = "forestHostLocator" }, stepDataDef = {
@@ -424,8 +424,8 @@ function enterprise_colonization.RecoverNewWorld_SSrv(...)
         }
     }
     local projectServiceData = {
-        projectDef  = createNewWorldProjectDef,
-        projectData = settleData,
+        projectDef  = projectDef,
+        projectData = projectData,
         projectMeta = { title = "Project colonize", description = "Creating a new world" },
     }
 
