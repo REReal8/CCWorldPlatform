@@ -507,6 +507,7 @@ function enterprise_projects.NextProjectStep(internalProjectData, stepResults)
         corelog.WriteToProjectsLog("Start step "..currentStep.." located async Obj service", projectId)
         local scheduledCorrectly = MethodExecutor.CallInstanceMethod(obj, serviceName, { stepData, callback })
         local className = ObjHost.GetClassName(objLocator)
+        if not className then className = "<unknown>" end
         if scheduledCorrectly ~= true then corelog.Error("enterprise_projects.NextProjectStep: Failed scheduling ("..type(scheduledCorrectly)..") LAOSrv service "..className..":"..serviceName.." for step "..currentStep.." of project"..projectId) TerminateProject(internalProjectData) return false end
         return scheduledCorrectly
     elseif stepType == "SOSrv" then
