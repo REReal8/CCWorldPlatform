@@ -3,6 +3,7 @@ local t_employment = {}
 local corelog = require "corelog"
 
 local Callback = require "obj_callback"
+local MethodExecutor = require "method_executor"
 local Location = require "obj_location"
 
 local enterprise_employment = require "enterprise_employment"
@@ -231,5 +232,36 @@ function t_employment.T_IRegistry_All()
     -- test
     T_IRegistry.pt_all(testClassName, enterprise_employment, workerId1, workerLocator1, workerId2, workerLocator2, thingName)
 end
+
+function t_employment.T_hostBuildRegisterAndBootWorker_ASrv_Turtle()
+    -- prepare test
+    corelog.WriteToLog("* enterprise_employment:hostBuildRegisterAndBootWorker_ASrv() tests (of Turtle)")
+    t_employment = t_employment or require "test.t_employment"
+
+    -- test
+    local serviceResults = MethodExecutor.DoASyncObjService_Sync(enterprise_employment, "hostBuildRegisterAndBootWorker_ASrv", {
+        className                   = testMObjClassName,
+        constructParameters         = constructParameters,
+        materialsItemSupplierLocator= t_employment.GetCurrentTurtleLocator(),
+        wasteItemDepotLocator       = t_employment.GetCurrentTurtleLocator(),
+    })
+
+    -- check: service success
+    assert(serviceResults, "no serviceResults returned")
+    assert(serviceResults.success, "failed executing service")
+
+    -- check: Worker hosted on MObjHost (full check done in pt_hostAndBuildMObj_ASrv)
+    local mobjLocator = serviceResults.mobjLocator assert(mobjLocator, "no mobjLocator returned")
+    local mobj = enterprise_employment:getObject(mobjLocator)
+    assert(mobj, "Worker(="..mobjLocator:getURI()..") not hosted by "..enterprise_employment:getHostName())
+
+    -- cleanup test
+    if logOk then corelog.WriteToLog(" ok") end
+    mobjLocator_Turtle = serviceResults.mobjLocator
+
+    -- return mobjLocator
+    return serviceResults.mobjLocator
+end
+
 
 return t_employment
