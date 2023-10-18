@@ -199,7 +199,7 @@ function enterprise_employment:register(...)
 
     -- register the Worker
     corelog.WriteToLog(">Registering Worker (workerId="..workerId..", workerLocator="..theWorkerLocator:getURI()..")")
-    table.insert(workerLocators, workerId, theWorkerLocator)
+    workerLocators[workerId] = theWorkerLocator
 
     -- save workerLocators
     local workerLocatorsLocator = SaveWorkerLocators(self, workerLocators)
